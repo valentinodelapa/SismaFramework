@@ -1,0 +1,26 @@
+.input, .select{border: none; background-color: transparent; display: flex;}
+
+.field{margin: 20px 10px;}
+.label{font-weight: 600; padding: 10px;}
+.control{margin: 0px 10px; padding: 10px; border-radius: 5px; flex-direction: row;}
+.control{border: 1px solid lightgray;}
+.control.danger{border: 1px solid red;}
+.control:focus-within{border: 1px solid blue;}
+.control .input, .control .select{padding: 0px; flex-grow: 2;}
+.control .input:focus{border: 0px;}
+.control .input:nth-child(even), .control .select:nth-child(even){margin: 0px 10px;}
+.control .select{appearance: none; -moz-appearance:none;}
+
+.editor{min-height: 300px; position: relative; margin: 0px 10px; background-color: #f4f4f4; box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3); border-top: 6px solid #4a4a4a; flex-direction: column; }
+.editor-toolbar{flex-direction: row; align-items: center; flex-wrap: wrap;}
+.editor-content-area{background-color: white; flex-direction: column; flex-grow: 2; margin-bottom: 10px;}
+.editor-toolbar-box{margin: 5px; border-right: 1px solid black; flex-direction: row;}
+.editor-toolbar-button, .editor-toolbar-menu{background-color: #f4f4f4; width: 30px; height: 30px; margin-right: 5px; text-align: center; vertical-align: middle;}
+.editor-toolbar-button svg, .editor-toolbar-menu svg{width: 20px; height: 20px; padding: 5px; border: none;}
+.editor-toolbar-button:hover, .editor-toolbar-button.active{background-color: #aaa;}
+.editor-toolbar-menu{flex-direction: column; z-index:100;}
+.editor-toolbar-menu .editor-toolbar-button{display: none;}
+.editor-toolbar-menu:hover .editor-toolbar-button{display: flex; top:100%;}
+.visuell-view, .html-view{padding: 10px; flex-grow: 2; outline: none; overflow: hidden; resize: vertical;}
+.visuell-view, .visuell-view div{position: relative; display: block; word-wrap: normal;}
+.html-view{border: 0px; resize: none;}

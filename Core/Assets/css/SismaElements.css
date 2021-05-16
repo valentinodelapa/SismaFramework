@@ -1,0 +1,57 @@
+/* button */
+.button{margin: 0px 8px; padding: 7px 16px; border-radius: 5px; display: inline-flex; flex-direction: row; text-decoration: none; font-size: 16px;}
+
+.button.is-small{padding: 5px 12px; font-size: 12px;}
+.button.is-normal{padding: 7px 16px; font-size: 16px;}
+.button.is-medium{padding: 9px 20px; font-size: 20px;}
+.button.is-large{padding: 11px 24px; font-size: 24px;}
+
+.button.is-black.is-ouline:hover{background-color: #0a0a0a; border: 1px solid transparent; color: #ffffff;}
+.button.is-danger.is-ouline:hover{background-color: #ff385f; border: 1px solid transparent; color: #ffffff;}
+.button.is-dark.is-ouline:hover{background-color: #353535; border: 1px solid transparent; color: #f4f4f4;}
+.button.is-info.is-ouline:hover{background-color: #209bee; border: 1px solid transparent; color: #ffffff;}
+.button.is-link.is-ouline:hover{background-color: #3273dc; border: 1px solid transparent; color: #ffffff;}
+.button.is-light.is-ouline:hover{background-color: #f4f4f4; border: 1px solid transparent; color: #353535;}
+.button.is-primary.is-ouline:hover{background-color: #00d1b1; border: 1px solid transparent; color: #ffffff;}
+.button.is-success.is-ouline:hover{background-color: #47c674; border: 1px solid transparent; color: #ffffff;}
+.button.is-warning.is-ouline:hover{background-color: #ffdd56; border: 1px solid transparent; color: #000000;}
+.button.is-white.is-ouline:hover{background-color: #ffffff; border: 1px solid transparent; color: #0a0a0a}
+
+.button.is-black.is-ouline, .button.is-black:hover{background-color: transparent; border: 1px solid #0a0a0a; color: #0a0a0a;}
+.button.is-danger.is-ouline, .button.is-danger:hover{background-color: transparent; border: 1px solid #ff385f; color: #ff385f;}
+.button.is-dark.is-ouline, .button.is-dark:hover{background-color: transparent; border: 1px solid #353535; color: #353535;}
+.button.is-info.is-ouline, .button.is-info:hover{background-color: transparent; border: 1px solid #209bee; color: #209bee;}
+.button.is-link.is-ouline, .button.is-link:hover{background-color: transparent; border: 1px solid #3273dc; color: #3273dc;}
+.button.is-light.is-ouline, .button.is-light:hover{background-color: transparent; border: 1px solid #f4f4f4; color: #f4f4f4;}
+.button.is-primary.is-ouline, .button.is-primary:hover{background-color: transparent; border: 1px solid #00d1b1; color: #00d1b1;}
+.button.is-success.is-ouline, .button.is-success:hover{background-color: transparent; border: 1px solid #47c674; color: #47c674;}
+.button.is-warning.is-ouline, .button.is-warning:hover{background-color: transparent; border: 1px solid #ffdd56; color: #ffdd56;}
+.button.is-white.is-ouline, .button.is-white:hover{background-color: transparent; border: 1px solid #ffffff; color: #ffffff}
+
+/* content */
+.content{width: 100%; position: relative; display: block;}
+.content.is-small{}
+.content.is-medium{}
+.content.is-large{}
+
+/* title */
+.title{margin: 0px; padding: 0px; color: #363636;}
+.subtitle{margin: 0px; padding: 0px; color: #4a4a4a;}
+
+.title.is-1, .subtitle.is-1{font-size: 28px;}
+.title.is-2, .subtitle.is-2{font-size: 26px;}
+.title.is-3, .subtitle.is-3{font-size: 24px;}
+.title.is-4, .subtitle.is-4{font-size: 22px;}
+.title.is-5, .subtitle.is-5{font-size: 20px;}
+.title.is-6, .subtitle.is-6{font-size: 18px;}
+
+/* image */
+.image{width:100%; margin: 0px; padding: 0px; position: relative; display: flex; justify-content: center; align-content: center;}
+.image.is-16x16{height:16px;width:16px}
+.image.is-24x24{height:24px;width:24px}
+.image.is-32x32{height:32px;width:32px}
+.image.is-48x48{height:48px;width:48px}
+.image.is-64x64{height:64px;width:64px}
+.image.is-96x96{height:96px;width:96px}
+.image.is-128x128{height:128px;width:128px}
+.image img{max-width: 100%; max-height: 100%; right: 0; left: 0; top: 0; bottom: 0; margin: auto; padding: 0px; position: relative; display: flex;}
