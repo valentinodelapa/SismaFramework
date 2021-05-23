@@ -40,7 +40,7 @@ abstract class ReferencedEntity extends BaseEntity
     {
         if ($sismaCollection === null){
             $modelName = str_replace('Entities', 'Models', static::COLLECTION_DATA[$propertyName]['entity']).'Model';
-            $modelMethodName = 'get'.ucfirst($propertyName).'by'.ucfirst(static::COLLECTION_DATA[$propertyName]['propertyName']);
+            $modelMethodName = 'get'.ucfirst($propertyName).'By'.ucfirst(static::COLLECTION_DATA[$propertyName]['propertyName']);
             $model = new $modelName();
             $this->$propertyName = $model->$modelMethodName($this);
         }else{

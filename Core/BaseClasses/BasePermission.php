@@ -18,7 +18,9 @@ abstract class BasePermission
     {
         $this->user = $user;
         $this->result = ($this->isInstancePermitted($subject) === false) ? false : $this->result;
+        $this->checkResult();
         $this->result = ($this->isConstantPermitted($attribute) === false) ? false : $this->result;
+        $this->checkResult();
         $this->result = ($this->checkPermmisions($subject, $attribute) === false) ? false : $this->result;
         $this->checkResult();
     }
