@@ -19,7 +19,7 @@ trait ParseValue
             return $value;
         }elseif(is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             $entityName = $reflectionNamedType->getName();
-            $modelName = str_replace(\Sisma\Core\ENTITY_NAMESPACE, \Sisma\Core\MODEL_NAMESPACE, $entityName) . 'Model';
+            $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
             $modelInstance = new $modelName();
             return $modelInstance->getEntityById($value);
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEnumerator::class)) {

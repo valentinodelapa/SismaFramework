@@ -21,12 +21,12 @@ abstract class BaseModel
         if ($adapter instanceof Adapter) {
             $this->adapter = $adapter;
         } else {
-            $this->adapter = Adapter::create(\Sisma\Core\DATABASE_ADAPTER_TYPE, [
-                        'database' => \Sisma\Core\DATABASE_NAME,
-                        'hostname' => \Sisma\Core\DATABASE_HOST,
-                        'password' => \Sisma\Core\DATABASE_PASSWORD,
-                        'port' => \Sisma\Core\DATABASE_PORT,
-                        'username' => \Sisma\Core\DATABASE_USERNAME,
+            $this->adapter = Adapter::create(\Config\DATABASE_ADAPTER_TYPE, [
+                        'database' => \Config\DATABASE_NAME,
+                        'hostname' => \Config\DATABASE_HOST,
+                        'password' => \Config\DATABASE_PASSWORD,
+                        'port' => \Config\DATABASE_PORT,
+                        'username' => \Config\DATABASE_USERNAME,
             ]);
         }
     }

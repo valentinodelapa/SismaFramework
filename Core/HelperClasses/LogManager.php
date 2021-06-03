@@ -8,7 +8,7 @@ class LogManager
     
     public function __construct()
     {
-        $this->handle = fopen(\Sisma\Core\LOG_PATH, 'a');
+        $this->handle = fopen(\Config\LOG_PATH, 'a');
     }
     
     public function saveLog(string $message, int $code)

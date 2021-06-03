@@ -32,7 +32,7 @@ class Adapter
     public static function create(string $type, array $options = []): Adapter
     {
         $parsedType = ucwords(strtolower($type));
-        $class = \Sisma\Core\ADAPTER_NAMESPACE.'Adapter' . $parsedType;
+        $class = \Config\ADAPTER_NAMESPACE.'Adapter' . $parsedType;
         return new $class($options);
     }
 

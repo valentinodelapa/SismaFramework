@@ -15,7 +15,7 @@ class Templater
 
     private static function getTemplateContent($template): string
     {
-        $path = \Sisma\Core\TEMPLATES_PATH . $template . '.php';
+        $path = \Config\TEMPLATES_PATH . $template . '.php';
         $templateContent = file_get_contents($path);
         return $templateContent;
     }

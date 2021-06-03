@@ -44,7 +44,7 @@ class Render
     private static function getLanguagePath(): string
     {
         if (Session::hasItem('lang') === false) {
-            Session::setItem('lang', \Sisma\Core\DEFAULT_LOCALE);
+            Session::setItem('lang', \Config\DEFAULT_LOCALE);
         }
         $path = self::getLocalePath(Session::getItem('lang'));
         return $path;
@@ -52,7 +52,7 @@ class Render
 
     private static function getLocalePath(?string $var = null): string
     {
-        $path = \Sisma\Core\LOCALES_PATH;
+        $path = \Config\LOCALES_PATH;
         return self::getSelectedLocale($path, $var);
     }
 
@@ -61,13 +61,13 @@ class Render
         if (file_exists($path . $lang)) {
             return $path . $lang;
         } else {
-            return $path . \Sisma\Core\DEFAULT_LOCALE . '.php';
+            return $path . \Config\DEFAULT_LOCALE . '.php';
         }
     }
 
     private static function getViewPath(string $view): string
     {
-        $path = \Sisma\Core\VIEWS_PATH . $view . '.php';
+        $path = \Config\VIEWS_PATH . $view . '.php';
         return $path;
     }
 

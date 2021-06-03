@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core;
+namespace Config;
 
 /* Name Constant */
 const ADAPTERS = 'Adapters';

@@ -16,11 +16,11 @@ class FixturesManager
 
     private function getFixturesArray(): void
     {
-        $fixturesFiles = scandir(\Sisma\Core\FIXTURE_PATH);
+        $fixturesFiles = scandir(\Config\FIXTURE_PATH);
         foreach ($fixturesFiles as $file) {
             if (($file != '.') && ($file != '..')) {
                 $fixtureName = str_replace('.php', '', $file);
-                $this->fixturesArray[\Sisma\Core\FIXTURE_NAMESPACE . $fixtureName] = false;
+                $this->fixturesArray[\Config\FIXTURE_NAMESPACE . $fixtureName] = false;
             }
         }
     }

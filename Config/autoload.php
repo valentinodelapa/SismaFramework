@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core;
+namespace Config;
 
 use Sisma\Core\HelperClasses\Router;
 

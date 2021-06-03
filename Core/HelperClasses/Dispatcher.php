@@ -47,8 +47,8 @@ class Dispatcher
     private function parsePath(): void
     {
         if ($this->path == '/') {
-            $this->controllerName = \Sisma\Core\DEFAULT_CONTROLLER_NAMESPACE;
-            $this->action = \Sisma\Core\DEFAULT_ACTION;
+            $this->controllerName = \Config\DEFAULT_CONTROLLER_NAMESPACE;
+            $this->action = \Config\DEFAULT_ACTION;
             $this->actionArguments = [];
         } else {
             $this->pathParts = array_values(array_filter(explode('/', $this->path), function($var)
@@ -61,8 +61,8 @@ class Dispatcher
 
     private function parsePathParts(): void
     {
-        $this->controllerName = \Sisma\Core\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
-        $this->action = (isset($this->pathParts[1])) ? self::convertToCamelCase($this->pathParts[1]) : \Sisma\Core\DEFAULT_ACTION;
+        $this->controllerName = \Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
+        $this->action = (isset($this->pathParts[1])) ? self::convertToCamelCase($this->pathParts[1]) : \Config\DEFAULT_ACTION;
         $this->actionArguments = array_slice($this->pathParts, 2);
     }
 
@@ -81,15 +81,15 @@ class Dispatcher
         $this->instanceControllerClass();
         if ($this->controllerInstance instanceof $this->controllerName) {
             $this->executeControllerAction();
-        } elseif (($this->pathParts[0] === 'fixture') && (\Sisma\Core\DEVELOPMENT_ENVIRONMENT === true)) {
+        } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             new FixturesManager();
-        } elseif (file_exists(\Sisma\Core\CORE_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
-            header('Content-type: ' . array_search($this->pathParts[0], \Sisma\Core\ASSET_FOLDERS));
-            echo file_get_contents(\Sisma\Core\CORE_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
-        } elseif (file_exists(\Sisma\Core\APPLICATION_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
-            header('Content-type: ' . array_search($this->pathParts[0], \Sisma\Core\ASSET_FOLDERS));
-            echo file_get_contents(\Sisma\Core\APPLICATION_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
-        } elseif (self::$reloadAttempts < \Sisma\Core\MAX_RELOAD_ATTEMPTS) {
+        } elseif (file_exists(\Config\CORE_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
+            header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
+            echo file_get_contents(\Config\CORE_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
+        } elseif (file_exists(\Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
+            header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
+            echo file_get_contents(\Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
+        } elseif (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
             $this->reloadDispatcher();
         } else {
             throw new PageNotFoundException();
@@ -151,11 +151,11 @@ class Dispatcher
             $this->defaultControllerChecked = $this->defaultActionChecked = false;
             self::$reloadAttempts++;
         } elseif ($this->defaultControllerChecked === false) {
-            array_unshift($this->pathParts, \Sisma\Core\DEFAULT_PATH);
+            array_unshift($this->pathParts, \Config\DEFAULT_PATH);
             $this->path = '/' . implode('/', $this->pathParts);
             $this->defaultControllerChecked = true;
         } elseif ($this->defaultActionChecked === false) {
-            $this->pathParts = [$this->pathParts[1], \Sisma\Core\DEFAULT_ACTION, ...array_slice($this->pathParts, 2)];
+            $this->pathParts = [$this->pathParts[1], \Config\DEFAULT_ACTION, ...array_slice($this->pathParts, 2)];
             $this->path = '/' . implode('/', $this->pathParts);
             $this->defaultActionChecked = true;
         }
@@ -165,7 +165,7 @@ class Dispatcher
     {
         if ($this->checkActionPresenceInController()) {
             $this->callControllerMethod();
-        } elseif (self::$reloadAttempts < \Sisma\Core\MAX_RELOAD_ATTEMPTS) {
+        } elseif (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
             $this->reloadDispatcher();
         } else {
             throw new PageNotFoundException();
