@@ -7,15 +7,17 @@ class Templater
 
     public static function generateTemplate($template, $vars): string
     {
-        extract($vars);
         $templateContent = self::getTemplateContent($template);
-        eval("\$templateContent = \"$templateContent\";");
+        $templateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($vars) {
+            $var = str_replace(['{{', '}}'], '', $varName[0]);
+            return $vars[$var];
+        }, $templateContent);
         return $templateContent;
     }
 
     private static function getTemplateContent($template): string
     {
-        $path = \Config\TEMPLATES_PATH . $template . '.php';
+        $path = \Config\TEMPLATES_PATH . $template . '.html';
         $templateContent = file_get_contents($path);
         return $templateContent;
     }

@@ -24,6 +24,13 @@ class Router
     {
         return self::$metaPath;
     }
+    
+    public static function getRootLink()
+    {
+        $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://';
+        $httpHost =  $_SERVER['HTTP_HOST'];
+        return $protocol.$httpHost.self::$metaPath;
+    }
 
     public static function reloadWithParseQuery(string $path): Response
     {
