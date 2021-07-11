@@ -222,7 +222,7 @@ class Dispatcher
             } elseif (array_key_exists($argument->name, $this->actionArguments)) {
                 $reflectionType = $argument->getType();
                 $actionArguments[$argument->name] = $this->parseValue($reflectionType, $this->actionArguments[$argument->name]);
-            } elseif ($argument->isOptional()) {
+            } elseif ($argument->isDefaultValueAvailable()) {
                 $actionArguments[$argument->name] = $argument->getDefaultValue();
             } else {
                 throw new InvalidArgumentsException();
