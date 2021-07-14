@@ -6,6 +6,7 @@ use Sisma\Core\Enumerators\FilterType;
 use Sisma\Core\HelperClasses\Filter;
 use Sisma\Core\HttpClasses\Request;
 use Sisma\Core\ProprietaryTypes\SismaCollection;
+use Sisma\Core\Exceptions\FormException;
 use Sisma\Core\Exceptions\InvalidArgumentsException;
 
 abstract class BaseForm
@@ -13,6 +14,8 @@ abstract class BaseForm
 
     use \Sisma\Core\Traits\ParseValue;
     use \Sisma\Core\Traits\Submitted;
+
+    protected const ENTITY_CLASS_NAME = BaseEntity::class;
 
     private array $sismaCollectionPropertyName = [];
     protected bool $filterResult = true;
@@ -23,20 +26,46 @@ abstract class BaseForm
     protected array $filterFiledsMode = [];
     protected array $filterErrors = [];
 
-    public function __construct()
+    public function __construct(?BaseEntity $baseEntity = null)
     {
+        $this->checkEntityClassNameOverride();
+        $this->embedEntity($baseEntity);
         $this->setFilterFieldsMode();
         $this->setEntityFromForm();
     }
+
+    private function checkEntityClassNameOverride()
+    {
+        if (static::ENTITY_CLASS_NAME === BaseEntity::class) {
+            throw new FormException();
+        }
+    }
+
+    private function embedEntity(?BaseEntity $baseEntity): void
+    {
+        $entityClassName = self::ENTITY_CLASS_NAME;
+        if ($baseEntity instanceof $entityClassName) {
+            $this->entity = $baseEntity;
+        } elseif ($baseEntity === null) {
+            $this->entity = $this->getEntityToEmbed($baseEntity);
+        } else {
+            throw new InvalidArgumentsException();
+        }
+    }
+
+    abstract protected function getEntityToEmbed(): BaseEntity;
 
     abstract protected function setFilterFieldsMode(): void;
 
     abstract protected function setEntityFromForm(): void;
 
-    public function handleRequest(Request $request):void
+    public function handleRequest(Request $request): void
     {
         $this->request = $request;
+        $this->injectRequest();
     }
+
+    abstract protected function injectRequest(): void;
 
     public function isValid(): bool
     {
@@ -91,14 +120,14 @@ abstract class BaseForm
         $reflectionForm = new \ReflectionClass($formPropertyClass);
         $reflectionFormConstructorParamenter = $reflectionForm->getConstructor()->getParameters()[0];
         if (($reflectionEntityProperty->isPublic())) {
-            if ($reflectionEntityProperty->getType()->getName() === $reflectionFormConstructorParamenter->getType()->getName()) {
+            if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
                 $$this->generateFormProperty($formPropertyClass, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentsException();
             }
         } else {
             $entityClass = get_class($this->entity);
-            if ($entityClass::COLLECTION_DATA[$propertyName]['entity'] === $reflectionFormConstructorParamenter->getType()->getName()) {
+            if ($entityClass::COLLECTION_DATA[$propertyName]['entity'] === $formPropertyClass::ENTITY_CLASS_NAME) {
                 $this->generateSismaCollectionProperty($sismaCollectionNumbers, $formPropertyClass, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentsException();

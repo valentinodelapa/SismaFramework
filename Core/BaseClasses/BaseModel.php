@@ -29,9 +29,12 @@ abstract class BaseModel
                         'username' => \Config\DATABASE_USERNAME,
             ]);
         }
+        $this->implementEmbeddedEntity();
     }
 
-    public function getEmbeddedEntity()
+    abstract public function implementEmbeddedEntity(): void;
+
+    public function getEmbeddedEntity(): BaseEntity
     {
         return $this->entity;
     }

@@ -2,7 +2,7 @@
 
 $locale = [
     'pages' => [
-        'default' => [
+        'sample' => [
             'index' => [
                 'title' => 'Homepage',
             ],
