@@ -30,4 +30,10 @@
 .menu-item input:checked ~ .menu-dropdown{height: auto; max-height: 500px; background-color: white; display: flex; flex-direction: column;}
 
 /* page */
-.page, .page div{display: block};
+.page, .page div{display: block}
+
+/* upload drop area */
+.upload-drop-area{border: 4px dashed black; background-position: center; background-repeat: no-repeat; background-size: 64px 64px; box-sizing: border-box; opacity: 0.5; text-align: center;}
+.upload-drop-area:hover, .upload-drop-area.dragging, .upload-drop-area.uploading {opacity: 1;}
+.upload-drop-area input {border: none; cursor: pointer;}
+.upload-drop-area input:focus {outline: none;}

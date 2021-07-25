@@ -4,9 +4,52 @@ namespace Sisma\Core\ExtendedClasses;
 
 use Sisma\Core\BaseClasses\BaseEntity;
 use Sisma\Core\ProprietaryTypes\SismaCollection;
+use Sisma\Core\Exceptions\InvalidArgumentException;
 
 abstract class ReferencedEntity extends BaseEntity
 {
+
+    protected static array $collectionData;
+    
+    public const FOREIGN_KEY_TYPE = 'foreignKeyType';
+    public const FOREIGN_KEY_NAME = 'foreignKeyName';
+
+    public static function getCollectionDataInformation(string $collectionName, string $information): string
+    {
+        static::setCollectionData();
+        return self::$collectionData[$collectionName][$information];
+    }
+
+    abstract protected static function setCollectionData(): void;
+
+    protected static function addCollectionData(string $collectionName, string $foreignKeyType, string $foreignKeyName): void
+    {
+        self::$collectionData[$collectionName] = [
+            static::FOREIGN_KEY_TYPE => $foreignKeyType,
+            static::FOREIGN_KEY_NAME => $foreignKeyName,
+        ];
+        self::checkCollectionDataConsistency($collectionName);
+    }
+
+    private static function checkCollectionDataConsistency(string $collectionName): void
+    {
+        $result = true;
+        $result = (self::checkRelatedPropertyPresence($collectionName) === false) ? false : $result;
+        $result = (self::checkRelatedPropertyName($collectionName) === false) ? false : $result;
+        $result = ($result) ?: throw new InvalidArgumentException();
+    }
+
+    private static function checkRelatedPropertyPresence(string $collectionName): bool
+    {
+        return (property_exists(self::$collectionData[$collectionName][static::FOREIGN_KEY_TYPE], self::$collectionData[$collectionName][static::FOREIGN_KEY_NAME]));
+    }
+    
+    private static function checkRelatedPropertyName(string $collectionName): bool
+    {
+        $calledClassName = get_called_class();
+        $reflectionRelatedProperty = new \ReflectionProperty(self::$collectionData[$collectionName][static::FOREIGN_KEY_TYPE], self::$collectionData[$collectionName][static::FOREIGN_KEY_NAME]);
+        return ($reflectionRelatedProperty->getType()->getName() === $calledClassName);
+    }
 
     public function __call($methodName, $arguments)
     {
@@ -18,7 +61,7 @@ abstract class ReferencedEntity extends BaseEntity
                 return $this->setSismaCollection($propertyName, $argument);
                 break;
             case 'add':
-                return $this->addEntityToSimaCollection($propertyName."s", $arguments[0]);
+                return $this->addEntityToSimaCollection($propertyName . "s", $arguments[0]);
                 break;
             case 'get':
                 return $this->getSismaCollection($propertyName);
@@ -38,14 +81,14 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function setSismaCollection(string $propertyName, ?SismaCollection $sismaCollection = null): void
     {
-        if ($sismaCollection === null){
-            $modelName = str_replace('Entities', 'Models', static::COLLECTION_DATA[$propertyName]['entity']).'Model';
-            $modelMethodName = 'get'.ucfirst($propertyName).'By'.ucfirst(static::COLLECTION_DATA[$propertyName]['propertyName']);
+        if ($sismaCollection === null) {
+            $modelName = str_replace('Entities', 'Models', self::getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';
+            $modelMethodName = 'get' . ucfirst($propertyName) . 'By' . ucfirst(self::getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME));
             $model = new $modelName();
             $this->$propertyName = $model->$modelMethodName($this);
-        }else{
+        } else {
             $this->$propertyName = $sismaCollection;
-            $entityPropertyName = static::COLLECTION_DATA[$propertyName]['propertyName'];
+            $entityPropertyName = self::getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
             foreach ($this->$propertyName as $entity) {
                 $entity->$entityPropertyName = $this;
             }
@@ -55,8 +98,8 @@ abstract class ReferencedEntity extends BaseEntity
     public function addEntityToSimaCollection(string $propertyName, BaseEntity $entity): void
     {
         $this->$propertyName->append($entity);
-        $entityPropertyName = static::COLLECTION_DATA[$propertyName]['propertyName'];
-        $entityType = static::COLLECTION_DATA[$propertyName]['entity'];
+        $entityPropertyName = self::getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
+        $entityType = self::getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE);
         if ($entity instanceof $entityType) {
             $entity->$entityPropertyName = $this;
         } else {

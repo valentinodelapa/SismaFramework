@@ -2,22 +2,24 @@
 
 namespace Sisma\Core\ObjectRelationalMapper;
 
+use Sisma\Core\HelperClasses\Debugger;
 use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmFunction;
 use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmKeyword;
 use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
 use Sisma\Core\ObjectRelationalMapper\ResultSet;
 
-class Adapter
+abstract class Adapter
 {
+
     protected static ?Adapter $adapter = null;
     protected static $connection = null;
 
     public function __construct(array $options = [])
     {
-        if (!Adapter::getDefault()) {
-            Adapter::setDefault($this);
-        }
+        $this->connect($options);
     }
+    
+    abstract protected function connect(array $options = []):void;
 
     public static function &getDefault(): ?Adapter
     {
@@ -32,14 +34,11 @@ class Adapter
     public static function create(string $type, array $options = []): Adapter
     {
         $parsedType = ucwords(strtolower($type));
-        $class = \Config\ADAPTER_NAMESPACE.'Adapter' . $parsedType;
+        $class = \Config\ADAPTER_NAMESPACE . 'Adapter' . $parsedType;
         return new $class($options);
     }
 
-    public function close(): void
-    {
-        
-    }
+    abstract public function close(): void;
 
     public function allColumns(): string
     {
@@ -77,7 +76,7 @@ class Adapter
     public function escapeColumn(string $name, bool $foreignKey = false): string
     {
         $arrayName = preg_split('/(?=[A-Z])/', $this->escapeIdentifier(($foreignKey) ? $name . 'Id' : $name));
-        array_walk($arrayName, function(&$value) {
+        array_walk($arrayName, function (&$value) {
             $value = strtolower($value);
         });
         $implodedName = implode('_', $arrayName);
@@ -127,12 +126,12 @@ class Adapter
 
     public function openBlock(): string
     {
-        return OrmKeyword::OPEN_BLOCK().' ';
+        return OrmKeyword::OPEN_BLOCK() . ' ';
     }
 
     public function closeBlock(): string
     {
-        return ' '.OrmKeyword::CLOSE_BLOCK();
+        return ' ' . OrmKeyword::CLOSE_BLOCK();
     }
 
     public function opAND(): string
@@ -159,7 +158,7 @@ class Adapter
             //$column = $this->escapeIdentifier($column);
             $column = $this->escapeColumn($column);
         }
-        return OrmFunction::COUNT().OrmKeyword::OPEN_BLOCK() . ($distinct ? OrmKeyword::DISTINCT().' ' : '') . $column . OrmKeyword::CLOSE_BLOCK().' as _numrows';
+        return OrmFunction::COUNT() . OrmKeyword::OPEN_BLOCK() . ($distinct ? OrmKeyword::DISTINCT() . ' ' : '') . $column . OrmKeyword::CLOSE_BLOCK() . ' as _numrows';
     }
 
     public function parseSelect(bool $distinct, array $select, array $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
@@ -167,23 +166,23 @@ class Adapter
         foreach ($orderby as $k => $v) {
             $orderby[$k] = $k . ' ' . $v;
         }
-        $query = OrmKeyword::SELECT().' ' .
-                ($distinct ? ' '.OrmKeyword::DISTINCT().' ' : '') .
+        $query = OrmKeyword::SELECT() . ' ' .
+                ($distinct ? ' ' . OrmKeyword::DISTINCT() . ' ' : '') .
                 implode(',', $select) . ' ' .
-                OrmKeyword::FROM().' ' . implode(',', $from) . ' ' .
-                ((count($where) > 0) ? OrmKeyword::WHERE().' ' . implode(' ', $where) : '' ). ' ' .
-                ($groupby ? ' '.OrmKeyword::GROUP_BY().' ' . implode(',', $groupby) . ' ' : '') .
-                ($groupby && $having ? OrmKeyword::Having().' ' . implode(' ', $having) . ' ' : '') .
-                (count($orderby) > 0 ? ' '.OrmKeyword::ORDER_BY().' ' . implode(',', $orderby) . ' ' : '') .
-                ($limit > 0 ? ' '.OrmKeyword::LIMIT().' ' . $limit . ' ' : '') .
-                ($offset > 0 ? ' '.OrmKeyword::OFFSET().' ' . $offset . ' ' : '');
+                OrmKeyword::FROM() . ' ' . implode(',', $from) . ' ' .
+                ((count($where) > 0) ? OrmKeyword::WHERE() . ' ' . implode(' ', $where) : '' ) . ' ' .
+                ($groupby ? ' ' . OrmKeyword::GROUP_BY() . ' ' . implode(',', $groupby) . ' ' : '') .
+                ($groupby && $having ? OrmKeyword::Having() . ' ' . implode(' ', $having) . ' ' : '') .
+                (count($orderby) > 0 ? ' ' . OrmKeyword::ORDER_BY() . ' ' . implode(',', $orderby) . ' ' : '') .
+                ($limit > 0 ? ' ' . OrmKeyword::LIMIT() . ' ' . $limit . ' ' : '') .
+                ($offset > 0 ? ' ' . OrmKeyword::OFFSET() . ' ' . $offset . ' ' : '');
         return $query;
     }
 
     public function parseInsert(array $table, array $columns = [], array $values = []): string
     {
-        $query = OrmKeyword::INSERT_INTO().' ' . implode(',', $table) . ' ' .
-                OrmKeyword::OPEN_BLOCK() . implode(',', $columns) . OrmKeyword::CLOSE_BLOCK().' '.OrmKeyword::INSERT_VALUES().' ' .
+        $query = OrmKeyword::INSERT_INTO() . ' ' . implode(',', $table) . ' ' .
+                OrmKeyword::OPEN_BLOCK() . implode(',', $columns) . OrmKeyword::CLOSE_BLOCK() . ' ' . OrmKeyword::INSERT_VALUES() . ' ' .
                 OrmKeyword::OPEN_BLOCK() . implode(',', $values) . OrmKeyword::CLOSE_BLOCK();
         return $query;
     }
@@ -194,58 +193,46 @@ class Adapter
         foreach ($columns as $k => $col) {
             $cmd[] = $col . ' = ' . $values[$k];
         }
-        $query = OrmKeyword::UPDATE().' ' . implode(',', $table) . ' ' .
-                OrmKeyword::SET().' ' . implode(',', $cmd) . ' ' .
-                ($where ? ' '.OrmKeyword::WHERE().' ' . implode(' ', $where) : '');
+        $query = OrmKeyword::UPDATE() . ' ' . implode(',', $table) . ' ' .
+                OrmKeyword::SET() . ' ' . implode(',', $cmd) . ' ' .
+                ($where ? ' ' . OrmKeyword::WHERE() . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
     public function parseDelete(array $from, array $where = []): string
     {
-        $query = OrmKeyword::DELETE_FROM().' ' . implode(',', $from) . ' ' .
-                ($where ? ' '.OrmKeyword::WHERE().' ' . implode(' ', $where) : '');
+        $query = OrmKeyword::DELETE_FROM() . ' ' . implode(',', $from) . ' ' .
+                ($where ? ' ' . OrmKeyword::WHERE() . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
     public function select(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSet
     {
-        return null;
+        Debugger::incrementQueryExecutedNumber();
+        return $this->selectToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
+
+    abstract protected function selectToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSet;
 
     public function execute(string $cmd, array $bindValues = [], array $bindTypes = []): bool
     {
-        return false;
+        Debugger::incrementQueryExecutedNumber();
+        return $this->executeToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
 
-    public function lastInsertId(): int
-    {
-        return 0;
-    }
+    abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
 
-    public function beginTransaction(): bool
-    {
-        return true;
-    }
+    abstract public function lastInsertId(): int;
 
-    public function commitTransaction(): bool
-    {
-        return true;
-    }
+    abstract public function beginTransaction(): bool;
 
-    public function rollbackTransaction(): bool
-    {
-        return true;
-    }
+    abstract public function commitTransaction(): bool;
 
-    public function getLastErrorMsg(): string
-    {
-        return '';
-    }
+    abstract public function rollbackTransaction(): bool;
 
-    public function getLastErrorCode(): string
-    {
-        return -1;
-    }
+    abstract public function getLastErrorMsg(): string;
+
+    abstract public function getLastErrorCode(): string;
 
 }
 

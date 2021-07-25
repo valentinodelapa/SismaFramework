@@ -33,7 +33,10 @@ abstract class BaseEntity
             $adapter = Adapter::getDefault();
         }
         $this->adapter = &$adapter;
+        $this->setPropertyDefaultValue();
     }
+    
+    abstract protected function setPropertyDefaultValue():void;
 
     public function isPrimaryKey(string $propertyName): bool
     {

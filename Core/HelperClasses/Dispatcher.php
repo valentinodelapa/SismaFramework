@@ -3,7 +3,7 @@
 namespace Sisma\Core\HelperClasses;
 
 use Sisma\Core\BaseClasses\BaseController;
-use Sisma\Core\Exceptions\InvalidArgumentsException;
+use Sisma\Core\Exceptions\InvalidArgumentException;
 use Sisma\Core\Exceptions\PageNotFoundException;
 use Sisma\Core\HelperClasses\Router;
 use Sisma\Core\HttpClasses\Authentication;
@@ -33,6 +33,7 @@ class Dispatcher
 
     public function __construct()
     {
+        Debugger::startExecutionTimeCalculation();
         Session::start();
         $this->request = new Request;
         $this->path = $this->request->server['REQUEST_URI'];
@@ -83,9 +84,9 @@ class Dispatcher
             $this->executeControllerAction();
         } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             new FixturesManager();
-        } elseif (file_exists(\Config\CORE_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
+        } elseif (file_exists(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
             header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
-            echo file_get_contents(\Config\CORE_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
+            echo file_get_contents(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
         } elseif (file_exists(\Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
             header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
             echo file_get_contents(\Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
@@ -131,7 +132,7 @@ class Dispatcher
                 $className = $argumentType->getName();
                 $this->constructorArguments[] = new $className();
             } else {
-                throw new InvalidArgumentsException();
+                throw new InvalidArgumentException();
             }
         }
     }
@@ -225,7 +226,7 @@ class Dispatcher
             } elseif ($argument->isDefaultValueAvailable()) {
                 $actionArguments[$argument->name] = $argument->getDefaultValue();
             } else {
-                throw new InvalidArgumentsException();
+                throw new InvalidArgumentException();
             }
         }
         $this->actionArguments = $actionArguments;

@@ -20,11 +20,11 @@ abstract class SelfReferencedModel extends BaseModel
         $query = $entityName::initQuery();
         $query->setWhere();
         if ($parentEntity === null) {
-            $query->appendCondition($entityName::COLLECTION_DATA[self::SISMA_COLLECTION_PROPERTY_NAME]['propertyName'], OrmOperator::IS_NULL(), '', true);
+            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), OrmOperator::IS_NULL(), '', true);
             $bindValues = [];
             $bindTypes = [];
         } else {
-            $query->appendCondition($entityName::COLLECTION_DATA[self::SISMA_COLLECTION_PROPERTY_NAME]['propertyName'], OrmOperator::EQUAL(), OrmKeyword::PLACEHOLDER(), true);
+            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), OrmOperator::EQUAL(), OrmKeyword::PLACEHOLDER(), true);
             $bindValues = [$parentEntity];
             $bindTypes = [OrmType::ENTITY()];
         }

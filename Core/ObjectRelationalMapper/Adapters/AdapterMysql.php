@@ -16,7 +16,7 @@ class AdapterMysql extends Adapter
 
     protected string $backtick = "`";
 
-    public function __construct(array $options = [])
+    public function connect(array $options = []): void
     {
         if (self::$connection === null) {
             $hostname = isset($options['hostname']) ? $options['hostname'] : 'localhost';
@@ -136,7 +136,7 @@ class AdapterMysql extends Adapter
         }
     }
 
-    public function select(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSetMysql
+    protected function selectToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSetMysql
     {
         if (!self::$connection) {
             return null;
@@ -156,7 +156,7 @@ class AdapterMysql extends Adapter
         return new ResultSetMysql($st);
     }
 
-    public function execute(string $cmd, array $bindValues = [], array $bindTypes = []): bool
+    protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool
     {
         if (!self::$connection) {
             return false;

@@ -182,7 +182,11 @@ class Filter
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
-        $result = (is_uploaded_file($value)) ? $result : false;
+        $result = (self::isArray($value)) ? $result : false;
+        $result = (array_key_exists('error', $value)) ? $result : false;
+        $result = ($value['error'] === 0) ? $result : false;
+        $result = (array_key_exists('tmp_name', $value)) ? $result : false;
+        $result = (is_uploaded_file($value['tmp_name'])) ? $result : false;
         return $result;
     }
     

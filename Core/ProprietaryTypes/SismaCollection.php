@@ -16,7 +16,6 @@ class SismaCollection extends \ArrayObject
     {
         $result = null;
         foreach ($this as $value) {
-            var_dump($value->$propertyName, $propertyValue);
             if ($value->$propertyName === $propertyValue) {
                 $result = $value;
             }

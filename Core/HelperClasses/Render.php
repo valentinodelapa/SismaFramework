@@ -15,6 +15,7 @@ class Render
         extract($vars);
         $viewPath = self::getViewPath($view);
         include($viewPath);
+        static::generateDebugBar();
         return new Response();
     }
 
@@ -69,6 +70,25 @@ class Render
     {
         $path = \Config\VIEWS_PATH . $view . '.php';
         return $path;
+    }
+
+    private static function generateDebugBar()
+    {
+        Debugger::endExecutionTimeCalculation();
+        if (\Config\DEVELOPMENT_ENVIRONMENT) {
+            foreach (Debugger::getInformations() as $name => $value) {
+                echo $name . ': ' . $value;
+                echo (array_key_last(Debugger::getInformations()) === $name) ?: ' - ';
+            }
+        }
+    }
+
+    public static function generateData(string $view, array $vars): Response
+    {
+        extract($vars);
+        $viewPath = self::getViewPath($view);
+        include($viewPath);
+        return new Response();
     }
 
 }
