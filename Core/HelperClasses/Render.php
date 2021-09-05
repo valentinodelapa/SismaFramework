@@ -13,9 +13,9 @@ class Render
         $locale = self::getActualLocaleArray($view);
         extract($locale);
         extract($vars);
+        $debugBar = static::generateDebugBar();
         $viewPath = self::getViewPath($view);
         include($viewPath);
-        static::generateDebugBar();
         return new Response();
     }
 
@@ -72,14 +72,13 @@ class Render
         return $path;
     }
 
-    private static function generateDebugBar()
+    private static function generateDebugBar(): string
     {
         Debugger::endExecutionTimeCalculation();
         if (\Config\DEVELOPMENT_ENVIRONMENT) {
-            foreach (Debugger::getInformations() as $name => $value) {
-                echo $name . ': ' . $value;
-                echo (array_key_last(Debugger::getInformations()) === $name) ?: ' - ';
-            }
+            return Debugger::generateDebugBar();
+        }else{
+            return '';
         }
     }
 

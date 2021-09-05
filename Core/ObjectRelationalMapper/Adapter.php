@@ -208,7 +208,7 @@ abstract class Adapter
 
     public function select(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSet
     {
-        Debugger::incrementQueryExecutedNumber();
+        Debugger::addQueryExecuted($cmd);
         return $this->selectToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
 
@@ -216,7 +216,7 @@ abstract class Adapter
 
     public function execute(string $cmd, array $bindValues = [], array $bindTypes = []): bool
     {
-        Debugger::incrementQueryExecutedNumber();
+        Debugger::addQueryExecuted($cmd);
         return $this->executeToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
 

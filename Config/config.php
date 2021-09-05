@@ -19,6 +19,7 @@ const MODELS = 'Models';
 const ORM = 'ObjectRelationalMapper';
 const PROJECT = 'Sisma';
 const SYSTEM = 'Sisma';
+const STRUCTURAL = 'Structural';
 const TEMPLATES = 'Templates';
 const VIEWS = 'Views';
 
@@ -78,6 +79,7 @@ const VIEWS_PATH = APPLICATION_PATH . VIEWS . '/';
 
 /* Templater Constant */
 const TEMPLATES_PATH = APPLICATION_PATH . TEMPLATES.'/';
+const STRUCTURAL_TEMPLATES_PATH = SYSTEM_PATH.'/'.STRUCTURAL.'/'.TEMPLATES.'/';
 
 /* Database Constant */
 const DATABASE_ADAPTER_TYPE = '';

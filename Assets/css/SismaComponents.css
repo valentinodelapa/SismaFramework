@@ -33,7 +33,22 @@
 .page, .page div{display: block}
 
 /* upload drop area */
-.upload-drop-area{border: 4px dashed black; background-position: center; background-repeat: no-repeat; background-size: 64px 64px; box-sizing: border-box; opacity: 0.5; text-align: center;}
+.upload-drop-area{border: 4px dashed black; padding: 60px 20px; box-sizing: border-box; opacity: 0.5; text-align: center;}
 .upload-drop-area:hover, .upload-drop-area.dragging, .upload-drop-area.uploading {opacity: 1;}
-.upload-drop-area input {border: none; cursor: pointer;}
+.upload-drop-area input {display: none; cursor: pointer;}
 .upload-drop-area input:focus {outline: none;}
+
+/* debug bar */
+.debug-bar{bottom: 0px; width: 100%; position: fixed; display: flex; flex-direction: column;}
+.debug-bar-header, .debug-bar-header-left{display: flex; flex-direction: row;}
+.debug-bar-header{padding: 2px 10px; justify-content: space-between; background-color: #dbdbdb;}
+.debug-bar-header-left{justify-content: flex-start;}
+.debug-bar-header-left > label, .debug-bar-header > div{margin: 0px 5px;}
+.debug-bar-header-left > div{cursor: pointer}
+.debug-bar-header-right > div{margin: 0px 1px;}
+.debug-bar-header-left > label{padding: 2px 0px;}
+.debug-bar-header-left > div, .debug-bar-header-right > div{padding: 2px 5px; background-color: #f4f4f4; border-radius: 3px;}
+.debug-bar-header-left > label:last-of-type{}
+.debug-bar-body{height: 200px; display: none; flex-direction: column; background-color: white; overflow-y: scroll}
+.debug-bar-body > div{padding: 2px 10px;}
+.debug-bar-body > div:nth-of-type(even){background-color: #f4f4f4}

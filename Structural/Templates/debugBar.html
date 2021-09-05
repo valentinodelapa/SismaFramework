@@ -1,0 +1,29 @@
+<div class="debug-bar">
+    <div class="debug-bar-header">
+        <div class="debug-bar-header-left">
+            <label>Database</label><div class="debug-information-label" id="debug-information-database">{{queryExecutedNumber}}</div>
+            <label>Log</label><div class="debug-information-label" id="debug-information-log">{{logRowNumber}}</div>
+        </div>
+        <div class="debug-bar-header-right">
+            <div>{{memoryUsed}} MB</div>
+            <div>{{executionTime}} ms</div>
+        </div>
+    </div>
+    <div class="debug-bar-body" id="debug-body-database">{{debugBarQuery}}</div>
+    <div class="debug-bar-body" id="debug-body-log">{{debugBarLog}}</div>
+    <script>
+        $(document).ready(function () {
+            var debugBarBody = $('.debug-bar-body')
+            $('.debug-information-label').on('click', function(){
+                var id = $(this).attr('id');
+                var informationType = id.split('-').pop();
+                $.each(debugBarBody, function(){
+                    if($(this).attr('id') !== 'debug-body-'+informationType){
+                       $(this).hide(); 
+                    }
+                });
+                $('#debug-body-'+informationType).toggle();
+            });
+        });
+    </script>
+</div>
