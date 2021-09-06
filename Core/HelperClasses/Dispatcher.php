@@ -48,9 +48,9 @@ class Dispatcher
     private function parsePath(): void
     {
         if ($this->path == '/') {
-            $this->controllerName = \Config\DEFAULT_CONTROLLER_NAMESPACE;
-            $this->action = \Config\DEFAULT_ACTION;
-            $this->actionArguments = [];
+            $this->pathParts[] = \Config\DEFAULT_PATH;
+            $this->pathParts[] = \Config\DEFAULT_ACTION;
+            $this->parsePathParts();
         } else {
             $this->pathParts = array_values(array_filter(explode('/', $this->path), function($var)
             {

@@ -1,2 +1,13 @@
 <title><?php echo $title; ?></title>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<link rel="stylesheet" href="/css/SismaBase.css">
+<link rel="stylesheet" href="/css/SismaComponents.css">
+<link rel="stylesheet" href="/css/SismaElements.css">
+<link rel="stylesheet" href="/css/SismaForm.css">
+<link rel="stylesheet" href="/css/SismaLayout.css">
+<link rel="stylesheet" href="/css/SismaTable.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.1/css/all.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.1/css/v4-shims.css">
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>

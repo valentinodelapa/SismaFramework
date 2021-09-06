@@ -29,8 +29,8 @@ class Logger
     {
         $handle = fopen(\Config\LOG_PATH, 'r');
         $log = [];
-        while (($buffer = fgets($handle, filesize(\Config\LOG_PATH))) !== false) {
-            $log[] = $buffer;
+        while(! feof($handle))  {
+            $log[] = fgets($handle);
         }
         fclose($handle);
         return $log;
