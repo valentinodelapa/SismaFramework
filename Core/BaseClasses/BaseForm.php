@@ -3,6 +3,7 @@
 namespace Sisma\Core\BaseClasses;
 
 use Sisma\Core\Enumerators\FilterType;
+use Sisma\Core\HelperClasses\Debugger;
 use Sisma\Core\HelperClasses\Filter;
 use Sisma\Core\HttpClasses\Request;
 use Sisma\Core\ProprietaryTypes\SismaCollection;
@@ -25,6 +26,7 @@ abstract class BaseForm
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     protected array $filterErrors = [];
+    private static bool $isFirstcalled = true;
 
     public function __construct(?BaseEntity $baseEntity = null)
     {
@@ -32,9 +34,10 @@ abstract class BaseForm
         $this->embedEntity($baseEntity);
         $this->setFilterFieldsMode();
         $this->setEntityFromForm();
+        Debugger::setFormFilter($this->filterErrors);
     }
 
-    private function checkEntityClassNameOverride()
+    private function checkEntityClassNameOverride() :void
     {
         if (static::ENTITY_CLASS_NAME === BaseEntity::class) {
             throw new FormException();
@@ -72,7 +75,7 @@ abstract class BaseForm
         $reflectionEntity = new \ReflectionClass($this->entity);
         $reflectionProperties = $reflectionEntity->getProperties();
         foreach ($reflectionProperties as $property) {
-            if (array_key_exists($property->name, $this->entityFromForm)) {
+            if (array_key_exists($property->name, $this->entityFromForm) && array_key_exists($property->name, $this->request->request)) {
                 $this->switchFormPropertyType($property);
             } elseif (($property->isPublic()) && ($this->entity->isPrimaryKey($property->name) === false)) {
                 $this->parseProperty($property);
@@ -83,7 +86,7 @@ abstract class BaseForm
         return $this->filterResult;
     }
 
-    private function switchFormPropertyType(\ReflectionProperty $property)
+    private function switchFormPropertyType(\ReflectionProperty $property): void
     {
         $request = $this->request;
         $this->entityData[$property->name] = [];
@@ -154,7 +157,7 @@ abstract class BaseForm
         $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
         if (($reflectionEntityProperty->isPublic())) {
             if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
-                $$this->generateFormProperty($formPropertyClass, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
+                $this->generateFormProperty($formPropertyClass, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
             }
@@ -211,7 +214,9 @@ abstract class BaseForm
     private function resolveSismaCollection(string $propertyName): void
     {
         foreach ($this->entityFromForm[$propertyName] as $form) {
-            $this->entity->addEntityToSimaCollection($propertyName, $form->resolveEntity());
+            if (isset($form->entityData)) {
+                $this->entity->addEntityToSimaCollection($propertyName, $form->resolveEntity());
+            }
         }
     }
 

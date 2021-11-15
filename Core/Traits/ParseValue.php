@@ -19,18 +19,22 @@ trait ParseValue
             settype($value, $reflectionNamedType->getName());
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
-            $entityName = $reflectionNamedType->getName();
-            $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
-            $modelInstance = new $modelName();
-            return $modelInstance->getEntityById($value);
+            return $this->parseEntity($reflectionNamedType->getName(), $value);
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEnumerator::class)) {
             $enumeratorName = $reflectionNamedType->getName();
             return new $enumeratorName($value);
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
             return new SismaDateTime($value);
-        }else{
+        } else {
             throw new InvalidArgumentException();
         }
+    }
+
+    private function parseEntity(string $entityName, string $value): BaseEntity
+    {
+        $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
+        $modelInstance = new $modelName();
+        return $modelInstance->getEntityById($value);
     }
 
 }

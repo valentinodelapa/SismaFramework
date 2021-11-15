@@ -3,6 +3,8 @@
 namespace Sisma\Core\ObjectRelationalMapper;
 
 use Sisma\Core\ObjectRelationalMapper\Adapter;
+use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmKeyword;
+use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
 use Sisma\Core\ObjectRelationalMapper\Query;
 
 class Query
@@ -93,18 +95,18 @@ class Query
         return $this;
     }
 
-    /*public function &setTables($list): Query
-    {
-        if (!is_array($list)) {
-            $list = array(strval($list));
-        }
-        $tables = array();
-        foreach ($list as $t) {
-            $tables[] = $this->adapter->escapeIdentifier($t);
-        }
-        $this->tables = $tables;
-        return $this;
-    }*/
+    /* public function &setTables($list): Query
+      {
+      if (!is_array($list)) {
+      $list = array(strval($list));
+      }
+      $tables = array();
+      foreach ($list as $t) {
+      $tables[] = $this->adapter->escapeIdentifier($t);
+      }
+      $this->tables = $tables;
+      return $this;
+      } */
 
     public function &setTable(string $table): Query
     {
@@ -166,16 +168,15 @@ class Query
         return $this;
     }
 
-    public function &appendCondition(string $column, string $operator, string $value = null, bool $foreignKey = false): Query
+    public function &appendCondition(string $column, OrmOperator $operator, OrmKeyword|string $value = null, bool $foreignKey = false): Query
     {
-        $escapedOperator = $this->adapter->escapeOperator($operator);
         $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
-        $escapedValue = $this->adapter->escapeValue($value, $escapedOperator);
+        $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->current_conditions == 'where') {
-            $this->where[] = $escapedColumn . $escapedOperator . $escapedValue;
+            $this->where[] = $escapedColumn .' '. $operator .' '. $escapedValue;
         }
         if ($this->current_conditions == 'having') {
-            $this->having[] = $escapedColumn . $escapedOperator . $escapedValue;
+            $this->having[] = $escapedColumn .' '. $operator .' '. $escapedValue;
         }
         return $this;
     }

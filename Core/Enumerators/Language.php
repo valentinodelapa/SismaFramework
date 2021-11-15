@@ -13,7 +13,7 @@ class Language extends DataEnumerator
     private const SPANISH = 'es_ES';
     private const GERMAN = 'de_DE';
 
-    protected function setAdditionalData()
+    protected function setAdditionalData(): array
     {
         $additionalData = [
             self::ITALIAN => [

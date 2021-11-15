@@ -3,6 +3,7 @@
         <div class="debug-bar-header-left">
             <label>Database</label><div class="debug-information-label" id="debug-information-database">{{queryExecutedNumber}}</div>
             <label>Log</label><div class="debug-information-label" id="debug-information-log">{{logRowNumber}}</div>
+            <label>Form</label><div class="debug-information-label" id="debug-information-form">{{formFilterNumber}}</div>
         </div>
         <div class="debug-bar-header-right">
             <div>{{memoryUsed}} MB</div>
@@ -11,6 +12,7 @@
     </div>
     <div class="debug-bar-body" id="debug-body-database">{{debugBarQuery}}</div>
     <div class="debug-bar-body" id="debug-body-log">{{debugBarLog}}</div>
+    <div class="debug-bar-body" id="debug-body-form">{{debugBarForm}}</div>
     <script>
         $(document).ready(function () {
             var debugBarBody = $('.debug-bar-body')

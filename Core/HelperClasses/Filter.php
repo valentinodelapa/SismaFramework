@@ -26,7 +26,11 @@ class Filter
 
     public static function isNotEmpty($value): bool
     {
-        return empty($value) ? false : true;
+        if ($value === 0) {
+            return true;
+        } else {
+            return empty($value) ? false : true;
+        }
     }
 
     public static function isString($value): bool
@@ -164,8 +168,8 @@ class Filter
         $result = (is_float($value)) ? $result : false;
         return $result;
     }
-    
-    public static function isBoolean($value):bool
+
+    public static function isBoolean($value): bool
     {
         return is_bool($value);
     }
@@ -177,8 +181,8 @@ class Filter
         $result = (is_array($value)) ? $result : false;
         return $result;
     }
-    
-    public static function isUploadedFile($value) : bool
+
+    public static function isUploadedFile($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -189,16 +193,16 @@ class Filter
         $result = (is_uploaded_file($value['tmp_name'])) ? $result : false;
         return $result;
     }
-    
-    public static function isEntity($value):bool
+
+    public static function isEntity($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
         $result = ($value instanceof BaseEntity) ? $result : false;
         return $result;
     }
-    
-    public static function isEnumerator($value):bool
+
+    public static function isEnumerator($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;

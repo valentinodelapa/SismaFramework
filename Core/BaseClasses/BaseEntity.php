@@ -213,7 +213,7 @@ abstract class BaseEntity
         $query = new Query($this->adapter);
         $query->setTable($this->tableName);
         $query->setWhere();
-        $query->appendCondition($this->primaryKey, '=', '?');
+        $query->appendCondition($this->primaryKey, OrmOperator::EQUAL(), OrmKeyword::PLACEHOLDER());
         $query->close();
         $cmd = $query->getCommandToExecute('delete');
         $adapterToCall = $query->getAdapter();

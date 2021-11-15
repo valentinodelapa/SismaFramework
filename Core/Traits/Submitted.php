@@ -2,7 +2,7 @@
 
 namespace Sisma\Core\Traits;
 
-use Sisma\Core\Enumerators\RequestType;
+use Sisma\Core\HelperClasses\Debugger;
 
 trait Submitted
 {

@@ -8,7 +8,7 @@ use Sisma\Core\HelperClasses\Session;
 abstract class DataEnumerator extends BaseEnumerator
 {
 
-    public function getAdditionalData(string $additionalDataName = 'name') /*: string | array | self */
+    public function getAdditionalData(string $additionalDataName = 'name'): string|array|self
     {
         $additionalData = $this->setAdditionalData();
         if (isset($additionalData[strval($this->__toString())][$additionalDataName])) {
@@ -20,7 +20,7 @@ abstract class DataEnumerator extends BaseEnumerator
         }
     }
 
-    public function hasAdditionalData()
+    public function hasAdditionalData(): bool
     {
         if (isset($additionalData[strval($this->__toString())][$additionalDataName])) {
             return true;
@@ -43,5 +43,5 @@ abstract class DataEnumerator extends BaseEnumerator
         return $choice;
     }
 
-    abstract protected function setAdditionalData();
+    abstract protected function setAdditionalData(): array;
 }

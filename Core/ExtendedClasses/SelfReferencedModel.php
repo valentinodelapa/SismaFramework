@@ -3,13 +3,13 @@
 namespace Sisma\Core\ExtendedClasses;
 
 use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\BaseClasses\BaseModel;
+use Sisma\Core\ExtendedClasses\ReferencedModel;
 use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmKeyword;
 use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
 use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmType;
 use Sisma\Core\ProprietaryTypes\SismaCollection;
 
-abstract class SelfReferencedModel extends BaseModel
+abstract class SelfReferencedModel extends ReferencedModel
 {
     const SISMA_COLLECTION_PROPERTY_NAME = 'sons';
     const SISMA_COLLECTION_GETTER_METHOD = 'getSons';

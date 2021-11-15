@@ -203,9 +203,8 @@ class AdapterMysql extends Adapter
      * @return string
      */
 
-    public function escapeValue($value, $operator): string
+    public function escapeValue($value, OrmOperator $operator): string
     {
-        $operator = $this->escapeOperator($operator);
         $value = parent::escapeValue($value, $operator);
         if (!in_array($operator, array(OrmOperator::IN(), OrmOperator::NOT_IN(), OrmOperator::IS_NULL(), OrmOperator::IS_NOT_NULL()))) {
             $placeholder = ($value == '?' || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));

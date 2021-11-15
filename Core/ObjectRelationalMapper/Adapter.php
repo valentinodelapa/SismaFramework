@@ -83,15 +83,6 @@ abstract class Adapter
         return $implodedName;
     }
 
-    public function escapeOperator(string $operator): string
-    {
-        $uppedOperator = strtoupper($operator);
-        if (!in_array($uppedOperator, OrmOperator::toArray())) {
-            return ' ' . OrmOperator::EQUAL() . ' ';
-        }
-        return ' ' . $uppedOperator . ' ';
-    }
-
     /*
      * escape e couple operator+value and return a string representation of the value to use in the query
      * @param array $value
@@ -99,14 +90,13 @@ abstract class Adapter
      * @return string
      */
 
-    public function escapeValue($value, string $operator): string
+    public function escapeValue($value, OrmOperator $operator): string
     {
         //$ret = '';
-        $escapedOperator = $this->escapeOperator($operator);
-        if ($escapedOperator == OrmOperator::IS_NULL() || $escapedOperator == OrmOperator::IS_NOT_NULL()) {
+        if ($operator == OrmOperator::IS_NULL() || $operator == OrmOperator::IS_NOT_NULL()) {
             return '';
         }
-        if ($escapedOperator == OrmOperator::IN() || $escapedOperator == OrmOperator::NOT_IN()) {
+        if ($operator == OrmOperator::IN() || $operator == OrmOperator::NOT_IN()) {
             if (!is_array($value)) {
                 $value = [$value];
             }

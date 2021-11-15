@@ -38,6 +38,12 @@
 .upload-drop-area input {display: none; cursor: pointer;}
 .upload-drop-area input:focus {outline: none;}
 
+/* modal */
+.modal-background{top: 0px; left: 0px; width: 100%; height: 100%; position: fixed; display: none; flex-direction: row; z-index: 100}
+.modal{margin: 2% 5%; padding: 10px; width: 90%; height: 90%; position: relative; display: flex; flex-direction: column; background-color: white; overflow-y: scroll;}
+.modal-header{height: 20px; margin-bottom: 10px;}
+.modal-body{flex-direction: column;}
+
 /* debug bar */
 .debug-bar{bottom: 0px; width: 100%; position: fixed; display: flex; flex-direction: column;}
 .debug-bar-header, .debug-bar-header-left{display: flex; flex-direction: row;}

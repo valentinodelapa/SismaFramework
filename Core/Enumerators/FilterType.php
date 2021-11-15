@@ -1,9 +1,12 @@
 <?php
 
 namespace Sisma\Core\Enumerators;
+
 use Sisma\Core\BaseClasses\BaseEnumerator;
+
 class FilterType extends BaseEnumerator
 {
+
     private const NO_FILTER = 'noFilter';
     private const STRING = 'isString';
     private const ALPHABETIC_STRING = 'isAlphabeticString';
@@ -18,4 +21,5 @@ class FilterType extends BaseEnumerator
     private const UPLOADED_FILE = 'isUploadedFile';
     private const ENUMERATOR = 'isEnumerator';
     private const ENTITY = 'isEntity';
+
 }

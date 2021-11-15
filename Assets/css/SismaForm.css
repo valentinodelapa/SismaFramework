@@ -18,7 +18,7 @@
 .editor-toolbar-button, .editor-toolbar-menu{background-color: #f4f4f4; width: 30px; height: 30px; margin-right: 5px; text-align: center; vertical-align: middle;}
 .editor-toolbar-button svg, .editor-toolbar-menu svg{width: 20px; height: 20px; padding: 5px; border: none;}
 .editor-toolbar-button:hover, .editor-toolbar-button.active{background-color: #aaa;}
-.editor-toolbar-menu{flex-direction: column; z-index:100;}
+.editor-toolbar-menu{flex-direction: column; z-index:2;}
 .editor-toolbar-menu .editor-toolbar-button{display: none;}
 .editor-toolbar-menu:hover .editor-toolbar-button{display: flex; top:100%;}
 .visuell-view, .html-view{padding: 10px; flex-grow: 2; outline: none; overflow: hidden; resize: vertical;}
