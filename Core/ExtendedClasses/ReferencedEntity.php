@@ -11,8 +11,10 @@ abstract class ReferencedEntity extends BaseEntity
 
     protected static array $collectionData;
     
+    
     public const FOREIGN_KEY_TYPE = 'foreignKeyType';
     public const FOREIGN_KEY_NAME = 'foreignKeyName';
+    public const FOREIGN_KEY_SUFFIX = 'Collection';
 
     public static function getCollectionDataInformation(string $collectionName, string $information): string
     {
@@ -36,7 +38,9 @@ abstract class ReferencedEntity extends BaseEntity
         $result = true;
         $result = (self::checkRelatedPropertyPresence($collectionName) === false) ? false : $result;
         $result = (self::checkRelatedPropertyName($collectionName) === false) ? false : $result;
-        $result = ($result) ?: throw new InvalidArgumentException();
+        if($result === false){
+            throw new InvalidArgumentException();
+        }
     }
 
     private static function checkRelatedPropertyPresence(string $collectionName): bool
@@ -61,7 +65,7 @@ abstract class ReferencedEntity extends BaseEntity
                 return $this->setSismaCollection($propertyName, $argument);
                 break;
             case 'add':
-                return $this->addEntityToSimaCollection($propertyName . "s", $arguments[0]);
+                return $this->addEntityToSimaCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
                 break;
             case 'get':
                 return $this->getSismaCollection($propertyName);

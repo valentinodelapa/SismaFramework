@@ -9,15 +9,15 @@ use Sisma\Core\ObjectRelationalMapper\Adapter;
 abstract class SelfReferencedEntity extends ReferencedEntity
 {
 
-    protected SismaCollection $sons;
+    protected SismaCollection $sonCollection;
 
-    private const SONS_PROPERTY_NAME = 'sons';
+    private const SONS_PROPERTY_NAME = 'sonCollection';
     private const PARENT_PREFIX_PROPERTY_NAME = 'parent';
 
     public function __construct(Adapter &$adapter = null)
     {
         parent::__construct($adapter);
-        $this->sons = new SismaCollection();
+        $this->sonCollection = new SismaCollection();
     }
 
     public static function getCollectionDataInformation(string $collectionName, string $information): string

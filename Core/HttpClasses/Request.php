@@ -68,7 +68,7 @@ class Request
     private function iterateProtectedProperties(array $fields, string $propertyName, BaseEntity &$entity)
     {
         foreach ($fields as $field) {
-            $methodName = "add" . ucfirst(substr($propertyName, 0, -1));
+            $methodName = "add" . ucfirst(str_replace(ReferencedEntity::FOREIGN_KEY_SUFFIX, '', $propertyName));
             $sismaCollectionClassName = $entity->getCollectionDataInformation($propertyName, ReferencedEntity::FOREIGN_KEY_TYPE);
             if (is_array($field)) {
                 $entity->$methodName($this->parseRequest($sismaCollectionClassName, $field));

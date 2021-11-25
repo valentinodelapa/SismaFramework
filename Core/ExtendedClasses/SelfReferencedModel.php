@@ -11,8 +11,8 @@ use Sisma\Core\ProprietaryTypes\SismaCollection;
 
 abstract class SelfReferencedModel extends ReferencedModel
 {
-    const SISMA_COLLECTION_PROPERTY_NAME = 'sons';
-    const SISMA_COLLECTION_GETTER_METHOD = 'getSons';
+    const SISMA_COLLECTION_PROPERTY_NAME = 'sonCollection';
+    const SISMA_COLLECTION_GETTER_METHOD = 'getSonCollection';
 
     public function getEntityCollectionByParent(?BaseEntity $parentEntity = null, ?array $order = null): SismaCollection
     {
