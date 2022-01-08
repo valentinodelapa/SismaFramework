@@ -1,8 +1,9 @@
 <?php
 
-namespace Sisma\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses;
 
-use Sisma\Core\HttpClasses\Response;
+use SismaFramework\Autoload\Autoloader;
+use SismaFramework\Core\HttpClasses\Response;
 
 class Render
 {
@@ -53,7 +54,7 @@ class Render
 
     private static function getLocalePath(?string $var = null): string
     {
-        $path = \Config\LOCALES_PATH;
+        $path = \Config\ROOT_PATH.Autoloader::getRelativePath().'/'.\Config\LOCALES_PATH;
         return self::getSelectedLocale($path, $var);
     }
 
@@ -68,7 +69,7 @@ class Render
 
     private static function getViewPath(string $view): string
     {
-        $path = \Config\VIEWS_PATH . $view . '.php';
+        $path = \Config\ROOT_PATH.Autoloader::getRelativePath().'/'.\Config\VIEWS_PATH . $view . '.php';
         return $path;
     }
 

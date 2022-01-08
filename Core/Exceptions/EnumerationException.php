@@ -4,11 +4,11 @@ namespace SismaFramework\Core\Exceptions;
 
 use SismaFramework\Core\BaseClasses\BaseException;
 
-class FilterException extends BaseException
+class EnumerationException extends BaseException
 {
     
     public function __construct()
     {
-        parent::__construct("Filter Exception", 0);
+        parent::__construct("EnumerationException", 0);
     }
 }

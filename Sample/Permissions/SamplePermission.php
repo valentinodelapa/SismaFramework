@@ -1,8 +1,8 @@
 <?php
 
-namespace Sisma\Sample\Permissions;
+namespace SismaFramework\Sample\Permissions;
 
-use Sisma\Core\BaseClasses\BasePermission;
+use SismaFramework\Core\BaseClasses\BasePermission;
 
 class SamplePermission extends BasePermission
 {

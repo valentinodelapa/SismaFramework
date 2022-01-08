@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses;
 
 class Encryptor
 {

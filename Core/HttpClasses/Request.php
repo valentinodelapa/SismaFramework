@@ -1,15 +1,15 @@
 <?php
 
-namespace Sisma\Core\HttpClasses;
+namespace SismaFramework\Core\HttpClasses;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\ExtendedClasses\ReferencedEntity;
-use Sisma\Core\Enumerators\RequestType;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Core\Enumerations\RequestType;
 
 class Request
 {
 
-    use \Sisma\Core\Traits\ParseValue;
+    use \SismaFramework\Core\Traits\ParseValue;
 
     public $query;
     public $request;

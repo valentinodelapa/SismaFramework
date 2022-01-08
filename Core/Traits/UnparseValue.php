@@ -1,10 +1,9 @@
 <?php
 
-namespace Sisma\Core\Traits;
+namespace SismaFramework\Core\Traits;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\BaseClasses\BaseEnumerator;
-use Sisma\Core\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
 
 trait UnparseValue
 {
@@ -14,8 +13,8 @@ trait UnparseValue
         foreach ($arrayValues as $key => $value) {
             if ($value instanceof BaseEntity) {
                 $arrayValues[$key] = $value->id;
-            } elseif ($value instanceof BaseEnumerator) {
-                $arrayValues[$key] = $value->__toString();
+            } elseif (is_subclass_of($value, \UnitEnum::class)) {
+                $arrayValues[$key] = $value->value;
             } elseif ($value instanceof SismaDateTime) {
                 $arrayValues[$key] = $value->format("Y-m-d H:i:s");
             }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Sisma\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses;
 
-use Sisma\Core\HttpClasses\Response;
+use SismaFramework\Core\HttpClasses\Response;
 
 class Router
 {

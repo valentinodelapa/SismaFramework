@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core\Interfaces\Entities;
+namespace SismaFramework\Core\Interfaces\Entities;
 
 interface UserInterface
 {

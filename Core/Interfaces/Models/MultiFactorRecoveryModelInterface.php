@@ -1,9 +1,9 @@
 <?php
 
-namespace Sisma\Core\Interfaces\Models;
+namespace SismaFramework\Core\Interfaces\Models;
 
-use Sisma\Core\Interfaces\Entities\MultiFactorInterface;
-use Sisma\Core\Interfaces\Entities\MultiFactorRecoveryInterface;
+use SismaFramework\Core\Interfaces\Entities\MultiFactorInterface;
+use SismaFramework\Core\Interfaces\Entities\MultiFactorRecoveryInterface;
 
 interface MultiFactorRecoveryModelInterface
 {

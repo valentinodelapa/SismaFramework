@@ -1,8 +1,8 @@
 <?php
 
-namespace Sisma\Core\Exceptions;
+namespace SismaFramework\Core\Exceptions;
 
-use Sisma\Core\BaseClasses\BaseException;
+use SismaFramework\Core\BaseClasses\BaseException;
 
 class FormException extends BaseException
 {

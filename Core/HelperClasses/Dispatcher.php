@@ -1,18 +1,19 @@
 <?php
 
-namespace Sisma\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses;
 
-use Sisma\Core\BaseClasses\BaseController;
-use Sisma\Core\Exceptions\InvalidArgumentException;
-use Sisma\Core\Exceptions\PageNotFoundException;
-use Sisma\Core\HelperClasses\Router;
-use Sisma\Core\HttpClasses\Authentication;
-use Sisma\Core\HttpClasses\Request;
+use SismaFramework\Autoload\Autoloader;
+use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\Exceptions\PageNotFoundException;
+use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HttpClasses\Authentication;
+use SismaFramework\Core\HttpClasses\Request;
 
 class Dispatcher
 {
 
-    use \Sisma\Core\Traits\ParseValue;
+    use \SismaFramework\Core\Traits\ParseValue;
 
     private static int $reloadAttempts = 0;
     private Request $request;
@@ -50,19 +51,19 @@ class Dispatcher
         if ($this->path == '/') {
             $this->pathParts[] = \Config\DEFAULT_PATH;
             $this->pathParts[] = \Config\DEFAULT_ACTION;
-            $this->parsePathParts();
         } else {
-            $this->pathParts = array_values(array_filter(explode('/', $this->path), function($var)
-            {
-                return $var !== "";
-            }));
-            $this->parsePathParts();
+            $this->pathParts = array_values(array_filter(explode('/', $this->path), function ($var) {
+                        return $var !== "";
+                    }));
         }
+        $this->parsePathParts();
     }
 
     private function parsePathParts(): void
     {
-        $this->controllerName = \Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
+        Autoloader::injectClassName(\Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller'));
+        Autoloader::findClass(substr(\Config\ROOT_PATH, 0, -1));
+        $this->controllerName = Autoloader::getNaturalNamespace() . '\\' . \Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
         $this->action = (isset($this->pathParts[1])) ? self::convertToCamelCase($this->pathParts[1]) : \Config\DEFAULT_ACTION;
         $this->actionArguments = array_slice($this->pathParts, 2);
     }

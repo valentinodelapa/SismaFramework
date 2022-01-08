@@ -1,9 +1,9 @@
 <?php
 
-namespace Sisma\Core\BaseClasses;
+namespace SismaFramework\Core\BaseClasses;
 
-use Sisma\Core\HelperClasses\Logger;
-use Sisma\Core\HelperClasses\Router;
+use SismaFramework\Core\HelperClasses\Logger;
+use SismaFramework\Core\HelperClasses\Router;
 
 class BaseException extends \Exception
 {

@@ -1,10 +1,9 @@
 <?php
 
-namespace Sisma\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\BaseClasses\BaseEnumerator;
-use Sisma\Core\Exceptions\FilterException;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\Exceptions\FilterException;
 
 class Filter
 {
@@ -202,11 +201,11 @@ class Filter
         return $result;
     }
 
-    public static function isEnumerator($value): bool
+    public static function isEnumeration($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
-        $result = ($value instanceof BaseEnumerator) ? $result : false;
+        $result = is_subclass_of($value, \UnitEnum::class) ? $result : false;
         return $result;
     }
 

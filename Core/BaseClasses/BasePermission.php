@@ -1,11 +1,11 @@
 <?php
 
-namespace Sisma\Core\BaseClasses;
+namespace SismaFramework\Core\BaseClasses;
 
-use Sisma\Core\BaseClasses\BaseModel;
-use Sisma\Core\Exceptions\AccessDeniedException;
-use Sisma\Core\HelperClasses\Session;
-use Sisma\Core\Interfaces\Entities\UserInterface;
+use SismaFramework\Core\BaseClasses\BaseModel;
+use SismaFramework\Core\Exceptions\AccessDeniedException;
+use SismaFramework\Core\HelperClasses\Session;
+use SismaFramework\Core\Interfaces\Entities\UserInterface;
 
 abstract class BasePermission
 {

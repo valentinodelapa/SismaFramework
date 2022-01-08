@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core\Interfaces\Models;
+namespace SismaFramework\Core\Interfaces\Models;
 
 interface UserModelInterface
 {

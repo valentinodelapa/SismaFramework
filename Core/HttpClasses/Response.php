@@ -1,8 +1,8 @@
 <?php
 
-namespace Sisma\Core\HttpClasses;
+namespace SismaFramework\Core\HttpClasses;
 
-use Sisma\Core\Enumerators\ResponseType;
+use SismaFramework\Core\Enumerations\ResponseType;
 
 class Response
 {
@@ -10,6 +10,6 @@ class Response
     
     public function __construct()
     {
-        $this->responseType = new ResponseType(intval(http_response_code()));
+        $this->responseType = ResponseType::from(intval(http_response_code()));
     }
 }

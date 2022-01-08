@@ -1,8 +1,8 @@
 <?php
 
-namespace Sisma\Core\BaseClasses;
+namespace SismaFramework\Core\BaseClasses;
 
-use Sisma\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\Core\ObjectRelationalMapper\Adapter;
 
 abstract class BaseFixture extends BaseModel
 {

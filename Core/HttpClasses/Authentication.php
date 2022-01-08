@@ -1,25 +1,25 @@
 <?php
 
-namespace Sisma\Core\HttpClasses;
+namespace SismaFramework\Core\HttpClasses;
 
-use Sisma\Core\Enumerators\RequestType;
-use Sisma\Core\HelperClasses\Encryptor;
-use Sisma\Core\HelperClasses\Filter;
-use Sisma\Core\HttpClasses\Request;
-use Sisma\Core\Interfaces\Entities\MultiFactorInterface;
-use Sisma\Core\Interfaces\Entities\MultiFactorRecoveryInterface;
-use Sisma\Core\Interfaces\Entities\PasswordInterface;
-use Sisma\Core\Interfaces\Entities\UserInterface;
-use Sisma\Core\Interfaces\Models\MultiFactorModelInterface;
-use Sisma\Core\Interfaces\Models\MultiFactorRecoveryModelInterface;
-use Sisma\Core\Interfaces\Models\PasswordModelInterface;
-use Sisma\Core\Interfaces\Models\UserModelInterface;
-use Sisma\Core\Interfaces\Wrappers\MultiFactorWrapperInterface;
+use SismaFramework\Core\Enumerations\RequestType;
+use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\Interfaces\Entities\MultiFactorInterface;
+use SismaFramework\Core\Interfaces\Entities\MultiFactorRecoveryInterface;
+use SismaFramework\Core\Interfaces\Entities\PasswordInterface;
+use SismaFramework\Core\Interfaces\Entities\UserInterface;
+use SismaFramework\Core\Interfaces\Models\MultiFactorModelInterface;
+use SismaFramework\Core\Interfaces\Models\MultiFactorRecoveryModelInterface;
+use SismaFramework\Core\Interfaces\Models\PasswordModelInterface;
+use SismaFramework\Core\Interfaces\Models\UserModelInterface;
+use SismaFramework\Core\Interfaces\Wrappers\MultiFactorWrapperInterface;
 
 class Authentication
 {
 
-    use \Sisma\Core\Traits\Submitted;
+    use \SismaFramework\Core\Traits\Submitted;
 
     private MultiFactorModelInterface $multiFactorModelInterface;
     private MultiFactorRecoveryModelInterface $multiFactorRecoveryModelInterface;
@@ -37,7 +37,7 @@ class Authentication
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->requestType = new RequestType($request->server['REQUEST_METHOD']);
+        $this->requestType = RequestType::from($request->server['REQUEST_METHOD']);
     }
 
     public function setUserModel(UserModelInterface $userModelInterface): void

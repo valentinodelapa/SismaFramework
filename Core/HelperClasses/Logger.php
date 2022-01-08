@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses;
 
 class Logger
 {
@@ -20,7 +20,7 @@ class Logger
     public static function getLog(): string
     {
         $handle = fopen(\Config\LOG_PATH, 'r');
-        $log = fread($handle, filesize(\Config\LOG_PATH));
+        $log = fread($handle, (filesize(\Config\LOG_PATH) > 0) ? filesize(\Config\LOG_PATH) : 1);
         fclose($handle);
         return $log;
     }

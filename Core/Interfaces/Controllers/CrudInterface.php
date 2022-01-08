@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core\Interfaces;
+namespace SismaFramework\Core\Interfaces;
 
 interface CrudInterface
 {

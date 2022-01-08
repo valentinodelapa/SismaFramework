@@ -1,8 +1,8 @@
 <?php
 
-namespace Sisma\Core\Traits;
+namespace SismaFramework\Core\Traits;
 
-use Sisma\Core\HelperClasses\Debugger;
+use SismaFramework\Core\HelperClasses\Debugger;
 
 trait Submitted
 {

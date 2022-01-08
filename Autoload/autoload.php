@@ -1,15 +1,12 @@
 <?php
 
-namespace Sisma\Autoload;
+namespace SismaFramework\Autoload;
 
-use Sisma\Core\HelperClasses\Router;
+require_once __DIR__.'/Autoloader.php';
 
-spl_autoload_register(function(string $className) {
-    $modifiedClassName = str_replace(\Config\PROJECT.'\\', '', $className);
-    $partialClassPath = str_replace('\\', DIRECTORY_SEPARATOR, $modifiedClassName);
-    $classPath = \Config\ROOT_PATH . $partialClassPath . '.php';
-    if (file_exists($classPath)) {
-        require_once($classPath);
+spl_autoload_register(function (string $className) {
+    Autoloader::injectClassName($className);
+    if (Autoloader::findClass(substr(\Config\ROOT_PATH, 0, -1))) {
+        require_once(Autoloader::getClassPath());
     }
 });
-

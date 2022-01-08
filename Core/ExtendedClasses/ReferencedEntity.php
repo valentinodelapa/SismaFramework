@@ -1,10 +1,10 @@
 <?php
 
-namespace Sisma\Core\ExtendedClasses;
+namespace SismaFramework\Core\ExtendedClasses;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\ProprietaryTypes\SismaCollection;
-use Sisma\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 abstract class ReferencedEntity extends BaseEntity
 {

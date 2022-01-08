@@ -1,20 +1,20 @@
 <?php
 
-namespace Sisma\Core\BaseClasses;
+namespace SismaFramework\Core\BaseClasses;
 
-use Sisma\Core\BaseClasses\BaseEnumerator;
-use Sisma\Core\ProprietaryTypes\SismaCollection;
-use Sisma\Core\ProprietaryTypes\SismaDateTime;
-use Sisma\Core\ObjectRelationalMapper\Adapter;
-use Sisma\Core\ObjectRelationalMapper\Query;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmKeyword;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
-use Sisma\Core\ObjectRelationalMapper\ResultSet;
+use SismaFramework\Core\BaseClasses\BaseEnumerator;
+use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\Core\ObjectRelationalMapper\Query;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
 
 abstract class BaseEntity
 {
 
-    use \Sisma\Core\Traits\UnparseValue;
+    use \SismaFramework\Core\Traits\UnparseValue;
 
     protected string $tableName = '';
     protected string $primaryKey = 'id';
@@ -119,7 +119,7 @@ abstract class BaseEntity
         $query = new Query($this->adapter);
         $query->setTable($this->tableName);
         $query->setWhere();
-        $query->appendCondition($this->primaryKey, OrmOperator::EQUAL(), OrmKeyword::PLACEHOLDER());
+        $query->appendCondition($this->primaryKey, OrmOperator::equal, OrmKeyword::placeholder);
         $query->close();
         $cmd = $query->getCommandToExecute('update', array('columns' => $cols, 'values' => $markers));
         $vals[] = $this->{$this->primaryKey};
@@ -153,8 +153,8 @@ abstract class BaseEntity
                 $p_val->insert();
             }
             $vals[] = $p_val->id;
-        } elseif ($p_val instanceof BaseEnumerator) {
-            $vals[] = $p_val->__toString();
+        } elseif (is_subclass_of ($p_val, \UnitEnum::class)) {
+            $vals[] = $p_val->value;
         } elseif ($p_val instanceof SismaDateTime) {
             $vals[] = $p_val->format("Y-m-d H:i:s");
         } else {
@@ -213,7 +213,7 @@ abstract class BaseEntity
         $query = new Query($this->adapter);
         $query->setTable($this->tableName);
         $query->setWhere();
-        $query->appendCondition($this->primaryKey, OrmOperator::EQUAL(), OrmKeyword::PLACEHOLDER());
+        $query->appendCondition($this->primaryKey, OrmOperator::equal, OrmKeyword::placeholder);
         $query->close();
         $cmd = $query->getCommandToExecute('delete');
         $adapterToCall = $query->getAdapter();

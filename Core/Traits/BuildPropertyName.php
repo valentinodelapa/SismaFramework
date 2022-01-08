@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core\Traits;
+namespace SismaFramework\Core\Traits;
 
 trait BuildPropertyName
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Sisma\Core\BaseClasses;
+namespace SismaFramework\Core\BaseClasses;
 
-use Sisma\Core\HelperClasses\Dispatcher;
-use Sisma\Core\HelperClasses\Router;
-use Sisma\Core\HelperClasses\Session;
+use SismaFramework\Core\HelperClasses\Dispatcher;
+use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HelperClasses\Session;
 
 abstract class BaseController
 {

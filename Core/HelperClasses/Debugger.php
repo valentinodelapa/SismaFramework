@@ -1,9 +1,9 @@
 <?php
 
-namespace Sisma\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses;
 
-use Sisma\Core\HelperClasses\Logger;
-use Sisma\Core\HelperClasses\Templater;
+use SismaFramework\Core\HelperClasses\Logger;
+use SismaFramework\Core\HelperClasses\Templater;
 
 class Debugger
 {

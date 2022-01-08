@@ -1,12 +1,12 @@
 <?php
 
-namespace Sisma\Core\ObjectRelationalMapper;
+namespace SismaFramework\Core\ObjectRelationalMapper;
 
-use Sisma\Core\HelperClasses\Debugger;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmFunction;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmKeyword;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
-use Sisma\Core\ObjectRelationalMapper\ResultSet;
+use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmFunction;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
 
 abstract class Adapter
 {
@@ -51,14 +51,15 @@ abstract class Adapter
         return $parsedName;
     }
 
-    public function escapeOrderDirection(string $name): string
+    public function escapeOrderDirection(?OrmKeyword $order = null): string
     {
-        $parsedName = strtoupper($name);
-        $ok = array('', OrmKeyword::ASC(), OrmKeyword::DESC());
-        if (!in_array($parsedName, $ok)) {
-            $parsedName = '';
+        $ok = array(null, OrmKeyword::asc, OrmKeyword::desc);
+        if (in_array($order, $ok)) {
+            $parsedOrder = $order->value;
+        }else{
+            $parsedOrder = '';
         }
-        return $parsedName;
+        return $parsedOrder;
     }
 
     public function escapeColumns(array $cols): array
@@ -83,20 +84,13 @@ abstract class Adapter
         return $implodedName;
     }
 
-    /*
-     * escape e couple operator+value and return a string representation of the value to use in the query
-     * @param array $value
-     * @param string $operator
-     * @return string
-     */
-
-    public function escapeValue($value, OrmOperator $operator): string
+    public function escapeValue(mixed $value, OrmOperator $operator): string
     {
         //$ret = '';
-        if ($operator == OrmOperator::IS_NULL() || $operator == OrmOperator::IS_NOT_NULL()) {
+        if ($operator == OrmOperator::isNull || $operator == OrmOperator::isNotNull) {
             return '';
         }
-        if ($operator == OrmOperator::IN() || $operator == OrmOperator::NOT_IN()) {
+        if ($operator == OrmOperator::in || $operator == OrmOperator::notIn) {
             if (!is_array($value)) {
                 $value = [$value];
             }
@@ -110,33 +104,37 @@ abstract class Adapter
             $val = array_shift($value);
             $value = $val;
         }
-        $stringValue = strval($value);
+        if($value instanceof OrmKeyword){
+            $stringValue = $value->value;
+        }else{
+            $stringValue = strval($value);
+        }
         return $stringValue;
     }
 
     public function openBlock(): string
     {
-        return OrmKeyword::OPEN_BLOCK() . ' ';
+        return OrmKeyword::openBlock->value . ' ';
     }
 
     public function closeBlock(): string
     {
-        return ' ' . OrmKeyword::CLOSE_BLOCK();
+        return ' ' . OrmKeyword::closeBlock->value;
     }
 
     public function opAND(): string
     {
-        return OrmOperator::AND();
+        return OrmOperator::and->value;
     }
 
     public function opOR(): string
     {
-        return OrmOperator::OR();
+        return OrmOperator::or->value;
     }
 
     public function opNOT(): string
     {
-        return OrmOperator::NOT();
+        return OrmOperator::not->value;
     }
 
     public function opCOUNT(string $column, bool $distinct): string
@@ -148,7 +146,7 @@ abstract class Adapter
             //$column = $this->escapeIdentifier($column);
             $column = $this->escapeColumn($column);
         }
-        return OrmFunction::COUNT() . OrmKeyword::OPEN_BLOCK() . ($distinct ? OrmKeyword::DISTINCT() . ' ' : '') . $column . OrmKeyword::CLOSE_BLOCK() . ' as _numrows';
+        return OrmFunction::count->value . OrmKeyword::openBlock->value . ($distinct ? OrmKeyword::distinct->value . ' ' : '') . $column . OrmKeyword::closeBlock->value . ' as _numrows';
     }
 
     public function parseSelect(bool $distinct, array $select, array $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
@@ -156,24 +154,24 @@ abstract class Adapter
         foreach ($orderby as $k => $v) {
             $orderby[$k] = $k . ' ' . $v;
         }
-        $query = OrmKeyword::SELECT() . ' ' .
-                ($distinct ? ' ' . OrmKeyword::DISTINCT() . ' ' : '') .
+        $query = OrmKeyword::select->value . ' ' .
+                ($distinct ? ' ' . OrmKeyword::distinct->value . ' ' : '') .
                 implode(',', $select) . ' ' .
-                OrmKeyword::FROM() . ' ' . implode(',', $from) . ' ' .
-                ((count($where) > 0) ? OrmKeyword::WHERE() . ' ' . implode(' ', $where) : '' ) . ' ' .
-                ($groupby ? ' ' . OrmKeyword::GROUP_BY() . ' ' . implode(',', $groupby) . ' ' : '') .
-                ($groupby && $having ? OrmKeyword::Having() . ' ' . implode(' ', $having) . ' ' : '') .
-                (count($orderby) > 0 ? ' ' . OrmKeyword::ORDER_BY() . ' ' . implode(',', $orderby) . ' ' : '') .
-                ($limit > 0 ? ' ' . OrmKeyword::LIMIT() . ' ' . $limit . ' ' : '') .
-                ($offset > 0 ? ' ' . OrmKeyword::OFFSET() . ' ' . $offset . ' ' : '');
+                OrmKeyword::from->value . ' ' . implode(',', $from) . ' ' .
+                ((count($where) > 0) ? OrmKeyword::where->value . ' ' . implode(' ', $where) : '' ) . ' ' .
+                ($groupby ? ' ' . OrmKeyword::groupBy->value . ' ' . implode(',', $groupby) . ' ' : '') .
+                ($groupby && $having ? OrmKeyword::having->value . ' ' . implode(' ', $having) . ' ' : '') .
+                (count($orderby) > 0 ? ' ' . OrmKeyword::orderBy->value . ' ' . implode(',', $orderby) . ' ' : '') .
+                ($limit > 0 ? ' ' . OrmKeyword::limit->value . ' ' . $limit . ' ' : '') .
+                ($offset > 0 ? ' ' . OrmKeyword::offset->value . ' ' . $offset . ' ' : '');
         return $query;
     }
 
     public function parseInsert(array $table, array $columns = [], array $values = []): string
     {
-        $query = OrmKeyword::INSERT_INTO() . ' ' . implode(',', $table) . ' ' .
-                OrmKeyword::OPEN_BLOCK() . implode(',', $columns) . OrmKeyword::CLOSE_BLOCK() . ' ' . OrmKeyword::INSERT_VALUES() . ' ' .
-                OrmKeyword::OPEN_BLOCK() . implode(',', $values) . OrmKeyword::CLOSE_BLOCK();
+        $query = OrmKeyword::insertInto->value . ' ' . implode(',', $table) . ' ' .
+                OrmKeyword::openBlock->value . implode(',', $columns) . OrmKeyword::closeBlock->value . ' ' . OrmKeyword::insertValue->value . ' ' .
+                OrmKeyword::openBlock->value . implode(',', $values) . OrmKeyword::closeBlock->value;
         return $query;
     }
 
@@ -183,16 +181,16 @@ abstract class Adapter
         foreach ($columns as $k => $col) {
             $cmd[] = $col . ' = ' . $values[$k];
         }
-        $query = OrmKeyword::UPDATE() . ' ' . implode(',', $table) . ' ' .
-                OrmKeyword::SET() . ' ' . implode(',', $cmd) . ' ' .
-                ($where ? ' ' . OrmKeyword::WHERE() . ' ' . implode(' ', $where) : '');
+        $query = OrmKeyword::update->value . ' ' . implode(',', $table) . ' ' .
+                OrmKeyword::set->value . ' ' . implode(',', $cmd) . ' ' .
+                ($where ? ' ' . OrmKeyword::where->value . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
     public function parseDelete(array $from, array $where = []): string
     {
-        $query = OrmKeyword::DELETE_FROM() . ' ' . implode(',', $from) . ' ' .
-                ($where ? ' ' . OrmKeyword::WHERE() . ' ' . implode(' ', $where) : '');
+        $query = OrmKeyword::deleteFrom->value . ' ' . implode(',', $from) . ' ' .
+                ($where ? ' ' . OrmKeyword::where->value . ' ' . implode(' ', $where) : '');
         return $query;
     }
 

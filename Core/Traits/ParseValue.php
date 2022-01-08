@@ -1,12 +1,11 @@
 <?php
 
-namespace Sisma\Core\Traits;
+namespace SismaFramework\Core\Traits;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\BaseClasses\BaseEnumerator;
-use Sisma\Core\ProprietaryTypes\SismaDateTime;
-use Sisma\Core\HttpClasses\Request;
-use Sisma\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 trait ParseValue
 {
@@ -20,9 +19,9 @@ trait ParseValue
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             return $this->parseEntity($reflectionNamedType->getName(), $value);
-        } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEnumerator::class)) {
-            $enumeratorName = $reflectionNamedType->getName();
-            return new $enumeratorName($value);
+        } elseif (enum_exists($reflectionNamedType->getName())) {
+            $enumerationName = $reflectionNamedType->getName();
+            return $enumerationName::from($value);
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
             return new SismaDateTime($value);
         } else {

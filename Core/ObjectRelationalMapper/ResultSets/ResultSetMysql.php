@@ -1,10 +1,10 @@
 <?php
 
-namespace Sisma\Core\ObjectRelationalMapper\ResultSets;
+namespace SismaFramework\Core\ObjectRelationalMapper\ResultSets;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\ObjectRelationalMapper\Adapter;
-use Sisma\Core\ObjectRelationalMapper\ResultSet;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
 
 class ResultSetMysql extends ResultSet
 {

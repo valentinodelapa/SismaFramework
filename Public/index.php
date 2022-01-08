@@ -2,8 +2,8 @@
 
 namespace Sisma;
 
-use Sisma\Core\CoreException;
-use Sisma\Core\HelperClasses\Dispatcher;
+use SismaFramework\Core\CoreException;
+use SismaFramework\Core\HelperClasses\Dispatcher;
 
 try {
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Sisma\Core\ExtendedClasses;
+namespace SismaFramework\Core\ExtendedClasses;
 
-use Sisma\Core\ExtendedClasses\ReferencedEntity;
-use Sisma\Core\ProprietaryTypes\SismaCollection;
-use Sisma\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\Core\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\Core\ObjectRelationalMapper\Adapter;
 
 abstract class SelfReferencedEntity extends ReferencedEntity
 {

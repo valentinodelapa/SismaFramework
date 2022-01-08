@@ -1,14 +1,13 @@
 <?php
 
-namespace Sisma\Core\ObjectRelationalMapper;
+namespace SismaFramework\Core\ObjectRelationalMapper;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\BaseClasses\BaseEnumerator;
+use SismaFramework\Core\BaseClasses\BaseEntity;
 
 class ResultSet implements \Iterator
 {
-    use \Sisma\Core\Traits\BuildPropertyName;
-    use \Sisma\Core\Traits\ParseValue;
+    use \SismaFramework\Core\Traits\BuildPropertyName;
+    use \SismaFramework\Core\Traits\ParseValue;
 
     protected string $returnType = \stdClass::class;
     protected int $currentRecord = 0;

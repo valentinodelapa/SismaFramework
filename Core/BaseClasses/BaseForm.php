@@ -1,20 +1,20 @@
 <?php
 
-namespace Sisma\Core\BaseClasses;
+namespace SismaFramework\Core\BaseClasses;
 
-use Sisma\Core\Enumerators\FilterType;
-use Sisma\Core\HelperClasses\Debugger;
-use Sisma\Core\HelperClasses\Filter;
-use Sisma\Core\HttpClasses\Request;
-use Sisma\Core\ProprietaryTypes\SismaCollection;
-use Sisma\Core\Exceptions\FormException;
-use Sisma\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\Core\Exceptions\FormException;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 abstract class BaseForm
 {
 
-    use \Sisma\Core\Traits\ParseValue;
-    use \Sisma\Core\Traits\Submitted;
+    use \SismaFramework\Core\Traits\ParseValue;
+    use \SismaFramework\Core\Traits\Submitted;
 
     protected const ENTITY_CLASS_NAME = BaseEntity::class;
 
@@ -34,7 +34,6 @@ abstract class BaseForm
         $this->embedEntity($baseEntity);
         $this->setFilterFieldsMode();
         $this->setEntityFromForm();
-        Debugger::setFormFilter($this->filterErrors);
     }
 
     private function checkEntityClassNameOverride() :void
@@ -83,12 +82,13 @@ abstract class BaseForm
             }
         }
         $this->customFilter();
+        Debugger::setFormFilter($this->filterErrors);
         return $this->filterResult;
     }
 
     private function switchFormPropertyType(\ReflectionProperty $property): void
     {
-        $request = $this->request;
+        $request = clone $this->request;
         $this->entityData[$property->name] = [];
         $this->filterErrors[$property->name . "Error"] = [];
         if (is_a($property->getType()->getName(), SismaCollection::class, true)) {
@@ -139,7 +139,7 @@ abstract class BaseForm
     {
         if (array_key_exists($propertyName, $this->filterFiledsMode)) {
             $this->filterErrors[$propertyName . "Error"] = false;
-            $filterFunction = $this->filterFiledsMode[$propertyName]['filterType']->__toString();
+            $filterFunction = $this->filterFiledsMode[$propertyName]['filterType']->value;
             if (Filter::$filterFunction($this->entityData[$propertyName])) {
                 $this->filterResult = $this->filterResult;
             } elseif (($this->filterFiledsMode[$propertyName]['allowNull'] === true) && ($this->entityData[$propertyName] === null)) {

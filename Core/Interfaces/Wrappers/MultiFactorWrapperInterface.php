@@ -1,8 +1,8 @@
 <?php
 
-namespace Sisma\Core\Interfaces\Wrappers;
+namespace SismaFramework\Core\Interfaces\Wrappers;
 
-use Sisma\Core\Interfaces\Entities\MultiFactorInterface;
+use SismaFramework\Core\Interfaces\Entities\MultiFactorInterface;
 
 interface MultiFactorWrapperInterface
 {

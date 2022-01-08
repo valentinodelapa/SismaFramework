@@ -1,6 +1,6 @@
 <?php
 
-namespace Sisma\Core\ProprietaryTypes;
+namespace SismaFramework\Core\ProprietaryTypes;
 
 class SismaDateTime extends \DateTime
 {

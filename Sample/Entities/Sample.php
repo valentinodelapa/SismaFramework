@@ -1,8 +1,8 @@
 <?php
 
-namespace Sisma\Sample\Entities;
+namespace SismaFramework\Sample\Entities;
 
-use Sisma\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\BaseClasses\BaseEntity;
 
 class Sample extends BaseEntity
 {

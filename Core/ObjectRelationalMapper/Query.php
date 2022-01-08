@@ -1,11 +1,11 @@
 <?php
 
-namespace Sisma\Core\ObjectRelationalMapper;
+namespace SismaFramework\Core\ObjectRelationalMapper;
 
-use Sisma\Core\ObjectRelationalMapper\Adapter;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmKeyword;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
-use Sisma\Core\ObjectRelationalMapper\Query;
+use SismaFramework\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Query;
 
 class Query
 {
@@ -168,15 +168,15 @@ class Query
         return $this;
     }
 
-    public function &appendCondition(string $column, OrmOperator $operator, OrmKeyword|string $value = null, bool $foreignKey = false): Query
+    public function &appendCondition(string $column, OrmOperator $operator, OrmKeyword|string|null $value = null, bool $foreignKey = false): Query
     {
         $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->current_conditions == 'where') {
-            $this->where[] = $escapedColumn .' '. $operator .' '. $escapedValue;
+            $this->where[] = $escapedColumn .' '. $operator->value .' '. $escapedValue;
         }
         if ($this->current_conditions == 'having') {
-            $this->having[] = $escapedColumn .' '. $operator .' '. $escapedValue;
+            $this->having[] = $escapedColumn .' '. $operator->value .' '. $escapedValue;
         }
         return $this;
     }

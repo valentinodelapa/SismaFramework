@@ -1,14 +1,14 @@
 <?php
 
-namespace Sisma\Core\BaseClasses;
+namespace SismaFramework\Core\BaseClasses;
 
-use Sisma\Core\ObjectRelationalMapper\Adapter;
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\Exceptions\ModelException;
-use Sisma\Core\ProprietaryTypes\SismaCollection;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmKeyword;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmType;
+use SismaFramework\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\Exceptions\ModelException;
+use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmType;
 
 abstract class BaseModel
 {
@@ -66,12 +66,12 @@ abstract class BaseModel
         $class = get_class($this->entity);
         $query = $class::initQuery();
         $query->setWhere();
-        $query->appendCondition('id', OrmOperator::EQUAL(), OrmKeyword::PLACEHOLDER());
+        $query->appendCondition('id', OrmOperator::equal, OrmKeyword::placeholder);
         $query->close();
         return $class::findFirst($query, [
                     $id,
                         ], [
-                    OrmType::INTEGER(),
+                    OrmType::typeInteger,
         ]);
     }
 
@@ -88,12 +88,12 @@ abstract class BaseModel
         $class = get_class($this->entity);
         $query = $class::initQuery();
         $query->setWhere();
-        $query->appendCondition('id', OrmOperator::EQUAL(), OrmKeyword::PLACEHOLDER());
+        $query->appendCondition('id', OrmOperator::equal, OrmKeyword::placeholder);
         $query->close();
         return $class::deleteBatch($query, [
                     $id,
                         ], [
-                    OrmType::INTEGER(),
+                    OrmType::typeInteger,
         ]);
     }
 

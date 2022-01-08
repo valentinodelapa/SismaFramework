@@ -1,13 +1,13 @@
 <?php
 
-namespace Sisma\Core\ExtendedClasses;
+namespace SismaFramework\Core\ExtendedClasses;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\ExtendedClasses\ReferencedModel;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmKeyword;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmType;
-use Sisma\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ExtendedClasses\ReferencedModel;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmType;
+use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 
 abstract class SelfReferencedModel extends ReferencedModel
 {
@@ -20,13 +20,13 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query = $entityName::initQuery();
         $query->setWhere();
         if ($parentEntity === null) {
-            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), OrmOperator::IS_NULL(), '', true);
+            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), OrmOperator::isNull, '', true);
             $bindValues = [];
             $bindTypes = [];
         } else {
-            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), OrmOperator::EQUAL(), OrmKeyword::PLACEHOLDER(), true);
+            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), OrmOperator::equal, OrmKeyword::placeholder, true);
             $bindValues = [$parentEntity];
-            $bindTypes = [OrmType::ENTITY()];
+            $bindTypes = [OrmType::typeEntity];
         }
         $query->setOrderBy($order);
         $query->close();

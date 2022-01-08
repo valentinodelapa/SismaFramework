@@ -1,15 +1,14 @@
 <?php
 
-namespace Sisma\Core\ObjectRelationalMapper\Adapters;
+namespace SismaFramework\Core\ObjectRelationalMapper\Adapters;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\BaseClasses\BaseEnumerator;
-use Sisma\Core\ProprietaryTypes\SismaDateTime;
-use Sisma\Core\Exceptions\AdapterException;
-use Sisma\Core\ObjectRelationalMapper\Adapter;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmOperator;
-use Sisma\Core\ObjectRelationalMapper\Enumerators\OrmType;
-use Sisma\Core\ObjectRelationalMapper\ResultSets\ResultSetMysql;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Core\Exceptions\AdapterException;
+use SismaFramework\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmType;
+use SismaFramework\Core\ObjectRelationalMapper\ResultSets\ResultSetMysql;
 
 class AdapterMysql extends Adapter
 {
@@ -57,27 +56,27 @@ class AdapterMysql extends Adapter
         }
     }
 
-    protected function translateDataType(string $type): int
+    protected function translateDataType(OrmType $ormType): int
     {
 
-        switch ($type) {
-            case OrmType::BOOLEAN():
+        switch ($ormType) {
+            case OrmType::typeBoolean:
                 return \PDO::PARAM_BOOL;
-            case OrmType::NULL():
+            case OrmType::typeNull:
                 return \PDO::PARAM_NULL;
-            case OrmType::INTEGER():
-            case OrmType::ENTITY():
+            case OrmType::typeInteger:
+            case OrmType::typeEntity:
                 return \PDO::PARAM_INT;
-            case OrmType::ENUMERATOR():
-            case OrmType::STRING():
-            case OrmType::DECIMAL():
-            case OrmType::DATE():
+            case OrmType::typeEnumeration:
+            case OrmType::typeString:
+            case OrmType::typeDecimal:
+            case OrmType::typeDate:
                 return \PDO::PARAM_STR;
-            case OrmType::BINARY():
+            case OrmType::typeBinary:
                 return \PDO::PARAM_LOB;
-            case OrmType::STMT():
+            case OrmType::typeStatement:
                 return \PDO::PARAM_STMT;
-            case OrmType::GENERIC():
+            case OrmType::typeGeneric:
             default:
                 return false;
         }
@@ -92,25 +91,25 @@ class AdapterMysql extends Adapter
                     $zero = true;
                 }
                 if (!isset($bindTypes[$k])) {
-                    $bindTypes[$k] = OrmType::GENERIC();
+                    $bindTypes[$k] = OrmType::typeGeneric;
                 }
-                if ($bindTypes[$k] == OrmType::GENERIC()) {
+                if ($bindTypes[$k] == OrmType::typeGeneric) {
                     if (is_integer($v)) {
-                        $bindTypes[$k] = OrmType::INTEGER();
+                        $bindTypes[$k] = OrmType::typeInteger;
                     } elseif (is_float($v)) {
-                        $bindTypes[$k] = OrmType::DECIMAL();
+                        $bindTypes[$k] = OrmType::typeDecimal;
                     } elseif (is_string($v)) {
-                        $bindTypes[$k] = OrmType::STRING();
+                        $bindTypes[$k] = OrmType::typeString;
                     } elseif (is_bool($v)) {
-                        $bindTypes[$k] = OrmType::BOOLEAN();
+                        $bindTypes[$k] = OrmType::typeBoolean;
                     } elseif ($v instanceof BaseEntity) {
-                        $bindTypes[$k] = OrmType::ENTITY();
-                    } elseif ($v instanceof BaseEnumerator) {
-                        $bindTypes[$k] = OrmType::ENUMERATOR();
+                        $bindTypes[$k] = OrmType::typeEntity;
+                    } elseif (is_subclass_of($v, \UnitEnum::class)) {
+                        $bindTypes[$k] = OrmType::typeEnumeration;
                     } elseif ($v instanceof SismaDateTime) {
-                        $bindTypes[$k] = OrmType::DATE();
+                        $bindTypes[$k] = OrmType::typeDate;
                     } else {
-                        $bindTypes[$k] = OrmType::GENERIC();
+                        $bindTypes[$k] = OrmType::typeGeneric;
                     }
                 }
                 $bindTypes[$k] = $this->translateDataType($bindTypes[$k]);
@@ -196,17 +195,10 @@ class AdapterMysql extends Adapter
         return $parsedName;
     }
 
-    /*
-     * escape a couple operator+value and return a string representation of the value to use in the query
-     * @param array $value
-     * @param string $operator
-     * @return string
-     */
-
-    public function escapeValue($value, OrmOperator $operator): string
+    public function escapeValue(mixed $value, OrmOperator $operator): string
     {
         $value = parent::escapeValue($value, $operator);
-        if (!in_array($operator, array(OrmOperator::IN(), OrmOperator::NOT_IN(), OrmOperator::IS_NULL(), OrmOperator::IS_NOT_NULL()))) {
+        if (!in_array($operator, [OrmOperator::in, OrmOperator::notIn, OrmOperator::isNull, OrmOperator::isNotNull])) {
             $placeholder = ($value == '?' || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));
             if ($placeholder) {
                 return $value;

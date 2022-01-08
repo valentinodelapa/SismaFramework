@@ -1,11 +1,11 @@
 <?php
 
-namespace Sisma\Sample\Controllers;
+namespace SismaFramework\Sample\Controllers;
 
-use Sisma\Core\BaseClasses\BaseController;
-use Sisma\Core\HttpClasses\Response;
-use Sisma\Core\HelperClasses\Render;
-use Sisma\Core\HelperClasses\Router;
+use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\HelperClasses\Render;
+use SismaFramework\Core\HelperClasses\Router;
 
 class SampleController extends BaseController
 {

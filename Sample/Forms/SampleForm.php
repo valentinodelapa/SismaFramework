@@ -1,10 +1,10 @@
 <?php
 
-namespace Sisma\Sample\Forms;
+namespace SismaFramework\Sample\Forms;
 
-use Sisma\Core\BaseClasses\BaseEntity;
-use Sisma\Core\BaseClasses\BaseForm;
-use Sisma\Sample\Entities\Sample;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Sample\Entities\Sample;
 
 class SampleForm extends BaseForm
 {

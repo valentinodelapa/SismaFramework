@@ -17,17 +17,18 @@ const FIXTURES = 'Fixtures';
 const LOCALES = 'Locales';
 const MODELS = 'Models';
 const ORM = 'ObjectRelationalMapper';
-const PROJECT = 'Sisma';
-const SYSTEM = 'Sisma';
+const PROJECT = 'SismaFramework';
+const SYSTEM = 'SismaFramework';
 const STRUCTURAL = 'Structural';
 const TEMPLATES = 'Templates';
 const VIEWS = 'Views';
 
 /* Base Constant */
+const LANGUAGE = 'it_IT';
 const MAX_RELOAD_ATTEMPTS = 3;
 const CONFIGURATION_PASSWORD = '';
 const ENCRYPTION_KEY = '';
-const ROOT_PATH = __DIR__ . '/../';
+const ROOT_PATH = __DIR__ . '/../../';
 const APPLICATION_PATH = ROOT_PATH . APPLICATION . '/';
 const APPLICATION_NAMESPACE = PROJECT . '\\' . APPLICATION . '\\';
 const APPLICATION_ASSETS_PATH = APPLICATION_PATH . ASSETS . '/';
