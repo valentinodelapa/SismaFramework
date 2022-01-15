@@ -2,7 +2,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Autoload\Autoloader;
+//use SismaFramework\Autoload\Autoloader;
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
@@ -15,6 +15,7 @@ class Dispatcher
 
     use \SismaFramework\Core\Traits\ParseValue;
 
+    public static string $selectedModule = '';
     private static int $reloadAttempts = 0;
     private Request $request;
     private string $path;
@@ -61,11 +62,19 @@ class Dispatcher
 
     private function parsePathParts(): void
     {
-        Autoloader::injectClassName(\Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller'));
-        Autoloader::findClass(substr(\Config\ROOT_PATH, 0, -1));
-        $this->controllerName = Autoloader::getNaturalNamespace() . '\\' . \Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
+        $this->selectModule();
         $this->action = (isset($this->pathParts[1])) ? self::convertToCamelCase($this->pathParts[1]) : \Config\DEFAULT_ACTION;
         $this->actionArguments = array_slice($this->pathParts, 2);
+    }
+    
+    private function selectModule():void{
+        foreach (\Config\MODULE_FOLDERS as $module){
+            $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
+            if($this->checkControllerPresence()){
+                self::$selectedModule = $module;
+                break;
+            }
+        }
     }
 
     private static function convertToStudlyCaps(string $string): string

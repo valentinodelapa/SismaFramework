@@ -3,6 +3,7 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Autoload\Autoloader;
+use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HttpClasses\Response;
 
 class Render
@@ -54,7 +55,7 @@ class Render
 
     private static function getLocalePath(?string $var = null): string
     {
-        $path = \Config\ROOT_PATH.Autoloader::getRelativePath().'/'.\Config\LOCALES_PATH;
+        $path = \Config\ROOT_PATH . Dispatcher::$selectedModule . '/' . \Config\LOCALES_PATH;
         return self::getSelectedLocale($path, $var);
     }
 
@@ -69,7 +70,7 @@ class Render
 
     private static function getViewPath(string $view): string
     {
-        $path = \Config\ROOT_PATH.Autoloader::getRelativePath().'/'.\Config\VIEWS_PATH . $view . '.php';
+        $path = \Config\ROOT_PATH . Dispatcher::$selectedModule . '/' . \Config\VIEWS_PATH . $view . '.php';
         return $path;
     }
 
@@ -78,7 +79,7 @@ class Render
         Debugger::endExecutionTimeCalculation();
         if (\Config\DEVELOPMENT_ENVIRONMENT) {
             return Debugger::generateDebugBar();
-        }else{
+        } else {
             return '';
         }
     }

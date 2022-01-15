@@ -3,6 +3,7 @@
 namespace Config;
 
 /* Name Constant */
+
 const ADAPTERS = 'Adapters';
 const APPLICATION = 'Sample';
 const ASSETS = 'Assets';
@@ -29,7 +30,7 @@ const MAX_RELOAD_ATTEMPTS = 3;
 const CONFIGURATION_PASSWORD = '';
 const ENCRYPTION_KEY = '';
 const ROOT_PATH = __DIR__ . '/../../';
-const APPLICATION_PATH = ROOT_PATH . APPLICATION . '/';
+const APPLICATION_PATH = APPLICATION . '/';
 const APPLICATION_NAMESPACE = PROJECT . '\\' . APPLICATION . '\\';
 const APPLICATION_ASSETS_PATH = APPLICATION_PATH . ASSETS . '/';
 const SYSTEM_PATH = ROOT_PATH;
@@ -39,6 +40,12 @@ const BASE_ASSETS_PATH = SYSTEM_PATH . ASSETS . '/';
 const LOG_PATH = SYSTEM_PATH . 'Logs/log.txt';
 const PUBLIC_PATH = SYSTEM_PATH . 'Public/';
 const DEVELOPMENT_ENVIRONMENT = true;
+const MODULE_FOLDERS = [
+];
+const AUTOLOAD_MAPPER = [
+];
+const AUTOLOAD_CLASS_MAPPER = [
+];
 const ASSET_FOLDERS = [
     'text/css' => 'css',
     'image/jpeg' => 'jpeg',
@@ -79,8 +86,8 @@ const LOCALES_PATH = APPLICATION_PATH . LOCALES . '/';
 const VIEWS_PATH = APPLICATION_PATH . VIEWS . '/';
 
 /* Templater Constant */
-const TEMPLATES_PATH = APPLICATION_PATH . TEMPLATES.'/';
-const STRUCTURAL_TEMPLATES_PATH = SYSTEM_PATH.'/'.STRUCTURAL.'/'.TEMPLATES.'/';
+const TEMPLATES_PATH = APPLICATION_PATH . TEMPLATES . '/';
+const STRUCTURAL_TEMPLATES_PATH = SYSTEM_PATH . '/' . STRUCTURAL . '/' . TEMPLATES . '/';
 
 /* Database Constant */
 const DATABASE_ADAPTER_TYPE = '';

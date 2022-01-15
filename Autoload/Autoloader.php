@@ -5,64 +5,66 @@ namespace SismaFramework\Autoload;
 class Autoloader
 {
 
-    private static $classPath;
-    private static $partialClassPath;
-    private static $classFound = false;
+    private string $className;
+    private string $classPath;
+    private static $classExsist = false;
     private static array $naturalNamespaceParts = [];
 
-    public static function injectClassName(string $className)
+    public function __construct(string $className)
     {
-        self::$partialClassPath = str_replace('\\', DIRECTORY_SEPARATOR, $className);
+        $this->className = $className;
     }
 
-    public static function findClass(string $directory, int $depth = 0): void
+    public function findClass(): bool
     {
-        if (is_dir($directory)) {
-            $classPath = $directory . '/' . self::$partialClassPath . '.php';
-            if (file_exists($classPath)) {
-                self::$classPath = $classPath;
-                self::$classFound = true;
-            } else {
-                $depth++;
-                self::searchInSubdirectory($directory, $depth);
-            }
+        $classPath = \Config\ROOT_PATH . str_replace('\\', DIRECTORY_SEPARATOR, $this->className) . '.php';
+        if ($this->classExsist($classPath)) {
+            return true;
+        } elseif ($this->mapNamespace()) {
+            return true;
+        } else {
+            return $this->mapClass();
         }
     }
 
-    private static function searchInSubdirectory(string $directory, int $depth): void
+    private function classExsist(string $classPath): bool
     {
-        $subdirectoryList = scandir($directory);
-        foreach ($subdirectoryList as $subdirectory) {
-            if (($subdirectory !== '.') && ($subdirectory !== '..')) {
-                self::findClass($directory . '/' . $subdirectory, $depth);
-                if (self::$classFound) {
-                    self::$naturalNamespaceParts[$depth] = $subdirectory;
-                    break;
+        if (file_exists($classPath)) {
+            $this->classPath = $classPath;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function mapNamespace(): bool
+    {
+        foreach (\Config\AUTOLOAD_NAMESPACE_MAPPER as $key => $value) {
+            if (str_contains($this->className, $key)) {
+                $className = str_replace($key, '', $this->className);
+                $classPath = \Config\ROOT_PATH . $value . $className . '.php';
+                if ($this->classExsist($classPath)) {
+                    return true;
                 }
             }
         }
+        return false;
     }
 
-    public static function getSearchResult(): bool
+    private function mapClass(): bool
     {
-        return self::$classFound;
+        if (array_key_exists($this->className, \Config\AUTOLOAD_CLASS_MAPPER)) {
+            $classPath = \Config\ROOT_PATH . \Config\AUTOLOAD_CLASS_MAPPER[$this->className] . '.php';
+            if ($this->classExsist($classPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public static function getClassPath(): string
+    public function getClassPath(): string
     {
-        return self::$classPath;
-    }
-
-    public static function getNaturalNamespace(): string
-    {
-        $naturalNamespace = implode('\\', self::$naturalNamespaceParts);
-        return $naturalNamespace;
-    }
-
-    public static function getRelativePath(): string
-    {
-        $naturalNamespace = implode('/', self::$naturalNamespaceParts);
-        return $naturalNamespace;
+        return $this->classPath;
     }
 
 }
