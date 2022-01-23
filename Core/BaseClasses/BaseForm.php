@@ -45,17 +45,15 @@ abstract class BaseForm
 
     private function embedEntity(?BaseEntity $baseEntity): void
     {
-        $entityClassName = self::ENTITY_CLASS_NAME;
+        $entityClassName = static::ENTITY_CLASS_NAME;
         if ($baseEntity instanceof $entityClassName) {
             $this->entity = $baseEntity;
         } elseif ($baseEntity === null) {
-            $this->entity = $this->getEntityToEmbed($baseEntity);
+            $this->entity = new $entityClassName();
         } else {
             throw new InvalidArgumentException();
         }
     }
-
-    abstract protected function getEntityToEmbed(): BaseEntity;
 
     abstract protected function setFilterFieldsMode(): void;
 
