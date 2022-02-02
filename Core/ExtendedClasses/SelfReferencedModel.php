@@ -55,4 +55,25 @@ abstract class SelfReferencedModel extends ReferencedModel
         $entityTree->delete();
     }
 
+    public function getOtherEntityCollection(BaseEntity $excludedEntity): SismaCollection
+    {
+        $class = get_class($this->entity);
+        $query = $class::initQuery();
+        $query->setWhere();
+        $query->appendCondition('parent_card', OrmOperator::equal, OrmKeyword::placeholder, true);
+        $bindValues = [
+            $excludedEntity,
+        ];
+        $bindTypes = [
+            OrmType::typeEntity,
+        ];
+        $query->close();
+        $result = $class::find($query, $bindValues, $bindTypes);
+        $collection = new SismaCollection;
+        foreach ($result as $entity) {
+            $collection->append($entity);
+        }
+        return $collection;
+    }
+
 }

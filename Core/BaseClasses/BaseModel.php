@@ -48,6 +48,14 @@ abstract class BaseModel
         }
     }
 
+    public function countEntityCollection(): int
+    {
+        $class = get_class($this->entity);
+        $query = $class::initQuery();
+        $query->close();
+        return $class::getCount($query);
+    }
+
     public function getEntityCollection(?array $order = null): SismaCollection
     {
         $class = get_class($this->entity);
