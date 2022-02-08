@@ -30,9 +30,9 @@ use SismaFramework\Core\ObjectRelationalMapper\Adapter;
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmType;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
 
 /**
  *
@@ -102,12 +102,12 @@ abstract class BaseModel
         $class = get_class($this->entity);
         $query = $class::initQuery();
         $query->setWhere();
-        $query->appendCondition('id', OrmOperator::equal, OrmKeyword::placeholder);
+        $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
         return $class::findFirst($query, [
                     $id,
                         ], [
-                    OrmType::typeInteger,
+                    DataType::typeInteger,
         ]);
     }
 
@@ -124,12 +124,12 @@ abstract class BaseModel
         $class = get_class($this->entity);
         $query = $class::initQuery();
         $query->setWhere();
-        $query->appendCondition('id', OrmOperator::equal, OrmKeyword::placeholder);
+        $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
         return $class::deleteBatch($query, [
                     $id,
                         ], [
-                    OrmType::typeInteger,
+                    DataType::typeInteger,
         ]);
     }
 

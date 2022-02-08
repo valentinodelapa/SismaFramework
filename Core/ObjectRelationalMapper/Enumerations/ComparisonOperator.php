@@ -30,26 +30,19 @@ namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum OrmKeyword: string
+enum ComparisonOperator: string
 {
-    case insertInto = 'INSERT INTO';
-    case update = 'UPDATE';
-    case deleteFrom = 'DELETE FROM';
-    case select = 'SELECT';
-    case insertValue = 'VALUES';
-    case set = 'SET';
-    case from = 'FROM';
-    case where = 'WHERE';
-    case having = 'HAVING';
-    case distinct = 'DISTINCT';
-    case join = 'JOIN';
-    case orderBy = 'ORDER BY';
-    case groupBy = 'GROUP_BY';
-    case asc = 'ASC';
-    case desc = 'DESC';
-    case limit = 'LIMIT';
-    case offset = 'OFFSET';
-    case placeholder = '?';
-    case openBlock = '(';
-    case closeBlock = ')';
+    case equal = '=';
+    case notEqualOne = '!=';
+    case notEqualTwo = '<>';
+    case greater = '>';
+    case less = '<';
+    case greaterOrEqual = '>=';
+    case lessOrEqual = '<=';
+    case in = 'IN';
+    case notIn = 'NOT IN';
+    case like = 'LIKE';
+    case notLike = 'NOT LIKE';
+    case isNull = 'IS NULL';
+    case isNotNull = 'IS NOT NULL';
 }

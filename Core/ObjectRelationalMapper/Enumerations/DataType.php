@@ -24,40 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;;
-
-use SismaFramework\Core\Enumerations\Language;
-use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
-use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-trait LanguageSelectionModel
+enum DataType
 {
-
-    public function getEntityCollectionByLanguage(?Language $language = null): SismaCollection
-    {
-        $class = get_class($this->entity);
-        $query = $class::initQuery();
-        $query->setWhere();
-        $bindValues = $bindTypes = [];
-        if ($language !== null){
-            $query->appendCondition('language', ComparisonOperator::equal, Keyword::placeholder);
-            $bindValues = [$language];
-            $bindTypes = [DataType::typeEnumeration];
-        }
-        $query->close();
-        $result = $class::find($query, $bindValues, $bindTypes);
-        $collection = new SismaCollection;
-        foreach ($result as $entity) {
-            $collection->append($entity);
-        }
-        return $collection;
-    }
-
+    case typeBoolean;
+    case typeNull;
+    case typeInteger;
+    case typeString;
+    case typeBinary;
+    case typeDecimal;
+    case typeDate;
+    case typeStatement;
+    case typeEntity;
+    case typeEnumeration;
+    case typeGeneric;
 }

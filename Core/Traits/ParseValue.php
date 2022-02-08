@@ -49,7 +49,12 @@ trait ParseValue
             return $this->parseEntity($reflectionNamedType->getName(), $value);
         } elseif (enum_exists($reflectionNamedType->getName())) {
             $enumerationName = $reflectionNamedType->getName();
-            return $enumerationName::from($value);
+            $enumerationValue = $enumerationName::tryFrom($value);
+            if(($enumerationValue === null) && ($reflectionNamedType->allowsNull() === false)){
+                throw new InvalidArgumentException();
+            }else{
+                return $enumerationName::from($value);
+            }
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
             return new SismaDateTime($value);
         } else {

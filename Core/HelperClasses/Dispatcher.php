@@ -93,11 +93,12 @@ class Dispatcher
         $this->action = (isset($this->pathParts[1])) ? self::convertToCamelCase($this->pathParts[1]) : \Config\DEFAULT_ACTION;
         $this->actionArguments = array_slice($this->pathParts, 2);
     }
-    
-    private function selectModule():void{
-        foreach (\Config\MODULE_FOLDERS as $module){
+
+    private function selectModule(): void
+    {
+        foreach (\Config\MODULE_FOLDERS as $module) {
             $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
-            if($this->checkControllerPresence()){
+            if ($this->checkControllerPresence()) {
                 self::$selectedModule = $module;
                 break;
             }
@@ -121,13 +122,32 @@ class Dispatcher
             $this->executeControllerAction();
         } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             new FixturesManager();
-        } elseif (file_exists(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
+        } elseif (file_exists(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->action)) {
             header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
-            echo file_get_contents(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
-        } elseif (file_exists(\Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . '\\' . $this->action)) {
-            header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
-            echo file_get_contents(\Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . '/' . $this->action);
-        } elseif (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
+            echo file_get_contents(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->action);
+        } else {
+            $this->findInApplicationPath();
+        }
+    }
+
+    private function findInApplicationPath(): void
+    {
+        $fileFound = false;
+        foreach (\Config\MODULE_FOLDERS as $folder) {
+            if (file_exists(\Config\ROOT_PATH . $folder . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->action)) {
+                header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
+                echo file_get_contents(\Config\ROOT_PATH . $folder . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->action);
+                $fileFound = true;
+            }
+        }
+        if ($fileFound === false) {
+            $this->findInApplicationPath();
+        }
+    }
+
+    private function switchNotFoundActions(): void
+    {
+        if (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
             $this->reloadDispatcher();
         } else {
             throw new PageNotFoundException();
@@ -203,10 +223,8 @@ class Dispatcher
     {
         if ($this->checkActionPresenceInController()) {
             $this->callControllerMethod();
-        } elseif (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
-            $this->reloadDispatcher();
-        } else {
-            throw new PageNotFoundException();
+        } else{
+            $this->switchNotFoundActions();
         }
     }
 

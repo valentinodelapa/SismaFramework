@@ -27,9 +27,13 @@
 namespace SismaFramework\Core\ObjectRelationalMapper;
 
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmFunction;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\AggregationFunction;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Condition;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Indexing;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\LogicalOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Statement;
 use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
 
 /**
@@ -79,23 +83,21 @@ abstract class Adapter
         return $parsedName;
     }
 
-    public function escapeOrderDirection(?OrmKeyword $order = null): string
+    public function escapeOrderIndexing(null|string|Indexing $order = null): string
     {
-        $ok = array(null, OrmKeyword::asc, OrmKeyword::desc);
-        if (in_array($order, $ok)) {
-            $parsedOrder = $order->value;
-        }else{
-            $parsedOrder = '';
+        if(is_string($order)){
+            $order = Indexing::tryFrom($order);
         }
-        return $parsedOrder;
+        if ($order instanceof Indexing) {
+            return $order->value;
+        }else{
+            return '';
+        }
     }
 
     public function escapeColumns(array $cols): array
     {
         $ret = [];
-        if (!is_array($cols)) {
-            $cols = array(strval($cols));
-        }
         foreach ($cols as $col) {
             $ret[] = $this->escapeColumn($col);
         }
@@ -112,13 +114,12 @@ abstract class Adapter
         return $implodedName;
     }
 
-    public function escapeValue(mixed $value, OrmOperator $operator): string
+    public function escapeValue(mixed $value, ComparisonOperator $operator): string
     {
-        //$ret = '';
-        if ($operator == OrmOperator::isNull || $operator == OrmOperator::isNotNull) {
+        if ($operator == ComparisonOperator::isNull || $operator == ComparisonOperator::isNotNull) {
             return '';
         }
-        if ($operator == OrmOperator::in || $operator == OrmOperator::notIn) {
+        if ($operator == ComparisonOperator::in || $operator == ComparisonOperator::notIn) {
             if (!is_array($value)) {
                 $value = [$value];
             }
@@ -132,7 +133,7 @@ abstract class Adapter
             $val = array_shift($value);
             $value = $val;
         }
-        if($value instanceof OrmKeyword){
+        if($value instanceof Keyword){
             $stringValue = $value->value;
         }else{
             $stringValue = strval($value);
@@ -142,27 +143,27 @@ abstract class Adapter
 
     public function openBlock(): string
     {
-        return OrmKeyword::openBlock->value . ' ';
+        return Keyword::openBlock->value . ' ';
     }
 
     public function closeBlock(): string
     {
-        return ' ' . OrmKeyword::closeBlock->value;
+        return ' ' . Keyword::closeBlock->value;
     }
 
     public function opAND(): string
     {
-        return OrmOperator::and->value;
+        return LogicalOperator::and->value;
     }
 
     public function opOR(): string
     {
-        return OrmOperator::or->value;
+        return LogicalOperator::or->value;
     }
 
     public function opNOT(): string
     {
-        return OrmOperator::not->value;
+        return LogicalOperator::not->value;
     }
 
     public function opCOUNT(string $column, bool $distinct): string
@@ -174,7 +175,7 @@ abstract class Adapter
             //$column = $this->escapeIdentifier($column);
             $column = $this->escapeColumn($column);
         }
-        return OrmFunction::count->value . OrmKeyword::openBlock->value . ($distinct ? OrmKeyword::distinct->value . ' ' : '') . $column . OrmKeyword::closeBlock->value . ' as _numrows';
+        return AggregationFunction::count->value . Keyword::openBlock->value . ($distinct ? Keyword::distinct->value . ' ' : '') . $column . Keyword::closeBlock->value . ' as _numrows';
     }
 
     public function parseSelect(bool $distinct, array $select, array $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
@@ -182,24 +183,24 @@ abstract class Adapter
         foreach ($orderby as $k => $v) {
             $orderby[$k] = $k . ' ' . $v;
         }
-        $query = OrmKeyword::select->value . ' ' .
-                ($distinct ? ' ' . OrmKeyword::distinct->value . ' ' : '') .
+        $query = Statement::select->value . ' ' .
+                ($distinct ? ' ' . Keyword::distinct->value . ' ' : '') .
                 implode(',', $select) . ' ' .
-                OrmKeyword::from->value . ' ' . implode(',', $from) . ' ' .
-                ((count($where) > 0) ? OrmKeyword::where->value . ' ' . implode(' ', $where) : '' ) . ' ' .
-                ($groupby ? ' ' . OrmKeyword::groupBy->value . ' ' . implode(',', $groupby) . ' ' : '') .
-                ($groupby && $having ? OrmKeyword::having->value . ' ' . implode(' ', $having) . ' ' : '') .
-                (count($orderby) > 0 ? ' ' . OrmKeyword::orderBy->value . ' ' . implode(',', $orderby) . ' ' : '') .
-                ($limit > 0 ? ' ' . OrmKeyword::limit->value . ' ' . $limit . ' ' : '') .
-                ($offset > 0 ? ' ' . OrmKeyword::offset->value . ' ' . $offset . ' ' : '');
+                Keyword::from->value . ' ' . implode(',', $from) . ' ' .
+                ((count($where) > 0) ? Condition::where->value . ' ' . implode(' ', $where) : '' ) . ' ' .
+                ($groupby ? ' ' . Keyword::groupBy->value . ' ' . implode(',', $groupby) . ' ' : '') .
+                ($groupby && $having ? Condition::having->value . ' ' . implode(' ', $having) . ' ' : '') .
+                (count($orderby) > 0 ? ' ' . Keyword::orderBy->value . ' ' . implode(',', $orderby) . ' ' : '') .
+                ($limit > 0 ? ' ' . Keyword::limit->value . ' ' . $limit . ' ' : '') .
+                ($offset > 0 ? ' ' . Keyword::offset->value . ' ' . $offset . ' ' : '');
         return $query;
     }
 
     public function parseInsert(array $table, array $columns = [], array $values = []): string
     {
-        $query = OrmKeyword::insertInto->value . ' ' . implode(',', $table) . ' ' .
-                OrmKeyword::openBlock->value . implode(',', $columns) . OrmKeyword::closeBlock->value . ' ' . OrmKeyword::insertValue->value . ' ' .
-                OrmKeyword::openBlock->value . implode(',', $values) . OrmKeyword::closeBlock->value;
+        $query = Statement::insert->value . ' ' . implode(',', $table) . ' ' .
+                Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ' ' . Keyword::insertValue->value . ' ' .
+                Keyword::openBlock->value . implode(',', $values) . Keyword::closeBlock->value;
         return $query;
     }
 
@@ -209,16 +210,16 @@ abstract class Adapter
         foreach ($columns as $k => $col) {
             $cmd[] = $col . ' = ' . $values[$k];
         }
-        $query = OrmKeyword::update->value . ' ' . implode(',', $table) . ' ' .
-                OrmKeyword::set->value . ' ' . implode(',', $cmd) . ' ' .
-                ($where ? ' ' . OrmKeyword::where->value . ' ' . implode(' ', $where) : '');
+        $query = Statement::update->value . ' ' . implode(',', $table) . ' ' .
+                Keyword::set->value . ' ' . implode(',', $cmd) . ' ' .
+                ($where ? ' ' . Condition::where->value . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
     public function parseDelete(array $from, array $where = []): string
     {
-        $query = OrmKeyword::deleteFrom->value . ' ' . implode(',', $from) . ' ' .
-                ($where ? ' ' . OrmKeyword::where->value . ' ' . implode(' ', $where) : '');
+        $query = Statement::delete->value . ' ' . implode(',', $from) . ' ' .
+                ($where ? ' ' . Condition::where->value . ' ' . implode(' ', $where) : '');
         return $query;
     }
 

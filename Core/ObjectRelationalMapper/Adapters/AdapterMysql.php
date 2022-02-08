@@ -30,8 +30,8 @@ use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Core\Exceptions\AdapterException;
 use SismaFramework\Core\ObjectRelationalMapper\Adapter;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmType;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
 use SismaFramework\Core\ObjectRelationalMapper\ResultSets\ResultSetMysql;
 
 /**
@@ -84,27 +84,27 @@ class AdapterMysql extends Adapter
         }
     }
 
-    protected function translateDataType(OrmType $ormType): int
+    protected function translateDataType(DataType $ormType): int
     {
 
         switch ($ormType) {
-            case OrmType::typeBoolean:
+            case DataType::typeBoolean:
                 return \PDO::PARAM_BOOL;
-            case OrmType::typeNull:
+            case DataType::typeNull:
                 return \PDO::PARAM_NULL;
-            case OrmType::typeInteger:
-            case OrmType::typeEntity:
+            case DataType::typeInteger:
+            case DataType::typeEntity:
                 return \PDO::PARAM_INT;
-            case OrmType::typeEnumeration:
-            case OrmType::typeString:
-            case OrmType::typeDecimal:
-            case OrmType::typeDate:
+            case DataType::typeEnumeration:
+            case DataType::typeString:
+            case DataType::typeDecimal:
+            case DataType::typeDate:
                 return \PDO::PARAM_STR;
-            case OrmType::typeBinary:
+            case DataType::typeBinary:
                 return \PDO::PARAM_LOB;
-            case OrmType::typeStatement:
+            case DataType::typeStatement:
                 return \PDO::PARAM_STMT;
-            case OrmType::typeGeneric:
+            case DataType::typeGeneric:
             default:
                 return false;
         }
@@ -119,25 +119,25 @@ class AdapterMysql extends Adapter
                     $zero = true;
                 }
                 if (!isset($bindTypes[$k])) {
-                    $bindTypes[$k] = OrmType::typeGeneric;
+                    $bindTypes[$k] = DataType::typeGeneric;
                 }
-                if ($bindTypes[$k] == OrmType::typeGeneric) {
+                if ($bindTypes[$k] == DataType::typeGeneric) {
                     if (is_integer($v)) {
-                        $bindTypes[$k] = OrmType::typeInteger;
+                        $bindTypes[$k] = DataType::typeInteger;
                     } elseif (is_float($v)) {
-                        $bindTypes[$k] = OrmType::typeDecimal;
+                        $bindTypes[$k] = DataType::typeDecimal;
                     } elseif (is_string($v)) {
-                        $bindTypes[$k] = OrmType::typeString;
+                        $bindTypes[$k] = DataType::typeString;
                     } elseif (is_bool($v)) {
-                        $bindTypes[$k] = OrmType::typeBoolean;
+                        $bindTypes[$k] = DataType::typeBoolean;
                     } elseif ($v instanceof BaseEntity) {
-                        $bindTypes[$k] = OrmType::typeEntity;
+                        $bindTypes[$k] = DataType::typeEntity;
                     } elseif (is_subclass_of($v, \UnitEnum::class)) {
-                        $bindTypes[$k] = OrmType::typeEnumeration;
+                        $bindTypes[$k] = DataType::typeEnumeration;
                     } elseif ($v instanceof SismaDateTime) {
-                        $bindTypes[$k] = OrmType::typeDate;
+                        $bindTypes[$k] = DataType::typeDate;
                     } else {
-                        $bindTypes[$k] = OrmType::typeGeneric;
+                        $bindTypes[$k] = DataType::typeGeneric;
                     }
                 }
                 $bindTypes[$k] = $this->translateDataType($bindTypes[$k]);
@@ -223,10 +223,10 @@ class AdapterMysql extends Adapter
         return $parsedName;
     }
 
-    public function escapeValue(mixed $value, OrmOperator $operator): string
+    public function escapeValue(mixed $value, ComparisonOperator $operator): string
     {
         $value = parent::escapeValue($value, $operator);
-        if (!in_array($operator, [OrmOperator::in, OrmOperator::notIn, OrmOperator::isNull, OrmOperator::isNotNull])) {
+        if (!in_array($operator, [ComparisonOperator::in, ComparisonOperator::notIn, ComparisonOperator::isNull, ComparisonOperator::isNotNull])) {
             $placeholder = ($value == '?' || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));
             if ($placeholder) {
                 return $value;

@@ -27,8 +27,11 @@
 namespace SismaFramework\Core\ObjectRelationalMapper;
 
 use SismaFramework\Core\ObjectRelationalMapper\Adapter;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Statement;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Condition;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Indexing;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
 use SismaFramework\Core\ObjectRelationalMapper\Query;
 
 /**
@@ -51,7 +54,7 @@ class Query
     protected string $command = '';
     static protected ?Query $instance = null;
     protected Adapter $adapter;
-    private string $current_conditions = '';
+    private ?Condition $current_conditions = null;
 
     public function __construct(?Adapter &$adapter = null)
     {
@@ -72,15 +75,15 @@ class Query
         $this->limit = 0;
         $this->group = array();
         $this->order = array();
-        $this->current_conditions = '';
+        $this->current_conditions = null;
         $this->closed = false;
         $this->command = '';
     }
 
-    public static function create(?Adapter &$adapter = null): Query
+    public static function create(?Adapter &$adapter = null): self
     {
         if (static::$instance === null) {
-            static::$instance = new Query($adapter);
+            static::$instance = new self($adapter);
         }
         $ret = clone static::$instance;
         return $ret;
@@ -91,19 +94,19 @@ class Query
         return $this->adapter;
     }
 
-    public function &setCount(string $column, bool $distinct = false): Query
+    public function &setCount(string $column, bool $distinct = false): self
     {
         $this->columns = array($this->adapter->opCount($column, $distinct));
         return $this;
     }
 
-    public function &setDistinct(bool $distinct = true): Query
+    public function &setDistinct(bool $distinct = true): self
     {
         $this->distinct = $distinct;
         return $this;
     }
 
-    public function &setColumns(?array $list = null): Query
+    public function &setColumns(?array $list = null): self
     {
         if ($list === null) {
             $this->setColumn();
@@ -113,7 +116,7 @@ class Query
         return $this;
     }
 
-    public function &setColumn(?string $column = null): Query
+    public function &setColumn(?string $column = null): self
     {
         if ($column === null) {
             $this->columns = [$this->adapter->allColumns()];
@@ -123,20 +126,17 @@ class Query
         return $this;
     }
 
-    /* public function &setTables($list): Query
-      {
-      if (!is_array($list)) {
-      $list = array(strval($list));
-      }
-      $tables = array();
-      foreach ($list as $t) {
-      $tables[] = $this->adapter->escapeIdentifier($t);
-      }
-      $this->tables = $tables;
-      return $this;
-      } */
+    public function &setTables(array $list): self
+    {
+        $tables = [];
+        foreach ($list as $t) {
+            $tables[] = $this->adapter->escapeIdentifier($t);
+        }
+        $this->tables = $tables;
+        return $this;
+    }
 
-    public function &setTable(string $table): Query
+    public function &setTable(string $table): self
     {
         $tables = [];
         $tables[] = $this->adapter->escapeIdentifier($table);
@@ -144,34 +144,35 @@ class Query
         return $this;
     }
 
-    public function &setOffset(int $offset): Query
+    public function &setOffset(int $offset): self
     {
         $this->offset = intval($offset);
         return $this;
     }
 
-    public function &setLimit(int $limit): Query
+    public function &setLimit(int $limit): self
     {
         $this->limit = intval($limit);
         return $this;
     }
 
-    public function &setOrderBy(?array $list = null): Query
+    public function &setOrderBy(?array $list = null): self
     {
-        $orders = array();
-        if ($list !== null) {
-            if (!is_array($list)) {
-                $list = [strval($list) => ''];
-            }
-            foreach ($list as $column => $mode) {
-                $orders[$this->adapter->escapeIdentifier($column)] = $this->adapter->escapeOrderDirection($mode);
-            }
-            $this->order = $orders;
+        foreach ($list as $column => $Indexing) {
+            $this->appendOrderByOption($column, $Indexing);
         }
         return $this;
     }
 
-    public function &setGroupBy(?array $list = null): Query
+    public function &appendOrderByOption(string $column, null|string|Indexing $Indexing = null): self
+    {
+        $parsedColumn = $this->adapter->escapeIdentifier($column);
+        $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
+        $this->order[$parsedColumn] = $parsedIndexing;
+        return $this;
+    }
+
+    public function &setGroupBy(?array $list = null): self
     {
         if ($list !== null) {
             $this->group = $this->adapter->escapeColumns($list);
@@ -179,86 +180,86 @@ class Query
         return $this;
     }
 
-    public function &setHaving(): Query
+    public function &setHaving(): self
     {
         $this->having = array();
-        $this->current_conditions = 'having';
+        $this->current_conditions = Condition::having;
         return $this;
     }
 
-    public function &setWhere(string $condition = ''): Query
+    public function &setWhere(string $condition = ''): self
     {
         $this->where = array();
         if ($condition !== '') {
             $this->where[] = $condition;
         }
-        $this->current_conditions = 'where';
+        $this->current_conditions = Condition::where;
         return $this;
     }
 
-    public function &appendCondition(string $column, OrmOperator $operator, OrmKeyword|string|null $value = null, bool $foreignKey = false): Query
+    public function &appendCondition(string $column, ComparisonOperator $operator, Keyword|string|null $value = null, bool $foreignKey = false): self
     {
         $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
         $escapedValue = $this->adapter->escapeValue($value, $operator);
-        if ($this->current_conditions == 'where') {
-            $this->where[] = $escapedColumn .' '. $operator->value .' '. $escapedValue;
+        if ($this->current_conditions == Condition::where) {
+            $this->where[] = $escapedColumn . ' ' . $operator->value . ' ' . $escapedValue;
         }
-        if ($this->current_conditions == 'having') {
-            $this->having[] = $escapedColumn .' '. $operator->value .' '. $escapedValue;
+        if ($this->current_conditions == Condition::having) {
+            $this->having[] = $escapedColumn . ' ' . $operator->value . ' ' . $escapedValue;
         }
         return $this;
     }
 
-    public function &appendOpenBlock(): Query
+    public function &appendOpenBlock(): self
     {
-        if ($this->current_conditions == 'where') {
+        if ($this->current_conditions == Condition::where) {
             $this->where[] = $this->adapter->openBlock();
         }
-        if ($this->current_conditions == 'having') {
+        if ($this->current_conditions == Condition::having) {
             $this->having[] = $this->adapter->openBlock();
         }
         return $this;
     }
 
-    public function &appendCloseBlock(): Query
+    public function &appendCloseBlock(): self
     {
-        if ($this->current_conditions == 'where') {
+        if ($this->current_conditions == Condition::where) {
             $this->where[] = $this->adapter->closeBlock();
         }
-        if ($this->current_conditions == 'having') {
+        if ($this->current_conditions == Condition::having) {
             $this->having[] = $this->adapter->closeBlock();
         }
         return $this;
     }
 
-    public function &appendAnd(): Query
+    public function &appendAnd(): self
     {
-        if ($this->current_conditions == 'where') {
+        if ($this->current_conditions == Condition::where) {
             $this->where[] = $this->adapter->opAND();
         }
-        if ($this->current_conditions == 'having') {
+        if ($this->current_conditions == Condition::having) {
             $this->having[] = $this->adapter->opAND();
         }
         return $this;
     }
 
-    public function &appendOr(): Query
+    public function &appendOr(): self
     {
-        if ($this->current_conditions == 'where') {
+        if ($this->current_conditions == Condition::where) {
             $this->where[] = $this->adapter->opOR();
         }
-        if ($this->current_conditions == 'having') {
+        if ($this->current_conditions == Condition::having) {
             $this->having[] = $this->adapter->opOR();
         }
         return $this;
     }
 
-    public function &appendNot(): Query
+    public function &appendNot(): self
     {
-        if ($this->current_conditions == 'where') {
+        if ($this->current_conditions == Condition::where) {
             $this->where[] = $this->adapter->opNOT();
         }
-        if ($this->current_conditions == 'having') {
+        if ($this->current_conditions == Condition::having) {
             $this->having[] = $this->adapter->opNOT();
         }
         return $this;
@@ -269,29 +270,29 @@ class Query
         $this->closed = true;
     }
 
-    public function &setCommand(string $cmd): Query
+    public function &setCommand(string $cmd): self
     {
         $this->command = strval($cmd);
         $this->close();
         return $this;
     }
 
-    public function getCommandToExecute(string $cmdType = 'select', array $extra = []): string
+    public function getCommandToExecute(Statement $cmdType = Statement::select, array $extra = []): ?string
     {
         if (!$this->closed) {
             return null;
         }
         switch ($cmdType) {
-            case 'insert':
+            case Statement::insert:
                 $this->command = $this->adapter->parseInsert($this->tables, $extra['columns'], $extra['values']);
                 break;
-            case 'update':
+            case Statement::update:
                 $this->command = $this->adapter->parseUpdate($this->tables, $extra['columns'], $extra['values'], $this->where);
                 break;
-            case 'delete':
+            case Statement::delete:
                 $this->command = $this->adapter->parseDelete($this->tables, $this->where);
                 break;
-            case 'select':
+            case Statement::select:
             default:
                 $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->tables, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
                 break;

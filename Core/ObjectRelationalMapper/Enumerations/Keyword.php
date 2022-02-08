@@ -30,11 +30,18 @@ namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum OrmFunction: string
+enum Keyword: string
 {
-
-    case count = 'COUNT';
-    case avg = 'AVG';
-    case sum = 'SUM';
-
+    case insertValue = 'VALUES';
+    case set = 'SET';
+    case from = 'FROM';
+    case distinct = 'DISTINCT';
+    case join = 'JOIN';
+    case orderBy = 'ORDER BY';
+    case groupBy = 'GROUP_BY';
+    case limit = 'LIMIT';
+    case offset = 'OFFSET';
+    case placeholder = '?';
+    case openBlock = '(';
+    case closeBlock = ')';
 }

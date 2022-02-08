@@ -30,17 +30,8 @@ namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum OrmType
+enum Indexing: string
 {
-    case typeBoolean;
-    case typeNull;
-    case typeInteger;
-    case typeString;
-    case typeBinary;
-    case typeDecimal;
-    case typeDate;
-    case typeStatement;
-    case typeEntity;
-    case typeEnumeration;
-    case typeGeneric;
+    case asc = 'ASC';
+    case desc = 'DESC';
 }

@@ -28,9 +28,9 @@ namespace SismaFramework\Core\ExtendedClasses;
 
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\ExtendedClasses\ReferencedModel;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmType;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 
 /**
@@ -48,13 +48,13 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query = $entityName::initQuery();
         $query->setWhere();
         if ($parentEntity === null) {
-            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), OrmOperator::isNull, '', true);
+            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
             $bindValues = [];
             $bindTypes = [];
         } else {
-            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), OrmOperator::equal, OrmKeyword::placeholder, true);
+            $query->appendCondition($entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues = [$parentEntity];
-            $bindTypes = [OrmType::typeEntity];
+            $bindTypes = [DataType::typeEntity];
         }
         $query->setOrderBy($order);
         $query->close();
@@ -88,12 +88,12 @@ abstract class SelfReferencedModel extends ReferencedModel
         $class = get_class($this->entity);
         $query = $class::initQuery();
         $query->setWhere();
-        $query->appendCondition('parent_card', OrmOperator::equal, OrmKeyword::placeholder, true);
+        $query->appendCondition('parent_card', ComparisonOperator::equal, Keyword::placeholder, true);
         $bindValues = [
             $excludedEntity,
         ];
         $bindTypes = [
-            OrmType::typeEntity,
+            DataType::typeEntity,
         ];
         $query->close();
         $result = $class::find($query, $bindValues, $bindTypes);

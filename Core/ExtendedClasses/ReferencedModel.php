@@ -29,9 +29,9 @@ namespace SismaFramework\Core\ExtendedClasses;
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\BaseClasses\BaseModel;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmType;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
 
 /**
  *
@@ -53,9 +53,9 @@ abstract class ReferencedModel extends BaseModel
         $class = get_class($this->entity);
         $query = $class::initQuery();
         $query->setWhere();
-        $query->appendCondition($propertyName, OrmOperator::equal, OrmKeyword::placeholder, true);
+        $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
         $bindValues = [$baseEntity];
-        $bindTypes = [OrmType::typeEntity];
+        $bindTypes = [DataType::typeEntity];
         $query->close();
         $result = $class::find($query, $bindValues, $bindTypes);
         $collection = new SismaCollection;

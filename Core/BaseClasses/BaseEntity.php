@@ -31,8 +31,9 @@ use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Core\ObjectRelationalMapper\Adapter;
 use SismaFramework\Core\ObjectRelationalMapper\Query;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmKeyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\OrmOperator;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Statement;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
+use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
 use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
 
 /**
@@ -147,9 +148,9 @@ abstract class BaseEntity
         $query = new Query($this->adapter);
         $query->setTable($this->tableName);
         $query->setWhere();
-        $query->appendCondition($this->primaryKey, OrmOperator::equal, OrmKeyword::placeholder);
+        $query->appendCondition($this->primaryKey, ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
-        $cmd = $query->getCommandToExecute('update', array('columns' => $cols, 'values' => $markers));
+        $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $cols, 'values' => $markers));
         $vals[] = $this->{$this->primaryKey};
         $this->checkStartTransaction();
         $ok = $this->adapter->execute($cmd, $vals);
@@ -202,7 +203,7 @@ abstract class BaseEntity
         $query = new Query($this->adapter);
         $query->setTable($this->tableName);
         $query->close();
-        $cmd = $query->getCommandToExecute('insert', array('columns' => $cols, 'values' => $markers));
+        $cmd = $query->getCommandToExecute(Statement::insert, array('columns' => $cols, 'values' => $markers));
         $this->checkStartTransaction();
         $ok = $this->adapter->execute($cmd, $vals);
         if ($ok) {
@@ -241,9 +242,9 @@ abstract class BaseEntity
         $query = new Query($this->adapter);
         $query->setTable($this->tableName);
         $query->setWhere();
-        $query->appendCondition($this->primaryKey, OrmOperator::equal, OrmKeyword::placeholder);
+        $query->appendCondition($this->primaryKey, ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
-        $cmd = $query->getCommandToExecute('delete');
+        $cmd = $query->getCommandToExecute(Statement::delete);
         $adapterToCall = $query->getAdapter();
         $bindValues = array($this->{$this->primaryKey});
         $ok = $adapterToCall->execute($cmd, $bindValues);
@@ -259,7 +260,7 @@ abstract class BaseEntity
             $query = static::initQuery($adapter);
         }
         $query->close();
-        $cmd = $query->getCommandToExecute('delete');
+        $cmd = $query->getCommandToExecute(Statement::delete);
         $adapterToCall = $query->getAdapter();
         self::unparseValue($bindValues);
         $ok = $adapterToCall->execute($cmd, $bindValues, $bindTypes);
@@ -272,7 +273,7 @@ abstract class BaseEntity
             $query = static::initQuery($adapter);
         }
         $query->close();
-        $cmd = $query->getCommandToExecute('select');
+        $cmd = $query->getCommandToExecute(Statement::select);
         $adapterToCall = $query->getAdapter();
         self::unparseValue($bindValues);
         $result = $adapterToCall->select($cmd, $bindValues, $bindTypes);
@@ -292,7 +293,7 @@ abstract class BaseEntity
         }
         $query->setCount('');
         $query->close();
-        $cmd = $query->getCommandToExecute('select');
+        $cmd = $query->getCommandToExecute(Statement::select);
         $adapterToCall = $query->getAdapter();
         self::unparseValue($bindValues);
         $result = $adapterToCall->select($cmd, $bindValues, $bindTypes);
