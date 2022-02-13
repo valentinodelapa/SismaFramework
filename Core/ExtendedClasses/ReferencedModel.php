@@ -28,6 +28,7 @@ namespace SismaFramework\Core\ExtendedClasses;
 
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\BaseClasses\BaseModel;
+use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
 use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
@@ -42,27 +43,79 @@ abstract class ReferencedModel extends BaseModel
 
     public function __call($name, $arguments): SismaCollection
     {
-        $nameParts = explode('By', substr($name, 3));
+        $nameParts = explode('By', $name);
+        $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
+        $action = array_shift($sismaCollectionParts);
         $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[1]));
         $entityName = strtolower(implode('_', $entityNameParts));
-        return $this->getSismaCollectionByEntity($entityName, $arguments[0]);
-    }
-    
-    public function getSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity): SismaCollection
-    {
-        $class = get_class($this->entity);
-        $query = $class::initQuery();
-        $query->setWhere();
-        $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
-        $bindValues = [$baseEntity];
-        $bindTypes = [DataType::typeEntity];
-        $query->close();
-        $result = $class::find($query, $bindValues, $bindTypes);
-        $collection = new SismaCollection;
-        foreach ($result as $entity) {
-            $collection->append($entity);
+        switch ($action) {
+            case 'get':
+                return $this->getSismaCollectionByEntity($entityName, $arguments[0]);
+                break;
+            case 'delete':
+                return $this->deleteSismaCollectionByEntity($entityName, $arguments[0]);
+                break;
+            default:
+                throw new ModelException('Metodo non trovato');
+                break;
         }
-        return $collection;
+    }
+
+    public function getSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        if ($baseEntity === null) {
+            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+            $bindValues = [];
+            $bindTypes = [];
+        } else {
+            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues = [$baseEntity];
+            $bindTypes = [DataType::typeEntity];
+        }
+        $query->close();
+        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
+    }
+
+    public function deleteSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        if ($baseEntity === null) {
+            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+            $bindValues = [];
+            $bindTypes = [];
+        } else {
+            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues = [$baseEntity];
+            $bindTypes = [DataType::typeEntity];
+        }
+        $query->close();
+        return $this->entityName::deleteBatch($query, $bindValues, $bindTypes);
+    }
+
+    public function getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, BaseEntity $baseEntity): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $query->appendCondition('id', ComparisonOperator::notEqualTwo, Keyword::placeholder, true);
+        $bindValues = [
+            $excludedEntity,
+        ];
+        $bindTypes = [
+            DataType::typeEntity,
+        ];
+        $query->appendAnd();
+        if ($baseEntity === null) {
+            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues = [$baseEntity];
+            $bindTypes = [DataType::typeEntity];
+        }
+        $query->close();
+        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
     }
 
 }

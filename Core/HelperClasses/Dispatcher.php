@@ -141,7 +141,7 @@ class Dispatcher
             }
         }
         if ($fileFound === false) {
-            $this->findInApplicationPath();
+            $this->switchNotFoundActions();
         }
     }
 

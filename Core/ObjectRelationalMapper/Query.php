@@ -158,8 +158,10 @@ class Query
 
     public function &setOrderBy(?array $list = null): self
     {
-        foreach ($list as $column => $Indexing) {
-            $this->appendOrderByOption($column, $Indexing);
+        if (is_array($list)) {
+            foreach ($list as $column => $Indexing) {
+                $this->appendOrderByOption($column, $Indexing);
+            }
         }
         return $this;
     }

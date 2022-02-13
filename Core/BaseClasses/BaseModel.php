@@ -33,6 +33,7 @@ use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
 use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
 use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
+use SismaFramework\Core\ObjectRelationalMapper\Query;
 
 /**
  *
@@ -43,6 +44,7 @@ abstract class BaseModel
 
     protected ?Adapter $adapter = null;
     protected BaseEntity $entity;
+    protected string $entityName;
 
     public function __construct(?Adapter $adapter = null)
     {
@@ -58,6 +60,7 @@ abstract class BaseModel
             ]);
         }
         $this->implementEmbeddedEntity();
+        $this->entityName = get_class($this->entity);
     }
 
     abstract public function implementEmbeddedEntity(): void;
@@ -78,18 +81,27 @@ abstract class BaseModel
 
     public function countEntityCollection(): int
     {
-        $class = get_class($this->entity);
-        $query = $class::initQuery();
+        $query = $this->initQuery();
         $query->close();
-        return $class::getCount($query);
+        return $this->entityName::getCount($query);
+    }
+
+    protected function initQuery(): Query
+    {
+        $query = $this->entityName::initQuery();
+        return $query;
     }
 
     public function getEntityCollection(?array $order = null): SismaCollection
     {
-        $class = get_class($this->entity);
-        $query = $class::initQuery();
+        $query = $this->initQuery();
         $query->close();
-        $result = $class::find($query);
+        return $this->getMultipleRowResult($query);
+    }
+
+    protected function getMultipleRowResult(Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
+    {
+        $result = $this->entityName::find($query, $bindValues, $bindTypes);
         $collection = new SismaCollection;
         foreach ($result as $entity) {
             $collection->append($entity);
@@ -97,14 +109,28 @@ abstract class BaseModel
         return $collection;
     }
 
+    public function getOtherEntityCollection(BaseEntity $excludedEntity): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $query->appendCondition('id', ComparisonOperator::notEqualTwo, Keyword::placeholder, true);
+        $bindValues = [
+            $excludedEntity,
+        ];
+        $bindTypes = [
+            DataType::typeEntity,
+        ];
+        $query->close();
+        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
+    }
+
     public function getEntityById(int $id): ?BaseEntity
     {
-        $class = get_class($this->entity);
-        $query = $class::initQuery();
+        $query = $this->initQuery();
         $query->setWhere();
         $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
-        return $class::findFirst($query, [
+        return $this->entityName::findFirst($query, [
                     $id,
                         ], [
                     DataType::typeInteger,
@@ -121,12 +147,11 @@ abstract class BaseModel
 
     public function deleteEntityById(int $id): bool
     {
-        $class = get_class($this->entity);
-        $query = $class::initQuery();
+        $query = $this->initQuery();
         $query->setWhere();
         $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
-        return $class::deleteBatch($query, [
+        return $this->entityName::deleteBatch($query, [
                     $id,
                         ], [
                     DataType::typeInteger,
