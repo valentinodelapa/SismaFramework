@@ -37,13 +37,26 @@ use SismaFramework\Core\Exceptions\EnumerationException;
 trait DataEnumeration
 {
 
-    abstract private function getAdditionalData(): int|string|array|\UnitEnum;
+    abstract private function setAdditionalData(): int|string|array|\UnitEnum;
     
-    abstract private function getFunctionalData() :int|string|array|\UnitEnum;
+    abstract private function setFunctionalData() :int|string|array|\UnitEnum;
 
     public function getAdditionalDataField(int|string|\UnitEnum ...$offsets): int|string|array|\UnitEnum
     {
-        $field = $this->getAdditionalData();
+        $field = $this->setAdditionalData();
+        foreach ($offsets as $offset) {
+            if (isset($field[$offset])) {
+                $field = $field[$offset];
+            } else {
+                throw new EnumerationException();
+            }
+        }
+        return $field;
+    }
+
+    public function getFunctionalDataField(int|string|\UnitEnum ...$offsets): int|string|array|\UnitEnum
+    {
+        $field = $this->setFunctionalData();
         foreach ($offsets as $offset) {
             if (isset($field[$offset])) {
                 $field = $field[$offset];

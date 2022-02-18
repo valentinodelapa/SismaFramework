@@ -117,16 +117,17 @@ class Dispatcher
 
     private function handle(): void
     {
-        $this->instanceControllerClass();
-        if ($this->controllerInstance instanceof $this->controllerName) {
-            $this->executeControllerAction();
+        if ($this->checkControllerPresence() === true) {
+            $this->resolveRouteCall();
         } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             new FixturesManager();
-        } elseif (file_exists(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->action)) {
+        } elseif (isset($this->pathParts[1]) && (file_exists(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
             header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
-            echo file_get_contents(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->action);
-        } else {
+            echo file_get_contents(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
+        } elseif ($this->pathParts[1]) {
             $this->findInApplicationPath();
+        } else {
+            $this->switchNotFoundActions();
         }
     }
 
@@ -134,9 +135,9 @@ class Dispatcher
     {
         $fileFound = false;
         foreach (\Config\MODULE_FOLDERS as $folder) {
-            if (file_exists(\Config\ROOT_PATH . $folder . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->action)) {
+            if (file_exists(\Config\ROOT_PATH . $folder . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])) {
                 header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
-                echo file_get_contents(\Config\ROOT_PATH . $folder . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->action);
+                echo file_get_contents(\Config\ROOT_PATH . $folder . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
                 $fileFound = true;
             }
         }
@@ -156,16 +157,14 @@ class Dispatcher
 
     private function instanceControllerClass(): void
     {
-        if ($this->checkControllerPresence() === true) {
-            $this->getControllerConstructorArguments();
-            if (count($this->reflectionConstructorArguments) == 0) {
-                $this->controllerInstance = new $this->controllerName;
-            } else {
-                $this->constructorArguments[] = $this->prevAccessToken;
-                $this->constructorArguments[] = $this->nextAccessToken;
-                $this->getAutoDependecyInjectionClass();
-                $this->controllerInstance = $this->reflectionController->newInstanceArgs($this->constructorArguments);
-            }
+        $this->getControllerConstructorArguments();
+        if (count($this->reflectionConstructorArguments) == 0) {
+            $this->controllerInstance = new $this->controllerName;
+        } else {
+            $this->constructorArguments[] = $this->prevAccessToken;
+            $this->constructorArguments[] = $this->nextAccessToken;
+            $this->getAutoDependecyInjectionClass();
+            $this->controllerInstance = $this->reflectionController->newInstanceArgs($this->constructorArguments);
         }
     }
 
@@ -219,11 +218,12 @@ class Dispatcher
         }
     }
 
-    private function executeControllerAction(): void
+    private function resolveRouteCall(): void
     {
         if ($this->checkActionPresenceInController()) {
+            $this->instanceControllerClass();
             $this->callControllerMethod();
-        } else{
+        } else {
             $this->switchNotFoundActions();
         }
     }

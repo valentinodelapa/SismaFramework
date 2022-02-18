@@ -41,7 +41,7 @@ enum Language: string
     case spanish = 'es_ES';
     case german = 'de_DE';
         
-    private function getAdditionalData(?self $language = null):string
+    private function setAdditionalData(?self $language = null):string
     {
         if($language === null){
             $language = self::from(\Config\LANGUAGE);
@@ -74,7 +74,7 @@ enum Language: string
         };
     }
     
-    private function getFunctionalData():int|string|array|\UnitEnum
+    private function setFunctionalData():int|string|array|\UnitEnum
     {
         
     }
