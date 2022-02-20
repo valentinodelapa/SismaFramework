@@ -33,10 +33,20 @@ namespace SismaFramework\Core\HelperClasses;
 class Logger
 {
 
-    public static function saveLog(string $message, int $code): void
+    public static function saveLog(string $message, int $code, string $file = ''): void
     {
         $handle = fopen(\Config\LOG_PATH, 'a');
-        fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\n");
+        fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "\n");
+        fclose($handle);
+    }
+
+    public static function saveTrace(array $trace): void
+    {
+        $handle = fopen(\Config\LOG_PATH, 'a');
+        foreach ($trace as $call) {
+            $row = "\t" . $call['class'] . $call['type'] . $call['function'] . "()" . "\n";
+            fwrite($handle, $row);
+        }
         fclose($handle);
     }
 
@@ -52,15 +62,17 @@ class Logger
         fclose($handle);
         return $log;
     }
-    
-    public static function getLogRowByRow():array
+
+    public static function getLogRowByRow(): array
     {
         $handle = fopen(\Config\LOG_PATH, 'r');
         $log = [];
-        while(! feof($handle))  {
-            $log[] = fgets($handle);
+        if ($handle) {
+            while (($line = fgets($handle)) !== false) {
+                $log[] = $line;
+            }
+            fclose($handle);
         }
-        fclose($handle);
         return $log;
     }
 

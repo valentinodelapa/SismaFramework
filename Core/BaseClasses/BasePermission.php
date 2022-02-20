@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\BaseClasses;
 
 use SismaFramework\Core\BaseClasses\BaseModel;
+use SismaFramework\Core\Enumerations\PermissionAttribute;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\Interfaces\Entities\UserInterface;
@@ -39,37 +40,23 @@ abstract class BasePermission
 {
 
     private static BasePermission $instance;
+    protected static $generateException = true;
     protected mixed $subject;
-    protected string $attribute;
+    protected PermissionAttribute $attribute;
     protected ?UserInterface $user;
     protected bool $result = true;
 
-    public function __construct(mixed $subject, string $attribute, ?UserInterface $user = null)
+    public function __construct(mixed $subject, PermissionAttribute $attribute, ?UserInterface $user = null)
     {
         $this->subject = $subject;
         $this->attribute = $attribute;
         $this->user = $user;
         $this->result = ($this->isInstancePermitted() === false) ? false : $this->result;
         $this->checkResult();
-        $this->result = ($this->isConstantPermitted() === false) ? false : $this->result;
-        $this->checkResult();
         $this->result = ($this->checkPermmisions() === false) ? false : $this->result;
-        $this->checkResult();
     }
 
     abstract protected function isInstancePermitted(): bool;
-
-    private function isConstantPermitted(): bool
-    {
-        $class = get_called_class();
-        $reflectionClass = new \ReflectionClass($class);
-        $constantArray = $reflectionClass->getConstants();
-        if (in_array($this->attribute, $constantArray)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     abstract protected function checkPermmisions(): bool;
 
@@ -80,10 +67,20 @@ abstract class BasePermission
         }
     }
 
-    static public function isAllowed(mixed $subject, string $attribute, ?UserInterface $user = null): void
+    protected function returnResult(): bool
+    {
+        return $this->result;
+    }
+
+    static public function isAllowed(mixed $subject, PermissionAttribute $attribute, ?UserInterface $user = null, bool $generateException = true): bool
     {
         $class = get_called_class();
+        static::$generateException = $generateException;
         self::$instance = new $class($subject, $attribute, $user);
+        if ($generateException) {
+            self::$instance->checkResult();
+        }
+        return self::$instance->returnResult();
     }
 
 }

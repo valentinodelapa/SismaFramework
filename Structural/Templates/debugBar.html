@@ -10,9 +10,15 @@
             <div>{{executionTime}} ms</div>
         </div>
     </div>
-    <div class="debug-bar-body" id="debug-body-database">{{debugBarQuery}}</div>
-    <div class="debug-bar-body" id="debug-body-log">{{debugBarLog}}</div>
-    <div class="debug-bar-body" id="debug-body-form">{{debugBarForm}}</div>
+    <div class="debug-bar-body" id="debug-body-database">
+        <pre>{{debugBarQuery}}</pre>
+    </div>
+    <div class="debug-bar-body" id="debug-body-log">
+        <pre>{{debugBarLog}}</pre>
+    </div>
+    <div class="debug-bar-body" id="debug-body-form">
+        <pre>{{debugBarForm}}</pre>
+    </div>
     <script>
         $(document).ready(function () {
             var debugBarBody = $('.debug-bar-body')

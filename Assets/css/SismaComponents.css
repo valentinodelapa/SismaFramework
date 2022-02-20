@@ -56,5 +56,6 @@
 .debug-bar-header-left > div, .debug-bar-header-right > div{padding: 2px 5px; background-color: #f4f4f4; border-radius: 3px;}
 .debug-bar-header-left > label:last-of-type{}
 .debug-bar-body{height: 200px; display: none; flex-direction: column; background-color: white; overflow-y: scroll}
-.debug-bar-body > div{padding: 2px 10px;}
-.debug-bar-body > div:nth-of-type(even){background-color: #f4f4f4}
+.debug-bar-body > pre {margin: 0px; padding: 0px;}
+.debug-bar-body > pre > div{padding: 2px 10px;}
+.debug-bar-body > pre > div:nth-of-type(even){background-color: #f4f4f4}

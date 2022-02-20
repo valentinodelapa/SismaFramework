@@ -24,29 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
-
-use SismaFramework\Core\HelperClasses\Logger;
-use SismaFramework\Core\HelperClasses\Router;
+namespace SismaFramework\Core\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class BaseException extends \Exception
+enum PermissionAttribute
 {
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = NULL)
-    {
-        parent::__construct($message, $code, $previous);
-        Logger::saveLog($message, $code);
-        if(\Config\DEVELOPMENT_ENVIRONMENT){
-            Logger::saveTrace($this->getTrace());
-        }
-        $this->errorRedirect();
-    }
-    
-    protected function errorRedirect()
-    {
-        Router::redirect('error/message/Errore');
-    }
+    case allow;
+    case check;
+    case deny;
 }
