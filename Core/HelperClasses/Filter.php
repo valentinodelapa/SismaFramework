@@ -96,7 +96,7 @@ class Filter
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
-        $result = (ctype_alpha($variabile)) ? $result : false;
+        $result = (ctype_alpha($value)) ? $result : false;
         return $result;
     }
 
@@ -128,7 +128,7 @@ class Filter
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
-        $result = (ctype_alnum($variabile)) ? $result : false;
+        $result = (ctype_alnum($value)) ? $result : false;
         return $result;
     }
 

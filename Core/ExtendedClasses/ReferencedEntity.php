@@ -28,6 +28,7 @@ namespace SismaFramework\Core\ExtendedClasses;
 
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\Core\Exceptions\EntityException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 /**
@@ -38,8 +39,7 @@ abstract class ReferencedEntity extends BaseEntity
 {
 
     protected static array $collectionData;
-    
-    
+
     public const FOREIGN_KEY_TYPE = 'foreignKeyType';
     public const FOREIGN_KEY_NAME = 'foreignKeyName';
     public const FOREIGN_KEY_SUFFIX = 'Collection';
@@ -66,7 +66,7 @@ abstract class ReferencedEntity extends BaseEntity
         $result = true;
         $result = (self::checkRelatedPropertyPresence($collectionName) === false) ? false : $result;
         $result = (self::checkRelatedPropertyName($collectionName) === false) ? false : $result;
-        if($result === false){
+        if ($result === false) {
             throw new InvalidArgumentException();
         }
     }
@@ -75,7 +75,7 @@ abstract class ReferencedEntity extends BaseEntity
     {
         return (property_exists(self::$collectionData[$collectionName][static::FOREIGN_KEY_TYPE], self::$collectionData[$collectionName][static::FOREIGN_KEY_NAME]));
     }
-    
+
     private static function checkRelatedPropertyName(string $collectionName): bool
     {
         $calledClassName = get_called_class();
@@ -90,13 +90,15 @@ abstract class ReferencedEntity extends BaseEntity
         switch ($methodType) {
             case 'set':
                 $argument = isset($arguments[0]) ? $arguments[0] : null;
-                return $this->setSismaCollection($propertyName, $argument);
+                $this->setSismaCollection($propertyName, $argument);
                 break;
             case 'add':
-                return $this->addEntityToSimaCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
+                $this->addEntityToSimaCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
                 break;
             case 'get':
                 return $this->getSismaCollection($propertyName);
+            default:
+                throw new EntityException('Metodo non trovato');
                 break;
         }
     }

@@ -120,7 +120,7 @@ class Dispatcher
         if ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
         } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
-            new FixturesManager();
+            $fixtureManager = new FixturesManager();
         } elseif (isset($this->pathParts[1]) && (file_exists(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
             header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
             echo file_get_contents(\Config\BASE_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);

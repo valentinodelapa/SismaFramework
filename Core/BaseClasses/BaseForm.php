@@ -168,11 +168,9 @@ abstract class BaseForm
         if (array_key_exists($propertyName, $this->filterFiledsMode)) {
             $this->filterErrors[$propertyName . "Error"] = false;
             $filterFunction = $this->filterFiledsMode[$propertyName]['filterType']->value;
-            if (Filter::$filterFunction($this->entityData->$propertyName)) {
-                $this->filterResult = $this->filterResult;
-            } elseif (($this->filterFiledsMode[$propertyName]['allowNull'] === true) && ($this->entityData->$propertyName === null)) {
-                $this->filterResult = $this->filterResult;
-            } else {
+            $conditionOne = Filter::$filterFunction($this->entityData->$propertyName);
+            $conditionTwo = (($this->filterFiledsMode[$propertyName]['allowNull'] === true) && ($this->entityData->$propertyName === null));
+            if (($conditionOne === false) && ($conditionTwo === false)) {
                 $this->filterResult = false;
                 $this->filterErrors[$propertyName . "Error"] = true;
             }

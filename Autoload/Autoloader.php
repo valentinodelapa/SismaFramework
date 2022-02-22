@@ -35,8 +35,6 @@ class Autoloader
 
     private string $className;
     private string $classPath;
-    private static $classExsist = false;
-    private static array $naturalNamespaceParts = [];
 
     public function __construct(string $className)
     {
@@ -45,8 +43,8 @@ class Autoloader
 
     public function findClass(): bool
     {
-        $classPath = \Config\ROOT_PATH . str_replace('\\', DIRECTORY_SEPARATOR, $this->className) . '.php';
-        if ($this->classExsist($classPath)) {
+        $actualClassPath = \Config\ROOT_PATH . str_replace('\\', DIRECTORY_SEPARATOR, $this->className) . '.php';
+        if ($this->classExsist($actualClassPath)) {
             return true;
         } elseif ($this->mapNamespace()) {
             return true;
@@ -69,9 +67,9 @@ class Autoloader
     {
         foreach (\Config\AUTOLOAD_NAMESPACE_MAPPER as $key => $value) {
             if (str_contains($this->className, $key)) {
-                $className = str_replace($key, '', $this->className);
-                $classPath = \Config\ROOT_PATH . $value . $className . '.php';
-                if ($this->classExsist($classPath)) {
+                $actualClassName = str_replace($key, '', $this->className);
+                $actualClassPath = \Config\ROOT_PATH . $value . $actualClassName . '.php';
+                if ($this->classExsist($actualClassPath)) {
                     return true;
                 }
             }
@@ -82,8 +80,8 @@ class Autoloader
     private function mapClass(): bool
     {
         if (array_key_exists($this->className, \Config\AUTOLOAD_CLASS_MAPPER)) {
-            $classPath = \Config\ROOT_PATH . \Config\AUTOLOAD_CLASS_MAPPER[$this->className] . '.php';
-            if ($this->classExsist($classPath)) {
+            $actualClassPath = \Config\ROOT_PATH . \Config\AUTOLOAD_CLASS_MAPPER[$this->className] . '.php';
+            if ($this->classExsist($actualClassPath)) {
                 return true;
             }
         }
