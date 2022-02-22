@@ -24,28 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Enumerations;
+namespace SismaFramework\Core\ProprietaryTypes;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum FilterType: string
+class SismaStandardClass extends \stdClass
 {
-    case noFilter = 'noFilter';
-    case isString = 'isString';
-    case isAlphabeticString = 'isAlphabeticString';
-    case isAlphanumericString = 'isAlphanumericString';
-    case isSecurePassword = 'isSecurePassword';
-    case isEmail = 'isEmail';
-    case isNumeric = 'isNumeric';
-    case isInteger = 'isInteger';
-    case isFloat = 'isFloat';
-    case isBoolean = 'isBoolean';
-    case isArray = 'isArray';
-    case isDate = 'isDate';
-    case isDatetime = 'isDatetime';
-    case isUploadedFile = 'isUploadedFile';
-    case isEnumeration = 'isEnumeration';
-    case isEntity = 'isEntity';
+    
 }

@@ -208,6 +208,16 @@ class Filter
         $result = (is_array($value)) ? $result : false;
         return $result;
     }
+    
+    public static function isDate($value):bool
+    {
+        return (SismaDateTime::createFromFormat('Y-m-d', $value)) ? true : false;
+    }
+    
+    public static function isDatetime($value):bool
+    {
+        return (SismaDateTime::createFromFormat('Y-m-d\TH:i', $value)) ? true : false;
+    }
 
     public static function isUploadedFile($value): bool
     {
