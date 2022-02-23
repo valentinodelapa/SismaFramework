@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,49 +24,24 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\ResultSets;
+namespace SismaFramework\Core\Traits;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\Core\ObjectRelationalMapper\Adapter;
-use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
 use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class ResultSetMysql extends ResultSet
+trait ConvertToSismaStandardClass
 {
 
-    protected ?\PDOStatement $result = null;
-
-    public function __construct(\PDOStatement &$result)
+    private function convertToSismaStandardClass($standardClass): SismaStandardClass
     {
-        $this->result = &$result;
-        $this->maxRecord = $this->result->rowCount() - 1;
-        $this->currentRecord = 0;
-    }
-
-    public function release(): void
-    {
-        if ($this->result === null) {
-            return;
+        $sismaStandardClass = new SismaStandardClass();
+        foreach ($standardClass as $property => $value) {
+            $sismaStandardClass->$property = $value;
         }
-        parent::release();
-        $this->result->closeCursor();
-        unset($this->result);
-        $this->result = null;
-    }
-
-    public function fetch(): SismaStandardClass|BaseEntity
-    {
-        if (($this->result === null) || ($this->currentRecord > $this->maxRecord)) {
-            return null;
-        }
-        $dbdata = $this->result->fetch(\PDO::FETCH_OBJ, \PDO::FETCH_ORI_ABS, $this->currentRecord);
-        return $this->transformResult($dbdata);
+        return $sismaStandardClass;
     }
 
 }
-
-?>

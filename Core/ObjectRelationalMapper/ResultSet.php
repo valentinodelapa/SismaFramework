@@ -27,28 +27,22 @@
 namespace SismaFramework\Core\ObjectRelationalMapper;
 
 use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class ResultSet implements \Iterator
+abstract class ResultSet implements \Iterator
 {
     use \SismaFramework\Core\Traits\BuildPropertyName;
+    use \SismaFramework\Core\Traits\ConvertToSismaStandardClass;
     use \SismaFramework\Core\Traits\ParseValue;
 
-    protected string $returnType = \stdClass::class;
+    protected string $returnType = SismaStandardClass::class;
     protected int $currentRecord = 0;
     protected int $maxRecord = -1;
-    //protected $result = null;
-/*
-    public function __construct(&$result)
-    {
-        $this->result = &$result;
-        $this->currentRecord = 0;
-        $this->maxRecord = -1;
-    }
-*/
+    
     public function numRows(): int
     {
         return 0;
@@ -71,10 +65,7 @@ class ResultSet implements \Iterator
         return $this->fetch();
     }
 
-    public function fetch(): \stdClass|BaseEntity
-    {
-        
-    }
+    abstract public function fetch(): SismaStandardClass|BaseEntity;
 
     public function seek(int $n): BaseEntity
     {
@@ -116,13 +107,13 @@ class ResultSet implements \Iterator
         }
     }
 
-    protected function transformResult(&$result): \stdClass|BaseEntity
+    protected function transformResult(&$result): SismaStandardClass|BaseEntity
     {
         if (!$result) {
             return null;
         }
-        if ($this->returnType == \stdClass::class) {
-            return $result;
+        if ($this->returnType == SismaStandardClass::class) {
+            return $this->convertToSismaStandardClass($result);
         }
         $class = $this->returnType;
         $obj = new $class();
