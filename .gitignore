@@ -2,5 +2,4 @@
 /nbproject/
 /Logs/log.txt
 /Tests/
-.scannerwork/.sonar_lock
-.scannerwork/report-task.txt
+.scannerwork/

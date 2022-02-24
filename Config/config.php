@@ -29,7 +29,7 @@ namespace Config;
 /* Name Constant */
 
 const ADAPTERS = 'Adapters';
-const APPLICATION = 'Sample';
+const APPLICATION = 'Application';
 const ASSETS = 'Assets';
 const CONTROLLERS = 'Controllers';
 const CORE = 'Core';
@@ -53,7 +53,7 @@ const LANGUAGE = 'it_IT';
 const MAX_RELOAD_ATTEMPTS = 3;
 const CONFIGURATION_PASSWORD = '';
 const ENCRYPTION_KEY = '';
-const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
+const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const APPLICATION_PATH = APPLICATION . DIRECTORY_SEPARATOR;
 const APPLICATION_NAMESPACE = PROJECT . '\\' . APPLICATION . '\\';
 const APPLICATION_ASSETS_PATH = APPLICATION_PATH . ASSETS . DIRECTORY_SEPARATOR;
@@ -61,8 +61,8 @@ const SYSTEM_PATH = ROOT_PATH;
 const CORE_PATH = SYSTEM_PATH . CORE . DIRECTORY_SEPARATOR;
 const CORE_NAMESPACE = SYSTEM . '\\' . CORE . '\\';
 const BASE_ASSETS_PATH = SYSTEM_PATH . ASSETS . DIRECTORY_SEPARATOR;
-const LOG_PATH = SYSTEM_PATH . 'Logs'.DIRECTORY_SEPARATOR.'log.txt';
-const PUBLIC_PATH = SYSTEM_PATH . 'Public'.DIRECTORY_SEPARATOR;
+const LOG_PATH = SYSTEM_PATH . 'Logs' . DIRECTORY_SEPARATOR . 'log.txt';
+const PUBLIC_PATH = SYSTEM_PATH . 'Public' . DIRECTORY_SEPARATOR;
 const DEVELOPMENT_ENVIRONMENT = true;
 const MODULE_FOLDERS = [
 ];
@@ -71,11 +71,11 @@ const AUTOLOAD_NAMESPACE_MAPPER = [
 const AUTOLOAD_CLASS_MAPPER = [
 ];
 const ASSET_FOLDERS = [
-    'text'.DIRECTORY_SEPARATOR.'css' => 'css',
-    'image'.DIRECTORY_SEPARATOR.'jpeg' => 'jpeg',
-    'image'.DIRECTORY_SEPARATOR.'png' => 'png',
-    'image'.DIRECTORY_SEPARATOR.'svg+xml' => 'svg',
-    'application'.DIRECTORY_SEPARATOR.'javascript' => 'javascript',
+    'text' . DIRECTORY_SEPARATOR . 'css' => 'css',
+    'image' . DIRECTORY_SEPARATOR . 'jpeg' => 'jpeg',
+    'image' . DIRECTORY_SEPARATOR . 'png' => 'png',
+    'image' . DIRECTORY_SEPARATOR . 'svg+xml' => 'svg',
+    'application' . DIRECTORY_SEPARATOR . 'javascript' => 'javascript',
 ];
 
 /* Fixtures Constant */

@@ -46,28 +46,18 @@ class AdapterMysql extends Adapter
     public function connect(array $options = []): void
     {
         if (self::$connection === null) {
-            $hostname = isset($options['hostname']) ? $options['hostname'] : 'localhost';
-            $port = isset($options['port']) ? $options['port'] : null;
-            $username = isset($options['username']) ? $options['username'] : 'root';
-            $password = isset($options['password']) ? $options['password'] : '';
-            $database = isset($options['database']) ? $options['database'] : '';
-            $charset = isset($options['charset']) ? $options['charset'] : 'utf8';
+            $hostname = $options['hostname'] ?? 'localhost';
+            $port = $options['port'] ?? null;
+            $username = $options['username'] ?? 'root';
+            $password = $options['password'] ?? '';
+            $database = $options['database'] ?? '';
+            $charset = $options['charset'] ?? 'utf8';
 
-            $dsn = 'mysql:' .
-                    'host=' . $hostname . ';' .
-                    ($port !== null ? 'port=' . $port . ';' : '') .
-                    'dbname=' . $database . ';' .
-                    'charset=' . $charset;
-            unset($options['hostname']);
-            unset($options['port']);
-            unset($options['username']);
-            unset($options['password']);
-            unset($options['database']);
-            unset($options['charset']);
+            $dsn = 'mysql:' . 'host=' . $hostname . ';' . ($port !== null ? 'port=' . $port . ';' : '') . 'dbname=' . $database . ';' . 'charset=' . $charset;
             self::$connection = new \PDO($dsn, $username, $password, $options);
             if (!self::$connection) {
                 self::$connection = null;
-                throw new \Exception('DB: unable to connect');
+                throw new AdapterException('DB: unable to connect');
             }
             self::$connection->exec('SET names ' . $charset);
             if (!Adapter::getDefault()) {
@@ -112,55 +102,56 @@ class AdapterMysql extends Adapter
 
     protected function parseBind(array &$bindValues = [], array &$bindTypes = []): void
     {
-        if ($bindValues) {
-            $zero = false;
-            foreach ($bindValues as $k => $v) {
-                if ($k === 0) {
-                    $zero = true;
-                }
-                if (!isset($bindTypes[$k])) {
-                    $bindTypes[$k] = DataType::typeGeneric;
-                }
-                if ($bindTypes[$k] == DataType::typeGeneric) {
-                    if (is_integer($v)) {
-                        $bindTypes[$k] = DataType::typeInteger;
-                    } elseif (is_float($v)) {
-                        $bindTypes[$k] = DataType::typeDecimal;
-                    } elseif (is_string($v)) {
-                        $bindTypes[$k] = DataType::typeString;
-                    } elseif (is_bool($v)) {
-                        $bindTypes[$k] = DataType::typeBoolean;
-                    } elseif ($v instanceof BaseEntity) {
-                        $bindTypes[$k] = DataType::typeEntity;
-                    } elseif (is_subclass_of($v, \UnitEnum::class)) {
-                        $bindTypes[$k] = DataType::typeEnumeration;
-                    } elseif ($v instanceof SismaDateTime) {
-                        $bindTypes[$k] = DataType::typeDate;
-                    } else {
-                        $bindTypes[$k] = DataType::typeGeneric;
-                    }
-                }
-                $bindTypes[$k] = $this->translateDataType($bindTypes[$k]);
+        $zero = false;
+        foreach ($bindValues as $key => $value) {
+            if (!isset($bindTypes[$key])) {
+                $bindTypes[$key] = DataType::typeGeneric;
             }
-            if ($zero) {
-                $tmpV = array();
-                $tmpK = array();
-                foreach ($bindValues as $k => $v) {
-                    if (is_int($k)) {
-                        $tmpV[$k + 1] = $v;
-                        $tmpK[$k + 1] = $bindTypes[$k];
-                    } else {
-                        $tmpV[$k] = $v;
-                        $tmpK[$k] = $bindTypes[$k];
-                    }
-                }
-                $bindValues = $tmpV;
-                $bindTypes = $tmpK;
+            if ($bindTypes[$key] === DataType::typeGeneric) {
+                $this->parseGenericBindType($bindTypes[$key], $value);
             }
-        } else {
-            $bindTypes = array();
-            $bindValues = array();
+            $bindTypes[$key] = $this->translateDataType($bindTypes[$key]);
         }
+        if (array_key_exists(0, $bindValues)) {
+            $this->incrementIndexedArrayKey($bindValues, $bindTypes);
+        }
+    }
+
+    private function parseGenericBindType(DataType &$bindType, mixed $value)
+    {
+        if (is_integer($value)) {
+            $bindType = DataType::typeInteger;
+        } elseif (is_float($value)) {
+            $bindType = DataType::typeDecimal;
+        } elseif (is_string($value)) {
+            $bindType = DataType::typeString;
+        } elseif (is_bool($value)) {
+            $bindType = DataType::typeBoolean;
+        } elseif ($value instanceof BaseEntity) {
+            $bindType = DataType::typeEntity;
+        } elseif (is_subclass_of($value, \UnitEnum::class)) {
+            $bindType = DataType::typeEnumeration;
+        } elseif ($value instanceof SismaDateTime) {
+            $bindType = DataType::typeDate;
+        } else {
+            $bindType = DataType::typeGeneric;
+        }
+    }
+
+    private function incrementIndexedArrayKey(array &$bindValues = [], array &$bindTypes = [])
+    {
+        $temporanyValues = $temporanyTypes = [];
+        foreach ($bindValues as $key => $value) {
+            if (is_int($key)) {
+                $temporanyValues[$key + 1] = $value;
+                $temporanyTypes[$key + 1] = $bindTypes[$key];
+            } else {
+                $temporanyValues[$key] = $value;
+                $temporanyTypes[$key] = $bindTypes[$key];
+            }
+        }
+        $bindValues = $temporanyValues;
+        $bindTypes = $temporanyTypes;
     }
 
     protected function selectToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSetMysql
@@ -168,19 +159,19 @@ class AdapterMysql extends Adapter
         if (!self::$connection) {
             return null;
         }
-        $st = self::$connection->prepare($cmd, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL));
+        $statement = self::$connection->prepare($cmd, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_SCROLL));
         $this->parseBind($bindValues, $bindTypes);
-        foreach ($bindValues as $key => $val) {
+        foreach ($bindValues as $key => &$value) {
             if ($bindTypes[$key] !== false) {
-                $st->bindValue($key, $val, $bindTypes[$key]);
-                $st->bindParam($key, $bindValues[$key], $bindTypes[$key]);
+                $statement->bindValue($key, $value, $bindTypes[$key]);
+                $statement->bindParam($key, $value, $bindTypes[$key]);
             } else {
-                $st->bindValue($key, $val, $bindTypes[$key]);
-                $st->bindParam($key, $bindValues[$key]);
+                $statement->bindValue($key, $value);
+                $statement->bindParam($key, $value);
             }
         }
-        $st->execute();
-        return new ResultSetMysql($st);
+        $statement->execute();
+        return new ResultSetMysql($statement);
     }
 
     protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool
@@ -188,21 +179,21 @@ class AdapterMysql extends Adapter
         if (!self::$connection) {
             return false;
         }
-        $st = self::$connection->prepare($cmd);
+        $statement = self::$connection->prepare($cmd);
         $this->parseBind($bindValues, $bindTypes);
-        foreach ($bindValues as $key => $val) {
+        foreach ($bindValues as $key => &$value) {
             if ($bindTypes[$key] !== false) {
-                $st->bindValue($key, $val, $bindTypes[$key]);
-                $st->bindParam($key, $bindValues[$key], $bindTypes[$key]);
+                $statement->bindValue($key, $value, $bindTypes[$key]);
+                $statement->bindParam($key, $value, $bindTypes[$key]);
             } else {
-                $st->bindValue($key, $val, $bindTypes[$key]);
-                $st->bindParam($key, $bindValues[$key]);
+                $statement->bindValue($key, $value);
+                $statement->bindParam($key, $value);
             }
         }
-        if ($st->execute()) {
+        if ($statement->execute()) {
             return true;
         } else {
-            $errorInfo = $st->errorInfo();
+            $errorInfo = $statement->errorInfo();
             Throw new AdapterException($errorInfo[0] . ' - ' . $errorInfo[2] . ' - ' . $cmd, $errorInfo[1]);
         }
     }
@@ -213,11 +204,8 @@ class AdapterMysql extends Adapter
             return $name;
         }
         $parts = explode('.', $name);
-        foreach ($parts as $k => $v) {
-            //$name = parent::escapeIdentifier($v);
-            //$name = str_replace($this->backtick, "", $name);
-            //$name = $this->backtick . $name . $this->backtick;
-            $parts[$k] = $this->backtick . str_replace($this->backtick, "", parent::escapeIdentifier($v)) . $this->backtick;
+        foreach ($parts as $key => $value) {
+            $parts[$key] = $this->backtick . str_replace($this->backtick, "", parent::escapeIdentifier($value)) . $this->backtick;
         }
         $parsedName = implode('.', $parts);
         return $parsedName;
