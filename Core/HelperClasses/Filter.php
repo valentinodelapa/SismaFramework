@@ -161,7 +161,7 @@ class Filter
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
-        if($result){
+        if ($result) {
             $result = (preg_match('/^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]{8,}$/', $value)) ? $result : false;
         }
         return $result;
@@ -171,7 +171,7 @@ class Filter
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
-        if($result){
+        if ($result) {
             $result = (preg_match('/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/', $value)) ? $result : false;
         }
         return $result;
@@ -213,15 +213,25 @@ class Filter
         $result = (is_array($value)) ? $result : false;
         return $result;
     }
-    
-    public static function isDate($value):bool
+
+    public static function isDate($value): bool
     {
-        return (SismaDateTime::createFromFormat('Y-m-d', $value)) ? true : false;
+        $result = true;
+        $result = (self::isNotEmpty($value)) ? $result : false;
+        if ($result) {
+            $result = (SismaDateTime::createFromFormat('Y-m-d', $value)) ? true : false;
+        }
+        return $result;
     }
-    
-    public static function isDatetime($value):bool
+
+    public static function isDatetime($value): bool
     {
-        return (SismaDateTime::createFromFormat('Y-m-d\TH:i', $value)) ? true : false;
+        $result = true;
+        $result = (self::isNotEmpty($value)) ? $result : false;
+        if ($result) {
+            $result = (SismaDateTime::createFromFormat('Y-m-d\TH:i', $value)) ? true : false;
+        }
+        return $result;
     }
 
     public static function isUploadedFile($value): bool

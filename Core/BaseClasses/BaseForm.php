@@ -59,7 +59,6 @@ abstract class BaseForm
 
     public function __construct(?BaseEntity $baseEntity = null)
     {
-        $this->entityData = new SismaStandardClass();
         $this->checkEntityClassNameOverride();
         $this->embedEntity($baseEntity);
         $this->setFilterFieldsMode();
@@ -99,6 +98,7 @@ abstract class BaseForm
 
     public function isValid(): bool
     {
+        $this->entityData = new SismaStandardClass();
         $reflectionEntity = new \ReflectionClass($this->entity);
         $reflectionProperties = $reflectionEntity->getProperties();
         foreach ($reflectionProperties as $property) {
@@ -246,7 +246,7 @@ abstract class BaseForm
         }
     }
     
-    public function getEntityDataTostandardClass(): SismaStandardClass
+    public function getEntityDataToStandardClass(): SismaStandardClass
     {
         return $this->entityData;
     }
