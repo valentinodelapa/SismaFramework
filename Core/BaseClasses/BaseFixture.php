@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\ORM\BaseClasses\BaseAdapter;
 
 /**
  *

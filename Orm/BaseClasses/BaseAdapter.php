@@ -24,26 +24,26 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper;
+namespace SismaFramework\ORM\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\AggregationFunction;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Condition;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Indexing;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\LogicalOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Statement;
-use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
+use SismaFramework\ORM\Enumerations\AggregationFunction;
+use SismaFramework\ORM\Enumerations\ComparisonOperator;
+use SismaFramework\ORM\Enumerations\Condition;
+use SismaFramework\ORM\Enumerations\Indexing;
+use SismaFramework\ORM\Enumerations\Keyword;
+use SismaFramework\ORM\Enumerations\LogicalOperator;
+use SismaFramework\ORM\Enumerations\Statement;
+use SismaFramework\ORM\BaseClasses\BaseResultSet;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-abstract class Adapter
+abstract class BaseAdapter
 {
 
-    protected static ?Adapter $adapter = null;
+    protected static ?BaseAdapter $adapter = null;
     protected static $connection = null;
 
     public function __construct(array $options = [])
@@ -53,17 +53,17 @@ abstract class Adapter
     
     abstract protected function connect(array $options = []):void;
 
-    public static function &getDefault(): ?Adapter
+    public static function &getDefault(): ?BaseAdapter
     {
         return static::$adapter;
     }
 
-    public static function setDefault(Adapter &$adapter): void
+    public static function setDefault(BaseAdapter &$adapter): void
     {
         static::$adapter = &$adapter;
     }
 
-    public static function create(string $type, array $options = []): Adapter
+    public static function create(string $type, array $options = []): BaseAdapter
     {
         $parsedType = ucwords(strtolower($type));
         $class = \Config\ADAPTER_NAMESPACE . 'Adapter' . $parsedType;
@@ -223,13 +223,13 @@ abstract class Adapter
         return $query;
     }
 
-    public function select(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSet
+    public function select(string $cmd, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
     {
         Debugger::addQueryExecuted($cmd);
         return $this->selectToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
 
-    abstract protected function selectToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSet;
+    abstract protected function selectToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): ?BaseResultSet;
 
     public function execute(string $cmd, array $bindValues = [], array $bindTypes = []): bool
     {

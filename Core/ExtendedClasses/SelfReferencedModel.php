@@ -28,9 +28,9 @@ namespace SismaFramework\Core\ExtendedClasses;
 
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\ExtendedClasses\ReferencedModel;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
+use SismaFramework\ORM\Enumerations\Keyword;
+use SismaFramework\ORM\Enumerations\ComparisonOperator;
+use SismaFramework\ORM\Enumerations\DataType;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 
 /**

@@ -29,12 +29,12 @@ namespace SismaFramework\Core\BaseClasses;
 use SismaFramework\Core\BaseClasses\BaseEnumerator;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
-use SismaFramework\Core\ObjectRelationalMapper\Adapter;
-use SismaFramework\Core\ObjectRelationalMapper\Query;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Statement;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
-use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
+use SismaFramework\ORM\BaseClasses\BaseAdapter;
+use SismaFramework\ORM\HelperClasses\Query;
+use SismaFramework\ORM\Enumerations\Statement;
+use SismaFramework\ORM\Enumerations\Keyword;
+use SismaFramework\ORM\Enumerations\ComparisonOperator;
+use SismaFramework\ORM\BaseClasses\BaseResultSet;
 
 /**
  *
@@ -50,16 +50,16 @@ abstract class BaseEntity
     protected static ?BaseEntity $instance = null;
     protected static bool $isFirstExecutedEntity = true;
     protected bool $isActiveTransaction = false;
-    protected ?Adapter $adapter = null;
+    protected ?BaseAdapter $adapter = null;
     protected array $collectionPropertiesName = [];
 
-    public function __construct(?Adapter &$adapter = null)
+    public function __construct(?BaseAdapter &$adapter = null)
     {
         if ($this->tableName === '') {
             $this->tableName = $this->buildTableName();
         }
         if ($adapter === null) {
-            $adapter = Adapter::getDefault();
+            $adapter = BaseAdapter::getDefault();
         }
         $this->adapter = &$adapter;
         $this->setPropertyDefaultValue();
@@ -115,10 +115,10 @@ abstract class BaseEntity
         return strtolower(implode('_', $tmp));
     }
 
-    static public function initQuery(?Adapter &$adapter = null): Query
+    static public function initQuery(?BaseAdapter &$adapter = null): Query
     {
         if ($adapter === null) {
-            $adapter = Adapter::getDefault();
+            $adapter = BaseAdapter::getDefault();
         }
         $class = get_called_class();
         $name = $class::getTableName();
@@ -127,7 +127,7 @@ abstract class BaseEntity
         return $qry;
     }
 
-    public function &getAdapter(): Adapter
+    public function &getAdapter(): BaseAdapter
     {
         return $this->adapter;
     }
@@ -254,7 +254,7 @@ abstract class BaseEntity
         return $ok;
     }
 
-    static public function deleteBatch(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?Adapter &$adapter = null): bool
+    static public function deleteBatch(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?BaseAdapter &$adapter = null): bool
     {
         if ($query === null) {
             $query = static::initQuery($adapter);
@@ -267,7 +267,7 @@ abstract class BaseEntity
         return $ok;
     }
 
-    static public function find(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?Adapter &$adapter = null): ResultSet
+    static public function find(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?BaseAdapter &$adapter = null): BaseResultSet
     {
         if ($query === null) {
             $query = static::initQuery($adapter);
@@ -284,7 +284,7 @@ abstract class BaseEntity
         return $result;
     }
 
-    static public function getCount(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?Adapter &$adapter = null): int
+    static public function getCount(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?BaseAdapter &$adapter = null): int
     {
         if ($query === null) {
             $query = $query = static::initQuery($adapter);
@@ -309,7 +309,7 @@ abstract class BaseEntity
         return $data->_numrows;
     }
 
-    static public function findFirst(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?Adapter &$adapter = null): ?BaseEntity
+    static public function findFirst(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?BaseAdapter &$adapter = null): ?BaseEntity
     {
         if ($query === null) {
             $query = $query = static::initQuery($adapter);

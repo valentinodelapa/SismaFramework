@@ -24,15 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
+namespace SismaFramework\ORM\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum LogicalOperator: string
-{   
-    case and = 'AND';
-    case or = 'OR';
-    case not = 'NOT';
+enum AggregationFunction: string
+{
+
+    case count = 'COUNT';
+    case avg = 'AVG';
+    case sum = 'SUM';
+
 }

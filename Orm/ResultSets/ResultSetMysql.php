@@ -24,14 +24,49 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
+namespace SismaFramework\ORM\ResultSets;
+
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
+use SismaFramework\ORM\BaseClasses\BaseAdapter;
+use SismaFramework\ORM\BaseClasses\BaseResultSet;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum Indexing: string
+class ResultSetMysql extends BaseResultSet
 {
-    case asc = 'ASC';
-    case desc = 'DESC';
+
+    protected ?\PDOStatement $result = null;
+
+    public function __construct(\PDOStatement &$result)
+    {
+        $this->result = &$result;
+        $this->maxRecord = $this->result->rowCount() - 1;
+        $this->currentRecord = 0;
+    }
+
+    public function release(): void
+    {
+        if ($this->result === null) {
+            return;
+        }
+        parent::release();
+        $this->result->closeCursor();
+        unset($this->result);
+        $this->result = null;
+    }
+
+    public function fetch(): SismaStandardClass|BaseEntity
+    {
+        if (($this->result === null) || ($this->currentRecord > $this->maxRecord)) {
+            return null;
+        }
+        $dbdata = $this->result->fetch(\PDO::FETCH_OBJ, \PDO::FETCH_ORI_ABS, $this->currentRecord);
+        return $this->transformResult($dbdata);
+    }
+
 }
+
+?>

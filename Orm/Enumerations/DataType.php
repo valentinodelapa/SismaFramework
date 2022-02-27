@@ -24,15 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Exceptions;
-
-use SismaFramework\Core\BaseClasses\BaseException;
+namespace SismaFramework\ORM\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class AdapterException extends BaseException
+enum DataType
 {
-    
+    case typeBoolean;
+    case typeNull;
+    case typeInteger;
+    case typeString;
+    case typeBinary;
+    case typeDecimal;
+    case typeDate;
+    case typeStatement;
+    case typeEntity;
+    case typeEnumeration;
+    case typeGeneric;
 }

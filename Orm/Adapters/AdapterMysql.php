@@ -24,21 +24,21 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\Adapters;
+namespace SismaFramework\ORM\Adapters;
 
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
-use SismaFramework\Core\Exceptions\AdapterException;
-use SismaFramework\Core\ObjectRelationalMapper\Adapter;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
-use SismaFramework\Core\ObjectRelationalMapper\ResultSets\ResultSetMysql;
+use SismaFramework\ORM\Exceptions\AdapterException;
+use SismaFramework\ORM\BaseClasses\BaseAdapter;
+use SismaFramework\ORM\Enumerations\ComparisonOperator;
+use SismaFramework\ORM\Enumerations\DataType;
+use SismaFramework\ORM\ResultSets\ResultSetMysql;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class AdapterMysql extends Adapter
+class AdapterMysql extends BaseAdapter
 {
 
     protected string $backtick = "`";
@@ -60,8 +60,8 @@ class AdapterMysql extends Adapter
                 throw new AdapterException('DB: unable to connect');
             }
             self::$connection->exec('SET names ' . $charset);
-            if (!Adapter::getDefault()) {
-                Adapter::setDefault($this);
+            if (!BaseAdapter::getDefault()) {
+                BaseAdapter::setDefault($this);
             }
         }
     }

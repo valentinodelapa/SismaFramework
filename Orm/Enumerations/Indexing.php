@@ -24,14 +24,14 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
+namespace SismaFramework\ORM\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum Condition: string
+enum Indexing: string
 {
-    case where = 'WHERE';
-    case having = 'HAVING';
+    case asc = 'ASC';
+    case desc = 'DESC';
 }

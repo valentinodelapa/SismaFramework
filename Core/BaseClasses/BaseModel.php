@@ -26,14 +26,14 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\ORM\BaseClasses\BaseAdapter;
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
-use SismaFramework\Core\ObjectRelationalMapper\Query;
+use SismaFramework\ORM\Enumerations\Keyword;
+use SismaFramework\ORM\Enumerations\ComparisonOperator;
+use SismaFramework\ORM\Enumerations\DataType;
+use SismaFramework\ORM\HelperClasses\Query;
 
 /**
  *
@@ -42,16 +42,16 @@ use SismaFramework\Core\ObjectRelationalMapper\Query;
 abstract class BaseModel
 {
 
-    protected ?Adapter $adapter = null;
+    protected ?BaseAdapter $adapter = null;
     protected BaseEntity $entity;
     protected string $entityName;
 
-    public function __construct(?Adapter $adapter = null)
+    public function __construct(?BaseAdapter $adapter = null)
     {
-        if ($adapter instanceof Adapter) {
+        if ($adapter instanceof BaseAdapter) {
             $this->adapter = $adapter;
         } else {
-            $this->adapter = Adapter::create(\Config\DATABASE_ADAPTER_TYPE, [
+            $this->adapter = BaseAdapter::create(\Config\DATABASE_ADAPTER_TYPE, [
                         'database' => \Config\DATABASE_NAME,
                         'hostname' => \Config\DATABASE_HOST,
                         'password' => \Config\DATABASE_PASSWORD,

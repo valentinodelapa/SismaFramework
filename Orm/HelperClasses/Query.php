@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper;
+namespace SismaFramework\ORM\HelperClasses;
 
-use SismaFramework\Core\ObjectRelationalMapper\Adapter;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Statement;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Condition;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Indexing;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Query;
+use SismaFramework\ORM\BaseClasses\BaseAdapter;
+use SismaFramework\ORM\Enumerations\Statement;
+use SismaFramework\ORM\Enumerations\Condition;
+use SismaFramework\ORM\Enumerations\Indexing;
+use SismaFramework\ORM\Enumerations\Keyword;
+use SismaFramework\ORM\Enumerations\ComparisonOperator;
+use SismaFramework\ORM\HelperClasses\Query;
 
 /**
  *
@@ -53,14 +53,14 @@ class Query
     protected bool $closed = false;
     protected string $command = '';
     static protected ?Query $instance = null;
-    protected Adapter $adapter;
+    protected BaseAdapter $adapter;
     private ?Condition $current_conditions = null;
 
-    public function __construct(?Adapter &$adapter = null)
+    public function __construct(?BaseAdapter &$adapter = null)
     {
         $this->reset();
         if ($adapter === null) {
-            $adapter = Adapter::getDefault();
+            $adapter = BaseAdapter::getDefault();
         }
         $this->adapter = &$adapter;
         $this->setColumn($this->adapter->allColumns());
@@ -80,7 +80,7 @@ class Query
         $this->command = '';
     }
 
-    public static function create(?Adapter &$adapter = null): self
+    public static function create(?BaseAdapter &$adapter = null): self
     {
         if (static::$instance === null) {
             static::$instance = new self($adapter);
@@ -89,7 +89,7 @@ class Query
         return $ret;
     }
 
-    public function &getAdapter(): Adapter
+    public function &getAdapter(): BaseAdapter
     {
         return $this->adapter;
     }

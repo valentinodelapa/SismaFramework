@@ -24,25 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
+namespace SismaFramework\ORM\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum ComparisonOperator: string
+enum Statement: string
 {
-    case equal = '=';
-    case notEqualOne = '!=';
-    case notEqualTwo = '<>';
-    case greater = '>';
-    case less = '<';
-    case greaterOrEqual = '>=';
-    case lessOrEqual = '<=';
-    case in = 'IN';
-    case notIn = 'NOT IN';
-    case like = 'LIKE';
-    case notLike = 'NOT LIKE';
-    case isNull = 'IS NULL';
-    case isNotNull = 'IS NOT NULL';
+    case insert = 'INSERT INTO';
+    case update = 'UPDATE';
+    case delete = 'DELETE FROM';
+    case select = 'SELECT';
 }

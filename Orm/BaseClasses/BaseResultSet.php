@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper;
+namespace SismaFramework\ORM\BaseClasses;
 
 use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
@@ -33,7 +33,7 @@ use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-abstract class ResultSet implements \Iterator
+abstract class BaseResultSet implements \Iterator
 {
     use \SismaFramework\Core\Traits\BuildPropertyName;
     use \SismaFramework\Core\Traits\ConvertToSismaStandardClass;

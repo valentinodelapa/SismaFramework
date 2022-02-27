@@ -28,7 +28,7 @@ namespace SismaFramework\Core\ExtendedClasses;
 
 use SismaFramework\Core\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\Core\ObjectRelationalMapper\Adapter;
+use SismaFramework\ORM\BaseClasses\BaseAdapter;
 
 /**
  *

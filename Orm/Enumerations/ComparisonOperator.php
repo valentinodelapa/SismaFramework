@@ -24,49 +24,25 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\ResultSets;
-
-use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\Core\ObjectRelationalMapper\Adapter;
-use SismaFramework\Core\ObjectRelationalMapper\ResultSet;
-use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
+namespace SismaFramework\ORM\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class ResultSetMysql extends ResultSet
+enum ComparisonOperator: string
 {
-
-    protected ?\PDOStatement $result = null;
-
-    public function __construct(\PDOStatement &$result)
-    {
-        $this->result = &$result;
-        $this->maxRecord = $this->result->rowCount() - 1;
-        $this->currentRecord = 0;
-    }
-
-    public function release(): void
-    {
-        if ($this->result === null) {
-            return;
-        }
-        parent::release();
-        $this->result->closeCursor();
-        unset($this->result);
-        $this->result = null;
-    }
-
-    public function fetch(): SismaStandardClass|BaseEntity
-    {
-        if (($this->result === null) || ($this->currentRecord > $this->maxRecord)) {
-            return null;
-        }
-        $dbdata = $this->result->fetch(\PDO::FETCH_OBJ, \PDO::FETCH_ORI_ABS, $this->currentRecord);
-        return $this->transformResult($dbdata);
-    }
-
+    case equal = '=';
+    case notEqualOne = '!=';
+    case notEqualTwo = '<>';
+    case greater = '>';
+    case less = '<';
+    case greaterOrEqual = '>=';
+    case lessOrEqual = '<=';
+    case in = 'IN';
+    case notIn = 'NOT IN';
+    case like = 'LIKE';
+    case notLike = 'NOT LIKE';
+    case isNull = 'IS NULL';
+    case isNotNull = 'IS NOT NULL';
 }
-
-?>

@@ -24,16 +24,19 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
+namespace SismaFramework\Core\Exceptions;
+
+use SismaFramework\Core\BaseClasses\BaseException;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum Statement: string
+class ProprietaryTypeException extends BaseException
 {
-    case insert = 'INSERT INTO';
-    case update = 'UPDATE';
-    case delete = 'DELETE FROM';
-    case select = 'SELECT';
+    
+    public function __construct()
+    {
+        parent::__construct("ProprietaryTypeException", 0);
+    }
 }

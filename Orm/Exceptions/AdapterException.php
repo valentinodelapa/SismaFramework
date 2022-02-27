@@ -24,24 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
+namespace SismaFramework\ORM\Exceptions;
+
+use SismaFramework\Core\BaseClasses\BaseException;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum Keyword: string
+class AdapterException extends BaseException
 {
-    case insertValue = 'VALUES';
-    case set = 'SET';
-    case from = 'FROM';
-    case distinct = 'DISTINCT';
-    case join = 'JOIN';
-    case orderBy = 'ORDER BY';
-    case groupBy = 'GROUP_BY';
-    case limit = 'LIMIT';
-    case offset = 'OFFSET';
-    case placeholder = '?';
-    case openBlock = '(';
-    case closeBlock = ')';
+    
 }

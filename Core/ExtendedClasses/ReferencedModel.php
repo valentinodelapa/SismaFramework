@@ -30,9 +30,9 @@ use SismaFramework\Core\BaseClasses\BaseEntity;
 use SismaFramework\Core\BaseClasses\BaseModel;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\Keyword;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\ComparisonOperator;
-use SismaFramework\Core\ObjectRelationalMapper\Enumerations\DataType;
+use SismaFramework\ORM\Enumerations\Keyword;
+use SismaFramework\ORM\Enumerations\ComparisonOperator;
+use SismaFramework\ORM\Enumerations\DataType;
 
 /**
  *

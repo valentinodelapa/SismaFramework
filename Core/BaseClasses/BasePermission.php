@@ -40,7 +40,6 @@ abstract class BasePermission
 {
 
     private static BasePermission $instance;
-    protected static $generateException = true;
     protected mixed $subject;
     protected PermissionAttribute $attribute;
     protected ?UserInterface $user;
@@ -54,6 +53,7 @@ abstract class BasePermission
         $this->result = ($this->isInstancePermitted() === false) ? false : $this->result;
         $this->checkResult();
         $this->result = ($this->checkPermmisions() === false) ? false : $this->result;
+        $this->checkResult();
     }
 
     abstract protected function isInstancePermitted(): bool;
@@ -67,20 +67,10 @@ abstract class BasePermission
         }
     }
 
-    protected function returnResult(): bool
-    {
-        return $this->result;
-    }
-
-    static public function isAllowed(mixed $subject, PermissionAttribute $attribute, ?UserInterface $user = null, bool $generateException = true): bool
+    static public function isAllowed(mixed $subject, PermissionAttribute $attribute, ?UserInterface $user = null):void
     {
         $class = get_called_class();
-        static::$generateException = $generateException;
         self::$instance = new $class($subject, $attribute, $user);
-        if ($generateException) {
-            self::$instance->checkResult();
-        }
-        return self::$instance->returnResult();
     }
 
 }

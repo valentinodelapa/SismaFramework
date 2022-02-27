@@ -24,23 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ObjectRelationalMapper\Enumerations;
+namespace SismaFramework\ORM\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum DataType
-{
-    case typeBoolean;
-    case typeNull;
-    case typeInteger;
-    case typeString;
-    case typeBinary;
-    case typeDecimal;
-    case typeDate;
-    case typeStatement;
-    case typeEntity;
-    case typeEnumeration;
-    case typeGeneric;
+enum LogicalOperator: string
+{   
+    case and = 'AND';
+    case or = 'OR';
+    case not = 'NOT';
 }

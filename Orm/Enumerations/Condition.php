@@ -24,40 +24,14 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;;
-
-use SismaFramework\Core\Enumerations\Language;
-use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\ORM\Enumerations\Keyword;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\Enumerations\DataType;
-use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+namespace SismaFramework\ORM\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-trait LanguageSelectionModel
+enum Condition: string
 {
-
-    public function getEntityCollectionByLanguage(?Language $language = null): SismaCollection
-    {
-        $class = get_class($this->entity);
-        $query = $class::initQuery();
-        $query->setWhere();
-        $bindValues = $bindTypes = [];
-        if ($language !== null){
-            $query->appendCondition('language', ComparisonOperator::equal, Keyword::placeholder);
-            $bindValues = [$language];
-            $bindTypes = [DataType::typeEnumeration];
-        }
-        $query->close();
-        $result = $class::find($query, $bindValues, $bindTypes);
-        $collection = new SismaCollection;
-        foreach ($result as $entity) {
-            $collection->append($entity);
-        }
-        return $collection;
-    }
-
+    case where = 'WHERE';
+    case having = 'HAVING';
 }
