@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 
 /**
@@ -35,36 +36,45 @@ use SismaFramework\Core\HttpClasses\Response;
 class Router
 {
 
-    private static $metaPath = '';
+    private static $metaUrl = '';
 
-    public static function redirect(string $path): Response
+    public static function redirect(string $relativeUrl): Response
     {
-        header("Location: " . self::$metaPath.'/' . $path);
+        header("Location: " . self::$metaUrl . '/' . $relativeUrl);
         return new Response();
     }
 
-    public static function concatenateMetaPath(string $pathToConcatenate)
+    public static function concatenateMetaUrl(string $pathToConcatenate)
     {
-        self::$metaPath .= $pathToConcatenate;
+        self::$metaUrl .= $pathToConcatenate;
     }
 
-    public static function getMetaPath()
+    public static function getMetaUrl()
     {
-        return self::$metaPath;
-    }
-    
-    public static function getRootLink()
-    {
-        $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://';
-        $httpHost =  $_SERVER['HTTP_HOST'];
-        return $protocol.$httpHost.self::$metaPath;
+        return self::$metaUrl;
     }
 
-    public static function reloadWithParseQuery(string $path): Response
+    public static function getRootUrl()
     {
-        $parsedPath = str_replace(["?", "=", "&"], '/', $path);
-        $parsedPath = str_replace('//', '/', $parsedPath);
-        header("Location: " . self::$metaPath . $parsedPath);
+        $request = new Request();
+        $protocol = stripos($request->server['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://';
+        $httpHost = $request->server['HTTP_HOST'];
+        return $protocol . $httpHost . self::$metaUrl;
+    }
+
+    public static function getActualUrl()
+    {
+        $request = new Request();
+        $requestUri = $request->server['REQUEST_URI'];
+        $relativeUrl = str_replace(self::$metaUrl, '', $requestUri);
+        return substr($relativeUrl, 1);
+    }
+
+    public static function reloadWithParseQuery(string $url): Response
+    {
+        $parsedUrl = str_replace(["?", "=", "&"], '/', $url);
+        $parsedUrl = str_replace('//', '/', $parsedUrl);
+        header("Location: " . self::$metaUrl . $parsedUrl);
         return new Response();
     }
 

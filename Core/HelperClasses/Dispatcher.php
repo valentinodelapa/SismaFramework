@@ -203,7 +203,7 @@ class Dispatcher
     private function switchPath()
     {
         if ($this->defaultControllerChecked && $this->defaultActionChecked) {
-            Router::concatenateMetaPath('/' . $this->pathParts[0]);
+            Router::concatenateMetaUrl('/' . $this->pathParts[0]);
             $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
             $this->defaultControllerChecked = $this->defaultActionChecked = false;
             self::$reloadAttempts++;

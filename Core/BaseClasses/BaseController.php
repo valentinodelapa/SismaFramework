@@ -41,7 +41,7 @@ abstract class BaseController
 
     public function __construct()
     {
-        $this->vars['metaPath'] = Router::getMetaPath();
+        $this->vars['metaUrl'] = Router::getMetaUrl();
     }
 
 }
