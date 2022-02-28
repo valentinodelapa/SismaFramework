@@ -41,7 +41,7 @@ use SismaFramework\ORM\Enumerations\DataType;
 abstract class ReferencedModel extends BaseModel
 {
 
-    public function __call($name, $arguments): SismaCollection
+    public function __call($name, $arguments): SismaCollection|bool
     {
         $nameParts = explode('By', $name);
         $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
@@ -78,7 +78,7 @@ abstract class ReferencedModel extends BaseModel
         return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
     }
 
-    public function deleteSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null): SismaCollection
+    public function deleteSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null): bool
     {
         $query = $this->initQuery();
         $query->setWhere();
