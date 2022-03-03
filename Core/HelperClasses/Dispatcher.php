@@ -124,24 +124,10 @@ class Dispatcher
         } elseif (isset($this->pathParts[1]) && (file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
             header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
             echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
-        } elseif (isset($this->pathParts[1])) {
-            $this->findInApplicationPath();
+        } elseif (isset($this->pathParts[1]) && (file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
+            header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
+            echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
         } else {
-            $this->switchNotFoundActions();
-        }
-    }
-
-    private function findInApplicationPath(): void
-    {
-        $fileFound = false;
-        foreach (\Config\MODULE_FOLDERS as $folder) {
-            if (file_exists(\Config\ROOT_PATH . $folder . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])) {
-                header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
-                echo file_get_contents(\Config\ROOT_PATH . $folder . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
-                $fileFound = true;
-            }
-        }
-        if ($fileFound === false) {
             $this->switchNotFoundActions();
         }
     }
@@ -205,6 +191,7 @@ class Dispatcher
         if ($this->defaultControllerChecked && $this->defaultActionChecked) {
             Router::concatenateMetaUrl('/' . $this->pathParts[0]);
             $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
+            $this->pathParts = [];
             $this->defaultControllerChecked = $this->defaultActionChecked = false;
             self::$reloadAttempts++;
         } elseif ($this->defaultControllerChecked === false) {
