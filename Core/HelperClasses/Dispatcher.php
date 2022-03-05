@@ -76,6 +76,7 @@ class Dispatcher
 
     private function parsePath(): void
     {
+        $this->pathParts = [];
         if ($this->path == '/') {
             $this->pathParts[] = \Config\DEFAULT_PATH;
             $this->pathParts[] = \Config\DEFAULT_ACTION;
@@ -132,77 +133,9 @@ class Dispatcher
         }
     }
 
-    private function switchNotFoundActions(): void
-    {
-        if (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
-            $this->reloadDispatcher();
-        } else {
-            throw new PageNotFoundException();
-        }
-    }
-
-    private function instanceControllerClass(): void
-    {
-        $this->getControllerConstructorArguments();
-        if (count($this->reflectionConstructorArguments) == 0) {
-            $this->controllerInstance = new $this->controllerName;
-        } else {
-            $this->constructorArguments[] = $this->prevAccessToken;
-            $this->constructorArguments[] = $this->nextAccessToken;
-            $this->getAutoDependecyInjectionClass();
-            $this->controllerInstance = $this->reflectionController->newInstanceArgs($this->constructorArguments);
-        }
-    }
-
     private function checkControllerPresence(): bool
     {
         return class_exists($this->controllerName);
-    }
-
-    private function getControllerConstructorArguments()
-    {
-        $this->reflectionController = new \ReflectionClass($this->controllerName);
-        $this->reflectionConstructor = $this->reflectionController->getConstructor();
-        $this->reflectionConstructorArguments = $this->reflectionConstructor->getParameters();
-    }
-
-    private function getAutoDependecyInjectionClass()
-    {
-        foreach ($this->reflectionConstructorArguments as $argument) {
-            $argumentType = $argument->getType();
-            if ($argumentType->isBuiltin() === false) {
-                $className = $argumentType->getName();
-                $this->constructorArguments[] = new $className();
-            } else {
-                throw new InvalidArgumentException();
-            }
-        }
-    }
-
-    private function reloadDispatcher()
-    {
-        $this->switchPath();
-        $this->parsePath();
-        $this->handle();
-    }
-
-    private function switchPath()
-    {
-        if ($this->defaultControllerChecked && $this->defaultActionChecked) {
-            Router::concatenateMetaUrl('/' . $this->pathParts[0]);
-            $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
-            $this->pathParts = [];
-            $this->defaultControllerChecked = $this->defaultActionChecked = false;
-            self::$reloadAttempts++;
-        } elseif ($this->defaultControllerChecked === false) {
-            array_unshift($this->pathParts, \Config\DEFAULT_PATH);
-            $this->path = '/' . implode('/', $this->pathParts);
-            $this->defaultControllerChecked = true;
-        } elseif ($this->defaultActionChecked === false) {
-            $this->pathParts = [$this->pathParts[1], \Config\DEFAULT_ACTION, ...array_slice($this->pathParts, 2)];
-            $this->path = '/' . implode('/', $this->pathParts);
-            $this->defaultActionChecked = true;
-        }
     }
 
     private function resolveRouteCall(): void
@@ -218,6 +151,39 @@ class Dispatcher
     private function checkActionPresenceInController(): bool
     {
         return method_exists($this->controllerName, $this->action);
+    }
+
+    private function instanceControllerClass(): void
+    {
+        $this->getControllerConstructorArguments();
+        if (count($this->reflectionConstructorArguments) == 0) {
+            $this->controllerInstance = new $this->controllerName;
+        } else {
+            $this->constructorArguments[] = $this->prevAccessToken;
+            $this->constructorArguments[] = $this->nextAccessToken;
+            $this->getAutoDependecyInjectionClass();
+            $this->controllerInstance = $this->reflectionController->newInstanceArgs($this->constructorArguments);
+        }
+    }
+
+    private function getControllerConstructorArguments(): void
+    {
+        $this->reflectionController = new \ReflectionClass($this->controllerName);
+        $this->reflectionConstructor = $this->reflectionController->getConstructor();
+        $this->reflectionConstructorArguments = $this->reflectionConstructor->getParameters();
+    }
+
+    private function getAutoDependecyInjectionClass(): void
+    {
+        foreach ($this->reflectionConstructorArguments as $argument) {
+            $argumentType = $argument->getType();
+            if ($argumentType->isBuiltin() === false) {
+                $className = $argumentType->getName();
+                $this->constructorArguments[] = new $className();
+            } else {
+                throw new InvalidArgumentException();
+            }
+        }
     }
 
     private function callControllerMethod(): void
@@ -272,6 +238,40 @@ class Dispatcher
             }
         }
         $this->actionArguments = $actionArguments;
+    }
+
+    private function switchNotFoundActions(): void
+    {
+        if (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
+            $this->reloadDispatcher();
+        } else {
+            throw new PageNotFoundException();
+        }
+    }
+
+    private function reloadDispatcher(): void
+    {
+        $this->switchPath();
+        $this->parsePath();
+        $this->handle();
+    }
+
+    private function switchPath(): void
+    {
+        if ($this->defaultControllerChecked && $this->defaultActionChecked) {
+            Router::concatenateMetaUrl('/' . $this->pathParts[0]);
+            $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
+            $this->defaultControllerChecked = $this->defaultActionChecked = false;
+            self::$reloadAttempts++;
+        } elseif ($this->defaultControllerChecked === false) {
+            array_unshift($this->pathParts, \Config\DEFAULT_PATH);
+            $this->path = '/' . implode('/', $this->pathParts);
+            $this->defaultControllerChecked = true;
+        } elseif ($this->defaultActionChecked === false) {
+            $this->pathParts = [$this->pathParts[1], \Config\DEFAULT_ACTION, ...array_slice($this->pathParts, 2)];
+            $this->path = '/' . implode('/', $this->pathParts);
+            $this->defaultActionChecked = true;
+        }
     }
 
 }
