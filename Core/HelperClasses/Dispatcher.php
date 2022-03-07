@@ -99,7 +99,7 @@ class Dispatcher
     {
         foreach (\Config\MODULE_FOLDERS as $module) {
             $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
-            if ($this->checkControllerPresence()) {
+            if (($this->checkControllerPresence()) || ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
                 self::$selectedModule = $module;
                 break;
             }
@@ -122,10 +122,10 @@ class Dispatcher
             $this->resolveRouteCall();
         } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             $fixtureManager = new FixturesManager();
-        } elseif (isset($this->pathParts[1]) && (file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
+        } elseif ((count($this->pathParts) === 2) && (file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
             header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
             echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
-        } elseif (isset($this->pathParts[1]) && (file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
+        } elseif ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
             header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
             echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
         } else {
