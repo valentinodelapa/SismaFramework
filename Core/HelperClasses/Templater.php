@@ -61,7 +61,7 @@ class Templater
         if(self::$isStructural){
             return \Config\STRUCTURAL_TEMPLATES_PATH . $template . '.html';
         }else{
-            return \Config\TEMPLATES_PATH . $template . '.html';
+            return \Config\ROOT_PATH . Dispatcher::$selectedModule . DIRECTORY_SEPARATOR .\Config\TEMPLATES_PATH . $template . '.html';
         }
     }
 

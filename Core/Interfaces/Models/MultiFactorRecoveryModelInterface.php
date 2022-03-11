@@ -28,6 +28,8 @@ namespace SismaFramework\Core\Interfaces\Models;
 
 use SismaFramework\Core\Interfaces\Entities\MultiFactorInterface;
 use SismaFramework\Core\Interfaces\Entities\MultiFactorRecoveryInterface;
+use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -35,5 +37,5 @@ use SismaFramework\Core\Interfaces\Entities\MultiFactorRecoveryInterface;
 interface MultiFactorRecoveryModelInterface
 {
 
-    public function getMultiFactorRecoveryInterfaceByParameters(MultiFactorInterface $multiFactorInterface, string $code): ?MultiFactorRecoveryInterface;
+    public function getMultiFactorRecoveryInterfaceCollectionByMultiFactorInterface(MultiFactorInterface $multiFactorInterface): SismaCollection;
 }

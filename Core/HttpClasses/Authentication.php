@@ -122,7 +122,7 @@ class Authentication
             $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByUserIterface($userInterface);
             if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->request['code'])){
                 return true;
-            }elseif ($this->checkMultiFactorBackup($multiFactorInterface, $this->request->request['code'])) {
+            }elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->request['code'])) {
                 return true;
             } else {
                 $this->filterErrors['codeError'] = true;
@@ -132,15 +132,17 @@ class Authentication
         return false;
     }
 
-    public function checkMultiFactorBackup(MultiFactorInterface $multiFactorInterface, string $code): bool
+    public function checkMultiFactorRecovery(MultiFactorInterface $multiFactorInterface, string $code): bool
     {
-        $multiFactorRecoveryInterface = $this->multiFactorRecoveryModelInterface->getMultiFactorRecoveryInterfaceByParameters($multiFactorInterface, $code);
-        if($multiFactorRecoveryInterface instanceof MultiFactorRecoveryInterface){
-            $multiFactorRecoveryInterface->delete();
-            return true;
-        }else{
-            return false;
+        $result = false;
+        $multiFactorRecoveryInterfaceCollection = $this->multiFactorRecoveryModelInterface->getMultiFactorRecoveryInterfaceCollectionByMultiFactorInterface($multiFactorInterface);
+        foreach ($multiFactorRecoveryInterfaceCollection as $multiFactorRecoveryInterface) {
+            if(Encryptor::verifyBlowfishHash($code, $multiFactorRecoveryInterface->token)){
+                $multiFactorRecoveryInterface->delete();
+                $result = true;
+            }
         }
+        return $result;
     }
 
     public function getUserInterface(): UserInterface
