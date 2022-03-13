@@ -40,10 +40,9 @@ class SismaStandardClass extends \stdClass
         $propertyName = lcfirst(substr($methodName, 3));
         switch ($methodType) {
             case 'get':
-                return $this->$propertyName ?? new SismaCollection();
+                return isset($this->$propertyName) ? new SismaCollection($this->$propertyName) : new SismaCollection();
             default:
                 throw new ProprietaryTypeException('Metodo non trovato');
-                break;
         }
     }
 }

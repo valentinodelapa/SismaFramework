@@ -40,9 +40,8 @@
 
 /* modal */
 .modal-background{top: 0px; left: 0px; width: 100%; height: 100%; position: fixed; display: none; flex-direction: row; z-index: 100}
-.modal{margin: 2% 5%; padding: 10px; width: 90%; height: 90%; position: relative; display: flex; flex-direction: column; background-color: white; box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02); overflow-y: scroll;}
-.modal-header{height: 20px; margin-bottom: 10px;}
-.modal-body{flex-direction: column;}
+.modal-body{margin: 2% 5%; padding: 10px; width: 90%; height: 90%; position: relative; display: flex; flex-direction: column; background-color: white; box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02); overflow-y: scroll;}
+.close-modal{position: fixed; top: 6%; right: 6%}
 
 /* debug bar */
 .debug-bar{bottom: 0px; width: 100%; position: fixed; display: flex; flex-direction: column;}
