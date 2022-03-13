@@ -64,8 +64,9 @@ class FixturesManager
     {
         if ($this->fixturesArray[$fixture] == false) {
             $fixtureInstance = new $fixture();
-            if (is_array($fixtureInstance->getDependencies())) {
-                $this->executeFixturesArray(array_flip($fixtureInstance->getDependencies()));
+            if (count($fixtureInstance->getDependencies()) > 0) {
+                //$this->executeFixturesArray(array_flip($fixtureInstance->getDependencies()));
+                $this->executeFixturesArray($fixtureInstance->getDependencies());
             }
             $fixtureInstance->execute($this->entitiesArray);
             $this->fixturesArray[$fixture] = true;

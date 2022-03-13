@@ -26,43 +26,55 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\ORM\BaseClasses\BaseAdapter;
+use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Core\Exceptions\FixtureException;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-abstract class BaseFixture extends BaseModel
+abstract class BaseFixture
 {
 
-    protected ?array $dependenciesArray = null;
-    protected string $entityType;
-    protected ?array $entitiesArray;
-    protected int $counter = 0;
+    private BaseEntity $entity;
+    private array $entitiesArray;
+    private array $dependenciesArray = [];
 
-    public function __construct(?Adapter $connection = null)
+    public function __construct()
     {
-        parent::__construct($connection);
         $this->setDependencies();
     }
 
     public function execute(array &$entitiesArray): void
     {
-        $data = $this->getFixtureData($entitiesArray);
-        while (is_array($data)) {
-            $this->entity = new $this->entityType();
-            $this->saveEntityByData($data);
-            $entitiesArray[$this->entityType][$this->counter] = $this->getEmbeddedEntity();
-            $this->counter++;
-            $data = $this->getFixtureData($entitiesArray);
+        $this->entitiesArray = $entitiesArray;
+        $this->setEntity();
+        $this->entity->save();
+        $entitiesArray[get_called_class()] = $this->getEmbeddedEntity();
+    }
+
+    abstract public function setEntity(): void;
+
+    protected function addEntity(BaseEntity $baseEntity): void
+    {
+        $this->entity = $baseEntity;
+    }
+
+    protected function getEntityByFixtureName(string $fixtureName): BaseEntity
+    {
+        if (in_array($fixtureName, $this->dependenciesArray)) {
+            return $this->entitiesArray[$fixtureName];
+        } else {
+            throw new FixtureException('Dipendenza non settata');
         }
     }
 
-    abstract public function getFixtureData(array $entitiesArray): ?array;
+    abstract protected function setDependencies(): void;
 
-    protected function setDependencies(): void
+    protected function addDipendency(string $dependencyClassName): self
     {
-        
+        $this->dependenciesArray[] = $dependencyClassName;
+        return $this;
     }
 
     public function getDependencies(): ?array
