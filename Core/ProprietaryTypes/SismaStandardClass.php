@@ -26,23 +26,11 @@
 
 namespace SismaFramework\Core\ProprietaryTypes;
 
-use SismaFramework\Core\Exceptions\ProprietaryTypeException;
-
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 class SismaStandardClass extends \stdClass
 {
-    public function __call($methodName, $arguments)
-    {
-        $methodType = substr($methodName, 0, 3);
-        $propertyName = lcfirst(substr($methodName, 3));
-        switch ($methodType) {
-            case 'get':
-                return isset($this->$propertyName) ? new SismaCollection($this->$propertyName) : new SismaCollection();
-            default:
-                throw new ProprietaryTypeException('Metodo non trovato');
-        }
-    }
+    
 }

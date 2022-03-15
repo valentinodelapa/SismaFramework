@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +24,19 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;
+namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
+use SismaFramework\Core\BaseClasses\BaseException;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-trait ConvertToSismaStandardClass
+class MethodNotFoundException extends BaseException
 {
-
-    private function convertToSismaStandardClass($standardClass): SismaStandardClass
+    
+    public function __construct()
     {
-        $sismaStandardClass = new SismaStandardClass();
-        foreach ($standardClass as $property => $value) {
-            $sismaStandardClass->$property = $value;
-        }
-        return $sismaStandardClass;
+        parent::__construct("MethodNotFoundException", 0);
     }
-
 }

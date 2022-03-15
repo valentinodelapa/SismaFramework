@@ -27,7 +27,7 @@
 namespace SismaFramework\ORM\BaseClasses;
 
 use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
+use SismaFramework\Core\ExtendedClasses\StandardEntity;
 
 /**
  *
@@ -36,10 +36,10 @@ use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
 abstract class BaseResultSet implements \Iterator
 {
     use \SismaFramework\Core\Traits\BuildPropertyName;
-    use \SismaFramework\Core\Traits\ConvertToSismaStandardClass;
+    use \SismaFramework\Core\Traits\ConvertToStandardEntity;
     use \SismaFramework\Core\Traits\ParseValue;
 
-    protected string $returnType = SismaStandardClass::class;
+    protected string $returnType = StandardEntity::class;
     protected int $currentRecord = 0;
     protected int $maxRecord = -1;
     
@@ -65,7 +65,7 @@ abstract class BaseResultSet implements \Iterator
         return $this->fetch();
     }
 
-    abstract public function fetch(): SismaStandardClass|BaseEntity;
+    abstract public function fetch(): StandardEntity|BaseEntity;
 
     public function seek(int $n): BaseEntity
     {
@@ -107,13 +107,13 @@ abstract class BaseResultSet implements \Iterator
         }
     }
 
-    protected function transformResult(&$result): SismaStandardClass|BaseEntity
+    protected function transformResult(&$result): StandardEntity|BaseEntity
     {
         if (!$result) {
             return null;
         }
-        if ($this->returnType == SismaStandardClass::class) {
-            return $this->convertToSismaStandardClass($result);
+        if ($this->returnType == StandardEntity::class) {
+            return $this->convertToStandardEntity($result);
         }
         $class = $this->returnType;
         $obj = new $class();

@@ -24,19 +24,28 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Exceptions;
+namespace SismaFramework\Core\ExtendedClasses;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\Core\Exceptions\MethodNotFoundException;
+use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
 
 /**
+ * Description of StandardEntity
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class ProprietaryTypeException extends BaseException
+class StandardEntity extends SismaStandardClass
 {
-    
-    public function __construct()
+    public function __call($methodName, $arguments)
     {
-        parent::__construct("ProprietaryTypeException", 0);
+        $methodType = substr($methodName, 0, 3);
+        $propertyName = lcfirst(substr($methodName, 3));
+        switch ($methodType) {
+            case 'get':
+                return isset($this->$propertyName) ? new SismaCollection($this->$propertyName) : new SismaCollection();
+            default:
+                throw new MethodNotFoundException('Metodo non trovato');
+        }
     }
 }
