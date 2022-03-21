@@ -39,6 +39,7 @@ use SismaFramework\Core\ProprietaryTypes\SismaCollection;
  */
 abstract class SelfReferencedModel extends ReferencedModel
 {
+
     const SISMA_COLLECTION_PROPERTY_NAME = 'sonCollection';
     const SISMA_COLLECTION_GETTER_METHOD = 'getSonCollection';
 
@@ -59,20 +60,28 @@ abstract class SelfReferencedModel extends ReferencedModel
         return $this->entityName::getCount($query, $bindValues, $bindTypes);
     }
 
-    public function getEntityCollectionByParent(?BaseEntity $parentEntity = null, ?array $order = null): SismaCollection
+    public function getEntityCollectionByParent(?BaseEntity $parentEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
     {
         $query = $this->initQuery();
         $query->setWhere();
+        $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
             $query->appendCondition($this->entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
-            $bindValues = [];
-            $bindTypes = [];
         } else {
             $query->appendCondition($this->entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues = [$parentEntity];
             $bindTypes = [DataType::typeEntity];
         }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
         $query->setOrderBy($order);
+        if ($offset !== null) {
+            $query->setOffset($offset);
+        }
+        if ($limit != null) {
+            $query->setLimit($limit);
+        }
         $query->close();
         return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
     }
@@ -103,14 +112,14 @@ abstract class SelfReferencedModel extends ReferencedModel
 
     public function getEntityTree(?BaseEntity $parentEntity = null, array $order = null): SismaCollection
     {
-        $entityTree = $this->getEntityCollectionByParent($parentEntity, $order);
+        $entityTree = $this->getEntityCollectionByParent($parentEntity, null, $order);
         foreach ($entityTree as $key => $entity) {
             $entityTree[$key]->setSismaCollection(self::SISMA_COLLECTION_PROPERTY_NAME, $this->getEntityTree($entity, $order));
         }
         return $entityTree;
     }
-    
-    public function deleteEntityTree(BaseEntity $entityTree):void
+
+    public function deleteEntityTree(BaseEntity $entityTree): void
     {
         foreach ($entityTree->self::SISMA_COLLECTION_GETTER_METHOD() as $entity) {
             $this->deleteEntityTree($entity);

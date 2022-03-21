@@ -61,18 +61,27 @@ abstract class ReferencedModel extends BaseModel
         }
     }
 
-    public function getSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null): SismaCollection
+    public function getSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
     {
         $query = $this->initQuery();
         $query->setWhere();
+        $bindValues = $bindTypes = [];
         if ($baseEntity === null) {
             $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
-            $bindValues = [];
-            $bindTypes = [];
         } else {
             $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues = [$baseEntity];
             $bindTypes = [DataType::typeEntity];
+        }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->setOrderBy($order);
+        if ($offset !== null) {
+            $query->setOffset($offset);
+        }
+        if ($limit != null) {
+            $query->setLimit($limit);
         }
         $query->close();
         return $this->getMultipleRowResult($query, $bindValues, $bindTypes);

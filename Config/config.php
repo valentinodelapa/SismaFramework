@@ -73,11 +73,11 @@ const AUTOLOAD_NAMESPACE_MAPPER = [
 const AUTOLOAD_CLASS_MAPPER = [
 ];
 const ASSET_FOLDERS = [
-    'text' . DIRECTORY_SEPARATOR . 'css' => 'css',
-    'image' . DIRECTORY_SEPARATOR . 'jpeg' => 'jpeg',
-    'image' . DIRECTORY_SEPARATOR . 'png' => 'png',
-    'image' . DIRECTORY_SEPARATOR . 'svg+xml' => 'svg',
-    'application' . DIRECTORY_SEPARATOR . 'javascript' => 'javascript',
+    'text/css' => 'css',
+    'image/jpeg' => 'jpeg',
+    'image/png' => 'png',
+    'image/svg+xml' => 'svg',
+    'application/javascript' => 'javascript',
 ];
 
 /* Fixtures Constant */

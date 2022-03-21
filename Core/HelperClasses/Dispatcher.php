@@ -91,7 +91,11 @@ class Dispatcher
     private function parsePathParts(): void
     {
         $this->selectModule();
-        $this->action = (isset($this->pathParts[1])) ? self::convertToCamelCase($this->pathParts[1]) : \Config\DEFAULT_ACTION;
+        if (isset($this->pathParts[1])) {
+            $this->action = self::convertToCamelCase($this->pathParts[1]);
+        } else {
+            $this->action = $this->pathParts[1] = \Config\DEFAULT_ACTION;
+        }
         $this->actionArguments = array_slice($this->pathParts, 2);
     }
 
@@ -114,6 +118,14 @@ class Dispatcher
     private static function convertToCamelCase(string $string): string
     {
         return lcfirst(self::convertToStudlyCaps($string));
+    }
+
+    private static function convertFromCamelCase(string $string): string
+    {
+
+        return implode('-', array_map(function ($value) {
+                    return strtolower($value);
+                }, array_filter(preg_split('/(?=[A-Z])/', $string))));
     }
 
     private function handle(): void
@@ -150,6 +162,7 @@ class Dispatcher
 
     private function checkActionPresenceInController(): bool
     {
+        Router::setActualCleanUrl($this->pathParts[0], $this->pathParts[1]);
         return method_exists($this->controllerName, $this->action);
     }
 

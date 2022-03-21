@@ -37,6 +37,7 @@ class Router
 {
 
     private static $metaUrl = '';
+    private static $actualCleanUrl;
 
     public static function redirect(string $relativeUrl): Response
     {
@@ -49,12 +50,22 @@ class Router
         self::$metaUrl .= $pathToConcatenate;
     }
 
-    public static function getMetaUrl()
+    public static function getMetaUrl(): string
     {
         return self::$metaUrl;
     }
 
-    public static function getRootUrl()
+    public static function setActualCleanUrl(string $controllerName, string $actionName): void
+    {
+        self::$actualCleanUrl = self::$metaUrl . '/' . $controllerName . '/' . $actionName . '/';
+    }
+
+    public static function getActualCleanUrl(): string
+    {
+        return self::$actualCleanUrl;
+    }
+
+    public static function getRootUrl(): string
     {
         $request = new Request();
         $protocol = stripos($request->server['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://';

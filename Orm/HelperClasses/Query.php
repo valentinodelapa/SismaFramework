@@ -168,7 +168,7 @@ class Query
 
     public function &appendOrderByOption(string $column, null|string|Indexing $Indexing = null): self
     {
-        $parsedColumn = $this->adapter->escapeIdentifier($column);
+        $parsedColumn = $this->adapter->escapeColumn($column);
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
         $this->order[$parsedColumn] = $parsedIndexing;
         return $this;

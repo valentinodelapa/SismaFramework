@@ -92,12 +92,25 @@ abstract class BaseModel
         return $query;
     }
 
-    public function getEntityCollection(?array $order = null): SismaCollection
+    public function getEntityCollection(?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
     {
         $query = $this->initQuery();
+        $bindValues = $bindTypes = [];
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->setOrderBy($order);
+        if ($offset !== null) {
+            $query->setOffset($offset);
+        }
+        if ($limit != null) {
+            $query->setLimit($limit);
+        }
         $query->close();
         return $this->getMultipleRowResult($query);
     }
+
+    abstract protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void;
 
     protected function getMultipleRowResult(Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
     {

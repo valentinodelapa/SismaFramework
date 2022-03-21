@@ -79,7 +79,7 @@ abstract class BaseAdapter
 
     public function escapeIdentifier(string $name): string
     {
-        $parsedName = str_replace(array(chr(0), "\n", "\r", "\t", "'", "\""), "", $name);
+        $parsedName = preg_replace("/([^a-zA-Z_]+)/","", $name);
         return $parsedName;
     }
 
