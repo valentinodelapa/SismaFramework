@@ -21,7 +21,7 @@
 
 /* menu */
 .menu{position: relative; list-style: none; display: flex; flex-direction: column; margin: 0px;}
-.menu-item{min-height: 40px; position: relative; display: flex; flex-direction: column; align-items: stretch;}
+.menu-item{min-height: 40px; position: relative; display: flex; flex-direction: column; align-items: stretch; flex-grow: 1;}
 .menu-link, .menu-label{min-height: 30px; padding: 5px 10px; border-bottom: 1px solid #f4f4f4; flex-direction: row; align-items: center; vertical-align: middle; font-weight: 600; color: #f4f4f4;}
 .menu-label:hover{color: #636363;}
 .menu-dropdown .menu-link {border-bottom: 1px solid #00d1b1; font-weight: normal; color: #353535;}

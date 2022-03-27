@@ -1,35 +1,35 @@
 /* button */
-.button{margin: 0px 8px; padding: 7px 16px; border-radius: 5px; display: inline-flex; flex-direction: row; text-decoration: none; font-size: 16px;}
+.button, .label{margin: 0px 8px; padding: 7px 16px; border-radius: 5px; display: inline-flex; flex-direction: row; text-decoration: none; font-size: 16px;}
 
-.button.has-horizontal{flex-direction: row;}
-.button.has-vertical{flex-direction: column;}
+.button.has-horizontal, .label.has-horizontal{flex-direction: row;}
+.button.has-vertical, .label.has-vertical{flex-direction: column;}
 
-.button.is-small{padding: 5px 12px; font-size: 12px;}
-.button.is-normal{padding: 7px 16px; font-size: 16px;}
-.button.is-medium{padding: 9px 20px; font-size: 20px;}
-.button.is-large{padding: 11px 24px; font-size: 24px;}
+.button.is-small, .label.is-small{padding: 5px 12px; font-size: 12px;}
+.button.is-normal, .label.is-normal{padding: 7px 16px; font-size: 16px;}
+.button.is-medium, .label.is-medium{padding: 9px 20px; font-size: 20px;}
+.button.is-large, .label.is-large{padding: 11px 24px; font-size: 24px;}
 
-.button.is-black.is-ouline:hover{background-color: #0a0a0a; border: 1px solid transparent; color: #ffffff;}
-.button.is-danger.is-ouline:hover{background-color: #ff385f; border: 1px solid transparent; color: #ffffff;}
-.button.is-dark.is-ouline:hover{background-color: #353535; border: 1px solid transparent; color: #f4f4f4;}
-.button.is-info.is-ouline:hover{background-color: #209bee; border: 1px solid transparent; color: #ffffff;}
-.button.is-link.is-ouline:hover{background-color: #3273dc; border: 1px solid transparent; color: #ffffff;}
-.button.is-light.is-ouline:hover{background-color: #f4f4f4; border: 1px solid transparent; color: #353535;}
-.button.is-primary.is-ouline:hover{background-color: #00d1b1; border: 1px solid transparent; color: #ffffff;}
-.button.is-success.is-ouline:hover{background-color: #47c674; border: 1px solid transparent; color: #ffffff;}
-.button.is-warning.is-ouline:hover{background-color: #ffdd56; border: 1px solid transparent; color: #000000;}
-.button.is-white.is-ouline:hover{background-color: #ffffff; border: 1px solid transparent; color: #0a0a0a}
+.button.is-black.is-ouline:hover, .label.is-black.is-ouline:hover{background-color: #0a0a0a; border: 1px solid transparent; color: #ffffff;}
+.button.is-danger.is-ouline:hover, .label.is-danger.is-ouline:hover{background-color: #ff385f; border: 1px solid transparent; color: #ffffff;}
+.button.is-dark.is-ouline:hover, .label.is-dark.is-ouline:hover{background-color: #353535; border: 1px solid transparent; color: #f4f4f4;}
+.button.is-info.is-ouline:hover, .label.is-info.is-ouline:hover{background-color: #209bee; border: 1px solid transparent; color: #ffffff;}
+.button.is-link.is-ouline:hover, .label.is-link.is-ouline:hover{background-color: #3273dc; border: 1px solid transparent; color: #ffffff;}
+.button.is-light.is-ouline:hover, .label.is-light.is-ouline:hover{background-color: #f4f4f4; border: 1px solid transparent; color: #353535;}
+.button.is-primary.is-ouline:hover, .label.is-primary.is-ouline:hover{background-color: #00d1b1; border: 1px solid transparent; color: #ffffff;}
+.button.is-success.is-ouline:hover, .label.is-success.is-ouline:hover{background-color: #47c674; border: 1px solid transparent; color: #ffffff;}
+.button.is-warning.is-ouline:hover, .label.is-warning.is-ouline:hover{background-color: #ffdd56; border: 1px solid transparent; color: #000000;}
+.button.is-white.is-ouline:hover, .label.is-white.is-ouline:hover{background-color: #ffffff; border: 1px solid transparent; color: #0a0a0a}
 
-.button.is-black.is-ouline, .button.is-black:hover{background-color: transparent; border: 1px solid #0a0a0a; color: #0a0a0a;}
-.button.is-danger.is-ouline, .button.is-danger:hover{background-color: transparent; border: 1px solid #ff385f; color: #ff385f;}
-.button.is-dark.is-ouline, .button.is-dark:hover{background-color: transparent; border: 1px solid #353535; color: #353535;}
-.button.is-info.is-ouline, .button.is-info:hover{background-color: transparent; border: 1px solid #209bee; color: #209bee;}
-.button.is-link.is-ouline, .button.is-link:hover{background-color: transparent; border: 1px solid #3273dc; color: #3273dc;}
-.button.is-light.is-ouline, .button.is-light:hover{background-color: transparent; border: 1px solid #f4f4f4; color: #f4f4f4;}
-.button.is-primary.is-ouline, .button.is-primary:hover{background-color: transparent; border: 1px solid #00d1b1; color: #00d1b1;}
-.button.is-success.is-ouline, .button.is-success:hover{background-color: transparent; border: 1px solid #47c674; color: #47c674;}
-.button.is-warning.is-ouline, .button.is-warning:hover{background-color: transparent; border: 1px solid #ffdd56; color: #ffdd56;}
-.button.is-white.is-ouline, .button.is-white:hover{background-color: transparent; border: 1px solid #ffffff; color: #ffffff}
+.button.is-black.is-ouline, .button.is-black:hover, .label.is-black.is-ouline, .label.is-black:hover{background-color: transparent; border: 1px solid #0a0a0a; color: #0a0a0a;}
+.button.is-danger.is-ouline, .button.is-danger:hover, .label.is-danger.is-ouline, .label.is-danger:hover{background-color: transparent; border: 1px solid #ff385f; color: #ff385f;}
+.button.is-dark.is-ouline, .button.is-dark:hover, .label.is-dark.is-ouline, .label.is-dark:hover{background-color: transparent; border: 1px solid #353535; color: #353535;}
+.button.is-info.is-ouline, .button.is-info:hover, .label.is-info.is-ouline, .label.is-info:hover{background-color: transparent; border: 1px solid #209bee; color: #209bee;}
+.button.is-link.is-ouline, .button.is-link:hover, .label.is-link.is-ouline, .label.is-link:hover{background-color: transparent; border: 1px solid #3273dc; color: #3273dc;}
+.button.is-light.is-ouline, .button.is-light:hover, .label.is-light.is-ouline, .label.is-light:hover{background-color: transparent; border: 1px solid #f4f4f4; color: #f4f4f4;}
+.button.is-primary.is-ouline, .button.is-primary:hover, .label.is-primary.is-ouline, .label.is-primary:hover{background-color: transparent; border: 1px solid #00d1b1; color: #00d1b1;}
+.button.is-success.is-ouline, .button.is-success:hover, .label.is-success.is-ouline, .label.is-success:hover{background-color: transparent; border: 1px solid #47c674; color: #47c674;}
+.button.is-warning.is-ouline, .button.is-warning:hover, .label.is-warning.is-ouline, .label.is-warning:hover{background-color: transparent; border: 1px solid #ffdd56; color: #ffdd56;}
+.button.is-white.is-ouline, .button.is-white:hover, .label.is-white.is-ouline, .label.is-white:hover{background-color: transparent; border: 1px solid #ffffff; color: #ffffff}
 
 /* content */
 .content{width: 100%; position: relative; display: block;}

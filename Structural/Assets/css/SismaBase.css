@@ -3,7 +3,7 @@ html{font-size: 16px; font-family: BlinkMacSystemFont, -apple-system, "Segoe UI"
 html, body{height: 100%; margin: 0px; padding: 0px;}
 body{display: flex; flex-direction: column; align-items: stretch;}
 body > article:nth-last-child(2), body > aside:nth-last-child(2), body > section:nth-last-child(2), body > div:nth-last-child(2){flex-grow: 2;}
-article, aside, div, footer, header, nav, section{position: relative; display: flex;}
+article, aside, div, footer, header, nav, section, span, label, a, svg{position: relative; display: flex;}
 a{text-decoration: none; color: #363636;}
 a:hover{color: #636363;}
 
