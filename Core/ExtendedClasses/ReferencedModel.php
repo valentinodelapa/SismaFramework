@@ -51,13 +51,10 @@ abstract class ReferencedModel extends BaseModel
         switch ($action) {
             case 'get':
                 return $this->getSismaCollectionByEntity($entityName, ...$arguments);
-                break;
             case 'delete':
                 return $this->deleteSismaCollectionByEntity($entityName, $arguments[0]);
-                break;
             default:
                 throw new ModelException('Metodo non trovato');
-                break;
         }
     }
 

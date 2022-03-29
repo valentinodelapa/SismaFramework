@@ -48,11 +48,11 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query = $this->initQuery();
         $query->setWhere();
         if ($parentEntity === null) {
-            $query->appendCondition($this->entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
             $bindValues = [];
             $bindTypes = [];
         } else {
-            $query->appendCondition($this->entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues = [$parentEntity];
             $bindTypes = [DataType::typeEntity];
         }
@@ -66,9 +66,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query->setWhere();
         $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
-            $query->appendCondition($this->entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues = [$parentEntity];
             $bindTypes = [DataType::typeEntity];
         }
@@ -99,9 +99,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         ];
         $query->appendAnd();
         if ($parentEntity === null) {
-            $query->appendCondition($this->entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }

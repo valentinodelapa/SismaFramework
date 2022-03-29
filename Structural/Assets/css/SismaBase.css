@@ -9,7 +9,7 @@ a:hover{color: #636363;}
 
 /* behaviour */
 .is-clear-display{display: block}
-.is-glow{flex-grow: 2;}
+.is-grow{flex-grow: 2;}
 
 /* color */
 .is-black{background-color: #0a0a0a; border: 1px solid transparent; color: #ffffff;}
@@ -35,6 +35,14 @@ a:hover{color: #636363;}
 .has-perpendicular-end{align-items: flex-end;}
 .has-perpendicular-stretch{align-items: stretch;}
 .has-perpendicular-baseline{align-items: baseline;}
+
+.has-gap-5{gap: 5px;}
+.has-gap-10{gap: 10px;}
+.has-gap-15{gap: 15px;}
+.has-gap-20{gap: 20px;}
+.has-gap-25{gap: 25px;}
+.has-gap-50{gap: 50px;}
+.has-gap-100{gap: 100px;}
 
 /* orientation */
 .has-horizontal{flex-direction: row;}

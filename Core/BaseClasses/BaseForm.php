@@ -193,7 +193,7 @@ abstract class BaseForm
             }
         } else {
             $entityClass = get_class($this->entity);
-            if ($entityClass::getCollectionDataInformation($propertyName, $entityClass::FOREIGN_KEY_TYPE) === $formPropertyClass::ENTITY_CLASS_NAME) {
+            if ($this->entity->getCollectionDataInformation($propertyName, $entityClass::FOREIGN_KEY_TYPE) === $formPropertyClass::ENTITY_CLASS_NAME) {
                 $sismaCollectionToEmbed = $this->entity->getSismaCollection($propertyName);
                 $this->generateSismaCollectionProperty($formPropertyClass, $sismaCollectionToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
