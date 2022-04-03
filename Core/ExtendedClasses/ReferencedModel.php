@@ -50,7 +50,7 @@ abstract class ReferencedModel extends BaseModel
         $entityName = strtolower(implode('_', $entityNameParts));
         switch ($action) {
             case 'get':
-                return $this->getSismaCollectionByEntity($entityName, ...$arguments);
+                return $this->getSismaCollectionByEntity($entityName, $arguments[0]);
             case 'delete':
                 return $this->deleteSismaCollectionByEntity($entityName, $arguments[0]);
             default:
