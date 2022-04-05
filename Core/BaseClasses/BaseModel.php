@@ -79,11 +79,15 @@ abstract class BaseModel
         }
     }
 
-    public function countEntityCollection(): int
+    public function countEntityCollection(?string $searchKey = null): int
     {
         $query = $this->initQuery();
+        $bindValues = $bindTypes = [];
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
         $query->close();
-        return $this->entityName::getCount($query);
+        return $this->entityName::getCount($query, $bindValues, $bindTypes);
     }
 
     protected function initQuery(): Query
@@ -107,7 +111,7 @@ abstract class BaseModel
             $query->setLimit($limit);
         }
         $query->close();
-        return $this->getMultipleRowResult($query);
+        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
     }
 
     abstract protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void;

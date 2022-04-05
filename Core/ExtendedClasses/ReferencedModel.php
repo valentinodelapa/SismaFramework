@@ -41,7 +41,7 @@ use SismaFramework\ORM\Enumerations\DataType;
 abstract class ReferencedModel extends BaseModel
 {
 
-    public function __call($name, $arguments): SismaCollection|bool
+    public function __call($name, $arguments): SismaCollection|int|bool
     {
         $nameParts = explode('By', $name);
         $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
@@ -49,16 +49,18 @@ abstract class ReferencedModel extends BaseModel
         $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[1]));
         $entityName = strtolower(implode('_', $entityNameParts));
         switch ($action) {
+            case 'count':
+                return $this->countEntityCollectionByEntity($entityName, ...$arguments);
             case 'get':
-                return $this->getSismaCollectionByEntity($entityName, $arguments[0]);
+                return $this->getEntityCollectionByEntity($entityName, ...$arguments);
             case 'delete':
-                return $this->deleteSismaCollectionByEntity($entityName, $arguments[0]);
+                return $this->deleteEntityCollectionByEntity($entityName, ...$arguments);
             default:
                 throw new ModelException('Metodo non trovato');
         }
     }
 
-    public function getSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
+    public function countEntityCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null, ?string $searchKey = null): int
     {
         $query = $this->initQuery();
         $query->setWhere();
@@ -67,8 +69,27 @@ abstract class ReferencedModel extends BaseModel
             $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
         } else {
             $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
-            $bindValues = [$baseEntity];
-            $bindTypes = [DataType::typeEntity];
+            $bindValues[] = $baseEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->close();
+        return $this->entityName::getCount($query, $bindValues, $bindTypes);
+    }
+
+    public function getEntityCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        if ($baseEntity === null) {
+            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues[] = $baseEntity;
+            $bindTypes[] = DataType::typeEntity;
         }
         if ($searchKey !== null) {
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -84,18 +105,20 @@ abstract class ReferencedModel extends BaseModel
         return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
     }
 
-    public function deleteSismaCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null): bool
+    public function deleteEntityCollectionByEntity(string $propertyName, BaseEntity $baseEntity = null, ?string $searchKey = null): bool
     {
         $query = $this->initQuery();
         $query->setWhere();
+        $bindValues = $bindTypes = [];
         if ($baseEntity === null) {
             $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
-            $bindValues = [];
-            $bindTypes = [];
         } else {
             $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
-            $bindValues = [$baseEntity];
-            $bindTypes = [DataType::typeEntity];
+            $bindValues[] = $baseEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
         return $this->entityName::deleteBatch($query, $bindValues, $bindTypes);

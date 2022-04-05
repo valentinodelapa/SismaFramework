@@ -43,18 +43,71 @@ abstract class SelfReferencedModel extends ReferencedModel
     const SISMA_COLLECTION_PROPERTY_NAME = 'sonCollection';
     const SISMA_COLLECTION_GETTER_METHOD = 'getSonCollection';
 
-    public function countEntityCollectionByParent(?BaseEntity $parentEntity = null): int
+    public function __call($name, $arguments): SismaCollection|int|bool
+    {
+        $nameParts = explode('By', $name);
+        if (str_contains($nameParts[1], 'Parent')) {
+            $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
+            $action = array_shift($sismaCollectionParts);
+            $nameParts[1] = str_replace('ParentAnd', '', $nameParts[1]);
+            $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[1]));
+            $entityName = strtolower(implode('_', $entityNameParts));
+            switch ($action) {
+                case 'count':
+                    return $this->countEntityCollectionByParentAndEntity($entityName, ...$arguments);
+                case 'get':
+                    return $this->getEntityCollectionByParentAndEntity($entityName, ...$arguments);
+                case 'delete':
+                    return $this->deleteEntityCollectionByParentAndEntity($entityName, ...$arguments);
+                default:
+                    throw new ModelException('Metodo non trovato');
+            }
+        } else {
+            parent::__call($name, $arguments);
+        }
+    }
+
+    public function countEntityCollectionByParent(?BaseEntity $parentEntity = null, ?string $searchKey = null): int
     {
         $query = $this->initQuery();
         $query->setWhere();
+        $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
             $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
-            $bindValues = [];
-            $bindTypes = [];
         } else {
             $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
-            $bindValues = [$parentEntity];
-            $bindTypes = [DataType::typeEntity];
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->close();
+        return $this->entityName::getCount($query, $bindValues, $bindTypes);
+    }
+
+    public function countEntityCollectionByParentAndEntity(string $propertyName, ?BaseEntity $parentEntity = null, BaseEntity $baseEntity = null, ?string $searchKey = null): int
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        if ($parentEntity === null) {
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        $query->appendAnd();
+        if ($baseEntity === null) {
+            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues[] = $baseEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
         return $this->entityName::getCount($query, $bindValues, $bindTypes);
@@ -69,8 +122,42 @@ abstract class SelfReferencedModel extends ReferencedModel
             $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
         } else {
             $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
-            $bindValues = [$parentEntity];
-            $bindTypes = [DataType::typeEntity];
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->setOrderBy($order);
+        if ($offset !== null) {
+            $query->setOffset($offset);
+        }
+        if ($limit != null) {
+            $query->setLimit($limit);
+        }
+        $query->close();
+        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
+    }
+
+    public function getEntityCollectionByParentAndEntity(string $propertyName, ?BaseEntity $parentEntity = null, BaseEntity $baseEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        if ($parentEntity === null) {
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        $query->appendAnd();
+        if ($baseEntity === null) {
+            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues[] = $baseEntity;
+            $bindTypes[] = DataType::typeEntity;
         }
         if ($searchKey !== null) {
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -117,6 +204,52 @@ abstract class SelfReferencedModel extends ReferencedModel
             $entityTree[$key]->setSismaCollection(self::SISMA_COLLECTION_PROPERTY_NAME, $this->getEntityTree($entity, $order));
         }
         return $entityTree;
+    }
+
+    public function deleteEntityCollectionByParent(BaseEntity $parentEntity = null, ?string $searchKey = null): bool
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        if ($parentEntity === null) {
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->close();
+        return $this->entityName::deleteBatch($query, $bindValues, $bindTypes);
+    }
+
+    public function deleteEntityCollectionByParentAndEntity(string $propertyName, ?BaseEntity $parentEntity = null, BaseEntity $baseEntity = null, ?string $searchKey = null): bool
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        if ($parentEntity === null) {
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        $query->appendAnd();
+        if ($baseEntity === null) {
+            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+            $bindValues[] = $baseEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        if ($searchKey !== null) {
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->close();
+        return $this->entityName::deleteBatch($query, $bindValues, $bindTypes);
     }
 
     public function deleteEntityTree(BaseEntity $entityTree): void
