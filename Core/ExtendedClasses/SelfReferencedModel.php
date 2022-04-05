@@ -63,7 +63,7 @@ abstract class SelfReferencedModel extends ReferencedModel
                     throw new ModelException('Metodo non trovato');
             }
         } else {
-            parent::__call($name, $arguments);
+            return parent::__call($name, $arguments);
         }
     }
 
