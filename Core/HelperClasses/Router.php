@@ -36,12 +36,12 @@ use SismaFramework\Core\HttpClasses\Response;
 class Router
 {
 
-    private static $metaUrl = '/';
+    private static $metaUrl = '';
     private static $actualCleanUrl;
 
     public static function redirect(string $relativeUrl): Response
     {
-        header("Location: " . self::$metaUrl . $relativeUrl);
+        header("Location: " . self::$metaUrl . '/' . $relativeUrl);
         return new Response();
     }
 
@@ -57,7 +57,7 @@ class Router
 
     public static function setActualCleanUrl(string $controllerName, string $actionName): void
     {
-        self::$actualCleanUrl = self::$metaUrl . $controllerName . '/' . $actionName . '/';
+        self::$actualCleanUrl = self::$metaUrl . '/' . $controllerName . '/' . $actionName . '/';
     }
 
     public static function getActualCleanUrl(): string
