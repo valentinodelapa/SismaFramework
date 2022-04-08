@@ -219,7 +219,7 @@ class Filter
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
         if ($result) {
-            $result = (SismaDateTime::createFromFormat('Y-m-d', $value)) ? true : false;
+            $result = $value instanceof SismaDateTime;
         }
         return $result;
     }
@@ -229,7 +229,7 @@ class Filter
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
         if ($result) {
-            $result = (SismaDateTime::createFromFormat('Y-m-d\TH:i', $value)) ? true : false;
+            $result = $value instanceof SismaDateTime;
         }
         return $result;
     }

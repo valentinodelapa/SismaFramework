@@ -33,7 +33,7 @@ namespace SismaFramework\Core\ProprietaryTypes;
 class SismaCollection extends \ArrayObject
 {
 
-    public function mergeWith(SismaCollection $sismaCollection)
+    public function mergeWith(SismaCollection $sismaCollection): void
     {
         foreach ($sismaCollection as $object) {
             $this->append($object);
@@ -51,9 +51,16 @@ class SismaCollection extends \ArrayObject
         return $result;
     }
 
-    public function has($value)
+    public function has($value): bool
     {
         return in_array($value, (array) $this);
+    }
+
+    public function slice(int $offset, ?int $length = null): void
+    {
+        $arrayFromObgect = $this->getArrayCopy();
+        $arraySliced = array_slice($arrayFromObgect, $offset, $length);
+        $this->exchangeArray($arraySliced);
     }
 
 }
