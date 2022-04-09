@@ -49,16 +49,21 @@ abstract class SelfReferencedModel extends ReferencedModel
         if (str_contains($nameParts[1], 'Parent')) {
             $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
             $action = array_shift($sismaCollectionParts);
-            $nameParts[1] = str_replace('ParentAnd', '', $nameParts[1]);
-            $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[1]));
-            $entityName = strtolower(implode('_', $entityNameParts));
+            $referencedEntities = [];
+            $parentEntity = array_shift($arguments);
+            $entityNames = explode('And', $nameParts[1]);
+            foreach ($entityNames as $entityName) {
+                $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $entityName));
+                $propertyName = strtolower(implode('_', $entityNameParts));
+                $referencedEntities[$propertyName] = array_shift($arguments);
+            }
             switch ($action) {
                 case 'count':
-                    return $this->countEntityCollectionByParentAndEntity($entityName, ...$arguments);
+                    return $this->countEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, ...$arguments);
                 case 'get':
-                    return $this->getEntityCollectionByParentAndEntity($entityName, ...$arguments);
+                    return $this->getEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, ...$arguments);
                 case 'delete':
-                    return $this->deleteEntityCollectionByParentAndEntity($entityName, ...$arguments);
+                    return $this->deleteEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, ...$arguments);
                 default:
                     throw new ModelException('Metodo non trovato');
             }
@@ -86,7 +91,7 @@ abstract class SelfReferencedModel extends ReferencedModel
         return $this->entityName::getCount($query, $bindValues, $bindTypes);
     }
 
-    public function countEntityCollectionByParentAndEntity(string $propertyName, ?BaseEntity $parentEntity = null, BaseEntity $baseEntity = null, ?string $searchKey = null): int
+    public function countEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null): int
     {
         $query = $this->initQuery();
         $query->setWhere();
@@ -99,12 +104,17 @@ abstract class SelfReferencedModel extends ReferencedModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        if ($baseEntity === null) {
-            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
-        } else {
-            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
-            $bindValues[] = $baseEntity;
-            $bindTypes[] = DataType::typeEntity;
+        foreach ($referencedEntities as $propertyName => $baseEntity) {
+            if ($baseEntity === null) {
+                $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+            } else {
+                $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+                $bindValues[] = $baseEntity;
+                $bindTypes[] = DataType::typeEntity;
+            }
+            if($propertyName !== array_key_last($referencedEntities)){
+                $query->appendAnd();
+            }
         }
         if ($searchKey !== null) {
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -139,7 +149,7 @@ abstract class SelfReferencedModel extends ReferencedModel
         return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
     }
 
-    public function getEntityCollectionByParentAndEntity(string $propertyName, ?BaseEntity $parentEntity = null, BaseEntity $baseEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
+    public function getEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
     {
         $query = $this->initQuery();
         $query->setWhere();
@@ -152,12 +162,17 @@ abstract class SelfReferencedModel extends ReferencedModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        if ($baseEntity === null) {
-            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
-        } else {
-            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
-            $bindValues[] = $baseEntity;
-            $bindTypes[] = DataType::typeEntity;
+        foreach ($referencedEntities as $propertyName => $baseEntity) {
+            if ($baseEntity === null) {
+                $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+            } else {
+                $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+                $bindValues[] = $baseEntity;
+                $bindTypes[] = DataType::typeEntity;
+            }
+            if($propertyName !== array_key_last($referencedEntities)){
+                $query->appendAnd();
+            }
         }
         if ($searchKey !== null) {
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -225,7 +240,7 @@ abstract class SelfReferencedModel extends ReferencedModel
         return $this->entityName::deleteBatch($query, $bindValues, $bindTypes);
     }
 
-    public function deleteEntityCollectionByParentAndEntity(string $propertyName, ?BaseEntity $parentEntity = null, BaseEntity $baseEntity = null, ?string $searchKey = null): bool
+    public function deleteEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null): bool
     {
         $query = $this->initQuery();
         $query->setWhere();
@@ -238,12 +253,17 @@ abstract class SelfReferencedModel extends ReferencedModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        if ($baseEntity === null) {
-            $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
-        } else {
-            $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
-            $bindValues[] = $baseEntity;
-            $bindTypes[] = DataType::typeEntity;
+        foreach ($referencedEntities as $propertyName => $baseEntity) {
+            if ($baseEntity === null) {
+                $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+            } else {
+                $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+                $bindValues[] = $baseEntity;
+                $bindTypes[] = DataType::typeEntity;
+            }
+            if($propertyName !== array_key_last($referencedEntities)){
+                $query->appendAnd();
+            }
         }
         if ($searchKey !== null) {
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
