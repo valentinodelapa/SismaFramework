@@ -155,7 +155,7 @@ abstract class BaseEntity
         $this->checkStartTransaction();
         $ok = $this->adapter->execute($cmd, $vals);
         if ($ok){
-            $this->saveSismaCollection();
+            $this->saveEntityCollection();
         }
         $this->checkEndTransaction();
         return $ok;
@@ -191,7 +191,7 @@ abstract class BaseEntity
         }
     }
     
-    protected function saveSismaCollection():void
+    protected function saveEntityCollection():void
     {
         
     }
@@ -208,7 +208,7 @@ abstract class BaseEntity
         $ok = $this->adapter->execute($cmd, $vals);
         if ($ok) {
             $this->{$this->primaryKey} = $this->adapter->lastInsertId();
-            $this->saveSismaCollection();
+            $this->saveEntityCollection();
         }
         $this->checkEndTransaction();
         return $ok;

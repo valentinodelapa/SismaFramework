@@ -194,8 +194,8 @@ abstract class BaseForm
         } else {
             $entityClass = get_class($this->entity);
             if ($this->entity->getCollectionDataInformation($propertyName, $entityClass::FOREIGN_KEY_TYPE) === $formPropertyClass::ENTITY_CLASS_NAME) {
-                $sismaCollectionToEmbed = $this->entity->getSismaCollection($propertyName);
-                $this->generateSismaCollectionProperty($formPropertyClass, $sismaCollectionToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
+                $entityCollectonToEmbed = $this->entity->getEntityCollection($propertyName);
+                $this->generateSismaCollectionProperty($formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
             }
@@ -210,10 +210,10 @@ abstract class BaseForm
         $filerErrors = $formProperty->returnFilterErrors();
     }
 
-    private function generateSismaCollectionProperty(string $formPropertyClass, SismaCollection $sismaCollectionToEmbed, ?array &$entityFromForm, ?array &$filerErrors): void
+    private function generateSismaCollectionProperty(string $formPropertyClass, SismaCollection $entityCollectonToEmbed, ?array &$entityFromForm, ?array &$filerErrors): void
     {
         for ($i = 0; $i < \Config\COLLECTION_FROM_FORM_NUMBER; $i++) {
-            $ntityToEmbed = $sismaCollectionToEmbed[$i] ?? null;
+            $ntityToEmbed = $entityCollectonToEmbed[$i] ?? null;
             $this->generateFormProperty($formPropertyClass, $ntityToEmbed, $entityFromForm[$i], $filerErrors[$i]);
         }
     }
@@ -247,7 +247,7 @@ abstract class BaseForm
     {
         foreach ($this->entityFromForm[$propertyName] as $form) {
             if (isset($form->entityData)) {
-                $this->entity->addEntityToSimaCollection($propertyName, $form->resolveEntity());
+                $this->entity->addEntityToEntityCollection($propertyName, $form->resolveEntity());
             }
         }
     }

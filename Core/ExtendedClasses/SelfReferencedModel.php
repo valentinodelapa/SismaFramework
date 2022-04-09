@@ -201,7 +201,7 @@ abstract class SelfReferencedModel extends ReferencedModel
     {
         $entityTree = $this->getEntityCollectionByParent($parentEntity, null, $order);
         foreach ($entityTree as $key => $entity) {
-            $entityTree[$key]->setSismaCollection(self::SISMA_COLLECTION_PROPERTY_NAME, $this->getEntityTree($entity, $order));
+            $entityTree[$key]->setEntityCollection(self::SISMA_COLLECTION_PROPERTY_NAME, $this->getEntityTree($entity, $order));
         }
         return $entityTree;
     }
