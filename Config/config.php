@@ -126,7 +126,3 @@ const DATABASE_PASSWORD = '';
 const DATABASE_PORT = '';
 const DATABASE_USERNAME = '';
 
-/* Google Apis */
-const GOOGLE_RECAPTCHA_SECRET_KEY = '';
-const GOOGLE_RECAPTCHA_SITE_KEY = '';
-
