@@ -46,13 +46,13 @@ abstract class SelfReferencedModel extends ReferencedModel
     public function __call($name, $arguments): SismaCollection|int|bool
     {
         $nameParts = explode('By', $name);
-        if (str_contains($nameParts[1], 'Parent')) {
+        if (str_contains($nameParts[1], 'ParentAnd')) {
             $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
             $action = array_shift($sismaCollectionParts);
             $referencedEntities = [];
             $parentEntity = array_shift($arguments);
             $entityNames = explode('And', $nameParts[1]);
-            foreach ($entityNames as $entityName) {
+            foreach (array_slice($entityNames, 1) as $entityName) {
                 $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $entityName));
                 $propertyName = strtolower(implode('_', $entityNameParts));
                 $referencedEntities[$propertyName] = array_shift($arguments);
