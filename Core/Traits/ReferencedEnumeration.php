@@ -35,23 +35,23 @@ trait ReferencedEnumeration
 
     use \SismaFramework\Core\Traits\DataEnumeration;
     
-    public function getEnumerationsFromParent(\UnitEnum $parentEnumeration = null, mixed ...$offsets): array
+    public static function getEnumerationsFromParent(\UnitEnum $parentEnumeration = null, mixed ...$offsets): array
     {
         $enumerations = [];
         foreach (self::cases() as $case) {
-            $additionalDataField = self::$case->getAdditionalDataField(...$offsets);
-            if ($additionalDataField === $parentEnumeration) {
+            $functionalDataField = $case->getFunctionalDataField(...$offsets);
+            if ($functionalDataField === $parentEnumeration) {
                 $enumerations[] = $case;
             }
         }
         return $enumerations;
     }
     
-    public function getChoiceFromParent(\UnitEnum $parentEnumeration = null, int|string|\UnitEnum $labelOffset = 'name', mixed ...$offsets): array
+    public static function getChoiceFromParent(\UnitEnum $parentEnumeration = null, array $labelOffset = [], mixed ...$offsets): array
     {
         $choice = [];
-        foreach ($this->getChildEnumerations($parentEnumeration, ...$offsets) as $case) {
-            $choice[$case->getAdditionalDataField($labelOffset)] = $case->value;
+        foreach (self::getEnumerationsFromParent($parentEnumeration, ...$offsets) as $case) {
+            $choice[$case->getAdditionalDataField(...$labelOffset)] = $case->value;
         }
         return $choice;
     }
