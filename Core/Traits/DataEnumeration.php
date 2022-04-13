@@ -37,11 +37,11 @@ use SismaFramework\Core\Exceptions\EnumerationException;
 trait DataEnumeration
 {
 
-    abstract private function setAdditionalData(): int|string|array|\UnitEnum;
+    abstract private function setAdditionalData(): null|int|string|array|\UnitEnum;
     
-    abstract private function setFunctionalData() :int|string|array|\UnitEnum;
+    abstract private function setFunctionalData() :null|int|string|array|\UnitEnum;
 
-    public function getAdditionalDataField(int|string|\UnitEnum ...$offsets): int|string|array|\UnitEnum
+    public function getAdditionalDataField(int|string|\UnitEnum ...$offsets): null|int|string|array|\UnitEnum
     {
         $field = $this->setAdditionalData();
         foreach ($offsets as $offset) {
@@ -54,7 +54,7 @@ trait DataEnumeration
         return $field;
     }
 
-    public function getFunctionalDataField(int|string|\UnitEnum ...$offsets): int|string|array|\UnitEnum
+    public function getFunctionalDataField(int|string|\UnitEnum ...$offsets): null|int|string|array|\UnitEnum
     {
         $field = $this->setFunctionalData();
         foreach ($offsets as $offset) {
