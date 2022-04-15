@@ -24,17 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ORM\BaseClasses;
+namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\ORM\Enumerations\AggregationFunction;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\Enumerations\Condition;
-use SismaFramework\ORM\Enumerations\Indexing;
-use SismaFramework\ORM\Enumerations\Keyword;
-use SismaFramework\ORM\Enumerations\LogicalOperator;
-use SismaFramework\ORM\Enumerations\Statement;
-use SismaFramework\ORM\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\Enumerations\AggregationFunction;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\Condition;
+use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\LogicalOperator;
+use SismaFramework\Orm\Enumerations\Statement;
+use SismaFramework\Orm\BaseClasses\BaseResultSet;
 
 /**
  *

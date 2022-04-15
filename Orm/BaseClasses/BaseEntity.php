@@ -24,17 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
+namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\Core\BaseClasses\BaseEnumerator;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
-use SismaFramework\ORM\BaseClasses\BaseAdapter;
-use SismaFramework\ORM\HelperClasses\Query;
-use SismaFramework\ORM\Enumerations\Statement;
-use SismaFramework\ORM\Enumerations\Keyword;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\Orm\Enumerations\Statement;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\HelperClasses\Cache;
 
 /**
  *
@@ -64,8 +64,8 @@ abstract class BaseEntity
         $this->adapter = &$adapter;
         $this->setPropertyDefaultValue();
     }
-    
-    abstract protected function setPropertyDefaultValue():void;
+
+    abstract protected function setPropertyDefaultValue(): void;
 
     public function isPrimaryKey(string $propertyName): bool
     {
@@ -131,16 +131,16 @@ abstract class BaseEntity
     {
         return $this->adapter;
     }
-    
+
     public function save(): bool
     {
-        if (($this->primaryKey == '')  || empty($this->{$this->primaryKey})) {
+        if (($this->primaryKey == '') || empty($this->{$this->primaryKey})) {
             return $this->insert();
-        }else{
+        } else {
             return $this->update();
         }
     }
-    
+
     public function update()
     {
         $cols = $vals = $markers = [];
@@ -154,10 +154,11 @@ abstract class BaseEntity
         $vals[] = $this->{$this->primaryKey};
         $this->checkStartTransaction();
         $ok = $this->adapter->execute($cmd, $vals);
-        if ($ok){
+        if ($ok) {
             $this->saveEntityCollection();
         }
         $this->checkEndTransaction();
+        Cache::setEntity($this);
         return $ok;
     }
 
@@ -168,7 +169,7 @@ abstract class BaseEntity
             if ($prop->isPublic() && $p_name != $this->primaryKey) {
                 $markers[] = '?';
                 $this->switchValueType($p_name, $prop->getType(), $p_val, $cols, $vals);
-            }elseif ($prop->getType()->getName() === SismaCollection::class){
+            } elseif ($prop->getType()->getName() === SismaCollection::class) {
                 array_push($this->collectionPropertiesName, $p_name);
             }
         }
@@ -178,11 +179,11 @@ abstract class BaseEntity
     {
         $cols[] = $this->adapter->escapeColumn($p_name, is_subclass_of($reflectionType->getName(), BaseEntity::class));
         if (is_a($p_val, BaseEntity::class)) {
-            if (!isset($p_val->id)){
+            if (!isset($p_val->id)) {
                 $p_val->insert();
             }
             $vals[] = $p_val->id;
-        } elseif (is_subclass_of ($p_val, \UnitEnum::class)) {
+        } elseif (is_subclass_of($p_val, \UnitEnum::class)) {
             $vals[] = $p_val->value;
         } elseif ($p_val instanceof SismaDateTime) {
             $vals[] = $p_val->format("Y-m-d H:i:s");
@@ -190,8 +191,8 @@ abstract class BaseEntity
             $vals[] = $p_val;
         }
     }
-    
-    protected function saveEntityCollection():void
+
+    protected function saveEntityCollection(): void
     {
         
     }
@@ -211,6 +212,7 @@ abstract class BaseEntity
             $this->saveEntityCollection();
         }
         $this->checkEndTransaction();
+        Cache::setEntity($this);
         return $ok;
     }
 

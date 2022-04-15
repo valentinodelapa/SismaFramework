@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ORM\HelperClasses;
+namespace SismaFramework\Orm\HelperClasses;
 
-use SismaFramework\ORM\BaseClasses\BaseAdapter;
-use SismaFramework\ORM\Enumerations\Statement;
-use SismaFramework\ORM\Enumerations\Condition;
-use SismaFramework\ORM\Enumerations\Indexing;
-use SismaFramework\ORM\Enumerations\Keyword;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\HelperClasses\Query;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\Enumerations\Statement;
+use SismaFramework\Orm\Enumerations\Condition;
+use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\HelperClasses\Query;
 
 /**
  *

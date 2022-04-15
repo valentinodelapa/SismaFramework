@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\Traits;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;

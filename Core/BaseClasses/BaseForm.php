@@ -34,6 +34,7 @@ use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
  *

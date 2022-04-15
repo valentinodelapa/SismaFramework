@@ -2,7 +2,7 @@
 
 namespace SismaFramework\Sample\Forms;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Sample\Entities\Sample;
 

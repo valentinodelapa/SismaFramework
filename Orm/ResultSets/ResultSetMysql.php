@@ -24,12 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ORM\ResultSets;
+namespace SismaFramework\Orm\ResultSets;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
-use SismaFramework\ORM\BaseClasses\BaseAdapter;
-use SismaFramework\ORM\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\BaseClasses\BaseResultSet;
 
 /**
  *

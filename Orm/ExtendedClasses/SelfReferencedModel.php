@@ -24,13 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ExtendedClasses;
+namespace SismaFramework\Orm\ExtendedClasses;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\Core\ExtendedClasses\ReferencedModel;
-use SismaFramework\ORM\Enumerations\Keyword;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\Enumerations\DataType;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\ExtendedClasses\ReferencedModel;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 
 /**
@@ -52,11 +52,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             $referencedEntities = [];
             $parentEntity = array_shift($arguments);
             $entityNames = explode('And', $nameParts[1]);
-            foreach (array_slice($entityNames, 1) as $entityName) {
-                $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $entityName));
-                $propertyName = strtolower(implode('_', $entityNameParts));
-                $referencedEntities[$propertyName] = array_shift($arguments);
-            }
+            $this->buildReferencedEntitiesArray(array_slice($entityNames, 1), $arguments, $referencedEntities);
             switch ($action) {
                 case 'count':
                     return $this->countEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, ...$arguments);

@@ -27,10 +27,10 @@
 namespace SismaFramework\Core\Traits;;
 
 use SismaFramework\Core\Enumerations\Language;
-use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\ORM\Enumerations\Keyword;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\Enumerations\DataType;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 
 /**

@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ExtendedClasses;
+namespace SismaFramework\Orm\ExtendedClasses;
 
-use SismaFramework\Core\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\ORM\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 
 /**
  *

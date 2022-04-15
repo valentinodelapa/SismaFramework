@@ -24,16 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
+namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\ORM\BaseClasses\BaseAdapter;
-use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\ORM\Enumerations\Keyword;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\Enumerations\DataType;
-use SismaFramework\ORM\HelperClasses\Query;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\HelperClasses\Query;
 
 /**
  *
@@ -143,15 +144,23 @@ abstract class BaseModel
 
     public function getEntityById(int $id): ?BaseEntity
     {
-        $query = $this->initQuery();
-        $query->setWhere();
-        $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
-        $query->close();
-        return $this->entityName::findFirst($query, [
-                    $id,
-                        ], [
-                    DataType::typeInteger,
-        ]);
+        if (\Config\ORM_CACHE_ACTIVATION_STATUS && Cache::checkEntityPresenceInClass($this->entityName, $id)) {
+            return Cache::getEntityById($this->entityName, $id);
+        } else {
+            $query = $this->initQuery();
+            $query->setWhere();
+            $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
+            $query->close();
+            $entity = $this->entityName::findFirst($query, [
+                        $id,
+                            ], [
+                        DataType::typeInteger,
+            ]);
+            if (\Config\ORM_CACHE_ACTIVATION_STATUS && ($entity instanceof $this->entityName)) {
+                Cache::setEntity($entity);
+            }
+            return $entity;
+        }
     }
 
     public function saveEntityByData(array $data): void

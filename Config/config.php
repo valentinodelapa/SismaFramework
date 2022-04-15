@@ -27,7 +27,7 @@
 namespace Config;
 
 /* Name Constant */
-
+const VERSION = '2.8.1';
 const ADAPTERS = 'Adapters';
 const APPLICATION = 'Sample';
 const ASSETS = 'Assets';
@@ -87,6 +87,7 @@ const FIXTURE_NAMESPACE = APPLICATION_NAMESPACE . FIXTURES . '\\';
 /* Object Relational Mapper Constant */
 const ORM_PATH = CORE_PATH . ORM . DIRECTORY_SEPARATOR;
 const ORM_NAMESPACE = CORE_NAMESPACE . ORM . '\\';
+const ORM_CACHE_ACTIVATION_STATUS = true;
 
 /* Adapter Constant */
 const ADAPTER_PATH = ORM_PATH . ADAPTERS . DIRECTORY_SEPARATOR;

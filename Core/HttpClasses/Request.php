@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Core\HttpClasses;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\Core\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Core\Enumerations\RequestType;
 
 /**

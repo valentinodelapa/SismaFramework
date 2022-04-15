@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ORM\Enumerations;
+namespace SismaFramework\Orm\Enumerations;
 
 /**
  *

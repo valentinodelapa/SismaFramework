@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\Core\BaseClasses\BaseModel;
+use SismaFramework\Orm\BaseClasses\BaseModel;
 use SismaFramework\Core\Enumerations\PermissionAttribute;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Core\HelperClasses\Session;

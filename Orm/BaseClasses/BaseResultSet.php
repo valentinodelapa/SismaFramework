@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ORM\BaseClasses;
+namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
 
 /**

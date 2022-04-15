@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ORM\Exceptions;
+namespace SismaFramework\Orm\Exceptions;
 
 use SismaFramework\Core\BaseClasses\BaseException;
 

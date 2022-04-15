@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ORM\Adapters;
+namespace SismaFramework\Orm\Adapters;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
-use SismaFramework\ORM\Exceptions\AdapterException;
-use SismaFramework\ORM\BaseClasses\BaseAdapter;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\Enumerations\DataType;
-use SismaFramework\ORM\ResultSets\ResultSetMysql;
+use SismaFramework\Orm\Exceptions\AdapterException;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\ResultSets\ResultSetMysql;
 
 /**
  *

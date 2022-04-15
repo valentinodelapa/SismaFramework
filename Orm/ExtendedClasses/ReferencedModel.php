@@ -24,15 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ExtendedClasses;
+namespace SismaFramework\Orm\ExtendedClasses;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
-use SismaFramework\Core\BaseClasses\BaseModel;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseModel;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\ORM\Enumerations\Keyword;
-use SismaFramework\ORM\Enumerations\ComparisonOperator;
-use SismaFramework\ORM\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
 
 /**
  *
@@ -48,11 +49,7 @@ abstract class ReferencedModel extends BaseModel
         $action = array_shift($sismaCollectionParts);
         $referencedEntities = [];
         $entityNames = explode('And', $nameParts[1]);
-        foreach ($entityNames as $entityName) {
-            $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $entityName));
-            $propertyName = strtolower(implode('_', $entityNameParts));
-            $referencedEntities[$propertyName] = array_shift($arguments);
-        }
+        $this->buildReferencedEntitiesArray($entityNames, $arguments, $referencedEntities);
         switch ($action) {
             case 'count':
                 return $this->countEntityCollectionByEntity($referencedEntities, ...$arguments);
@@ -62,6 +59,20 @@ abstract class ReferencedModel extends BaseModel
                 return $this->deleteEntityCollectionByEntity($referencedEntities, ...$arguments);
             default:
                 throw new ModelException('Metodo non trovato');
+        }
+    }
+
+    protected function buildReferencedEntitiesArray(array $entityNames, array &$arguments, array &$referencedEntities): void
+    {
+        foreach ($entityNames as $entityName) {
+            $entity = array_shift($arguments);
+            if (($entity instanceof \Config\ENTITY_NAMESPACE . $entityName) || ($entity === null)) {
+                $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $entityName));
+                $propertyName = strtolower(implode('_', $entityNameParts));
+                $referencedEntities[$propertyName] = $entity;
+            } else {
+                throw new InvalidArgumentException();
+            }
         }
     }
 
@@ -78,7 +89,7 @@ abstract class ReferencedModel extends BaseModel
                 $bindValues[] = $baseEntity;
                 $bindTypes[] = DataType::typeEntity;
             }
-            if($propertyName !== array_key_last($referencedEntities)){
+            if ($propertyName !== array_key_last($referencedEntities)) {
                 $query->appendAnd();
             }
         }
@@ -102,7 +113,7 @@ abstract class ReferencedModel extends BaseModel
                 $bindValues[] = $baseEntity;
                 $bindTypes[] = DataType::typeEntity;
             }
-            if($propertyName !== array_key_last($referencedEntities)){
+            if ($propertyName !== array_key_last($referencedEntities)) {
                 $query->appendAnd();
             }
         }
@@ -133,7 +144,7 @@ abstract class ReferencedModel extends BaseModel
                 $bindValues[] = $baseEntity;
                 $bindTypes[] = DataType::typeEntity;
             }
-            if($propertyName !== array_key_last($referencedEntities)){
+            if ($propertyName !== array_key_last($referencedEntities)) {
                 $query->appendAnd();
             }
         }

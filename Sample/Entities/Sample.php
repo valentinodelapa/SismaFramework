@@ -2,7 +2,7 @@
 
 namespace SismaFramework\Sample\Entities;
 
-use SismaFramework\Core\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 class Sample extends BaseEntity
 {

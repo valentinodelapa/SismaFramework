@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,37 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Orm\Enumerations;
+namespace SismaFramework\Orm\HelperClasses;
+
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
+ * Description of EntityCache
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum AggregationFunction: string
+class Cache
 {
 
-    case count = 'COUNT';
-    case avg = 'AVG';
-    case sum = 'SUM';
+    private static array $entityCache = [];
+
+    public static function setEntity(BaseEntity $entity): void
+    {
+        static::$entityCache[get_class($entity)][$entity->id] = $entity;
+    }
+
+    public static function checkEntityPresenceInClass(string $entityName, int $entityId): bool
+    {
+        if (isset(static::$entityCache[$entityName])) {
+            return array_key_exists($entityId, static::$entityCache[$entityName]);
+        } else {
+            return false;
+        }
+    }
+
+    public static function getEntityById(string $entityName, int $entityId): BaseEntity
+    {
+        return static::$entityCache[$entityName][$entityId];
+    }
 
 }
