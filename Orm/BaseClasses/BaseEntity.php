@@ -158,7 +158,9 @@ abstract class BaseEntity
             $this->saveEntityCollection();
         }
         $this->checkEndTransaction();
-        Cache::setEntity($this);
+        if (\Config\ORM_CACHE) {
+            Cache::setEntity($this);
+        }
         return $ok;
     }
 
@@ -212,7 +214,9 @@ abstract class BaseEntity
             $this->saveEntityCollection();
         }
         $this->checkEndTransaction();
-        Cache::setEntity($this);
+        if (\Config\ORM_CACHE) {
+            Cache::setEntity($this);
+        }
         return $ok;
     }
 

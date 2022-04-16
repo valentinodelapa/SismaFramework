@@ -144,7 +144,7 @@ abstract class BaseModel
 
     public function getEntityById(int $id): ?BaseEntity
     {
-        if (\Config\ORM_CACHE_ACTIVATION_STATUS && Cache::checkEntityPresenceInClass($this->entityName, $id)) {
+        if (\Config\ORM_CACHE && Cache::checkEntityPresenceInClass($this->entityName, $id)) {
             return Cache::getEntityById($this->entityName, $id);
         } else {
             $query = $this->initQuery();
@@ -156,7 +156,7 @@ abstract class BaseModel
                             ], [
                         DataType::typeInteger,
             ]);
-            if (\Config\ORM_CACHE_ACTIVATION_STATUS && ($entity instanceof $this->entityName)) {
+            if (\Config\ORM_CACHE && ($entity instanceof $this->entityName)) {
                 Cache::setEntity($entity);
             }
             return $entity;
