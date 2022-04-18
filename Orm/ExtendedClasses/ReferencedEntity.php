@@ -91,16 +91,13 @@ abstract class ReferencedEntity extends BaseEntity
         switch ($methodType) {
             case 'set':
                 $argument = isset($arguments[0]) ? $arguments[0] : null;
-                $this->setEntityCollection($propertyName, $argument);
-                break;
+                return $this->setEntityCollection($propertyName, $argument);
             case 'add':
-                $this->addEntityToEntityCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
-                break;
+                return $this->addEntityToEntityCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
             case 'get':
                 return $this->getEntityCollection($propertyName);
             default:
                 throw new EntityException('Metodo non trovato');
-                break;
         }
     }
 
@@ -120,25 +117,53 @@ abstract class ReferencedEntity extends BaseEntity
             $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';
             $modelMethodName = 'get' . ucfirst($propertyName) . 'By' . ucfirst($this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME));
             $model = new $modelName();
-            $this->$propertyName = $model->$modelMethodName($this);
-        } else {
-            $this->$propertyName = $sismaCollection;
+            $this->$propertyName->exchangeArray($model->$modelMethodName($this));
+        } elseif ($this->checkCollectionElementTypeConsistency($propertyName, $sismaCollection)) {
+            $this->$propertyName->exchangeArray($sismaCollection);
             $entityPropertyName = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
             foreach ($this->$propertyName as $entity) {
                 $entity->$entityPropertyName = $this;
             }
+        }else{
+            throw new InvalidArgumentException();
         }
+    }
+
+    public function checkCollectionElementTypeConsistency(string $propertyName, SismaCollection $sismaCollection): bool
+    {
+        $entityType = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE);
+        $isConsistent = true;
+        foreach ($sismaCollection as $entity) {
+            if(($entity instanceof $entityType) === false){
+                $isConsistent = false;
+            }
+        }
+        return $isConsistent;
     }
 
     public function addEntityToEntityCollection(string $propertyName, BaseEntity $entity): void
     {
-        $this->$propertyName->append($entity);
         $entityPropertyName = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
         $entityType = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE);
         if ($entity instanceof $entityType) {
+            $this->switchAdditionType($propertyName, $entity);
             $entity->$entityPropertyName = $this;
         } else {
-            
+            throw new InvalidArgumentException();
+        }
+    }
+
+    private function switchAdditionType(string $propertyName, BaseEntity $entity): void
+    {
+        $found = false;
+        foreach ($this->$propertyName as $key => $includedEntity) {
+            if (isset($entity->id) && ($includedEntity->id === $entity->id)) {
+                $this->$propertyName[$key] = $entity;
+                $found = true;
+            }
+        }
+        if ($found === false) {
+            $this->$propertyName->append($entity);
         }
     }
 

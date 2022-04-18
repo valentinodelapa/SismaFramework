@@ -27,7 +27,7 @@
 namespace Config;
 
 /* Name Constant */
-const VERSION = '2.8.1';
+const VERSION = '2.9.2';
 const ADAPTERS = 'Adapters';
 const APPLICATION = 'Sample';
 const ASSETS = 'Assets';
