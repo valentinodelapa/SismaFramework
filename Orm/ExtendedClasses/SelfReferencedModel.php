@@ -81,6 +81,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             $bindTypes[] = DataType::typeEntity;
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
@@ -113,6 +114,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             }
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
@@ -132,6 +134,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             $bindTypes[] = DataType::typeEntity;
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->setOrderBy($order);
@@ -171,6 +174,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             }
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->setOrderBy($order);
@@ -230,6 +234,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             $bindTypes[] = DataType::typeEntity;
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
@@ -262,6 +267,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             }
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();

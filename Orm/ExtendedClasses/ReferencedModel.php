@@ -94,6 +94,7 @@ abstract class ReferencedModel extends BaseModel
             }
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
@@ -118,6 +119,7 @@ abstract class ReferencedModel extends BaseModel
             }
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->setOrderBy($order);
@@ -149,6 +151,7 @@ abstract class ReferencedModel extends BaseModel
             }
         }
         if ($searchKey !== null) {
+            $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();

@@ -75,6 +75,7 @@ a:hover{color: #636363;}
 .has-text-weight-bold{font-weight:700;}
 
 .is-invisible{display:none;}
+.is-absolute{position: absolute;}
 .is-fixed{position: fixed;}
 .is-vertical-scroll{overflow-y: scroll}
 .is-horizontal-scroll{overflow-x: scroll}
