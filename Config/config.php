@@ -27,7 +27,6 @@
 namespace Config;
 
 /* Name Constant */
-const VERSION = '2.9.2';
 const ADAPTERS = 'Adapters';
 const APPLICATION = 'Sample';
 const ASSETS = 'Assets';
@@ -41,7 +40,7 @@ const ENTITIES = 'Entities';
 const FIXTURES = 'Fixtures';
 const LOCALES = 'Locales';
 const MODELS = 'Models';
-const ORM = 'ObjectRelationalMapper';
+const ORM = 'Orm';
 const PROJECT = 'SismaFramework';
 const SYSTEM = 'SismaFramework';
 const STRUCTURAL = 'Structural';
@@ -49,7 +48,9 @@ const TEMPLATES = 'Templates';
 const VIEWS = 'Views';
 
 /* Base Constant */
+const VERSION = '2.9.2';
 const LANGUAGE = 'it_IT';
+const MINIMUM_PHP_VERSION = '8.1.0';
 const MAX_RELOAD_ATTEMPTS = 3;
 const CONFIGURATION_PASSWORD = '';
 const ENCRYPTION_KEY = '';

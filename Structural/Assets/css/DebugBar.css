@@ -1,0 +1,42 @@
+/*
+The MIT License
+
+Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+/* 
+    Created on : 22 apr 2022, 21:33:59
+    Author     : Valentino de Lapa <valentino.delapa@gmail.com>
+*/
+
+.debug-bar{bottom: 0px; width: 100%; position: fixed; display: flex; flex-direction: column;}
+.debug-bar-header, .debug-bar-header-left{display: flex; flex-direction: row;}
+.debug-bar-header{padding: 2px 10px; justify-content: space-between; background-color: #dbdbdb;}
+.debug-bar-header-left{justify-content: flex-start;}
+.debug-bar-header-left > label, .debug-bar-header > div{margin: 0px 5px;}
+.debug-bar-header-left > div{cursor: pointer}
+.debug-bar-header-right > div{margin: 0px 1px;}
+.debug-bar-header-left > label{padding: 2px 0px;}
+.debug-bar-header-left > div, .debug-bar-header-right > div{padding: 2px 5px; background-color: #f4f4f4; border-radius: 3px;}
+.debug-bar-header-left > label:last-of-type{}
+.debug-bar-body{height: 200px; display: none; flex-direction: column; background-color: white; overflow-y: scroll}
+.debug-bar-body > pre {margin: 0px; padding: 0px;}
+.debug-bar-body > pre > div{padding: 2px 10px;}
+.debug-bar-body > pre > div:nth-of-type(even){background-color: #f4f4f4}
