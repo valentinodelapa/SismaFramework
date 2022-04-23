@@ -123,7 +123,7 @@ class Dispatcher
         return lcfirst(self::convertToStudlyCaps($string));
     }
 
-    private static function convertFromCamelCase(string $string): string
+    private static function convertToKebabCase(string $string): string
     {
 
         return implode('-', array_map(function ($value) {
