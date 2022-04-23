@@ -238,7 +238,7 @@ class Dispatcher
     {
         $odd = $even = [];
         while (count($this->actionArguments) > 1) {
-            $odd[] = array_shift($this->actionArguments);
+            $odd[] = $this->convertToCamelCase(array_shift($this->actionArguments));
             $even[] = array_shift($this->actionArguments);
         }
         $this->actionArguments = array_combine($odd, $even);
