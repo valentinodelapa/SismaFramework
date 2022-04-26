@@ -26,8 +26,8 @@ THE SOFTWARE.
     Author     : Valentino de Lapa <valentino.delapa@gmail.com>
 */
 
-.debug-bar{bottom: 0px; width: 100%; position: fixed; display: flex; flex-direction: column;}
-.debug-bar-header, .debug-bar-header-left{display: flex; flex-direction: row;}
+.debug-bar{bottom: 0px; width: 100%; position: fixed; display: flex; flex-direction: column; z-index: 100;}
+.debug-bar-header, .debug-bar-header-left, .debug-bar-header-right{display: flex; flex-direction: row;}
 .debug-bar-header{padding: 2px 10px; justify-content: space-between; background-color: #dbdbdb;}
 .debug-bar-header-left{justify-content: flex-start;}
 .debug-bar-header-left > label, .debug-bar-header > div{margin: 0px 5px;}
@@ -39,4 +39,5 @@ THE SOFTWARE.
 .debug-bar-body{height: 200px; display: none; flex-direction: column; background-color: white; overflow-y: scroll}
 .debug-bar-body > pre {margin: 0px; padding: 0px;}
 .debug-bar-body > pre > div{padding: 2px 10px;}
+.debug-bar-body > pre > div:nth-of-type(odd){background-color: #ffffff}
 .debug-bar-body > pre > div:nth-of-type(even){background-color: #f4f4f4}
