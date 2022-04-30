@@ -137,12 +137,15 @@ class Dispatcher
             $this->resolveRouteCall();
         } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             $fixtureManager = new FixturesManager();
-        } elseif ((count($this->pathParts) === 2) && (file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
-            header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
+        } elseif ((count($this->pathParts) === 2) && $this->checkResourceTypeExist('assetFolder', $this->pathParts[0]) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])) {
+            header('Content-type: ' . $this->getResourceType('assetFolder', 'mime', $this->pathParts[0]));
             echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
-        } elseif ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]))) {
-            header('Content-type: ' . array_search($this->pathParts[0], \Config\ASSET_FOLDERS));
+        } elseif ((count($this->pathParts) === 2) && $this->checkResourceTypeExist('assetFolder', $this->pathParts[0]) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])) {
+            header('Content-type: ' . $this->getResourceType('assetFolder', 'mime', $this->pathParts[0]));
             echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]);
+        } elseif ($this->checkResourceTypeExist('extension', $this->getExtension()) && file_exists(\Config\ROOT_PATH . $this->path)) {
+            header('Content-type: '.$this->getResourceType('extension', 'mime', $this->getExtension()));
+            echo file_get_contents(\Config\ROOT_PATH . $this->path);
         } else {
             $this->switchNotFoundActions();
         }
@@ -271,6 +274,33 @@ class Dispatcher
         } else {
             throw new PageNotFoundException();
         }
+    }
+
+    private function checkResourceTypeExist(string $type, string $value):bool
+    {
+        $found = false;
+        foreach (\Config\RESOURCES as $resource) {
+            if($resource[$type] === $value){
+                $found = true;
+            }
+        }
+        return $found;
+    }
+    
+    private function getResourceType(string $searchType, string $returnType, string $value):string|bool
+    {
+        foreach (\Config\RESOURCES as $resource) {
+            if($resource[$searchType] === $value){
+                return $resource[$returnType];
+            }
+        }
+        return false;
+    }
+    
+    public function getExtension():string
+    {
+        $splittedPath = explode('.', $this->path);
+        return end($splittedPath);
     }
 
     private function reloadDispatcher(): void
