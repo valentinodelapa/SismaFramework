@@ -24,35 +24,39 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;
+namespace SismaFramework\Core\Enumerations;
+
+use SismaFramework\Core\HelperClasses\Session;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-trait ReferencedEnumeration
+enum Resource: string
 {
-
     use \SismaFramework\Core\Traits\DataEnumeration;
-    
-    public static function getEnumerationsFromParent(\UnitEnum $parentEnumeration = null, mixed ...$offsets): array
+
+    case css = 'css';
+    case jpg = 'jpg';
+    case jpeg = 'jpeg';
+    case png = 'png';
+    case svg = 'svg';
+    case js = 'js';
+        
+    private function matchAdditionalData($language):string
     {
-        $enumerations = [];
-        foreach (self::cases() as $case) {
-            $functionalDataField = $case->getFunctionalDataField(...$offsets);
-            if ($functionalDataField === $parentEnumeration) {
-                $enumerations[] = $case;
-            }
-        }
-        return $enumerations;
+        
     }
     
-    public static function getChoiceFromParent(Language $language, \UnitEnum $parentEnumeration = null, array $labelOffset = [], mixed ...$offsets): array
+    private function matchFunctionalData():int|string|array|\UnitEnum
     {
-        $choice = [];
-        foreach (self::getEnumerationsFromParent($parentEnumeration, ...$offsets) as $case) {
-            $choice[$case->getAdditionalDataField($language, ...$labelOffset)] = $case->value;
-        }
-        return $choice;
+        return match($this){
+            self::css => 'text/css',
+            self::jpg, self::jpeg => 'image/jpeg',
+            self::png => 'image/png',
+            self::svg => 'image/svg+xml',
+            self::js => 'application/javascript',
+        };
     }
+
 }

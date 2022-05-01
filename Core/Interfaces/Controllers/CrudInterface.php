@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Interfaces;
+namespace SismaFramework\Core\Interfaces\Controllers;
 
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
@@ -35,11 +35,11 @@ use SismaFramework\Core\HttpClasses\Response;
 interface CrudInterface
 {
 
-    public function create(?Request $request): Response;
+    public function create(Request $request): Response;
 
     public function view(): Response;
 
-    public function update(): Response;
+    public function update(Request $request): Response;
 
     public function delete(): Response;
 }

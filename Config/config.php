@@ -73,33 +73,6 @@ const AUTOLOAD_NAMESPACE_MAPPER = [
 ];
 const AUTOLOAD_CLASS_MAPPER = [
 ];
-const RESOURCES = [
-    [
-        'extension' => 'css',
-        'mime' => 'text/css',
-        'assetFolder' => 'css',
-    ],
-    [
-        'extension' => 'jpeg',
-        'mime' => 'image/jpeg',
-        'assetFolder' => 'jpeg',
-    ],
-    [
-        'extension' => 'png',
-        'mime' => 'image/png',
-        'assetFolder' => 'png',
-    ],
-    [
-        'extension' => 'svg',
-        'mime' => 'image/svg+xml',
-        'assetFolder' => 'svg',
-    ],
-    [
-        'extension' => 'js',
-        'mime' => 'application/javascript',
-        'assetFolder' => 'javascript',
-    ],
-];
 
 /* Fixtures Constant */
 const FIXTURE_PATH = APPLICATION_PATH . FIXTURES . DIRECTORY_SEPARATOR;

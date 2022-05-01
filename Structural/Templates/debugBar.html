@@ -19,19 +19,4 @@
     <div class="debug-bar-body" id="debug-body-form">
         <pre>{{debugBarForm}}</pre>
     </div>
-    <script>
-        $(document).ready(function () {
-            var debugBarBody = $('.debug-bar-body')
-            $('.debug-information-label').on('click', function(){
-                var id = $(this).attr('id');
-                var informationType = id.split('-').pop();
-                $.each(debugBarBody, function(){
-                    if($(this).attr('id') !== 'debug-body-'+informationType){
-                       $(this).hide(); 
-                    }
-                });
-                $('#debug-body-'+informationType).toggle();
-            });
-        });
-    </script>
 </div>

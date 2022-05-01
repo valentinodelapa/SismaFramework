@@ -27,7 +27,6 @@
 namespace SismaFramework\Core\Traits;
 
 use SismaFramework\Core\Enumerations\Language;
-use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\Exceptions\EnumerationException;
 
 /**
@@ -37,13 +36,13 @@ use SismaFramework\Core\Exceptions\EnumerationException;
 trait DataEnumeration
 {
 
-    abstract private function setAdditionalData(): null|int|string|array|\UnitEnum;
+    abstract private function matchAdditionalData(Language $language): null|int|string|array|\UnitEnum;
     
-    abstract private function setFunctionalData() :null|int|string|array|\UnitEnum;
+    abstract private function matchFunctionalData() :null|int|string|array|\UnitEnum;
 
-    public function getAdditionalDataField(int|string|\UnitEnum ...$offsets): null|int|string|array|\UnitEnum
+    public function getAdditionalDataField(Language $language, int|string|\UnitEnum ...$offsets): null|int|string|array|\UnitEnum
     {
-        $field = $this->setAdditionalData();
+        $field = $this->matchAdditionalData($language);
         foreach ($offsets as $offset) {
             if (isset($field[$offset])) {
                 $field = $field[$offset];
@@ -56,7 +55,7 @@ trait DataEnumeration
 
     public function getFunctionalDataField(int|string|\UnitEnum ...$offsets): null|int|string|array|\UnitEnum
     {
-        $field = $this->setFunctionalData();
+        $field = $this->matchFunctionalData();
         foreach ($offsets as $offset) {
             if (isset($field[$offset])) {
                 $field = $field[$offset];
@@ -67,11 +66,11 @@ trait DataEnumeration
         return $field;
     }
     
-    public static function getChoiceFromEnumerations(mixed $labelOffset = null): array
+    public static function getChoiceFromEnumerations(Language $language, mixed $labelOffset = null): array
     {
         $choice = [];
         foreach (self::cases() as $value) {
-            $choiceKey = ($labelOffset === null) ? $value->getAdditionalDataField() : $value->getAdditionalDataField($labelOffset);
+            $choiceKey = ($labelOffset === null) ? $value->getAdditionalDataField($language) : $value->getAdditionalDataField($labelOffset);
             $choice[$choiceKey] = $value->value;
         }
         return $choice;
