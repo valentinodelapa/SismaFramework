@@ -30,6 +30,7 @@ use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
+use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Authentication;
 use SismaFramework\Core\HttpClasses\Request;
@@ -95,7 +96,7 @@ class Dispatcher
     {
         $this->selectModule();
         if (isset($this->pathParts[1])) {
-            $this->action = self::convertToCamelCase($this->pathParts[1]);
+            $this->action = NotationManager::convertToCamelCase($this->pathParts[1]);
         } else {
             $this->defaultActionInjected = true;
             $this->action = $this->pathParts[1] = \Config\DEFAULT_ACTION;
@@ -106,30 +107,12 @@ class Dispatcher
     private function selectModule(): void
     {
         foreach (\Config\MODULE_FOLDERS as $module) {
-            $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . self::convertToStudlyCaps($this->pathParts[0] . 'Controller');
+            $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . NotationManager::convertToStudlyCaps($this->pathParts[0] . 'Controller');
             if (($this->checkControllerPresence()) || ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
                 self::$selectedModule = $module;
                 break;
             }
         }
-    }
-
-    private static function convertToStudlyCaps(string $string): string
-    {
-        return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
-    }
-
-    private static function convertToCamelCase(string $string): string
-    {
-        return lcfirst(self::convertToStudlyCaps($string));
-    }
-
-    private static function convertToKebabCase(string $string): string
-    {
-
-        return implode('-', array_map(function ($value) {
-                    return strtolower($value);
-                }, array_filter(preg_split('/(?=[A-Z])/', $string))));
     }
 
     private function handle(): void
@@ -242,7 +225,7 @@ class Dispatcher
     {
         $odd = $even = [];
         while (count($this->actionArguments) > 1) {
-            $odd[] = $this->convertToCamelCase(array_shift($this->actionArguments));
+            $odd[] = NotationManager::convertToCamelCase(array_shift($this->actionArguments));
             $even[] = array_shift($this->actionArguments);
         }
         $this->actionArguments = array_combine($odd, $even);
@@ -275,27 +258,6 @@ class Dispatcher
         } else {
             throw new PageNotFoundException();
         }
-    }
-
-    private function checkResourceTypeExist(string $type, string $value): bool
-    {
-        $found = false;
-        foreach (\Config\RESOURCES as $resource) {
-            if ($resource[$type] === $value) {
-                $found = true;
-            }
-        }
-        return $found;
-    }
-
-    private function getResourceType(string $searchType, string $returnType, string $value): string|bool
-    {
-        foreach (\Config\RESOURCES as $resource) {
-            if ($resource[$searchType] === $value) {
-                return $resource[$returnType];
-            }
-        }
-        return false;
     }
 
     public function getExtension(): string
