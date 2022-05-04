@@ -96,7 +96,7 @@ class Authentication
     public function checkUser(): bool
     {
         if (Filter::isString($this->request->request['username'])) {
-            $this->userInterface = $this->userModelInterface->getEntityByUsername($this->request->request['username']);
+            $this->userInterface = $this->userModelInterface->getActiveUserByUsername($this->request->request['username']);
             if (($this->userInterface instanceof UserInterface) && $this->checkPassword($this->userInterface)) {
                 return true;
             } else {

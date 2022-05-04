@@ -36,5 +36,5 @@ interface UserModelInterface
 
     public function testUniqueEmail(string $email);
 
-    public function getEntityByUsername(string $username);
+    public function getActiveUserByUsername(string $username);
 }
