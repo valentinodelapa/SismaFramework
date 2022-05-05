@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\Traits;
 
+use SismaFramework\Core\Enumerations\Language;
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
