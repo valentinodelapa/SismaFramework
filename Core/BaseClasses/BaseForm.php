@@ -188,7 +188,7 @@ abstract class BaseForm
         $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
         if (($reflectionEntityProperty->isPublic())) {
             if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
-                $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
+                $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
             }
