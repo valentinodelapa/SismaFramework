@@ -105,7 +105,7 @@ abstract class BaseForm
         foreach ($reflectionProperties as $property) {
             if (array_key_exists($property->name, $this->entityFromForm) && array_key_exists($property->name, $this->request->request)) {
                 $this->switchFormPropertyType($property);
-            } elseif (($property->isPublic()) && ($this->entity->isPrimaryKey($property->name) === false)) {
+            } elseif (($property->isPublic()) && (($this->entity->isPrimaryKey($property->name) === false) || \Config\PRIMARY_KEY_PASS_ACCEPTED)) {
                 $this->parseProperty($property);
                 $this->switchFilter($property->name);
             }
