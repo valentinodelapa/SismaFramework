@@ -172,7 +172,7 @@ abstract class BaseForm
 
     private function switchFilter(string $propertyName): void
     {
-        if (array_key_exists($propertyName, $this->filterFiledsMode)) {
+        if (array_key_exists($propertyName, $this->filterFiledsMode) && property_exists($this->entityData, $propertyName)) {
             $this->filterErrors[$propertyName . "Error"] = false;
             $filterFunction = $this->filterFiledsMode[$propertyName]['filterType']->value;
             $conditionOne = Filter::$filterFunction($this->entityData->$propertyName);
