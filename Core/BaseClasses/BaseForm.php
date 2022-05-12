@@ -149,7 +149,9 @@ abstract class BaseForm
 
     private function parseProperty(\ReflectionProperty $property): void
     {
-        if (array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== '')) {
+        if(\Config\PRIMARY_KEY_PASS_ACCEPTED && $this->entity->isPrimaryKey($property->name) && ((array_key_exists($property->name, $this->request->request) == false) || ($this->request->request[$property->name] === ''))){
+            
+        }elseif (array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== '')) {
             $reflectionType = $property->getType();
             $this->entityData->{$property->name} = $this->parseValue($reflectionType, $this->request->request[$property->name]);
         } elseif (array_key_exists($property->name, $this->request->files)) {
