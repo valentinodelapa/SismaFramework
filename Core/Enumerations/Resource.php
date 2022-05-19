@@ -37,11 +37,13 @@ enum Resource: string
     use \SismaFramework\Core\Traits\DataEnumeration;
 
     case css = 'css';
+    case geojson = 'geojson';
     case jpg = 'jpg';
     case jpeg = 'jpeg';
+    case js = 'js';
+    case json = 'json';
     case png = 'png';
     case svg = 'svg';
-    case js = 'js';
         
     private function matchAdditionalData($language):string
     {
@@ -52,10 +54,12 @@ enum Resource: string
     {
         return match($this){
             self::css => 'text/css',
+            self::geojson => 'application/geo+json',
             self::jpg, self::jpeg => 'image/jpeg',
+            self::js => 'application/javascript',
+            self::json => 'application/json',
             self::png => 'image/png',
             self::svg => 'image/svg+xml',
-            self::js => 'application/javascript',
         };
     }
 
