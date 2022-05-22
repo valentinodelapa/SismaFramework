@@ -105,7 +105,7 @@ abstract class BaseForm
         foreach ($reflectionProperties as $property) {
             if (array_key_exists($property->name, $this->entityFromForm) && array_key_exists($property->name, $this->request->request)) {
                 $this->switchFormPropertyType($property);
-            } elseif (($property->isPublic()) && (($this->entity->isPrimaryKey($property->name) === false) || \Config\PRIMARY_KEY_PASS_ACCEPTED)) {
+            } elseif (($property->class === get_class($this->entity)) && (($this->entity->isPrimaryKey($property->name) === false) || \Config\PRIMARY_KEY_PASS_ACCEPTED)) {
                 $this->parseProperty($property);
                 $this->switchFilter($property->name);
             }
@@ -188,17 +188,17 @@ abstract class BaseForm
     {
         $reflectionEntity = new \ReflectionClass($this->entity);
         $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
-        if (($reflectionEntityProperty->isPublic())) {
-            if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
-                $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
-            } else {
-                throw new InvalidArgumentException();
-            }
-        } else {
+        if ($reflectionEntityProperty->getType()->getName() === SismaCollection::class) {
             $entityClass = get_class($this->entity);
             if ($this->entity->getCollectionDataInformation($propertyName, $entityClass::FOREIGN_KEY_TYPE) === $formPropertyClass::ENTITY_CLASS_NAME) {
                 $entityCollectonToEmbed = $this->entity->getEntityCollection($propertyName);
                 $this->generateSismaCollectionProperty($formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
+            } else {
+                throw new InvalidArgumentException();
+            }
+        } elseif($reflectionEntityProperty->class === get_class($this->entity)) {
+            if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
+                $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
             }
@@ -236,11 +236,11 @@ abstract class BaseForm
 
     public function resolveEntity(): BaseEntity
     {
-        foreach ($this->entityData as $key => $value) {
-            if (in_array($key, $this->sismaCollectionPropertyName)) {
-                $this->resolveSismaCollection($key);
+        foreach ($this->entityData as $propertyName => $value) {
+            if (in_array($propertyName, $this->sismaCollectionPropertyName)) {
+                $this->resolveSismaCollection($propertyName);
             } else {
-                $this->entity->$key = $value;
+                $this->entity->$propertyName = $value;
             }
         }
         return $this->entity;

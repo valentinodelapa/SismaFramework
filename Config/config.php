@@ -49,9 +49,9 @@ const TEMPLATES = 'Templates';
 const VIEWS = 'Views';
 
 /* Base Constant */
-const MAJOR = 2;
-const MINOR = 14;
-const PATCH = 4;
+const MAJOR = 3;
+const MINOR = 0;
+const PATCH = 0;
 const LANGUAGE = 'it_IT';
 const DEFAULT_META_URL = '';
 const MINIMUM_PHP_VERSION = '8.1.0';

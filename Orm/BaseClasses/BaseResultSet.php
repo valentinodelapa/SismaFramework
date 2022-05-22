@@ -122,7 +122,7 @@ abstract class BaseResultSet implements \Iterator
             if (property_exists($obj, $property)) {
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
-                $obj->$property = $this->parseValue($reflectionType, $value);
+                $obj->$property = $this->parseValue($reflectionType, $value, false);
             }
         }
         return $obj;

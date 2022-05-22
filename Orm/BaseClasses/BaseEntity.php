@@ -43,6 +43,7 @@ use SismaFramework\Orm\HelperClasses\Cache;
 abstract class BaseEntity
 {
 
+    use \SismaFramework\Core\Traits\ParseValue;
     use \SismaFramework\Core\Traits\UnparseValue;
 
     protected string $tableName = '';
@@ -52,6 +53,7 @@ abstract class BaseEntity
     protected bool $isActiveTransaction = false;
     protected ?BaseAdapter $adapter = null;
     protected array $collectionPropertiesName = [];
+    protected array $foreignKeyIndexes;
 
     public function __construct(?BaseAdapter &$adapter = null)
     {
@@ -63,6 +65,32 @@ abstract class BaseEntity
         }
         $this->adapter = &$adapter;
         $this->setPropertyDefaultValue();
+    }
+
+    public function __get($name)
+    {
+        if (isset($this->$name) === false) {
+            $this->forceForeignKeyPropertySet($name);
+        }
+        return $this->$name;
+    }
+
+    public function __set($name, $value)
+    {
+        $reflectionProperty = new \ReflectionProperty($this, $name);
+        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && is_int($value)) {
+            $this->foreignKeyIndexes[$name] = $value;
+        } else {
+            $this->$name = $value;
+        }
+    }
+
+    public function forceForeignKeyPropertySet($propertyName): void
+    {
+        $reflectionProperty = new \ReflectionProperty($this, $propertyName);
+        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)&& isset($this->foreignKeyIndexes[$propertyName])) {
+            $this->$propertyName = $this->parseEntity($reflectionProperty->getType()->getName(), $this->foreignKeyIndexes[$propertyName]);
+        }
     }
 
     abstract protected function setPropertyDefaultValue(): void;
@@ -92,8 +120,8 @@ abstract class BaseEntity
 
     public function getField(string $name)
     {
-        $prop = new \ReflectionProperty(get_class($this), $name);
-        if (!$prop->isPublic()) {
+        $prop = new \ReflectionProperty(get_called_class(), $name);
+        if ($prop->class !== get_called_class()) {
             return null;
         }
         unset($prop);
@@ -168,11 +196,11 @@ abstract class BaseEntity
     {
         foreach ($this as $p_name => $p_val) {
             $prop = new \ReflectionProperty(get_class($this), $p_name);
-            if ($prop->isPublic() && $p_name != $this->primaryKey) {
+            if ($prop->getType()->getName() === SismaCollection::class) {
+                array_push($this->collectionPropertiesName, $p_name);
+            } elseif (($prop->class === get_called_class()) && ($p_name != $this->primaryKey)) {
                 $markers[] = '?';
                 $this->switchValueType($p_name, $prop->getType(), $p_val, $cols, $vals);
-            } elseif ($prop->getType()->getName() === SismaCollection::class) {
-                array_push($this->collectionPropertiesName, $p_name);
             }
         }
     }

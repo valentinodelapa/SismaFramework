@@ -28,7 +28,6 @@ namespace SismaFramework\Core\Traits;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
-use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 /**
@@ -38,7 +37,7 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 trait ParseValue
 {
 
-    private function parseValue(\ReflectionNamedType $reflectionNamedType, ?string $value): mixed
+    private function parseValue(\ReflectionNamedType $reflectionNamedType, ?string $value, $parseEntity = true): mixed
     {
         if (($value === null) || ($reflectionNamedType->allowsNull() && ($value === ''))) {
             return null;
@@ -46,7 +45,11 @@ trait ParseValue
             settype($value, $reflectionNamedType->getName());
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
-            return $this->parseEntity($reflectionNamedType->getName(), $value);
+            if($parseEntity){
+                return $this->parseEntity($reflectionNamedType->getName(), $value);
+            }else{
+                return intval($value);
+            }
         } elseif (enum_exists($reflectionNamedType->getName())) {
             $enumerationName = $reflectionNamedType->getName();
             $enumerationValue = $enumerationName::tryFrom($value);
