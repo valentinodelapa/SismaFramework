@@ -88,7 +88,7 @@ abstract class BaseEntity
     public function forceForeignKeyPropertySet($propertyName): void
     {
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
-        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)&& isset($this->foreignKeyIndexes[$propertyName])) {
+        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && isset($this->foreignKeyIndexes[$propertyName])) {
             $this->$propertyName = $this->parseEntity($reflectionProperty->getType()->getName(), $this->foreignKeyIndexes[$propertyName]);
         }
     }
@@ -173,6 +173,7 @@ abstract class BaseEntity
     {
         $cols = $vals = $markers = [];
         $this->parseValues($cols, $vals, $markers);
+        $this->parseForeignKeyIndexes($cols, $vals, $markers);
         $query = new Query($this->adapter);
         $query->setTable($this->tableName);
         $query->setWhere();
@@ -222,6 +223,15 @@ abstract class BaseEntity
         }
     }
 
+    public function parseForeignKeyIndexes(array &$cols, array &$vals, array &$markers): void
+    {
+        foreach ($this->foreignKeyIndexes as $p_name => $p_val) {
+            $markers[] = '?';
+            $cols[] = $this->adapter->escapeColumn($p_name, true);
+            $vals[] = $p_val;
+        }
+    }
+
     protected function saveEntityCollection(): void
     {
         
@@ -231,6 +241,7 @@ abstract class BaseEntity
     {
         $cols = $vals = $markers = [];
         $this->parseValues($cols, $vals, $markers);
+        $this->parseForeignKeyIndexes($cols, $vals, $markers);
         $query = new Query($this->adapter);
         $query->setTable($this->tableName);
         $query->close();
