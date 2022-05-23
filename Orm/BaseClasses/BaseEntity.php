@@ -53,7 +53,7 @@ abstract class BaseEntity
     protected bool $isActiveTransaction = false;
     protected ?BaseAdapter $adapter = null;
     protected array $collectionPropertiesName = [];
-    protected array $foreignKeyIndexes;
+    protected array $foreignKeyIndexes = [];
 
     public function __construct(?BaseAdapter &$adapter = null)
     {
@@ -69,10 +69,19 @@ abstract class BaseEntity
 
     public function __get($name)
     {
-        if (isset($this->$name) === false) {
-            $this->forceForeignKeyPropertySet($name);
-        }
+        $this->forceForeignKeyPropertySet($name);
         return $this->$name;
+    }
+
+    public function forceForeignKeyPropertySet($propertyName): void
+    {
+        if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName])) {
+            $reflectionProperty = new \ReflectionProperty($this, $propertyName);
+            if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+                $this->$propertyName = $this->parseEntity($reflectionProperty->getType()->getName(), $this->foreignKeyIndexes[$propertyName]);
+                unset($this->foreignKeyIndexes[$propertyName]);
+            }
+        }
     }
 
     public function __set($name, $value)
@@ -85,12 +94,10 @@ abstract class BaseEntity
         }
     }
 
-    public function forceForeignKeyPropertySet($propertyName): void
+    public function __isset($name)
     {
-        $reflectionProperty = new \ReflectionProperty($this, $propertyName);
-        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && isset($this->foreignKeyIndexes[$propertyName])) {
-            $this->$propertyName = $this->parseEntity($reflectionProperty->getType()->getName(), $this->foreignKeyIndexes[$propertyName]);
-        }
+        $this->forceForeignKeyPropertySet($name);
+        return isset($this->$name);
     }
 
     abstract protected function setPropertyDefaultValue(): void;
