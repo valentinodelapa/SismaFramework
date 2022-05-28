@@ -48,6 +48,15 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         $this->sonCollection = new SismaCollection();
     }
 
+    protected function checkFinalClassProperty($propertyName): bool
+    {
+        if ($propertyName === self::SONS_PROPERTY_NAME) {
+            return true;
+        } else {
+            return parent::checkFinalClassProperty($propertyName);
+        }
+    }
+
     public function getCollectionDataInformation(string $collectionName, string $information): string
     {
         $calledClassNamePartes = explode("\\", static::class);

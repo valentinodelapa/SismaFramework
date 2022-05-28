@@ -191,7 +191,7 @@ abstract class BaseForm
         if ($reflectionEntityProperty->getType()->getName() === SismaCollection::class) {
             $entityClass = get_class($this->entity);
             if ($this->entity->getCollectionDataInformation($propertyName, $entityClass::FOREIGN_KEY_TYPE) === $formPropertyClass::ENTITY_CLASS_NAME) {
-                $entityCollectonToEmbed = $this->entity->getEntityCollection($propertyName);
+                $entityCollectonToEmbed = $this->entity->$propertyName;
                 $this->generateSismaCollectionProperty($formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
@@ -206,19 +206,18 @@ abstract class BaseForm
         return $this;
     }
 
-    private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed, ?self &$entityFromForm, ?array &$filterErrors): void
-    {
-        $formProperty = new $formPropertyClass($entityToEmbed);
-        $entityFromForm = $formProperty;
-        $filterErrors = $formProperty->returnFilterErrors();
-    }
-
     private function generateSismaCollectionProperty(string $formPropertyClass, SismaCollection $entityCollectonToEmbed, ?array &$entityFromForm, ?array &$filerErrors): void
     {
         for ($i = 0; $i < \Config\COLLECTION_FROM_FORM_NUMBER; $i++) {
             $ntityToEmbed = $entityCollectonToEmbed[$i] ?? null;
             $this->generateFormProperty($formPropertyClass, $ntityToEmbed, $entityFromForm[$i], $filerErrors[$i]);
         }
+    }
+
+    private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed, ?self &$entityFromForm, ?array &$filterErrors): void
+    {
+        $entityFromForm = new $formPropertyClass($entityToEmbed);
+        $filterErrors = $entityFromForm->returnFilterErrors();
     }
 
     protected function addFilterFieldMode(string $propertyName, FilterType $filterType, array $parameters = [], bool $allowNull = false): self

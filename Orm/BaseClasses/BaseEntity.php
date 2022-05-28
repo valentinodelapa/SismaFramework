@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
@@ -69,22 +70,40 @@ abstract class BaseEntity
 
     public function __get($name)
     {
-        $this->forceForeignKeyPropertySet($name);
-        return $this->$name;
+        if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
+            $this->forceForeignKeyPropertySet($name);
+            return $this->$name;
+        } else {
+            throw new InvalidArgumentException($name);
+        }
     }
 
-    public function forceForeignKeyPropertySet($propertyName): void
+    protected function checkFinalClassProperty($propertyName): bool
     {
-        if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName])) {
-            $reflectionProperty = new \ReflectionProperty($this, $propertyName);
-            if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
-                $this->$propertyName = $this->parseEntity($reflectionProperty->getType()->getName(), $this->foreignKeyIndexes[$propertyName]);
-                unset($this->foreignKeyIndexes[$propertyName]);
-            }
+        $reflectionProperty = new \ReflectionProperty($this, $propertyName);
+        return $reflectionProperty->class === get_class($this);
+    }
+
+    protected function forceForeignKeyPropertySet($propertyName): void
+    {
+        $reflectionProperty = new \ReflectionProperty($this, $propertyName);
+        $reflectionTypeName = $reflectionProperty->getType()->getName();
+        if (($reflectionProperty->class === get_class($this)) && (isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
+            $this->$propertyName = $this->parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
+            unset($this->foreignKeyIndexes[$propertyName]);
         }
     }
 
     public function __set($name, $value)
+    {
+        if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
+            $this->switchSettingType($name, $value);
+        } else {
+            throw new InvalidArgumentException();
+        }
+    }
+
+    private function switchSettingType($name, $value): void
     {
         $reflectionProperty = new \ReflectionProperty($this, $name);
         if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && is_int($value)) {
@@ -96,7 +115,9 @@ abstract class BaseEntity
 
     public function __isset($name)
     {
-        $this->forceForeignKeyPropertySet($name);
+        if (property_exists($this, $name)) {
+            $this->forceForeignKeyPropertySet($name);
+        }
         return isset($this->$name);
     }
 

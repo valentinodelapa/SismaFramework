@@ -45,6 +45,7 @@ class Logger
         $handle = fopen(\Config\LOG_PATH, 'a');
         foreach ($trace as $call) {
             $row = "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "\n";
+            $row .= isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "\n" : ';';
             fwrite($handle, $row);
         }
         fclose($handle);

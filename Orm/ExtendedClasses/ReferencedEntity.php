@@ -38,11 +38,31 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 abstract class ReferencedEntity extends BaseEntity
 {
 
+    use \SismaFramework\Core\Traits\ParseValue;
+
     private array $collectionData;
 
     public const FOREIGN_KEY_TYPE = 'foreignKeyType';
     public const FOREIGN_KEY_NAME = 'foreignKeyName';
     public const FOREIGN_KEY_SUFFIX = 'Collection';
+
+    protected function forceForeignKeyPropertySet($propertyName): void
+    {
+        $reflectionProperty = new \ReflectionProperty($this, $propertyName);
+        $reflectionTypeName = $reflectionProperty->getType()->getName();
+        if (($reflectionProperty->class === get_class($this))) {
+            if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
+                $this->$propertyName = $this->parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
+                unset($this->foreignKeyIndexes[$propertyName]);
+            } elseif (($reflectionTypeName === SismaCollection::class) && ((isset($this->$propertyName) === false) || (count($this->$propertyName) === 0))) {
+                $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';
+                $foreignKeyName = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
+                $model = new $modelName();
+                $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : [] ; 
+                $this->$propertyName = new SismaCollection($entityCollection);
+            }
+        }
+    }
 
     public function getCollectionDataInformation(string $collectionName, string $information): string
     {
@@ -64,10 +84,8 @@ abstract class ReferencedEntity extends BaseEntity
 
     private function checkCollectionDataConsistency(string $collectionName): void
     {
-        $result = true;
-        $result = ($this->checkRelatedPropertyPresence($collectionName) === false) ? false : $result;
-        $result = ($this->checkRelatedPropertyName($collectionName) === false) ? false : $result;
-        if ($result === false) {
+        if (($this->checkRelatedPropertyPresence($collectionName) === false) ||
+                ($this->checkRelatedPropertyName($collectionName) === false)) {
             throw new InvalidArgumentException();
         }
     }
@@ -94,8 +112,6 @@ abstract class ReferencedEntity extends BaseEntity
                 return $this->setEntityCollection($propertyName, $argument);
             case 'add':
                 return $this->addEntityToEntityCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
-            case 'get':
-                return $this->getEntityCollection($propertyName);
             default:
                 throw new EntityException('Metodo non trovato');
         }
@@ -111,20 +127,15 @@ abstract class ReferencedEntity extends BaseEntity
         }
     }
 
-    public function setEntityCollection(string $propertyName, ?SismaCollection $sismaCollection = null): void
+    public function setEntityCollection(string $propertyName, SismaCollection $sismaCollection): void
     {
-        if ($sismaCollection === null) {
-            $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';
-            $modelMethodName = 'get' . ucfirst($propertyName) . 'By' . ucfirst($this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME));
-            $model = new $modelName();
-            $this->$propertyName->exchangeArray($model->$modelMethodName($this));
-        } elseif ($this->checkCollectionElementTypeConsistency($propertyName, $sismaCollection)) {
+        if ($this->checkCollectionElementTypeConsistency($propertyName, $sismaCollection)) {
             $this->$propertyName->exchangeArray($sismaCollection);
             $entityPropertyName = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
             foreach ($this->$propertyName as $entity) {
                 $entity->$entityPropertyName = $this;
             }
-        }else{
+        } else {
             throw new InvalidArgumentException();
         }
     }
@@ -134,7 +145,7 @@ abstract class ReferencedEntity extends BaseEntity
         $entityType = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE);
         $isConsistent = true;
         foreach ($sismaCollection as $entity) {
-            if(($entity instanceof $entityType) === false){
+            if (($entity instanceof $entityType) === false) {
                 $isConsistent = false;
             }
         }
@@ -165,11 +176,6 @@ abstract class ReferencedEntity extends BaseEntity
         if ($found === false) {
             $this->$propertyName->append($entity);
         }
-    }
-
-    public function getEntityCollection(string $propertyName): SismaCollection
-    {
-        return $this->$propertyName;
     }
 
 }
