@@ -24,13 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ProprietaryTypes;
+namespace SismaFramework\ProprietaryTypes;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaStandardClass extends \stdClass
+class SismaDateTime extends \DateTime
 {
     
 }

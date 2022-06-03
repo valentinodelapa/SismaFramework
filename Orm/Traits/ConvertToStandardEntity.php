@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,43 +24,24 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ProprietaryTypes;
+namespace SismaFramework\Orm\Traits;
+
+use SismaFramework\Core\ExtendedClasses\StandardEntity;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaCollection extends \ArrayObject
+trait ConvertToStandardEntity
 {
 
-    public function mergeWith(SismaCollection $sismaCollection): void
+    private function convertToStandardEntity($standardClass): StandardEntity
     {
-        foreach ($sismaCollection as $object) {
-            $this->append($object);
+        $StandardEntity = new StandardEntity();
+        foreach ($standardClass as $property => $value) {
+            $StandardEntity->$property = $value;
         }
-    }
-
-    public function findFromProperty(string $propertyName, mixed $propertyValue): mixed
-    {
-        $result = null;
-        foreach ($this as $value) {
-            if ($value->$propertyName === $propertyValue) {
-                $result = $value;
-            }
-        }
-        return $result;
-    }
-
-    public function has($value): bool
-    {
-        return in_array($value, (array) $this);
-    }
-
-    public function slice(int $offset, ?int $length = null): void
-    {
-        $arrayFromObgect = $this->getArrayCopy();
-        $arraySliced = array_slice($arrayFromObgect, $offset, $length);
-        $this->exchangeArray($arraySliced);
+        return $StandardEntity;
     }
 
 }

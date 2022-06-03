@@ -27,7 +27,7 @@
 namespace SismaFramework\Orm\ExtendedClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\EntityException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
@@ -38,7 +38,7 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 abstract class ReferencedEntity extends BaseEntity
 {
 
-    use \SismaFramework\Core\Traits\ParseValue;
+    use \SismaFramework\Traits\ParseValue;
 
     private array $collectionData;
 

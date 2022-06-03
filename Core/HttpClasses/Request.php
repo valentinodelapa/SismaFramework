@@ -37,7 +37,7 @@ use SismaFramework\Core\Enumerations\RequestType;
 class Request
 {
 
-    use \SismaFramework\Core\Traits\ParseValue;
+    use \SismaFramework\Traits\ParseValue;
 
     public $query;
     public $request;

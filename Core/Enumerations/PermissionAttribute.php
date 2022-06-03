@@ -32,7 +32,9 @@ namespace SismaFramework\Core\Enumerations;
  */
 enum PermissionAttribute
 {
+
     case allow;
     case check;
     case deny;
+
 }

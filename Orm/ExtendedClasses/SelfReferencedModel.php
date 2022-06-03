@@ -31,7 +31,7 @@ use SismaFramework\Orm\ExtendedClasses\ReferencedModel;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\ProprietaryTypes\SismaCollection;
 
 /**
  *

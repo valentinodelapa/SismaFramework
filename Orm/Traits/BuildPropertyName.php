@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;
+namespace SismaFramework\Orm\Traits;
 
 /**
  *

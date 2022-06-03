@@ -28,8 +28,8 @@ namespace SismaFramework\Core\ExtendedClasses;
 
 use SismaFramework\Core\Exceptions\MethodNotFoundException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
+use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\ProprietaryTypes\SismaStandardClass;
 
 /**
  * Description of StandardEntity

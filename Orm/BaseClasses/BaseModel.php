@@ -29,7 +29,7 @@ namespace SismaFramework\Orm\BaseClasses;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\ModelException;
-use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;

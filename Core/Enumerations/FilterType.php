@@ -32,6 +32,7 @@ namespace SismaFramework\Core\Enumerations;
  */
 enum FilterType: string
 {
+
     case noFilter = 'noFilter';
     case isString = 'isString';
     case isAlphabeticString = 'isAlphabeticString';
@@ -48,4 +49,5 @@ enum FilterType: string
     case isUploadedFile = 'isUploadedFile';
     case isEnumeration = 'isEnumeration';
     case isEntity = 'isEntity';
+
 }

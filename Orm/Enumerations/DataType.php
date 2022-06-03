@@ -32,6 +32,7 @@ namespace SismaFramework\Orm\Enumerations;
  */
 enum DataType
 {
+
     case typeBoolean;
     case typeNull;
     case typeInteger;
@@ -43,4 +44,5 @@ enum DataType
     case typeEntity;
     case typeEnumeration;
     case typeGeneric;
+
 }

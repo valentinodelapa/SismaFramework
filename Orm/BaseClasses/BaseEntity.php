@@ -27,8 +27,8 @@
 namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Core\ProprietaryTypes\SismaCollection;
-use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Enumerations\Statement;
@@ -44,8 +44,8 @@ use SismaFramework\Orm\HelperClasses\Cache;
 abstract class BaseEntity
 {
 
-    use \SismaFramework\Core\Traits\ParseValue;
-    use \SismaFramework\Core\Traits\UnparseValue;
+    use \SismaFramework\Traits\ParseValue;
+    use \SismaFramework\Traits\UnparseValue;
 
     protected string $tableName = '';
     protected string $primaryKey = 'id';

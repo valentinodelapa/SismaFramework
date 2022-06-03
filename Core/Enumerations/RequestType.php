@@ -32,6 +32,7 @@ namespace SismaFramework\Core\Enumerations;
  */
 enum RequestType: string
 {
+
     case methodHead = 'HEAD';
     case methodGet = 'GET';
     case methodPost = 'POST';
@@ -42,4 +43,5 @@ enum RequestType: string
     case methodOptions = 'OPTIONS';
     case methodTrace = 'TRACE';
     case methodConnect = 'CONNECT';
+
 }

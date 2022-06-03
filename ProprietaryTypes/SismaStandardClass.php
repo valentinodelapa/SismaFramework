@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;
-
-use SismaFramework\Core\ExtendedClasses\StandardEntity;
+namespace SismaFramework\ProprietaryTypes;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-trait ConvertToStandardEntity
+class SismaStandardClass extends \stdClass
 {
-
-    private function convertToStandardEntity($standardClass): StandardEntity
-    {
-        $StandardEntity = new StandardEntity();
-        foreach ($standardClass as $property => $value) {
-            $StandardEntity->$property = $value;
-        }
-        return $StandardEntity;
-    }
-
+    
 }

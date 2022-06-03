@@ -32,8 +32,10 @@ namespace SismaFramework\Orm\Enumerations;
  */
 enum Statement: string
 {
+
     case insert = 'INSERT INTO';
     case update = 'UPDATE';
     case delete = 'DELETE FROM';
     case select = 'SELECT';
+
 }

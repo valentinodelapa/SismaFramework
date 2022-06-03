@@ -35,9 +35,9 @@ use SismaFramework\Core\ExtendedClasses\StandardEntity;
  */
 abstract class BaseResultSet implements \Iterator
 {
-    use \SismaFramework\Core\Traits\BuildPropertyName;
-    use \SismaFramework\Core\Traits\ConvertToStandardEntity;
-    use \SismaFramework\Core\Traits\ParseValue;
+    use \SismaFramework\Orm\Traits\BuildPropertyName;
+    use \SismaFramework\Orm\Traits\ConvertToStandardEntity;
+    use \SismaFramework\Traits\ParseValue;
 
     protected string $returnType = StandardEntity::class;
     protected int $currentRecord = 0;

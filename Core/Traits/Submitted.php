@@ -26,14 +26,13 @@
 
 namespace SismaFramework\Core\Traits;
 
-use SismaFramework\Core\HelperClasses\Debugger;
-
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 trait Submitted
 {
+
     public function isSubmitted(): bool
     {
         if (isset($this->request->request['submitted'])) {
@@ -42,9 +41,10 @@ trait Submitted
             return false;
         }
     }
-    
-    public function returnFilterErrors():array
+
+    public function returnFilterErrors(): array
     {
         return $this->filterErrors;
     }
+
 }

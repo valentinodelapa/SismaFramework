@@ -32,6 +32,7 @@ namespace SismaFramework\Orm\Enumerations;
  */
 enum ComparisonOperator: string
 {
+
     case equal = '=';
     case notEqualOne = '!=';
     case notEqualTwo = '<>';
@@ -45,4 +46,5 @@ enum ComparisonOperator: string
     case notLike = 'NOT LIKE';
     case isNull = 'IS NULL';
     case isNotNull = 'IS NOT NULL';
+
 }

@@ -32,6 +32,7 @@ namespace SismaFramework\Core\Enumerations;
  */
 enum ResponseType: int
 {
+
     case httpNull = 0;
     case httpContinue = 100;
     case httpSwitchingProtocols = 101;
@@ -96,4 +97,5 @@ enum ResponseType: int
     case httpLoopDetected = 508;
     case httpNotExtended = 510;
     case httpNetworkAuthenticationRequired = 511;
+
 }

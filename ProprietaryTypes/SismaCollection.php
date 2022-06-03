@@ -24,13 +24,43 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ProprietaryTypes;
+namespace SismaFramework\ProprietaryTypes;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaDateTime extends \DateTime
+class SismaCollection extends \ArrayObject
 {
-    
+
+    public function mergeWith(SismaCollection $sismaCollection): void
+    {
+        foreach ($sismaCollection as $object) {
+            $this->append($object);
+        }
+    }
+
+    public function findFromProperty(string $propertyName, mixed $propertyValue): mixed
+    {
+        $result = null;
+        foreach ($this as $value) {
+            if ($value->$propertyName === $propertyValue) {
+                $result = $value;
+            }
+        }
+        return $result;
+    }
+
+    public function has($value): bool
+    {
+        return in_array($value, (array) $this);
+    }
+
+    public function slice(int $offset, ?int $length = null): void
+    {
+        $arrayFromObgect = $this->getArrayCopy();
+        $arraySliced = array_slice($arrayFromObgect, $offset, $length);
+        $this->exchangeArray($arraySliced);
+    }
+
 }

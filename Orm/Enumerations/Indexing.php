@@ -32,6 +32,8 @@ namespace SismaFramework\Orm\Enumerations;
  */
 enum Indexing: string
 {
+
     case asc = 'ASC';
     case desc = 'DESC';
+
 }

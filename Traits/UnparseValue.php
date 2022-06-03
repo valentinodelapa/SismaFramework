@@ -24,10 +24,10 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;
+namespace SismaFramework\Traits;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaDateTime;
 
 /**
  *

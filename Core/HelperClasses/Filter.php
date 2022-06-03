@@ -28,7 +28,7 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\FilterException;
-use SismaFramework\Core\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaDateTime;
 
 /**
  *

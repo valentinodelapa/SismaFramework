@@ -30,7 +30,7 @@ use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Core\ProprietaryTypes\SismaCollection;
+use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
@@ -43,7 +43,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 abstract class BaseForm
 {
 
-    use \SismaFramework\Core\Traits\ParseValue;
+    use \SismaFramework\Traits\ParseValue;
     use \SismaFramework\Core\Traits\Submitted;
 
     protected const ENTITY_CLASS_NAME = BaseEntity::class;

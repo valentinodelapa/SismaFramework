@@ -34,6 +34,7 @@ use SismaFramework\Core\HelperClasses\Session;
  */
 enum Resource: string
 {
+
     use \SismaFramework\Core\Traits\DataEnumeration;
 
     case css = 'css';
@@ -44,15 +45,15 @@ enum Resource: string
     case json = 'json';
     case png = 'png';
     case svg = 'svg';
-        
-    private function matchAdditionalData($language):string
+
+    private function matchAdditionalData($language): string
     {
         
     }
-    
-    private function matchFunctionalData():int|string|array|\UnitEnum
+
+    private function matchFunctionalData(): int|string|array|\UnitEnum
     {
-        return match($this){
+        return match ($this) {
             self::css => 'text/css',
             self::geojson => 'application/geo+json',
             self::jpg, self::jpeg => 'image/jpeg',

@@ -32,6 +32,8 @@ namespace SismaFramework\Orm\Enumerations;
  */
 enum Condition: string
 {
+
     case where = 'WHERE';
     case having = 'HAVING';
+
 }

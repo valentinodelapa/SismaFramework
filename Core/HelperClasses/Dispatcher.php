@@ -42,7 +42,7 @@ use SismaFramework\Core\HttpClasses\Request;
 class Dispatcher
 {
 
-    use \SismaFramework\Core\Traits\ParseValue;
+    use \SismaFramework\Traits\ParseValue;
 
     public static string $selectedModule = '';
     private static int $reloadAttempts = 0;

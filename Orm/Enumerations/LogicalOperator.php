@@ -31,8 +31,12 @@ namespace SismaFramework\Orm\Enumerations;
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 enum LogicalOperator: string
-{   
+{
+
     case and = 'AND';
     case or = 'OR';
-    case not = 'NOT';
-}
+    case not =
+    'NOT';
+    }
+
+    

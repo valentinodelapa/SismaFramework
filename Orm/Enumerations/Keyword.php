@@ -32,6 +32,7 @@ namespace SismaFramework\Orm\Enumerations;
  */
 enum Keyword: string
 {
+
     case insertValue = 'VALUES';
     case set = 'SET';
     case from = 'FROM';
@@ -44,4 +45,5 @@ enum Keyword: string
     case placeholder = '?';
     case openBlock = '(';
     case closeBlock = ')';
+
 }
