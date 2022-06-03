@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\ExtendedClasses;
 
 use SismaFramework\Core\Exceptions\MethodNotFoundException;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
 
@@ -37,15 +38,16 @@ use SismaFramework\Core\ProprietaryTypes\SismaStandardClass;
  */
 class StandardEntity extends SismaStandardClass
 {
-    public function __call($methodName, $arguments)
+
+    public function __get($name)
     {
-        $methodType = substr($methodName, 0, 3);
-        $propertyName = lcfirst(substr($methodName, 3));
-        switch ($methodType) {
-            case 'get':
-                return isset($this->$propertyName) ? new SismaCollection($this->$propertyName) : new SismaCollection();
-            default:
-                throw new MethodNotFoundException('Metodo non trovato');
+        if (str_contains($name, 'Collection')) {
+            return isset($this->$name) ? new SismaCollection($this->$name) : new SismaCollection();
+        }elseif(isset($this->$name)){
+            return $this->$name;
+        }else{
+            return null;
         }
     }
+
 }
