@@ -51,7 +51,7 @@ const VIEWS = 'Views';
 /* Base Constant */
 const MAJOR = 3;
 const MINOR = 1;
-const PATCH = 3;
+const PATCH = 4;
 const LANGUAGE = 'it_IT';
 const DEFAULT_META_URL = '';
 const MINIMUM_PHP_VERSION = '8.1.0';

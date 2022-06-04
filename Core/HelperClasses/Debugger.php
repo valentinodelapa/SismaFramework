@@ -37,7 +37,6 @@ class Debugger
 {
 
     private static float $microtime;
-    private static float $endExecutionTime;
     private static float $executionTime;
     private static int $queryExecutedNumber = 0;
     private static int $logRowNumber = 0;
@@ -105,8 +104,7 @@ class Debugger
     private static function getMemoryUsed()
     {
         $memoryUsedInByte = memory_get_usage();
-        $memoryUsed = round($memoryUsedInByte / 1024 / 1024, 2);
-        return $memoryUsed;
+        return round($memoryUsedInByte / 1024 / 1024, 2);
     }
 
     public static function addQueryExecuted(string $query): void

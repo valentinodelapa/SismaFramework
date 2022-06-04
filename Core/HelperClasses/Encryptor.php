@@ -36,8 +36,7 @@ class Encryptor
     public static function getBlowfishHash(string $text, string $workload): string
     {
         $salt = substr(str_replace('+', '.', base64_encode(openssl_random_pseudo_bytes(16))), 0, 22);
-        $result = crypt($text, '$2y$' . $workload . '$' . $salt);
-        return $result;
+        return crypt($text, '$2y$' . $workload . '$' . $salt);
     }
 
     public static function verifyBlowfishHash(string $text, string $hash): bool

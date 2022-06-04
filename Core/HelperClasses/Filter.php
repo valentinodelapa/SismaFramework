@@ -216,12 +216,7 @@ class Filter
 
     public static function isDate($value): bool
     {
-        $result = true;
-        $result = (self::isNotEmpty($value)) ? $result : false;
-        if ($result) {
-            $result = $value instanceof SismaDateTime;
-        }
-        return $result;
+        return self::isDatetime($value);
     }
 
     public static function isDatetime($value): bool

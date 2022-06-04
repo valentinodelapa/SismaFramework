@@ -62,10 +62,9 @@ class FixturesManager
 
     private function executeFixture($fixture): void
     {
-        if ($this->fixturesArray[$fixture] == false) {
+        if ($this->fixturesArray[$fixture] === false) {
             $fixtureInstance = new $fixture();
             if (count($fixtureInstance->getDependencies()) > 0) {
-                //$this->executeFixturesArray(array_flip($fixtureInstance->getDependencies()));
                 $this->executeFixturesArray($fixtureInstance->getDependencies());
             }
             $fixtureInstance->execute($this->entitiesArray);

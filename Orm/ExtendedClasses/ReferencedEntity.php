@@ -58,7 +58,7 @@ abstract class ReferencedEntity extends BaseEntity
                 $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';
                 $foreignKeyName = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
                 $model = new $modelName();
-                $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : [] ; 
+                $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : [];
                 $this->$propertyName = new SismaCollection($entityCollection);
             }
         }
@@ -108,10 +108,15 @@ abstract class ReferencedEntity extends BaseEntity
         $propertyName = lcfirst(substr($methodName, 3));
         switch ($methodType) {
             case 'set':
-                $argument = isset($arguments[0]) ? $arguments[0] : null;
-                return $this->setEntityCollection($propertyName, $argument);
+                if (isset($arguments[0])) {
+                    $this->setEntityCollection($propertyName, $arguments[0]);
+                    break;
+                } else {
+                    throw new InvalidArgumentException();
+                }
             case 'add':
-                return $this->addEntityToEntityCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
+                $this->addEntityToEntityCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
+                break;
             default:
                 throw new EntityException('Metodo non trovato');
         }

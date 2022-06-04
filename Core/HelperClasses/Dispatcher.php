@@ -43,6 +43,8 @@ class Dispatcher
 {
 
     use \SismaFramework\Traits\ParseValue;
+    
+    const CONTENT_TYPE_DECLARATION = 'Content-type: ';
 
     public static string $selectedModule = '';
     private static int $reloadAttempts = 0;
@@ -122,13 +124,13 @@ class Dispatcher
         } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             $fixtureManager = new FixturesManager();
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
-            header('Content-type: ' . Resource::from($this->getExtension())->getFunctionalDataField());
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
             echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->path);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
-            header('Content-type: ' . Resource::from($this->getExtension())->getFunctionalDataField());
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
             echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path);
         } elseif (Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . $this->path)) {
-            header('Content-type: ' . Resource::from($this->getExtension())->getFunctionalDataField());
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
             echo file_get_contents(\Config\ROOT_PATH . $this->path);
         } else {
             $this->switchNotFoundActions();
@@ -199,8 +201,8 @@ class Dispatcher
         if (count($this->reflectionActionArguments) > 0) {
             $this->callControllerMethodWithArguments();
         } else {
-            $action = $this->action;
-            $this->controllerInstance->$action();
+            $currentAction = $this->action;
+            $this->controllerInstance->$currentAction();
         }
     }
 
@@ -233,22 +235,22 @@ class Dispatcher
 
     private function parseArgsAssociativeArray(): void
     {
-        $actionArguments = [];
+        $currentActionArguments = [];
         foreach ($this->reflectionActionArguments as $argument) {
             if ($argument->getType()->getName() === Request::class) {
-                $actionArguments[$argument->name] = $this->request;
+                $currentActionArguments[$argument->name] = $this->request;
             } elseif ($argument->getType()->getName() === Authentication::class) {
-                $actionArguments[$argument->name] = new Authentication($this->request);
+                $currentActionArguments[$argument->name] = new Authentication($this->request);
             } elseif (array_key_exists($argument->name, $this->actionArguments)) {
                 $reflectionType = $argument->getType();
-                $actionArguments[$argument->name] = $this->parseValue($reflectionType, $this->actionArguments[$argument->name]);
+                $currentActionArguments[$argument->name] = $this->parseValue($reflectionType, $this->actionArguments[$argument->name]);
             } elseif ($argument->isDefaultValueAvailable()) {
-                $actionArguments[$argument->name] = $argument->getDefaultValue();
+                $currentActionArguments[$argument->name] = $argument->getDefaultValue();
             } else {
                 throw new InvalidArgumentException();
             }
         }
-        $this->actionArguments = $actionArguments;
+        $this->actionArguments = $currentActionArguments;
     }
 
     private function switchNotFoundActions(): void

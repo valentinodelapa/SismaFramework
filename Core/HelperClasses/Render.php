@@ -52,8 +52,7 @@ class Render
     private static function getDeviceClass(): string
     {
         $ua = $_SERVER['HTTP_USER_AGENT'];
-        $class = (stristr($ua, 'mobile') !== false ) ? 'mobile' : 'desktop';
-        return $class;
+        return (stristr($ua, 'mobile') !== false ) ? 'mobile' : 'desktop';
     }
 
     private static function getActualLocaleArray(string $view)
@@ -77,8 +76,7 @@ class Render
         if (Session::hasItem('lang') === false) {
             Session::setItem('lang', \Config\DEFAULT_LOCALE);
         }
-        $path = self::getLocalePath(Session::getItem('lang'));
-        return $path;
+        return self::getLocalePath(Session::getItem('lang'));
     }
 
     private static function getLocalePath(?string $var = null): string
@@ -98,8 +96,7 @@ class Render
 
     private static function getViewPath(string $view): string
     {
-        $path = \Config\ROOT_PATH . Dispatcher::$selectedModule . DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view . '.php';
-        return $path;
+        return \Config\ROOT_PATH . Dispatcher::$selectedModule . DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view . '.php';
     }
 
     private static function generateDebugBar(): string

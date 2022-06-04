@@ -35,11 +35,7 @@ trait Submitted
 
     public function isSubmitted(): bool
     {
-        if (isset($this->request->request['submitted'])) {
-            return true;
-        } else {
-            return false;
-        }
+        return isset($this->request->request['submitted']);
     }
 
     public function returnFilterErrors(): array

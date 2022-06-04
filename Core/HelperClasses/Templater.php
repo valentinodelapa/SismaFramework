@@ -52,8 +52,7 @@ class Templater
     private static function getTemplateContent(string $template): string
     {
         $path = self::getTemplatePath($template);
-        $templateContent = file_get_contents($path);
-        return $templateContent;
+        return file_get_contents($path);
     }
     
     private static function getTemplatePath(string $template)

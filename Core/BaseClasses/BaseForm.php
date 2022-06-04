@@ -56,7 +56,6 @@ abstract class BaseForm
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     protected array $filterErrors = [];
-    private static bool $isFirstcalled = true;
 
     public function __construct(?BaseEntity $baseEntity = null)
     {
@@ -105,7 +104,8 @@ abstract class BaseForm
         foreach ($reflectionProperties as $property) {
             if (array_key_exists($property->name, $this->entityFromForm) && array_key_exists($property->name, $this->request->request)) {
                 $this->switchFormPropertyType($property);
-            } elseif (($property->class === get_class($this->entity)) && (($this->entity->isPrimaryKey($property->name) === false) || \Config\PRIMARY_KEY_PASS_ACCEPTED)) {
+            } elseif (($property->class === get_class($this->entity)) && (($this->entity->isPrimaryKey($property->name) === false) || 
+                    (\Config\PRIMARY_KEY_PASS_ACCEPTED) && array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== ''))) {
                 $this->parseProperty($property);
                 $this->switchFilter($property->name);
             }
@@ -117,25 +117,25 @@ abstract class BaseForm
 
     private function switchFormPropertyType(\ReflectionProperty $property): void
     {
-        $request = clone $this->request;
+        $currentRequest = clone $this->request;
         $this->entityData->{$property->name} = new StandardEntity();
         $this->filterErrors[$property->name . "Error"] = [];
         if (is_a($property->getType()->getName(), SismaCollection::class, true)) {
             $this->entityData->{$property->name} = new SismaCollection();
             foreach ($this->request->request[$property->name] as $key => $value) {
-                $request->request = $value;
+                $currentRequest->request = $value;
                 $this->entityData->{$property->name}[$key] = new StandardEntity();
                 $this->filterErrors[$property->name . "Error"][$key] = [];
-                $this->switchForm($this->entityFromForm[$property->name][$key], $property->name, $request, $this->entityData->{$property->name}[$key], $this->filterErrors[$property->name . "Error"][$key]);
+                $this->switchForm($this->entityFromForm[$property->name][$key], $currentRequest, $this->entityData->{$property->name}[$key], $this->filterErrors[$property->name . "Error"][$key]);
                 array_push($this->sismaCollectionPropertyName, $property->name);
             }
         } else {
-            $request->request = $this->request->request[$property->name];
-            $this->switchForm($this->entityFromForm[$property->name], $property->name, $request, $this->entityData->{$property->name}, $this->filterErrors[$property->name . "Error"]);
+            $currentRequest->request = $this->request->request[$property->name];
+            $this->switchForm($this->entityFromForm[$property->name], $currentRequest, $this->entityData->{$property->name}, $this->filterErrors[$property->name . "Error"]);
         }
     }
 
-    private function switchForm(self $entityFromForm, string $propertyName, Request $request, StandardEntity &$entityData, array &$filterErrors): void
+    private function switchForm(self $entityFromForm, Request $request, StandardEntity &$entityData, array &$filterErrors): void
     {
         $entityFromForm->handleRequest($request);
         if ($entityFromForm->isValid()) {
@@ -149,9 +149,7 @@ abstract class BaseForm
 
     private function parseProperty(\ReflectionProperty $property): void
     {
-        if(\Config\PRIMARY_KEY_PASS_ACCEPTED && $this->entity->isPrimaryKey($property->name) && ((array_key_exists($property->name, $this->request->request) == false) || ($this->request->request[$property->name] === ''))){
-            
-        }elseif (array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== '')) {
+        if (array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== '')) {
             $reflectionType = $property->getType();
             $this->entityData->{$property->name} = $this->parseValue($reflectionType, $this->request->request[$property->name]);
         } elseif (array_key_exists($property->name, $this->request->files)) {

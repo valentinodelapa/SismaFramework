@@ -24,10 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;;
+namespace SismaFramework\Core\Traits;
 
 use SismaFramework\Core\Enumerations\Language;
-use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
