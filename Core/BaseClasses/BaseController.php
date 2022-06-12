@@ -43,6 +43,7 @@ abstract class BaseController
     {
         $this->vars['metaUrl'] = Router::getMetaUrl();
         $this->vars['actualCleanUrl'] = Router::getActualCleanUrl();
+        $this->vars['rootUrl'] = Router::getRootUrl();
     }
 
 }

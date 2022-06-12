@@ -36,6 +36,17 @@ use SismaFramework\Core\HttpClasses\Response;
  */
 class Render
 {
+    private static ?string $customRenderModule;
+    
+    public static function setCustomRenderModule(string $module):void
+    {
+        self::$customRenderModule = $module;
+    }
+    
+    private static function getRenderModule():string
+    {
+        return self::$customRenderModule ?? Dispatcher::$selectedModule;
+    }
 
     public static function generateView(string $view, array $vars): Response
     {
@@ -81,7 +92,7 @@ class Render
 
     private static function getLocalePath(?string $var = null): string
     {
-        $path = \Config\ROOT_PATH . Dispatcher::$selectedModule . DIRECTORY_SEPARATOR . \Config\LOCALES_PATH;
+        $path = \Config\ROOT_PATH . self::getRenderModule() . DIRECTORY_SEPARATOR . \Config\LOCALES_PATH;
         return self::getSelectedLocale($path, $var);
     }
 
@@ -96,7 +107,7 @@ class Render
 
     private static function getViewPath(string $view): string
     {
-        return \Config\ROOT_PATH . Dispatcher::$selectedModule . DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view . '.php';
+        return \Config\ROOT_PATH . self::getRenderModule() . DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view . '.php';
     }
 
     private static function generateDebugBar(): string
