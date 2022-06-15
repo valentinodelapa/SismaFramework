@@ -68,7 +68,7 @@ class Autoloader
         foreach (\Config\AUTOLOAD_NAMESPACE_MAPPER as $key => $value) {
             if (str_contains($this->className, $key)) {
                 $actualClassName = str_replace($key, '', $this->className);
-                $actualClassPath = \Config\ROOT_PATH . $value . $actualClassName . '.php';
+                $actualClassPath = \Config\ROOT_PATH . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php';
                 if ($this->classExsist($actualClassPath)) {
                     return true;
                 }
