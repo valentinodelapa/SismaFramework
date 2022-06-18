@@ -36,19 +36,23 @@ class Logger
     public static function saveLog(string $message, int $code, string $file = ''): void
     {
         $handle = fopen(\Config\LOG_PATH, 'a');
-        fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "\n");
-        fclose($handle);
+        if ($handle !== false) {
+            fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "\n");
+            fclose($handle);
+        }
     }
 
     public static function saveTrace(array $trace): void
     {
         $handle = fopen(\Config\LOG_PATH, 'a');
-        foreach ($trace as $call) {
-            $row = "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "\n";
-            $row .= isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "\n" : ';';
-            fwrite($handle, $row);
+        if ($handle !== false) {
+            foreach ($trace as $call) {
+                $row = "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "\n";
+                $row .= isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "\n" : ';';
+                fwrite($handle, $row);
+            }
+            fclose($handle);
         }
-        fclose($handle);
     }
 
     public static function clearLog(): void
@@ -56,25 +60,31 @@ class Logger
         file_put_contents(\Config\LOG_PATH, '');
     }
 
-    public static function getLog(): string
+    public static function getLog(): string|false
     {
         $handle = fopen(\Config\LOG_PATH, 'r');
-        $log = fread($handle, (filesize(\Config\LOG_PATH) > 0) ? filesize(\Config\LOG_PATH) : 1);
-        fclose($handle);
-        return $log;
+        if ($handle !== false) {
+            $log = fread($handle, (filesize(\Config\LOG_PATH) > 0) ? filesize(\Config\LOG_PATH) : 1);
+            fclose($handle);
+            return $log;
+        } else {
+            return false;
+        }
     }
 
-    public static function getLogRowByRow(): array
+    public static function getLogRowByRow(): array|false
     {
         $handle = fopen(\Config\LOG_PATH, 'r');
-        $log = [];
-        if ($handle) {
+        if ($handle !== false) {
+            $log = [];
             while (($line = fgets($handle)) !== false) {
                 $log[] = $line;
             }
             fclose($handle);
+            return $log;
+        } else {
+            return false;
         }
-        return $log;
     }
 
 }
