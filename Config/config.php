@@ -49,12 +49,8 @@ const TEMPLATES = 'Templates';
 const VIEWS = 'Views';
 
 /* Base Constant */
-const MAJOR = 3;
-const MINOR = 2;
-const PATCH = 2;
 const LANGUAGE = 'it_IT';
 const DEFAULT_META_URL = '';
-const MINIMUM_PHP_VERSION = '8.1.0';
 const MAX_RELOAD_ATTEMPTS = 3;
 const CONFIGURATION_PASSWORD = '';
 const ENCRYPTION_KEY = '';
