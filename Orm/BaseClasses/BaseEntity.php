@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
@@ -34,6 +33,7 @@ use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\HelperClasses\Cache;
 
@@ -76,7 +76,7 @@ abstract class BaseEntity
             $this->forceForeignKeyPropertySet($name);
             return $this->$name;
         } else {
-            throw new InvalidArgumentException($name);
+            throw new InvalidPropertyException($name);
         }
     }
 
@@ -101,7 +101,7 @@ abstract class BaseEntity
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
             $this->switchSettingType($name, $value);
         } else {
-            throw new InvalidArgumentException();
+            throw new InvalidPropertyException();
         }
     }
 
