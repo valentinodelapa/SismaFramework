@@ -46,21 +46,19 @@ abstract class ReferencedEntity extends BaseEntity
     public const FOREIGN_KEY_NAME = 'foreignKeyName';
     public const FOREIGN_KEY_SUFFIX = 'Collection';
 
-    protected function forceForeignKeyPropertySet($propertyName): void
+    protected function forceForeignKeyPropertySet(string $propertyName): void
     {
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         $reflectionTypeName = $reflectionProperty->getType()->getName();
-        if (($reflectionProperty->class === get_class($this))) {
-            if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
-                $this->$propertyName = $this->parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
-                unset($this->foreignKeyIndexes[$propertyName]);
-            } elseif (($reflectionTypeName === SismaCollection::class) && ((isset($this->$propertyName) === false) || (count($this->$propertyName) === 0))) {
-                $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';
-                $foreignKeyName = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
-                $model = new $modelName();
-                $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : [];
-                $this->$propertyName = new SismaCollection($entityCollection);
-            }
+        if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
+            $this->$propertyName = $this->parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
+            unset($this->foreignKeyIndexes[$propertyName]);
+        } elseif (($reflectionTypeName === SismaCollection::class) && ((isset($this->$propertyName) === false) || (count($this->$propertyName) === 0))) {
+            $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';
+            $foreignKeyName = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
+            $model = new $modelName();
+            $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : [];
+            $this->$propertyName = new SismaCollection($entityCollection);
         }
     }
 

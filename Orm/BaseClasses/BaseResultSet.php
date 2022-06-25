@@ -125,6 +125,7 @@ abstract class BaseResultSet implements \Iterator
                 $obj->$property = $this->parseValue($reflectionType, $value, false);
             }
         }
+        $obj->activeChangeTracking();
         return $obj;
     }
 

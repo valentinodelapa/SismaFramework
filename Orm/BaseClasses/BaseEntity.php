@@ -55,6 +55,8 @@ abstract class BaseEntity
     protected ?BaseAdapter $adapter = null;
     protected array $collectionPropertiesName = [];
     protected array $foreignKeyIndexes = [];
+    private bool $changeTrackingActive = false;
+    private bool $modified = false;
 
     public function __construct(?BaseAdapter &$adapter = null)
     {
@@ -78,17 +80,17 @@ abstract class BaseEntity
         }
     }
 
-    protected function checkFinalClassProperty($propertyName): bool
+    protected function checkFinalClassProperty(string $propertyName): bool
     {
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         return $reflectionProperty->class === get_class($this);
     }
 
-    protected function forceForeignKeyPropertySet($propertyName): void
+    protected function forceForeignKeyPropertySet(string $propertyName): void
     {
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         $reflectionTypeName = $reflectionProperty->getType()->getName();
-        if (($reflectionProperty->class === get_class($this)) && (isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
+        if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
             $this->$propertyName = $this->parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
             unset($this->foreignKeyIndexes[$propertyName]);
         }
@@ -103,22 +105,42 @@ abstract class BaseEntity
         }
     }
 
-    private function switchSettingType($name, $value): void
+    private function switchSettingType(string $name, mixed $value): void
     {
         $reflectionProperty = new \ReflectionProperty($this, $name);
         if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && is_int($value)) {
+            $this->trackChanges($reflectionProperty->getType(), $name, $value);
             $this->foreignKeyIndexes[$name] = $value;
+            unset($this->$name);
         } else {
+            $this->trackChanges($reflectionProperty->getType(), $name, $value);
             $this->$name = $value;
+            unset($this->foreignKeyIndexes[$name]);
+        }
+    }
+
+    private function trackChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value)
+    {
+        $conditionOne = is_subclass_of($reflectionNamedType->getName(), BaseEntity::class) && is_int($value) && (!isset($this->foreignKeyIndexes[$name]) || ($this->foreignKeyIndexes[$name] !== $value)) && (!isset($this->$name) || ($this->$name->id !== $value));
+        $conditionTwo = is_subclass_of($reflectionNamedType->getName(), BaseEntity::class) && is_subclass_of($value, BaseEntity::class) && (!isset($this->$name) || ($this->$name != $value)) && (!isset($this->foreignKeyIndexes[$name]) || ($this->foreignKeyIndexes[$name] !== $value->id));
+        $conditionThre = is_a($reflectionNamedType->getName(), SismaCollection::class) && (!isset($this->$name) || ($this->$name != $value));
+        $conditionFour = $reflectionNamedType->isBuiltin() && (!isset($this->$name) || ($this->$name !== $value));
+        if ($this->changeTrackingActive && ($conditionOne || $conditionTwo || $conditionThre || $conditionFour)) {
+            $this->modified = true;
         }
     }
 
     public function __isset($name)
     {
-        if (property_exists($this, $name)) {
+        if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
             $this->forceForeignKeyPropertySet($name);
         }
         return isset($this->$name);
+    }
+    
+    public function activeChangeTracking()
+    {
+        $this->changeTrackingActive = true;
     }
 
     abstract protected function setPropertyDefaultValue(): void;
@@ -223,13 +245,13 @@ abstract class BaseEntity
 
     public function parseValues(array &$cols, array &$vals, array &$markers): void
     {
-        foreach ($this as $p_name => $p_val) {
-            $prop = new \ReflectionProperty(get_class($this), $p_name);
-            if ($prop->getType()->getName() === SismaCollection::class) {
-                array_push($this->collectionPropertiesName, $p_name);
-            } elseif (($prop->class === get_called_class()) && ($p_name != $this->primaryKey)) {
+        $reflectionClass = new \ReflectionClass($this);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if ($reflectionProperty->getType()->getName() === SismaCollection::class) {
+                array_push($this->collectionPropertiesName, $reflectionProperty->getName());
+            } elseif (($reflectionProperty->class === get_called_class()) && ($reflectionProperty->getName() != $this->primaryKey)) {
                 $markers[] = '?';
-                $this->switchValueType($p_name, $prop->getType(), $p_val, $cols, $vals);
+                $this->switchValueType($reflectionProperty->getName(), $reflectionProperty->getType(), $reflectionProperty->getValue($this), $cols, $vals);
             }
         }
     }
@@ -240,6 +262,8 @@ abstract class BaseEntity
         if (is_a($p_val, BaseEntity::class)) {
             if (!isset($p_val->id)) {
                 $p_val->insert();
+            } elseif ($p_val->modified) {
+                $p_val->update();
             }
             $vals[] = $p_val->id;
         } elseif (is_subclass_of($p_val, \UnitEnum::class)) {
