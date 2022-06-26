@@ -26,7 +26,9 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Autoload\Autoloader;
+use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Core\Enumerations\Resource;
+use SismaFramework\Core\Exceptions\RenderException;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HttpClasses\Response;
 
@@ -36,14 +38,16 @@ use SismaFramework\Core\HttpClasses\Response;
  */
 class Render
 {
+
     private static ?string $customRenderModule;
-    
-    public static function setCustomRenderModule(string $module):void
+    private static Resource $localeType;
+
+    public static function setCustomRenderModule(string $module): void
     {
         self::$customRenderModule = $module;
     }
-    
-    private static function getRenderModule():string
+
+    private static function getRenderModule(): string
     {
         return self::$customRenderModule ?? Dispatcher::$selectedModule;
     }
@@ -70,7 +74,15 @@ class Render
     {
         $viewParts = \explode('/', $view);
         $languagePath = self::getLanguagePath();
-        include($languagePath);
+        switch (self::$localeType) {
+            case Resource::json:
+                $locale = json_decode(file_get_contents($languagePath), true);
+                break;
+            case Resource::php:
+            default:
+                include($languagePath);
+                break;
+        }
         $actualLocale = $locale['pages'];
         $commonLocale = $locale['common'];
         foreach ($viewParts as $part) {
@@ -85,29 +97,37 @@ class Render
     private static function getLanguagePath(): string
     {
         if (Session::hasItem('lang') === false) {
-            Session::setItem('lang', \Config\DEFAULT_LOCALE);
+            $configLanguage = Language::tryFrom(Session::getItem('lang')) ?? Language::tryFrom(\Config\LANGUAGE);
+        }else{
+            $configLanguage = Language::tryFrom(\Config\LANGUAGE);
         }
-        return self::getLocalePath(Session::getItem('lang'));
+        if ($configLanguage !== null) {
+            Session::setItem('lang', $configLanguage->value);
+        } else {
+            throw new RenderException('Formato lingua non corretto');
+        }
+        return self::getLocalePath($configLanguage);
     }
 
-    private static function getLocalePath(?string $var = null): string
+    private static function getLocalePath(Language $language): string
     {
         $path = \Config\ROOT_PATH . self::getRenderModule() . DIRECTORY_SEPARATOR . \Config\LOCALES_PATH;
-        return self::getSelectedLocale($path, $var);
+        return self::getSelectedLocale($path, $language);
     }
 
-    private static function getSelectedLocale($path, $lang): string
+    private static function getSelectedLocale(string $path, Language $language): string
     {
-        if (file_exists($path . $lang)) {
-            return $path . $lang;
+        self::$localeType = Resource::tryFrom(\Config\DEFAULT_LOCALE_TYPE);
+        if ((self::$localeType !== null) && file_exists($path . $language->value . '.' . self::$localeType->value)) {
+            return $path . $language->value . '.' . self::$localeType->value;
         } else {
-            return $path . \Config\DEFAULT_LOCALE . '.php';
+            throw new RenderException('File non trovato');
         }
     }
 
     private static function getViewPath(string $view): string
     {
-        return \Config\ROOT_PATH . self::getRenderModule() . DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view . '.php';
+        return \Config\ROOT_PATH . self::getRenderModule() . DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view . '.' . Resource::php->value;
     }
 
     private static function generateDebugBar(): string

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,45 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Enumerations;
+namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\HelperClasses\Session;
+use SismaFramework\Core\BaseClasses\BaseException;
 
 /**
+ * Description of RenderException
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum Resource: string
+class RenderException extends BaseException
 {
-
-    use \SismaFramework\Core\Traits\DataEnumeration;
-
-    case css = 'css';
-    case geojson = 'geojson';
-    case jpg = 'jpg';
-    case jpeg = 'jpeg';
-    case js = 'js';
-    case json = 'json';
-    case php = 'php';
-    case png = 'png';
-    case svg = 'svg';
-
-    private function matchAdditionalData($language): string
-    {
-        
-    }
-
-    private function matchFunctionalData(): int|string|array|\UnitEnum
-    {
-        return match ($this) {
-            self::css => 'text/css',
-            self::geojson => 'application/geo+json',
-            self::jpg, self::jpeg => 'image/jpeg',
-            self::js => 'application/javascript',
-            self::json => 'application/json',
-            self::png => 'image/png',
-            self::svg => 'image/svg+xml',
-        };
-    }
-
+    
 }

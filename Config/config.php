@@ -26,6 +26,8 @@
 
 namespace Config;
 
+use SismaFramework\Core\Enumerations\Resource;
+
 /* Name Constant */
 
 const ADAPTERS = 'Adapters';
@@ -36,7 +38,7 @@ const CORE = 'Core';
 const DEFAULT_PATH = 'Sample';
 const DEFAULT_ACTION = 'index';
 const DEFAULT_CONTROLLER = DEFAULT_PATH . 'Controller';
-const DEFAULT_LOCALE = 'it_IT';
+const DEFAULT_LOCALE_TYPE = 'json';
 const ENTITIES = 'Entities';
 const FIXTURES = 'Fixtures';
 const LOCALES = 'Locales';
