@@ -1,9 +1,9 @@
- <?php
- 
+<?php
+
 /*
- *  The MIT License*
+ * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,13 +23,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 namespace SismaFramework\Orm\Exceptions;
+
+use SismaFramework\Core\BaseClasses\BaseException;
+
 /**
  * Description of InvalidPropertyException
  *
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author valen
  */
-class InvalidPropertyException extends \SismaFramework\Core\BaseClasses\BaseException
+class InvalidPropertyException extends BaseException
 {
     protected function errorRedirect()
     {
