@@ -96,7 +96,7 @@ class Render
 
     private static function getLanguagePath(): string
     {
-        if (Session::hasItem('lang') === false) {
+        if (Session::hasItem('lang')) {
             $configLanguage = Language::tryFrom(Session::getItem('lang')) ?? Language::tryFrom(\Config\LANGUAGE);
         }else{
             $configLanguage = Language::tryFrom(\Config\LANGUAGE);
