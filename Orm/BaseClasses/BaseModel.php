@@ -85,6 +85,7 @@ abstract class BaseModel
         $query = $this->initQuery();
         $bindValues = $bindTypes = [];
         if ($searchKey !== null) {
+            $query->setWhere();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
