@@ -49,6 +49,7 @@ const SYSTEM = 'SismaFramework';
 const STRUCTURAL = 'Structural';
 const TEMPLATES = 'Templates';
 const VIEWS = 'Views';
+const DIRECTORY_UP = '..';
 
 /* Base Constant */
 const LANGUAGE = 'it_IT';

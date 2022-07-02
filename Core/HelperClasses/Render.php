@@ -47,11 +47,6 @@ class Render
         self::$customRenderModule = $module;
     }
 
-    private static function getRenderModule(): string
-    {
-        return self::$customRenderModule ?? Dispatcher::$selectedModule;
-    }
-
     public static function generateView(string $view, array $vars): Response
     {
         $deviceClass = self::getDeviceClass();
@@ -111,23 +106,28 @@ class Render
 
     private static function getLocalePath(Language $language): string
     {
-        $path = \Config\ROOT_PATH . self::getRenderModule() . DIRECTORY_SEPARATOR . \Config\LOCALES_PATH;
-        return self::getSelectedLocale($path, $language);
-    }
-
-    private static function getSelectedLocale(string $path, Language $language): string
-    {
         self::$localeType = Resource::tryFrom(\Config\DEFAULT_LOCALE_TYPE);
-        if ((self::$localeType !== null) && file_exists($path . $language->value . '.' . self::$localeType->value)) {
-            return $path . $language->value . '.' . self::$localeType->value;
+        if (self::$localeType !== null){
+            return self::getExistingFilePath( DIRECTORY_SEPARATOR . \Config\LOCALES_PATH.$language->value,  self::$localeType);
         } else {
+            throw new RenderException('File non trovato');
+        }
+    }
+    
+    private static function getExistingFilePath(string $path, Resource $resource):string
+    {
+        if(self::$customRenderModule && file_exists(\Config\ROOT_PATH. self::$customRenderModule. $path. '.'.$resource->value)){
+            return \Config\ROOT_PATH. self::$customRenderModule. $path. '.'.$resource->value;
+        }elseif(file_exists(\Config\ROOT_PATH. Dispatcher::$selectedModule. $path. '.'.$resource->value)){
+            return \Config\ROOT_PATH. Dispatcher::$selectedModule. $path. '.'.$resource->value;
+        }else{
             throw new RenderException('File non trovato');
         }
     }
 
     private static function getViewPath(string $view): string
     {
-        return \Config\ROOT_PATH . self::getRenderModule() . DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view . '.' . Resource::php->value;
+        return self::getExistingFilePath(DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view, Resource::php);
     }
 
     private static function generateDebugBar(): string

@@ -34,8 +34,10 @@ use SismaFramework\Core\BaseClasses\BaseException;
  */
 class PageNotFoundException extends BaseException
 {
-    public function __construct()
+
+    public function __construct(string $message = "", int $code = 0, \Throwable $previous = NULL)
     {
-        parent::__construct("Pagina non trovata", 0);
+        parent::__construct("Pagina non trovata: " . $message, $code, $previous);
     }
+
 }

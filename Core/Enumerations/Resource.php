@@ -46,6 +46,7 @@ enum Resource: string
     case php = 'php';
     case png = 'png';
     case svg = 'svg';
+    case woff2 = 'woff2';
 
     private function matchAdditionalData($language): string
     {
@@ -62,6 +63,7 @@ enum Resource: string
             self::json => 'application/json',
             self::png => 'image/png',
             self::svg => 'image/svg+xml',
+            self::woff2 => 'font/woff2',
         };
     }
 

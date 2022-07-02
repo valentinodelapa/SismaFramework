@@ -121,8 +121,11 @@ class Dispatcher
     {
         if ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
-        } elseif (($this->pathParts[0] === 'fixture') && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
+        } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             $fixtureManager = new FixturesManager();
+        }elseif(($this->pathParts[0] === \Config\DIRECTORY_UP) && Resource::tryFrom($this->getExtension()) && file_exists(__DIR__ . $this->path)){
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
+            echo file_get_contents(__DIR__ . $this->path);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
             echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->path);
@@ -258,7 +261,7 @@ class Dispatcher
         if (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
             $this->reloadDispatcher();
         } else {
-            throw new PageNotFoundException();
+            throw new PageNotFoundException($this->path);
         }
     }
 
