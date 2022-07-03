@@ -41,6 +41,8 @@ abstract class BaseController
 
     public function __construct()
     {
+        $this->vars['controllerUrl'] = Router::getControllerUrl();
+        $this->vars['actionUrl'] = Router::getActionUrl();
         $this->vars['metaUrl'] = Router::getMetaUrl();
         $this->vars['actualCleanUrl'] = Router::getActualCleanUrl();
         $this->vars['rootUrl'] = Router::getRootUrl();
