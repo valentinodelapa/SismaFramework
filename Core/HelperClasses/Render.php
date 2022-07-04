@@ -39,7 +39,7 @@ use SismaFramework\Core\HttpClasses\Response;
 class Render
 {
 
-    private static ?string $customRenderModule;
+    private static ?string $customRenderModule = null;
     private static Resource $localeType;
 
     public static function setCustomRenderModule(string $module): void
@@ -116,7 +116,7 @@ class Render
     
     private static function getExistingFilePath(string $path, Resource $resource):string
     {
-        if(self::$customRenderModule && file_exists(\Config\ROOT_PATH. self::$customRenderModule. $path. '.'.$resource->value)){
+        if((self::$customRenderModule !== null) && file_exists(\Config\ROOT_PATH. self::$customRenderModule. $path. '.'.$resource->value)){
             return \Config\ROOT_PATH. self::$customRenderModule. $path. '.'.$resource->value;
         }elseif(file_exists(\Config\ROOT_PATH. Dispatcher::$selectedModule. $path. '.'.$resource->value)){
             return \Config\ROOT_PATH. Dispatcher::$selectedModule. $path. '.'.$resource->value;
