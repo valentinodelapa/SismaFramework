@@ -26,10 +26,8 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\Orm\BaseClasses\BaseModel;
 use SismaFramework\Core\Enumerations\PermissionAttribute;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
-use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\Interfaces\Entities\UserInterface;
 
 /**
@@ -50,11 +48,14 @@ abstract class BasePermission
         $this->subject = $subject;
         $this->attribute = $attribute;
         $this->user = $user;
+        $this->callParentPermissions();
         $this->result = ($this->isInstancePermitted() === false) ? false : $this->result;
         $this->checkResult();
         $this->result = ($this->checkPermmisions() === false) ? false : $this->result;
         $this->checkResult();
     }
+    
+    abstract protected function callParentPermissions():void;
 
     abstract protected function isInstancePermitted(): bool;
 
