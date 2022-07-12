@@ -247,9 +247,9 @@ abstract class BaseEntity
     {
         $reflectionClass = new \ReflectionClass($this);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if ($reflectionProperty->getType()->getName() === SismaCollection::class) {
+            if (($reflectionProperty->getType()->getName() === SismaCollection::class) && (count($this->collectionPropertiesName) > 0)) {
                 array_push($this->collectionPropertiesName, $reflectionProperty->getName());
-            } elseif (($reflectionProperty->class === get_called_class()) && ($reflectionProperty->getName() != $this->primaryKey)) {
+            } elseif (($reflectionProperty->getType()->getName() !== SismaCollection::class) && ($reflectionProperty->class === get_called_class()) && ($reflectionProperty->getName() != $this->primaryKey)) {
                 $markers[] = '?';
                 $this->switchValueType($reflectionProperty->getName(), $reflectionProperty->getType(), $reflectionProperty->getValue($this), $cols, $vals);
             }

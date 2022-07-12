@@ -43,7 +43,7 @@ class Dispatcher
 {
 
     use \SismaFramework\Traits\ParseValue;
-    
+
     const CONTENT_TYPE_DECLARATION = 'Content-type: ';
 
     public static string $selectedModule = '';
@@ -123,7 +123,7 @@ class Dispatcher
             $this->resolveRouteCall();
         } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             $fixtureManager = new FixturesManager();
-        }elseif(($this->pathParts[0] === \Config\DIRECTORY_UP) && Resource::tryFrom($this->getExtension()) && file_exists(__DIR__ . $this->path)){
+        } elseif (($this->pathParts[0] === \Config\DIRECTORY_UP) && Resource::tryFrom($this->getExtension()) && file_exists(__DIR__ . $this->path)) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
             echo file_get_contents(__DIR__ . $this->path);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
