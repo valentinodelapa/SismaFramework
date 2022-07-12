@@ -40,6 +40,7 @@ abstract class ReferencedEntity extends BaseEntity
 
     use \SismaFramework\Traits\ParseValue;
 
+    protected array $collectionPropertiesName = [];
     private array $collectionData;
 
     public const FOREIGN_KEY_TYPE = 'foreignKeyType';
@@ -178,6 +179,19 @@ abstract class ReferencedEntity extends BaseEntity
         }
         if ($found === false) {
             $this->$propertyName->append($entity);
+        }
+    }
+
+    public function parseValues(array &$cols, array &$vals, array &$markers): void
+    {
+        $reflectionClass = new \ReflectionClass($this);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (($reflectionProperty->getType()->getName() === SismaCollection::class) && (count($reflectionProperty->getValue($this)) > 0) && (in_array($reflectionProperty->getName(), $this->collectionPropertiesName) === false)) {
+                array_push($this->collectionPropertiesName, $reflectionProperty->getName());
+            } elseif (($reflectionProperty->getType()->getName() !== SismaCollection::class) && ($reflectionProperty->class === get_called_class()) && ($reflectionProperty->getName() != $this->primaryKey)) {
+                $markers[] = '?';
+                $this->switchValueType($reflectionProperty->getName(), $reflectionProperty->getType(), $reflectionProperty->getValue($this), $cols, $vals);
+            }
         }
     }
 

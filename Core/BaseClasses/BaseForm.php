@@ -155,7 +155,11 @@ abstract class BaseForm
         } elseif (array_key_exists($property->name, $this->request->files)) {
             $this->entityData->{$property->name} = $this->request->files[$property->name];
         } elseif (array_key_exists($property->name, $this->filterFiledsMode)) {
-            $this->entityData->{$property->name} = null;
+            if(($property->getType()->getName() === 'bool') && ($property->getType()->allowsNull()) === false){
+                $this->entityData->{$property->name} = false;
+            }else{
+                $this->entityData->{$property->name} = null;
+            }
         }
     }
 

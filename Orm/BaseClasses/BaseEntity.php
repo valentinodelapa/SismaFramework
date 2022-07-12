@@ -53,8 +53,8 @@ abstract class BaseEntity
     protected static bool $isFirstExecutedEntity = true;
     protected bool $isActiveTransaction = false;
     protected ?BaseAdapter $adapter = null;
-    protected array $collectionPropertiesName = [];
     protected array $foreignKeyIndexes = [];
+    private static $updateStack = [];
     private bool $changeTrackingActive = false;
     private bool $modified = false;
 
@@ -221,6 +221,7 @@ abstract class BaseEntity
 
     public function update()
     {
+        self::$updateStack[$this->buildTableName()][] = $this->id;
         $cols = $vals = $markers = [];
         $this->parseValues($cols, $vals, $markers);
         $this->parseForeignKeyIndexes($cols, $vals, $markers);
@@ -247,9 +248,7 @@ abstract class BaseEntity
     {
         $reflectionClass = new \ReflectionClass($this);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (($reflectionProperty->getType()->getName() === SismaCollection::class) && (count($reflectionProperty->getValue($this)) > 0)) {
-                array_push($this->collectionPropertiesName, $reflectionProperty->getName());
-            } elseif (($reflectionProperty->getType()->getName() !== SismaCollection::class) && ($reflectionProperty->class === get_called_class()) && ($reflectionProperty->getName() != $this->primaryKey)) {
+            if (($reflectionProperty->class === get_called_class()) && ($reflectionProperty->getName() != $this->primaryKey)) {
                 $markers[] = '?';
                 $this->switchValueType($reflectionProperty->getName(), $reflectionProperty->getType(), $reflectionProperty->getValue($this), $cols, $vals);
             }
@@ -262,7 +261,7 @@ abstract class BaseEntity
         if (is_a($p_val, BaseEntity::class)) {
             if (!isset($p_val->id)) {
                 $p_val->insert();
-            } elseif ($p_val->modified) {
+            } elseif (($p_val->modified) && (in_array($p_val->id, self::$updateStack[$p_val->buildTableName()]) === false)) {
                 $p_val->update();
             }
             $vals[] = $p_val->id;
