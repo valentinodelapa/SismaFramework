@@ -54,7 +54,6 @@ abstract class BaseEntity
     protected bool $isActiveTransaction = false;
     protected ?BaseAdapter $adapter = null;
     protected array $foreignKeyIndexes = [];
-    private static $updateStack = [];
     private bool $changeTrackingActive = false;
     private bool $modified = false;
 
@@ -137,7 +136,7 @@ abstract class BaseEntity
         }
         return isset($this->$name);
     }
-    
+
     public function activeChangeTracking()
     {
         $this->changeTrackingActive = true;
@@ -220,8 +219,8 @@ abstract class BaseEntity
     }
 
     public function update()
-    {
-        self::$updateStack[$this->buildTableName()][] = $this->id;
+    {   
+        $this->modified = false;
         $cols = $vals = $markers = [];
         $this->parseValues($cols, $vals, $markers);
         $this->parseForeignKeyIndexes($cols, $vals, $markers);
@@ -261,7 +260,7 @@ abstract class BaseEntity
         if (is_a($p_val, BaseEntity::class)) {
             if (!isset($p_val->id)) {
                 $p_val->insert();
-            } elseif (($p_val->modified) && (in_array($p_val->id, self::$updateStack[$p_val->buildTableName()]) === false)) {
+            } elseif ($p_val->modified) {
                 $p_val->update();
             }
             $vals[] = $p_val->id;
