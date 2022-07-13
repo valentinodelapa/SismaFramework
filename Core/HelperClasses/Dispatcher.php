@@ -132,9 +132,9 @@ class Dispatcher
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
             echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path);
-        } elseif (Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . $this->path)) {
+        } elseif (Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
-            echo file_get_contents(\Config\ROOT_PATH . $this->path);
+            echo file_get_contents(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
         } else {
             $this->switchNotFoundActions();
         }

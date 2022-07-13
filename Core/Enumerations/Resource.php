@@ -39,6 +39,8 @@ enum Resource: string
 
     case css = 'css';
     case geojson = 'geojson';
+    case htm = 'htm';
+    case html = 'html';
     case jpg = 'jpg';
     case jpeg = 'jpeg';
     case js = 'js';
@@ -59,6 +61,7 @@ enum Resource: string
         return match ($this) {
             self::css => 'text/css',
             self::geojson => 'application/geo+json',
+            self::htm, self::html => 'text/html',
             self::jpg, self::jpeg => 'image/jpeg',
             self::js => 'application/javascript',
             self::json, self::map => 'application/json',
