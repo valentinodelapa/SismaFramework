@@ -46,6 +46,11 @@ class Render
     {
         self::$customRenderModule = $module;
     }
+    
+    public static function unsetCustomRenderModule():void
+    {
+        self::$customRenderModule = null;
+    }
 
     public static function generateView(string $view, array $vars): Response
     {
