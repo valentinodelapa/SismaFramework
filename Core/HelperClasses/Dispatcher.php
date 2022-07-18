@@ -268,7 +268,7 @@ class Dispatcher
     public function getExtension(): string
     {
         $splittedPath = explode('.', $this->path);
-        return end($splittedPath);
+        return strtolower(end($splittedPath));
     }
 
     private function reloadDispatcher(): void
