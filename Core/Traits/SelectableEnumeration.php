@@ -27,50 +27,20 @@
 namespace SismaFramework\Core\Traits;
 
 use SismaFramework\Core\Enumerations\Language;
-use SismaFramework\Core\Exceptions\EnumerationException;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-trait DataEnumeration
+trait SelectableEnumeration
 {
+    abstract public function getFriendlyLabel(Language $language):string;
 
-    abstract private function matchAdditionalData(Language $language): null|int|string|array|\UnitEnum;
-    
-    abstract private function matchFunctionalData() :null|int|string|array|\UnitEnum;
-
-    public function getAdditionalDataField(Language $language, int|string|\UnitEnum ...$offsets): null|int|string|array|\UnitEnum
-    {
-        $field = $this->matchAdditionalData($language);
-        foreach ($offsets as $offset) {
-            if (isset($field[$offset])) {
-                $field = $field[$offset];
-            } else {
-                throw new EnumerationException();
-            }
-        }
-        return $field;
-    }
-
-    public function getFunctionalDataField(int|string|\UnitEnum ...$offsets): null|int|string|array|\UnitEnum
-    {
-        $field = $this->matchFunctionalData();
-        foreach ($offsets as $offset) {
-            if (isset($field[$offset])) {
-                $field = $field[$offset];
-            } else {
-                throw new EnumerationException();
-            }
-        }
-        return $field;
-    }
-    
-    public static function getChoiceFromEnumerations(Language $language, mixed $labelOffset = null): array
+    public static function getChoiceFromEnumerations(Language $language): array
     {
         $choice = [];
         foreach (self::cases() as $value) {
-            $choiceKey = ($labelOffset === null) ? $value->getAdditionalDataField($language) : $value->getAdditionalDataField($labelOffset);
+            $choiceKey = $value->getFriendlyLabel($language);
             $choice[$choiceKey] = $value->value;
         }
         return $choice;

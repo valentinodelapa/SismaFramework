@@ -26,8 +26,6 @@
 
 namespace SismaFramework\Core\Enumerations;
 
-use SismaFramework\Core\HelperClasses\Session;
-
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -35,18 +33,15 @@ use SismaFramework\Core\HelperClasses\Session;
 enum Language: string
 {
 
-    use \SismaFramework\Core\Traits\DataEnumeration;
+    use \SismaFramework\Core\Traits\SelectableEnumeration;
 
     case italian = 'it_IT';
     case americanEnglish = 'en_US';
     case spanish = 'es_ES';
     case german = 'de_DE';
 
-    private function matchAdditionalData(?self $language = null): string
+    public function getFriendlyLabel(self $language): string
     {
-        if ($language === null) {
-            $language = self::from(\Config\LANGUAGE);
-        }
         return match ($this) {
             self::italian => match ($language) {
                 Language::italian => "Italiano",
@@ -73,11 +68,6 @@ enum Language: string
                 Language::german => "German",
             },
         };
-    }
-
-    private function matchFunctionalData(): int|string|array|\UnitEnum
-    {
-        
     }
 
 }

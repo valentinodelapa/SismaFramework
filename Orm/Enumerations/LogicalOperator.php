@@ -35,8 +35,8 @@ enum LogicalOperator: string
 
     case and = 'AND';
     case or = 'OR';
-    case not =
-    'NOT';
-    }
+    case not = 'NOT';
+    
+}
 
     

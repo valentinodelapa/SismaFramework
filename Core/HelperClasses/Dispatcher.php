@@ -124,16 +124,16 @@ class Dispatcher
         } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
             $fixtureManager = new FixturesManager();
         } elseif (($this->pathParts[0] === \Config\DIRECTORY_UP) && Resource::tryFrom($this->getExtension()) && file_exists(__DIR__ . $this->path)) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
             echo file_get_contents(__DIR__ . $this->path);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
             echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->path);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
             echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path);
         } elseif (Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getFunctionalDataField());
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
             echo file_get_contents(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
         } else {
             $this->switchNotFoundActions();

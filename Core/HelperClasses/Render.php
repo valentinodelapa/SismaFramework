@@ -46,8 +46,8 @@ class Render
     {
         self::$customRenderModule = $module;
     }
-    
-    public static function unsetCustomRenderModule():void
+
+    public static function unsetCustomRenderModule(): void
     {
         self::$customRenderModule = null;
     }
@@ -70,9 +70,23 @@ class Render
         return (stristr($ua, 'mobile') !== false ) ? 'mobile' : 'desktop';
     }
 
-    private static function getActualLocaleArray(string $view)
+    private static function getActualLocaleArray(string $view): array
     {
         $viewParts = \explode('/', $view);
+        $locale = self::getLocale();
+        $actualLocale = $locale['pages'];
+        $commonLocale = $locale['pages']['common'];
+        foreach ($viewParts as $part) {
+            if (isset($actualLocale['common'])) {
+                $commonLocale = array_merge($commonLocale, $actualLocale['common']);
+            }
+            $actualLocale = $actualLocale[$part];
+        }
+        return array_merge($actualLocale, $commonLocale);
+    }
+    
+    private static function getLocale():array
+    {
         $languagePath = self::getLanguagePath();
         switch (self::$localeType) {
             case Resource::json:
@@ -83,22 +97,14 @@ class Render
                 include($languagePath);
                 break;
         }
-        $actualLocale = $locale['pages'];
-        $commonLocale = $locale['common'];
-        foreach ($viewParts as $part) {
-            if (isset($actualLocale['common'])) {
-                $commonLocale = array_merge($commonLocale, $actualLocale['common']);
-            }
-            $actualLocale = $actualLocale[$part];
-        }
-        return array_merge($actualLocale, $commonLocale);
+        return $locale;
     }
 
     private static function getLanguagePath(): string
     {
         if (Session::hasItem('lang')) {
             $configLanguage = Language::tryFrom(Session::getItem('lang')) ?? Language::tryFrom(\Config\LANGUAGE);
-        }else{
+        } else {
             $configLanguage = Language::tryFrom(\Config\LANGUAGE);
         }
         if ($configLanguage !== null) {
@@ -112,20 +118,20 @@ class Render
     private static function getLocalePath(Language $language): string
     {
         self::$localeType = Resource::tryFrom(\Config\DEFAULT_LOCALE_TYPE);
-        if (self::$localeType !== null){
-            return self::getExistingFilePath( DIRECTORY_SEPARATOR . \Config\LOCALES_PATH.$language->value,  self::$localeType);
+        if (self::$localeType !== null) {
+            return self::getExistingFilePath(DIRECTORY_SEPARATOR . \Config\LOCALES_PATH . $language->value, self::$localeType);
         } else {
             throw new RenderException('File non trovato');
         }
     }
-    
-    private static function getExistingFilePath(string $path, Resource $resource):string
+
+    private static function getExistingFilePath(string $path, Resource $resource): string
     {
-        if((self::$customRenderModule !== null) && file_exists(\Config\ROOT_PATH. self::$customRenderModule. $path. '.'.$resource->value)){
-            return \Config\ROOT_PATH. self::$customRenderModule. $path. '.'.$resource->value;
-        }elseif(file_exists(\Config\ROOT_PATH. Dispatcher::$selectedModule. $path. '.'.$resource->value)){
-            return \Config\ROOT_PATH. Dispatcher::$selectedModule. $path. '.'.$resource->value;
-        }else{
+        if ((self::$customRenderModule !== null) && file_exists(\Config\ROOT_PATH . self::$customRenderModule . $path . '.' . $resource->value)) {
+            return \Config\ROOT_PATH . self::$customRenderModule . $path . '.' . $resource->value;
+        } elseif (file_exists(\Config\ROOT_PATH . Dispatcher::$selectedModule . $path . '.' . $resource->value)) {
+            return \Config\ROOT_PATH . Dispatcher::$selectedModule . $path . '.' . $resource->value;
+        } else {
             throw new RenderException('File non trovato');
         }
     }
@@ -133,6 +139,15 @@ class Render
     private static function getViewPath(string $view): string
     {
         return self::getExistingFilePath(DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view, Resource::php);
+    }
+
+    public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
+    {
+        $reflectionEnumeration = new \ReflectionClass($enumeration);
+        $enumerationName = $reflectionEnumeration->getShortName();
+        $locale = self::getLocale();
+        $field = $locale['enumerations'][$enumerationName];
+        return $field[$enumeration];
     }
 
     private static function generateDebugBar(): string

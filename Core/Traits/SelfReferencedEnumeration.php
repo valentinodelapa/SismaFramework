@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2022 valen.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,34 +26,12 @@
 
 namespace SismaFramework\Core\Traits;
 
-use SismaFramework\Core\Enumerations\Language;
 /**
  *
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author valen
  */
-trait ReferencedEnumeration
+trait SelfReferencedEnumeration
 {
 
-    use \SismaFramework\Core\Traits\DataEnumeration;
-    
-    public static function getEnumerationsFromParent(\UnitEnum $parentEnumeration = null, mixed ...$offsets): array
-    {
-        $enumerations = [];
-        foreach (self::cases() as $case) {
-            $functionalDataField = $case->getFunctionalDataField(...$offsets);
-            if ($functionalDataField === $parentEnumeration) {
-                $enumerations[] = $case;
-            }
-        }
-        return $enumerations;
-    }
-    
-    public static function getChoiceFromParent(Language $language, \UnitEnum $parentEnumeration = null, array $labelOffset = [], mixed ...$offsets): array
-    {
-        $choice = [];
-        foreach (self::getEnumerationsFromParent($parentEnumeration, ...$offsets) as $case) {
-            $choice[$case->getAdditionalDataField($language, ...$labelOffset)] = $case->value;
-        }
-        return $choice;
-    }
+    abstract public function getParent(): self;
 }

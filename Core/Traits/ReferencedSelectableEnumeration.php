@@ -24,42 +24,34 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Enumerations;
+namespace SismaFramework\Core\Traits;
+
+use SismaFramework\Core\Enumerations\Language;
 
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum Resource: string
+trait ReferencedSelectableEnumeration
 {
 
-    case css = 'css';
-    case geojson = 'geojson';
-    case htm = 'htm';
-    case html = 'html';
-    case jpg = 'jpg';
-    case jpeg = 'jpeg';
-    case js = 'js';
-    case json = 'json';
-    case map = 'map';
-    case php = 'php';
-    case png = 'png';
-    case svg = 'svg';
-    case woff2 = 'woff2';
+    use SelectableEnumeration;
 
-    public function getMime(): string
+    private static function getChoiceByReferencedEnumeration(Language $language, $referencingMethodName, \UnitEnum $referencedEnumeration = null): array
     {
-        return match ($this) {
-            self::css => 'text/css',
-            self::geojson => 'application/geo+json',
-            self::htm, self::html => 'text/html',
-            self::jpg, self::jpeg => 'image/jpeg',
-            self::js => 'application/javascript',
-            self::json, self::map => 'application/json',
-            self::png => 'image/png',
-            self::svg => 'image/svg+xml',
-            self::woff2 => 'font/woff2',
-        };
+        $choice = [];
+        foreach (self::cases() as $case) {
+            if ($case->$referencingMethodName() === $referencedEnumeration) {
+                $choice[$case->getFriendlyLabel($language)] = $case->value;
+            }
+        }
+        return $choice;
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        $nameParts = explode('ChoiceBy', $name);
+        return $this->getChoiceByReferencedEnumeration($arguments[0], implode('', $nameParts), $arguments[1]);
     }
 
 }
