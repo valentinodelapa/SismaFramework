@@ -35,15 +35,14 @@ trait MultipleSelfReferencedEnumeration
 
     use SelectableEnumeration;
 
-    abstract public function getMultipleParent(): array;
+    abstract public function getSons(): array;
 
     private static function getChoiceByMultipleParent(Language $language, \UnitEnum $referencedEnumeration = null): array
     {
-        $choice = [];
-        foreach (self::cases() as $case) {
-            if (in_array($referencedEnumeration, $case->getMultipleParent())) {
-                $choice[$case->getFriendlyLabel($language)] = $case->value;
-            }
+        $choice = $sons = [];
+        $sons = $this->getSons();
+        foreach ($sons as $case) {
+            $choice[$case->getFriendlyLabel($language)] = $case->value;
         }
         return $choice;
     }
