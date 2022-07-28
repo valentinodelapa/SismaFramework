@@ -133,7 +133,7 @@ abstract class BaseModel
     {
         $query = $this->initQuery();
         $query->setWhere();
-        $query->appendCondition('id', ComparisonOperator::notEqualTwo, Keyword::placeholder, true);
+        $query->appendCondition('id', ComparisonOperator::notEqualTwo, Keyword::placeholder);
         $bindValues = [
             $excludedEntity,
         ];
