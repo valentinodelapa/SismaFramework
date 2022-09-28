@@ -50,6 +50,7 @@ class Dispatcher
     private static int $reloadAttempts = 0;
     private Request $request;
     private string $path;
+    private $streamContex = null; 
     private array $pathParts;
     private bool $defaultControllerInjected = false;
     private bool $defaultActionInjected = false;
@@ -75,7 +76,12 @@ class Dispatcher
         if (empty($this->request->server['QUERY_STRING'])) {
             $this->parsePath();
             $this->handle();
-        } else {
+        } elseif(Resource::tryFrom($this->getExtension())) {
+            $this->path = strtok($this->path, '?');
+            $this->streamContex = Router::getStreamContentResource($this->request->server['QUERY_STRING']);
+            $this->parsePath();
+            $this->handle();
+        }else{
             Router::reloadWithParseQuery($this->path);
         }
     }
@@ -125,16 +131,16 @@ class Dispatcher
             $fixtureManager = new FixturesManager();
         } elseif (($this->pathParts[0] === \Config\DIRECTORY_UP) && Resource::tryFrom($this->getExtension()) && file_exists(__DIR__ . $this->path)) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(__DIR__ . $this->path);
+            echo file_get_contents(__DIR__ . $this->path, false, $this->streamContex);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->path);
+            echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->path, false, $this->streamContex);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path);
+            echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path, false, $this->streamContex);
         } elseif (Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+            echo file_get_contents(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts), false, $this->streamContex);
         } else {
             $this->switchNotFoundActions();
         }
@@ -267,7 +273,7 @@ class Dispatcher
 
     public function getExtension(): string
     {
-        $splittedPath = explode('.', $this->path);
+        $splittedPath = explode('.', strtok($this->path, '?'));
         return strtolower(end($splittedPath));
     }
 
