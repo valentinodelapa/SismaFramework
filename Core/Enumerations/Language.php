@@ -63,9 +63,9 @@ enum Language: string
             },
             self::german => match ($language) {
                 Language::italian => "Tedesco",
-                Language::americanEnglish => "Alemán",
+                Language::americanEnglish => "German",
                 Language::spanish => "Alemán",
-                Language::german => "German",
+                Language::german => "Deutsch",
             },
         };
     }

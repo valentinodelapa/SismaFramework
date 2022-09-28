@@ -30,6 +30,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\EntityException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\HelperClasses\Parser;
 
 /**
  *
@@ -37,8 +38,6 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
  */
 abstract class ReferencedEntity extends BaseEntity
 {
-
-    use \SismaFramework\Traits\ParseValue;
 
     protected array $collectionPropertiesName = [];
     private array $collectionData;
@@ -52,7 +51,7 @@ abstract class ReferencedEntity extends BaseEntity
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         $reflectionTypeName = $reflectionProperty->getType()->getName();
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
-            $this->$propertyName = $this->parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
+            $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
             unset($this->foreignKeyIndexes[$propertyName]);
         } elseif (($reflectionTypeName === SismaCollection::class) && ((isset($this->$propertyName) === false) || (count($this->$propertyName) === 0))) {
             $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';

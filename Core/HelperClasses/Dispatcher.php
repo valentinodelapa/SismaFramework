@@ -31,6 +31,7 @@ use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\HelperClasses\NotationManager;
+use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Authentication;
 use SismaFramework\Core\HttpClasses\Request;
@@ -42,15 +43,13 @@ use SismaFramework\Core\HttpClasses\Request;
 class Dispatcher
 {
 
-    use \SismaFramework\Traits\ParseValue;
-
     const CONTENT_TYPE_DECLARATION = 'Content-type: ';
 
     public static string $selectedModule = '';
     private static int $reloadAttempts = 0;
     private Request $request;
     private string $path;
-    private $streamContex = null; 
+    private $streamContex = null;
     private array $pathParts;
     private bool $defaultControllerInjected = false;
     private bool $defaultActionInjected = false;
@@ -72,18 +71,16 @@ class Dispatcher
         Debugger::startExecutionTimeCalculation();
         Session::start();
         $this->request = new Request;
-        $this->path = $this->request->server['REQUEST_URI'];
-        if (empty($this->request->server['QUERY_STRING'])) {
-            $this->parsePath();
-            $this->handle();
-        } elseif(Resource::tryFrom($this->getExtension())) {
-            $this->path = strtok($this->path, '?');
-            $this->streamContex = Router::getStreamContentResource($this->request->server['QUERY_STRING']);
-            $this->parsePath();
-            $this->handle();
-        }else{
-            Router::reloadWithParseQuery($this->path);
+        $this->path = strtok($this->request->server['REQUEST_URI'], '?');
+        if (strlen($this->request->server['QUERY_STRING']) > 0) {
+            if (Resource::tryFrom($this->getExtension())) {
+                $this->streamContex = Router::getStreamContentResource($this->request->server['QUERY_STRING']);
+            } else {
+                Router::reloadWithParseQuery($this->request->server['REQUEST_URI']);
+            }
         }
+        $this->parsePath();
+        $this->handle();
     }
 
     private function parsePath(): void
@@ -252,7 +249,7 @@ class Dispatcher
                 $currentActionArguments[$argument->name] = new Authentication($this->request);
             } elseif (array_key_exists($argument->name, $this->actionArguments)) {
                 $reflectionType = $argument->getType();
-                $currentActionArguments[$argument->name] = $this->parseValue($reflectionType, $this->actionArguments[$argument->name]);
+                $currentActionArguments[$argument->name] = Parser::parseValue($reflectionType, $this->actionArguments[$argument->name]);
             } elseif ($argument->isDefaultValueAvailable()) {
                 $currentActionArguments[$argument->name] = $argument->getDefaultValue();
             } else {

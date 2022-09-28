@@ -36,6 +36,7 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Core\HelperClasses\Parser;
 
 /**
  *
@@ -43,9 +44,6 @@ use SismaFramework\Orm\HelperClasses\Cache;
  */
 abstract class BaseEntity
 {
-
-    use \SismaFramework\Traits\ParseValue;
-    use \SismaFramework\Traits\UnparseValue;
 
     protected string $tableName = '';
     protected string $primaryKey = 'id';
@@ -90,7 +88,7 @@ abstract class BaseEntity
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         $reflectionTypeName = $reflectionProperty->getType()->getName();
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
-            $this->$propertyName = $this->parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
+            $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
             unset($this->foreignKeyIndexes[$propertyName]);
         }
     }
@@ -357,7 +355,7 @@ abstract class BaseEntity
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::delete);
         $adapterToCall = $query->getAdapter();
-        self::unparseValue($bindValues);
+        Parser::unparseValues($bindValues);
         $ok = $adapterToCall->execute($cmd, $bindValues, $bindTypes);
         return $ok;
     }
@@ -370,7 +368,7 @@ abstract class BaseEntity
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::select);
         $adapterToCall = $query->getAdapter();
-        self::unparseValue($bindValues);
+        Parser::unparseValues($bindValues);
         $result = $adapterToCall->select($cmd, $bindValues, $bindTypes);
         if (!$result) {
             return null;
@@ -390,7 +388,7 @@ abstract class BaseEntity
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::select);
         $adapterToCall = $query->getAdapter();
-        self::unparseValue($bindValues);
+        Parser::unparseValues($bindValues);
         $result = $adapterToCall->select($cmd, $bindValues, $bindTypes);
         if (!$result) {
             return 0;

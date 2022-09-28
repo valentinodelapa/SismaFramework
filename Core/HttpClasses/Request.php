@@ -29,6 +29,7 @@ namespace SismaFramework\Core\HttpClasses;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Core\Enumerations\RequestType;
+use SismaFramework\Core\HelperClasses\Parser;
 
 /**
  *
@@ -36,8 +37,6 @@ use SismaFramework\Core\Enumerations\RequestType;
  */
 class Request
 {
-
-    use \SismaFramework\Traits\ParseValue;
 
     public $query;
     public $request;
@@ -79,7 +78,7 @@ class Request
         if (is_array($field)) {
             $entity->$propertyName = $this->parseRequest($reflectionProperty->getType()->getName(), $field);
         } elseif ($field !== '') {
-            $entity->$propertyName = $this->parseValue($reflectionProperty->getType(), $field);
+            $entity->$propertyName = Parser::parseValue($reflectionProperty->getType(), $field);
         }
     }
 
@@ -101,7 +100,7 @@ class Request
             if (is_array($field)) {
                 $entity->$methodName($this->parseRequest($sismaCollectionClassName, $field));
             } else {
-                $entity->$methodName($this->parseEntity($sismaCollectionClassName, $field));
+                $entity->$methodName(Parser::parseEntity($sismaCollectionClassName, $field));
             }
         }
     }

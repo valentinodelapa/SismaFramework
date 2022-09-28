@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Traits;
+namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
@@ -34,10 +34,10 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-trait ParseValue
+class Parser
 {
 
-    private function parseValue(\ReflectionNamedType $reflectionNamedType, ?string $value, $parseEntity = true): mixed
+    public static function parseValue(\ReflectionNamedType $reflectionNamedType, ?string $value, $parseEntity = true): mixed
     {
         if (($value === null) || ($reflectionNamedType->allowsNull() && ($value === ''))) {
             return null;
@@ -45,19 +45,13 @@ trait ParseValue
             settype($value, $reflectionNamedType->getName());
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
-            if($parseEntity){
-                return $this->parseEntity($reflectionNamedType->getName(), $value);
-            }else{
+            if ($parseEntity) {
+                return self::parseEntity($reflectionNamedType->getName(), $value);
+            } else {
                 return intval($value);
             }
         } elseif (enum_exists($reflectionNamedType->getName())) {
-            $enumerationName = $reflectionNamedType->getName();
-            $enumerationValue = $enumerationName::tryFrom($value);
-            if(($enumerationValue === null) && ($reflectionNamedType->allowsNull() === false)){
-                throw new InvalidArgumentException();
-            }else{
-                return $enumerationName::from($value);
-            }
+            return self::parseEnumeration($reflectionNamedType->getName(), $value, $reflectionNamedType->allowsNull());
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
             return new SismaDateTime($value);
         } else {
@@ -65,11 +59,34 @@ trait ParseValue
         }
     }
 
-    private function parseEntity(string $entityName, string $value): BaseEntity
+    public static function parseEntity(string $entityName, string $value): BaseEntity
     {
         $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
         $modelInstance = new $modelName();
         return $modelInstance->getEntityById($value);
+    }
+
+    public static function parseEnumeration(string $enumerationName, string $value, bool $allowsNull): ?\UnitEnum
+    {
+        $enumerationValue = $enumerationName::tryFrom($value);
+        if (($enumerationValue === null) && ($allowsNull === false)) {
+            throw new InvalidArgumentException();
+        } else {
+            return $enumerationName::from($value);
+        }
+    }
+
+    public static function unparseValues(array &$arrayValues): void
+    {
+        foreach ($arrayValues as $key => $value) {
+            if ($value instanceof BaseEntity) {
+                $arrayValues[$key] = $value->id;
+            } elseif ($value instanceof \UnitEnum) {
+                $arrayValues[$key] = $value->value;
+            } elseif ($value instanceof SismaDateTime) {
+                $arrayValues[$key] = $value->format("Y-m-d H:i:s");
+            }
+        }
     }
 
 }

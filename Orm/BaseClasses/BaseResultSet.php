@@ -28,6 +28,7 @@ namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\Core\HelperClasses\Parser;
 
 /**
  *
@@ -37,7 +38,6 @@ abstract class BaseResultSet implements \Iterator
 {
     use \SismaFramework\Orm\Traits\BuildPropertyName;
     use \SismaFramework\Orm\Traits\ConvertToStandardEntity;
-    use \SismaFramework\Traits\ParseValue;
 
     protected string $returnType = StandardEntity::class;
     protected int $currentRecord = 0;
@@ -122,7 +122,7 @@ abstract class BaseResultSet implements \Iterator
             if (property_exists($obj, $property)) {
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
-                $obj->$property = $this->parseValue($reflectionType, $value, false);
+                $obj->$property = Parser::parseValue($reflectionType, $value, false);
             }
         }
         $obj->activeChangeTracking();

@@ -29,6 +29,7 @@ namespace SismaFramework\Core\BaseClasses;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\FormException;
@@ -43,7 +44,6 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 abstract class BaseForm
 {
 
-    use \SismaFramework\Traits\ParseValue;
     use \SismaFramework\Core\Traits\Submitted;
 
     protected const ENTITY_CLASS_NAME = BaseEntity::class;
@@ -151,7 +151,7 @@ abstract class BaseForm
     {
         if (array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== '')) {
             $reflectionType = $property->getType();
-            $this->entityData->{$property->name} = $this->parseValue($reflectionType, $this->request->request[$property->name]);
+            $this->entityData->{$property->name} = Parser::parseValue($reflectionType, $this->request->request[$property->name]);
         } elseif (array_key_exists($property->name, $this->request->files)) {
             $this->entityData->{$property->name} = $this->request->files[$property->name];
         } elseif (array_key_exists($property->name, $this->filterFiledsMode)) {
