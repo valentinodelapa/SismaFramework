@@ -108,7 +108,11 @@ class Router
         $data = [];
         foreach (explode('&', $queryString) as $parameterBlock) {
             $parameterBlockParts = explode('=', $parameterBlock);
-            $data[$parameterBlockParts[0]] = $parameterBlockParts[1];
+            if(count($parameterBlockParts) === 2){
+                $data[$parameterBlockParts[0]] = $parameterBlockParts[1];
+            }else{
+                $data[] = $parameterBlockParts[0];
+            }
         }
         $request = new Request();
         $opts = [

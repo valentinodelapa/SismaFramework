@@ -45,6 +45,7 @@ enum Resource: string
     case php = 'php';
     case png = 'png';
     case svg = 'svg';
+    case woff = 'woff';
     case woff2 = 'woff2';
 
     public function getMime(): string
@@ -58,6 +59,7 @@ enum Resource: string
             self::json, self::map => 'application/json',
             self::png => 'image/png',
             self::svg => 'image/svg+xml',
+            self::woff => 'font/woff',
             self::woff2 => 'font/woff2',
         };
     }
