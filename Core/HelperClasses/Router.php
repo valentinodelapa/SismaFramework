@@ -103,25 +103,4 @@ class Router
         return new Response();
     }
 
-    public static function getStreamContentResource(string $queryString)
-    {
-        $data = [];
-        foreach (explode('&', $queryString) as $parameterBlock) {
-            $parameterBlockParts = explode('=', $parameterBlock);
-            if(count($parameterBlockParts) === 2){
-                $data[$parameterBlockParts[0]] = $parameterBlockParts[1];
-            }else{
-                $data[] = $parameterBlockParts[0];
-            }
-        }
-        $request = new Request();
-        $opts = [
-            $request->server['SERVER_PROTOCOL'] => [
-                'method' => 'GET',
-                'content' => $data
-            ]
-        ];
-        return stream_context_create($opts);
-    }
-
 }

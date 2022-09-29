@@ -111,4 +111,15 @@ class Request
         return $this->parseRequest($arguments[0], $this->$propertyName);
     }
 
+    public static function getStreamContentResource()
+    {
+        $opts = [
+            $this->server['SERVER_PROTOCOL'] => [
+                'method' => 'GET',
+                'content' => $this->query
+            ]
+        ];
+        return stream_context_create($opts);
+    }
+
 }

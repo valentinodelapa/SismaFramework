@@ -74,7 +74,7 @@ class Dispatcher
         $this->path = strtok($this->request->server['REQUEST_URI'], '?');
         if (strlen($this->request->server['QUERY_STRING']) > 0) {
             if (Resource::tryFrom($this->getExtension())) {
-                $this->streamContex = Router::getStreamContentResource($this->request->server['QUERY_STRING']);
+                $this->streamContex = $this->request->getStreamContentResource();
             } else {
                 Router::reloadWithParseQuery($this->request->server['REQUEST_URI']);
             }
