@@ -42,6 +42,7 @@ enum Resource: string
     case js = 'js';
     case json = 'json';
     case map = 'map';
+    case otf = 'otf';
     case php = 'php';
     case png = 'png';
     case svg = 'svg';
@@ -58,6 +59,7 @@ enum Resource: string
             self::js => 'application/javascript',
             self::json, self::map => 'application/json',
             self::png => 'image/png',
+            self::otf => 'font/otf',
             self::svg => 'image/svg+xml',
             self::woff => 'font/woff',
             self::woff2 => 'font/woff2',

@@ -122,25 +122,31 @@ class Dispatcher
 
     private function handle(): void
     {
-        if ($this->checkControllerPresence() === true) {
-            $this->resolveRouteCall();
-        } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
-            $fixtureManager = new FixturesManager();
-        } elseif (($this->pathParts[0] === \Config\DIRECTORY_UP) && Resource::tryFrom($this->getExtension()) && file_exists(__DIR__ . $this->path)) {
+        if (Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(__DIR__ . $this->path, false, $this->streamContex);
+            echo file_get_contents(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts), false, $this->streamContex);
+        } elseif (($this->pathParts[0] === \Config\DIRECTORY_UP) && Resource::tryFrom($this->getExtension()) && file_exists($this->path)) {
+            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
+            echo file_get_contents($this->path, false, $this->streamContex);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
             echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->path, false, $this->streamContex);
         } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
             header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
             echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path, false, $this->streamContex);
-        } elseif (Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts), false, $this->streamContex);
+        } elseif ($this->checkControllerPresence() === true) {
+            $this->resolveRouteCall();
+        } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
+            $fixtureManager = new FixturesManager();
         } else {
             $this->switchNotFoundActions();
         }
+    }
+
+    public function getExtension(): string
+    {
+        $splittedPath = explode('.', strtok($this->path, '?'));
+        return strtolower(end($splittedPath));
     }
 
     private function checkControllerPresence(): bool
@@ -266,12 +272,6 @@ class Dispatcher
         } else {
             throw new PageNotFoundException($this->path);
         }
-    }
-
-    public function getExtension(): string
-    {
-        $splittedPath = explode('.', strtok($this->path, '?'));
-        return strtolower(end($splittedPath));
     }
 
     private function reloadDispatcher(): void
