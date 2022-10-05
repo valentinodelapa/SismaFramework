@@ -120,20 +120,15 @@ class Dispatcher
         }
     }
 
+    private function checkControllerPresence(): bool
+    {
+        return class_exists($this->controllerName);
+    }
+
     private function handle(): void
     {
-        if (Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts), false, $this->streamContex);
-        } elseif (($this->pathParts[0] === \Config\DIRECTORY_UP) && Resource::tryFrom($this->getExtension()) && file_exists($this->path)) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents($this->path, false, $this->streamContex);
-        } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(\Config\STRUCTURAL_ASSETS_PATH . $this->path, false, $this->streamContex);
-        } elseif ((count($this->pathParts) === 2) && Resource::tryFrom($this->getExtension()) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
-            header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-            echo file_get_contents(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path, false, $this->streamContex);
+        if (Resource::tryFrom($this->getExtension())) {
+            $this->handleFile();
         } elseif ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
         } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
@@ -143,15 +138,69 @@ class Dispatcher
         }
     }
 
-    public function getExtension(): string
+    private function handleFile(): void
     {
-        $splittedPath = explode('.', strtok($this->path, '?'));
-        return strtolower(end($splittedPath));
+        if (file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
+            $this->makeResource(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
+            $this->makeResource(\Config\STRUCTURAL_ASSETS_PATH . $this->path);
+        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
+            $this->makeResource(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path);
+        } else {
+            $this->switchNotFoundActions();
+        }
     }
 
-    private function checkControllerPresence(): bool
+    private function makeResource(string $filename): void
     {
-        return class_exists($this->controllerName);
+        header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
+        echo file_get_contents($filename, false, $this->streamContex);
+    }
+
+    private function switchNotFoundActions(): void
+    {
+        if (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
+            $this->reloadDispatcher();
+        } else {
+            throw new PageNotFoundException($this->path);
+        }
+    }
+
+    private function reloadDispatcher(): void
+    {
+        $this->switchPath();
+        $this->parsePath();
+        $this->handle();
+    }
+
+    private function switchPath(): void
+    {
+        if ($this->defaultControllerChecked && $this->defaultActionChecked) {
+            Router::concatenateMetaUrl('/' . $this->pathParts[0]);
+            $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
+            $this->defaultControllerChecked = $this->defaultActionChecked = false;
+            self::$reloadAttempts++;
+        } elseif ($this->defaultControllerChecked === false) {
+            array_unshift($this->pathParts, \Config\DEFAULT_PATH);
+            $this->defaultControllerInjected = true;
+            if ($this->defaultActionInjected) {
+                $this->defaultActionInjected = false;
+                array_pop($this->pathParts);
+            }
+            $this->path = '/' . implode('/', $this->pathParts);
+            $this->defaultControllerChecked = true;
+        } elseif ($this->defaultActionChecked === false) {
+            $this->defaultControllerInjected = false;
+            $this->pathParts = [$this->pathParts[1], \Config\DEFAULT_ACTION, ...array_slice($this->pathParts, 2)];
+            $this->path = '/' . implode('/', $this->pathParts);
+            $this->defaultActionChecked = true;
+        }
+    }
+
+    public function getExtension(): string
+    {
+        $splittedPath = explode('.', $this->path);
+        return strtolower(end($splittedPath));
     }
 
     private function resolveRouteCall(): void
@@ -263,46 +312,6 @@ class Dispatcher
             }
         }
         $this->actionArguments = $currentActionArguments;
-    }
-
-    private function switchNotFoundActions(): void
-    {
-        if (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
-            $this->reloadDispatcher();
-        } else {
-            throw new PageNotFoundException($this->path);
-        }
-    }
-
-    private function reloadDispatcher(): void
-    {
-        $this->switchPath();
-        $this->parsePath();
-        $this->handle();
-    }
-
-    private function switchPath(): void
-    {
-        if ($this->defaultControllerChecked && $this->defaultActionChecked) {
-            Router::concatenateMetaUrl('/' . $this->pathParts[0]);
-            $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
-            $this->defaultControllerChecked = $this->defaultActionChecked = false;
-            self::$reloadAttempts++;
-        } elseif ($this->defaultControllerChecked === false) {
-            array_unshift($this->pathParts, \Config\DEFAULT_PATH);
-            $this->defaultControllerInjected = true;
-            if ($this->defaultActionInjected) {
-                $this->defaultActionInjected = false;
-                array_pop($this->pathParts);
-            }
-            $this->path = '/' . implode('/', $this->pathParts);
-            $this->defaultControllerChecked = true;
-        } elseif ($this->defaultActionChecked === false) {
-            $this->defaultControllerInjected = false;
-            $this->pathParts = [$this->pathParts[1], \Config\DEFAULT_ACTION, ...array_slice($this->pathParts, 2)];
-            $this->path = '/' . implode('/', $this->pathParts);
-            $this->defaultActionChecked = true;
-        }
     }
 
 }
