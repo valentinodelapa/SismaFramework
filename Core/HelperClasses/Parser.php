@@ -63,7 +63,12 @@ class Parser
     {
         $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
         $modelInstance = new $modelName();
-        return $modelInstance->getEntityById($value);
+        $entity = $modelInstance->getEntityById($value);
+        if($entity instanceof BaseEntity){
+            return $entity;
+        }else{
+            throw new InvalidArgumentException();
+        }
     }
 
     public static function parseEnumeration(string $enumerationName, string $value, bool $allowsNull): ?\UnitEnum

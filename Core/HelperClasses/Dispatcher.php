@@ -77,6 +77,7 @@ class Dispatcher
                 $this->streamContex = $this->request->getStreamContentResource();
             } else {
                 Router::reloadWithParseQuery($this->request->server['REQUEST_URI']);
+                exit();
             }
         }
         $this->parsePath();
@@ -153,8 +154,12 @@ class Dispatcher
 
     private function makeResource(string $filename): void
     {
+        header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-        echo file_get_contents($filename, false, $this->streamContex);
+        //echo file_get_contents($filename, false, $this->streamContex);
+        readfile($filename, false, $this->streamContex);
+        /*$stream = fopen($filename, 'rb', false, $this->streamContex);
+        fpassthru($stream);*/
     }
 
     private function switchNotFoundActions(): void

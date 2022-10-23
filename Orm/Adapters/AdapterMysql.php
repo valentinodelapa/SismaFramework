@@ -117,7 +117,7 @@ class AdapterMysql extends BaseAdapter
         }
     }
 
-    private function parseGenericBindType(DataType &$bindType, mixed $value)
+    private function parseGenericBindType(DataType &$bindType, mixed $value): void
     {
         if (is_integer($value)) {
             $bindType = DataType::typeInteger;
@@ -138,7 +138,7 @@ class AdapterMysql extends BaseAdapter
         }
     }
 
-    private function incrementIndexedArrayKey(array &$bindValues = [], array &$bindTypes = [])
+    private function incrementIndexedArrayKey(array &$bindValues = [], array &$bindTypes = []): void
     {
         $temporanyValues = $temporanyTypes = [];
         foreach ($bindValues as $key => $value) {

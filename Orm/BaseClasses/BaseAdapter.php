@@ -44,7 +44,7 @@ abstract class BaseAdapter
 {
 
     protected static ?BaseAdapter $adapter = null;
-    protected static $connection = null;
+    protected static mixed $connection = null;
 
     public function __construct(array $options = [])
     {

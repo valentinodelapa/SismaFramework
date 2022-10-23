@@ -37,11 +37,13 @@ enum Resource: string
     case geojson = 'geojson';
     case htm = 'htm';
     case html = 'html';
+    case ico = 'ico';
     case jpg = 'jpg';
     case jpeg = 'jpeg';
     case js = 'js';
     case json = 'json';
     case map = 'map';
+    case mp4 = 'mp4';
     case otf = 'otf';
     case php = 'php';
     case png = 'png';
@@ -55,9 +57,11 @@ enum Resource: string
             self::css => 'text/css',
             self::geojson => 'application/geo+json',
             self::htm, self::html => 'text/html',
+            self::ico => 'image/x-icon',
             self::jpg, self::jpeg => 'image/jpeg',
             self::js => 'application/javascript',
             self::json, self::map => 'application/json',
+            self::mp4 => 'video/mp4',
             self::png => 'image/png',
             self::otf => 'font/otf',
             self::svg => 'image/svg+xml',

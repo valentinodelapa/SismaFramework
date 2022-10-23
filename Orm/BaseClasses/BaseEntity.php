@@ -30,6 +30,7 @@ use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
@@ -48,10 +49,11 @@ abstract class BaseEntity
     protected string $tableName = '';
     protected string $primaryKey = 'id';
     protected static ?BaseEntity $instance = null;
-    protected static bool $isFirstExecutedEntity = true;
     protected bool $isActiveTransaction = false;
     protected ?BaseAdapter $adapter = null;
     protected array $foreignKeyIndexes = [];
+    private static bool $isFirstExecutedEntity = true;
+    private static bool $manualTransactionStarted = false;
     private bool $changeTrackingActive = false;
     private bool $modified = false;
 
@@ -241,6 +243,36 @@ abstract class BaseEntity
         return $ok;
     }
 
+    public function startTransaction(): void
+    {
+        $this->adapter->beginTransaction();
+        self::$manualTransactionStarted = true;
+    }
+
+    public function commitTransaction(): void
+    {
+        $this->adapter->commitTransaction();
+        self::$manualTransactionStarted = false;
+    }
+
+    private function checkStartTransaction()
+    {
+        if (self::$isFirstExecutedEntity && (self::$manualTransactionStarted === false)) {
+            $this->adapter->beginTransaction();
+            self::$isFirstExecutedEntity = false;
+            $this->isActiveTransaction = true;
+        }
+    }
+
+    private function checkEndTransaction()
+    {
+        if ($this->isActiveTransaction && (self::$manualTransactionStarted === false)) {
+            $this->adapter->commitTransaction();
+            self::$isFirstExecutedEntity = true;
+            $this->isActiveTransaction = false;
+        }
+    }
+
     public function parseValues(array &$cols, array &$vals, array &$markers): void
     {
         $reflectionClass = new \ReflectionClass($this);
@@ -307,26 +339,6 @@ abstract class BaseEntity
         return $ok;
     }
 
-    private function checkStartTransaction()
-    {
-        if (self::$isFirstExecutedEntity) {
-            $adapterToCall = $this->adapter;
-            $adapterToCall->beginTransaction();
-            self::$isFirstExecutedEntity = false;
-            $this->isActiveTransaction = true;
-        }
-    }
-
-    private function checkEndTransaction()
-    {
-        if ($this->isActiveTransaction) {
-            $adapterToCall = $this->adapter;
-            $adapterToCall->commitTransaction();
-            self::$isFirstExecutedEntity = true;
-            $this->isActiveTransaction = false;
-        }
-    }
-
     public function delete(): bool
     {
         if ($this->primaryKey == '') {
@@ -339,8 +351,10 @@ abstract class BaseEntity
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::delete);
         $adapterToCall = $query->getAdapter();
-        $bindValues = array($this->{$this->primaryKey});
-        $ok = $adapterToCall->execute($cmd, $bindValues);
+        $bindValues = [$this];
+        $bindTypes = [DataType::typeEntity];
+        Parser::unparseValues($bindValues);
+        $ok = $adapterToCall->execute($cmd, $bindValues, $bindTypes);
         if ($ok) {
             unset($this->{$this->primaryKey});
         }
