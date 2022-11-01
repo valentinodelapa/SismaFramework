@@ -40,6 +40,7 @@ abstract class ReferencedEntity extends BaseEntity
 {
 
     protected array $collectionPropertiesName = [];
+    protected array $collectionPropertiesSetted = [];
     private array $collectionData;
 
     public const FOREIGN_KEY_TYPE = 'foreignKeyType';
@@ -53,7 +54,7 @@ abstract class ReferencedEntity extends BaseEntity
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
             $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
             unset($this->foreignKeyIndexes[$propertyName]);
-        } elseif (($reflectionTypeName === SismaCollection::class) && ((isset($this->$propertyName) === false) || (count($this->$propertyName) === 0))) {
+        } elseif (($reflectionTypeName === SismaCollection::class) && ((isset($this->$propertyName) === false) || ((count($this->$propertyName) === 0) && (in_array($propertyName, $this->collectionPropertiesSetted) === false)))) {
             $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_TYPE)) . 'Model';
             $foreignKeyName = $this->getCollectionDataInformation($propertyName, static::FOREIGN_KEY_NAME);
             $model = new $modelName();
@@ -138,6 +139,7 @@ abstract class ReferencedEntity extends BaseEntity
             foreach ($this->$propertyName as $entity) {
                 $entity->$entityPropertyName = $this;
             }
+            $this->collectionPropertiesSetted[] = $propertyName;
         } else {
             throw new InvalidArgumentException();
         }
