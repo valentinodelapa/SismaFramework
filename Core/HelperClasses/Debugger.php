@@ -28,6 +28,7 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Templater;
+use SismaFramework\Core\HelperClasses\Parser;
 
 /**
  *
@@ -41,8 +42,10 @@ class Debugger
     private static int $queryExecutedNumber = 0;
     private static int $logRowNumber = 0;
     private static int $formFilterNumber = 0;
+    private static int $varsNumber = 0;
     private static array $queryExecuted = [];
     private static array $formFilter = [];
+    private static array $vars = [];
 
     public static function startExecutionTimeCalculation(): void
     {
@@ -58,7 +61,7 @@ class Debugger
     public static function generateDebugBar()
     {
         Templater::setStructural();
-        $debugBarQuery = $debugBarLog = $debugBarForm = '';
+        $debugBarQuery = $debugBarLog = $debugBarForm = $debugBarVars = '';
         foreach (self::$queryExecuted as $query) {
             $debugBarQuery .= Templater::generateTemplate('debugBarBody', ['information' => $query]);
         }
@@ -67,10 +70,13 @@ class Debugger
             $debugBarLog .= Templater::generateTemplate('debugBarBody', ['information' => $logRow]);
         }
         $debugBarForm = self::generateDebugBarForm(self::$formFilter);
+        self::$varsNumber = count(self::$vars);
+        $debugBarVars = self::generateDebugBarVars();
         $vars = array_merge(self::getInformations(), [
             'debugBarQuery' => $debugBarQuery,
             'debugBarLog' => $debugBarLog,
             'debugBarForm' => $debugBarForm,
+            'debugBarVars' => $debugBarVars,
         ]);
         return Templater::generateTemplate('debugBar', $vars);
     }
@@ -90,12 +96,27 @@ class Debugger
         return $debugBarForm;
     }
 
+    private static function generateDebugBarVars()
+    {
+        $vars = [];
+        foreach (self::$vars as $key => $value) {
+            $vars[$key] = $value;
+        }
+        Parser::unparseValues($vars);
+        $debugBarVars = '';
+        foreach ($vars as $field => $information) {
+            $debugBarVars .= Templater::generateTemplate('debugBarBody', ['information' => $field . ': ' . print_r($information, true)]);
+        }
+        return $debugBarVars;
+    }
+
     public static function getInformations(): array
     {
         return [
             "queryExecutedNumber" => self::$queryExecutedNumber,
             "logRowNumber" => self::$logRowNumber,
             "formFilterNumber" => self::$formFilterNumber,
+            "varsNumber" => self::$varsNumber,
             "memoryUsed" => self::getMemoryUsed(),
             "executionTime" => self::$executionTime,
         ];
@@ -121,6 +142,11 @@ class Debugger
     public static function setFormFilter(array $formFilter): void
     {
         self::$formFilter = $formFilter;
+    }
+
+    public static function setVars(array $vars): void
+    {
+        self::$vars = $vars;
     }
 
 }

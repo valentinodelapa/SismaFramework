@@ -27,42 +27,46 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Resource;
+use SismaFramework\Core\Exceptions\ModuleException;
 
 /**
- *
+ * 
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class Templater
+class ModuleManager
 {
-    private static $isStructural = false;
-    
-    public static function setStructural(bool $isStructural = true)
+
+    private static string $applicationModule = '';
+    private static ?string $customVisualizationModule = null;
+
+    public static function setApplicationModule(string $module): void
     {
-        self::$isStructural = $isStructural;
+        self::$applicationModule = $module;
     }
 
-    public static function generateTemplate(string $template, array $vars): string
+    public static function getApplicationModule(): string
     {
-        $templateContent = self::getTemplateContent($template);
-        $templateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($vars) {
-            $var = str_replace(['{{', '}}'], '', $varName[0]);
-            return $vars[$var];
-        }, $templateContent);
-        return $templateContent;
+        return self::$applicationModule;
     }
 
-    private static function getTemplateContent(string $template): string
+    public static function setCustomVisualizationModule(string $module): void
     {
-        $path = self::getTemplatePath($template);
-        return file_get_contents($path);
+        self::$customVisualizationModule = $module;
     }
-    
-    private static function getTemplatePath(string $template)
+
+    public static function unsetCustomVisualizationModule(): void
     {
-        if(self::$isStructural){
-            return \Config\STRUCTURAL_TEMPLATES_PATH . $template . '.html';
-        }else{
-            return ModuleManager::getExistingFilePath(\Config\TEMPLATES_PATH.$template, Resource::html);
+        self::$customVisualizationModule = null;
+    }
+
+    public static function getExistingFilePath(string $path, Resource $resource): string
+    {
+        if ((empty(self::$customVisualizationModule) === false) && file_exists(\Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+            return \Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
+        } elseif (file_exists(\Config\ROOT_PATH . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+            return \Config\ROOT_PATH . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
+        } else {
+            throw new ModuleException('File non trovato');
         }
     }
 

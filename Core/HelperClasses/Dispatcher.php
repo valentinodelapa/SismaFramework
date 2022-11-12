@@ -45,7 +45,6 @@ class Dispatcher
 
     const CONTENT_TYPE_DECLARATION = 'Content-type: ';
 
-    public static string $selectedModule = '';
     private static int $reloadAttempts = 0;
     private Request $request;
     private string $path;
@@ -115,7 +114,7 @@ class Dispatcher
         foreach (\Config\MODULE_FOLDERS as $module) {
             $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . NotationManager::convertToStudlyCaps($this->pathParts[0] . 'Controller');
             if (($this->checkControllerPresence()) || ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
-                self::$selectedModule = $module;
+                ModuleManager::setApplicationModule($module);
                 break;
             }
         }
@@ -145,8 +144,8 @@ class Dispatcher
             $this->makeResource(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
         } elseif ((count($this->pathParts) === 2) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
             $this->makeResource(\Config\STRUCTURAL_ASSETS_PATH . $this->path);
-        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
-            $this->makeResource(\Config\ROOT_PATH . self::$selectedModule . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path);
+        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
+            $this->makeResource(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path);
         } else {
             $this->switchNotFoundActions();
         }

@@ -29,7 +29,6 @@ namespace SismaFramework\Core\HelperClasses;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\RenderException;
-use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HttpClasses\Response;
 
 /**
@@ -54,6 +53,7 @@ class Render
 
     public static function generateView(string $view, array $vars): Response
     {
+        Debugger::setVars($vars);
         $deviceClass = self::getDeviceClass();
         $locale = self::getActualLocaleArray($view);
         extract($locale);
@@ -80,7 +80,7 @@ class Render
             if (isset($actualLocale['common'])) {
                 $commonLocale = array_merge($commonLocale, $actualLocale['common']);
             }
-            $actualLocale = $actualLocale[$part];
+            $actualLocale = $actualLocale[$part] ?? $actualLocale;
         }
         return array_merge($actualLocale, $commonLocale);
     }
@@ -119,18 +119,7 @@ class Render
     {
         self::$localeType = Resource::tryFrom(\Config\DEFAULT_LOCALE_TYPE);
         if (self::$localeType !== null) {
-            return self::getExistingFilePath(DIRECTORY_SEPARATOR . \Config\LOCALES_PATH . $language->value, self::$localeType);
-        } else {
-            throw new RenderException('File non trovato');
-        }
-    }
-
-    private static function getExistingFilePath(string $path, Resource $resource): string
-    {
-        if ((self::$customRenderModule !== null) && file_exists(\Config\ROOT_PATH . self::$customRenderModule . $path . '.' . $resource->value)) {
-            return \Config\ROOT_PATH . self::$customRenderModule . $path . '.' . $resource->value;
-        } elseif (file_exists(\Config\ROOT_PATH . Dispatcher::$selectedModule . $path . '.' . $resource->value)) {
-            return \Config\ROOT_PATH . Dispatcher::$selectedModule . $path . '.' . $resource->value;
+            return ModuleManager::getExistingFilePath(\Config\LOCALES_PATH . $language->value, self::$localeType);
         } else {
             throw new RenderException('File non trovato');
         }
@@ -138,7 +127,7 @@ class Render
 
     private static function getViewPath(string $view): string
     {
-        return self::getExistingFilePath(DIRECTORY_SEPARATOR . \Config\VIEWS_PATH . $view, Resource::php);
+        return ModuleManager::getExistingFilePath(\Config\VIEWS_PATH . $view, Resource::php);
     }
 
     public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array

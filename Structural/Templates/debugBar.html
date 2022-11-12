@@ -4,6 +4,7 @@
             <label>Database</label><div class="debug-information-label" id="debug-information-database">{{queryExecutedNumber}}</div>
             <label>Log</label><div class="debug-information-label" id="debug-information-log">{{logRowNumber}}</div>
             <label>Form</label><div class="debug-information-label" id="debug-information-form">{{formFilterNumber}}</div>
+            <label>Variables</label><div class="debug-information-label" id="debug-information-vars">{{varsNumber}}</div>
         </div>
         <div class="debug-bar-header-right">
             <div>{{memoryUsed}} MB</div>
@@ -18,5 +19,8 @@
     </div>
     <div class="debug-bar-body" id="debug-body-form">
         <pre>{{debugBarForm}}</pre>
+    </div>
+    <div class="debug-bar-body" id="debug-body-vars">
+        <pre>{{debugBarVars}}</pre>
     </div>
 </div>
