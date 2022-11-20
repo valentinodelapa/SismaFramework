@@ -40,6 +40,18 @@ class Logger
             fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "\n");
             fclose($handle);
         }
+        self::truncateLog();
+    }
+
+    private static function truncateLog(): void
+    {
+        $logRows = file(\Config\LOG_PATH);
+        $maxRows = \Config\DEVELOPMENT_ENVIRONMENT ? \Config\LOG_DEVELOPEMENT_MAX_ROW : \Config\LOG_PRODUCTION_MAX_ROW;
+        if (count($logRows) > $maxRows) {
+            $offset = $maxRows-count($logRows);
+            $logRows = array_slice($logRows, $offset);
+            file_put_contents(\Config\LOG_PATH, $logRows);
+        }
     }
 
     public static function saveTrace(array $trace): void
@@ -62,29 +74,12 @@ class Logger
 
     public static function getLog(): string|false
     {
-        $handle = fopen(\Config\LOG_PATH, 'r');
-        if ($handle !== false) {
-            $log = fread($handle, (filesize(\Config\LOG_PATH) > 0) ? filesize(\Config\LOG_PATH) : 1);
-            fclose($handle);
-            return $log;
-        } else {
-            return false;
-        }
+        return file_get_contents(\Config\LOG_PATH);
     }
 
     public static function getLogRowByRow(): array|false
     {
-        $handle = fopen(\Config\LOG_PATH, 'r');
-        if ($handle !== false) {
-            $log = [];
-            while (($line = fgets($handle)) !== false) {
-                $log[] = $line;
-            }
-            fclose($handle);
-            return $log;
-        } else {
-            return false;
-        }
+        return file(\Config\LOG_PATH);
     }
 
 }
