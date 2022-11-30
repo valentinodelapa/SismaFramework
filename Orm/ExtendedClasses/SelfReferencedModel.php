@@ -40,8 +40,8 @@ use SismaFramework\ProprietaryTypes\SismaCollection;
 abstract class SelfReferencedModel extends ReferencedModel
 {
 
-    const SISMA_COLLECTION_PROPERTY_NAME = 'sonCollection';
-    const SISMA_COLLECTION_GETTER_METHOD = 'getSonCollection';
+    private const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
+    private const SONS_GETTER_METHOD = 'getSonCollection';
 
     public function __call($name, $arguments): SismaCollection|int|bool
     {
@@ -74,9 +74,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query->setWhere();
         $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -94,9 +94,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query->setWhere();
         $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -127,9 +127,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query->setWhere();
         $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -154,9 +154,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query->setWhere();
         $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -201,9 +201,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         ];
         $query->appendAnd();
         if ($parentEntity === null) {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -216,7 +216,7 @@ abstract class SelfReferencedModel extends ReferencedModel
     {
         $entityTree = $this->getEntityCollectionByParent($parentEntity, null, $order);
         foreach ($entityTree as $key => $entity) {
-            $entityTree[$key]->setEntityCollection(self::SISMA_COLLECTION_PROPERTY_NAME, $this->getEntityTree($entity, $order));
+            $entityTree[$key]->setEntityCollection(self::SON_COLLECTION_PROPERTY_NAME, $this->getEntityTree($entity, $order));
         }
         return $entityTree;
     }
@@ -227,9 +227,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query->setWhere();
         $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -247,9 +247,9 @@ abstract class SelfReferencedModel extends ReferencedModel
         $query->setWhere();
         $bindValues = $bindTypes = [];
         if ($parentEntity === null) {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::isNull, '', true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entity->getCollectionDataInformation(self::SISMA_COLLECTION_PROPERTY_NAME, $this->entityName::FOREIGN_KEY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entity->getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -276,7 +276,7 @@ abstract class SelfReferencedModel extends ReferencedModel
 
     public function deleteEntityTree(BaseEntity $entityTree): void
     {
-        foreach ($entityTree->self::SISMA_COLLECTION_GETTER_METHOD() as $entity) {
+        foreach ($entityTree->self::SONS_GETTER_METHOD() as $entity) {
             $this->deleteEntityTree($entity);
         }
         $entityTree->delete();

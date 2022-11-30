@@ -111,7 +111,7 @@ class Dispatcher
 
     private function selectModule(): void
     {
-        foreach (\Config\MODULE_FOLDERS as $module) {
+        foreach (ModuleManager::getModuleList() as $module) {
             $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . NotationManager::convertToStudlyCaps($this->pathParts[0] . 'Controller');
             if (($this->checkControllerPresence()) || ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
                 ModuleManager::setApplicationModule($module);

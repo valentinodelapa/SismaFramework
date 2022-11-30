@@ -104,7 +104,7 @@ abstract class BaseEntity
         }
     }
 
-    private function switchSettingType(string $name, mixed $value): void
+    protected function switchSettingType(string $name, mixed $value): void
     {
         $reflectionProperty = new \ReflectionProperty($this, $name);
         if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && is_int($value)) {

@@ -29,6 +29,7 @@ namespace SismaFramework\Orm\ExtendedClasses;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\Cache;
 
 /**
  *
@@ -39,8 +40,8 @@ abstract class SelfReferencedEntity extends ReferencedEntity
 
     protected SismaCollection $sonCollection;
 
-    private const SONS_PROPERTY_NAME = 'sonCollection';
     private const PARENT_PREFIX_PROPERTY_NAME = 'parent';
+    private const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
 
     public function __construct(Adapter &$adapter = null)
     {
@@ -48,20 +49,63 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         $this->sonCollection = new SismaCollection();
     }
 
-    protected function checkFinalClassProperty($propertyName): bool
+    public function __get($name)
     {
-        if ($propertyName === self::SONS_PROPERTY_NAME) {
-            return true;
+        if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
+            $this->forceForeignKeyPropertySet($name);
+            return $this->$name;
+        } elseif ($name === self::SON_COLLECTION_PROPERTY_NAME) {
+            $calledClassNamePartes = explode("\\", static::class);
+            $collectionName = lcfirst(end($calledClassNamePartes)) . self::FOREIGN_KEY_SUFFIX . ucfirst(self::PARENT_PREFIX_PROPERTY_NAME) . end($calledClassNamePartes);
+            $this->forceCollectionPropertySet($collectionName);
+            return $this->collections[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)];
+        } elseif ($this->checkCollectionExists($name)) {
+            $this->forceCollectionPropertySet($name);
+            return $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)];
         } else {
-            return parent::checkFinalClassProperty($propertyName);
+            throw new InvalidPropertyException($name);
         }
     }
 
-    public function getCollectionDataInformation(string $collectionName, string $information): string
+    public function __set($name, $value)
     {
-        $calledClassNamePartes = explode("\\", static::class);
-        $this->addCollectionData(self::SONS_PROPERTY_NAME, static::class, self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes));
-        return parent::getCollectionDataInformation($collectionName, $information);
+        if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
+            $this->switchSettingType($name, $value);
+        } elseif ($name === self::SON_COLLECTION_PROPERTY_NAME) {
+            $calledClassNamePartes = explode("\\", static::class);
+            $collectionName = lcfirst(end($calledClassNamePartes)) . self::FOREIGN_KEY_SUFFIX . ucfirst(self::PARENT_PREFIX_PROPERTY_NAME) . end($calledClassNamePartes);
+            $this->forceCollectionPropertySet($collectionName);
+            return $this->collections[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = $value;
+        } elseif ($this->checkCollectionExists($name)) {
+            return $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = $value;
+        } else {
+            throw new InvalidPropertyException();
+        }
+    }
+
+    public function getForeignKeyReference(string $collectionName): string
+    {
+        if ($collectionName === self::SON_COLLECTION_PROPERTY_NAME) {
+            $calledClassNamePartes = explode("\\", static::class);
+            return lcfirst(end($calledClassNamePartes));
+        } else {
+            return parent::getForeignKeyReference($collectionName);
+        }
+    }
+
+    public function getForeignKeyName(string $collectionName): string
+    {
+        $collectionNameParts = explode(self::FOREIGN_KEY_SUFFIX, $collectionName);
+        if ($collectionName === self::SON_COLLECTION_PROPERTY_NAME) {
+            $calledClassNamePartes = explode("\\", static::class);
+            return self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes);
+        } elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData($this)[$collectionNameParts[0]]) === 1) {
+            return array_key_first(Cache::getForeignKeyData($this)[$collectionNameParts[0]]);
+        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false) && (isset(Cache::getForeignKeyData($this)[$collectionNameParts[0]][lcfirst($collectionNameParts[1])]))) {
+            return lcfirst($collectionNameParts[1]);
+        } else {
+            
+        }
     }
 
 }

@@ -146,7 +146,7 @@ abstract class BaseModel
 
     public function getEntityById(int $id): ?BaseEntity
     {
-        if (\Config\ORM_CACHE && Cache::checkEntityPresenceInClass($this->entityName, $id)) {
+        if (\Config\ORM_CACHE && Cache::checkEntityPresenceInCache($this->entityName, $id)) {
             return Cache::getEntityById($this->entityName, $id);
         } else {
             $query = $this->initQuery();

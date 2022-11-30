@@ -39,6 +39,11 @@ class ModuleManager
     private static string $applicationModule = '';
     private static ?string $customVisualizationModule = null;
 
+    public static function getModuleList(): array
+    {
+        return \Config\MODULE_FOLDERS;
+    }
+
     public static function setApplicationModule(string $module): void
     {
         self::$applicationModule = $module;
