@@ -36,6 +36,8 @@ use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\HelperClasses\Cache;
 
 /**
  *
@@ -99,12 +101,19 @@ abstract class BaseForm
     public function isValid(): bool
     {
         $this->entityData = new StandardEntity();
+        if (is_a($this->entity, ReferencedEntity::class)) {
+            foreach (Cache::getForeignKeyData($this->entity) as $propertyName => $propertyType) {
+                if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX, $this->request->request)) {
+                    $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX);
+                }
+            }
+        }
         $reflectionEntity = new \ReflectionClass($this->entity);
         $reflectionProperties = $reflectionEntity->getProperties();
         foreach ($reflectionProperties as $property) {
-            if (array_key_exists($property->name, $this->entityFromForm) && array_key_exists($property->name, $this->request->request)) {
-                $this->switchFormPropertyType($property);
-            } elseif (($property->class === get_class($this->entity)) && (($this->entity->isPrimaryKey($property->name) === false) || 
+            /* if (array_key_exists($property->name, $this->entityFromForm) && array_key_exists($property->name, $this->request->request)) {
+              $this->switchFormPropertyType($property);
+              } else */if (($property->class === get_class($this->entity)) && (($this->entity->isPrimaryKey($property->name) === false) ||
                     (\Config\PRIMARY_KEY_PASS_ACCEPTED) && array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== ''))) {
                 $this->parseProperty($property);
                 $this->switchFilter($property->name);
@@ -115,23 +124,44 @@ abstract class BaseForm
         return $this->filterResult;
     }
 
-    private function switchFormPropertyType(\ReflectionProperty $property): void
+    /* private function switchFormPropertyType(\ReflectionProperty $property): void
+      {
+      $currentRequest = clone $this->request;
+      $this->entityData->{$property->name} = new StandardEntity();
+      $this->filterErrors[$property->name . "Error"] = [];
+      //if (is_a($property->getType()->getName(), SismaCollection::class, true)) {
+      if ($this->entity->checkCollectionExists($property->name)) {
+      $this->entityData->{$property->name} = new SismaCollection();
+      foreach ($this->request->request[$property->name] as $key => $value) {
+      $currentRequest->request = $value;
+      $this->entityData->{$property->name}[$key] = new StandardEntity();
+      $this->filterErrors[$property->name . "Error"][$key] = [];
+      $this->switchForm($this->entityFromForm[$property->name][$key], $currentRequest, $this->entityData->{$property->name}[$key], $this->filterErrors[$property->name . "Error"][$key]);
+      array_push($this->sismaCollectionPropertyName, $property->name);
+      }
+      } else {
+      $currentRequest->request = $this->request->request[$property->name];
+      $this->switchForm($this->entityFromForm[$property->name], $currentRequest, $this->entityData->{$property->name}, $this->filterErrors[$property->name . "Error"]);
+      }
+      } */
+
+    private function switchFormPropertyType(string $propertyName): void
     {
         $currentRequest = clone $this->request;
-        $this->entityData->{$property->name} = new StandardEntity();
-        $this->filterErrors[$property->name . "Error"] = [];
-        if (is_a($property->getType()->getName(), SismaCollection::class, true)) {
-            $this->entityData->{$property->name} = new SismaCollection();
-            foreach ($this->request->request[$property->name] as $key => $value) {
+        $this->entityData->{$propertyName} = new StandardEntity();
+        $this->filterErrors[$propertyName . "Error"] = [];
+        if ($this->entity->checkCollectionExists($propertyName)) {
+            $this->entityData->{$propertyName} = new SismaCollection();
+            foreach ($this->request->request[$propertyName] as $key => $value) {
                 $currentRequest->request = $value;
-                $this->entityData->{$property->name}[$key] = new StandardEntity();
-                $this->filterErrors[$property->name . "Error"][$key] = [];
-                $this->switchForm($this->entityFromForm[$property->name][$key], $currentRequest, $this->entityData->{$property->name}[$key], $this->filterErrors[$property->name . "Error"][$key]);
-                array_push($this->sismaCollectionPropertyName, $property->name);
+                $this->entityData->{$propertyName}[$key] = new StandardEntity();
+                $this->filterErrors[$propertyName . "Error"][$key] = [];
+                $this->switchForm($this->entityFromForm[$propertyName][$key], $currentRequest, $this->entityData->{$propertyName}[$key], $this->filterErrors[$propertyName . "Error"][$key]);
+                array_push($this->sismaCollectionPropertyName, $propertyName);
             }
         } else {
-            $currentRequest->request = $this->request->request[$property->name];
-            $this->switchForm($this->entityFromForm[$property->name], $currentRequest, $this->entityData->{$property->name}, $this->filterErrors[$property->name . "Error"]);
+            $currentRequest->request = $this->request->request[$propertyName];
+            $this->switchForm($this->entityFromForm[$propertyName], $currentRequest, $this->entityData->{$propertyName}, $this->filterErrors[$propertyName . "Error"]);
         }
     }
 
@@ -155,9 +185,9 @@ abstract class BaseForm
         } elseif (array_key_exists($property->name, $this->request->files)) {
             $this->entityData->{$property->name} = $this->request->files[$property->name];
         } elseif (array_key_exists($property->name, $this->filterFiledsMode)) {
-            if(($property->getType()->getName() === 'bool') && ($property->getType()->allowsNull()) === false){
+            if (($property->getType()->getName() === 'bool') && ($property->getType()->allowsNull()) === false) {
                 $this->entityData->{$property->name} = false;
-            }else{
+            } else {
                 $this->entityData->{$property->name} = null;
             }
         }
@@ -184,21 +214,23 @@ abstract class BaseForm
 
     protected function addEntityFromForm(string $propertyName, string $formPropertyClass): self
     {
-        $reflectionEntity = new \ReflectionClass($this->entity);
-        $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
-        if ($reflectionEntityProperty->getType()->getName() === SismaCollection::class) {
-            $entityClass = get_class($this->entity);
-            if ($this->entity->getCollectionDataInformation($propertyName, $entityClass::FOREIGN_KEY_TYPE) === $formPropertyClass::ENTITY_CLASS_NAME) {
+        //if ($reflectionEntityProperty->getType()->getName() === SismaCollection::class) {
+        if ($this->entity->checkCollectionExists($propertyName)) {
+            if ($this->entity->getCollectionDataInformation($propertyName) === $formPropertyClass::ENTITY_CLASS_NAME) {
                 $entityCollectonToEmbed = $this->entity->$propertyName;
                 $this->generateSismaCollectionProperty($formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
             }
-        } elseif($reflectionEntityProperty->class === get_class($this->entity)) {
-            if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
-                $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
-            } else {
-                throw new InvalidArgumentException();
+        } elseif (property_exists($this->entity, $propertyName)) {
+            $reflectionEntity = new \ReflectionClass($this->entity);
+            $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
+            if ($reflectionEntityProperty->class === get_class($this->entity)) {
+                if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
+                    $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
+                } else {
+                    throw new InvalidArgumentException();
+                }
             }
         }
         return $this;

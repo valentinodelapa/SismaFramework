@@ -78,6 +78,11 @@ abstract class BaseEntity
             throw new InvalidPropertyException($name);
         }
     }
+    
+    public function checkCollectionExists(string $collectionName):bool
+    {
+        return false;
+    }
 
     protected function checkFinalClassProperty(string $propertyName): bool
     {

@@ -39,7 +39,6 @@ class Cache
 {
 
     private static array $entityCache = [];
-    private static array $entityPropertyCache = [];
     private static array $foreighKeyDataCache = [];
 
     public static function setEntity(BaseEntity $entity): void
@@ -61,48 +60,50 @@ class Cache
         return static::$entityCache[$entityName][$entityId];
     }
 
-    private static function setForeignKeyData(string $referencedEntityName): void
-    {
-        if (count(static::$entityPropertyCache) > 0) {
-            foreach (static::$entityPropertyCache as $entityName => $entity) {
-                foreach ($entity as $propertyName => $propertyData) {
-                    if (is_a($propertyData['propertyType'], $referencedEntityName, true)) {
-                        static::$foreighKeyDataCache[$referencedEntityName][lcfirst($propertyData['entityName'])][$propertyName] = $entityName;
-                    }
-                }
-            }
-        } else {
-            foreach (ModuleManager::getModuleList() as $module) {
-                $entitiesDirectory = \Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\ENTITY_PATH;
-                if (is_dir($entitiesDirectory)) {
-                    foreach (array_diff(scandir($entitiesDirectory), ['.', '..']) as $entityFileName) {
-                        $entitySimpleName = str_replace('.php', '', $entityFileName);
-                        $entityName = $module . '\\' . \Config\ENTITY_NAMESPACE . $entitySimpleName;
-                        $reflectionEntity = new \ReflectionClass($entityName);
-                        foreach ($reflectionEntity->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-                            if (is_subclass_of($property->getType()->getName(), BaseEntity::class, true)) {
-                                static::$entityPropertyCache[$entityName][$property->getName()] = [
-                                    'entityName' => $entitySimpleName,
-                                    'propertyType' => $property->getType()->getName(),
-                                ];
-                                if (is_a($property->getType()->getName(), $referencedEntityName, true)) {
-                                    static::$foreighKeyDataCache[$referencedEntityName][lcfirst($entitySimpleName)][$property->getName()] = $entityName;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     public static function getForeignKeyData(ReferencedEntity $referencedEntity): array
     {
         $referencedEntityName = get_class($referencedEntity);
         if (array_key_exists($referencedEntityName, static::$foreighKeyDataCache) === false) {
-            static::setForeignKeyData($referencedEntityName);
+            if (file_exists(\Config\REFERENCE_CACHE_PATH)) {
+                static::getForeignKeyDataFromCacheFile($referencedEntityName);
+            } else {
+                static::setForeignKeyDataFromEntities();
+            }
         }
         return static::$foreighKeyDataCache[$referencedEntityName];
+    }
+
+    private static function getForeignKeyDataFromCacheFile(string $referencedEntityName): void
+    {
+        static::$foreighKeyDataCache = json_decode(file_get_contents(\Config\REFERENCE_CACHE_PATH), true);
+        if (array_key_exists($referencedEntityName, static::$foreighKeyDataCache) === false) {
+            static::setForeignKeyDataFromEntities();
+        }
+    }
+
+    private static function setForeignKeyDataFromEntities(): void
+    {
+        foreach (ModuleManager::getModuleList() as $module) {
+            $entitiesDirectory = \Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\ENTITY_PATH;
+            if (is_dir($entitiesDirectory)) {
+                static::scanModuleEntities($module, $entitiesDirectory);
+            }
+        }
+        file_put_contents(\Config\REFERENCE_CACHE_PATH, json_encode(static::$foreighKeyDataCache));
+    }
+
+    private static function scanModuleEntities($module, $directory): void
+    {
+        foreach (array_diff(scandir($directory), ['.', '..']) as $entityFileName) {
+            $entitySimpleName = str_replace('.php', '', $entityFileName);
+            $entityName = $module . '\\' . \Config\ENTITY_NAMESPACE . $entitySimpleName;
+            $reflectionEntity = new \ReflectionClass($entityName);
+            foreach ($reflectionEntity->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+                if (is_subclass_of($property->getType()->getName(), BaseEntity::class, true)) {
+                    static::$foreighKeyDataCache[$property->getType()->getName()][lcfirst($entitySimpleName)][$property->getName()] = $entityName;
+                }
+            }
+        }
     }
 
 }

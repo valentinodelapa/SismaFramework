@@ -38,15 +38,12 @@ use SismaFramework\Orm\HelperClasses\Cache;
 abstract class SelfReferencedEntity extends ReferencedEntity
 {
 
-    protected SismaCollection $sonCollection;
-
     private const PARENT_PREFIX_PROPERTY_NAME = 'parent';
     private const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
 
     public function __construct(Adapter &$adapter = null)
     {
         parent::__construct($adapter);
-        $this->sonCollection = new SismaCollection();
     }
 
     public function __get($name)
@@ -75,9 +72,12 @@ abstract class SelfReferencedEntity extends ReferencedEntity
             $calledClassNamePartes = explode("\\", static::class);
             $collectionName = lcfirst(end($calledClassNamePartes)) . self::FOREIGN_KEY_SUFFIX . ucfirst(self::PARENT_PREFIX_PROPERTY_NAME) . end($calledClassNamePartes);
             $this->forceCollectionPropertySet($collectionName);
-            return $this->collections[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = $value;
+            $this->collectionPropertiesSetted[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = true;
+            $this->collections[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = $value;
         } elseif ($this->checkCollectionExists($name)) {
-            return $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = $value;
+            var_dump($value);
+            $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = true;
+            $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = $value;
         } else {
             throw new InvalidPropertyException();
         }
@@ -93,18 +93,18 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         }
     }
 
-    public function getForeignKeyName(string $collectionName): string
+    public function getForeignKeyName(string $collectionName): ?string
     {
-        $collectionNameParts = explode(self::FOREIGN_KEY_SUFFIX, $collectionName);
+        $collectionNameParts = array_diff(explode(self::FOREIGN_KEY_SUFFIX, $collectionName), ['']);
         if ($collectionName === self::SON_COLLECTION_PROPERTY_NAME) {
             $calledClassNamePartes = explode("\\", static::class);
             return self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes);
         } elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData($this)[$collectionNameParts[0]]) === 1) {
             return array_key_first(Cache::getForeignKeyData($this)[$collectionNameParts[0]]);
-        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false) && (isset(Cache::getForeignKeyData($this)[$collectionNameParts[0]][lcfirst($collectionNameParts[1])]))) {
+        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData($this)[$collectionNameParts[0]][lcfirst($collectionNameParts[1])]))) {
             return lcfirst($collectionNameParts[1]);
         } else {
-            
+            return null;
         }
     }
 
