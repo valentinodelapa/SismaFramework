@@ -75,7 +75,7 @@ class Cache
 
     private static function getForeignKeyDataFromCacheFile(string $referencedEntityName): void
     {
-        static::$foreighKeyDataCache = json_decode(file_get_contents(\Config\REFERENCE_CACHE_PATH), true);
+        static::$foreighKeyDataCache = json_decode(file_get_contents(\Config\REFERENCE_CACHE_PATH), true) ?? [];
         if (array_key_exists($referencedEntityName, static::$foreighKeyDataCache) === false) {
             static::setForeignKeyDataFromEntities();
         }

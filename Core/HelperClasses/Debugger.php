@@ -146,7 +146,22 @@ class Debugger
 
     public static function setVars(array $vars): void
     {
-        self::$vars = $vars;
+        $parsedVars = [];
+        foreach ($vars as $key => $value) {
+            switch (gettype($value)) {
+                case 'boolean':
+                case 'integer':
+                case 'double':
+                case 'string':
+                case 'boolean':
+                    $parsedVars[$key] = $value;
+                    break;
+                default:
+                    $parsedVars[$key] = gettype($value);
+                    break;
+            }
+        }
+        self::$vars = $parsedVars;
     }
 
 }

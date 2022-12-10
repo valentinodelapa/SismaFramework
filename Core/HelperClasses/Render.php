@@ -40,6 +40,7 @@ class Render
 
     private static ?string $customRenderModule = null;
     private static Resource $localeType;
+    private static string $view;
 
     public static function setCustomRenderModule(string $module): void
     {
@@ -53,13 +54,14 @@ class Render
 
     public static function generateView(string $view, array $vars): Response
     {
+        self::$view = $view;
         Debugger::setVars($vars);
         $deviceClass = self::getDeviceClass();
-        $locale = self::getActualLocaleArray($view);
+        $locale = self::getActualLocaleArray(self::$view);
         extract($locale);
         extract($vars);
         $debugBar = static::generateDebugBar();
-        $viewPath = self::getViewPath($view);
+        $viewPath = self::getViewPath(self::$view);
         include($viewPath);
         return new Response();
     }
@@ -151,8 +153,9 @@ class Render
 
     public static function generateData(string $view, array $vars): Response
     {
+        self::$view = $view;
         extract($vars);
-        $viewPath = self::getViewPath($view);
+        $viewPath = self::getViewPath(self::$view);
         include($viewPath);
         return new Response();
     }

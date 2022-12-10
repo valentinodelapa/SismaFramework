@@ -41,11 +41,6 @@ abstract class SelfReferencedEntity extends ReferencedEntity
     private const PARENT_PREFIX_PROPERTY_NAME = 'parent';
     private const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
 
-    public function __construct(Adapter &$adapter = null)
-    {
-        parent::__construct($adapter);
-    }
-
     public function __get($name)
     {
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
