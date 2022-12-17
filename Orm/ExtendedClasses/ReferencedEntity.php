@@ -52,11 +52,20 @@ abstract class ReferencedEntity extends BaseEntity
     {
         parent::__construct($adapter);
         foreach (Cache::getForeignKeyData($this) as $foreignKeyReference => $foreignKeyData) {
-            foreach ($foreignKeyData as $foreignKeyName => $foreignKeyType) {
+            foreach (array_keys($foreignKeyData) as $foreignKeyName) {
                 $this->collections[$foreignKeyReference][$foreignKeyName] = new SismaCollection();
                 $this->collectionPropertiesSetted[$foreignKeyReference][$foreignKeyName] = false;
             }
         }
+    }
+    
+    public function getCollectionNames()
+    {
+        $collectionNames = array_keys($this->collections);
+        array_walk($collectionNames, function(&$value){
+            $value .= self::FOREIGN_KEY_SUFFIX;
+        });
+        return $collectionNames;
     }
 
     public function __get($name)
@@ -74,9 +83,9 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function checkCollectionExists(string $collectionName): bool
     {
-        if(str_contains($collectionName, self::FOREIGN_KEY_SUFFIX) === false){
+        if (str_contains($collectionName, self::FOREIGN_KEY_SUFFIX) === false) {
             return false;
-        }elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData($this)[$this->getForeignKeyReference($collectionName)]) === 1) {
+        } elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData($this)[$this->getForeignKeyReference($collectionName)]) === 1) {
             return true;
         } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false) && (isset(Cache::getForeignKeyData($this)[$this->getForeignKeyReference($collectionName)][$this->getForeignKeyName($collectionName)]))) {
             return true;
@@ -163,8 +172,9 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function __call($methodName, $arguments)
     {
-        $methodType = substr($methodName, 0, 3);
-        $propertyName = lcfirst(substr($methodName, 3));
+        $methodNameParts = preg_split('/(?=[A-Z])/',$methodName);
+        $methodType = array_shift($methodNameParts);
+        $propertyName = lcfirst(implode($methodNameParts));
         switch ($methodType) {
             case 'set':
                 if (isset($arguments[0])) {
@@ -176,6 +186,8 @@ abstract class ReferencedEntity extends BaseEntity
             case 'add':
                 $this->addEntityToEntityCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
                 break;
+            case 'count':
+                return $this->countEntityCollection($propertyName);
             default:
                 throw new EntityException('Metodo non trovato');
         }
@@ -243,6 +255,14 @@ abstract class ReferencedEntity extends BaseEntity
         if ($found === false) {
             $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]->append($entity);
         }
+    }
+
+    public function countEntityCollection(string $propertyName): int
+    {
+        $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
+        $foreignKeyName = $this->getForeignKeyName($propertyName);
+        $model = new $modelName();
+        return $model->countEntityCollectionByEntity([$foreignKeyName => $this]);
     }
 
 }
