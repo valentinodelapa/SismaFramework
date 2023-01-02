@@ -38,19 +38,8 @@ use SismaFramework\Core\HttpClasses\Response;
 class Render
 {
 
-    private static ?string $customRenderModule = null;
     private static Resource $localeType;
     private static string $view;
-
-    public static function setCustomRenderModule(string $module): void
-    {
-        self::$customRenderModule = $module;
-    }
-
-    public static function unsetCustomRenderModule(): void
-    {
-        self::$customRenderModule = null;
-    }
 
     public static function generateView(string $view, array $vars): Response
     {

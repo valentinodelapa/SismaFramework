@@ -53,6 +53,7 @@ class Authentication
     private MultiFactorRecoveryModelInterface $multiFactorRecoveryModelInterface;
     private MultiFactorWrapperInterface $multiFactorWrapperInterface;
     private Request $request;
+    private RequestType $requestType;
     private PasswordModelInterface $passwordModelInterface;
     private ?UserInterface $userInterface;
     private UserModelInterface $userModelInterface;
