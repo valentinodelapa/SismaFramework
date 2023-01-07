@@ -38,6 +38,7 @@ class ModuleManager
 
     private static string $applicationModule = '';
     private static ?string $customVisualizationModule = null;
+    private static bool $customVisualizationFileExists;
 
     public static function getModuleList(): array
     {
@@ -67,8 +68,22 @@ class ModuleManager
     public static function getExistingFilePath(string $path, Resource $resource): string
     {
         if ((empty(self::$customVisualizationModule) === false) && file_exists(\Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+            self::$customVisualizationFileExists = true;
             return \Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } elseif (file_exists(\Config\ROOT_PATH . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+            self::$customVisualizationFileExists = false;
+            return \Config\ROOT_PATH . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
+        } else {
+            throw new ModuleException('File non trovato');
+        }
+    }
+
+    public static function getConsequentFilePath(string $path, Resource $resource): string
+    {
+
+        if (self::$customVisualizationFileExists && file_exists(\Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+            return \Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
+        } elseif ((self::$customVisualizationFileExists === false) && file_exists(\Config\ROOT_PATH . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             return \Config\ROOT_PATH . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } else {
             throw new ModuleException('File non trovato');

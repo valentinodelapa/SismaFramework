@@ -46,11 +46,11 @@ class Render
         self::$view = $view;
         Debugger::setVars($vars);
         $deviceClass = self::getDeviceClass();
+        $viewPath = self::getViewPath(self::$view);
         $locale = self::getActualLocaleArray(self::$view);
         extract($locale);
         extract($vars);
         $debugBar = static::generateDebugBar();
-        $viewPath = self::getViewPath(self::$view);
         include($viewPath);
         return new Response();
     }
@@ -110,7 +110,7 @@ class Render
     {
         self::$localeType = Resource::tryFrom(\Config\DEFAULT_LOCALE_TYPE);
         if (self::$localeType !== null) {
-            return ModuleManager::getExistingFilePath(\Config\LOCALES_PATH . $language->value, self::$localeType);
+            return ModuleManager::getConsequentFilePath(\Config\LOCALES_PATH . $language->value, self::$localeType);
         } else {
             throw new RenderException('File non trovato');
         }
