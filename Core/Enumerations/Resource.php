@@ -45,6 +45,7 @@ enum Resource: string
     case map = 'map';
     case mp4 = 'mp4';
     case otf = 'otf';
+    case pdf = 'pdf';
     case php = 'php';
     case png = 'png';
     case svg = 'svg';
@@ -63,6 +64,7 @@ enum Resource: string
             self::js => 'application/javascript',
             self::json, self::map => 'application/json',
             self::mp4 => 'video/mp4',
+            self::pdf => 'application/pdf',
             self::png => 'image/png',
             self::otf => 'font/otf',
             self::svg => 'image/svg+xml',
