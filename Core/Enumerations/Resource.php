@@ -48,6 +48,7 @@ enum Resource: string
     case php = 'php';
     case png = 'png';
     case svg = 'svg';
+    case ttf = 'ttf';
     case woff = 'woff';
     case woff2 = 'woff2';
 
@@ -65,6 +66,7 @@ enum Resource: string
             self::png => 'image/png',
             self::otf => 'font/otf',
             self::svg => 'image/svg+xml',
+            self::ttf => 'font/ttf',
             self::woff => 'font/woff',
             self::woff2 => 'font/woff2',
         };
