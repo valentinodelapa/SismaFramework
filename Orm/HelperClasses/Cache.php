@@ -60,23 +60,41 @@ class Cache
         return static::$entityCache[$entityName][$entityId];
     }
 
-    public static function getForeignKeyData(ReferencedEntity $referencedEntity): array
+    public static function getForeignKeyData(ReferencedEntity $referencedEntity, ?string $propertyName = null): array
     {
         $referencedEntityName = get_class($referencedEntity);
-        if (array_key_exists($referencedEntityName, static::$foreighKeyDataCache) === false) {
+        if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
             if (file_exists(\Config\REFERENCE_CACHE_PATH)) {
-                static::getForeignKeyDataFromCacheFile($referencedEntityName);
+                static::getForeignKeyDataFromCacheFile($referencedEntityName, $propertyName);
             } else {
                 static::setForeignKeyDataFromEntities();
             }
         }
-        return static::$foreighKeyDataCache[$referencedEntityName];
+        return ($propertyName === null) ? static::$foreighKeyDataCache[$referencedEntityName] : static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
     }
 
-    private static function getForeignKeyDataFromCacheFile(string $referencedEntityName): void
+    private static function checkEntityPresence(string $referencedEntityName, ?string $propertyName): bool
+    {
+        if (array_key_exists($referencedEntityName, static::$foreighKeyDataCache)) {
+            return self::checkForeignKeyPresence($referencedEntityName, $propertyName);
+        } else {
+            return false;
+        }
+    }
+
+    private static function checkForeignKeyPresence(string $referencedEntityName, ?string $propertyName): bool
+    {
+        if ($propertyName === null) {
+            return true;
+        } else {
+            return array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName]);
+        }
+    }
+
+    private static function getForeignKeyDataFromCacheFile(string $referencedEntityName, ?string $propertyName = null): void
     {
         static::$foreighKeyDataCache = json_decode(file_get_contents(\Config\REFERENCE_CACHE_PATH), true) ?? [];
-        if (array_key_exists($referencedEntityName, static::$foreighKeyDataCache) === false) {
+        if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
             static::setForeignKeyDataFromEntities();
         }
     }

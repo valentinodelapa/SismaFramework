@@ -94,9 +94,9 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         if ($collectionName === self::SON_COLLECTION_PROPERTY_NAME) {
             $calledClassNamePartes = explode("\\", static::class);
             return self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes);
-        } elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData($this)[$collectionNameParts[0]]) === 1) {
-            return array_key_first(Cache::getForeignKeyData($this)[$collectionNameParts[0]]);
-        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData($this)[$collectionNameParts[0]][lcfirst($collectionNameParts[1])]))) {
+        } elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData($this, $collectionNameParts[0])) === 1) {
+            return array_key_first(Cache::getForeignKeyData($this, $collectionNameParts[0]));
+        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData($this, $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
             return lcfirst($collectionNameParts[1]);
         } else {
             return null;
