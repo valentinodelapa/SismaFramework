@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +24,29 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HelperClasses;
+namespace SismaFramework\Sample\Entities;
+
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
+ * Description of ReferencedSample
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class Encryptor
+
+class BaseSample extends BaseEntity
 {
 
-    public static function getBlowfishHash(string $text, string $workload): string
+    public int $id;
+
+    protected function setPropertyDefaultValue(): void
     {
-        $salt = substr(str_replace('+', '.', base64_encode(openssl_random_pseudo_bytes(16))), 0, 22);
-        return crypt($text, '$2y$' . $workload . '$' . $salt);
+        
     }
 
-    public static function verifyBlowfishHash(string $text, string $hash): bool
+    protected function setEncryptedColumns(): void
     {
-        return password_verify($text, $hash);
+        
     }
 
 }

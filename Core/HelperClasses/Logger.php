@@ -35,6 +35,7 @@ class Logger
 
     public static function saveLog(string $message, int $code, string $file = ''): void
     {
+        self::createLogDirectory();
         $handle = fopen(\Config\LOG_PATH, 'a');
         if ($handle !== false) {
             fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "\n");
@@ -43,12 +44,21 @@ class Logger
         self::truncateLog();
     }
 
+    public static function createLogDirectory()
+    {
+        if (is_dir(\Config\LOG_DIRECTORY_PATH) === false) {
+            mkdir(\Config\LOG_DIRECTORY_PATH);
+            $handle = fopen(\Config\LOG_PATH, 'a');
+            fclose($handle);
+        }
+    }
+
     private static function truncateLog(): void
     {
         $logRows = file(\Config\LOG_PATH);
         $maxRows = \Config\DEVELOPMENT_ENVIRONMENT ? \Config\LOG_DEVELOPEMENT_MAX_ROW : \Config\LOG_PRODUCTION_MAX_ROW;
         if (count($logRows) > $maxRows) {
-            $offset = $maxRows-count($logRows);
+            $offset = $maxRows - count($logRows);
             $logRows = array_slice($logRows, $offset);
             file_put_contents(\Config\LOG_PATH, $logRows);
         }
@@ -69,16 +79,19 @@ class Logger
 
     public static function clearLog(): void
     {
+        self::createLogDirectory();
         file_put_contents(\Config\LOG_PATH, '');
     }
 
     public static function getLog(): string|false
     {
+        self::createLogDirectory();
         return file_get_contents(\Config\LOG_PATH);
     }
 
     public static function getLogRowByRow(): array|false
     {
+        self::createLogDirectory();
         return file(\Config\LOG_PATH);
     }
 

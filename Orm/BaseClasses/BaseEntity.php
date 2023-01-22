@@ -37,6 +37,7 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Parser;
 
 /**
@@ -56,6 +57,7 @@ abstract class BaseEntity
     private static bool $manualTransactionStarted = false;
     private bool $changeTrackingActive = false;
     private bool $modified = false;
+    private array $encryptedColumns = [];
 
     public function __construct(?BaseAdapter &$adapter = null)
     {
@@ -67,6 +69,7 @@ abstract class BaseEntity
         }
         $this->adapter = &$adapter;
         $this->setPropertyDefaultValue();
+        $this->setEncryptedColumns();
     }
 
     public function __get($name)
@@ -140,6 +143,13 @@ abstract class BaseEntity
             $this->forceForeignKeyPropertySet($name);
         }
         return isset($this->$name);
+    }
+    
+    abstract protected function setEncryptedColumns():void;
+    
+    protected function addEncryptedColumns(string $columnName):void
+    {
+        $this->encryptedColumns[] = $columnName;
     }
 
     public function activeChangeTracking()
@@ -298,14 +308,18 @@ abstract class BaseEntity
             } elseif ($p_val->modified) {
                 $p_val->update();
             }
-            $vals[] = $p_val->id;
+            $parsedValue = $p_val->id;
         } elseif (is_subclass_of($p_val, \UnitEnum::class)) {
-            $vals[] = $p_val->value;
+            $parsedValue = $p_val->value;
         } elseif ($p_val instanceof SismaDateTime) {
-            $vals[] = $p_val->format("Y-m-d H:i:s");
+            $parsedValue = $p_val->format("Y-m-d H:i:s");
         } else {
-            $vals[] = $p_val;
+            $parsedValue = $p_val;
         }
+        if(in_array($p_name, $this->encryptedColumns)){
+            
+        }
+        $vals[] = $parsedValue;
     }
 
     public function parseForeignKeyIndexes(array &$cols, array &$vals, array &$markers): void
