@@ -212,6 +212,18 @@ class Query
         return $this;
     }
 
+    public function &appendSubquery(Query $query, ComparisonOperator $operator, Keyword|string|null $value = null): self
+    {
+        $escapedValue = $this->adapter->escapeValue($value, $operator);
+        if ($this->current_conditions == Condition::where) {
+            $this->where[] = '(' . $query->getCommandToExecute() . ') ' . $operator->value . ' ' . $escapedValue;
+        }
+        if ($this->current_conditions == Condition::having) {
+            $this->having[] = '(' . $query->getCommandToExecute() . ') ' . $operator->value . ' ' . $escapedValue;
+        }
+        return $this;
+    }
+
     public function &appendOpenBlock(): self
     {
         if ($this->current_conditions == Condition::where) {

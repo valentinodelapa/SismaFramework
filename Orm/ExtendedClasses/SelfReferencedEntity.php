@@ -29,6 +29,7 @@ namespace SismaFramework\Orm\ExtendedClasses;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 
 /**

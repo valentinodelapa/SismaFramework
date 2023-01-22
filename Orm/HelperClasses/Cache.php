@@ -64,6 +64,9 @@ class Cache
     {
         $referencedEntityName = get_class($referencedEntity);
         if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
+            if(is_dir(\Config\REFERENCE_CACHE_DIRECTORY) === false){
+                mkdir(\Config\REFERENCE_CACHE_DIRECTORY);
+            }
             if (file_exists(\Config\REFERENCE_CACHE_PATH)) {
                 static::getForeignKeyDataFromCacheFile($referencedEntityName, $propertyName);
             } else {

@@ -31,6 +31,7 @@ namespace Config;
 const ADAPTERS = 'Adapters';
 const APPLICATION = 'Sample';
 const ASSETS = 'Assets';
+const CACHE = 'Cache';
 const CONTROLLERS = 'Controllers';
 const CORE = 'Core';
 const DEFAULT_PATH = 'Sample';
@@ -83,7 +84,8 @@ const FIXTURE_NAMESPACE = APPLICATION_NAMESPACE . FIXTURES . '\\';
 const ORM_PATH = CORE_PATH . ORM . DIRECTORY_SEPARATOR;
 const ORM_NAMESPACE = CORE_NAMESPACE . ORM . '\\';
 const ORM_CACHE = true;
-const REFERENCE_CACHE_PATH = ROOT_PATH.'Cache'.DIRECTORY_SEPARATOR.'referenceCache.json';
+const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE;
+const REFERENCE_CACHE_PATH = REFERENCE_CACHE_DIRECTORY . DIRECTORY_SEPARATOR . 'referenceCache.json';
 
 /* Adapter Constant */
 const ADAPTER_PATH = ORM_PATH . ADAPTERS . DIRECTORY_SEPARATOR;
