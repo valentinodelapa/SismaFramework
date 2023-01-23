@@ -173,6 +173,14 @@ class Query
         $this->order[$parsedColumn] = $parsedIndexing;
         return $this;
     }
+    
+    public function &appendOrderBySubquery(Query $query, null|string|Indexing $Indexing = null): self
+    {
+        $parsedQuery = '('.$query->getCommandToExecute().')';
+        $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
+        $this->order[$parsedQuery] = $parsedIndexing;
+        return $this;
+    }
 
     public function &setGroupBy(?array $list = null): self
     {
