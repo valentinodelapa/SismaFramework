@@ -100,6 +100,7 @@ abstract class ReferencedEntity extends BaseEntity
     public function __isset($name)
     {
         if ($this->checkCollectionExists($name)) {
+            $this->forceCollectionPropertySet($name);
             return isset($this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)]);
         } else {
             return parent::__isset($name);
