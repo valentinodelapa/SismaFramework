@@ -178,11 +178,12 @@ abstract class BaseAdapter
         return AggregationFunction::count->value . Keyword::openBlock->value . ($distinct ? Keyword::distinct->value . ' ' : '') . $column . Keyword::closeBlock->value . ' as _numrows';
     }
 
-    public function parseSelect(bool $distinct, array $select, array $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
+    public function parseSelect(bool $distinct, array $select, array $selectAlias, array $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
     {
         foreach ($orderby as $k => $v) {
             $orderby[$k] = $k . ' ' . $v;
         }
+        $this->processSelectAlias($select, $selectAlias);
         $query = Statement::select->value . ' ' .
                 ($distinct ? ' ' . Keyword::distinct->value . ' ' : '') .
                 implode(',', $select) . ' ' .
@@ -194,6 +195,17 @@ abstract class BaseAdapter
                 ($limit > 0 ? ' ' . Keyword::limit->value . ' ' . $limit . ' ' : '') .
                 ($offset > 0 ? ' ' . Keyword::offset->value . ' ' . $offset . ' ' : '');
         return $query;
+    }
+    
+    private function processSelectAlias(array &$select, array $selectAlias)
+    {
+        if(count($selectAlias) > 0){
+            foreach($select as $key => &$singleColumn){
+                if(array_key_exists($key, $selectAlias)){
+                    $singleColumn .= ' '.Keyword::as->value.' '.$selectAlias[$key];
+                }
+            }
+        }
     }
 
     public function parseInsert(array $table, array $columns = [], array $values = []): string

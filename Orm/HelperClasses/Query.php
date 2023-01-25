@@ -43,6 +43,7 @@ class Query
 
     protected bool $distinct = false;
     protected array $columns = [];
+    protected array $columnAlias = [];
     protected array $tables = [];
     protected array $where = [];
     protected int $offset = 0;
@@ -69,6 +70,7 @@ class Query
     protected function reset(): void
     {
         $this->columns = array();
+        $this->columnAlias = array();
         $this->tables = array();
         $this->where = array();
         $this->offset = 0;
@@ -122,6 +124,15 @@ class Query
             $this->columns = [$this->adapter->allColumns()];
         } else {
             $this->columns = [$this->adapter->escapeColumn($column)];
+        }
+        return $this;
+    }
+    
+    public function &setSubqueryColumn(Query $subquery, ?string $columnAlias = null): self
+    {
+        $this->columns = ['('.$subquery->getCommandToExecute().')'];
+        if($columnAlias !== null){
+            $this->columnAlias[array_key_last($this->columns)] = $this->adapter->escapeColumn($columnAlias);
         }
         return $this;
     }
@@ -220,7 +231,7 @@ class Query
         return $this;
     }
 
-    public function &appendSubquery(Query $query, ComparisonOperator $operator, Keyword|string|null $value = null): self
+    public function &appendSubqueryCondition(Query $query, ComparisonOperator $operator, Keyword|string|null $value = null): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->current_conditions == Condition::where) {
@@ -316,7 +327,7 @@ class Query
                 break;
             case Statement::select:
             default:
-                $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->tables, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
+                $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->columnAlias, $this->tables, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
                 break;
         }
         return $this->command;
