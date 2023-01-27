@@ -42,7 +42,6 @@ use SismaFramework\Core\HttpClasses\Request;
  */
 class Dispatcher
 {
-
     const CONTENT_TYPE_DECLARATION = 'Content-type: ';
 
     private static int $reloadAttempts = 0;
@@ -155,10 +154,14 @@ class Dispatcher
     {
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-        //echo file_get_contents($filename, false, $this->streamContex);
-        readfile($filename, false, $this->streamContex);
-        /*$stream = fopen($filename, 'rb', false, $this->streamContex);
-        fpassthru($stream);*/
+        if (filesize($filename) < \Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT) {
+            echo file_get_contents($filename, false, $this->streamContex);
+        } elseif (filesize($filename) < \Config\READFILE_MAX_BITES_LIMIT) {
+            readfile($filename, false, $this->streamContex);
+        } else {
+            $stream = fopen($filename, 'rb', false, $this->streamContex);
+            fpassthru($stream);
+        }
     }
 
     private function switchNotFoundActions(): void
