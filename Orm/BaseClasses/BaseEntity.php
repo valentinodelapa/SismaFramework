@@ -49,6 +49,7 @@ abstract class BaseEntity
 
     protected string $tableName = '';
     protected string $primaryKey = 'id';
+    protected string $initializationVectorPropertyName = 'initializationVector';
     protected static ?BaseEntity $instance = null;
     protected bool $isActiveTransaction = false;
     protected ?BaseAdapter $adapter = null;
@@ -69,7 +70,7 @@ abstract class BaseEntity
         }
         $this->adapter = &$adapter;
         $this->setPropertyDefaultValue();
-        $this->setEncryptedColumns();
+        $this->setEncryptedProperties();
     }
 
     public function __get($name)
@@ -145,11 +146,21 @@ abstract class BaseEntity
         return isset($this->$name);
     }
     
-    abstract protected function setEncryptedColumns():void;
+    abstract protected function setEncryptedProperties():void;
     
-    protected function addEncryptedColumns(string $columnName):void
+    protected function addEncryptedProperty(string $columnName):void
     {
         $this->encryptedColumns[] = $columnName;
+    }
+    
+    public function isEncryptedProperty(string $columnName):bool
+    {
+        return (in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->initializationVectorPropertyName)));
+    }
+    
+    public function getInitializationVectorPropertyName():string
+    {
+        return $this->initializationVectorPropertyName;
     }
 
     public function activeChangeTracking()
@@ -316,8 +327,8 @@ abstract class BaseEntity
         } else {
             $parsedValue = $p_val;
         }
-        if(in_array($p_name, $this->encryptedColumns)){
-            
+        if($this->isEncryptedProperty($p_name)){
+            $parsedValue = Encryptor::encryptString($parsedValue, $this->{$this->initializationVectorPropertyName});
         }
         $vals[] = $parsedValue;
     }

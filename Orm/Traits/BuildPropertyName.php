@@ -32,11 +32,23 @@ namespace SismaFramework\Orm\Traits;
  */
 trait BuildPropertyName
 {
-    protected static function buildPropertyName(string $propertyName): string
+
+    protected static function buildPropertyName(string $columnName): string
     {
-        $propertyName = (substr($propertyName, -3, 3) == '_id') ? substr($propertyName, 0, -3) : $propertyName;
-        $propertyName = str_replace(' ', '', ucwords(str_replace('_', ' ', $propertyName)));
-        $propertyName = lcfirst($propertyName);
+        $columnName = (substr($columnName, -3, 3) == '_id') ? substr($columnName, 0, -3) : $columnName;
+        $columnName = str_replace(' ', '', ucwords(str_replace('_', ' ', $columnName)));
+        $columnName = lcfirst($columnName);
+        return $columnName;
+    }
+
+    public static function buildColumnName(string $propertyName): string
+    {
+        $propertyName = preg_split('/(?=[A-Z])/', $propertyName);
+        array_walk($propertyName, function (&$value) {
+            $value = strtolower($value);
+        });
+        $propertyName = implode('_', $propertyName);
         return $propertyName;
     }
+
 }

@@ -44,4 +44,17 @@ class Encryptor
         return password_verify($text, $hash);
     }
 
+    public static function encryptString(string $plainText, ?string &$initializationVector): string
+    {
+        if($initializationVector === null){
+            $initializationVector = openssl_random_pseudo_bytes(\Config\INITIALIZATION_VECTOR_BYTES);
+        }
+        return openssl_encrypt($plainText, \Config\ENCRYPTION_ALGORITHM, \Config\ENCRYPTION_PASSPHRASE, 0, $initializationVector);
+    }
+
+    public static function decryptString(string $cipherText, string $initializationVector): string
+    {
+        return openssl_decrypt($cipherText, \Config\ENCRYPTION_ALGORITHM, \Config\ENCRYPTION_PASSPHRASE, 0, $initializationVector);
+    }
+
 }

@@ -44,7 +44,7 @@ class BaseSample extends BaseEntity
         
     }
 
-    protected function setEncryptedColumns(): void
+    protected function setEncryptedProperties(): void
     {
         
     }

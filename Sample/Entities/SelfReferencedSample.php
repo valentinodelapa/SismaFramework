@@ -42,7 +42,7 @@ class SelfReferencedSample extends SelfReferencedEntity
         
     }
 
-    protected function setEncryptedColumns(): void
+    protected function setEncryptedProperties(): void
     {
         
     }

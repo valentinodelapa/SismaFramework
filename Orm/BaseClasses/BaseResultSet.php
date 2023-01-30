@@ -28,6 +28,7 @@ namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Parser;
 
 /**
@@ -122,6 +123,11 @@ abstract class BaseResultSet implements \Iterator
             if (property_exists($obj, $property)) {
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
+                $initializationVectorColumnName = static::buildColumnName($obj->getInitializationVectorPropertyName());
+                if($obj->isEncryptedProperty($property) && ($result->$initializationVectorColumnName !== null)){
+                    var_dump('entra');
+                    $value = Encryptor::decryptString($value, $result->$initializationVectorColumnName);
+                }
                 $obj->$property = Parser::parseValue($reflectionType, $value, false);
             }
         }

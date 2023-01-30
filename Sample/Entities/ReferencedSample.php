@@ -42,7 +42,7 @@ class ReferencedSample extends ReferencedEntity
         
     }
 
-    protected function setEncryptedColumns(): void
+    protected function setEncryptedProperties(): void
     {
         
     }
