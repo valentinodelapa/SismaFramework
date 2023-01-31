@@ -80,7 +80,6 @@ class ModuleManager
 
     public static function getConsequentFilePath(string $path, Resource $resource): string
     {
-
         if (self::$customVisualizationFileExists && file_exists(\Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             return \Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } elseif ((self::$customVisualizationFileExists === false) && file_exists(\Config\ROOT_PATH . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {

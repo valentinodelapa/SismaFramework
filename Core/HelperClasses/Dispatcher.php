@@ -153,7 +153,9 @@ class Dispatcher
     private function makeResource(string $filename): void
     {
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
+        header("Accept-Ranges: bytes");
         header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
+        header("Content-Length: " . filesize($filename));
         if (filesize($filename) < \Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT) {
             echo file_get_contents($filename, false, $this->streamContex);
         } elseif (filesize($filename) < \Config\READFILE_MAX_BITES_LIMIT) {

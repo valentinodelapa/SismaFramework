@@ -50,11 +50,13 @@ const STRUCTURAL = 'Structural';
 const TEMPLATES = 'Templates';
 const RESOURCES = 'Resources';
 const VIEWS = 'Views';
+const THIS_DIRECTORY = '.';
 const DIRECTORY_UP = '..';
 
 /* Base Constant */
 const LANGUAGE = 'it_IT';
 const DEFAULT_META_URL = '';
+const MINIMUM_PHP_VERSION = '8.1.0';
 const MAX_RELOAD_ATTEMPTS = 3;
 const CONFIGURATION_PASSWORD = '';
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;

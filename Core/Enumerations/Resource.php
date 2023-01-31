@@ -34,6 +34,8 @@ enum Resource: string
 {
 
     case css = 'css';
+    case doc = 'doc';
+    case docx = 'docx';
     case geojson = 'geojson';
     case htm = 'htm';
     case html = 'html';
@@ -43,34 +45,50 @@ enum Resource: string
     case js = 'js';
     case json = 'json';
     case map = 'map';
+    case mp3 = 'mp3';
     case mp4 = 'mp4';
     case otf = 'otf';
     case pdf = 'pdf';
     case php = 'php';
     case png = 'png';
+    case ppt = 'ppt';
+    case pptx = 'pptx';
+    case rar = 'rar';
     case svg = 'svg';
     case ttf = 'ttf';
     case woff = 'woff';
     case woff2 = 'woff2';
+    case xls = 'xls';
+    case xlsx = 'xlsx';
+    case zip = 'zip';
 
     public function getMime(): string
     {
         return match ($this) {
             self::css => 'text/css',
+            self::doc => 'application/msword',
+            self::docx => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             self::geojson => 'application/geo+json',
             self::htm, self::html => 'text/html',
             self::ico => 'image/x-icon',
             self::jpg, self::jpeg => 'image/jpeg',
             self::js => 'application/javascript',
             self::json, self::map => 'application/json',
+            self::mp3 => 'audio/mp3',
             self::mp4 => 'video/mp4',
+            self::otf => 'font/otf',
             self::pdf => 'application/pdf',
             self::png => 'image/png',
-            self::otf => 'font/otf',
+            self::ppt => 'application/vnd.ms-powerpoint',
+            self::pptx => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            self::rar => 'application/x-rar-compressed',
             self::svg => 'image/svg+xml',
             self::ttf => 'font/ttf',
             self::woff => 'font/woff',
             self::woff2 => 'font/woff2',
+            self::xls => 'application/vnd.ms-excel',
+            self::xlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            self::zip => 'application/x-zip-compressed',
         };
     }
 
