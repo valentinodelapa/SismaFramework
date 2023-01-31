@@ -71,7 +71,6 @@ abstract class SelfReferencedEntity extends ReferencedEntity
             $this->collectionPropertiesSetted[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = true;
             $this->collections[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = $value;
         } elseif ($this->checkCollectionExists($name)) {
-            var_dump($value);
             $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = true;
             $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = $value;
         } else {

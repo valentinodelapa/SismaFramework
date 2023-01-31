@@ -125,7 +125,6 @@ abstract class BaseResultSet implements \Iterator
                 $reflectionType = $reflectionProperty->getType();
                 $initializationVectorColumnName = static::buildColumnName($obj->getInitializationVectorPropertyName());
                 if($obj->isEncryptedProperty($property) && ($result->$initializationVectorColumnName !== null)){
-                    var_dump('entra');
                     $value = Encryptor::decryptString($value, $result->$initializationVectorColumnName);
                 }
                 $obj->$property = Parser::parseValue($reflectionType, $value, false);
