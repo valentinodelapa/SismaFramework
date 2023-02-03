@@ -122,7 +122,7 @@ abstract class BaseModel
     protected function getMultipleRowResult(Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
     {
         $result = $this->entityName::find($query, $bindValues, $bindTypes);
-        $collection = new SismaCollection;
+        $collection = new SismaCollection($this->entityName);
         foreach ($result as $entity) {
             $collection->append($entity);
         }

@@ -26,12 +26,40 @@
 
 namespace SismaFramework\ProprietaryTypes;
 
+use SismaFramework\Core\Exceptions\InvalidTypeException;
+
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 class SismaCollection extends \ArrayObject
 {
+    private string $restrictiveType;
+
+    public function __construct(string $restrictiveType, array|object $array = [], int $flags = 0, string $iteratorClass = \ArrayIterator::class)
+    {
+        $this->restrictiveType = $restrictiveType;
+        return parent::__construct($array, $flags, $iteratorClass);
+    }
+
+    public function append(mixed $value): void
+    {
+        if ($value instanceof $this->restrictiveType) {
+            parent::append($value);
+        } else {
+            throw new InvalidTypeException();
+        }
+    }
+
+    public function exchangeArray(array|object $array): array
+    {
+        foreach ($array as $entity) {
+            if (($entity instanceof $this->restrictiveType) === false) {
+                throw new InvalidTypeException();
+            }
+        }
+        return parent::exchangeArray($array);
+    }
 
     public function mergeWith(SismaCollection $sismaCollection): void
     {

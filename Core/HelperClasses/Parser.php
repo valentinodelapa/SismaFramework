@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
@@ -54,6 +55,8 @@ class Parser
             return self::parseEnumeration($reflectionNamedType->getName(), $value, $reflectionNamedType->allowsNull());
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
             return new SismaDateTime($value);
+        } elseif ($reflectionNamedType->getName() === 'array') {
+            return $value;
         } else {
             throw new InvalidArgumentException();
         }
@@ -64,9 +67,9 @@ class Parser
         $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
         $modelInstance = new $modelName();
         $entity = $modelInstance->getEntityById($value);
-        if($entity instanceof BaseEntity){
+        if ($entity instanceof BaseEntity) {
             return $entity;
-        }else{
+        } else {
             throw new InvalidArgumentException();
         }
     }

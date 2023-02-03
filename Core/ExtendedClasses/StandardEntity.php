@@ -42,7 +42,7 @@ class StandardEntity extends SismaStandardClass
     public function __get($name)
     {
         if (str_contains($name, 'Collection')) {
-            return isset($this->$name) ? new SismaCollection($this->$name) : new SismaCollection();
+            return isset($this->$name) ? new SismaCollection(self::class, $this->$name) : new SismaCollection(self::class);
         }elseif(isset($this->$name)){
             return $this->$name;
         }else{

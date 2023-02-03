@@ -31,7 +31,6 @@ use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\EntityException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\HelperClasses\Cache;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 
 /**
  *
@@ -39,7 +38,6 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
  */
 abstract class ReferencedEntity extends BaseEntity
 {
-
     //protected array $collectionPropertiesName = [];
     protected array $collectionPropertiesSetted = [];
     protected array $collections = [];
@@ -91,7 +89,7 @@ abstract class ReferencedEntity extends BaseEntity
             $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
             $foreignKeyName = $this->getForeignKeyName($propertyName);
             $model = new $modelName();
-            $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : new SismaCollection();
+            $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : new SismaCollection($this->getCollectionDataInformation($propertyName));
             $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = true;
             $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = $entityCollection;
         }
@@ -198,55 +196,38 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function setEntityCollection(string $propertyName, SismaCollection $sismaCollection): void
     {
-        if ($this->checkCollectionElementTypeConsistency($propertyName, $sismaCollection)) {
-            $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = $sismaCollection;
-            $entityPropertyName = $this->getForeignKeyName($propertyName);
-            foreach ($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] as $entity) {
-                $entity->$entityPropertyName = $this;
-            }
-            $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = true;
-        } else {
-            throw new InvalidArgumentException();
+        $this->inizializeEntityCollection($propertyName);
+        $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]->exchangeArray($sismaCollection);
+        $entityPropertyName = $this->getForeignKeyName($propertyName);
+        foreach ($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] as $entity) {
+            $entity->$entityPropertyName = $this;
         }
+        $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = true;
     }
 
-    public function checkCollectionElementTypeConsistency(string $propertyName, SismaCollection $sismaCollection): bool
+    private function inizializeEntityCollection(string $propertyName): void
     {
-
-        $entityType = $this->getCollectionDataInformation($propertyName);
-        $isConsistent = true;
-        foreach ($sismaCollection as $entity) {
-            if (($entity instanceof $entityType) === false) {
-                $isConsistent = false;
-            }
+        if (isset($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]) === false) {
+            $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = new SismaCollection($this->getCollectionDataInformation($propertyName));
         }
-        return $isConsistent;
     }
 
     public function addEntityToEntityCollection(string $propertyName, BaseEntity $entity): void
     {
         $entityPropertyName = $this->getForeignKeyName($propertyName);
-        $entityType = $this->getCollectionDataInformation($propertyName);
-        if ($entity instanceof $entityType) {
-            $this->switchAdditionType($propertyName, $entity);
-            $entity->$entityPropertyName = $this;
-        } else {
-            throw new InvalidArgumentException();
-        }
+        $this->switchAdditionType($propertyName, $entity);
+        $entity->$entityPropertyName = $this;
     }
 
     private function switchAdditionType(string $propertyName, BaseEntity $entity): void
     {
         $found = false;
-        if (isset($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)])) {
-            foreach ($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] as &$includedEntity) {
-                if (isset($entity->id) && ($includedEntity->id === $entity->id)) {
-                    $includedEntity = $entity;
-                    $found = true;
-                }
+        $this->inizializeEntityCollection($propertyName);
+        foreach ($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] as &$includedEntity) {
+            if (isset($entity->id) && ($includedEntity->id === $entity->id)) {
+                $includedEntity = $entity;
+                $found = true;
             }
-        }else{
-            $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = new SismaCollection();
         }
         if ($found === false) {
             $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]->append($entity);

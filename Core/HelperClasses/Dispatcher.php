@@ -300,7 +300,23 @@ class Dispatcher
             $odd[] = NotationManager::convertToCamelCase(array_shift($this->actionArguments));
             $even[] = array_shift($this->actionArguments);
         }
-        $this->actionArguments = array_combine($odd, $even);
+        $this->actionArguments = $this->combineArrayToAssociativeArray($odd, $even);
+    }
+
+    private function combineArrayToAssociativeArray(array $keys, array $values): array
+    {
+        $result = [];
+        foreach ($keys as $index => $key) {
+            if (array_key_exists($key, $result)) {
+                if (!is_array($result[$key])) {
+                    $result[$key] = [$result[$key]];
+                }
+                $result[$key][] = $values[$index];
+            } else {
+                $result[$key] = $values[$index];
+            }
+        }
+        return $result;
     }
 
     private function parseArgsAssociativeArray(): void
