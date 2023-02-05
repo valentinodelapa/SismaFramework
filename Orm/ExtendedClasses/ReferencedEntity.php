@@ -38,7 +38,6 @@ use SismaFramework\Orm\HelperClasses\Cache;
  */
 abstract class ReferencedEntity extends BaseEntity
 {
-    //protected array $collectionPropertiesName = [];
     protected array $collectionPropertiesSetted = [];
     protected array $collections = [];
 
@@ -48,7 +47,7 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function getCollectionNames()
     {
-        $collectionNames = array_keys($this->collections);
+        $collectionNames = array_keys(Cache::getForeignKeyData($this));
         array_walk($collectionNames, function (&$value) {
             $value .= self::FOREIGN_KEY_SUFFIX;
         });
