@@ -66,7 +66,9 @@ abstract class ReferencedModel extends BaseModel
     {
         foreach ($entityNames as $entityName) {
             $entity = array_shift($arguments);
-            if (($entity instanceof \Config\ENTITY_NAMESPACE . $entityName) || ($entity === null)) {
+            $reflectionProperty = new \ReflectionProperty($this->entity, lcfirst($entityName));
+            $fullEntityName = $reflectionProperty->getType()->getName();
+            if (($entity instanceof $fullEntityName) || ($entity === null)) {
                 $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $entityName));
                 $propertyName = strtolower(implode('_', $entityNameParts));
                 $referencedEntities[$propertyName] = $entity;
