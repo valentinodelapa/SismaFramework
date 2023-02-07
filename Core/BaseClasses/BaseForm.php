@@ -189,13 +189,13 @@ abstract class BaseForm
         }
     }
 
-    protected function addEntityFromForm(string $propertyName, string $formPropertyClass, int $baseCollectionFromFromNumber = 0): self
+    protected function addEntityFromForm(string $propertyName, string $formPropertyClass, int $baseCollectionFormFromNumber = 0): self
     {
         if ($this->entity->checkCollectionExists($propertyName)) {
             if ($this->entity->getCollectionDataInformation($propertyName) === $formPropertyClass::ENTITY_CLASS_NAME) {
                 $entityCollectonToEmbed = $this->entity->$propertyName;
-                $collectionFromFromNumber = isset($this->request->request[$propertyName]) ? count($this->request->request[$propertyName]) : $baseCollectionFromFromNumber;
-                $this->generateSismaCollectionProperty($collectionFromFromNumber, $formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
+                $sismaCollectionPropertyKeys = isset($this->request->request[$propertyName]) ? array_keys($this->request->request[$propertyName]) : $this->getBaseCollectionFormKeys($baseCollectionFormFromNumber);
+                $this->generateSismaCollectionProperty($sismaCollectionPropertyKeys, $formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
             }
@@ -212,12 +212,20 @@ abstract class BaseForm
         }
         return $this;
     }
+    
+    private function getBaseCollectionFormKeys(int $baseCollectionFormFromNumber): array{
+        if($baseCollectionFormFromNumber === 0){
+            return [];
+        }else{
+            return range(0, $baseCollectionFormFromNumber-1);
+        }
+    }
 
-    private function generateSismaCollectionProperty(int $collectionFromFromNumber, string $formPropertyClass, SismaCollection $entityCollectonToEmbed, ?array &$entityFromForm, ?array &$filerErrors): void
+    private function generateSismaCollectionProperty(array $sismaCollectionPropertyKeys, string $formPropertyClass, SismaCollection $entityCollectonToEmbed, ?array &$entityFromForm, ?array &$filerErrors): void
     {
-        for ($i = 0; $i < $collectionFromFromNumber; $i++) {
-            $ntityToEmbed = $entityCollectonToEmbed[$i] ?? null;
-            $this->generateFormProperty($formPropertyClass, $ntityToEmbed, $entityFromForm[$i], $filerErrors[$i]);
+        foreach($sismaCollectionPropertyKeys as $key){
+            $ntityToEmbed = $entityCollectonToEmbed[$key] ?? null;
+            $this->generateFormProperty($formPropertyClass, $ntityToEmbed, $entityFromForm[$key], $filerErrors[$key]);
         }
     }
 
