@@ -47,10 +47,13 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function getCollectionNames()
     {
-        $collectionNames = array_keys(Cache::getForeignKeyData($this));
-        array_walk($collectionNames, function (&$value) {
-            $value .= self::FOREIGN_KEY_SUFFIX;
-        });
+        $collectionNames = [];
+        $collections = Cache::getForeignKeyData($this);
+        foreach($collections as $collectionName => $reference){
+            foreach(array_keys($reference) as $refenrenceName){
+                $collectionNames[] = $collectionName.self::FOREIGN_KEY_SUFFIX.$refenrenceName;
+            }
+        }
         return $collectionNames;
     }
 
