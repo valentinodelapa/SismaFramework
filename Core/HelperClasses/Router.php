@@ -82,7 +82,7 @@ class Router
     public static function getRootUrl(): string
     {
         $request = new Request();
-        $protocol = stripos($request->server['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://';
+        $protocol = (isset($request->server['HTTPS']) && ($request->server['HTTPS'] === 'on')) ? 'https://' : 'http://';
         $httpHost = $request->server['HTTP_HOST'];
         return $protocol . $httpHost . self::$metaUrl;
     }
