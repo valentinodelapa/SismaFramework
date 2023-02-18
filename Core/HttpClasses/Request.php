@@ -100,7 +100,7 @@ class Request
             if (is_array($field)) {
                 $entity->$methodName($this->parseRequest($sismaCollectionClassName, $field));
             } else {
-                $entity->$methodName(Parser::parseEntity($sismaCollectionClassName, $field));
+                $entity->$methodName(Parser::parseEntity($sismaCollectionClassName, intval($field)));
             }
         }
     }

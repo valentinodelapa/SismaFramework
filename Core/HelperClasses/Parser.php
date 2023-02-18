@@ -47,7 +47,7 @@ class Parser
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             if ($parseEntity) {
-                return self::parseEntity($reflectionNamedType->getName(), $value);
+                return self::parseEntity($reflectionNamedType->getName(), intval($value));
             } else {
                 return intval($value);
             }
@@ -62,7 +62,7 @@ class Parser
         }
     }
 
-    public static function parseEntity(string $entityName, string $value): BaseEntity
+    public static function parseEntity(string $entityName, int $value): BaseEntity
     {
         $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
         $modelInstance = new $modelName();
