@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,22 +30,9 @@ namespace SismaFramework\Orm\Enumerations;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-enum ComparisonOperator: string
+enum TextSearchMode: string
 {
-
-    case against = 'AGAINST';
-    case equal = '=';
-    case notEqualOne = '!=';
-    case notEqualTwo = '<>';
-    case greater = '>';
-    case less = '<';
-    case greaterOrEqual = '>=';
-    case lessOrEqual = '<=';
-    case in = 'IN';
-    case notIn = 'NOT IN';
-    case like = 'LIKE';
-    case notLike = 'NOT LIKE';
-    case isNull = 'IS NULL';
-    case isNotNull = 'IS NOT NULL';
-
+    case inNaturaLanguageMode = 'IN NATURAL LANGUAGE MODE';
+    case withQueryExpansion = 'WITH QUERY EXPANSION';
+    case inBooleanMode = 'IN BOOLEAN MODE';
 }

@@ -32,6 +32,7 @@ use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\HelperClasses\Query;
 
 /**
@@ -40,7 +41,6 @@ use SismaFramework\Orm\HelperClasses\Query;
  */
 class Query
 {
-
     protected bool $distinct = false;
     protected array $columns = [];
     protected array $columnAlias = [];
@@ -127,11 +127,11 @@ class Query
         }
         return $this;
     }
-    
+
     public function &setSubqueryColumn(Query $subquery, ?string $columnAlias = null): self
     {
-        $this->columns = ['('.$subquery->getCommandToExecute().')'];
-        if($columnAlias !== null){
+        $this->columns = [Keyword::openBlock->value . $subquery->getCommandToExecute() . Keyword::closeBlock->value];
+        if ($columnAlias !== null) {
             $this->columnAlias[array_key_last($this->columns)] = $this->adapter->escapeColumn($columnAlias);
         }
         return $this;
@@ -184,10 +184,10 @@ class Query
         $this->order[$parsedColumn] = $parsedIndexing;
         return $this;
     }
-    
+
     public function &appendOrderBySubquery(Query $query, null|string|Indexing $Indexing = null): self
     {
-        $parsedQuery = '('.$query->getCommandToExecute().')';
+        $parsedQuery = '(' . $query->getCommandToExecute() . ')';
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
         $this->order[$parsedQuery] = $parsedIndexing;
         return $this;
@@ -231,14 +231,24 @@ class Query
         return $this;
     }
 
+    public function &appendMatchCondition(array $columns, Keyword|string|null $value = null, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): self
+    {
+        foreach ($columns as &$column) {
+            $column = $this->adapter->escapeColumn($column);
+        }
+        $escapedValue = $this->adapter->escapeValue($value, ComparisonOperator::against);
+        $this->where[] = Keyword::match->value . ' ' . Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ComparisonOperator::against->value . Keyword::openBlock->value . $escapedValue . ' '. $textSearchMode->value . Keyword::closeBlock->value;
+        return $this;
+    }
+
     public function &appendSubqueryCondition(Query $query, ComparisonOperator $operator, Keyword|string|null $value = null): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->current_conditions == Condition::where) {
-            $this->where[] = '(' . $query->getCommandToExecute() . ') ' . $operator->value . ' ' . $escapedValue;
+            $this->where[] = Keyword::openBlock->value . $query->getCommandToExecute() . Keyword::closeBlock->value . ' ' . $operator->value . ' ' . $escapedValue;
         }
         if ($this->current_conditions == Condition::having) {
-            $this->having[] = '(' . $query->getCommandToExecute() . ') ' . $operator->value . ' ' . $escapedValue;
+            $this->having[] = Keyword::openBlock->value . $query->getCommandToExecute() . Keyword::closeBlock->value . ' ' . $operator->value . ' ' . $escapedValue;
         }
         return $this;
     }

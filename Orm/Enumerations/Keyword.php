@@ -38,6 +38,7 @@ enum Keyword: string
     case from = 'FROM';
     case distinct = 'DISTINCT';
     case join = 'JOIN';
+    case match = 'MATCH';
     case orderBy = 'ORDER BY';
     case groupBy = 'GROUP_BY';
     case limit = 'LIMIT';
