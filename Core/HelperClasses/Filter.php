@@ -238,6 +238,7 @@ class Filter
         $result = ($value['error'] === 0) ? $result : false;
         $result = (array_key_exists('tmp_name', $value)) ? $result : false;
         $result = (is_uploaded_file($value['tmp_name'])) ? $result : false;
+        $result = (mime_content_type($value['tmp_name']) !== false) ? $result : false;
         return $result;
     }
 
