@@ -73,7 +73,7 @@ class Render
             }
             $actualLocale = $actualLocale[$part] ?? $actualLocale;
         }
-        return array_merge($actualLocale, $commonLocale);
+        return array_merge($commonLocale, $actualLocale);
     }
     
     private static function getLocale():array
