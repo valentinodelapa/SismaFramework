@@ -122,7 +122,7 @@ class Debugger
         ];
     }
 
-    private static function getMemoryUsed()
+    private static function getMemoryUsed(): float
     {
         $memoryUsedInByte = memory_get_usage();
         return round($memoryUsedInByte / 1024 / 1024, 2);
@@ -153,7 +153,6 @@ class Debugger
                 case 'integer':
                 case 'double':
                 case 'string':
-                case 'boolean':
                     $parsedVars[$key] = $value;
                     break;
                 default:

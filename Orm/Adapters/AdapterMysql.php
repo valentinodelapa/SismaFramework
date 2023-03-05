@@ -60,7 +60,7 @@ class AdapterMysql extends BaseAdapter
                 throw new AdapterException('DB: unable to connect');
             }
             self::$connection->exec('SET names ' . $charset);
-            if (!BaseAdapter::getDefault()) {
+            if (BaseAdapter::getDefault() === null) {
                 BaseAdapter::setDefault($this);
             }
         }

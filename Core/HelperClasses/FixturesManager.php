@@ -44,11 +44,13 @@ class FixturesManager
 
     private function getFixturesArray(): void
     {
-        $fixturesFiles = scandir(\Config\FIXTURE_PATH);
-        foreach ($fixturesFiles as $file) {
-            if (($file != '.') && ($file != '..')) {
-                $fixtureName = str_replace('.php', '', $file);
-                $this->fixturesArray[\Config\FIXTURE_NAMESPACE . $fixtureName] = false;
+        foreach (ModuleManager::getModuleList() as $module) {
+            $fixturesFiles = scandir(\Config\ROOT_PATH . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . \Config\FIXTURE_PATH);
+            foreach ($fixturesFiles as $file) {
+                if (($file != '.') && ($file != '..')) {
+                    $fixtureName = str_replace('.php', '', $file);
+                    $this->fixturesArray[$module.'\\'.\Config\FIXTURE_NAMESPACE . $fixtureName] = false;
+                }
             }
         }
     }

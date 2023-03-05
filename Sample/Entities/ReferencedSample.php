@@ -29,8 +29,6 @@ namespace SismaFramework\Sample\Entities;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
 /**
- * Description of ReferencedSample
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 class ReferencedSample extends ReferencedEntity

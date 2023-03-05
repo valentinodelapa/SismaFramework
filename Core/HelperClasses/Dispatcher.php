@@ -58,6 +58,7 @@ class Dispatcher
     private array $constructorArguments;
     private string $action;
     private array $actionArguments;
+    private FixturesManager $fixtureManager;
     private \ReflectionClass $reflectionController;
     private \ReflectionMethod $reflectionConstructor;
     private array $reflectionConstructorArguments;
@@ -110,6 +111,7 @@ class Dispatcher
 
     private function selectModule(): void
     {
+        ModuleManager::initializeApplicationModule();
         foreach (ModuleManager::getModuleList() as $module) {
             $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . NotationManager::convertToStudlyCaps($this->pathParts[0] . 'Controller');
             if (($this->checkControllerPresence()) || ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
@@ -131,7 +133,7 @@ class Dispatcher
         } elseif ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
         } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
-            $fixtureManager = new FixturesManager();
+            $this->fixtureManager = new FixturesManager();
         } else {
             $this->switchNotFoundActions();
         }

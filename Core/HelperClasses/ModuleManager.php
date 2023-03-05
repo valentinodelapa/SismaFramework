@@ -44,6 +44,11 @@ class ModuleManager
     {
         return \Config\MODULE_FOLDERS;
     }
+    
+    public static function initializeApplicationModule()
+    {
+        self::$applicationModule = '';
+    }
 
     public static function setApplicationModule(string $module): void
     {

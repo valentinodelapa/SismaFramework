@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Fixture;
+namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Sample\Entities\Sample;
+use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Core\BaseClasses\BaseFixture;
 
 /**
@@ -44,7 +44,7 @@ class SampleFixture extends BaseFixture
 
     public function setEntity(): void
     {
-        
+        $this->addEntity(new BaseSample());
     }
 
 }

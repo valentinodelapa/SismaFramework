@@ -76,6 +76,7 @@ class Query
         $this->offset = 0;
         $this->limit = 0;
         $this->group = array();
+        $this->having = array();
         $this->order = array();
         $this->current_conditions = null;
         $this->closed = false;

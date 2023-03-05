@@ -50,11 +50,21 @@ abstract class BaseAdapter
     {
         $this->connect($options);
     }
-    
-    abstract protected function connect(array $options = []):void;
+
+    abstract protected function connect(array $options = []): void;
 
     public static function &getDefault(): ?BaseAdapter
     {
+        if (static::$adapter === null) {
+            $defaultAdapter = static::create(\Config\DATABASE_ADAPTER_TYPE, [
+                        'database' => \Config\DATABASE_NAME,
+                        'hostname' => \Config\DATABASE_HOST,
+                        'password' => \Config\DATABASE_PASSWORD,
+                        'port' => \Config\DATABASE_PORT,
+                        'username' => \Config\DATABASE_USERNAME,
+                    ]);
+            static::setDefault($defaultAdapter);
+        }
         return static::$adapter;
     }
 
@@ -79,18 +89,18 @@ abstract class BaseAdapter
 
     public function escapeIdentifier(string $name): string
     {
-        $parsedName = preg_replace("/([^a-zA-Z_]+)/","", $name);
+        $parsedName = preg_replace("/([^a-zA-Z_]+)/", "", $name);
         return $parsedName;
     }
 
     public function escapeOrderIndexing(null|string|Indexing $order = null): string
     {
-        if(is_string($order)){
+        if (is_string($order)) {
             $order = Indexing::tryFrom($order);
         }
         if ($order instanceof Indexing) {
             return $order->value;
-        }else{
+        } else {
             return '';
         }
     }
@@ -133,9 +143,9 @@ abstract class BaseAdapter
             $val = array_shift($value);
             $value = $val;
         }
-        if($value instanceof Keyword){
+        if ($value instanceof Keyword) {
             $stringValue = $value->value;
-        }else{
+        } else {
             $stringValue = strval($value);
         }
         return $stringValue;
@@ -196,13 +206,13 @@ abstract class BaseAdapter
                 ($offset > 0 ? ' ' . Keyword::offset->value . ' ' . $offset . ' ' : '');
         return $query;
     }
-    
+
     private function processSelectAlias(array &$select, array $selectAlias)
     {
-        if(count($selectAlias) > 0){
-            foreach($select as $key => &$singleColumn){
-                if(array_key_exists($key, $selectAlias)){
-                    $singleColumn .= ' '.Keyword::as->value.' '.$selectAlias[$key];
+        if (count($selectAlias) > 0) {
+            foreach ($select as $key => &$singleColumn) {
+                if (array_key_exists($key, $selectAlias)) {
+                    $singleColumn .= ' ' . Keyword::as->value . ' ' . $selectAlias[$key];
                 }
             }
         }
@@ -262,7 +272,6 @@ abstract class BaseAdapter
     abstract public function getLastErrorMsg(): string;
 
     abstract public function getLastErrorCode(): string;
-
 }
 
 ?>

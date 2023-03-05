@@ -29,8 +29,6 @@ namespace SismaFramework\Sample\Entities;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 
 /**
- * Description of SelfReferenceSample
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 class SelfReferencedSample extends SelfReferencedEntity

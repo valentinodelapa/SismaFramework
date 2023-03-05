@@ -29,8 +29,6 @@ namespace SismaFramework\Sample\Entities;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
- * Description of ReferencedSample
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 
