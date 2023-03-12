@@ -42,10 +42,13 @@ use SismaFramework\Core\HttpClasses\Request;
  */
 class Dispatcher
 {
+
     const CONTENT_TYPE_DECLARATION = 'Content-type: ';
 
+    private FixturesManager $fixturesManager;
     private static int $reloadAttempts = 0;
     private Request $request;
+    private string $originalPath;
     private string $path;
     private $streamContex = null;
     private array $pathParts;
@@ -58,19 +61,23 @@ class Dispatcher
     private array $constructorArguments;
     private string $action;
     private array $actionArguments;
-    private FixturesManager $fixtureManager;
     private \ReflectionClass $reflectionController;
     private \ReflectionMethod $reflectionConstructor;
     private array $reflectionConstructorArguments;
     private \ReflectionMethod $reflectionAction;
     private array $reflectionActionArguments;
-
+    
     public function __construct()
     {
-        Debugger::startExecutionTimeCalculation();
         Session::start();
-        $this->request = new Request;
-        $this->path = strtok($this->request->server['REQUEST_URI'], '?');
+        $this->fixturesManager = new FixturesManager();
+    }
+    
+    public function run()
+    {
+        Debugger::startExecutionTimeCalculation();
+        $this->request = new Request();
+        $this->originalPath = $this->path = strtok($this->request->server['REQUEST_URI'], '?');
         if (strlen($this->request->server['QUERY_STRING']) > 0) {
             if (Resource::tryFrom($this->getExtension())) {
                 $this->streamContex = $this->request->getStreamContentResource();
@@ -83,10 +90,16 @@ class Dispatcher
         $this->handle();
     }
 
+    private function getExtension(): string
+    {
+        $splittedPath = explode('.', $this->path);
+        return strtolower(end($splittedPath));
+    }
+
     private function parsePath(): void
     {
         $this->pathParts = [];
-        if ($this->path == '/') {
+        if ($this->path === '/') {
             $this->pathParts[] = \Config\DEFAULT_PATH;
             $this->pathParts[] = \Config\DEFAULT_ACTION;
         } else {
@@ -133,7 +146,7 @@ class Dispatcher
         } elseif ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
         } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
-            $this->fixtureManager = new FixturesManager();
+            $this->fixturesManager->run();
         } else {
             $this->switchNotFoundActions();
         }
@@ -173,7 +186,7 @@ class Dispatcher
         if (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
             $this->reloadDispatcher();
         } else {
-            throw new PageNotFoundException($this->path);
+            throw new PageNotFoundException($this->originalPath);
         }
     }
 
@@ -188,7 +201,7 @@ class Dispatcher
     {
         if ($this->defaultControllerChecked && $this->defaultActionChecked) {
             Router::concatenateMetaUrl('/' . $this->pathParts[0]);
-            $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
+            $this->path = '/' . implode('/', array_slice($this->pathParts, 2)).'/';
             $this->defaultControllerChecked = $this->defaultActionChecked = false;
             self::$reloadAttempts++;
         } elseif ($this->defaultControllerChecked === false) {
@@ -198,20 +211,14 @@ class Dispatcher
                 $this->defaultActionInjected = false;
                 array_pop($this->pathParts);
             }
-            $this->path = '/' . implode('/', $this->pathParts);
+            $this->path = '/' . implode('/', $this->pathParts).'/';
             $this->defaultControllerChecked = true;
         } elseif ($this->defaultActionChecked === false) {
             $this->defaultControllerInjected = false;
             $this->pathParts = [$this->pathParts[1], \Config\DEFAULT_ACTION, ...array_slice($this->pathParts, 2)];
-            $this->path = '/' . implode('/', $this->pathParts);
+            $this->path = '/' . implode('/', $this->pathParts).'/';
             $this->defaultActionChecked = true;
         }
-    }
-
-    public function getExtension(): string
-    {
-        $splittedPath = explode('.', $this->path);
-        return strtolower(end($splittedPath));
     }
 
     private function resolveRouteCall(): void
@@ -240,8 +247,6 @@ class Dispatcher
         if (count($this->reflectionConstructorArguments) == 0) {
             $this->controllerInstance = new $this->controllerName;
         } else {
-            $this->constructorArguments[] = $this->prevAccessToken;
-            $this->constructorArguments[] = $this->nextAccessToken;
             $this->getAutoDependecyInjectionClass();
             $this->controllerInstance = $this->reflectionController->newInstanceArgs($this->constructorArguments);
         }

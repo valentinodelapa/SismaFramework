@@ -21,19 +21,15 @@ class SampleController extends BaseController
         return Render::generateView('sample/index', $this->vars);
     }
     
-    public function error($message): Response
+    public function error(string $message): Response
     {
-        $this->vars = [
-            'message' => urldecode($message),
-        ];
+        $this->vars['message'] = urldecode($message);
         return Render::generateView('sample/error', $this->vars);
     }
 
-    public function notify($message): Response
+    public function notify(string $message): Response
     {
-        $this->vars = [
-            'message' => urldecode($message),
-        ];
+        $this->vars['message'] = urldecode($message);
         return Render::generateView('sample/notify', $this->vars);
     }
 

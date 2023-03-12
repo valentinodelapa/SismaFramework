@@ -35,6 +35,7 @@ try {
     require_once(__DIR__ . '/../Autoload/autoload.php');
 
     $dispatcher = new Dispatcher();
+    $dispatcher->run();
     
 } catch (Exception $exception) {
     

@@ -36,7 +36,7 @@ class FixturesManager
     private array $fixturesArray;
     private array $entitiesArray = [];
 
-    public function __construct()
+    public function run()
     {
         $this->getFixturesArray();
         $this->executeFixturesArray($this->fixturesArray);

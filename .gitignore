@@ -3,3 +3,4 @@
 /Logs/log.txt
 /Tests/report/
 .scannerwork/
+Tests/.phpunit.result.cache

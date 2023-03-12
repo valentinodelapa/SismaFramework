@@ -35,7 +35,8 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 class BaseSample extends BaseEntity
 {
 
-    public int $id;
+    protected int $id;
+    protected string $sample;
 
     protected function setPropertyDefaultValue(): void
     {

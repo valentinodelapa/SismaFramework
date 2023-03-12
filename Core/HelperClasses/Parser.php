@@ -38,7 +38,7 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 class Parser
 {
 
-    public static function parseValue(\ReflectionNamedType $reflectionNamedType, ?string $value, $parseEntity = true): mixed
+    public static function parseValue(\ReflectionNamedType $reflectionNamedType, null|string|array $value, $parseEntity = true): mixed
     {
         if (($value === null) || ($reflectionNamedType->allowsNull() && ($value === ''))) {
             return null;

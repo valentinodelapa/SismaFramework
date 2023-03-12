@@ -4,12 +4,12 @@ namespace SismaFramework\Sample\Forms;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Sample\Entities\Sample;
+use SismaFramework\Sample\Entities\BaseSample;
 
-class SampleForm extends BaseForm
+class BaseSampleForm extends BaseForm
 {
 
-    protected const ENTITY_CLASS_NAME = Sample::class;
+    protected const ENTITY_CLASS_NAME = BaseSample::class;
 
     protected function customFilter(): void
     {

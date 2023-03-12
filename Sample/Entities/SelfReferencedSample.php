@@ -33,7 +33,8 @@ use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
  */
 class SelfReferencedSample extends SelfReferencedEntity
 {
-    public int $id;
+    protected int $id;
+    protected self $parentSelfReferencedSample;
     
     protected function setPropertyDefaultValue(): void
     {
