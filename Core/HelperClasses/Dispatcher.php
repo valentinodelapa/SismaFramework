@@ -99,7 +99,7 @@ class Dispatcher
     private function parsePath(): void
     {
         $this->pathParts = [];
-        if ($this->path === '/') {
+        if ($this->path == '/') {
             $this->pathParts[] = \Config\DEFAULT_PATH;
             $this->pathParts[] = \Config\DEFAULT_ACTION;
         } else {
@@ -201,7 +201,7 @@ class Dispatcher
     {
         if ($this->defaultControllerChecked && $this->defaultActionChecked) {
             Router::concatenateMetaUrl('/' . $this->pathParts[0]);
-            $this->path = '/' . implode('/', array_slice($this->pathParts, 2)).'/';
+            $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
             $this->defaultControllerChecked = $this->defaultActionChecked = false;
             self::$reloadAttempts++;
         } elseif ($this->defaultControllerChecked === false) {
@@ -211,12 +211,12 @@ class Dispatcher
                 $this->defaultActionInjected = false;
                 array_pop($this->pathParts);
             }
-            $this->path = '/' . implode('/', $this->pathParts).'/';
+            $this->path = '/' . implode('/', $this->pathParts);
             $this->defaultControllerChecked = true;
         } elseif ($this->defaultActionChecked === false) {
             $this->defaultControllerInjected = false;
             $this->pathParts = [$this->pathParts[1], \Config\DEFAULT_ACTION, ...array_slice($this->pathParts, 2)];
-            $this->path = '/' . implode('/', $this->pathParts).'/';
+            $this->path = '/' . implode('/', $this->pathParts);
             $this->defaultActionChecked = true;
         }
     }
