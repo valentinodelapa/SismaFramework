@@ -27,7 +27,6 @@
 namespace SismaFramework\Core\Traits;
 
 /**
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 trait MultipleSelfReferencedEnumeration
@@ -37,7 +36,7 @@ trait MultipleSelfReferencedEnumeration
 
     abstract public function getSons(): array;
 
-    private static function getChoiceByMultipleParent(Language $language, \UnitEnum $referencedEnumeration = null): array
+    public function getChoiceByMultipleParent(Language $language): array
     {
         $choice = $sons = [];
         $sons = $this->getSons();

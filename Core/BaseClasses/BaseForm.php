@@ -212,18 +212,19 @@ abstract class BaseForm
         }
         return $this;
     }
-    
-    private function getBaseCollectionFormKeys(int $baseCollectionFormFromNumber): array{
-        if($baseCollectionFormFromNumber === 0){
+
+    private function getBaseCollectionFormKeys(int $baseCollectionFormFromNumber): array
+    {
+        if ($baseCollectionFormFromNumber === 0) {
             return [];
-        }else{
-            return range(0, $baseCollectionFormFromNumber-1);
+        } else {
+            return range(0, $baseCollectionFormFromNumber - 1);
         }
     }
 
     private function generateSismaCollectionProperty(array $sismaCollectionPropertyKeys, string $formPropertyClass, SismaCollection $entityCollectonToEmbed, ?array &$entityFromForm, ?array &$filerErrors): void
     {
-        foreach($sismaCollectionPropertyKeys as $key){
+        foreach ($sismaCollectionPropertyKeys as $key) {
             $ntityToEmbed = $entityCollectonToEmbed[$key] ?? null;
             $this->generateFormProperty($formPropertyClass, $ntityToEmbed, $entityFromForm[$key], $filerErrors[$key]);
         }

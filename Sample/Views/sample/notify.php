@@ -5,10 +5,10 @@
     </head>
     <body>
         <header>
-            <?php echo $projectTitle; ?>
+            <h1>Notifica</h1>
         </header>
         <nav>
-            <?php require_once __DIR__ . '/commonParts/menu.php'; ?>
+            <?php require_once __DIR__ . '/../commonParts/menu.php'; ?>
         </nav>
         <section class="d-flex align-items-center flex-column">
             <h1>Notify</h1>

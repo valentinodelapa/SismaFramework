@@ -48,7 +48,7 @@ class OtherController extends BaseController
 
     public function index(string $parameter): Response
     {
-        $this->vars['parameter'] = $parameter;
+        $this->vars['parameter'] = urldecode($parameter);
         return Render::generateView('other/index', $this->vars);
     }
 
@@ -60,20 +60,20 @@ class OtherController extends BaseController
 
     public function actionWithAuthentication(Authentication $authentication): Response
     {
-        $this->vars['authentication'] = $authentication;
-        return Render::generateView('other/actionWithRequest', $this->vars);
+        $this->vars['authentication'] = $authentication->isSubmitted();
+        return Render::generateView('other/actionWithAuthentication', $this->vars);
     }
 
     public function actionWithDefaultValue(bool $isDefault = true): Response
     {
         $this->vars['isDefault'] = $isDefault;
-        return Render::generateView('other/actionWithRequest', $this->vars);
+        return Render::generateView('other/actionWithDefaultValue', $this->vars);
     }
 
     public function actionWithArray(array $array): Response
     {
         $this->vars['array'] = $array;
-        return Render::generateView('other/actionWithRequest', $this->vars);
+        return Render::generateView('other/actionWithArray', $this->vars);
     }
 
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <?php require_once __DIR__ . '/../commonParts/baseHead.php'; ?>
     </head>
     <body>
         <header>Errore</header>
@@ -9,15 +9,12 @@
 
         </nav>
         <div class="body">
-            <aside>
-
-            </aside>
             <article>
                 <?php echo $message; ?>
             </article>     
         </div>
         <footer>
-
+            <?php require_once __DIR__ . '/../commonParts/footer.php'; ?>
         </footer>
-</body>
+    </body>
 </html>

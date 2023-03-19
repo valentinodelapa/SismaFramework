@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html class="h-100">
+<html>
     <head>
         <?php require_once __DIR__ . '/../commonParts/baseHead.php'; ?>
     </head>
-    <body class="h-100">
-        <header class="h-25 d-flex align-items-center justify-content-center flex-row">
-            <?php require_once __DIR__ . '/../commonParts/header.php'; ?>
+    <body>
+        <header>
+            <h1>Index</h1>
         </header>
         <nav>
             <?php require_once __DIR__ . '/../commonParts/menu.php'; ?>
         </nav>
-        <article>
-            Hello World
-        </article>
+        <section class="d-flex align-items-center flex-column">
+            <h1>Other - Index</h1>
+            <?php echo $isDefault ? 'is default' : 'is not default'; ?>
+        </section>
         <footer>
             <?php require_once __DIR__ . '/../commonParts/footer.php'; ?>
         </footer>

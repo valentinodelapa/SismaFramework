@@ -1,1 +1,1 @@
-<title><?php echo $title; ?></title>
+<title><?php echo $controllerUrl; ?> - <?php echo $actionUrl; ?></title>

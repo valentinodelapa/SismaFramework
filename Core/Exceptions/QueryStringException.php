@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,31 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
+namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\HelperClasses\Logger;
+use SismaFramework\Core\BaseClasses\BaseException;
 use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HttpClasses\Request;
 
 /**
+ * Description of QueryStringException
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class BaseException extends \Exception
+class QueryStringException extends BaseException
 {
-
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-        Logger::saveLog($message, $code);
-        if (\Config\DEVELOPMENT_ENVIRONMENT) {
-            Logger::saveTrace($this->getTrace());
-        }
-        $this->errorRedirect();
-    }
-
+    
     protected function errorRedirect()
     {
-        Router::redirect('error/message/Errore');
+        $request = new Request();
+        Router::reloadWithParseQuery($request->server['REQUEST_URI']);
     }
-
 }

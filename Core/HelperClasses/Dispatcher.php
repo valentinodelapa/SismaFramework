@@ -30,6 +30,7 @@ use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
+use SismaFramework\Core\Exceptions\QueryStringException;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\Router;
@@ -82,8 +83,7 @@ class Dispatcher
             if (Resource::tryFrom($this->getExtension())) {
                 $this->streamContex = $this->request->getStreamContentResource();
             } else {
-                Router::reloadWithParseQuery($this->request->server['REQUEST_URI']);
-                exit();
+                throw new QueryStringException();
             }
         }
         $this->parsePath();

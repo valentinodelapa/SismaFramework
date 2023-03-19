@@ -4,3 +4,4 @@
 /Tests/report/
 .scannerwork/
 Tests/.phpunit.result.cache
+/Tests/coverage-report/
