@@ -34,8 +34,8 @@ use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 class ReferencedSample extends ReferencedEntity
 {
     protected int $id;
-    protected BaseSample $baseSample;
-    
+    protected string $text;
+
     protected function setPropertyDefaultValue(): void
     {
         

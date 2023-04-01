@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,26 +26,22 @@
 
 namespace SismaFramework\Sample\Entities;
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
+USE SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
+ * Description of WrongEntity
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-
-class BaseSample extends BaseEntity
+class WrongEntity extends BaseEntity
 {
-
-    protected int $id;
-    protected ReferencedSample $referencedSample;
-    protected string $text;
-    protected bool $boolean;
-
-    protected function setPropertyDefaultValue(): void
+    
+    protected function setEncryptedProperties(): void
     {
         
     }
 
-    protected function setEncryptedProperties(): void
+    protected function setPropertyDefaultValue(): void
     {
         
     }

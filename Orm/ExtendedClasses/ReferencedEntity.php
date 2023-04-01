@@ -90,7 +90,7 @@ abstract class ReferencedEntity extends BaseEntity
                 ($this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] === false))) {
             $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
             $foreignKeyName = $this->getForeignKeyName($propertyName);
-            $model = new $modelName();
+            $model = new $modelName($this->adapter);
             $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : new SismaCollection($this->getCollectionDataInformation($propertyName));
             $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = true;
             $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = $entityCollection;

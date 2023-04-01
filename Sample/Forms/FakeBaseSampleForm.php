@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,36 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Entities;
+namespace SismaFramework\Sample\Forms;
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Sample\Entities\FakeBaseSample;
 
 /**
+ * Description of FakeBaseSampleForm
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-
-class BaseSample extends BaseEntity
+class FakeBaseSampleForm extends BaseForm
 {
-
-    protected int $id;
-    protected ReferencedSample $referencedSample;
-    protected string $text;
-    protected bool $boolean;
-
-    protected function setPropertyDefaultValue(): void
+    protected const ENTITY_CLASS_NAME = FakeBaseSample::class;
+    
+    protected function customFilter(): void
     {
         
     }
 
-    protected function setEncryptedProperties(): void
+    protected function injectRequest(): void
+    {
+        
+    }
+
+    protected function setEntityFromForm(): void
+    {
+        $this->addEntityFromForm('fakeReferencedSample', ReferencedSampleFromBaseSampleForm::class);
+    }
+
+    protected function setFilterFieldsMode(): void
     {
         
     }

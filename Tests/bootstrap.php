@@ -24,30 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Entities;
-
-use SismaFramework\Orm\BaseClasses\BaseEntity;
-
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
+// TODO: check include path
+//ini_set('include_path', ini_get('include_path'));
 
-class BaseSample extends BaseEntity
-{
+// put your code here
 
-    protected int $id;
-    protected ReferencedSample $referencedSample;
-    protected string $text;
-    protected bool $boolean;
-
-    protected function setPropertyDefaultValue(): void
-    {
-        
-    }
-
-    protected function setEncryptedProperties(): void
-    {
-        
-    }
-
-}
+require_once __DIR__ . '/../Config/config.php';
+require_once __DIR__ . '/../Autoload/autoload.php';

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+The MIT License
+
+Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="/bootstrap.php"
+         colors="true"
+         cacheResult="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false">
+    <testsuites>
+        <testsuite name="Application Test Suite">
+            <directory suffix="Test.php">./Core</directory>
+        </testsuite>
+    </testsuites>
+    <coverage cacheDirectory="./report"
+              includeUncoveredFiles="true"
+              processUncoveredFiles="true"
+              pathCoverage="false"
+              ignoreDeprecatedCodeUnits="true"
+              disableCodeCoverageIgnore="true">
+        <include>
+            <directory suffix=".php">../Autoload</directory>
+            <directory suffix=".php">../Config</directory>
+            <directory suffix=".php">../Core</directory>
+            <directory suffix=".php">../Orm</directory>
+        </include>
+        <report>
+            <clover outputFile="coverage-report/clover.xml"/>
+            <cobertura outputFile="coverage-report/cobertura.xml"/>
+            <crap4j outputFile="coverage-report/crap4j.xml" threshold="50"/>
+            <html outputDirectory="coverage-report/html-coverage" lowUpperBound="50" highLowerBound="90"/>
+            <php outputFile="coverage-report/coverage.php"/>
+            <text outputFile="coverage-report/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="coverage-report/xml-coverage"/>
+        </report>
+    </coverage>
+    <php>
+        <server name="HTTP_USER_AGENT" value="" />
+        <server name="HTTP_HOST" value="localhost" />
+        <server name="QUERY_STRING" value="" />
+        <server name="REMOTE_ADDR" value="" />
+        <server name="REQUEST_METHOD" value="POST" />
+        <server name="REQUEST_URI" value="/" />
+        <server name="SERVER_PROTOCOL" value="" />
+        <const name="Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT" value="400"/>
+        <const name="Config\READFILE_MAX_BITES_LIMIT" value="1000"/>
+    </php>
+</phpunit>

@@ -24,30 +24,35 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Entities;
+namespace SismaFramework\Tests\Core\HelperClasses;
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\NotationManager;
 
 /**
+ * Description of NotationManagertest
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-
-class BaseSample extends BaseEntity
+class NotationManagerTest extends TestCase
 {
-
-    protected int $id;
-    protected ReferencedSample $referencedSample;
-    protected string $text;
-    protected bool $boolean;
-
-    protected function setPropertyDefaultValue(): void
+    private \ReflectionClass $reflectionNotationManager;
+    
+    public function testConvertToStudlyCaps()
     {
-        
+        $result = NotationManager::convertToStudlyCaps('fake-fake-fake');
+        $this->assertEquals('FakeFakeFake', $result);
     }
 
-    protected function setEncryptedProperties(): void
+    public function testConvertToCamelCase()
     {
-        
+        $result = NotationManager::convertToCamelCase('fake-fake-fake');
+        $this->assertEquals('fakeFakeFake', $result);
     }
-
+    
+    public function testConvertToKebabKase()
+    {
+        $result = NotationManager::convertToKebabCase('fakeFakeFake');
+        $this->assertEquals('fake-fake-fake', $result);
+    }
 }

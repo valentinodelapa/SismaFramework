@@ -27,15 +27,17 @@
 namespace SismaFramework\Sample\Forms;
 
 use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Sample\Entities\ReferencedSample;
+use SismaFramework\Core\Enumerations\FilterType;
 
 /**
- * Description of FakeSampleForm
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class FakeSampleForm extends BaseForm
+class ReferencedSampleFromBaseSampleForm extends BaseForm
 {
-    
+
+    protected const ENTITY_CLASS_NAME = ReferencedSample::class;
+
     protected function customFilter(): void
     {
         
@@ -53,7 +55,7 @@ class FakeSampleForm extends BaseForm
 
     protected function setFilterFieldsMode(): void
     {
-        
+        $this->addFilterFieldMode('text', FilterType::isString);
     }
 
 }

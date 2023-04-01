@@ -35,6 +35,7 @@ use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Cache;
@@ -50,7 +51,6 @@ abstract class BaseForm
 
     protected const ENTITY_CLASS_NAME = BaseEntity::class;
 
-    private array $sismaCollectionPropertyName = [];
     protected bool $filterResult = true;
     protected BaseEntity $entity;
     protected Request $request;
@@ -58,9 +58,12 @@ abstract class BaseForm
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     protected array $filterErrors = [];
+    private array $sismaCollectionPropertyName = [];
+    private ?BaseAdapter $customAdapter = null;
 
-    public function __construct(?BaseEntity $baseEntity = null)
+    public function __construct(?BaseEntity $baseEntity = null, ?BaseAdapter $customAdapter = null)
     {
+        $this->customAdapter = $customAdapter;
         $this->checkEntityClassNameIsOverride();
         $this->embedEntity($baseEntity);
         $this->setFilterFieldsMode();
@@ -73,21 +76,19 @@ abstract class BaseForm
         }
     }
 
-    private function embedEntity(?BaseEntity $baseEntity): void
+    private function embedEntity(?BaseEntity $baseEntity, ?BaseAdapter $adapter = null): void
     {
         $entityClassName = static::ENTITY_CLASS_NAME;
         if ($baseEntity instanceof $entityClassName) {
             $this->entity = $baseEntity;
         } elseif ($baseEntity === null) {
-            $this->entity = new $entityClassName();
+            $this->entity = new $entityClassName($this->customAdapter);
         } else {
             throw new InvalidArgumentException();
         }
     }
 
     abstract protected function setFilterFieldsMode(): void;
-
-    abstract protected function setEntityFromForm(): void;
 
     public function handleRequest(Request $request): void
     {
@@ -97,6 +98,8 @@ abstract class BaseForm
     }
 
     abstract protected function injectRequest(): void;
+
+    abstract protected function setEntityFromForm(): void;
 
     public function isValid(): bool
     {
@@ -111,8 +114,9 @@ abstract class BaseForm
         $reflectionEntity = new \ReflectionClass($this->entity);
         $reflectionProperties = $reflectionEntity->getProperties();
         foreach ($reflectionProperties as $property) {
-            if (($property->class === get_class($this->entity)) && (($this->entity->isPrimaryKey($property->name) === false) ||
-                    (\Config\PRIMARY_KEY_PASS_ACCEPTED) && array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== ''))) {
+            if (array_key_exists($property->name, $this->entityFromForm)) {
+                $this->switchFormPropertyType($property->name);
+            } elseif (($property->class === get_class($this->entity)) && (($this->entity->isPrimaryKey($property->name) === false) || (\Config\PRIMARY_KEY_PASS_ACCEPTED))) {
                 $this->parseProperty($property);
                 $this->switchFilter($property->name);
             }
@@ -137,7 +141,7 @@ abstract class BaseForm
                 array_push($this->sismaCollectionPropertyName, $propertyName);
             }
         } else {
-            $currentRequest->request = $this->request->request[$propertyName];
+            $currentRequest->request = $this->request->request[$propertyName] ?? [];
             $this->switchForm($this->entityFromForm[$propertyName], $currentRequest, $this->entityData->{$propertyName}, $this->filterErrors[$propertyName . "Error"]);
         }
     }
@@ -232,7 +236,7 @@ abstract class BaseForm
 
     private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed, ?self &$entityFromForm, ?array &$filterErrors): void
     {
-        $entityFromForm = new $formPropertyClass($entityToEmbed);
+        $entityFromForm = new $formPropertyClass($entityToEmbed, $this->customAdapter);
         $filterErrors = $entityFromForm->returnFilterErrors();
     }
 

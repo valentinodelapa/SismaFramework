@@ -24,30 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Entities;
+namespace SismaFramework\Tests\Core\HelperClasses;
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * Description of FixturesManagerTest
+ *
+ * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
  */
-
-class BaseSample extends BaseEntity
+class FixturesManagerTest extends TestCase
 {
-
-    protected int $id;
-    protected ReferencedSample $referencedSample;
-    protected string $text;
-    protected bool $boolean;
-
-    protected function setPropertyDefaultValue(): void
-    {
-        
-    }
-
-    protected function setEncryptedProperties(): void
-    {
-        
-    }
-
+    
 }

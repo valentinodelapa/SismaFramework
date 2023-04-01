@@ -1,0 +1,1 @@
+{"SismaFramework\\Sample\\Entities\\ReferencedSample":{"baseSample":{"referencedSample":"SismaFramework\\Sample\\Entities\\BaseSample"}},"SismaFramework\\Sample\\Entities\\FakeReferencedSample":{"fakeBaseSample":{"fakeReferencedSample":"SismaFramework\\Sample\\Entities\\FakeBaseSample"}}}
