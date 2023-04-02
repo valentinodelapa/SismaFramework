@@ -94,7 +94,7 @@ abstract class BaseModel
 
     protected function initQuery(): Query
     {
-        $query = $this->entityName::initQuery();
+        $query = $this->entityName::initQuery($this->adapter);
         return $query;
     }
 

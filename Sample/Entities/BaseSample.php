@@ -37,8 +37,11 @@ class BaseSample extends BaseEntity
 
     protected int $id;
     protected ReferencedSample $referencedSample;
+    protected ReferencedSample $referencedSampleTwo;
+    protected OtherReferencedSample $otherReferencedSample;
     protected string $text;
     protected bool $boolean;
+    protected ?string $nullableSecureString = null;
 
     protected function setPropertyDefaultValue(): void
     {

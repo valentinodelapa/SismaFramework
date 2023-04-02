@@ -38,6 +38,7 @@ use SismaFramework\Core\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Cache;
 
 /**
@@ -58,7 +59,7 @@ abstract class BaseForm
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     protected array $filterErrors = [];
-    private array $sismaCollectionPropertyName = [];
+    private array $sismaCollectionToResolve = [];
     private ?BaseAdapter $customAdapter = null;
 
     public function __construct(?BaseEntity $baseEntity = null, ?BaseAdapter $customAdapter = null)
@@ -76,7 +77,7 @@ abstract class BaseForm
         }
     }
 
-    private function embedEntity(?BaseEntity $baseEntity, ?BaseAdapter $adapter = null): void
+    private function embedEntity(?BaseEntity $baseEntity): void
     {
         $entityClassName = static::ENTITY_CLASS_NAME;
         if ($baseEntity instanceof $entityClassName) {
@@ -105,48 +106,58 @@ abstract class BaseForm
     {
         $this->entityData = new StandardEntity();
         if (is_a($this->entity, ReferencedEntity::class)) {
-            foreach (Cache::getForeignKeyData($this->entity) as $propertyName => $propertyType) {
-                if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX, $this->request->request)) {
-                    $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX);
-                }
-            }
+            $this->parseCollectionProperties();
         }
-        $reflectionEntity = new \ReflectionClass($this->entity);
-        $reflectionProperties = $reflectionEntity->getProperties();
-        foreach ($reflectionProperties as $property) {
-            if (array_key_exists($property->name, $this->entityFromForm)) {
-                $this->switchFormPropertyType($property->name);
-            } elseif (($property->class === get_class($this->entity)) && (($this->entity->isPrimaryKey($property->name) === false) || (\Config\PRIMARY_KEY_PASS_ACCEPTED))) {
-                $this->parseProperty($property);
-                $this->switchFilter($property->name);
-            }
-        }
+        $this->parseStandardProperties();
         $this->customFilter();
         Debugger::setFormFilter($this->filterErrors);
         return $this->filterResult;
     }
 
-    private function switchFormPropertyType(string $propertyName): void
+    private function parseCollectionProperties(): void
     {
-        $currentRequest = clone $this->request;
-        $this->entityData->{$propertyName} = new StandardEntity();
-        $this->filterErrors[$propertyName . "Error"] = [];
-        if ($this->entity->checkCollectionExists($propertyName)) {
-            $this->entityData->{$propertyName} = new SismaCollection(StandardEntity::class);
-            foreach ($this->request->request[$propertyName] as $key => $value) {
-                $currentRequest->request = $value;
-                $this->entityData->{$propertyName}[$key] = new StandardEntity();
-                $this->filterErrors[$propertyName . "Error"][$key] = [];
-                $this->switchForm($this->entityFromForm[$propertyName][$key], $currentRequest, $this->entityData->{$propertyName}[$key], $this->filterErrors[$propertyName . "Error"][$key]);
-                array_push($this->sismaCollectionPropertyName, $propertyName);
+        foreach (Cache::getForeignKeyData($this->entity) as $propertyName => $propertyData) {
+            if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX, $this->request->request)) {
+                $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX);
+            } elseif (count($propertyData) > 1) {
+                $this->parseCollectionWithMultipleReferencedForeignKey($propertyName, $propertyData);
+            } elseif ($this->isSelfReferencedProperty($propertyData)) {
+                $this->switchFormPropertyType(SelfReferencedEntity::SON_COLLECTION_PROPERTY_NAME);
             }
-        } else {
-            $currentRequest->request = $this->request->request[$propertyName] ?? [];
-            $this->switchForm($this->entityFromForm[$propertyName], $currentRequest, $this->entityData->{$propertyName}, $this->filterErrors[$propertyName . "Error"]);
         }
     }
 
-    private function switchForm(self $entityFromForm, Request $request, StandardEntity &$entityData, array &$filterErrors): void
+    private function switchFormPropertyType(string $propertyName): void
+    {
+        $this->entityData->{$propertyName} = new StandardEntity();
+        $this->filterErrors[$propertyName . "Error"] = [];
+        if ($this->entity->checkCollectionExists($propertyName)) {
+            $this->switchFormOfCollection($propertyName);
+        } else {
+            $currentRequest = new Request();
+            $currentRequest->request = $this->request->request[$propertyName] ?? [];
+            $currentForm = $this->entityFromForm[$propertyName];
+            $this->entityData->{$propertyName} = $this->switchForm($currentForm, $currentRequest);
+            $this->filterErrors[$propertyName . "Error"] = $currentForm->returnFilterErrors();
+        }
+    }
+
+    private function switchFormOfCollection(string $propertyName): void
+    {
+        $this->entityData->{$propertyName} = new SismaCollection(StandardEntity::class);
+        if (isset($this->request->request[$propertyName])) {
+            foreach ($this->request->request[$propertyName] as $key => $value) {
+                $currentRequest = new Request();
+                $currentRequest->request = $value;
+                $currentForm = $this->entityFromForm[$propertyName][$key];
+                $this->entityData->{$propertyName}[$key] = $this->switchForm($currentForm, $currentRequest);
+                $this->filterErrors[$propertyName . "Error"][$key] = $currentForm->returnFilterErrors();
+                array_push($this->sismaCollectionToResolve, $propertyName);
+            }
+        }
+    }
+
+    private function switchForm(self $entityFromForm, Request $request): StandardEntity|BaseEntity
     {
         $entityFromForm->handleRequest($request);
         if ($entityFromForm->isValid()) {
@@ -155,10 +166,34 @@ abstract class BaseForm
             $entityData = $entityFromForm->getEntityDataToStandardEntity();
             $this->filterResult = false;
         }
-        $filterErrors = $entityFromForm->returnFilterErrors();
+        return $entityData;
     }
 
-    private function parseProperty(\ReflectionProperty $property): void
+    private function parseStandardProperties(): void
+    {
+        $reflectionEntity = new \ReflectionClass($this->entity);
+        $reflectionProperties = $reflectionEntity->getProperties();
+        foreach ($reflectionProperties as $property) {
+            if (array_key_exists($property->name, $this->entityFromForm)) {
+                $this->switchFormPropertyType($property->name);
+            } elseif ($this->isFieldProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property)) {
+                $this->parseSingleStandardProperty($property);
+                $this->switchFilter($property->name);
+            }
+        }
+    }
+
+    private function isFieldProperty(\ReflectionProperty $property): bool
+    {
+        return ($property->class === get_class($this->entity));
+    }
+
+    private function isNotPrimaryKeyOrPassIsActive(\ReflectionProperty $property): bool
+    {
+        return (($this->entity->isPrimaryKey($property->name) === false) || (\Config\PRIMARY_KEY_PASS_ACCEPTED));
+    }
+
+    private function parseSingleStandardProperty(\ReflectionProperty $property): void
     {
         if (array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== '')) {
             $reflectionType = $property->getType();
@@ -182,39 +217,83 @@ abstract class BaseForm
     private function switchFilter(string $propertyName): void
     {
         if (array_key_exists($propertyName, $this->filterFiledsMode) && property_exists($this->entityData, $propertyName)) {
-            $this->filterErrors[$propertyName . "Error"] = false;
-            $filterFunction = $this->filterFiledsMode[$propertyName]['filterType']->value;
-            $conditionOne = Filter::$filterFunction($this->entityData->$propertyName);
-            $conditionTwo = (($this->filterFiledsMode[$propertyName]['allowNull'] === true) && ($this->entityData->$propertyName === null));
-            if (($conditionOne === false) && ($conditionTwo === false)) {
+            if ($this->filterHasFailed($propertyName) && ($this->isNullButNotNullable($propertyName))) {
                 $this->filterResult = false;
                 $this->filterErrors[$propertyName . "Error"] = true;
+            } else {
+                $this->filterErrors[$propertyName . "Error"] = false;
             }
+        }
+    }
+
+    private function filterHasFailed(string $propertyName): bool
+    {
+        $filterFunction = $this->filterFiledsMode[$propertyName]['filterType']->value;
+        return !Filter::$filterFunction($this->entityData->$propertyName);
+    }
+
+    private function isNullButNotNullable(string $propertyName): bool
+    {
+        if ($this->entityData->$propertyName === null) {
+            return !$this->filterFiledsMode[$propertyName]['allowNull'];
+        } else {
+            return false;
+        }
+    }
+
+    private function parseCollectionWithMultipleReferencedForeignKey(string $propertyName, array $propertyData): void
+    {
+        foreach (array_keys($propertyData) as $foreignKeyPropertyName) {
+            $parsedForeignKeyPropertyName = ucfirst($foreignKeyPropertyName);
+            if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX . $parsedForeignKeyPropertyName, $this->request->request)) {
+                $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX . $parsedForeignKeyPropertyName);
+            }
+        }
+    }
+
+    private function isSelfReferencedProperty(array $propertyData): bool
+    {
+        $foreignKeyPropertyName = array_key_first($propertyData);
+        $referentEntity = $propertyData[$foreignKeyPropertyName];
+        if (str_contains($foreignKeyPropertyName, SelfReferencedEntity::PARENT_PREFIX_PROPERTY_NAME) && ($referentEntity === get_class($this->entity))) {
+            return true;
+        } else {
+            return false;
         }
     }
 
     protected function addEntityFromForm(string $propertyName, string $formPropertyClass, int $baseCollectionFormFromNumber = 0): self
     {
         if ($this->entity->checkCollectionExists($propertyName)) {
-            if ($this->entity->getCollectionDataInformation($propertyName) === $formPropertyClass::ENTITY_CLASS_NAME) {
-                $entityCollectonToEmbed = $this->entity->$propertyName;
-                $sismaCollectionPropertyKeys = isset($this->request->request[$propertyName]) ? array_keys($this->request->request[$propertyName]) : $this->getBaseCollectionFormKeys($baseCollectionFormFromNumber);
-                $this->generateSismaCollectionProperty($sismaCollectionPropertyKeys, $formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
+            $this->addEntityCollectionFromForm($propertyName, $formPropertyClass, $baseCollectionFormFromNumber);
+        } elseif (property_exists($this->entity, $propertyName)) {
+            $this->addEntityFromFormViaForeignKey($propertyName, $formPropertyClass);
+        }
+        return $this;
+    }
+
+    private function addEntityCollectionFromForm(string $propertyName, string $formPropertyClass, int $baseCollectionFormFromNumber): void
+    {
+        if ($this->entity->getCollectionDataInformation($propertyName) === $formPropertyClass::ENTITY_CLASS_NAME) {
+            $entityCollectonToEmbed = $this->entity->$propertyName;
+            $sismaCollectionPropertyKeys = isset($this->request->request[$propertyName]) ? array_keys($this->request->request[$propertyName]) : $this->getBaseCollectionFormKeys($baseCollectionFormFromNumber);
+            $this->generateSismaCollectionProperty($sismaCollectionPropertyKeys, $formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
+        } else {
+            throw new InvalidArgumentException();
+        }
+    }
+
+    private function addEntityFromFormViaForeignKey(string $propertyName, string $formPropertyClass): void
+    {
+        $reflectionEntity = new \ReflectionClass($this->entity);
+        $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
+        if ($reflectionEntityProperty->class === get_class($this->entity)) {
+            if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
+                $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
             }
-        } elseif (property_exists($this->entity, $propertyName)) {
-            $reflectionEntity = new \ReflectionClass($this->entity);
-            $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
-            if ($reflectionEntityProperty->class === get_class($this->entity)) {
-                if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
-                    $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
-                } else {
-                    throw new InvalidArgumentException();
-                }
-            }
         }
-        return $this;
     }
 
     private function getBaseCollectionFormKeys(int $baseCollectionFormFromNumber): array
@@ -256,7 +335,7 @@ abstract class BaseForm
     public function resolveEntity(): BaseEntity
     {
         foreach ($this->entityData as $propertyName => $value) {
-            if (in_array($propertyName, $this->sismaCollectionPropertyName)) {
+            if (in_array($propertyName, $this->sismaCollectionToResolve)) {
                 $this->resolveSismaCollection($propertyName);
             } else {
                 $this->entity->$propertyName = $value;

@@ -24,38 +24,28 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Forms;
+namespace SismaFramework\Sample\Models;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Sample\Entities\WrongEntity;
+use SismaFramework\Sample\Entities\SelfReferencedSample;
+use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
+use SismaFramework\Orm\HelperClasses\Query;
 
 /**
- * Description of FakeBaseSampleForm
+ * Description of SelfReferencedSampleModel
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class FakeBaseSampleFormFromReferencedSampleForm extends BaseForm
+class SelfReferencedSampleModel extends SelfReferencedModel
 {
-    protected const ENTITY_CLASS_NAME = WrongEntity::class;
     
-    protected function customFilter(): void
+    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
         
     }
 
-    protected function injectRequest(): void
+    public function implementEmbeddedEntity(): void
     {
-        
-    }
-
-    protected function setEntityFromForm(): void
-    {
-        
-    }
-
-    protected function setFilterFieldsMode(): void
-    {
-        
+        $this->entity = new SelfReferencedSample($this->adapter);
     }
 
 }

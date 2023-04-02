@@ -51,7 +51,7 @@ class FakeReferencedSampleForm extends BaseForm
 
     protected function setEntityFromForm(): void
     {
-        $this->addEntityFromForm('fakeBaseSampleCollection', FakeBaseSampleFormFromReferencedSampleForm::class);
+        $this->addEntityFromForm('fakeBaseSampleCollection', FakeBaseSampleFormFromOtherForm::class);
         
     }
 

@@ -29,13 +29,14 @@ class BaseSampleForm extends BaseForm
 
     protected function setEntityFromForm(): void
     {
-        $this->addEntityFromForm('referencedSample', ReferencedSampleFromBaseSampleForm::class);
+        $this->addEntityFromForm('referencedSample', ReferencedSampleFormFromOtherForm::class);
     }
 
     protected function setFilterFieldsMode(): void
     {
         $this->addFilterFieldMode('text', FilterType::isString)
-                ->addFilterFieldMode('boolean', FilterType::isBoolean);
+                ->addFilterFieldMode('boolean', FilterType::isBoolean)
+                ->addFilterFieldMode('nullableSecureString', FilterType::isSecurePassword, [], true);
     }
 
 }

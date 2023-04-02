@@ -37,8 +37,8 @@ use SismaFramework\Orm\HelperClasses\Cache;
 abstract class SelfReferencedEntity extends ReferencedEntity
 {
 
-    private const PARENT_PREFIX_PROPERTY_NAME = 'parent';
-    private const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
+    public const PARENT_PREFIX_PROPERTY_NAME = 'parent';
+    public const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
 
     public function __get($name)
     {

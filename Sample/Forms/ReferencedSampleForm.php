@@ -50,12 +50,14 @@ class ReferencedSampleForm extends BaseForm
 
     protected function setEntityFromForm(): void
     {
-        $this->addEntityFromForm('baseSampleCollection', BaseSampleFormFromReferencedSampleForm::class);
+        $this->addEntityFromForm('baseSampleCollectionReferencedSample', BaseSampleFormFromOtherForm::class)
+                ->addEntityFromForm('baseSampleCollectionReferencedSampleTwo', BaseSampleFormFromOtherForm::class, 1);
     }
 
     protected function setFilterFieldsMode(): void
     {
-        $this->addFilterFieldMode('text', FilterType::isString);
+        $this->addFilterFieldMode('text', FilterType::isString)
+                ->addFilterFieldMode('nullableInteger', FilterType::isInteger, [], true);
     }
 
 }

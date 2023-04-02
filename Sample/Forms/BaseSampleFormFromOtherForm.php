@@ -7,7 +7,7 @@ use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Sample\Entities\BaseSample;
 
-class BaseSampleFormFromReferencedSampleForm extends BaseForm
+class BaseSampleFormFromOtherForm extends BaseForm
 {
 
     protected const ENTITY_CLASS_NAME = BaseSample::class;

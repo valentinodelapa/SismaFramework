@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,39 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Entities;
+namespace SismaFramework\Sample\Forms;
 
-use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Sample\Entities\OtherReferencedSample;
+use SismaFramework\Core\Enumerations\FilterType;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class ReferencedSample extends ReferencedEntity
+class OtherReferencedSampleForm extends BaseForm
 {
-    protected int $id;
-    protected string $text;
-    protected ?int $nullableInteger = null;
 
-    protected function setPropertyDefaultValue(): void
+    protected const ENTITY_CLASS_NAME = OtherReferencedSample::class;
+
+    protected function customFilter(): void
     {
         
     }
 
-    protected function setEncryptedProperties(): void
+    protected function injectRequest(): void
     {
         
+    }
+
+    protected function setEntityFromForm(): void
+    {
+        $this->addEntityFromForm('baseSampleCollection', BaseSampleFormFromOtherForm::class);
+    }
+
+    protected function setFilterFieldsMode(): void
+    {
+        $this->addFilterFieldMode('text', FilterType::isString)
+                ->addFilterFieldMode('nullableInteger', FilterType::isInteger, [], true);
     }
 
 }

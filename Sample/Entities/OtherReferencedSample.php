@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,20 +29,21 @@ namespace SismaFramework\Sample\Entities;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
 /**
+ * Description of ReferencedSampleTwo
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class ReferencedSample extends ReferencedEntity
+class OtherReferencedSample extends ReferencedEntity
 {
     protected int $id;
     protected string $text;
-    protected ?int $nullableInteger = null;
-
-    protected function setPropertyDefaultValue(): void
+    
+    protected function setEncryptedProperties(): void
     {
         
     }
 
-    protected function setEncryptedProperties(): void
+    protected function setPropertyDefaultValue(): void
     {
         
     }

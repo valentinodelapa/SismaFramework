@@ -27,17 +27,16 @@
 namespace SismaFramework\Sample\Forms;
 
 use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Sample\Entities\WrongEntity;
+use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Sample\Entities\SelfReferencedSample;
 
 /**
- * Description of FakeReferencedSampleForm
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class FakeReferencedSampleFormFromBaseSampleForm extends BaseForm
+class SelfReferencedSampleForm extends BaseForm
 {
 
-    protected const ENTITY_CLASS_NAME = WrongEntity::class;
+    protected const ENTITY_CLASS_NAME = SelfReferencedSample::class;
 
     protected function customFilter(): void
     {
@@ -51,12 +50,12 @@ class FakeReferencedSampleFormFromBaseSampleForm extends BaseForm
 
     protected function setEntityFromForm(): void
     {
-        
+        $this->addEntityFromForm('sonCollection', self::class);
     }
 
     protected function setFilterFieldsMode(): void
     {
-        
+        $this->addFilterFieldMode('text', FilterType::isString);
     }
 
 }

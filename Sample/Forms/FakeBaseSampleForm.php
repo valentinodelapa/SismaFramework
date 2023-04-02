@@ -50,7 +50,7 @@ class FakeBaseSampleForm extends BaseForm
 
     protected function setEntityFromForm(): void
     {
-        $this->addEntityFromForm('fakeReferencedSample', ReferencedSampleFromBaseSampleForm::class);
+        $this->addEntityFromForm('fakeReferencedSample', FakeReferencedSampleFormFromOtherForm::class);
     }
 
     protected function setFilterFieldsMode(): void
