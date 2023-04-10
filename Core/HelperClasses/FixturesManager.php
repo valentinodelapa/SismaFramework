@@ -26,6 +26,8 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -35,6 +37,12 @@ class FixturesManager
 
     private array $fixturesArray;
     private array $entitiesArray = [];
+    private ?BaseAdapter $customAdapter = null;
+    
+    public function __construct(?BaseAdapter $customAdapter = null)
+    {
+        $this->customAdapter = $customAdapter;
+    }
 
     public function run()
     {
@@ -65,11 +73,11 @@ class FixturesManager
     private function executeFixture($fixture): void
     {
         if ($this->fixturesArray[$fixture] === false) {
-            $fixtureInstance = new $fixture();
+            $fixtureInstance = new $fixture($this->customAdapter);
             if (count($fixtureInstance->getDependencies()) > 0) {
                 $this->executeFixturesArray($fixtureInstance->getDependencies());
             }
-            $fixtureInstance->execute($this->entitiesArray);
+            $this->entitiesArray[$fixture] = $fixtureInstance->execute($this->entitiesArray);
             $this->fixturesArray[$fixture] = true;
         }
     }

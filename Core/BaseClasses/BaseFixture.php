@@ -26,8 +26,9 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\FixtureException;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 
 /**
  *
@@ -39,18 +40,20 @@ abstract class BaseFixture
     private BaseEntity $entity;
     private array $entitiesArray;
     private array $dependenciesArray = [];
+    protected ?BaseAdapter $customAdapter = null;
 
-    public function __construct()
+    public function __construct(?BaseAdapter $customAdapter = null)
     {
+        $this->customAdapter = $customAdapter;
         $this->setDependencies();
     }
 
-    public function execute(array &$entitiesArray): void
+    public function execute(array &$entitiesArray): BaseEntity
     {
         $this->entitiesArray = $entitiesArray;
         $this->setEntity();
         $this->entity->save();
-        $entitiesArray[get_called_class()] = $this->getEmbeddedEntity();
+        return $this->entity;
     }
 
     abstract public function setEntity(): void;
@@ -62,6 +65,7 @@ abstract class BaseFixture
 
     protected function getEntityByFixtureName(string $fixtureName): BaseEntity
     {
+        
         if (in_array($fixtureName, $this->dependenciesArray)) {
             return $this->entitiesArray[$fixtureName];
         } else {

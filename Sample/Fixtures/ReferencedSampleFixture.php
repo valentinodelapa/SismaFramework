@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,17 +26,14 @@
 
 namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Core\BaseClasses\BaseFixture;
+use SismaFramework\Sample\Entities\ReferencedSample;
 
 /**
- * Description of SampleFixture
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SampleFixture extends BaseFixture
+class ReferencedSampleFixture extends BaseFixture
 {
-
     protected function setDependencies(): void
     {
         
@@ -44,7 +41,8 @@ class SampleFixture extends BaseFixture
 
     public function setEntity(): void
     {
-        $this->addEntity(new BaseSample());
+        $referencedSample = new ReferencedSample($this->customAdapter);
+        $referencedSample->text = 'referenced sample text';
     }
 
 }
