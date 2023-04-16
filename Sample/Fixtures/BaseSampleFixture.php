@@ -27,8 +27,6 @@
 namespace SismaFramework\Sample\Fixtures;
 
 use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\OtherReferencedSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Core\BaseClasses\BaseFixture;
 
 /**

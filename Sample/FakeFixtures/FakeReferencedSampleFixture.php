@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Fixtures;
+namespace SismaFramework\Sample\FakeFixtures;
 
 use SismaFramework\Core\BaseClasses\BaseFixture;
 use SismaFramework\Sample\Entities\FakeReferencedSample;

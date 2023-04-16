@@ -24,16 +24,19 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Fixtures;
+namespace SismaFramework\Sample\FakeFixtures;
 
 use SismaFramework\Core\BaseClasses\BaseFixture;
-use SismaFramework\Sample\Entities\OtherReferencedSample;
+use SismaFramework\Sample\Entities\FakeBaseSample;
 
 /**
+ * Description of FakeBaseSampleFixture
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class OtherReferencedSampleFixture extends BaseFixture
+class FakeBaseSampleFixture extends BaseFixture
 {
+    
     protected function setDependencies(): void
     {
         
@@ -41,9 +44,9 @@ class OtherReferencedSampleFixture extends BaseFixture
 
     public function setEntity(): void
     {
-        $otherReferencedSample = new OtherReferencedSample($this->customAdapter);
-        $otherReferencedSample->text = 'other referenced sample text';
-        $this->addEntity($otherReferencedSample);
+        $fakeBaseSample = new FakeBaseSample($this->customAdapter);
+        $fakeBaseSample->fakeReferencedSample =  $this->getEntityByFixtureName(FakeReferencedSampleFixture::class);
+        $this->addEntity($fakeBaseSample);
     }
 
 }

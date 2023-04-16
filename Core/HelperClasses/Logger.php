@@ -58,7 +58,7 @@ class Logger
         $logRows = file(\Config\LOG_PATH);
         $maxRows = \Config\DEVELOPMENT_ENVIRONMENT ? \Config\LOG_DEVELOPEMENT_MAX_ROW : \Config\LOG_PRODUCTION_MAX_ROW;
         if (count($logRows) > $maxRows) {
-            $offset = $maxRows - count($logRows);
+            $offset = $maxRows - count($logRows) - 1;
             $logRows = array_slice($logRows, $offset);
             file_put_contents(\Config\LOG_PATH, $logRows);
         }

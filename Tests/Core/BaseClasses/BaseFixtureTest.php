@@ -30,13 +30,12 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\FixtureException;
 use SismaFramework\Orm\Adapters\AdapterMysql;
 use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\FakeBaseSample;
 use SismaFramework\Sample\Entities\FakeReferencedSample;
 use SismaFramework\Sample\Entities\OtherReferencedSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
+use SismaFramework\Sample\FakeFixtures\FakeBaseSampleFixture;
+use SismaFramework\Sample\FakeFixtures\FakeReferencedSampleFixture;
 use SismaFramework\Sample\Fixtures\BaseSampleFixture;
-use SismaFramework\Sample\Fixtures\FakeBaseSampleFixture;
-use SismaFramework\Sample\Fixtures\FakeReferencedSampleFixture;
 use SismaFramework\Sample\Fixtures\OtherReferencedSampleFixture;
 use SismaFramework\Sample\Fixtures\ReferencedSampleFixture;
 

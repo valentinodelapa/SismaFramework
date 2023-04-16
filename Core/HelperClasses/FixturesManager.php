@@ -47,7 +47,18 @@ class FixturesManager
     public function run()
     {
         $this->getFixturesArray();
-        $this->executeFixturesArray($this->fixturesArray);
+        $this->executeFixturesArray(array_keys($this->fixturesArray));
+    }
+    
+    public function extecuted():bool
+    {
+        $result = true;
+        foreach ($this->fixturesArray as $fixture) {
+            if($fixture === false){
+                $result = false;
+            }
+        }
+        return $result;
     }
 
     private function getFixturesArray(): void
@@ -65,7 +76,7 @@ class FixturesManager
 
     private function executeFixturesArray(array $fixturesArray): void
     {
-        foreach (array_keys($fixturesArray) as $fixture) {
+        foreach ($fixturesArray as $fixture) {
             $this->executeFixture($fixture);
         }
     }

@@ -24,26 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Fixtures;
-
-use SismaFramework\Core\BaseClasses\BaseFixture;
-use SismaFramework\Sample\Entities\OtherReferencedSample;
-
-/**
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
- */
-class OtherReferencedSampleFixture extends BaseFixture
-{
-    protected function setDependencies(): void
-    {
-        
-    }
-
-    public function setEntity(): void
-    {
-        $otherReferencedSample = new OtherReferencedSample($this->customAdapter);
-        $otherReferencedSample->text = 'other referenced sample text';
-        $this->addEntity($otherReferencedSample);
-    }
-
-}
+$locale = [
+    "common" => [
+    ],
+    "pages" => [
+        "common" => [
+        ],
+    ],
+];

@@ -51,13 +51,13 @@ THE SOFTWARE.
             <directory suffix=".php">../Orm</directory>
         </include>
         <report>
-            <clover outputFile="coverage-report/clover.xml"/>
-            <cobertura outputFile="coverage-report/cobertura.xml"/>
-            <crap4j outputFile="coverage-report/crap4j.xml" threshold="50"/>
-            <html outputDirectory="coverage-report/html-coverage" lowUpperBound="50" highLowerBound="90"/>
-            <php outputFile="coverage-report/coverage.php"/>
-            <text outputFile="coverage-report/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
-            <xml outputDirectory="coverage-report/xml-coverage"/>
+            <clover outputFile="coverage-report/clover.xml" />
+            <cobertura outputFile="coverage-report/cobertura.xml" />
+            <crap4j outputFile="coverage-report/crap4j.xml" threshold="50" />
+            <html outputDirectory="coverage-report/html-coverage" lowUpperBound="50" highLowerBound="90" />
+            <php outputFile="coverage-report/coverage.php" />
+            <text outputFile="coverage-report/coverage.txt" showUncoveredFiles="false" showOnlySummary="true" />
+            <xml outputDirectory="coverage-report/xml-coverage" />
         </report>
     </coverage>
     <php>
@@ -68,7 +68,8 @@ THE SOFTWARE.
         <server name="REQUEST_METHOD" value="POST" />
         <server name="REQUEST_URI" value="/" />
         <server name="SERVER_PROTOCOL" value="" />
-        <const name="Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT" value="400"/>
-        <const name="Config\READFILE_MAX_BITES_LIMIT" value="1000"/>
+        <const name="Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT" value="400" />
+        <const name="Config\LOG_DEVELOPEMENT_MAX_ROW" value="2" />
+        <const name="Config\READFILE_MAX_BITES_LIMIT" value="1000" />
     </php>
 </phpunit>

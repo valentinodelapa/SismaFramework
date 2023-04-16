@@ -30,8 +30,6 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\NotationManager;
 
 /**
- * Description of NotationManagertest
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 class NotationManagerTest extends TestCase

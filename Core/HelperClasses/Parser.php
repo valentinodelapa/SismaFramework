@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
@@ -37,6 +38,13 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
  */
 class Parser
 {
+
+    private static ?BaseAdapter $customAdapter = null;
+
+    public static function setCustomAdapter(BaseAdapter $customAdapter): void
+    {
+        self::$customAdapter = $customAdapter;
+    }
 
     public static function parseValue(\ReflectionNamedType $reflectionNamedType, null|string|array $value, $parseEntity = true): mixed
     {
@@ -52,10 +60,10 @@ class Parser
                 return intval($value);
             }
         } elseif (enum_exists($reflectionNamedType->getName())) {
-            return self::parseEnumeration($reflectionNamedType->getName(), $value, $reflectionNamedType->allowsNull());
+            return self::parseEnumeration($reflectionNamedType->getName(), $value);
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
             return new SismaDateTime($value);
-        } elseif ($reflectionNamedType->getName() === 'array') {
+        } elseif (($reflectionNamedType->getName() === 'array') && is_array($value)) {
             return $value;
         } else {
             throw new InvalidArgumentException();
@@ -65,7 +73,7 @@ class Parser
     public static function parseEntity(string $entityName, int $value): BaseEntity
     {
         $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
-        $modelInstance = new $modelName();
+        $modelInstance = new $modelName(self::$customAdapter);
         $entity = $modelInstance->getEntityById($value);
         if ($entity instanceof BaseEntity) {
             return $entity;
@@ -74,13 +82,13 @@ class Parser
         }
     }
 
-    public static function parseEnumeration(string $enumerationName, string $value, bool $allowsNull): ?\UnitEnum
+    public static function parseEnumeration(string $enumerationName, string $value): ?\UnitEnum
     {
-        $enumerationValue = $enumerationName::tryFrom($value);
-        if (($enumerationValue === null) && ($allowsNull === false)) {
-            throw new InvalidArgumentException();
+        $enumerationInstance = $enumerationName::tryFrom($value);
+        if (($enumerationInstance instanceof \BackedEnum)) {
+            return $enumerationInstance;
         } else {
-            return $enumerationName::from($value);
+            throw new InvalidArgumentException();
         }
     }
 

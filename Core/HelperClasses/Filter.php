@@ -130,6 +130,8 @@ class Filter
         $result = true;
         $result = (self::isString($value)) ? $result : false;
         $result = (ctype_alnum($value)) ? $result : false;
+        $result = (ctype_alpha($value)) ? false : $result;
+        $result = (ctype_digit($value)) ? false : $result;
         return $result;
     }
 

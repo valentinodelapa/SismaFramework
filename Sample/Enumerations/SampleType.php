@@ -24,26 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Fixtures;
-
-use SismaFramework\Core\BaseClasses\BaseFixture;
-use SismaFramework\Sample\Entities\OtherReferencedSample;
+namespace SismaFramework\Sample\Enumerations;
 
 /**
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class OtherReferencedSampleFixture extends BaseFixture
+enum SampleType: string
 {
-    protected function setDependencies(): void
-    {
-        
-    }
 
-    public function setEntity(): void
-    {
-        $otherReferencedSample = new OtherReferencedSample($this->customAdapter);
-        $otherReferencedSample->text = 'other referenced sample text';
-        $this->addEntity($otherReferencedSample);
-    }
+    case one = 'O';
+    case two = 'T';
 
 }

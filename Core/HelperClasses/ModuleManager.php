@@ -70,6 +70,11 @@ class ModuleManager
         self::$customVisualizationModule = null;
     }
 
+    public static function getCustomVisualizationModule(): ?string
+    {
+        return self::$customVisualizationModule;
+    }
+
     public static function getExistingFilePath(string $path, Resource $resource): string
     {
         if ((empty(self::$customVisualizationModule) === false) && file_exists(\Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {

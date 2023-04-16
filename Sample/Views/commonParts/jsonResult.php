@@ -1,6 +1,6 @@
 <?php
 
-/*
+/* 
  * The MIT License
  *
  * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
@@ -24,29 +24,6 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Fixtures;
+header('Content-Type: application/json');
 
-use SismaFramework\Core\BaseClasses\BaseFixture;
-use SismaFramework\Sample\Entities\FakeBaseSample;
-
-/**
- * Description of FakeBaseSampleFixture
- *
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
- */
-class FakeBaseSampleFixture extends BaseFixture
-{
-    
-    protected function setDependencies(): void
-    {
-        
-    }
-
-    public function setEntity(): void
-    {
-        $fakeBaseSample = new FakeBaseSample($this->customAdapter);
-        $fakeBaseSample->fakeReferencedSample =  $this->getEntityByFixtureName(FakeReferencedSampleFixture::class);
-        $this->addEntity($fakeBaseSample);
-    }
-
-}
+echo $result;
