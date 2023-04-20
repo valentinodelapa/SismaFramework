@@ -7,4 +7,4 @@ Ringraziamo gli autori di SimpleORM per aver condiviso il loro lavoro con la com
 
 Copia della licenza presente nella repository originale è inclusa nella presente cartella radice della componente con indicata notifica di copyright che riportiamo anche di seguito.
 
-Copyright (c) 2015 Davide Airaghi
+Copyright 2015 Davide Airaghi
