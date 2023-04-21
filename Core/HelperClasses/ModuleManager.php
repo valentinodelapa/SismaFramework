@@ -38,7 +38,7 @@ class ModuleManager
 
     private static string $applicationModule = '';
     private static ?string $customVisualizationModule = null;
-    private static bool $customVisualizationFileExists;
+    private static bool $customVisualizationFileExists = false;
 
     public static function getModuleList(): array
     {
@@ -75,9 +75,9 @@ class ModuleManager
         return self::$customVisualizationModule;
     }
 
-    public static function getExistingFilePath(string $path, Resource $resource, $customVisualizationModuleAccepted = true): string
+    public static function getExistingFilePath(string $path, Resource $resource): string
     {
-        if ($customVisualizationModuleAccepted && (empty(self::$customVisualizationModule) === false) && file_exists(\Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+        if ((empty(self::$customVisualizationModule) === false) && file_exists(\Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             self::$customVisualizationFileExists = true;
             return \Config\ROOT_PATH . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } elseif (file_exists(\Config\ROOT_PATH . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
