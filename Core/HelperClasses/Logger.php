@@ -94,5 +94,11 @@ class Logger
         self::createLogDirectory();
         return file(\Config\LOG_PATH);
     }
+    
+    public static function getLogRowNumber():int
+    {
+        self::createLogDirectory();
+        return count(file(\Config\LOG_PATH));
+    }
 
 }

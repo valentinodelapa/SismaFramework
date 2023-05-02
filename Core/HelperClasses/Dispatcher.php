@@ -31,6 +31,7 @@ use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\Exceptions\QueryStringException;
+use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\Router;
@@ -67,13 +68,12 @@ class Dispatcher
     private array $reflectionConstructorArguments;
     private \ReflectionMethod $reflectionAction;
     private array $reflectionActionArguments;
-    
+
     public function __construct()
     {
-        Session::start();
         $this->fixturesManager = new FixturesManager();
     }
-    
+
     public function run()
     {
         Debugger::startExecutionTimeCalculation();

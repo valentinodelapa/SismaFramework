@@ -24,16 +24,18 @@
  * THE SOFTWARE.
  */
 
-namespace Sisma;
+namespace SismaFramework;
 
 use \Exception;
 use SismaFramework\Core\HelperClasses\Dispatcher;
+use SismaFramework\Core\HelperClasses\Session;
 
 try {
 
     require_once(__DIR__ . '/../Config/config.php');
     require_once(__DIR__ . '/../Autoload/autoload.php');
 
+    Session::start();
     $dispatcher = new Dispatcher();
     $dispatcher->run();
     

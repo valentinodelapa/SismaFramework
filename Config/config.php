@@ -27,7 +27,6 @@
 namespace Config;
 
 /* Name Constant */
-
 const ADAPTERS = 'Adapters';
 const APPLICATION = 'Sample';
 const ASSETS = 'Assets';
@@ -130,6 +129,8 @@ const LOG_DIRECTORY_PATH = SYSTEM_PATH . LOGS;
 const LOG_PATH = LOG_DIRECTORY_PATH . DIRECTORY_SEPARATOR . 'log.txt';
 const LOG_DEVELOPEMENT_MAX_ROW = 1000;
 const LOG_PRODUCTION_MAX_ROW = 100;
+const LOG_WARNING_ROW = 10;
+const LOG_DANGER_ROW = 50;
 
 /* Encryptor Constants */
 const ENCRYPTION_PASSPHRASE = '';
