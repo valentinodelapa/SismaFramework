@@ -45,6 +45,7 @@ use SismaFramework\Core\HttpClasses\Request;
 class Dispatcher
 {
 
+    const CONTENT_DISPOSITION_DECLARATION = 'Content-Disposition: ';
     const CONTENT_TYPE_DECLARATION = 'Content-type: ';
 
     private FixturesManager $fixturesManager;
@@ -170,6 +171,7 @@ class Dispatcher
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
         header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
+        header(self::CONTENT_DISPOSITION_DECLARATION."inline");
         header("Content-Length: " . filesize($filename));
         if (filesize($filename) < \Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT) {
             echo file_get_contents($filename, false, $this->streamContex);
