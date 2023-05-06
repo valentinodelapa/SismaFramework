@@ -218,18 +218,6 @@ class DispatcherTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testNotifyPathWithQueryString()
-    {
-        $_SERVER['REQUEST_URI'] = '/notify?message=message';
-        $_SERVER['QUERY_STRING'] = 'message=test+message';
-        $this->expectException(QueryStringException::class);
-        $dispatcher = new Dispatcher();
-        $dispatcher->run();
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
     public function testOtherIndexPath()
     {
         $_SERVER['REQUEST_URI'] = '/other/parameter/test+message/';

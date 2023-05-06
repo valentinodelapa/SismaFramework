@@ -95,7 +95,7 @@ class Router
         return substr($relativeUrl, 1);
     }
 
-    public static function reloadWithParseQuery(string $url): Response
+    public static function reloadWithParsedQueryString(string $url): Response
     {
         $parsedUrl = str_replace(["?", "=", "&"], '/', $url);
         $parsedUrl = str_replace('//', '/', $parsedUrl);

@@ -36,7 +36,17 @@ use SismaFramework\Core\HelperClasses\ResourceMaker;
  */
 class ResourceMakerTest extends TestCase
 {
-    
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testIsAcceptedResourceFile()
+    {
+        $resourceMaker = new ResourceMaker();
+        $this->assertTrue($resourceMaker->isAcceptedResourceFile('/sample.js'));
+        $this->assertFalse($resourceMaker->isAcceptedResourceFile('/notify/'));
+    }
+
     /**
      * @runInSeparateProcess
      */
@@ -49,7 +59,7 @@ class ResourceMakerTest extends TestCase
         \ob_end_clean();
         $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'), $result);
     }
-    
+
     /**
      * @runInSeparateProcess
      */
@@ -93,4 +103,5 @@ class ResourceMakerTest extends TestCase
         \ob_end_clean();
         $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/javascript/sample.js'), $result);
     }
+
 }

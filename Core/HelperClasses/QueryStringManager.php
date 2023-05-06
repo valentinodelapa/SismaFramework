@@ -24,23 +24,37 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Exceptions;
+namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseException;
-use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\Exceptions\QueryStringException;
 
 /**
- * Description of QueryStringException
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class QueryStringException extends BaseException
+class QueryStringManager
 {
-    
-    protected function errorRedirect()
+
+    private Request $request;
+    private ResourceMaker $resourceMaker;
+
+    public function __construct(Request $request = new Request(),
+            ResourceMaker $resourceMaker = new ResourceMaker(),
+            Router $router = new Router())
     {
-        $request = new Request();
-        Router::reloadWithParsedQueryString($request->server['REQUEST_URI']);
+        $this->request = $request;
+        $this->resourceMaker = $resourceMaker;
     }
+
+    public function switchOptions(string $path): void
+    {
+        if (strlen($this->request->server['QUERY_STRING']) > 0) {
+            if ($this->resourceMaker->isAcceptedResourceFile($path)) {
+                $this->resourceMaker->setStreamContex($path);
+            } else {
+                throw new QueryStringException();
+            }
+        }
+    }
+
 }
