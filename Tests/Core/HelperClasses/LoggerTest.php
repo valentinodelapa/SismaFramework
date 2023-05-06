@@ -53,6 +53,7 @@ class LoggerTest extends TestCase
     
     public function testTruncateLog()
     {
+        Logger::setMaxRows(2);
         Logger::clearLog();
         $this->assertEquals(0, count(Logger::getLogRowByRow()));
         Logger::saveLog('sample message', 1);

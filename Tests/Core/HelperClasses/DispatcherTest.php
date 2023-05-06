@@ -28,11 +28,13 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
-use SismaFramework\Core\Exceptions\QueryStringException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\Exceptions\QueryStringException;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\FixturesManager;
+use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HttpClasses\Request;
 
 /**
  * Description of DispatcherTest
@@ -42,27 +44,21 @@ use SismaFramework\Core\HelperClasses\Router;
 class DispatcherTest extends TestCase
 {
 
-    private \ReflectionClass $dispatcherClass;
-    private Dispatcher $dispatcherInstance;
-
-    public function __construct($name = null, $data = [], $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-        $this->dispatcherClass = new \ReflectionClass(Dispatcher::class);
-        $this->dispatcherInstance = new Dispatcher();
-    }
-
     /**
      * @runInSeparateProcess
      */
     public function testStructuralFileFopen()
     {
         $_SERVER['REQUEST_URI'] = '/css/DebugBar.css';
-        \ob_start();
-        $this->dispatcherInstance->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Structural/Assets/css/DebugBar.css'), $result);
+        $resourceMakerMock = $this->createMock(ResourceMaker::class);
+        $resourceMakerMock->expects($this->once())
+                ->method('isAcceptedResourceFile')
+                ->willReturn(true);
+        $resourceMakerMock->expects($this->once())
+                ->method('makeResource')
+                ->with(\Config\STRUCTURAL_ASSETS_PATH . 'css'.DIRECTORY_SEPARATOR.'DebugBar.css');
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher->run();
     }
 
     /**
@@ -71,11 +67,15 @@ class DispatcherTest extends TestCase
     public function testModuleFile()
     {
         $_SERVER['REQUEST_URI'] = '/css/sample.css';
-        \ob_start();
-        $this->dispatcherInstance->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'), $result);
+        $resourceMakerMock = $this->createMock(ResourceMaker::class);
+        $resourceMakerMock->expects($this->once())
+                ->method('isAcceptedResourceFile')
+                ->willReturn(true);
+        $resourceMakerMock->expects($this->once())
+                ->method('makeResource')
+                ->with(\Config\SYSTEM_PATH.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'css'.DIRECTORY_SEPARATOR.'sample.css');
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher->run();
     }
 
     /**
@@ -84,24 +84,15 @@ class DispatcherTest extends TestCase
     public function testDirectAccessToFile()
     {
         $_SERVER['REQUEST_URI'] = 'SismaFramework/Sample/Assets/css/sample.css';
-        \ob_start();
-        $this->dispatcherInstance->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'), $result);
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testFileWithReadfile()
-    {
-        $_SERVER['REQUEST_URI'] = '/javascript/jquery.debugBar.js';
-        \ob_start();
-        $this->dispatcherInstance->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Structural/Assets/javascript/jquery.debugBar.js'), $result);
+        $resourceMakerMock = $this->createMock(ResourceMaker::class);
+        $resourceMakerMock->expects($this->once())
+                ->method('isAcceptedResourceFile')
+                ->willReturn(true);
+        $resourceMakerMock->expects($this->once())
+                ->method('makeResource')
+                ->with(\Config\SYSTEM_PATH.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'css'.DIRECTORY_SEPARATOR.'sample.css');
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher->run();
     }
 
     /**
@@ -111,11 +102,17 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/javascript/sample.js?resource=resource';
         $_SERVER['QUERY_STRING'] = 'resource=resource';
-        \ob_start();
-        $this->dispatcherInstance->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/javascript/sample.js'), $result);
+        $resourceMakerMock = $this->createMock(ResourceMaker::class);
+        $resourceMakerMock->expects($this->once())
+                ->method('setStreamContex');
+        $resourceMakerMock->expects($this->exactly(2))
+                ->method('isAcceptedResourceFile')
+                ->willReturn(true);
+        $resourceMakerMock->expects($this->once())
+                ->method('makeResource')
+                ->with(\Config\SYSTEM_PATH.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'javascript'.DIRECTORY_SEPARATOR.'sample.js');
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher->run();
     }
 
     /**
@@ -126,7 +123,8 @@ class DispatcherTest extends TestCase
         $_SERVER['REQUEST_URI'] = 'fake/fake/fake/fake/fake.css';
         $_SERVER['QUERY_STRING'] = '';
         $this->expectException(PageNotFoundException::class);
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
     }
 
     /**
@@ -137,10 +135,9 @@ class DispatcherTest extends TestCase
         $fixturesManagerMock = $this->createMock(FixturesManager::class);
         $fixturesManagerMock->expects($this->once())
                 ->method('run');
-        $fixturesManagerProperty = $this->dispatcherClass->getProperty('fixturesManager');
-        $fixturesManagerProperty->setValue($this->dispatcherInstance, $fixturesManagerMock);
         $_SERVER['REQUEST_URI'] = '/fixtures/';
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher( new Request(), new ResourceMaker, $fixturesManagerMock);
+        $dispatcher->run();
     }
 
     /**
@@ -150,7 +147,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('sample - index', $result);
@@ -164,7 +162,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/sample/index/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('sample - index', $result);
@@ -178,7 +177,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/index/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('sample - index', $result);
@@ -192,7 +192,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/sample/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('sample - index', $result);
@@ -206,7 +207,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/notify/message/test+message';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('sample - notify', $result);
@@ -221,7 +223,8 @@ class DispatcherTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/notify?message=message';
         $_SERVER['QUERY_STRING'] = 'message=test+message';
         $this->expectException(QueryStringException::class);
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
     }
 
     /**
@@ -231,7 +234,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/other/parameter/test+message/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('other - index', $result);
@@ -245,7 +249,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/fake/other/index/parameter/other+test+message/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('other - index', $result);
@@ -260,7 +265,8 @@ class DispatcherTest extends TestCase
         $_POST['parameter'] = 'test parameter';
         $_SERVER['REQUEST_URI'] = '/other/action-with-request/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('other - action-with-request', $result);
@@ -275,7 +281,8 @@ class DispatcherTest extends TestCase
         $_POST['username'] = 'username';
         $_SERVER['REQUEST_URI'] = '/other/action-with-authentication/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('other - action-with-authentication', $result);
@@ -289,7 +296,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/other/action-with-default-value/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('other - action-with-default-value', $result);
@@ -303,7 +311,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/other/action-with-array/array/first/array/second/array/third/';
         \ob_start();
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
         $result = \ob_get_contents();
         \ob_end_clean();
         $this->assertStringContainsString('other - action-with-array', $result);
@@ -319,7 +328,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/other/fake/test/';
         $this->expectException(InvalidArgumentException::class);
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
     }
 
     /**
@@ -329,7 +339,8 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/fake/fake/fake/fake/fake/fake/';
         $this->expectException(PageNotFoundException::class);
-        $this->dispatcherInstance->run();
+        $dispatcher = new Dispatcher();
+        $dispatcher->run();
     }
 
 }

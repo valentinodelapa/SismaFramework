@@ -46,7 +46,6 @@ THE SOFTWARE.
               disableCodeCoverageIgnore="true">
         <include>
             <directory suffix=".php">../Autoload</directory>
-            <directory suffix=".php">../Config</directory>
             <directory suffix=".php">../Core</directory>
             <directory suffix=".php">../Orm</directory>
         </include>
@@ -68,8 +67,5 @@ THE SOFTWARE.
         <server name="REQUEST_METHOD" value="POST" />
         <server name="REQUEST_URI" value="/" />
         <server name="SERVER_PROTOCOL" value="" />
-        <const name="Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT" value="400" />
-        <const name="Config\LOG_DEVELOPEMENT_MAX_ROW" value="2" />
-        <const name="Config\READFILE_MAX_BITES_LIMIT" value="1000" />
     </php>
 </phpunit>

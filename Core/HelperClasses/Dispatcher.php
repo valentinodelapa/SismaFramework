@@ -27,7 +27,6 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\BaseClasses\BaseController;
-use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\Exceptions\QueryStringException;
@@ -37,6 +36,7 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Authentication;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HelperClasses\ResourceMaker;
 
 /**
  *
@@ -45,15 +45,12 @@ use SismaFramework\Core\HttpClasses\Request;
 class Dispatcher
 {
 
-    const CONTENT_DISPOSITION_DECLARATION = 'Content-Disposition: ';
-    const CONTENT_TYPE_DECLARATION = 'Content-type: ';
-
+    private ResourceMaker $resourceMaker;
     private FixturesManager $fixturesManager;
     private static int $reloadAttempts = 0;
     private Request $request;
     private string $originalPath;
     private string $path;
-    private $streamContex = null;
     private array $pathParts;
     private bool $defaultControllerInjected = false;
     private bool $defaultActionInjected = false;
@@ -70,31 +67,28 @@ class Dispatcher
     private \ReflectionMethod $reflectionAction;
     private array $reflectionActionArguments;
 
-    public function __construct()
+    public function __construct(Request $request = new Request,
+            ResourceMaker $resourceMaker = new ResourceMaker,
+            FixturesManager $fixtureManager = new FixturesManager())
     {
-        $this->fixturesManager = new FixturesManager();
+        $this->request = $request;
+        $this->resourceMaker = $resourceMaker;
+        $this->fixturesManager = $fixtureManager;
     }
 
     public function run()
     {
         Debugger::startExecutionTimeCalculation();
-        $this->request = new Request();
         $this->originalPath = $this->path = strtok($this->request->server['REQUEST_URI'], '?');
         if (strlen($this->request->server['QUERY_STRING']) > 0) {
-            if (Resource::tryFrom($this->getExtension())) {
-                $this->streamContex = $this->request->getStreamContentResource();
+            if ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
+                $this->resourceMaker->setStreamContex($this->path);
             } else {
                 throw new QueryStringException();
             }
         }
         $this->parsePath();
         $this->handle();
-    }
-
-    private function getExtension(): string
-    {
-        $splittedPath = explode('.', $this->path);
-        return strtolower(end($splittedPath));
     }
 
     private function parsePath(): void
@@ -142,7 +136,7 @@ class Dispatcher
 
     private function handle(): void
     {
-        if (Resource::tryFrom($this->getExtension())) {
+        if ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
             $this->handleFile();
         } elseif ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
@@ -156,30 +150,13 @@ class Dispatcher
     private function handleFile(): void
     {
         if (file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            $this->makeResource(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
-        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . $this->path)) {
-            $this->makeResource(\Config\STRUCTURAL_ASSETS_PATH . $this->path);
-        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path)) {
-            $this->makeResource(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->path);
+            $this->resourceMaker->makeResource(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
+            $this->resourceMaker->makeResource(\Config\STRUCTURAL_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
+            $this->resourceMaker->makeResource(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
         } else {
             $this->switchNotFoundActions();
-        }
-    }
-
-    private function makeResource(string $filename): void
-    {
-        header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
-        header("Accept-Ranges: bytes");
-        header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension())->getMime());
-        header(self::CONTENT_DISPOSITION_DECLARATION."inline");
-        header("Content-Length: " . filesize($filename));
-        if (filesize($filename) < \Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT) {
-            echo file_get_contents($filename, false, $this->streamContex);
-        } elseif (filesize($filename) < \Config\READFILE_MAX_BITES_LIMIT) {
-            readfile($filename, false, $this->streamContex);
-        } else {
-            $stream = fopen($filename, 'rb', false, $this->streamContex);
-            fpassthru($stream);
         }
     }
 

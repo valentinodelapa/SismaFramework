@@ -33,6 +33,13 @@ namespace SismaFramework\Core\HelperClasses;
 class Logger
 {
 
+    private static int $maxRows = \Config\DEVELOPMENT_ENVIRONMENT ? \Config\LOG_DEVELOPEMENT_MAX_ROW : \Config\LOG_PRODUCTION_MAX_ROW;
+    
+    public static function setMaxRows(int $maxRows):void
+    {
+        self::$maxRows = $maxRows;
+    }
+
     public static function saveLog(string $message, int $code, string $file = ''): void
     {
         self::createLogDirectory();
@@ -56,9 +63,8 @@ class Logger
     private static function truncateLog(): void
     {
         $logRows = file(\Config\LOG_PATH);
-        $maxRows = \Config\DEVELOPMENT_ENVIRONMENT ? \Config\LOG_DEVELOPEMENT_MAX_ROW : \Config\LOG_PRODUCTION_MAX_ROW;
-        if (count($logRows) > $maxRows) {
-            $offset = $maxRows - count($logRows) - 1;
+        if (count($logRows) > self::$maxRows) {
+            $offset = self::$maxRows - count($logRows) - 1;
             $logRows = array_slice($logRows, $offset);
             file_put_contents(\Config\LOG_PATH, $logRows);
         }
@@ -94,8 +100,8 @@ class Logger
         self::createLogDirectory();
         return file(\Config\LOG_PATH);
     }
-    
-    public static function getLogRowNumber():int
+
+    public static function getLogRowNumber(): int
     {
         self::createLogDirectory();
         return count(file(\Config\LOG_PATH));

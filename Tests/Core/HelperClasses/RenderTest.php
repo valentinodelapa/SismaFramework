@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,26 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
+namespace SismaFramework\Tests\Core\HelperClasses;
 
-use SismaFramework\Core\HelperClasses\Router;
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Render;
 
 /**
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-abstract class BaseController
+class RenderTest extends TestCase
 {
-
-    protected array $vars;
-
-    public function __construct()
-    {
-        $this->vars['controllerUrl'] = Router::getControllerUrl();
-        $this->vars['actionUrl'] = Router::getActionUrl();
-        $this->vars['metaUrl'] = Router::getMetaUrl();
-        $this->vars['actualCleanUrl'] = Router::getActualCleanUrl();
-        $this->vars['rootUrl'] = Router::getRootUrl();
-    }
-
+    
 }
