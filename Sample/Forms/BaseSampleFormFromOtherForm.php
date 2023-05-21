@@ -10,7 +10,10 @@ use SismaFramework\Sample\Entities\BaseSample;
 class BaseSampleFormFromOtherForm extends BaseForm
 {
 
-    protected const ENTITY_CLASS_NAME = BaseSample::class;
+    protected static function getEntityName(): string
+    {
+        return BaseSample::class;
+    }
 
     protected function customFilter(): void
     {

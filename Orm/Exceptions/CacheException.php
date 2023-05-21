@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,43 +24,19 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Forms;
+namespace SismaFramework\Orm\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Sample\Entities\FakeReferencedSample;
+use SismaFramework\Core\BaseClasses\BaseException;
 
 /**
- * Description of FakeReferencedSampleForm
+ * Description of InvalidPropertyException
  *
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author valen
  */
-class FakeReferencedSampleForm extends BaseForm
+class CacheException extends BaseException
 {
-
-    protected static function getEntityName(): string
-    {
-        return FakeReferencedSample::class;
-    }
-
-    protected function customFilter(): void
+    protected function errorRedirect()
     {
         
     }
-
-    protected function injectRequest(): void
-    {
-        
-    }
-
-    protected function setEntityFromForm(): void
-    {
-        $this->addEntityFromForm('fakeBaseSampleCollection', FakeBaseSampleFormFromOtherForm::class);
-        
-    }
-
-    protected function setFilterFieldsMode(): void
-    {
-        
-    }
-
 }

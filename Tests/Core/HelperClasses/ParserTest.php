@@ -29,7 +29,9 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
-use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Enumerations\SampleType;
@@ -102,8 +104,15 @@ class ParserTest extends TestCase
 
     public function testParseValueWithEntity()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        Parser::setCustomAdapter($adapterMysqlMock);
+        $baseSample = new BaseSample();
+        $baseSample->id = 1;
+        Cache::setEntity($baseSample);
+        $baseResultSetMock = $this->createMock(BaseResultSet::class);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->any())
+                ->method('select')
+                ->willReturn($baseResultSetMock);
+        BaseAdapter::setDefault($baseAdapterMock);
         $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
@@ -183,8 +192,8 @@ class ParserTest extends TestCase
     
     public function testUnparseValue()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $baseSample = new BaseSample($adapterMysqlMock);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseSample = new BaseSample($baseAdapterMock);
         $baseSample->id = 1;
         $sampleType = SampleType::one;
         $sismaDatetme = new SismaDateTime();

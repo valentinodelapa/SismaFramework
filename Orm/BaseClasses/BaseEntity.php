@@ -26,51 +26,51 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\ProprietaryTypes\SismaCollection;
-use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Statement;
-use SismaFramework\Orm\Enumerations\Keyword;
-use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
-use SismaFramework\Orm\BaseClasses\BaseResultSet;
-use SismaFramework\Orm\HelperClasses\Cache;
-use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Parser;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 abstract class BaseEntity
 {
 
+    public bool $modified = false;
+    public bool $nestedChanges = false;
+    public array $foreignKeys = [];
+    public string $initializationVectorPropertyName = 'initializationVector';
+    protected BaseEntity $callingEntity;
     protected string $tableName = '';
     protected string $primaryKey = 'id';
-    protected string $initializationVectorPropertyName = 'initializationVector';
     protected static ?BaseEntity $instance = null;
     protected bool $isActiveTransaction = false;
     protected ?BaseAdapter $adapter = null;
     protected array $foreignKeyIndexes = [];
-    private static bool $isFirstExecutedEntity = true;
-    private static bool $manualTransactionStarted = false;
-    private bool $changeTrackingActive = false;
-    private bool $modified = false;
     private array $encryptedColumns = [];
 
-    public function __construct(?BaseAdapter &$adapter = null)
+    public function __construct()
     {
-        if ($this->tableName === '') {
-            $this->tableName = $this->buildTableName();
-        }
-        if ($adapter === null) {
-            $adapter = BaseAdapter::getDefault();
-        }
-        $this->adapter = &$adapter;
+        $this->tableName = $this->buildTableName();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
+        $reflectionClass = new \ReflectionClass($this);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (($reflectionProperty->class === get_called_class()) && is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+                $this->foreignKeys[] = $reflectionProperty->getName();
+            }
+        }
+    }
+
+    public function unsetPrimaryKey(): void
+    {
+        unset($this->{$this->primaryKey});
+    }
+
+    public function checkCollectionExists(string $collectionName): bool
+    {
+        return false;
     }
 
     public function __get($name)
@@ -81,11 +81,6 @@ abstract class BaseEntity
         } else {
             throw new InvalidPropertyException($name);
         }
-    }
-    
-    public function checkCollectionExists(string $collectionName):bool
-    {
-        return false;
     }
 
     protected function checkFinalClassProperty(string $propertyName): bool
@@ -100,6 +95,7 @@ abstract class BaseEntity
         $reflectionTypeName = $reflectionProperty->getType()->getName();
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
             $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
+            $this->$propertyName->callingEntity = $this;
             unset($this->foreignKeyIndexes[$propertyName]);
         }
     }
@@ -117,24 +113,52 @@ abstract class BaseEntity
     {
         $reflectionProperty = new \ReflectionProperty($this, $name);
         if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && is_int($value)) {
-            $this->trackChanges($reflectionProperty->getType(), $name, $value);
+            $this->trackForeignKeyPropertyWithIndexNotConvertedChanges($reflectionProperty->getType(), $name, $value);
             $this->foreignKeyIndexes[$name] = $value;
             unset($this->$name);
-        } else {
-            $this->trackChanges($reflectionProperty->getType(), $name, $value);
+        } elseif (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && ($value instanceof BaseEntity)) {
+            $value->callingEntity = $this;
+            $this->trackForeignKeyPropertyChanges($reflectionProperty->getType(), $name, $value);
             $this->$name = $value;
             unset($this->foreignKeyIndexes[$name]);
+        } else {
+            $this->trackbuiltinPropertyChanges($reflectionProperty->getType(), $name, $value);
+            $this->$name = $value;
         }
     }
 
-    private function trackChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value)
+    private function trackForeignKeyPropertyWithIndexNotConvertedChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
     {
-        $conditionOne = is_subclass_of($reflectionNamedType->getName(), BaseEntity::class) && is_int($value) && (!isset($this->foreignKeyIndexes[$name]) || ($this->foreignKeyIndexes[$name] !== $value)) && (!isset($this->$name) || ($this->$name->id !== $value));
-        $conditionTwo = is_subclass_of($reflectionNamedType->getName(), BaseEntity::class) && is_subclass_of($value, BaseEntity::class) && (!isset($this->$name) || ($this->$name != $value)) && (!isset($this->foreignKeyIndexes[$name]) || ($this->foreignKeyIndexes[$name] !== $value->id));
-        $conditionThre = is_a($reflectionNamedType->getName(), SismaCollection::class) && (!isset($this->$name) || ($this->$name != $value));
-        $conditionFour = $reflectionNamedType->isBuiltin() && (!isset($this->$name) || ($this->$name !== $value));
-        if ($this->changeTrackingActive && ($conditionOne || $conditionTwo || $conditionThre || $conditionFour)) {
+        if (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class) && is_int($value) &&
+                ((isset($this->foreignKeyIndexes[$name]) && ($this->foreignKeyIndexes[$name] !== $value)) ||
+                (isset($this->$name) && (!isset($this->$name->id) || ($this->$name->id !== $value))))) {
             $this->modified = true;
+            if (isset($this->callingEntity)) {
+                $this->callingEntity->nestedChanges = true;
+            }
+        }
+    }
+
+    private function trackForeignKeyPropertyChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
+    {
+        if (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class) &&
+                is_subclass_of($value, BaseEntity::class) &&
+                ((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
+                (isset($this->$name) && ($this->$name != $value))))) {
+            $this->modified = true;
+            if (isset($this->callingEntity)) {
+                $this->callingEntity->nestedChanges = true;
+            }
+        }
+    }
+
+    private function trackbuiltinPropertyChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
+    {
+        if ($reflectionNamedType->isBuiltin() && isset($this->$name) && ($this->$name !== $value)) {
+            $this->modified = true;
+            if (isset($this->callingEntity)) {
+                $this->callingEntity->nestedChanges = true;
+            }
         }
     }
 
@@ -145,27 +169,22 @@ abstract class BaseEntity
         }
         return isset($this->$name);
     }
-    
-    abstract protected function setEncryptedProperties():void;
-    
-    protected function addEncryptedProperty(string $columnName):void
+
+    abstract protected function setEncryptedProperties(): void;
+
+    protected function addEncryptedProperty(string $columnName): void
     {
         $this->encryptedColumns[] = $columnName;
     }
-    
-    public function isEncryptedProperty(string $columnName):bool
+
+    public function isEncryptedProperty(string $columnName): bool
     {
         return (in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->initializationVectorPropertyName)));
     }
-    
-    public function getInitializationVectorPropertyName():string
+
+    public function getInitializationVectorPropertyName(): string
     {
         return $this->initializationVectorPropertyName;
-    }
-
-    public function activeChangeTracking()
-    {
-        $this->changeTrackingActive = true;
     }
 
     abstract protected function setPropertyDefaultValue(): void;
@@ -175,7 +194,17 @@ abstract class BaseEntity
         return ($propertyName === $this->primaryKey);
     }
 
-    protected static function getTableName(): string
+    public function getPrimaryKeyPropertyName(): string
+    {
+        return $this->primaryKey;
+    }
+
+    public function getEntityTableName(): string
+    {
+        return $this->tableName;
+    }
+
+    public static function getTableName(): string
     {
         $obj = static::create();
         $name = $obj->buildTableName();
@@ -218,251 +247,14 @@ abstract class BaseEntity
         return strtolower(implode('_', $tmp));
     }
 
-    static public function initQuery(?BaseAdapter &$adapter = null): Query
+    public function getForeignKeyIndexes(): array
     {
-        if ($adapter === null) {
-            $adapter = BaseAdapter::getDefault();
-        }
-        $class = get_called_class();
-        $name = $class::getTableName();
-        $qry = new Query($adapter);
-        $qry->setTable($name);
-        return $qry;
+        return $this->foreignKeyIndexes;
     }
 
-    public function &getAdapter(): BaseAdapter
+    public function delete(DataMapper $dataMapper = new DataMapper()): bool
     {
-        return $this->adapter;
-    }
-
-    public function save(): bool
-    {
-        if (($this->primaryKey == '') || empty($this->{$this->primaryKey})) {
-            return $this->insert();
-        } else {
-            return $this->update();
-        }
-    }
-
-    public function update()
-    {   
-        $this->modified = false;
-        $cols = $vals = $markers = [];
-        $this->parseValues($cols, $vals, $markers);
-        $this->parseForeignKeyIndexes($cols, $vals, $markers);
-        $query = new Query($this->adapter);
-        $query->setTable($this->tableName);
-        $query->setWhere();
-        $query->appendCondition($this->primaryKey, ComparisonOperator::equal, Keyword::placeholder);
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $cols, 'values' => $markers));
-        $vals[] = $this->{$this->primaryKey};
-        $this->checkStartTransaction();
-        $ok = $this->adapter->execute($cmd, $vals);
-        if ($ok) {
-            $this->saveEntityCollection();
-        }
-        $this->checkEndTransaction();
-        if (\Config\ORM_CACHE) {
-            Cache::setEntity($this);
-        }
-        return $ok;
-    }
-
-    public function startTransaction(): void
-    {
-        $this->adapter->beginTransaction();
-        self::$manualTransactionStarted = true;
-    }
-
-    public function commitTransaction(): void
-    {
-        $this->adapter->commitTransaction();
-        self::$manualTransactionStarted = false;
-    }
-
-    private function checkStartTransaction()
-    {
-        if (self::$isFirstExecutedEntity && (self::$manualTransactionStarted === false)) {
-            $this->adapter->beginTransaction();
-            self::$isFirstExecutedEntity = false;
-            $this->isActiveTransaction = true;
-        }
-    }
-
-    private function checkEndTransaction()
-    {
-        if ($this->isActiveTransaction && (self::$manualTransactionStarted === false)) {
-            $this->adapter->commitTransaction();
-            self::$isFirstExecutedEntity = true;
-            $this->isActiveTransaction = false;
-        }
-    }
-
-    public function parseValues(array &$cols, array &$vals, array &$markers): void
-    {
-        $reflectionClass = new \ReflectionClass($this);
-        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (($reflectionProperty->class === get_called_class()) && ($reflectionProperty->getName() != $this->primaryKey)) {
-                $markers[] = '?';
-                $this->switchValueType($reflectionProperty->getName(), $reflectionProperty->getType(), $reflectionProperty->getValue($this), $cols, $vals);
-            }
-        }
-    }
-
-    public function switchValueType(string $p_name, \ReflectionType $reflectionType, mixed $p_val, array &$cols, array &$vals): void
-    {
-        $cols[] = $this->adapter->escapeColumn($p_name, is_subclass_of($reflectionType->getName(), BaseEntity::class));
-        if (is_a($p_val, BaseEntity::class)) {
-            if (!isset($p_val->id)) {
-                $p_val->insert();
-            } elseif ($p_val->modified) {
-                $p_val->update();
-            }
-            $parsedValue = $p_val->id;
-        } elseif (is_subclass_of($p_val, \UnitEnum::class)) {
-            $parsedValue = $p_val->value;
-        } elseif ($p_val instanceof SismaDateTime) {
-            $parsedValue = $p_val->format("Y-m-d H:i:s");
-        } else {
-            $parsedValue = $p_val;
-        }
-        if($this->isEncryptedProperty($p_name)){
-            $parsedValue = Encryptor::encryptString($parsedValue, $this->{$this->initializationVectorPropertyName});
-        }
-        $vals[] = $parsedValue;
-    }
-
-    public function parseForeignKeyIndexes(array &$cols, array &$vals, array &$markers): void
-    {
-        foreach ($this->foreignKeyIndexes as $p_name => $p_val) {
-            $markers[] = '?';
-            $cols[] = $this->adapter->escapeColumn($p_name, true);
-            $vals[] = $p_val;
-        }
-    }
-
-    protected function saveEntityCollection(): void
-    {
-        
-    }
-
-    public function insert(): bool
-    {
-        $cols = $vals = $markers = [];
-        $this->parseValues($cols, $vals, $markers);
-        $this->parseForeignKeyIndexes($cols, $vals, $markers);
-        $query = new Query($this->adapter);
-        $query->setTable($this->tableName);
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::insert, array('columns' => $cols, 'values' => $markers));
-        $this->checkStartTransaction();
-        $ok = $this->adapter->execute($cmd, $vals);
-        if ($ok) {
-            $this->{$this->primaryKey} = $this->adapter->lastInsertId();
-            $this->saveEntityCollection();
-        }
-        $this->checkEndTransaction();
-        if (\Config\ORM_CACHE) {
-            Cache::setEntity($this);
-        }
-        return $ok;
-    }
-
-    public function delete(): bool
-    {
-        if ($this->primaryKey == '') {
-            return false;
-        }
-        $query = new Query($this->adapter);
-        $query->setTable($this->tableName);
-        $query->setWhere();
-        $query->appendCondition($this->primaryKey, ComparisonOperator::equal, Keyword::placeholder);
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::delete);
-        $adapterToCall = $query->getAdapter();
-        $bindValues = [$this];
-        $bindTypes = [DataType::typeEntity];
-        Parser::unparseValues($bindValues);
-        $ok = $adapterToCall->execute($cmd, $bindValues, $bindTypes);
-        if ($ok) {
-            unset($this->{$this->primaryKey});
-        }
-        return $ok;
-    }
-
-    static public function deleteBatch(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?BaseAdapter &$adapter = null): bool
-    {
-        if ($query === null) {
-            $query = static::initQuery($adapter);
-        }
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::delete);
-        $adapterToCall = $query->getAdapter();
-        Parser::unparseValues($bindValues);
-        $ok = $adapterToCall->execute($cmd, $bindValues, $bindTypes);
-        return $ok;
-    }
-
-    static public function find(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?BaseAdapter &$adapter = null): BaseResultSet
-    {
-        if ($query === null) {
-            $query = static::initQuery($adapter);
-        }
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::select);
-        $adapterToCall = $query->getAdapter();
-        Parser::unparseValues($bindValues);
-        $result = $adapterToCall->select($cmd, $bindValues, $bindTypes);
-        if (!$result) {
-            return null;
-        }
-        $result->setReturnType(get_called_class());
-        return $result;
-    }
-
-    static public function getCount(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?BaseAdapter &$adapter = null): int
-    {
-        if ($query === null) {
-            $query = $query = static::initQuery($adapter);
-        } else {
-            $query = clone $query;
-        }
-        $query->setCount('');
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::select);
-        $adapterToCall = $query->getAdapter();
-        Parser::unparseValues($bindValues);
-        $result = $adapterToCall->select($cmd, $bindValues, $bindTypes);
-        if (!$result) {
-            return 0;
-        }
-        $data = $result->fetch();
-        $result->release();
-        unset($result);
-        if (!$data) {
-            return 0;
-        }
-        return $data->_numrows;
-    }
-
-    static public function findFirst(?Query $query = null, array $bindValues = [], array $bindTypes = [], ?BaseAdapter &$adapter = null): ?BaseEntity
-    {
-        if ($query === null) {
-            $query = $query = static::initQuery($adapter);
-        }
-        $query->setOffset(0);
-        $query->setLimit(1);
-        $list = static::find($query, $bindValues, $bindTypes, $adapter);
-        if (!$list) {
-            return null;
-        }
-        $ret = null;
-        foreach ($list as $x) {
-            $ret = $x;
-            break;
-        }
-        return $ret;
+        return $dataMapper->delete($this);
     }
 
 }

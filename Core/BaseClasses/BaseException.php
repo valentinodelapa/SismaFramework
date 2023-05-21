@@ -30,7 +30,6 @@ use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Router;
 
 /**
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 class BaseException extends \Exception

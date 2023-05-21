@@ -29,6 +29,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Templater;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 
 /**
  * Description of DebuggerTest
@@ -90,6 +91,8 @@ class DebuggerTest extends TestCase
     
     public function testGenerateDebugBarVars()
     {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
         Templater::setStructural();
         $varsProperty = $this->debuggerReflection->getProperty('vars');
         $varsProperty->setAccessible(true);

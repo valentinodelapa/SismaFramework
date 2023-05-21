@@ -35,6 +35,11 @@ use SismaFramework\Core\BaseClasses\BaseForm;
  */
 class EntityNotInitializedForm extends BaseForm
 {
+
+    protected static function getEntityName(): string
+    {
+        return 'FakeString';
+    }
     
     protected function customFilter(): void
     {

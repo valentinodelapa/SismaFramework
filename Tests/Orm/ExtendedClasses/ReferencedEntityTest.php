@@ -24,43 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Forms;
+namespace SismaFramework\Tests\Orm\ExtendedClasses;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Sample\Entities\FakeReferencedSample;
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Sample\Entities\ReferencedSample;
+use SismaFramework\Sample\Entities\OtherReferencedSample;
 
 /**
- * Description of FakeReferencedSampleForm
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class FakeReferencedSampleForm extends BaseForm
+class ReferencedEntityTest extends TestCase
 {
-
-    protected static function getEntityName(): string
+    
+    public function testCollectionNestedChanges()
     {
-        return FakeReferencedSample::class;
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->addBaseSample(new BaseSample());
+        $this->assertFalse($otherReferencedSample->nestedChanges);
+        $otherReferencedSample->baseSampleCollection[0]->text = 'base sample';
+        $this->assertFalse($otherReferencedSample->nestedChanges);
+        $otherReferencedSample->baseSampleCollection[0]->text = 'base sample modified';
+        $this->assertTrue($otherReferencedSample->nestedChanges);
     }
-
-    protected function customFilter(): void
-    {
-        
-    }
-
-    protected function injectRequest(): void
-    {
-        
-    }
-
-    protected function setEntityFromForm(): void
-    {
-        $this->addEntityFromForm('fakeBaseSampleCollection', FakeBaseSampleFormFromOtherForm::class);
-        
-    }
-
-    protected function setFilterFieldsMode(): void
-    {
-        
-    }
-
 }

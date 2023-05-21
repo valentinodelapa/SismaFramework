@@ -43,7 +43,7 @@ use SismaFramework\Sample\Forms\SelfReferencedSampleForm;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 
 /**
@@ -55,11 +55,17 @@ class BaseFormTest extends TestCase
 {
 
     private SampleForm $sampleForm;
+    
+    public function __construct($name = null, $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+    }
 
     public function testFormForBaseEntityNotSubmitted()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $baseSampleForm = new BaseSampleForm(null, $adapterMysqlMock);
+        $baseSampleForm = new BaseSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $baseSampleForm->handleRequest($requestMock);
@@ -69,8 +75,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForBaseEntitySubmittedNotValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $baseSampleForm = new BaseSampleForm(null, $adapterMysqlMock);
+        $baseSampleForm = new BaseSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -89,8 +94,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForBaseEntitySubmittedValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $baseSampleForm = new BaseSampleForm(null, $adapterMysqlMock);
+        $baseSampleForm = new BaseSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -112,12 +116,11 @@ class BaseFormTest extends TestCase
 
     public function testFormUpdateForBaseEntitySubmittedValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $baseSample = new BaseSample($adapterMysqlMock);
+        $baseSample = new BaseSample();
         $baseSample->id = 1;
-        $baseSample->referencedSample = new ReferencedSample($adapterMysqlMock);
+        $baseSample->referencedSample = new ReferencedSample();
         $baseSample->referencedSample->id = 2;
-        $baseSampleForm = new BaseSampleForm($baseSample, $adapterMysqlMock);
+        $baseSampleForm = new BaseSampleForm($baseSample);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -141,8 +144,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForReferencedEntityNotSubmitted()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $referencedSampleForm = new ReferencedSampleForm(null, $adapterMysqlMock);
+        $referencedSampleForm = new ReferencedSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $referencedSampleForm->handleRequest($requestMock);
@@ -152,8 +154,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForReferencedEntityWithCollectionNotValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $referencedSampleForm = new ReferencedSampleForm(null, $adapterMysqlMock);
+        $referencedSampleForm = new ReferencedSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -173,8 +174,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForReferencedEntityWithCollectionValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $referencedSampleForm = new ReferencedSampleForm(null, $adapterMysqlMock);
+        $referencedSampleForm = new ReferencedSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -197,17 +197,16 @@ class BaseFormTest extends TestCase
 
     public function testFormUpdateForReferencedEntityWithCollectionValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $referencedSample = new ReferencedSample($adapterMysqlMock);
+        $referencedSample = new ReferencedSample();
         $referencedSample->id = 1;
         $baseSampleCollection = new SismaCollection(BaseSample::class);
-        $baseSampleCollection->append(new BaseSample($adapterMysqlMock));
-        $baseSampleCollection->append(new BaseSample($adapterMysqlMock));
+        $baseSampleCollection->append(new BaseSample());
+        $baseSampleCollection->append(new BaseSample());
         $referencedSample->setBaseSampleCollectionReferencedSample($baseSampleCollection);
         $referencedSample->baseSampleCollectionReferencedSample[0]->id = 2;
         $referencedSample->baseSampleCollectionReferencedSample[1]->id = 3;
         $referencedSample->setBaseSampleCollectionReferencedSampleTwo(new SismaCollection(BaseSample::class));
-        $referencedSampleForm = new ReferencedSampleForm($referencedSample, $adapterMysqlMock);
+        $referencedSampleForm = new ReferencedSampleForm($referencedSample);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -233,8 +232,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForOtherReferencedEntityWithCollectionNotValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $otherReferencedSampleForm = new OtherReferencedSampleForm(null, $adapterMysqlMock);
+        $otherReferencedSampleForm = new OtherReferencedSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -254,8 +252,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForOtherReferencedEntityWithCollectionValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $otherReferencedSampleForm = new OtherReferencedSampleForm(null, $adapterMysqlMock);
+        $otherReferencedSampleForm = new OtherReferencedSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -279,16 +276,15 @@ class BaseFormTest extends TestCase
 
     public function testFormUpdateForOtherReferencedEntityWithCollectionValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $otherReferencedSample = new OtherReferencedSample($adapterMysqlMock);
+        $otherReferencedSample = new OtherReferencedSample();
         $otherReferencedSample->id = 1;
         $baseSampleCollection = new SismaCollection(BaseSample::class);
-        $baseSampleCollection->append(new BaseSample($adapterMysqlMock));
-        $baseSampleCollection->append(new BaseSample($adapterMysqlMock));
+        $baseSampleCollection->append(new BaseSample());
+        $baseSampleCollection->append(new BaseSample());
         $otherReferencedSample->setBaseSampleCollection($baseSampleCollection);
         $otherReferencedSample->baseSampleCollection[0]->id = 2;
         $otherReferencedSample->baseSampleCollection[1]->id = 3;
-        $otherReferencedSampleForm = new OtherReferencedSampleForm($otherReferencedSample, $adapterMysqlMock);
+        $otherReferencedSampleForm = new OtherReferencedSampleForm($otherReferencedSample);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -315,8 +311,7 @@ class BaseFormTest extends TestCase
     
     public function testFormForSelfReferencedEntityNotValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $selfReferencedSampleForm = new SelfReferencedSampleForm(null, $adapterMysqlMock);
+        $selfReferencedSampleForm = new SelfReferencedSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -336,8 +331,7 @@ class BaseFormTest extends TestCase
     
     public function testFormForSelfReferencedEntityValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $selfReferencedSampleForm = new SelfReferencedSampleForm(null, $adapterMysqlMock);
+        $selfReferencedSampleForm = new SelfReferencedSampleForm(null);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -361,20 +355,19 @@ class BaseFormTest extends TestCase
     
     public function testFormUpdateForSelfReferencedEntityValid()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $selfReferencedSample = new SelfReferencedSample($adapterMysqlMock);
+        $selfReferencedSample = new SelfReferencedSample();
         $selfReferencedSample->id = 1;
         $sonCollection = new SismaCollection(SelfReferencedSample::class);
-        $sonSelfReferencedSampleOne = new SelfReferencedSample($adapterMysqlMock);
+        $sonSelfReferencedSampleOne = new SelfReferencedSample();
         $sonSelfReferencedSampleOne->sonCollection = new SismaCollection(SelfReferencedSample::class);
         $sonCollection->append($sonSelfReferencedSampleOne);
-        $sonSelfReferencedSampleTwo = new SelfReferencedSample($adapterMysqlMock);
+        $sonSelfReferencedSampleTwo = new SelfReferencedSample();
         $sonSelfReferencedSampleTwo->sonCollection = new SismaCollection(SelfReferencedSample::class);
         $sonCollection->append($sonSelfReferencedSampleTwo);
         $selfReferencedSample->setSonCollection($sonCollection);
         $selfReferencedSample->sonCollection[0]->id = 2;
         $selfReferencedSample->sonCollection[1]->id = 3;
-        $selfReferencedSampleForm = new SelfReferencedSampleForm($selfReferencedSample, $adapterMysqlMock);
+        $selfReferencedSampleForm = new SelfReferencedSampleForm($selfReferencedSample);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
@@ -413,9 +406,8 @@ class BaseFormTest extends TestCase
      */
     public function testFormWithNotValidEntity()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
         $this->expectException(InvalidArgumentException::class);
-        $baseSampleForm = new BaseSampleForm(new ReferencedSample($adapterMysqlMock));
+        $baseSampleForm = new BaseSampleForm(new ReferencedSample());
     }
 
     /**
@@ -423,11 +415,10 @@ class BaseFormTest extends TestCase
      */
     public function testFormUpdateWithNotValidReferencedEntityType()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
         $this->expectException(InvalidArgumentException::class);
-        $fakeBaseSample = new FakeBaseSample($adapterMysqlMock);
-        $fakeBaseSample->fakeReferencedSample = new FakeReferencedSample($adapterMysqlMock);
-        $fakeBaseSampleForm = new FakeBaseSampleForm($fakeBaseSample, $adapterMysqlMock);
+        $fakeBaseSample = new FakeBaseSample();
+        $fakeBaseSample->fakeReferencedSample = new FakeReferencedSample();
+        $fakeBaseSampleForm = new FakeBaseSampleForm($fakeBaseSample);
         $requestMock = $this->createMock(Request::class);
         $fakeBaseSampleForm->handleRequest($requestMock);
     }
@@ -437,12 +428,11 @@ class BaseFormTest extends TestCase
      */
     public function testFormUpdateWithNotValidReferencedEntityTypeInCollection()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
         $this->expectException(InvalidArgumentException::class);
-        $fakeReferencedSample = new FakeReferencedSample($adapterMysqlMock);
-        $fakeReferencedSample->addFakeBaseSample(new FakeBaseSample($adapterMysqlMock));
-        $fakeReferencedSample->addFakeBaseSample(new FakeBaseSample($adapterMysqlMock));
-        $fakeReferencedSampleForm = new FakeReferencedSampleForm($fakeReferencedSample, $adapterMysqlMock);
+        $fakeReferencedSample = new FakeReferencedSample();
+        $fakeReferencedSample->addFakeBaseSample(new FakeBaseSample());
+        $fakeReferencedSample->addFakeBaseSample(new FakeBaseSample());
+        $fakeReferencedSampleForm = new FakeReferencedSampleForm($fakeReferencedSample);
         $requestMock = $this->createMock(Request::class);
         $fakeReferencedSampleForm->handleRequest($requestMock);
     }

@@ -36,7 +36,10 @@ use SismaFramework\Core\Enumerations\FilterType;
 class ReferencedSampleForm extends BaseForm
 {
 
-    protected const ENTITY_CLASS_NAME = ReferencedSample::class;
+    protected static function getEntityName(): string
+    {
+        return ReferencedSample::class;
+    }
 
     protected function customFilter(): void
     {

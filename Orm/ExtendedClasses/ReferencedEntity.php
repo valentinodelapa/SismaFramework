@@ -38,6 +38,7 @@ use SismaFramework\Orm\HelperClasses\Cache;
  */
 abstract class ReferencedEntity extends BaseEntity
 {
+
     protected array $collectionPropertiesSetted = [];
     protected array $collections = [];
 
@@ -45,13 +46,18 @@ abstract class ReferencedEntity extends BaseEntity
     public const FOREIGN_KEY_NAME = 'foreignKeyName';
     public const FOREIGN_KEY_SUFFIX = 'Collection';
 
+    public function getCollections(): array
+    {
+        return $this->collections;
+    }
+
     public function getCollectionNames()
     {
         $collectionNames = [];
-        $collections = Cache::getForeignKeyData($this);
-        foreach($collections as $collectionName => $reference){
-            foreach(array_keys($reference) as $refenrenceName){
-                $collectionNames[] = $collectionName.self::FOREIGN_KEY_SUFFIX.$refenrenceName;
+        $collections = Cache::getForeignKeyData(get_called_class());
+        foreach ($collections as $collectionName => $reference) {
+            foreach (array_keys($reference) as $refenrenceName) {
+                $collectionNames[] = $collectionName . self::FOREIGN_KEY_SUFFIX . $refenrenceName;
             }
         }
         return $collectionNames;
@@ -64,7 +70,7 @@ abstract class ReferencedEntity extends BaseEntity
             return $this->$name;
         } elseif ($this->checkCollectionExists($name)) {
             $this->forceCollectionPropertySet($name);
-            return $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)];
+            return $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)];
         } else {
             throw new InvalidPropertyException($name);
         }
@@ -74,9 +80,9 @@ abstract class ReferencedEntity extends BaseEntity
     {
         if (str_contains($collectionName, self::FOREIGN_KEY_SUFFIX) === false) {
             return false;
-        } elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData($this, $this->getForeignKeyReference($collectionName))) === 1) {
+        } elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData(get_called_class(), $this->getForeignKeyReference($collectionName))) === 1) {
             return true;
-        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false) && (isset(Cache::getForeignKeyData($this, $this->getForeignKeyReference($collectionName))[$this->getForeignKeyName($collectionName)]))) {
+        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false) && (isset(Cache::getForeignKeyData(get_called_class(), $this->getForeignKeyReference($collectionName))[static::getForeignKeyName($collectionName)]))) {
             return true;
         } else {
             return false;
@@ -85,15 +91,15 @@ abstract class ReferencedEntity extends BaseEntity
 
     protected function forceCollectionPropertySet(string $propertyName): void
     {
-        if ((isset($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]) === false) ||
-                ((count($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]) === 0) &&
-                ($this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] === false))) {
+        if ((isset($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)]) === false) ||
+                ((count($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)]) === 0) &&
+                ($this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] === false))) {
             $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
-            $foreignKeyName = $this->getForeignKeyName($propertyName);
+            $foreignKeyName = static::getForeignKeyName($propertyName);
             $model = new $modelName($this->adapter);
             $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : new SismaCollection($this->getCollectionDataInformation($propertyName));
-            $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = true;
-            $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = $entityCollection;
+            $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = true;
+            $this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = $entityCollection;
         }
     }
 
@@ -101,7 +107,7 @@ abstract class ReferencedEntity extends BaseEntity
     {
         if ($this->checkCollectionExists($name)) {
             $this->forceCollectionPropertySet($name);
-            return isset($this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)]);
+            return isset($this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)]);
         } else {
             return parent::__isset($name);
         }
@@ -109,7 +115,7 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function getCollectionDataInformation(string $collectionName): string
     {
-        return Cache::getForeignKeyData($this, $this->getForeignKeyReference($collectionName))[$this->getForeignKeyName($collectionName)];
+        return Cache::getForeignKeyData(get_called_class(), $this->getForeignKeyReference($collectionName))[static::getForeignKeyName($collectionName)];
     }
 
     public function getForeignKeyReference(string $collectionName): string
@@ -118,12 +124,12 @@ abstract class ReferencedEntity extends BaseEntity
         return $collectionNameParts[0];
     }
 
-    public function getForeignKeyName(string $collectionName): ?string
+    public static function getForeignKeyName(string $collectionName): ?string
     {
         $collectionNameParts = array_diff(explode(self::FOREIGN_KEY_SUFFIX, $collectionName), ['']);
-        if (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData($this, $collectionNameParts[0])) === 1) {
-            return array_key_first(Cache::getForeignKeyData($this, $collectionNameParts[0]));
-        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false) && isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData($this, $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
+        if (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])) === 1) {
+            return array_key_first(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0]));
+        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false) && isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
             return lcfirst($collectionNameParts[1]);
         } else {
             return null;
@@ -135,8 +141,8 @@ abstract class ReferencedEntity extends BaseEntity
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
             $this->switchSettingType($name, $value);
         } elseif ($this->checkCollectionExists($name)) {
-            $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = true;
-            $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = $value;
+            $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = true;
+            $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
         } else {
             throw new InvalidPropertyException();
         }
@@ -185,7 +191,7 @@ abstract class ReferencedEntity extends BaseEntity
         }
     }
 
-    protected function saveEntityCollection(): void
+    public function saveEntityCollection(): void
     {
         foreach ($this->collections as $foreignKey) {
             foreach ($foreignKey as $collection) {
@@ -199,47 +205,49 @@ abstract class ReferencedEntity extends BaseEntity
     public function setEntityCollection(string $propertyName, SismaCollection $sismaCollection): void
     {
         $this->inizializeEntityCollection($propertyName);
-        $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]->exchangeArray($sismaCollection);
-        $entityPropertyName = $this->getForeignKeyName($propertyName);
-        foreach ($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] as $entity) {
+        $this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)]->exchangeArray($sismaCollection);
+        $entityPropertyName = static::getForeignKeyName($propertyName);
+        foreach ($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] as $entity) {
             $entity->$entityPropertyName = $this;
+            $entity->callingEntity = $this;
         }
-        $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = true;
+        $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = true;
     }
 
     private function inizializeEntityCollection(string $propertyName): void
     {
-        if (isset($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]) === false) {
-            $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = new SismaCollection($this->getCollectionDataInformation($propertyName));
+        if (isset($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)]) === false) {
+            $this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = new SismaCollection($this->getCollectionDataInformation($propertyName));
         }
     }
 
     public function addEntityToEntityCollection(string $propertyName, BaseEntity $entity): void
     {
-        $entityPropertyName = $this->getForeignKeyName($propertyName);
+        $entityPropertyName = static::getForeignKeyName($propertyName);
         $this->switchAdditionType($propertyName, $entity);
         $entity->$entityPropertyName = $this;
+        $entity->callingEntity = $this;
     }
 
     private function switchAdditionType(string $propertyName, BaseEntity $entity): void
     {
         $found = false;
         $this->inizializeEntityCollection($propertyName);
-        foreach ($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] as &$includedEntity) {
+        foreach ($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] as &$includedEntity) {
             if (isset($entity->id) && ($includedEntity->id === $entity->id)) {
                 $includedEntity = $entity;
                 $found = true;
             }
         }
         if ($found === false) {
-            $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)]->append($entity);
+            $this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)]->append($entity);
         }
     }
 
     public function countEntityCollection(string $propertyName): int
     {
         $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
-        $foreignKeyName = $this->getForeignKeyName($propertyName);
+        $foreignKeyName = static::getForeignKeyName($propertyName);
         $model = new $modelName();
         return $model->countEntityCollectionByEntity([$foreignKeyName => $this]);
     }

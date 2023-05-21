@@ -45,7 +45,7 @@ class BaseSampleFixture extends BaseFixture
 
     public function setEntity(): void
     {
-        $baseSample = new BaseSample($this->customAdapter);
+        $baseSample = new BaseSample();
         $baseSample->referencedSample = $this->getEntityByFixtureName(ReferencedSampleFixture::class);
         $baseSample->referencedSampleTwo = $this->getEntityByFixtureName(ReferencedSampleFixture::class);
         $baseSample->otherReferencedSample = $this->getEntityByFixtureName(OtherReferencedSampleFixture::class);

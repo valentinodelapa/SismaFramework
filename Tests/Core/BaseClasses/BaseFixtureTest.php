@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\FixtureException;
-use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\FakeReferencedSample;
 use SismaFramework\Sample\Entities\OtherReferencedSample;
@@ -49,20 +49,19 @@ class BaseFixtureTest extends TestCase
 
     public function testBaseSampleFixture()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $adapterMysqlMock->method('execute')
-                ->willReturn(true);
-        $adapterMysqlMock->method('lastInsertId')
-                ->willReturn(1);
-        $referencedSample = new ReferencedSample($adapterMysqlMock);
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['save'])
+                ->getMock();
+        $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample text';
-        $otherReferencedSample = new OtherReferencedSample($adapterMysqlMock);
+        $otherReferencedSample = new OtherReferencedSample();
         $otherReferencedSample->text = 'other referenced sample text';
         $entitesArray = [
             ReferencedSampleFixture::class => $referencedSample,
             OtherReferencedSampleFixture::class => $otherReferencedSample,
         ];
-        $baseSampleFixture = new BaseSampleFixture($adapterMysqlMock);
+        $baseSampleFixture = new BaseSampleFixture($dataMapperMock);
         $baseSample = $baseSampleFixture->execute($entitesArray);
         $this->assertInstanceOf(BaseSample::class, $baseSample);
         $this->assertInstanceOf(ReferencedSample::class, $baseSample->referencedSample);
@@ -76,11 +75,14 @@ class BaseFixtureTest extends TestCase
     public function testFakeBaseSampleFixtureWithException()
     {
         $this->expectException(FixtureException::class);
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['save'])
+                ->getMock();
         $entitesArray = [
-            FakeReferencedSampleFixture::class => new FakeReferencedSample($adapterMysqlMock),
+            FakeReferencedSampleFixture::class => new FakeReferencedSample(),
         ];
-        $fakeBaseSampleFixture = new FakeBaseSampleFixture($adapterMysqlMock);
+        $fakeBaseSampleFixture = new FakeBaseSampleFixture($dataMapperMock);
         $fakeBaseSampleFixture->execute($entitesArray);
     }
 

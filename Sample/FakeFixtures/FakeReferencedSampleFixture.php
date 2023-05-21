@@ -42,7 +42,7 @@ class FakeReferencedSampleFixture extends BaseFixture
 
     public function setEntity(): void
     {
-        $fakeReferencedSample = new FakeReferencedSample($this->customAdapter);
+        $fakeReferencedSample = new FakeReferencedSample();
         $this->addEntity($fakeReferencedSample);
     }
 

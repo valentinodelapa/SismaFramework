@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  *
@@ -35,10 +36,12 @@ use SismaFramework\Core\HelperClasses\Router;
 abstract class BaseController
 {
 
+    protected DataMapper $dataMapper;
     protected array $vars;
 
-    public function __construct()
+    public function __construct(DataMapper $dataMapper = new DataMapper())
     {
+        $this->dataMapper = $dataMapper;
         $this->vars['controllerUrl'] = Router::getControllerUrl();
         $this->vars['actionUrl'] = Router::getActionUrl();
         $this->vars['metaUrl'] = Router::getMetaUrl();

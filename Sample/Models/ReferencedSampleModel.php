@@ -35,14 +35,15 @@ use SismaFramework\Sample\Entities\ReferencedSample;
  */
 class ReferencedSampleModel extends ReferencedModel
 {
+
+    protected function getEntityName(): string
+    {
+        return ReferencedSample::class;
+    }
+
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
         
-    }
-
-    public function implementEmbeddedEntity(): void
-    {
-        $this->entity = new ReferencedSample($this->adapter);
     }
 
 }

@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\FixturesManager;
-use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  * Description of FixturesManagerTest
@@ -40,13 +40,12 @@ class FixturesManagerTest extends TestCase
 
     public function testFixtureManager()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $adapterMysqlMock->method('execute')
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('save')
                 ->willReturn(true);
-        $adapterMysqlMock->method('lastInsertId')
-                ->willReturn(1);
-        $fixtureManager = new FixturesManager($adapterMysqlMock);
+        $fixtureManager = new FixturesManager($dataMapperMock);
         $fixtureManager->run();
         $this->assertTrue($fixtureManager->extecuted());
     }
+
 }

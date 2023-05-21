@@ -66,7 +66,7 @@ abstract class ReferencedModel extends BaseModel
     {
         foreach ($entityNames as $entityName) {
             $entity = array_shift($arguments);
-            $reflectionProperty = new \ReflectionProperty($this->entity, lcfirst($entityName));
+            $reflectionProperty = new \ReflectionProperty($this->entityName, lcfirst($entityName));
             $fullEntityName = $reflectionProperty->getType()->getName();
             if (($entity instanceof $fullEntityName) || ($entity === null)) {
                 $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $entityName));
@@ -100,7 +100,7 @@ abstract class ReferencedModel extends BaseModel
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
-        return $this->entityName::getCount($query, $bindValues, $bindTypes);
+        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
     }
 
     public function getEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
@@ -132,7 +132,7 @@ abstract class ReferencedModel extends BaseModel
             $query->setLimit($limit);
         }
         $query->close();
-        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($query, $bindValues, $bindTypes);
     }
 
     public function deleteEntityCollectionByEntity(array $referencedEntities, BaseEntity $baseEntity = null, ?string $searchKey = null): bool
@@ -157,7 +157,7 @@ abstract class ReferencedModel extends BaseModel
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
-        return $this->entityName::deleteBatch($query, $bindValues, $bindTypes);
+        return $this->dataMapper->deleteBatch($query, $bindValues, $bindTypes);
     }
 
     public function getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, BaseEntity $baseEntity): SismaCollection
@@ -180,7 +180,7 @@ abstract class ReferencedModel extends BaseModel
             $bindTypes = [DataType::typeEntity];
         }
         $query->close();
-        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($query, $bindValues, $bindTypes);
     }
 
 }

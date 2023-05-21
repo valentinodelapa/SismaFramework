@@ -37,15 +37,15 @@ use SismaFramework\Orm\HelperClasses\Query;
  */
 class SelfReferencedSampleModel extends SelfReferencedModel
 {
-    
+
+    protected function getEntityName(): string
+    {
+        return SelfReferencedSample::class;
+    }
+
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
         
-    }
-
-    public function implementEmbeddedEntity(): void
-    {
-        $this->entity = new SelfReferencedSample($this->adapter);
     }
 
 }

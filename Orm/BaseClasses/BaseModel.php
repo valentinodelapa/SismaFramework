@@ -35,50 +35,35 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
- *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 abstract class BaseModel
 {
 
     protected ?BaseAdapter $adapter = null;
-    protected BaseEntity $entity;
-    protected string $entityName;
+    protected DataMapper $dataMapper;
+    protected readonly string $entityName;
 
-    public function __construct(?BaseAdapter $adapter = null)
+    public function __construct(?BaseAdapter $adapter = null, DataMapper $dataMapper = new DataMapper())
     {
-        if ($adapter instanceof BaseAdapter) {
-            $this->adapter = $adapter;
-        } else {
-            $this->adapter = BaseAdapter::create(\Config\DATABASE_ADAPTER_TYPE, [
-                        'database' => \Config\DATABASE_NAME,
-                        'hostname' => \Config\DATABASE_HOST,
-                        'password' => \Config\DATABASE_PASSWORD,
-                        'port' => \Config\DATABASE_PORT,
-                        'username' => \Config\DATABASE_USERNAME,
-            ]);
-        }
-        $this->implementEmbeddedEntity();
-        $this->entityName = get_class($this->entity);
+        $this->adapter = $adapter ?? BaseAdapter::getDefault();
+        $this->dataMapper = $dataMapper;
+        $this->entityName = $this->getEntityName();
+        $this->checkEntityName();
+        $this->dataMapper->setEntityName($this->entityName);
     }
 
-    abstract public function implementEmbeddedEntity(): void;
-
-    public function getEmbeddedEntity(): BaseEntity
+    private function checkEntityName()
     {
-        return $this->entity;
-    }
-
-    public function setEntityByData(array $data): void
-    {
-        $classProperty = get_class_vars(get_class($this->entity));
-        $orderedData = array_intersect_key($data, $classProperty);
-        foreach ($orderedData as $key => $value) {
-            $this->entity->$key = $value;
+        if (is_subclass_of($this->entityName, BaseEntity::class) === false) {
+            throw new ModelException();
         }
     }
+
+    abstract protected function getEntityName(): string;
 
     public function countEntityCollection(?string $searchKey = null): int
     {
@@ -89,12 +74,12 @@ abstract class BaseModel
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
         }
         $query->close();
-        return $this->entityName::getCount($query, $bindValues, $bindTypes);
+        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
     }
 
     protected function initQuery(): Query
     {
-        $query = $this->entityName::initQuery($this->adapter);
+        $query = $this->dataMapper->initQuery();
         return $query;
     }
 
@@ -114,20 +99,10 @@ abstract class BaseModel
             $query->setLimit($limit);
         }
         $query->close();
-        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($query, $bindValues, $bindTypes);
     }
 
     abstract protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void;
-
-    protected function getMultipleRowResult(Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
-    {
-        $result = $this->entityName::find($query, $bindValues, $bindTypes);
-        $collection = new SismaCollection($this->entityName);
-        foreach ($result as $entity) {
-            $collection->append($entity);
-        }
-        return $collection;
-    }
 
     public function getOtherEntityCollection(BaseEntity $excludedEntity): SismaCollection
     {
@@ -141,7 +116,7 @@ abstract class BaseModel
             DataType::typeEntity,
         ];
         $query->close();
-        return $this->getMultipleRowResult($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($query, $bindValues, $bindTypes);
     }
 
     public function getEntityById(int $id): ?BaseEntity
@@ -153,23 +128,15 @@ abstract class BaseModel
             $query->setWhere();
             $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
             $query->close();
-            $entity = $this->entityName::findFirst($query, [
-                        $id,
-                            ], [
-                        DataType::typeInteger,
+            $entity = $this->dataMapper->findFirst($query, [
+                $id,
+                    ], [
+                DataType::typeInteger,
             ]);
             if (\Config\ORM_CACHE && ($entity instanceof $this->entityName)) {
                 Cache::setEntity($entity);
             }
             return $entity;
-        }
-    }
-
-    public function saveEntityByData(array $data): void
-    {
-        $this->setEntityByData($data);
-        if (!$this->entity->save()) {
-            Throw new ModelException();
         }
     }
 
@@ -179,7 +146,7 @@ abstract class BaseModel
         $query->setWhere();
         $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
-        return $this->entityName::deleteBatch($query, [
+        return $this->dataMapper->deleteBatch($query, [
                     $id,
                         ], [
                     DataType::typeInteger,

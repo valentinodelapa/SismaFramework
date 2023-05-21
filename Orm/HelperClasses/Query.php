@@ -41,6 +41,7 @@ use SismaFramework\Orm\HelperClasses\Query;
  */
 class Query
 {
+
     protected bool $distinct = false;
     protected array $columns = [];
     protected array $columnAlias = [];
@@ -61,9 +62,10 @@ class Query
     {
         $this->reset();
         if ($adapter === null) {
-            $adapter = BaseAdapter::getDefault();
+            $this->adapter = &BaseAdapter::getDefault();
+        } else {
+            $this->adapter = &$adapter;
         }
-        $this->adapter = &$adapter;
         $this->setColumn($this->adapter->allColumns());
     }
 
@@ -238,7 +240,7 @@ class Query
             $column = $this->adapter->escapeColumn($column);
         }
         $escapedValue = $this->adapter->escapeValue($value, ComparisonOperator::against);
-        $this->where[] = Keyword::match->value . ' ' . Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ComparisonOperator::against->value . Keyword::openBlock->value . $escapedValue . ' '. $textSearchMode->value . Keyword::closeBlock->value;
+        $this->where[] = Keyword::match->value . ' ' . Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ComparisonOperator::against->value . Keyword::openBlock->value . $escapedValue . ' ' . $textSearchMode->value . Keyword::closeBlock->value;
         return $this;
     }
 

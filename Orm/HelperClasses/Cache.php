@@ -60,20 +60,23 @@ class Cache
         return static::$entityCache[$entityName][$entityId];
     }
 
-    public static function getForeignKeyData(ReferencedEntity $referencedEntity, ?string $propertyName = null): array
+    public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null): array
     {
-        $referencedEntityName = get_class($referencedEntity);
-        if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
-            if(is_dir(\Config\REFERENCE_CACHE_DIRECTORY) === false){
-                mkdir(\Config\REFERENCE_CACHE_DIRECTORY);
+        if (is_subclass_of($referencedEntityName, ReferencedEntity::class)) {
+            if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
+                if (is_dir(\Config\REFERENCE_CACHE_DIRECTORY) === false) {
+                    mkdir(\Config\REFERENCE_CACHE_DIRECTORY);
+                }
+                if (file_exists(\Config\REFERENCE_CACHE_PATH)) {
+                    static::getForeignKeyDataFromCacheFile($referencedEntityName, $propertyName);
+                } else {
+                    static::setForeignKeyDataFromEntities();
+                }
             }
-            if (file_exists(\Config\REFERENCE_CACHE_PATH)) {
-                static::getForeignKeyDataFromCacheFile($referencedEntityName, $propertyName);
-            } else {
-                static::setForeignKeyDataFromEntities();
-            }
+            return ($propertyName === null) ? static::$foreighKeyDataCache[$referencedEntityName] : static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+        } else {
+            throw new CacheException();
         }
-        return ($propertyName === null) ? static::$foreighKeyDataCache[$referencedEntityName] : static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
     }
 
     private static function checkEntityPresence(string $referencedEntityName, ?string $propertyName): bool

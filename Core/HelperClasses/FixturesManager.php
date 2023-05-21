@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  *
@@ -37,11 +37,11 @@ class FixturesManager
 
     private array $fixturesArray;
     private array $entitiesArray = [];
-    private ?BaseAdapter $customAdapter = null;
+    private DataMapper $dataMapper;
     
-    public function __construct(?BaseAdapter $customAdapter = null)
+    public function __construct(DataMapper $dataMapper = new DataMapper())
     {
-        $this->customAdapter = $customAdapter;
+        $this->dataMapper = $dataMapper;
     }
 
     public function run()
@@ -84,7 +84,7 @@ class FixturesManager
     private function executeFixture($fixture): void
     {
         if ($this->fixturesArray[$fixture] === false) {
-            $fixtureInstance = new $fixture($this->customAdapter);
+            $fixtureInstance = new $fixture($this->dataMapper);
             if (count($fixtureInstance->getDependencies()) > 0) {
                 $this->executeFixturesArray($fixtureInstance->getDependencies());
             }

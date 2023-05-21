@@ -36,7 +36,11 @@ use SismaFramework\Sample\Entities\FakeBaseSample;
  */
 class FakeBaseSampleForm extends BaseForm
 {
-    protected const ENTITY_CLASS_NAME = FakeBaseSample::class;
+
+    protected static function getEntityName(): string
+    {
+        return FakeBaseSample::class;
+    }
     
     protected function customFilter(): void
     {

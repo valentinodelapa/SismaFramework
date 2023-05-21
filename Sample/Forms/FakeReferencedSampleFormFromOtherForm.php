@@ -37,7 +37,10 @@ use SismaFramework\Sample\Entities\WrongEntity;
 class FakeReferencedSampleFormFromOtherForm extends BaseForm
 {
 
-    protected const ENTITY_CLASS_NAME = WrongEntity::class;
+    protected static function getEntityName(): string
+    {
+        return WrongEntity::class;
+    }
 
     protected function customFilter(): void
     {

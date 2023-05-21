@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
@@ -38,13 +38,6 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
  */
 class Parser
 {
-
-    private static ?BaseAdapter $customAdapter = null;
-
-    public static function setCustomAdapter(BaseAdapter $customAdapter): void
-    {
-        self::$customAdapter = $customAdapter;
-    }
 
     public static function parseValue(\ReflectionNamedType $reflectionNamedType, null|string|array $value, $parseEntity = true): mixed
     {
@@ -73,7 +66,7 @@ class Parser
     public static function parseEntity(string $entityName, int $value): BaseEntity
     {
         $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
-        $modelInstance = new $modelName(self::$customAdapter);
+        $modelInstance = new $modelName();
         $entity = $modelInstance->getEntityById($value);
         if ($entity instanceof BaseEntity) {
             return $entity;
@@ -94,15 +87,30 @@ class Parser
 
     public static function unparseValues(array &$arrayValues): void
     {
-        foreach ($arrayValues as $key => $value) {
-            if ($value instanceof BaseEntity) {
-                $arrayValues[$key] = $value->id;
-            } elseif ($value instanceof \UnitEnum) {
-                $arrayValues[$key] = $value->value;
-            } elseif ($value instanceof SismaDateTime) {
-                $arrayValues[$key] = $value->format("Y-m-d H:i:s");
-            }
+        foreach ($arrayValues as &$value) {
+            $value = self::unparseValue($value);
         }
+    }
+
+    public static function unparseValue(mixed $value, bool $persistentUnparse = false, DataMapper $dataMapper = new DataMapper()): null|int|float|string
+    {
+        if ($value instanceof BaseEntity) {
+            if ($persistentUnparse) {
+                self::saveEntityModification($value, $dataMapper);
+            }
+            return $value->id;
+        } elseif ($value instanceof \UnitEnum) {
+            return $value->value;
+        } elseif ($value instanceof SismaDateTime) {
+            return $value->format("Y-m-d H:i:s");
+        } else {
+            return $value;
+        }
+    }
+
+    private static function saveEntityModification(BaseEntity $entity, DataMapper $dataMapper): void
+    {
+        $dataMapper->save($entity);
     }
 
 }

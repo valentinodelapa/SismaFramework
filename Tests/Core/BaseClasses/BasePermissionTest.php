@@ -29,7 +29,7 @@ namespace SismaFramework\Tests\Core\BaseClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Enumerations\PermissionAttribute;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
-use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Sample\Permissions\SamplePermission;
@@ -39,34 +39,35 @@ use SismaFramework\Sample\Permissions\SamplePermission;
  */
 class BasePermissionTest extends TestCase
 {
-    
+
     /**
      * @runInSeparateProcess
      */
     public function testIstanceNotPermitted()
     {
         $this->expectException(AccessDeniedException::class);
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        SamplePermission::isAllowed(new ReferencedSample($adapterMysqlMock), PermissionAttribute::allow);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        SamplePermission::isAllowed(new ReferencedSample($baseAdapterMock), PermissionAttribute::allow);
     }
-    
+
     /**
      * @runInSeparateProcess
      */
     public function testCheckPermissionFalse()
     {
         $this->expectException(AccessDeniedException::class);
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        SamplePermission::isAllowed(new BaseSample($adapterMysqlMock), PermissionAttribute::allow);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        SamplePermission::isAllowed(new BaseSample($baseAdapterMock), PermissionAttribute::allow);
     }
-    
+
     /**
      * @runInSeparateProcess
      */
     public function testCheckPermissionTrue()
     {
         $this->expectNotToPerformAssertions();
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        SamplePermission::isAllowed(new BaseSample($adapterMysqlMock), PermissionAttribute::deny);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        SamplePermission::isAllowed(new BaseSample($baseAdapterMock), PermissionAttribute::deny);
     }
+
 }

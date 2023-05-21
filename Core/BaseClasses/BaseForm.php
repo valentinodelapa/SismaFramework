@@ -50,8 +50,6 @@ abstract class BaseForm
 
     use \SismaFramework\Core\Traits\Submitted;
 
-    protected const ENTITY_CLASS_NAME = BaseEntity::class;
-
     protected bool $filterResult = true;
     protected BaseEntity $entity;
     protected Request $request;
@@ -59,31 +57,32 @@ abstract class BaseForm
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     protected array $filterErrors = [];
+    private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
-    private ?BaseAdapter $customAdapter = null;
 
-    public function __construct(?BaseEntity $baseEntity = null, ?BaseAdapter $customAdapter = null)
+    public function __construct(?BaseEntity $baseEntity = null)
     {
-        $this->customAdapter = $customAdapter;
-        $this->checkEntityClassNameIsOverride();
+        $this->checkEntityName();
         $this->embedEntity($baseEntity);
         $this->setFilterFieldsMode();
     }
-
-    private function checkEntityClassNameIsOverride(): void
+    
+    private function checkEntityName()
     {
-        if (static::ENTITY_CLASS_NAME === BaseEntity::class) {
+        if(is_subclass_of($this->getEntityName(), BaseEntity::class) === false){
             throw new FormException();
         }
     }
 
+    abstract protected static function getEntityName(): string;
+
     private function embedEntity(?BaseEntity $baseEntity): void
     {
-        $entityClassName = static::ENTITY_CLASS_NAME;
+        $entityClassName = static::getEntityName();
         if ($baseEntity instanceof $entityClassName) {
             $this->entity = $baseEntity;
         } elseif ($baseEntity === null) {
-            $this->entity = new $entityClassName($this->customAdapter);
+            $this->entity = new $entityClassName();
         } else {
             throw new InvalidArgumentException();
         }
@@ -116,7 +115,7 @@ abstract class BaseForm
 
     private function parseCollectionProperties(): void
     {
-        foreach (Cache::getForeignKeyData($this->entity) as $propertyName => $propertyData) {
+        foreach (Cache::getForeignKeyData(static::getEntityName()) as $propertyName => $propertyData) {
             if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX, $this->request->request)) {
                 $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX);
             } elseif (count($propertyData) > 1) {
@@ -139,6 +138,7 @@ abstract class BaseForm
             $currentForm = $this->entityFromForm[$propertyName];
             $this->entityData->{$propertyName} = $this->switchForm($currentForm, $currentRequest);
             $this->filterErrors[$propertyName . "Error"] = $currentForm->returnFilterErrors();
+            array_push($this->entityToResolve, $propertyName);
         }
     }
 
@@ -160,10 +160,8 @@ abstract class BaseForm
     private function switchForm(self $entityFromForm, Request $request): StandardEntity|BaseEntity
     {
         $entityFromForm->handleRequest($request);
-        if ($entityFromForm->isValid()) {
-            $entityData = $entityFromForm->resolveEntity();
-        } else {
-            $entityData = $entityFromForm->getEntityDataToStandardEntity();
+        $entityData = $entityFromForm->getEntityDataToStandardEntity();
+        if ($entityFromForm->isValid() === false) {
             $this->filterResult = false;
         }
         return $entityData;
@@ -274,7 +272,7 @@ abstract class BaseForm
 
     private function addEntityCollectionFromForm(string $propertyName, string $formPropertyClass, int $baseCollectionFormFromNumber): void
     {
-        if ($this->entity->getCollectionDataInformation($propertyName) === $formPropertyClass::ENTITY_CLASS_NAME) {
+        if ($this->entity->getCollectionDataInformation($propertyName) === $formPropertyClass::getEntityName()) {
             $entityCollectonToEmbed = $this->entity->$propertyName;
             $sismaCollectionPropertyKeys = isset($this->request->request[$propertyName]) ? array_keys($this->request->request[$propertyName]) : $this->getBaseCollectionFormKeys($baseCollectionFormFromNumber);
             $this->generateSismaCollectionProperty($sismaCollectionPropertyKeys, $formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
@@ -288,7 +286,7 @@ abstract class BaseForm
         $reflectionEntity = new \ReflectionClass($this->entity);
         $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
         if ($reflectionEntityProperty->class === get_class($this->entity)) {
-            if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::ENTITY_CLASS_NAME) {
+            if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::getEntityName()) {
                 $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
                 throw new InvalidArgumentException();
@@ -315,7 +313,7 @@ abstract class BaseForm
 
     private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed, ?self &$entityFromForm, ?array &$filterErrors): void
     {
-        $entityFromForm = new $formPropertyClass($entityToEmbed, $this->customAdapter);
+        $entityFromForm = new $formPropertyClass($entityToEmbed);
         $filterErrors = $entityFromForm->returnFilterErrors();
     }
 
@@ -337,11 +335,20 @@ abstract class BaseForm
         foreach ($this->entityData as $propertyName => $value) {
             if (in_array($propertyName, $this->sismaCollectionToResolve)) {
                 $this->resolveSismaCollection($propertyName);
+            } elseif (in_array($propertyName, $this->entityToResolve)) {
+                $this->resolveEntityByForm($propertyName);
             } else {
                 $this->entity->$propertyName = $value;
             }
         }
         return $this->entity;
+    }
+
+    private function resolveEntityByForm(string $propertyName): void
+    {
+        if (isset($this->entityFromForm[$propertyName]->entityData)) {
+            $this->entity->$propertyName = $this->entityFromForm[$propertyName]->resolveEntity();
+        }
     }
 
     private function resolveSismaCollection(string $propertyName): void

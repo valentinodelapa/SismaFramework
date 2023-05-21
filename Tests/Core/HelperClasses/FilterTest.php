@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Filter;
-use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Enumerations\SampleType;
@@ -38,30 +38,31 @@ use SismaFramework\Sample\Enumerations\SampleType;
  */
 class FilterTest extends TestCase
 {
+
     public function testNoFilter()
     {
         $this->assertTrue(Filter::noFilter('sample value'));
     }
-    
+
     public function testIsNotNull()
     {
         $this->assertTrue(Filter::isNotNull('not null value'));
         $this->assertFalse(Filter::isNotNull(null));
     }
-    
+
     public function testIsNotFalse()
     {
         $this->assertTrue(Filter::isNotFalse('not false value'));
         $this->assertFalse(Filter::isNotFalse(false));
     }
-    
+
     public function testIsNotEmpty()
     {
         $this->assertTrue(Filter::isNotEmpty(0));
         $this->assertTrue(Filter::isNotEmpty('not empty value'));
         $this->assertFalse(Filter::isNotEmpty(''));
     }
-    
+
     public function testIsString()
     {
         $this->assertTrue(Filter::isString('string value'));
@@ -73,19 +74,19 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isString(''));
         $this->assertFalse(Filter::isString(['array']));
     }
-    
+
     public function testIsMinLimitString()
     {
         $this->assertTrue(Filter::isMinLimitString('string min limit value', 10));
         $this->assertFalse(Filter::isMinLimitString('fake', 10));
     }
-    
+
     public function testIsMaxLimitString()
     {
         $this->assertTrue(Filter::isMaxLimitString('string max limit value', 30));
         $this->assertFalse(Filter::isMaxLimitString('fake', 3));
     }
-    
+
     public function testLimitString()
     {
         $this->assertTrue(Filter::isLimitString('string limit value', 10, 30));
@@ -93,7 +94,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isLimitString('fake', 10, 30));
         $this->assertFalse(Filter::isLimitString('fake', 10, 3));
     }
-    
+
     public function testIsAlphabeticString()
     {
         $this->assertTrue(Filter::isAlphabeticString('alphabeticStringValue'));
@@ -102,7 +103,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isAlphabeticString('123 alphanumeric'));
         $this->assertFalse(Filter::isAlphabeticString('123'));
     }
-    
+
     public function testIsMinLimitAlphabeticString()
     {
         $this->assertTrue(Filter::isMinLimitAlphabeticString('stringMinLimitValue', 10));
@@ -110,7 +111,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isMinLimitAlphabeticString('stringMaxLimitValue123', 10));
         $this->assertFalse(Filter::isMinLimitAlphabeticString('fake', 10));
     }
-    
+
     public function testIsMaxLimitAlphabeticString()
     {
         $this->assertTrue(Filter::isMaxLimitAlphabeticString('stringMaxLimitValue', 30));
@@ -118,7 +119,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isMaxLimitAlphabeticString('stringMaxLimitValue123', 30));
         $this->assertFalse(Filter::isMaxLimitAlphabeticString('fake', 3));
     }
-    
+
     public function testLimitAlphabeticString()
     {
         $this->assertTrue(Filter::isLimitAlphabeticString('stringLimitValue', 10, 30));
@@ -128,7 +129,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isLimitAlphabeticString('fake', 10, 30));
         $this->assertFalse(Filter::isLimitAlphabeticString('fake', 10, 3));
     }
-    
+
     public function testIsAlphanumericString()
     {
         $this->assertTrue(Filter::isAlphanumericString('123alphanumericStringValue'));
@@ -137,7 +138,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isAlphanumericString('alphabetic string value with spaces'));
         $this->assertFalse(Filter::isAlphanumericString('123'));
     }
-    
+
     public function testIsMinLimitAlphanumericString()
     {
         $this->assertTrue(Filter::isMinLimitAlphanumericString('123stringMinLimitValue', 10));
@@ -145,7 +146,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isMinLimitAlphanumericString('stringMaxLimitValue', 10));
         $this->assertFalse(Filter::isMinLimitAlphanumericString('fake', 10));
     }
-    
+
     public function testIsMaxLimitAlphanumericString()
     {
         $this->assertTrue(Filter::isMaxLimitAlphanumericString('123stringMaxLimitValue', 30));
@@ -153,7 +154,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isMaxLimitAlphanumericString('stringMaxLimitValue', 30));
         $this->assertFalse(Filter::isMaxLimitAlphanumericString('fake', 3));
     }
-    
+
     public function testLimitAlphanumericString()
     {
         $this->assertTrue(Filter::isLimitAlphanumericString('123stringLimitValue', 10, 30));
@@ -163,7 +164,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isLimitAlphanumericString('fake', 10, 30));
         $this->assertFalse(Filter::isLimitAlphanumericString('fake', 10, 3));
     }
-    
+
     public function testIsSecurePassword()
     {
         $this->assertTrue(Filter::isSecurePassword('SamplePassword1@'));
@@ -175,7 +176,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isSecurePassword('1234567890@'));
         $this->assertFalse(Filter::isSecurePassword('Sp@1'));
     }
-    
+
     public function testIsEmal()
     {
         $this->assertTrue(Filter::isEmail('sample@password.net'));
@@ -184,7 +185,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isEmail('sample@password'));
         $this->assertFalse(Filter::isEmail('samplepassword.net'));
     }
-    
+
     public function testIsNumeric()
     {
         $this->assertTrue(Filter::isNumeric(1));
@@ -196,7 +197,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isNumeric(''));
         $this->assertFalse(Filter::isNumeric(['array']));
     }
-    
+
     public function testIsInteger()
     {
         $this->assertTrue(Filter::isInteger(1));
@@ -208,7 +209,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isInteger(''));
         $this->assertFalse(Filter::isInteger(['array']));
     }
-    
+
     public function testIsFloat()
     {
         $this->assertTrue(Filter::isFloat(1.1));
@@ -220,7 +221,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isFloat(''));
         $this->assertFalse(Filter::isFloat(['array']));
     }
-    
+
     public function testIsBoolean()
     {
         $this->assertTrue(Filter::isBoolean(true));
@@ -232,7 +233,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isBoolean(''));
         $this->assertFalse(Filter::isBoolean(['array']));
     }
-    
+
     public function testIsArray()
     {
         $this->assertTrue(Filter::isArray(['array']));
@@ -244,7 +245,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isArray(null));
         $this->assertFalse(Filter::isArray(''));
     }
-    
+
     public function testIsDate()
     {
         $this->assertTrue(Filter::isDate(new SismaDateTime()));
@@ -257,7 +258,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isDate(null));
         $this->assertFalse(Filter::isDate(''));
     }
-    
+
     public function testIsDatetime()
     {
         $this->assertTrue(Filter::isDatetime(new SismaDateTime()));
@@ -270,11 +271,10 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isDatetime(null));
         $this->assertFalse(Filter::isDatetime(''));
     }
-    
+
     public function testIsEntity()
     {
-        $adapterMysqlMock = $this->createMock(AdapterMysql::class);
-        $this->assertTrue(Filter::isEntity(new BaseSample($adapterMysqlMock)));
+        $this->assertTrue(Filter::isEntity(new BaseSample()));
         $this->assertFalse(Filter::isEntity(['array']));
         $this->assertFalse(Filter::isEntity(1.1));
         $this->assertFalse(Filter::isEntity(1));
@@ -284,7 +284,7 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isEntity(null));
         $this->assertFalse(Filter::isEntity(''));
     }
-    
+
     public function testIsEnumeration()
     {
         $this->assertTrue(Filter::isEnumeration(SampleType::one));
@@ -297,4 +297,5 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isEnumeration(null));
         $this->assertFalse(Filter::isEnumeration(''));
     }
+
 }

@@ -32,10 +32,10 @@ use SismaFramework\Sample\Entities\BaseSample;
 
 class BaseSampleModel extends BaseModel
 {
-    
-    public function implementEmbeddedEntity():void
+
+    protected function getEntityName(): string
     {
-        $this->entity = new BaseSample($this->adapter);
+        return BaseSample::class;
     }
 
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void

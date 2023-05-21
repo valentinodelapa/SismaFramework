@@ -29,12 +29,11 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Core\Exceptions\QueryStringException;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
-use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 
 /**
  * Description of DispatcherTest
@@ -43,6 +42,13 @@ use SismaFramework\Core\HttpClasses\Request;
  */
 class DispatcherTest extends TestCase
 {
+    
+    public function __construct($name = null, $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+    }
 
     /**
      * @runInSeparateProcess

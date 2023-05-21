@@ -28,8 +28,7 @@ namespace SismaFramework\Core\BaseClasses;
 
 use SismaFramework\Core\Exceptions\FixtureException;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
-
+use SismaFramework\Orm\HelperClasses\DataMapper;
 /**
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -40,11 +39,11 @@ abstract class BaseFixture
     private BaseEntity $entity;
     private array $entitiesArray;
     private array $dependenciesArray = [];
-    protected ?BaseAdapter $customAdapter = null;
+    protected DataMapper $dataMapper;
 
-    public function __construct(?BaseAdapter $customAdapter = null)
+    public function __construct(DataMapper $dataMapper = new DataMapper())
     {
-        $this->customAdapter = $customAdapter;
+        $this->dataMapper = $dataMapper;
         $this->setDependencies();
     }
 
@@ -52,7 +51,7 @@ abstract class BaseFixture
     {
         $this->entitiesArray = $entitiesArray;
         $this->setEntity();
-        $this->entity->save();
+        $this->dataMapper->save($this->entity);
         return $this->entity;
     }
 

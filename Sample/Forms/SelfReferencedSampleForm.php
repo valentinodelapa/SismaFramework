@@ -36,7 +36,10 @@ use SismaFramework\Sample\Entities\SelfReferencedSample;
 class SelfReferencedSampleForm extends BaseForm
 {
 
-    protected const ENTITY_CLASS_NAME = SelfReferencedSample::class;
+    protected static function getEntityName(): string
+    {
+        return SelfReferencedSample::class;
+    }
 
     protected function customFilter(): void
     {
