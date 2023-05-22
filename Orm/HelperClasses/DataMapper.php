@@ -204,6 +204,8 @@ class DataMapper
         $ok = $this->adapter->execute($cmd, $this->values);
         if ($ok) {
             $this->entity->{$this->entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
+            $this->entity->modified = false;
+            $this->entity->nestedChanges = false;
             $this->checkIsReferencedEntity();
         }
         $this->checkEndTransaction();
