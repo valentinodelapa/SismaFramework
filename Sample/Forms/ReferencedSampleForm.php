@@ -53,8 +53,8 @@ class ReferencedSampleForm extends BaseForm
 
     protected function setEntityFromForm(): void
     {
-        $this->addEntityFromForm('baseSampleCollectionReferencedSample', BaseSampleFormFromOtherForm::class)
-                ->addEntityFromForm('baseSampleCollectionReferencedSampleTwo', BaseSampleFormFromOtherForm::class, 1);
+        $this->addEntityFromForm('baseSampleCollectionReferencedEntityWithoutInitialization', BaseSampleFormFromOtherForm::class)
+                ->addEntityFromForm('baseSampleCollectionReferencedEntityWithInitialization', BaseSampleFormFromOtherForm::class, 1);
     }
 
     protected function setFilterFieldsMode(): void

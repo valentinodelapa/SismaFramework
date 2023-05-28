@@ -74,10 +74,8 @@ class DataMapper
 
     public function save(BaseEntity $entity)
     {
-
         if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
             return $this->insert($entity);
-            //}else{
         } elseif ($entity->modified) {
             return $this->update($entity);
         } elseif ($entity->nestedChanges) {

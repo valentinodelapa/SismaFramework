@@ -64,8 +64,8 @@ class BaseFixtureTest extends TestCase
         $baseSampleFixture = new BaseSampleFixture($dataMapperMock);
         $baseSample = $baseSampleFixture->execute($entitesArray);
         $this->assertInstanceOf(BaseSample::class, $baseSample);
-        $this->assertInstanceOf(ReferencedSample::class, $baseSample->referencedSample);
-        $this->assertInstanceOf(ReferencedSample::class, $baseSample->referencedSampleTwo);
+        $this->assertInstanceOf(ReferencedSample::class, $baseSample->referencedEntityWithoutInitialization);
+        $this->assertInstanceOf(ReferencedSample::class, $baseSample->referencedEntityWithInitialization);
         $this->assertInstanceOf(OtherReferencedSample::class, $baseSample->otherReferencedSample);
     }
 

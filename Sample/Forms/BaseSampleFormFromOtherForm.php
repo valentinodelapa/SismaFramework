@@ -36,7 +36,7 @@ class BaseSampleFormFromOtherForm extends BaseForm
 
     protected function setFilterFieldsMode(): void
     {
-        $this->addFilterFieldMode('text', FilterType::isString)
+        $this->addFilterFieldMode('stringWithoutInizialization', FilterType::isString)
                 ->addFilterFieldMode('boolean', FilterType::isBoolean);
     }
 

@@ -28,123 +28,205 @@ namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
+use SismaFramework\Sample\Enumerations\SampleType;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 class BaseEntityTest extends TestCase
 {
-    
-    public function testEntityWithEntityNotConvertedPropertyNotModified()
-    {
-        $baseSample = new BaseSample();
-        $baseSample->text = 'base sample';
-        $baseSample->boolean = true;
-        $baseSample->referencedSample = 1;
-        $this->assertFalse($baseSample->modified);
-    }
-    
-    public function testEntityWithEntityNotConvertedPropertyModified()
+
+    public function testEntityWithEntityNotConvertedProperty()
     {
         $baseSampleOne = new BaseSample();
-        $baseSampleOne->referencedSample = 1;
         $this->assertFalse($baseSampleOne->modified);
-        $baseSampleOne->referencedSample = 2;
+        $baseSampleOne->referencedEntityWithoutInitialization = 1;
         $this->assertTrue($baseSampleOne->modified);
-        
+        $baseSampleOne->modified = false;
+        $baseSampleOne->referencedEntityWithoutInitialization = 1;
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->referencedEntityWithoutInitialization = 2;
+        $this->assertTrue($baseSampleOne->modified);
+
         $baseSampleTwo = new BaseSample();
-        $baseSampleTwo->referencedSample = new ReferencedSample();
-        $baseSampleTwo->referencedSample = 1;
+        $baseSampleTwo->referencedEntityWithInitialization->id = 1;
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->referencedEntityWithInitialization = 1;
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->referencedEntityWithInitialization = 2;
         $this->assertTrue($baseSampleTwo->modified);
-        
+
         $baseSampleThree = new BaseSample();
-        $baseSampleThree->referencedSample = new ReferencedSample();
-        $baseSampleThree->referencedSample->id = 2;
         $this->assertFalse($baseSampleThree->modified);
-        $baseSampleThree->referencedSample = 3;
+        $baseSampleThree->nullableReferencedEntityWithInitialization = 1;
+        $this->assertTrue($baseSampleThree->modified);
+        $baseSampleThree->modified = false;
+        $baseSampleThree->nullableReferencedEntityWithInitialization = 1;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->nullableReferencedEntityWithInitialization = 2;
         $this->assertTrue($baseSampleThree->modified);
     }
-    
-    public function testEntityWithEntityConvertedPropertyNotModified()
-    {
-        $baseSample = new BaseSample();
-        $baseSample->text = 'base sample';
-        $baseSample->boolean = true;
-        $referencedSample = new ReferencedSample();
-        $baseSample->referencedSample = $referencedSample;
-        $this->assertFalse($baseSample->modified);
-    }
-    
+
     public function testEntityWithEntityConvertedPropertyModifiedOne()
     {
+        $referencedSampleOne = new ReferencedSample();
+        $referencedSampleOne->id = 1;
         $baseSampleOne = new BaseSample();
-        $baseSampleOne->referencedSample = new ReferencedSample();
-        $baseSampleOne->referencedSample->id = 1;
         $this->assertFalse($baseSampleOne->modified);
-        $baseSampleOne->referencedSample = new ReferencedSample();
+        $baseSampleOne->referencedEntityWithoutInitialization = $referencedSampleOne;
         $this->assertTrue($baseSampleOne->modified);
-        
+        $baseSampleOne->modified = false;
+        $baseSampleOne->referencedEntityWithoutInitialization = $referencedSampleOne;
+        $this->assertFalse($baseSampleOne->modified);
+        $referencedSampleTwo = new ReferencedSample();
+        $referencedSampleTwo->id = 2;
+        $baseSampleOne->referencedEntityWithoutInitialization = $referencedSampleTwo;
+        $this->assertTrue($baseSampleOne->modified);
+        $baseSampleOne->modified = false;
+        $baseSampleOne->referencedEntityWithoutInitialization = new ReferencedSample();
+        $this->assertTrue($baseSampleOne->modified);
+
         $baseSampleTwo = new BaseSample();
-        $baseSampleTwo->referencedSample = 1;
+        $baseSampleTwo->referencedEntityWithInitialization->id = 1;
         $this->assertFalse($baseSampleTwo->modified);
-        $baseSampleTwo->referencedSample = new ReferencedSample();
+        $baseSampleTwo->referencedEntityWithInitialization = $baseSampleTwo->referencedEntityWithInitialization;
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->referencedEntityWithInitialization = new ReferencedSample();
         $this->assertTrue($baseSampleTwo->modified);
-        
+
+        $referencedSampleFour = new ReferencedSample();
+        $referencedSampleFour->id = 1;
         $baseSampleThree = new BaseSample();
-        $baseSampleThree->referencedSample = 1;
         $this->assertFalse($baseSampleThree->modified);
-        $baseSampleThree->referencedSample = new ReferencedSample();
-        $baseSampleThree->referencedSample->id = 2;
+        $baseSampleThree->nullableReferencedEntityWithInitialization = null;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->nullableReferencedEntityWithInitialization = $referencedSampleFour;
         $this->assertTrue($baseSampleThree->modified);
-        
-        $baseSampleFour = new BaseSample();
-        $referencedSample = new ReferencedSample();
-        $referencedSample->id = 1;
-        $referencedSample->text = 'referenced sample';
-        $baseSampleFour->referencedSample = $referencedSample;
-        $this->assertFalse($baseSampleFour->modified);
-        $referencedSample->text = 'referenced sample modified';
-        $baseSampleFour->referencedSample = $referencedSample;
-        $this->assertFalse($baseSampleFour->modified);
+        $baseSampleThree->modified = false;
+        $baseSampleThree->nullableReferencedEntityWithInitialization = $referencedSampleFour;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->nullableReferencedEntityWithInitialization = null;
+        $this->assertTrue($baseSampleThree->modified);
     }
-    
-    public function testEntityWithBuiltInPropertyNotModified()
+
+    public function testEntityWithBuiltInProperty()
     {
-        $baseSample = new BaseSample();
-        $baseSample->text = 'base sample';
-        $this->assertFalse($baseSample->modified);
+        $baseSampleOne = new BaseSample();
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->stringWithoutInizialization = 'base sample';
+        $this->assertTrue($baseSampleOne->modified);
+        $baseSampleOne->modified = false;
+        $baseSampleOne->stringWithoutInizialization = 'base sample';
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->stringWithoutInizialization = 'base sample modified';
+        $this->assertTrue($baseSampleOne->modified);
+
+        $baseSampleTwo = new BaseSample();
+        $baseSampleTwo->stringWithInizialization = 'base sample';
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->stringWithInizialization = 'base sample modified';
+        $this->assertTrue($baseSampleTwo->modified);
+
+        $baseSampleThree = new BaseSample();
+        $baseSampleThree->nullableStringWithInizialization = null;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->nullableStringWithInizialization = 'nullable string';
+        $this->assertTrue($baseSampleThree->modified);
+        $baseSampleThree->modified = false;
+        $baseSampleThree->nullableStringWithInizialization = 'nullable string';
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->nullableStringWithInizialization = 'nullable modified string';
+        $this->assertTrue($baseSampleThree->modified);
     }
-    
-    public function testEntityWithBuiltInPropertyModified()
+
+    public function testEntityWithEnumProperty()
     {
-        $baseSample = new BaseSample();
-        $baseSample->text = 'base sample';
-        $this->assertFalse($baseSample->modified);
-        $baseSample->text = 'base sample';
-        $this->assertFalse($baseSample->modified);
-        $baseSample->text = 'base sample modified';
-        $this->assertTrue($baseSample->modified);
+        $baseSampleOne = new BaseSample();
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->enumWithoutInitialization = SampleType::one;
+        $this->assertTrue($baseSampleOne->modified);
+        $baseSampleOne->modified = false;
+        $baseSampleOne->enumWithoutInitialization = SampleType::one;
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->enumWithoutInitialization = SampleType::two;
+        $this->assertTrue($baseSampleOne->modified);
+
+        $baseSampleTwo = new BaseSample();
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->enumWithInitialization = SampleType::one;
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->enumWithInitialization = SampleType::two;
+        $this->assertTrue($baseSampleTwo->modified);
+
+        $baseSampleThree = new BaseSample();
+        $baseSampleThree->enumNullableWithInitialization = null;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->enumNullableWithInitialization = SampleType::one;
+        $this->assertTrue($baseSampleThree->modified);
+        $baseSampleThree->modified = false;
+        $baseSampleThree->enumNullableWithInitialization = SampleType::one;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->enumNullableWithInitialization = SampleType::two;
+        $this->assertTrue($baseSampleThree->modified);
     }
-    
+
+    public function testEntityWithSismaDateTimeProperty()
+    {
+        $baseSampleOne = new BaseSample();
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
+        $this->assertTrue($baseSampleOne->modified);
+        $baseSampleOne->modified = false;
+        $baseSampleOne->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $this->assertTrue($baseSampleOne->modified);
+
+        $baseSampleTwo = new BaseSample();
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $this->assertTrue($baseSampleTwo->modified);
+
+        $baseSampleThree = new BaseSample();
+        $baseSampleThree->datetimeNullableWithInitialization = null;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->datetimeNullableWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
+        $this->assertTrue($baseSampleThree->modified);
+        $baseSampleThree->modified = false;
+        $baseSampleThree->datetimeNullableWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->datetimeNullableWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $this->assertTrue($baseSampleThree->modified);
+    }
+
     public function testForeignKeyNestedChanges()
     {
         $baseSampleOne = new BaseSample();
-        $baseSampleOne->referencedSample = new ReferencedSample();
-        $baseSampleOne->referencedSample->text = 'referenced sample';
         $this->assertFalse($baseSampleOne->nestedChanges);
-        $baseSampleOne->referencedSample->text = 'referenced sample modified';
+        $baseSampleOne->referencedEntityWithoutInitialization = new ReferencedSample();
+        $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
         $this->assertTrue($baseSampleOne->nestedChanges);
-        
+        $baseSampleOne->nestedChanges = false;
+        $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
+        $this->assertFalse($baseSampleOne->nestedChanges);
+        $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample modified';
+        $this->assertTrue($baseSampleOne->nestedChanges);
+
         $baseSampleTwo = new BaseSample();
         $referencedSample = new ReferencedSample();
         $referencedSample->id = 1;
         $referencedSample->text = 'referenced sample';
         Cache::setEntity($referencedSample);
-        $baseSampleTwo->referencedSample = 1;
+        $baseSampleTwo->referencedEntityWithoutInitialization = 1;
         $this->assertFalse($baseSampleTwo->nestedChanges);
-        $baseSampleTwo->referencedSample->text = 'referenced sample modified';
+        $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
+        $this->assertFalse($baseSampleTwo->nestedChanges);
+        $baseSampleTwo->referencedEntityWithoutInitialization->text = 'referenced sample modified';
         $this->assertTrue($baseSampleTwo->nestedChanges);
     }
 }

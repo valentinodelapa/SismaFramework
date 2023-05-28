@@ -35,7 +35,6 @@ use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
@@ -235,7 +234,7 @@ abstract class BaseForm
         if ($this->entityData->$propertyName === null) {
             return !$this->filterFiledsMode[$propertyName]['allowNull'];
         } else {
-            return false;
+            return true;
         }
     }
 

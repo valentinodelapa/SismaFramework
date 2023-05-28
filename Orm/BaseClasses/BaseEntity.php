@@ -26,10 +26,11 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
+use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
-use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\ProprietaryTypes\SismaDateTime;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -112,54 +113,81 @@ abstract class BaseEntity
     protected function switchSettingType(string $name, mixed $value): void
     {
         $reflectionProperty = new \ReflectionProperty($this, $name);
-        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && is_int($value)) {
-            $this->trackForeignKeyPropertyWithIndexNotConvertedChanges($reflectionProperty->getType(), $name, $value);
-            $this->foreignKeyIndexes[$name] = $value;
-            unset($this->$name);
-        } elseif (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class) && ($value instanceof BaseEntity)) {
-            $value->callingEntity = $this;
-            $this->trackForeignKeyPropertyChanges($reflectionProperty->getType(), $name, $value);
-            $this->$name = $value;
-            unset($this->foreignKeyIndexes[$name]);
+        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+            if (is_int($value)) {
+                $this->trackForeignKeyPropertyWithIndexNotConvertedChanges($reflectionProperty->getType(), $name, $value);
+                $this->foreignKeyIndexes[$name] = $value;
+                unset($this->$name);
+            } elseif (($value instanceof BaseEntity)) {
+                $value->callingEntity = $this;
+                $this->trackForeignKeyPropertyWithIndexConvertedChanges($reflectionProperty->getType(), $name, $value);
+                $this->$name = $value;
+                unset($this->foreignKeyIndexes[$name]);
+            } elseif ($value === null) {
+                $this->trackForeignKeyPropertyWithNullValueChanges($reflectionProperty->getType(), $name, $value);
+                $this->$name = $value;
+                unset($this->foreignKeyIndexes[$name]);
+            }
         } else {
-            $this->trackbuiltinPropertyChanges($reflectionProperty->getType(), $name, $value);
+            $this->trackOtherPropertyChanges($reflectionProperty->getType(), $name, $value);
             $this->$name = $value;
         }
     }
 
     private function trackForeignKeyPropertyWithIndexNotConvertedChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
     {
-        if (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class) && is_int($value) &&
-                ((isset($this->foreignKeyIndexes[$name]) && ($this->foreignKeyIndexes[$name] !== $value)) ||
-                (isset($this->$name) && (!isset($this->$name->id) || ($this->$name->id !== $value))))) {
+        if (((isset($this->foreignKeyIndexes[$name]) && ($this->foreignKeyIndexes[$name] !== $value)) ||
+                (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name->id !== $value))))) {
             $this->modified = true;
-            if (isset($this->callingEntity)) {
-                $this->callingEntity->nestedChanges = true;
-            }
+            $this->setNestedChanges();
         }
     }
 
-    private function trackForeignKeyPropertyChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
+    private function setNestedChanges(): void
     {
-        if (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class) &&
-                is_subclass_of($value, BaseEntity::class) &&
-                ((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
-                (isset($this->$name) && ($this->$name != $value))))) {
-            $this->modified = true;
-            if (isset($this->callingEntity)) {
-                $this->callingEntity->nestedChanges = true;
-            }
+        if (isset($this->callingEntity)) {
+            $this->callingEntity->nestedChanges = true;
         }
     }
 
-    private function trackbuiltinPropertyChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
+    private function trackForeignKeyPropertyWithIndexConvertedChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
     {
-        if ($reflectionNamedType->isBuiltin() && isset($this->$name) && ($this->$name !== $value)) {
+        if (((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
+                (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name != $value)))))) {
             $this->modified = true;
-            if (isset($this->callingEntity)) {
-                $this->callingEntity->nestedChanges = true;
-            }
+            $this->setNestedChanges();
         }
+    }
+
+    private function trackForeignKeyPropertyWithNullValueChanges(\ReflectionNamedType $reflectionNamedType, mixed $name): void
+    {
+        if ((isset($this->foreignKeyIndexes[$name]) || isset($this->$name))) {
+            $this->modified = true;
+            $this->setNestedChanges();
+        }
+    }
+
+    private function trackOtherPropertyChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
+    {
+        if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
+                $this->checkSismaDateTimePropertyChange($reflectionNamedType, $name, $value)) {
+            $this->modified = true;
+            $this->setNestedChanges();
+        }
+    }
+
+    private function checkBuiltinOrEnumPropertyChange(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): bool
+    {
+        return (($reflectionNamedType->isBuiltin() || enum_exists($reflectionNamedType->getName())) &&
+                ((isset($this->$name) && ($this->$name !== $value)) ||
+                ((isset($this->$name) === false) && ($value !== null))));
+    }
+
+    private function checkSismaDateTimePropertyChange(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): bool
+    {
+        return (is_a($reflectionNamedType->getName(), SismaDateTime::class, true) &&
+                ((isset($this->$name) && ((($value instanceof SismaDateTime) && ($this->$name != $value)) || ($value === null))) ||
+                ((isset($this->$name) === false) && ($value !== null))));
     }
 
     public function __isset($name)
@@ -256,5 +284,4 @@ abstract class BaseEntity
     {
         return $dataMapper->delete($this);
     }
-
 }

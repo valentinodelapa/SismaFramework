@@ -117,20 +117,21 @@ abstract class BaseResultSet implements \Iterator
             return $this->convertToStandardEntity($result);
         }
         $class = $this->returnType;
-        $obj = new $class();
+        $entity = new $class();
         foreach ($result as $property => $value) {
             $property = static::buildPropertyName($property);
-            if (property_exists($obj, $property)) {
+            if (property_exists($entity, $property)) {
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
-                $initializationVectorColumnName = static::buildColumnName($obj->getInitializationVectorPropertyName());
-                if($obj->isEncryptedProperty($property) && ($result->$initializationVectorColumnName !== null)){
+                $initializationVectorColumnName = static::buildColumnName($entity->getInitializationVectorPropertyName());
+                if($entity->isEncryptedProperty($property) && ($result->$initializationVectorColumnName !== null)){
                     $value = Encryptor::decryptString($value, $result->$initializationVectorColumnName);
                 }
-                $obj->$property = Parser::parseValue($reflectionType, $value, false);
+                $entity->$property = Parser::parseValue($reflectionType, $value, false);
             }
         }
-        return $obj;
+        $entity->modified = false;
+        return $entity;
     }
 
 }

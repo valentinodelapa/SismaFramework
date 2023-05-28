@@ -27,6 +27,8 @@
 namespace SismaFramework\Sample\Entities;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Sample\Enumerations\SampleType;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -36,16 +38,26 @@ class BaseSample extends BaseEntity
 {
 
     protected int $id;
-    protected ReferencedSample $referencedSample;
-    protected ReferencedSample $referencedSampleTwo;
+    protected ReferencedSample $referencedEntityWithoutInitialization;
+    protected ReferencedSample $referencedEntityWithInitialization;
+    protected ?ReferencedSample $nullableReferencedEntityWithInitialization = null;
     protected OtherReferencedSample $otherReferencedSample;
-    protected string $text;
-    protected bool $boolean;
+    protected SismaDateTime $datetimeWithoutInitialization;
+    protected SismaDateTime $datetimeWithInitialization;
+    protected ?SismaDateTime $datetimeNullableWithInitialization = null;
+    protected SampleType $enumWithoutInitialization;
+    protected SampleType $enumWithInitialization = SampleType::one;
+    protected ?SampleType $enumNullableWithInitialization = null;
+    protected string $stringWithoutInizialization;
+    protected string $stringWithInizialization = 'base sample';
+    protected ?string $nullableStringWithInizialization = null;
     protected ?string $nullableSecureString = null;
+    protected bool $boolean;
 
     protected function setPropertyDefaultValue(): void
     {
-        
+        $this->referencedEntityWithInitialization = new ReferencedSample();
+        $this->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
     }
 
     protected function setEncryptedProperties(): void
