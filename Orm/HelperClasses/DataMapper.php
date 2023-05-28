@@ -107,10 +107,10 @@ class DataMapper
             $this->entity->modified = false;
             $this->entity->nestedChanges = false;
             $this->checkIsReferencedEntity();
-        }
-        $this->checkEndTransaction();
-        if ($this->ormCacheStatus) {
-            Cache::setEntity($this->entity);
+            $this->checkEndTransaction();
+            if ($this->ormCacheStatus) {
+                Cache::setEntity($this->entity);
+            }
         }
         return $ok;
     }
@@ -205,10 +205,10 @@ class DataMapper
             $this->entity->modified = false;
             $this->entity->nestedChanges = false;
             $this->checkIsReferencedEntity();
-        }
-        $this->checkEndTransaction();
-        if ($this->ormCacheStatus) {
-            Cache::setEntity($this->entity);
+            $this->checkEndTransaction();
+            if ($this->ormCacheStatus) {
+                Cache::setEntity($this->entity);
+            }
         }
         return $ok;
     }
@@ -309,5 +309,4 @@ class DataMapper
         }
         return $ret;
     }
-
 }

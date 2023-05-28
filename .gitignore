@@ -1,6 +1,7 @@
 /.tools/
 /nbproject/
 /Logs/log.txt
+/Sample/Cache/
 /Tests/coverage-report/
 /Tests/report/
 /Tests/.phpunit.result.cache
