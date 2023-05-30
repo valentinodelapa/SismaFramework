@@ -210,6 +210,9 @@ abstract class ReferencedEntity extends BaseEntity
         foreach ($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] as $entity) {
             $entity->$entityPropertyName = $this;
             $entity->callingEntity = $this;
+            if (isset($entity->id) === false) {
+                $this->nestedChanges = true;
+            }
         }
         $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = true;
     }
@@ -227,6 +230,9 @@ abstract class ReferencedEntity extends BaseEntity
         $this->switchAdditionType($propertyName, $entity);
         $entity->$entityPropertyName = $this;
         $entity->callingEntity = $this;
+        if (isset($entity->id) === false) {
+            $this->nestedChanges = true;
+        }
     }
 
     private function switchAdditionType(string $propertyName, BaseEntity $entity): void
@@ -251,5 +257,4 @@ abstract class ReferencedEntity extends BaseEntity
         $model = new $modelName();
         return $model->countEntityCollectionByEntity([$foreignKeyName => $this]);
     }
-
 }
