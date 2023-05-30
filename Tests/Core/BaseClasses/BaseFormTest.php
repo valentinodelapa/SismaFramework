@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2022 Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ use SismaFramework\ProprietaryTypes\SismaCollection;
 /**
  * Description of BaseFormTest
  *
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author Valentino de Lapa
  */
 class BaseFormTest extends TestCase
 {

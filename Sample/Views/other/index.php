@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
     <head>
         <?php require_once __DIR__ . '/../commonParts/baseHead.php'; ?>
     </head>

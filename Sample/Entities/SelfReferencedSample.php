@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2022 Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ namespace SismaFramework\Sample\Entities;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 
 /**
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author Valentino de Lapa
  */
 class SelfReferencedSample extends SelfReferencedEntity
 {

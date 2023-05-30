@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright (c) 2020-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 
 /**
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author Valentino de Lapa
  */
 abstract class BaseEntity
 {
@@ -278,10 +278,5 @@ abstract class BaseEntity
     public function getForeignKeyIndexes(): array
     {
         return $this->foreignKeyIndexes;
-    }
-
-    public function delete(DataMapper $dataMapper = new DataMapper()): bool
-    {
-        return $dataMapper->delete($this);
     }
 }

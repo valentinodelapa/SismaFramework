@@ -2,7 +2,7 @@
 <!--
 The MIT License
 
-Copyright 2022 Valentino de Lapa <valentino.delapa@gmail.com>.
+Copyright 2022 Valentino de Lapa.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,7 @@ THE SOFTWARE.
     <testsuites>
         <testsuite name="Application Test Suite">
             <directory suffix="Test.php">./Core</directory>
+            <directory suffix="Test.php">./Orm</directory>
         </testsuite>
     </testsuites>
     <coverage cacheDirectory="./report"

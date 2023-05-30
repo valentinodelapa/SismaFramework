@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2023 Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ use SismaFramework\Orm\HelperClasses\Query;
 /**
  * Description of SelfReferencedSampleModel
  *
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author Valentino de Lapa
  */
 class SelfReferencedSampleModel extends SelfReferencedModel
 {

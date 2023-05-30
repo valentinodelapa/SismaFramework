@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright (c) 2020-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ use SismaFramework\ProprietaryTypes\SismaCollection;
 
 /**
  *
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author Valentino de Lapa
  */
 abstract class SelfReferencedModel extends ReferencedModel
 {
@@ -279,7 +279,7 @@ abstract class SelfReferencedModel extends ReferencedModel
         foreach ($entityTree->self::SONS_GETTER_METHOD() as $entity) {
             $this->deleteEntityTree($entity);
         }
-        $entityTree->delete();
+        $this->dataMapper->delete($entityTree);
     }
 
 }

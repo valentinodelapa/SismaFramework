@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2020 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright (c) 2020-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,10 +39,11 @@ use SismaFramework\Core\Interfaces\Models\MultiFactorRecoveryModelInterface;
 use SismaFramework\Core\Interfaces\Models\PasswordModelInterface;
 use SismaFramework\Core\Interfaces\Models\UserModelInterface;
 use SismaFramework\Core\Interfaces\Wrappers\MultiFactorWrapperInterface;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  *
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ * @author Valentino de Lapa
  */
 class Authentication
 {
@@ -133,13 +134,13 @@ class Authentication
         return false;
     }
 
-    public function checkMultiFactorRecovery(MultiFactorInterface $multiFactorInterface, string $code): bool
+    public function checkMultiFactorRecovery(MultiFactorInterface $multiFactorInterface, string $code, DataMapper $dataMapper = new DataMapper()): bool
     {
         $result = false;
         $multiFactorRecoveryInterfaceCollection = $this->multiFactorRecoveryModelInterface->getMultiFactorRecoveryInterfaceCollectionByMultiFactorInterface($multiFactorInterface);
         foreach ($multiFactorRecoveryInterfaceCollection as $multiFactorRecoveryInterface) {
             if(Encryptor::verifyBlowfishHash($code, $multiFactorRecoveryInterface->token)){
-                $multiFactorRecoveryInterface->delete();
+                $dataMapper->delete($multiFactorRecoveryInterface);
                 $result = true;
             }
         }
