@@ -29,7 +29,6 @@ namespace SismaFramework\Orm\BaseClasses;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
-use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 
 /**
@@ -43,7 +42,6 @@ abstract class BaseEntity
     public array $foreignKeys = [];
     public string $initializationVectorPropertyName = 'initializationVector';
     protected BaseEntity $callingEntity;
-    protected string $tableName = '';
     protected string $primaryKey = 'id';
     protected static ?BaseEntity $instance = null;
     protected bool $isActiveTransaction = false;
@@ -53,7 +51,6 @@ abstract class BaseEntity
 
     public function __construct()
     {
-        $this->tableName = $this->buildTableName();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
         $reflectionClass = new \ReflectionClass($this);
@@ -115,16 +112,16 @@ abstract class BaseEntity
         $reflectionProperty = new \ReflectionProperty($this, $name);
         if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
             if (is_int($value)) {
-                $this->trackForeignKeyPropertyWithIndexNotConvertedChanges($reflectionProperty->getType(), $name, $value);
+                $this->trackForeignKeyPropertyWithIndexNotConvertedChanges($name, $value);
                 $this->foreignKeyIndexes[$name] = $value;
                 unset($this->$name);
             } elseif (($value instanceof BaseEntity)) {
                 $value->callingEntity = $this;
-                $this->trackForeignKeyPropertyWithIndexConvertedChanges($reflectionProperty->getType(), $name, $value);
+                $this->trackForeignKeyPropertyWithIndexConvertedChanges($name, $value);
                 $this->$name = $value;
                 unset($this->foreignKeyIndexes[$name]);
             } elseif ($value === null) {
-                $this->trackForeignKeyPropertyWithNullValueChanges($reflectionProperty->getType(), $name, $value);
+                $this->trackForeignKeyPropertyWithNullValueChanges($name);
                 $this->$name = $value;
                 unset($this->foreignKeyIndexes[$name]);
             }
@@ -134,7 +131,7 @@ abstract class BaseEntity
         }
     }
 
-    private function trackForeignKeyPropertyWithIndexNotConvertedChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
+    private function trackForeignKeyPropertyWithIndexNotConvertedChanges(mixed $name, mixed $value): void
     {
         if (((isset($this->foreignKeyIndexes[$name]) && ($this->foreignKeyIndexes[$name] !== $value)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name->id !== $value))))) {
@@ -150,7 +147,7 @@ abstract class BaseEntity
         }
     }
 
-    private function trackForeignKeyPropertyWithIndexConvertedChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
+    private function trackForeignKeyPropertyWithIndexConvertedChanges(mixed $name, mixed $value): void
     {
         if (((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name != $value)))))) {
@@ -159,7 +156,7 @@ abstract class BaseEntity
         }
     }
 
-    private function trackForeignKeyPropertyWithNullValueChanges(\ReflectionNamedType $reflectionNamedType, mixed $name): void
+    private function trackForeignKeyPropertyWithNullValueChanges(mixed $name): void
     {
         if ((isset($this->foreignKeyIndexes[$name]) || isset($this->$name))) {
             $this->modified = true;
@@ -227,19 +224,6 @@ abstract class BaseEntity
         return $this->primaryKey;
     }
 
-    public function getEntityTableName(): string
-    {
-        return $this->tableName;
-    }
-
-    public static function getTableName(): string
-    {
-        $obj = static::create();
-        $name = $obj->buildTableName();
-        unset($obj);
-        return $name;
-    }
-
     static public function create(): BaseEntity
     {
         $class = get_called_class();
@@ -258,21 +242,6 @@ abstract class BaseEntity
         }
         unset($prop);
         return $this->$name;
-    }
-
-    public function buildTableName(): string
-    {
-        $class = get_class($this);
-        $poppedParts = explode('\\', $class);
-        $parts = preg_split('/(?=[A-Z])/', array_pop($poppedParts));
-        $tmp = array();
-        foreach ($parts as $p) {
-            $p = trim($p);
-            if ($p != '') {
-                $tmp[] = $p;
-            }
-        }
-        return strtolower(implode('_', $tmp));
     }
 
     public function getForeignKeyIndexes(): array

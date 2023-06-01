@@ -27,6 +27,7 @@
 namespace SismaFramework\Orm\HelperClasses;
 
 use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
@@ -68,7 +69,7 @@ class DataMapper
 
     public function initQuery(Query $query = new Query()): Query
     {
-        $query->setTable($this->entityName::getTableName());
+        $query->setTable(NotationManager::convertEntityNameToTableName($this->entityName));
         return $query;
     }
 
@@ -92,7 +93,7 @@ class DataMapper
     public function update(BaseEntity $entity, Query $query = new Query()): bool
     {
         $this->entity = $entity;
-        $query->setTable($this->entity->getEntityTableName());
+        $query->setTable(NotationManager::convertEntityToTableName($this->entity));
         $this->columns = $this->values = $this->markers = [];
         $this->parseValues();
         $this->parseForeignKeyIndexes();
@@ -192,7 +193,7 @@ class DataMapper
     public function insert(BaseEntity $entity, Query $query = new Query()): bool
     {
         $this->entity = $entity;
-        $query->setTable($this->entity->getEntityTableName());
+        $query->setTable(NotationManager::convertEntityToTableName($this->entity));
         $this->columns = $this->values = $this->markers = [];
         $this->parseValues();
         $this->parseForeignKeyIndexes();
@@ -225,7 +226,7 @@ class DataMapper
     public function delete(BaseEntity $entity, Query $query = new Query()): bool
     {
         $this->entity = $entity;
-        $query->setTable($this->entity->getEntityTableName());
+        $query->setTable(NotationManager::convertEntityToTableName($this->entity));
         if ($this->entity->getPrimaryKeyPropertyName() == '') {
             return false;
         }

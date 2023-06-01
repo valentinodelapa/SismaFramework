@@ -29,10 +29,10 @@ namespace SismaFramework\Orm\BaseClasses;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
 use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 
 /**
- *
  * @author Valentino de Lapa
  */
 abstract class BaseResultSet implements \Iterator
@@ -117,11 +117,11 @@ abstract class BaseResultSet implements \Iterator
         $class = $this->returnType;
         $entity = new $class();
         foreach ($result as $property => $value) {
-            $property = $this->buildPropertyName($property);
+            $property = NotationManager::convertColumnNameToPropertyName($property);
             if (property_exists($entity, $property)) {
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
-                $initializationVectorColumnName = $this->buildColumnName($entity->getInitializationVectorPropertyName());
+                $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
                 if ($entity->isEncryptedProperty($property) && ($result->$initializationVectorColumnName !== null)) {
                     $value = Encryptor::decryptString($value, $result->$initializationVectorColumnName);
                 }
@@ -139,24 +139,6 @@ abstract class BaseResultSet implements \Iterator
             $StandardEntity->$property = $value;
         }
         return $StandardEntity;
-    }
-
-    private function buildPropertyName(string $columnName): string
-    {
-        $columnName = (substr($columnName, -3, 3) == '_id') ? substr($columnName, 0, -3) : $columnName;
-        $columnName = str_replace(' ', '', ucwords(str_replace('_', ' ', $columnName)));
-        $columnName = lcfirst($columnName);
-        return $columnName;
-    }
-
-    private function buildColumnName(string $propertyName): string
-    {
-        $propertyName = preg_split('/(?=[A-Z])/', $propertyName);
-        array_walk($propertyName, function (&$value) {
-            $value = strtolower($value);
-        });
-        $propertyName = implode('_', $propertyName);
-        return $propertyName;
     }
 }
 

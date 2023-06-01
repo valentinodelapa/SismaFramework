@@ -41,7 +41,8 @@ class ReferencedEntityTest extends TestCase
     {
         $otherReferencedSample = new OtherReferencedSample();
         $otherReferencedSample->addBaseSample(new BaseSample());
-        $this->assertFalse($otherReferencedSample->nestedChanges);
+        $this->assertTrue($otherReferencedSample->nestedChanges);
+        $otherReferencedSample->nestedChanges = false;
         $otherReferencedSample->baseSampleCollection[0]->stringWithoutInizialization = 'base sample';
         $this->assertTrue($otherReferencedSample->nestedChanges);
         $otherReferencedSample->nestedChanges = false;
