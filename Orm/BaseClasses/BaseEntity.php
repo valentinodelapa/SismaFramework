@@ -29,6 +29,7 @@ namespace SismaFramework\Orm\BaseClasses;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
+use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 
 /**
@@ -112,9 +113,17 @@ abstract class BaseEntity
         $reflectionProperty = new \ReflectionProperty($this, $name);
         if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
             if (is_int($value)) {
-                $this->trackForeignKeyPropertyWithIndexNotConvertedChanges($name, $value);
-                $this->foreignKeyIndexes[$name] = $value;
-                unset($this->$name);
+                if (Cache::checkEntityPresenceInCache($reflectionProperty->getType()->getName(), $value)) {
+                    $cachedEntity = Cache::getEntityById($reflectionProperty->getType()->getName(), $value);
+                    $cachedEntity->callingEntity = $this;
+                    $this->trackForeignKeyPropertyWithIndexConvertedChanges($name, $cachedEntity);
+                    $this->$name = $cachedEntity;
+                    unset($this->foreignKeyIndexes[$name]);
+                } else {
+                    $this->trackForeignKeyPropertyWithIndexNotConvertedChanges($name, $value);
+                    $this->foreignKeyIndexes[$name] = $value;
+                    unset($this->$name);
+                }
             } elseif (($value instanceof BaseEntity)) {
                 $value->callingEntity = $this;
                 $this->trackForeignKeyPropertyWithIndexConvertedChanges($name, $value);

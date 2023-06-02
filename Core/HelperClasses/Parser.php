@@ -112,5 +112,4 @@ class Parser
     {
         $dataMapper->save($entity);
     }
-
 }

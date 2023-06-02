@@ -90,21 +90,19 @@ class DataMapper
         }
     }
 
-    public function update(BaseEntity $entity, Query $query = new Query()): bool
+    public function insert(BaseEntity $entity, Query $query = new Query()): bool
     {
         $this->entity = $entity;
         $query->setTable(NotationManager::convertEntityToTableName($this->entity));
         $this->columns = $this->values = $this->markers = [];
         $this->parseValues();
         $this->parseForeignKeyIndexes();
-        $query->setWhere();
-        $query->appendCondition($this->entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
-        $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $this->columns, 'values' => $this->markers));
-        $this->values[] = $this->entity->{$this->entity->getPrimaryKeyPropertyName()};
+        $cmd = $query->getCommandToExecute(Statement::insert, array('columns' => $this->columns, 'values' => $this->markers));
         $this->checkStartTransaction();
         $ok = $this->adapter->execute($cmd, $this->values);
         if ($ok) {
+            $this->entity->{$this->entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
             $this->entity->modified = false;
             $this->entity->nestedChanges = false;
             $this->checkIsReferencedEntity();
@@ -151,15 +149,9 @@ class DataMapper
         }
     }
 
-    public function startTransaction(): void
-    {
-        $this->adapter->beginTransaction();
-        self::$manualTransactionStarted = true;
-    }
-
     private function checkIsReferencedEntity()
     {
-        if ($this->entity instanceof ReferencedEntity) {
+        if (($this->entity instanceof ReferencedEntity) && $this->entity->nestedChanges) {
             $this->saveEntityCollection();
         }
     }
@@ -184,25 +176,21 @@ class DataMapper
         }
     }
 
-    public function commitTransaction(): void
-    {
-        $this->adapter->commitTransaction();
-        self::$manualTransactionStarted = false;
-    }
-
-    public function insert(BaseEntity $entity, Query $query = new Query()): bool
+    public function update(BaseEntity $entity, Query $query = new Query()): bool
     {
         $this->entity = $entity;
         $query->setTable(NotationManager::convertEntityToTableName($this->entity));
         $this->columns = $this->values = $this->markers = [];
         $this->parseValues();
         $this->parseForeignKeyIndexes();
+        $query->setWhere();
+        $query->appendCondition($this->entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
-        $cmd = $query->getCommandToExecute(Statement::insert, array('columns' => $this->columns, 'values' => $this->markers));
+        $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $this->columns, 'values' => $this->markers));
+        $this->values[] = $this->entity->{$this->entity->getPrimaryKeyPropertyName()};
         $this->checkStartTransaction();
         $ok = $this->adapter->execute($cmd, $this->values);
         if ($ok) {
-            $this->entity->{$this->entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
             $this->entity->modified = false;
             $this->entity->nestedChanges = false;
             $this->checkIsReferencedEntity();
@@ -212,6 +200,18 @@ class DataMapper
             }
         }
         return $ok;
+    }
+
+    public function startTransaction(): void
+    {
+        $this->adapter->beginTransaction();
+        self::$manualTransactionStarted = true;
+    }
+
+    public function commitTransaction(): void
+    {
+        $this->adapter->commitTransaction();
+        self::$manualTransactionStarted = false;
     }
 
     private function saveForeignKeys(self $dataMapper = new DataMapper())

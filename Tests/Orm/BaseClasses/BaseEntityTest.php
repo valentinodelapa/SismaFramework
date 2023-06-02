@@ -218,15 +218,27 @@ class BaseEntityTest extends TestCase
         $this->assertTrue($baseSampleOne->nestedChanges);
 
         $baseSampleTwo = new BaseSample();
-        $referencedSample = new ReferencedSample();
-        $referencedSample->id = 1;
-        $referencedSample->text = 'referenced sample';
-        Cache::setEntity($referencedSample);
+        $referencedSampleOne = new ReferencedSample();
+        $referencedSampleOne->id = 1;
+        $referencedSampleOne->text = 'referenced sample';
+        Cache::setEntity($referencedSampleOne);
         $baseSampleTwo->referencedEntityWithoutInitialization = 1;
         $this->assertFalse($baseSampleTwo->nestedChanges);
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
         $this->assertFalse($baseSampleTwo->nestedChanges);
         $baseSampleTwo->referencedEntityWithoutInitialization->text = 'referenced sample modified';
         $this->assertTrue($baseSampleTwo->nestedChanges);
+
+        $baseSampleThree = new BaseSample();
+        $referencedSampleTwo = new ReferencedSample();
+        $referencedSampleTwo->id = 1;
+        $referencedSampleTwo->text = 'referenced sample';
+        Cache::setEntity($referencedSampleTwo);
+        $baseSampleThree->referencedEntityWithoutInitialization = 1;
+        $this->assertFalse($baseSampleThree->nestedChanges);
+        $referencedSampleTwo->text = 'referenced sample';
+        $this->assertFalse($baseSampleThree->nestedChanges);
+        $referencedSampleTwo->text = 'referenced sample modified';
+        $this->assertTrue($baseSampleThree->nestedChanges);
     }
 }

@@ -66,15 +66,14 @@ abstract class BaseResultSet implements \Iterator
 
     abstract public function fetch(): StandardEntity|BaseEntity;
 
-    public function seek(int $n): BaseEntity
+    public function seek(int $recordIndex): BaseEntity
     {
-        $n = intval($n);
-        if ($n < 0) {
-            $n = 0;
+        if ($recordIndex < 0) {
+            $recordIndex = 0;
         } elseif ($n > $this->maxRecord) {
-            $n = $this->maxRecord;
+            $recordIndex = $this->maxRecord;
         }
-        $this->currentRecord = $n;
+        $this->currentRecord = $recordIndex;
     }
 
     public function current(): BaseEntity
