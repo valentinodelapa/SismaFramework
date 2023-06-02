@@ -221,6 +221,8 @@ class BaseEntityTest extends TestCase
         $referencedSampleOne = new ReferencedSample();
         $referencedSampleOne->id = 1;
         $referencedSampleOne->text = 'referenced sample';
+        $this->assertTrue($referencedSampleOne->modified);
+        $referencedSampleOne->modified = false;
         Cache::setEntity($referencedSampleOne);
         $baseSampleTwo->referencedEntityWithoutInitialization = 1;
         $this->assertFalse($baseSampleTwo->nestedChanges);
@@ -233,6 +235,8 @@ class BaseEntityTest extends TestCase
         $referencedSampleTwo = new ReferencedSample();
         $referencedSampleTwo->id = 1;
         $referencedSampleTwo->text = 'referenced sample';
+        $this->assertTrue($referencedSampleTwo->modified);
+        $referencedSampleTwo->modified = false;
         Cache::setEntity($referencedSampleTwo);
         $baseSampleThree->referencedEntityWithoutInitialization = 1;
         $this->assertFalse($baseSampleThree->nestedChanges);
@@ -240,5 +244,14 @@ class BaseEntityTest extends TestCase
         $this->assertFalse($baseSampleThree->nestedChanges);
         $referencedSampleTwo->text = 'referenced sample modified';
         $this->assertTrue($baseSampleThree->nestedChanges);
+        
+        $baseSampleFour = new BaseSample();
+        $referencedSampleThree = new ReferencedSample();
+        $referencedSampleThree->id = 1;
+        $referencedSampleThree->text = 'referenced sample';
+        $this->assertTrue($referencedSampleTwo->modified);
+        Cache::setEntity($referencedSampleThree);
+        $baseSampleFour->referencedEntityWithoutInitialization = 1;
+        $this->assertTrue($baseSampleFour->nestedChanges);
     }
 }
