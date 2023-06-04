@@ -1,13 +1,12 @@
-{
+ {
     "name": "valentinodelapa/sismaframework",
-    "version" : "3.7.2",
+    "version" : "5.0.11",
     "description": "PHP MVC framework with ORM",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Valentino de Lapa",
-            "email": "valentino.delapa@gmail.com",
             "role": "Developer"
         }
     ],
