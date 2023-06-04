@@ -145,9 +145,9 @@ Questa libreria, consistente anch'essa in un semplice framework basato su patter
 Successivamente lo stesso è stato più volte rimaneggiato ma il contributo fornitoci dalla libreria citata è innegabile
 * La guida [**Creare un e-commerce con PHP**](https://www.html.it/guide/creare-un-e-commerce-con-php/) e, nello specifico le lezioni riguardanti il pattern MVC.
 Probabilmente lo sviluppo embrionale della classe Dispatcher della presente libreria deve molto alla relativa lezione di questa guida.
-Anche il meccanismo di autoloading delle classi per mezzo il namespace è stato ispirato dalla presente guida.
+Anche il meccanismo di autoloading delle classi per mezzo del namespace è stato ispirato dalla presente guida.
 * La libreria [**Symfony**](https://github.com/symfony/symfony).
-Questa libreria, che non ha certo bisogno di presentazioni, è stata uno spunto prezioso per quanto riguarda alcune tecniche utilizzate (seppur con notevoli differenze) anche durante lo sviluppo di questa libreria.
+Questa libreria, che non ha certo bisogno di presentazioni, è stata uno spunto prezioso per quanto riguarda alcune tecniche utilizzate (seppur con notevoli differenze) anche durante lo sviluppo del presente progetto.
 * La libreria [**SimpleORM**](https://github.com/davideairaghi/php/tree/master/library/Airaghi/DB/SimpleORM).
 Discorso a parte va fatto per questa libreria, che è stata utilizzata come punto di partenza per sviluppare l'ORM presente all'interno del progetto.
 Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreia orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
