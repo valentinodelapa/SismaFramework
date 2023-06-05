@@ -31,13 +31,13 @@ use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
-use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 
 /**
@@ -73,26 +73,24 @@ class DataMapper
         return $query;
     }
 
-    public function save(BaseEntity $entity)
+    public function save(BaseEntity $entity, bool $nestedChangesTracking = true)
     {
+        $this->entity = $entity;
         if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
-            return $this->insert($entity);
+            return $this->insert();
         } elseif ($entity->modified) {
-            return $this->update($entity);
-        } elseif ($entity->nestedChanges) {
-            $this->entity = $entity;
-            $this->entity->nestedChanges = false;
-            $this->saveForeignKeys();
-            $this->checkIsReferencedEntity();
-            return true;
+            return $this->update();
         } else {
+            if ($nestedChangesTracking) {
+                $this->saveForeignKeys();
+                $this->checkIsReferencedEntity();
+            }
             return true;
         }
     }
 
-    public function insert(BaseEntity $entity, Query $query = new Query()): bool
+    private function insert(Query $query = new Query()): bool
     {
-        $this->entity = $entity;
         $query->setTable(NotationManager::convertEntityToTableName($this->entity));
         $this->columns = $this->values = $this->markers = [];
         $this->parseValues();
@@ -104,7 +102,6 @@ class DataMapper
         if ($ok) {
             $this->entity->{$this->entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
             $this->entity->modified = false;
-            $this->entity->nestedChanges = false;
             $this->checkIsReferencedEntity();
             $this->checkEndTransaction();
             if ($this->ormCacheStatus) {
@@ -116,6 +113,7 @@ class DataMapper
 
     private function parseValues(): void
     {
+        $this->entity->propertyNestedChanges = false;
         $reflectionClass = new \ReflectionClass($this->entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             if (($reflectionProperty->class === get_class($this->entity)) && ($this->entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
@@ -151,7 +149,8 @@ class DataMapper
 
     private function checkIsReferencedEntity()
     {
-        if (($this->entity instanceof ReferencedEntity) && $this->entity->nestedChanges) {
+        if (($this->entity instanceof ReferencedEntity) && $this->entity->collectionNestedChanges) {
+            $this->entity->collectionNestedChanges = false;
             $this->saveEntityCollection();
         }
     }
@@ -176,9 +175,8 @@ class DataMapper
         }
     }
 
-    public function update(BaseEntity $entity, Query $query = new Query()): bool
+    public function update(Query $query = new Query()): bool
     {
-        $this->entity = $entity;
         $query->setTable(NotationManager::convertEntityToTableName($this->entity));
         $this->columns = $this->values = $this->markers = [];
         $this->parseValues();
@@ -192,7 +190,6 @@ class DataMapper
         $ok = $this->adapter->execute($cmd, $this->values);
         if ($ok) {
             $this->entity->modified = false;
-            $this->entity->nestedChanges = false;
             $this->checkIsReferencedEntity();
             $this->checkEndTransaction();
             if ($this->ormCacheStatus) {
@@ -216,9 +213,12 @@ class DataMapper
 
     private function saveForeignKeys(self $dataMapper = new DataMapper())
     {
-        foreach ($this->entity->foreignKeys as $foreignKey) {
-            if ($this->entity->$foreignKey instanceof BaseEntity) {
-                $dataMapper->save($this->entity->$foreignKey);
+        if ($this->entity->propertyNestedChanges) {
+            $this->entity->propertyNestedChanges = false;
+            foreach ($this->entity->foreignKeys as $foreignKey) {
+                if ($this->entity->$foreignKey instanceof BaseEntity) {
+                    $dataMapper->save($this->entity->$foreignKey);
+                }
             }
         }
     }

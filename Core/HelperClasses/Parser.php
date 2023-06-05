@@ -110,6 +110,6 @@ class Parser
 
     private static function saveEntityModification(BaseEntity $entity, DataMapper $dataMapper): void
     {
-        $dataMapper->save($entity);
+        $dataMapper->save($entity, false);
     }
 }

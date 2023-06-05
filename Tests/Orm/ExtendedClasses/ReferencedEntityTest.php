@@ -41,14 +41,14 @@ class ReferencedEntityTest extends TestCase
     {
         $otherReferencedSample = new OtherReferencedSample();
         $otherReferencedSample->addBaseSample(new BaseSample());
-        $this->assertTrue($otherReferencedSample->nestedChanges);
-        $otherReferencedSample->nestedChanges = false;
+        $this->assertTrue($otherReferencedSample->collectionNestedChanges);
+        $otherReferencedSample->collectionNestedChanges = false;
         $otherReferencedSample->baseSampleCollection[0]->stringWithoutInizialization = 'base sample';
-        $this->assertTrue($otherReferencedSample->nestedChanges);
-        $otherReferencedSample->nestedChanges = false;
-        $this->assertFalse($otherReferencedSample->nestedChanges);
+        $this->assertTrue($otherReferencedSample->collectionNestedChanges);
+        $otherReferencedSample->collectionNestedChanges = false;
+        $this->assertFalse($otherReferencedSample->collectionNestedChanges);
         $otherReferencedSample->baseSampleCollection[0]->stringWithoutInizialization = 'base sample modified';
-        $this->assertTrue($otherReferencedSample->nestedChanges);
+        $this->assertTrue($otherReferencedSample->collectionNestedChanges);
     }
 
     public function testSetCollectionNestedChange()
@@ -59,7 +59,7 @@ class ReferencedEntityTest extends TestCase
         $baseSampleCollectionOne = new SismaCollection(BaseSample::class);
         $baseSampleCollectionOne->append($baseSampleOne);
         $otherReferencedSampleOne->setBaseSampleCollection($baseSampleCollectionOne);
-        $this->assertTrue($otherReferencedSampleOne->nestedChanges);
+        $this->assertTrue($otherReferencedSampleOne->collectionNestedChanges);
         
         $otherReferencedSampleTwo = new OtherReferencedSample();
         $baseSampleTwo = new BaseSample();
@@ -72,7 +72,7 @@ class ReferencedEntityTest extends TestCase
         $baseSampleCollectionTwo = new SismaCollection(BaseSample::class);
         $baseSampleCollectionTwo->append($baseSampleTwo);
         $otherReferencedSampleTwo->setBaseSampleCollection($baseSampleCollectionTwo);
-        $this->assertTrue($otherReferencedSampleTwo->nestedChanges);
+        $this->assertTrue($otherReferencedSampleTwo->collectionNestedChanges);
         
         $otherReferencedSampleThree = new OtherReferencedSample();
         $otherReferencedSampleThree->id = 1;
@@ -85,7 +85,7 @@ class ReferencedEntityTest extends TestCase
         $baseSampleCollectionThree = new SismaCollection(BaseSample::class);
         $baseSampleCollectionThree->append($baseSampleThree);
         $otherReferencedSampleThree->setBaseSampleCollection($baseSampleCollectionThree);
-        $this->assertFalse($otherReferencedSampleThree->nestedChanges);
+        $this->assertFalse($otherReferencedSampleThree->collectionNestedChanges);
     }
 
     public function testAddCollectionNestedChange()
@@ -94,7 +94,7 @@ class ReferencedEntityTest extends TestCase
         $baseSampleOne = new BaseSample();
         $this->assertFalse($baseSampleOne->modified);
         $otherReferencedSampleOne->addBaseSample($baseSampleOne);
-        $this->assertTrue($otherReferencedSampleOne->nestedChanges);
+        $this->assertTrue($otherReferencedSampleOne->collectionNestedChanges);
         
         $otherReferencedSampleTwo = new OtherReferencedSample();
         $baseSampleTwo = new BaseSample();
@@ -105,7 +105,7 @@ class ReferencedEntityTest extends TestCase
         $baseSampleTwo->stringWithoutInizialization = 'base sample';
         $this->assertTrue($baseSampleTwo->modified);
         $otherReferencedSampleTwo->addBaseSample($baseSampleTwo);
-        $this->assertTrue($otherReferencedSampleTwo->nestedChanges);
+        $this->assertTrue($otherReferencedSampleTwo->collectionNestedChanges);
         
         $otherReferencedSampleThree = new OtherReferencedSample();
         $otherReferencedSampleThree->id = 1;
@@ -116,6 +116,6 @@ class ReferencedEntityTest extends TestCase
         $this->assertTrue($baseSampleThree->modified);
         $baseSampleThree->modified = false;
         $otherReferencedSampleThree->addBaseSample($baseSampleThree);
-        $this->assertFalse($otherReferencedSampleThree->nestedChanges);
+        $this->assertFalse($otherReferencedSampleThree->collectionNestedChanges);
     }
 }

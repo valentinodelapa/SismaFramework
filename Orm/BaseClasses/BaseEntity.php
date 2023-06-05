@@ -31,6 +31,7 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
 /**
  * @author Valentino de Lapa
@@ -39,10 +40,11 @@ abstract class BaseEntity
 {
 
     public bool $modified = false;
-    public bool $nestedChanges = false;
+    public bool $propertyNestedChanges = false;
     public array $foreignKeys = [];
     public string $initializationVectorPropertyName = 'initializationVector';
-    protected BaseEntity $callingEntity;
+    protected ?BaseEntity $propertyCallingEntity = null;
+    protected ?ReferencedEntity $collectionCallingEntity = null;
     protected string $primaryKey = 'id';
     protected static ?BaseEntity $instance = null;
     protected bool $isActiveTransaction = false;
@@ -94,7 +96,7 @@ abstract class BaseEntity
         $reflectionTypeName = $reflectionProperty->getType()->getName();
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
             $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
-            $this->$propertyName->callingEntity = $this;
+            $this->$propertyName->propertyCallingEntity = $this;
             unset($this->foreignKeyIndexes[$propertyName]);
         }
     }
@@ -145,14 +147,17 @@ abstract class BaseEntity
 
     private function setNestedChangesOnCallingEntityWhenEntityChanges(): void
     {
-        if (isset($this->callingEntity)) {
-            $this->callingEntity->nestedChanges = true;
+        if (isset($this->propertyCallingEntity)) {
+            $this->propertyCallingEntity->propertyNestedChanges = true;
+        }
+        if(isset($this->collectionCallingEntity)){
+            $this->collectionCallingEntity->collectionNestedChanges = true;
         }
     }
 
     private function setEntityProperty(string $name, BaseEntity $value): void
     {
-        $value->callingEntity = $this;
+        $value->propertyCallingEntity = $this;
         $this->trackForeignKeyPropertyWithIndexConvertedChanges($name, $value);
         $this->$name = $value;
         $this->setNestedChangesOnEntityWhenCalledEntitiesIsModified($value);
@@ -162,7 +167,7 @@ abstract class BaseEntity
     protected function setNestedChangesOnEntityWhenCalledEntitiesIsModified(BaseEntity $entity)
     {
         if ((isset($entity->id) === false) || $entity->modified) {
-            $this->nestedChanges = true;
+            $this->propertyNestedChanges = true;
         }
     }
 

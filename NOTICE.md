@@ -18,7 +18,7 @@ Parte di questo software è stata ispirata dalla repository [**Symfony**](https:
 
 Ringraziamo gli autori del progetto **Symfony** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](https://github.com/valentinodelapa/SismaFramework/blob/master/ThirdPartyLicenses/Symfony/LICENSE) è inclusa nella cartella ThirdPartyLicenses/SimpleORM con indicata la notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](https://github.com/valentinodelapa/SismaFramework/blob/master/third-party-licenses/Symfony/LICENSE) è inclusa nella cartella third-party-licenses/SimpleORM con indicata la notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2004-present Fabien Potencier
 
@@ -28,6 +28,6 @@ La componente *ORM* di questo software include codice della repository [**Simple
 
 Ringraziamo gli autori del progetto **SimpleORM** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](https://github.com/valentinodelapa/SismaFramework/blob/master/ThirdPartyLicenses/SimpleORM/LICENSE) è inclusa nella cartella ThirdPartyLicenses/Symfony con indicata notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](https://github.com/valentinodelapa/SismaFramework/blob/master/third-party-licenses/SimpleORM/LICENSE) è inclusa nella cartella third-party-licenses/Symfony con indicata notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2015-present Davide Airaghi

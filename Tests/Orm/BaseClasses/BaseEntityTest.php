@@ -207,15 +207,15 @@ class BaseEntityTest extends TestCase
     public function testForeignKeyNestedChanges()
     {
         $baseSampleOne = new BaseSample();
-        $this->assertFalse($baseSampleOne->nestedChanges);
+        $this->assertFalse($baseSampleOne->propertyNestedChanges);
         $baseSampleOne->referencedEntityWithoutInitialization = new ReferencedSample();
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
-        $this->assertTrue($baseSampleOne->nestedChanges);
-        $baseSampleOne->nestedChanges = false;
+        $this->assertTrue($baseSampleOne->propertyNestedChanges);
+        $baseSampleOne->propertyNestedChanges = false;
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
-        $this->assertFalse($baseSampleOne->nestedChanges);
+        $this->assertFalse($baseSampleOne->propertyNestedChanges);
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample modified';
-        $this->assertTrue($baseSampleOne->nestedChanges);
+        $this->assertTrue($baseSampleOne->propertyNestedChanges);
 
         $baseSampleTwo = new BaseSample();
         $referencedSampleOne = new ReferencedSample();
@@ -225,11 +225,11 @@ class BaseEntityTest extends TestCase
         $referencedSampleOne->modified = false;
         Cache::setEntity($referencedSampleOne);
         $baseSampleTwo->referencedEntityWithoutInitialization = 1;
-        $this->assertFalse($baseSampleTwo->nestedChanges);
+        $this->assertFalse($baseSampleTwo->propertyNestedChanges);
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
-        $this->assertFalse($baseSampleTwo->nestedChanges);
+        $this->assertFalse($baseSampleTwo->propertyNestedChanges);
         $baseSampleTwo->referencedEntityWithoutInitialization->text = 'referenced sample modified';
-        $this->assertTrue($baseSampleTwo->nestedChanges);
+        $this->assertTrue($baseSampleTwo->propertyNestedChanges);
 
         $baseSampleThree = new BaseSample();
         $referencedSampleTwo = new ReferencedSample();
@@ -239,11 +239,11 @@ class BaseEntityTest extends TestCase
         $referencedSampleTwo->modified = false;
         Cache::setEntity($referencedSampleTwo);
         $baseSampleThree->referencedEntityWithoutInitialization = 1;
-        $this->assertFalse($baseSampleThree->nestedChanges);
+        $this->assertFalse($baseSampleThree->propertyNestedChanges);
         $referencedSampleTwo->text = 'referenced sample';
-        $this->assertFalse($baseSampleThree->nestedChanges);
+        $this->assertFalse($baseSampleThree->propertyNestedChanges);
         $referencedSampleTwo->text = 'referenced sample modified';
-        $this->assertTrue($baseSampleThree->nestedChanges);
+        $this->assertTrue($baseSampleThree->propertyNestedChanges);
         
         $baseSampleFour = new BaseSample();
         $referencedSampleThree = new ReferencedSample();
@@ -252,6 +252,6 @@ class BaseEntityTest extends TestCase
         $this->assertTrue($referencedSampleTwo->modified);
         Cache::setEntity($referencedSampleThree);
         $baseSampleFour->referencedEntityWithoutInitialization = 1;
-        $this->assertTrue($baseSampleFour->nestedChanges);
+        $this->assertTrue($baseSampleFour->propertyNestedChanges);
     }
 }
