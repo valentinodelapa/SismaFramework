@@ -35,8 +35,16 @@ class Session
 
     public static function start(): void
     {
-        //session_id(uniqid());
+        session_set_cookie_params([
+            'lifetime' => 3600,
+            'path' => '/',
+            'domain' => $_SERVER['HTTP_HOST'],
+            'secure' => (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on')) ? true : false,
+            'httponly' => true,
+            'samesite' => 'Strict'
+        ]);
         session_start();
+        session_regenerate_id();
         self::setItem('token', hash("sha512", $_SERVER['HTTP_USER_AGENT'] . $_SERVER['REMOTE_ADDR']));
     }
 
@@ -48,12 +56,12 @@ class Session
             $_SESSION[$key] = serialize($value);
         }
     }
-    
-    public static function unsetItem($key):void
+
+    public static function unsetItem($key): void
     {
         unset($_SESSION[$key]);
     }
-    
+
     public static function getItem($key, $unserialize = false): string|array
     {
         if (!$unserialize) {
@@ -79,5 +87,4 @@ class Session
         session_destroy();
         $_SESSION = [];
     }
-
 }
