@@ -135,7 +135,7 @@ abstract class ReferencedModel extends BaseModel
         return $this->dataMapper->find($query, $bindValues, $bindTypes);
     }
 
-    public function deleteEntityCollectionByEntity(array $referencedEntities, BaseEntity $baseEntity = null, ?string $searchKey = null): bool
+    public function deleteEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): bool
     {
         $query = $this->initQuery();
         $query->setWhere();
