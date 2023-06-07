@@ -43,6 +43,7 @@ enum Resource: string
     case jpg = 'jpg';
     case jpeg = 'jpeg';
     case js = 'js';
+    case jsm = 'jsm';
     case json = 'json';
     case map = 'map';
     case mp3 = 'mp3';
@@ -72,12 +73,13 @@ enum Resource: string
             self::htm, self::html => 'text/html',
             self::ico => 'image/x-icon',
             self::jpg, self::jpeg => 'image/jpeg',
-            self::js => 'application/javascript',
+            self::js, self::jsm => 'application/javascript',
             self::json, self::map => 'application/json',
             self::mp3 => 'audio/mp3',
             self::mp4 => 'video/mp4',
             self::otf => 'font/otf',
             self::pdf => 'application/pdf',
+            self::php => 'application/x-httpd-php',
             self::png => 'image/png',
             self::ppt => 'application/vnd.ms-powerpoint',
             self::pptx => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
