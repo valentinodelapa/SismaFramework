@@ -119,6 +119,15 @@ abstract class BaseModel
         return $this->dataMapper->find($query, $bindValues, $bindTypes);
     }
 
+    public function convertArrayIntoEntityCollection(array $entitiesId): SismaCollection
+    {
+        $collection = new SismaCollection($this->entityName);
+        foreach ($entitiesId as $entityId) {
+            $collection->append($this->getEntityById($entityId));
+        }
+        return $collection;
+    }
+
     public function getEntityById(int $id): ?BaseEntity
     {
         if (\Config\ORM_CACHE && Cache::checkEntityPresenceInCache($this->entityName, $id)) {
@@ -157,5 +166,4 @@ abstract class BaseModel
     {
         $this->adapter = null;
     }
-
 }
