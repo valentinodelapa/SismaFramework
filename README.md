@@ -12,7 +12,7 @@ Supporta nativamente i link parlanti con notazione kebab case.
 
 ## Installazione
 
-Il progetto non necessita nativamente di dipendenze: il mio consiglio è quindi di includerlo con **submodule** invece di utilizzare la tecnica di **vendoring** (e quindi tramite composer).
+Il progetto non necessita nativamente di dipendenze: il mio consiglio è quindi di includerlo con *submodule* invece di utilizzare la tecnica di *vendoring* (e quindi tramite composer).
 In tal modo nel proprio progetto viene inserito un riferimento alla libreria che viene inclusa nel progetto principale come una dipendenza.
 Al contrario, con il vendoring, il codice di terze parti viene copiato direttamente nel progetto principale. Questo può rendere il progetto più difficile da mantenere e aggiornare in futuro.
 
@@ -68,7 +68,7 @@ Nel caso in cui si intendano aggiungere altri file di configurazione è nescessa
 ## Utilizzo
 
 Di seguito alcune informazioni base su come utilizzare la libreria.
-Per maggiori informazioni si faccia riferimento alla documentazione ed agli esempi presenti nella cartella `Sample` del progetto.
+Per maggiori informazioni si faccia riferimento alla [documentazione ](docs/INDEX.md)ed agli esempi presenti nella cartella `Sample` del progetto.
 
 ### Framework
 

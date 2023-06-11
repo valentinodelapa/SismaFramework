@@ -4,7 +4,7 @@ Parte di questo software è stata ispirata dalla repository [**MVC_todo**](https
 
 Ringraziamo gli autori del progetto **MVC_todo** per aver condiviso il loro lavoro con la comunità open source.
 
-La repository **MVC_todo** non risulta essere soggetta ad alcuna licenza.
+La repository non risulta essere soggetta ad alcuna licenza e non riporta alcuna notifica di copyright.
 
 ---
 
@@ -18,16 +18,16 @@ Parte di questo software è stata ispirata dalla repository [**Symfony**](https:
 
 Ringraziamo gli autori del progetto **Symfony** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](https://github.com/valentinodelapa/SismaFramework/blob/master/third-party-licenses/Symfony/LICENSE) è inclusa nella cartella third-party-licenses/SimpleORM con indicata la notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](third-party-licenses/Symfony/LICENSE) è inclusa nella cartella third-party-licenses/SimpleORM con indicata la notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2004-present Fabien Potencier
 
 ---
 
-La componente *ORM* di questo software include codice della repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze.
+La componente *ORM* è stata sviluppata basandosi su codice originale presente nella repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze.
 
 Ringraziamo gli autori del progetto **SimpleORM** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](https://github.com/valentinodelapa/SismaFramework/blob/master/third-party-licenses/SimpleORM/LICENSE) è inclusa nella cartella third-party-licenses/Symfony con indicata notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](third-party-licenses/SimpleORM/LICENSE) è inclusa nella cartella third-party-licenses/Symfony con indicata notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2015-present Davide Airaghi
