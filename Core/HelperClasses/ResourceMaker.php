@@ -28,6 +28,7 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\Exceptions\AccessDeniedException;
 
 /**
  * Description of ResourceMaker
@@ -62,7 +63,7 @@ class ResourceMaker
 
     public function setStreamContex(string $path): void
     {
-            $this->streamContex = $this->request->getStreamContentResource();
+        $this->streamContex = $this->request->getStreamContentResource();
     }
 
     public function isAcceptedResourceFile(string $path): bool
@@ -78,19 +79,23 @@ class ResourceMaker
 
     public function makeResource(string $filename): void
     {
-        header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
-        header("Accept-Ranges: bytes");
-        header(self::CONTENT_TYPE_DECLARATION . Resource::from($this->getExtension($filename))->getMime());
-        header(self::CONTENT_DISPOSITION_DECLARATION . "inline");
-        header("Content-Length: " . filesize($filename));
-        if (filesize($filename) < $this->fileGetContentMaxBytesLimit) {
-            echo file_get_contents($filename, false, $this->streamContex);
-        } elseif (filesize($filename) < $this->readfileMaxBytesLimit) {
-            readfile($filename, false, $this->streamContex);
-        } else {
-            $stream = fopen($filename, 'rb', false, $this->streamContex);
-            fpassthru($stream);
+        $resource = Resource::from($this->getExtension($filename));
+        if ($resource->isRenderable()) {
+            header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
+            header("Accept-Ranges: bytes");
+            header(self::CONTENT_TYPE_DECLARATION . $resource->getMime());
+            header(self::CONTENT_DISPOSITION_DECLARATION . "inline");
+            header("Content-Length: " . filesize($filename));
+            if (filesize($filename) < $this->fileGetContentMaxBytesLimit) {
+                echo file_get_contents($filename, false, $this->streamContex);
+            } elseif (filesize($filename) < $this->readfileMaxBytesLimit) {
+                readfile($filename, false, $this->streamContex);
+            } else {
+                $stream = fopen($filename, 'rb', false, $this->streamContex);
+                fpassthru($stream);
+            }
+        }else{
+            throw new AccessDeniedException();
         }
     }
-
 }

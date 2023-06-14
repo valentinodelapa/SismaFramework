@@ -324,5 +324,4 @@ class Dispatcher
         }
         $this->actionArguments = $currentActionArguments;
     }
-
 }

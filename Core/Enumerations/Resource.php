@@ -50,6 +50,7 @@ enum Resource: string
     case mp4 = 'mp4';
     case otf = 'otf';
     case pdf = 'pdf';
+    case php = 'php';
     case png = 'png';
     case ppt = 'ppt';
     case pptx = 'pptx';
@@ -78,6 +79,7 @@ enum Resource: string
             self::mp4 => 'video/mp4',
             self::otf => 'font/otf',
             self::pdf => 'application/pdf',
+            self::php => 'application/x-httpd-php',
             self::png => 'image/png',
             self::ppt => 'application/vnd.ms-powerpoint',
             self::pptx => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
@@ -89,6 +91,18 @@ enum Resource: string
             self::xls => 'application/vnd.ms-excel',
             self::xlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             self::zip => 'application/x-zip-compressed',
+        };
+    }
+    
+    public function isRenderable():bool
+    {
+         return match ($this) {
+            self::css, self::doc, self::docx, self::geojson, self::htm, self::html,
+            self::ico, self::jpg, self::jpeg, self::js, self::jsm, self::json, self::map,
+            self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
+            self::rar, self::svg, self::ttf, self::woff, self::woff2, self::xls,
+            self::xlsx, self::zip => true,
+            self::php => false,
         };
     }
 
