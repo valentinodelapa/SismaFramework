@@ -50,7 +50,6 @@ enum Resource: string
     case mp4 = 'mp4';
     case otf = 'otf';
     case pdf = 'pdf';
-    case php = 'php';
     case png = 'png';
     case ppt = 'ppt';
     case pptx = 'pptx';
@@ -79,7 +78,6 @@ enum Resource: string
             self::mp4 => 'video/mp4',
             self::otf => 'font/otf',
             self::pdf => 'application/pdf',
-            self::php => 'application/x-httpd-php',
             self::png => 'image/png',
             self::ppt => 'application/vnd.ms-powerpoint',
             self::pptx => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
