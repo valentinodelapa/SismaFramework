@@ -42,6 +42,7 @@ use SismaFramework\Sample\Forms\ReferencedSampleForm;
 use SismaFramework\Sample\Forms\SelfReferencedSampleForm;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\ExtendedClasses\StandardEntity;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\ProprietaryTypes\SismaCollection;
@@ -55,7 +56,7 @@ class BaseFormTest extends TestCase
 {
 
     private SampleForm $sampleForm;
-    
+
     public function __construct($name = null, $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -90,6 +91,29 @@ class BaseFormTest extends TestCase
         $this->assertTrue($filterErrors['nullableSecureStringError']);
         $this->assertArrayHasKey('referencedEntityWithoutInitializationError', $filterErrors);
         $this->assertTrue($filterErrors['referencedEntityWithoutInitializationError']['textError']);
+    }
+
+    public function testFormForBaseEntityWithForeignKeySubmittedNotValid()
+    {
+        $baseSampleForm = new BaseSampleForm(null);
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
+        $requestMock->request = [
+            'referencedEntityWithoutInitialization' => [
+                'text' => 'referenced sample',
+            ],
+            'submitted' => 'on'
+        ];
+        $baseSampleForm->handleRequest($requestMock);
+        $this->assertTrue($baseSampleForm->isSubmitted());
+        $this->assertFalse($baseSampleForm->isValid());
+        $filterErrors = $baseSampleForm->returnFilterErrors();
+        $this->assertArrayHasKey('stringWithoutInizializationError', $filterErrors);
+        $this->assertTrue($filterErrors['stringWithoutInizializationError']);
+        $baseSampleResult = $baseSampleForm->getEntityDataToStandardEntity();
+        $this->assertInstanceOf(StandardEntity::class, $baseSampleResult);
+        $this->assertInstanceOf(StandardEntity::class, $baseSampleResult->referencedEntityWithoutInitialization);
+        $this->assertEquals('referenced sample', $baseSampleResult->referencedEntityWithoutInitialization->text);
     }
 
     public function testFormForBaseEntitySubmittedValid()
@@ -159,7 +183,10 @@ class BaseFormTest extends TestCase
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
             'text' => 'referenced sample',
-            'baseSampleCollectionReferencedEntityWithoutInitialization' => [[], []],
+            'baseSampleCollectionReferencedEntityWithoutInitialization' => [
+                ['stringWithoutInizialization' => 'base sample one'],
+                []
+            ],
             'submitted' => 'on'
         ];
         $referencedSampleForm->handleRequest($requestMock);
@@ -168,8 +195,10 @@ class BaseFormTest extends TestCase
         $filterErrors = $referencedSampleForm->returnFilterErrors();
         $this->assertArrayHasKey('baseSampleCollectionReferencedEntityWithoutInitializationError', $filterErrors);
         $this->assertCount(2, $filterErrors['baseSampleCollectionReferencedEntityWithoutInitializationError']);
-        $this->assertTrue($filterErrors['baseSampleCollectionReferencedEntityWithoutInitializationError'][0]['stringWithoutInizializationError']);
+        $this->assertFalse($filterErrors['baseSampleCollectionReferencedEntityWithoutInitializationError'][0]['stringWithoutInizializationError']);
         $this->assertTrue($filterErrors['baseSampleCollectionReferencedEntityWithoutInitializationError'][1]['stringWithoutInizializationError']);
+        $referencedSampleResult = $referencedSampleForm->getEntityDataToStandardEntity();
+        $this->assertEquals('base sample one', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInizialization);
     }
 
     public function testFormForReferencedEntityWithCollectionValid()
@@ -308,7 +337,7 @@ class BaseFormTest extends TestCase
         $this->assertEquals(2, $otherReferencedSampleResult->baseSampleCollection[0]->id);
         $this->assertEquals(3, $otherReferencedSampleResult->baseSampleCollection[1]->id);
     }
-    
+
     public function testFormForSelfReferencedEntityNotValid()
     {
         $selfReferencedSampleForm = new SelfReferencedSampleForm(null);
@@ -316,7 +345,7 @@ class BaseFormTest extends TestCase
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $requestMock->request = [
             'text' => 'self referenced sample one',
-            'sonCollection' => [[],[]],
+            'sonCollection' => [[], []],
             'submitted' => 'on'
         ];
         $selfReferencedSampleForm->handleRequest($requestMock);
@@ -328,7 +357,7 @@ class BaseFormTest extends TestCase
         $this->assertTrue($filterErrors['sonCollectionError'][0]['textError']);
         $this->assertTrue($filterErrors['sonCollectionError'][1]['textError']);
     }
-    
+
     public function testFormForSelfReferencedEntityValid()
     {
         $selfReferencedSampleForm = new SelfReferencedSampleForm(null);
@@ -352,7 +381,7 @@ class BaseFormTest extends TestCase
         $this->assertEquals('self referenced sample two', $selfReferencedSampleResult->sonCollection[0]->text);
         $this->assertEquals('self referenced sample three', $selfReferencedSampleResult->sonCollection[1]->text);
     }
-    
+
     public function testFormUpdateForSelfReferencedEntityValid()
     {
         $selfReferencedSample = new SelfReferencedSample();
@@ -436,5 +465,4 @@ class BaseFormTest extends TestCase
         $requestMock = $this->createMock(Request::class);
         $fakeReferencedSampleForm->handleRequest($requestMock);
     }
-
 }

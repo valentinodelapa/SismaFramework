@@ -8,7 +8,7 @@ Inoltre, è compatibile nativamente con i database *MySQL* e *MariaDB* ma predis
 
 ## Caratteristiche generali
 
-I requisiti principali del Framework sono i seguenti:
+I requisiti principali della libreria sono i seguenti:
 
 * Compatibile nativamente con MySQL e MariaDB ma configurabile per essere indipendente dal database.
 
@@ -19,6 +19,23 @@ I requisiti principali del Framework sono i seguenti:
 * Di conseguenza il codice risulta essere auto-documentato adottando pratiche di codice agile e pulito.
 
 * Semplice da estendere con moduli ad hoc o librerie di terze parti.
+
+## Caratteristiche di automazione
+
+La libreria automatizza la maggior parte delle caratteristiche comuni ai progetti permettendo allo sviluppatore di concentrarsi sulle specifiche dell’applicazione. Ecco alcuni esempi:
+
+* La logica di presentazione è separata dalla logica di elaborazione.
+
+* I form supportano la validazione e la ripopolazione automatica assicurando integrità ai dati e buon livello di esperienza utente.
+
+* Le interfacce supportano l’internazionalizzazione mediante i file di linguaggio.
+
+* L’escape dell’output garantisce protezione da attacchi mediante dati corrotti.
+
+* La gestione automatica dell’autenticazione aiuta a creare in modo semplice aree protette.
+
+* La gestione dell’url rewrite aiuta a creare indirizzi user-friendly evitando le query string.
+  
 
 ## Concetti fondamentali
 
@@ -40,3 +57,5 @@ Verranno analizzate in seguito le peculiarità del modulo ORM integrato nel prog
 ---
 
 [Indice](INDEX.md) | Successivo: [Installazione](INSTALLATION.md)
+
+

@@ -10,7 +10,7 @@ Tale meccanismo permette di diminuire le chiamate al database ponendo tale cache
 
 ## Auto-determinazione delle relazioni inverse delle entità
 
-È presente un meccanismo che, scorrendo le entità presenti nei vari moduli del progetto (ed a tal scopo utilizza le costanti `ROOT_PATH`, `ENTITY_PATH `ed `ENTITY_NAMESPACE `presenti nel file di configurazione), è in grado di generare un file json che rappresenta la rete di relazioni inverse delle entità. Questa funzionalità permette la generazione automatica delle collezioni di oggetti (meccanismo descritto nel paragrafo Entità referenziate) e permette di implementare un meccanismo di blocco in fase di cancellazione utile a garantire l'integrità referenziale a livello di applicazione (è possibile utilizzare a tal scopo la classe `ReferencedEntityDeletionPermission`, il cui funzionamento sarà analizzato nel capitolo Permissions).
+È presente un meccanismo che, scorrendo le entità presenti nei vari moduli del progetto (ed a tal scopo utilizza le costanti `ROOT_PATH`, `ENTITY_PATH `ed `ENTITY_NAMESPACE `presenti nel file di configurazione), è in grado di generare un file json che rappresenta la rete di relazioni inverse delle entità. Questa funzionalità permette la generazione automatica delle collezioni di oggetti (meccanismo descritto nel paragrafo Entità referenziate) e permette di implementare un meccanismo di blocco in fase di cancellazione utile a garantire l'integrità referenziale a livello di applicazione (è possibile utilizzare a tal scopo la classe `ReferencedEntityDeletionPermission`, il cui funzionamento viene analizzato nel capitolo Permissions).
 
 La costante che indica il percorso nel quale la libreria salverà il file json è indicato da due costanti presenti nel file di configurazione:
 
@@ -24,5 +24,3 @@ const REFERENCE_CACHE_PATH = '';
 * * *
 
 [Indice](INDEX.md) | Precedente: [Modelli](ORM_MODELS.md) | Successivo: [Controllori](CONTROLLERS.md)
-
-

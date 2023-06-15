@@ -159,10 +159,10 @@ abstract class BaseForm
     private function switchForm(self $entityFromForm, Request $request): StandardEntity|BaseEntity
     {
         $entityFromForm->handleRequest($request);
-        $entityData = $entityFromForm->getEntityDataToStandardEntity();
         if ($entityFromForm->isValid() === false) {
             $this->filterResult = false;
         }
+        $entityData = $entityFromForm->getEntityDataToStandardEntity();
         return $entityData;
     }
 

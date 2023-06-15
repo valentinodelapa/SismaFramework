@@ -4,28 +4,28 @@
 
 * [Installazione](INSTALLATION.md)
 
-* [Struttura cartella di progetto](PROJECT_FOLDER_STRUCTURE.md)
-
-* [ORM](ORM.md)
-  
-  - [Entità](ORM_ENTITIES.md)
-  
-  - [Modelli](ORM_MODELS.md)
-  
-  - [Funzionalità aggiuntive](ORM_ADDITIONAL_FEATURES.md)
+* [Struttura cartella di progetto](PROJECT_FOLDER_STRUCTURE.md))
 
 * [Controllori](CONTROLLERS.md)
   
-  * Classe Render
+  * [Classe Render](CONTROLLERS.md#classe-render)
   
-  * Classe Router
+  * [Classe Router](CONTROLLERS.md#classe-router)
 
-* Viste
+* [Viste](VIEWS.md)
   
-  * Templates
-- 
-* Authentications
+  * [Templates](VIEWS.md#templates)
+- [Forms](FORMS.md)
+  
+  - [Authentications](FORMS.md#authentications)
 
+- [ORM](ORM.md)
+  
+  * [Entità](ORM_ENTITIES.md)
+  
+  * [Modelli](ORM_MODELS.md)
+  
+  * [Funzionalità aggiuntive](ORM_ADDITIONAL_FEATURES.md)
 * Barra di debug
 
 
