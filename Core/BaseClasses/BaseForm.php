@@ -156,14 +156,13 @@ abstract class BaseForm
         }
     }
 
-    private function switchForm(self $entityFromForm, Request $request): StandardEntity|BaseEntity
+    private function switchForm(self $entityFromForm, Request $request): StandardEntity
     {
         $entityFromForm->handleRequest($request);
         if ($entityFromForm->isValid() === false) {
             $this->filterResult = false;
         }
-        $entityData = $entityFromForm->getEntityDataToStandardEntity();
-        return $entityData;
+        return $entityFromForm->getEntityDataToStandardEntity();
     }
 
     private function parseStandardProperties(): void

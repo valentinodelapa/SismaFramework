@@ -20,11 +20,6 @@ class BaseSampleForm extends BaseForm
         
     }
 
-    protected function getEntityToEmbed(): BaseEntity
-    {
-        
-    }
-
     protected function injectRequest(): void
     {
         
