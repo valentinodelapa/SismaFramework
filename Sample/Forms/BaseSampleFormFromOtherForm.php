@@ -26,6 +26,7 @@ class BaseSampleFormFromOtherForm extends BaseForm
 
     protected function setEntityFromForm(): void
     {
+        
     }
 
     protected function setFilterFieldsMode(): void

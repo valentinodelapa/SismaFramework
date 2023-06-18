@@ -17,6 +17,7 @@
   * [Templates](VIEWS.md#templates)
 - [Forms](FORMS.md)
   
+  * [Request](FORMS.md#request)
   - [Authentications](FORMS.md#authentications)
 
 - [ORM](ORM.md)
@@ -26,6 +27,6 @@
   * [Modelli](ORM_MODELS.md)
   
   * [Funzionalità aggiuntive](ORM_ADDITIONAL_FEATURES.md)
-* Barra di debug
+* [Barra di debug](DEBUG_BAR.md)
 
 
