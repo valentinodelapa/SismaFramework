@@ -41,7 +41,7 @@ use SismaFramework\ProprietaryTypes\SismaDateTime;
 class DataMapperTest extends TestCase
 {
 
-    public function testSaveNewBaseEntityWithThreeInsert()
+    public function testSaveNewBaseEntityWithInsertInsertInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->exactly(3))
@@ -86,7 +86,7 @@ class DataMapperTest extends TestCase
         $dataMapper->save($baseSample);
     }
     
-    public function testSaveNewBaseEntityWithTwoInsertAndOneUpdate()
+    public function testSaveNewBaseEntityWithInsertUpdateInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->exactly(3))
@@ -134,7 +134,7 @@ class DataMapperTest extends TestCase
         $dataMapper->save($baseSample);
     }
     
-    public function testSaveNewBaseEntityWithOneInsertAndOneUpdate()
+    public function testSaveNewBaseEntityWithNothingUpdateInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->exactly(2))
@@ -177,6 +177,273 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
+        $dataMapper->save($baseSample);
+    }
+
+    public function testSaveNewBaseEntityWithInsertInsertUpdate()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) {
+                    static $invocation = 0;
+                    $invocation++;
+                    if ($invocation === 1) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["referenced sample", null], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 2) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["other referenced sample"], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 3) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 2], $param2);
+                        $this->assertEquals([], $param3);
+                    }
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('parseInsert');
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('parseUpdate');
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('lastInsertId')
+                ->willReturn(1);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapper = new DataMapper();
+        $referencedSample = new ReferencedSample();
+        $referencedSample->text = 'referenced sample';
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->id = 2;
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $dataMapper->save($baseSample);
+    }
+
+    public function testSaveNewBaseEntityWithInsertUpdateUpdate()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) {
+                    static $invocation = 0;
+                    $invocation++;
+                    if ($invocation === 1) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["referenced sample", null], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 2) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["other referenced sample", 2], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 3) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
+                        $this->assertEquals([], $param3);
+                    }
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('parseInsert');
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('parseUpdate');
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('lastInsertId')
+                ->willReturn(1);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapper = new DataMapper();
+        $referencedSample = new ReferencedSample();
+        $referencedSample->text = 'referenced sample';
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->id = 2;
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->id = 3;
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $dataMapper->save($baseSample);
+    }
+
+    public function testSaveNewBaseEntityWithNothingUpdateUpdate()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) {
+                    static $invocation = 0;
+                    $invocation++;
+                    if ($invocation === 1) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["other referenced sample", 2], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 2) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
+                        $this->assertEquals([], $param3);
+                    }
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('parseUpdate');
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapper = new DataMapper();
+        $referencedSample = new ReferencedSample();
+        $referencedSample->id = 1;
+        $referencedSample->text = 'referenced sample';
+        $referencedSample->modified = false;
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->id = 2;
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->id = 3;
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $dataMapper->save($baseSample);
+    }
+
+    public function testSaveNewBaseEntityWithInsertInsertNothing()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) {
+                    static $invocation = 0;
+                    $invocation++;
+                    if ($invocation === 1) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["referenced sample", null], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 2) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["other referenced sample"], $param2);
+                        $this->assertEquals([], $param3);
+                    }
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('parseInsert');
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('lastInsertId')
+                ->willReturn(1);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapper = new DataMapper();
+        $referencedSample = new ReferencedSample();
+        $referencedSample->text = 'referenced sample';
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->id = 2;
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $baseSample->modified = false;
+        $dataMapper->save($baseSample);
+    }
+
+    public function testSaveNewBaseEntityWithInsertUpdateNothing()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) {
+                    static $invocation = 0;
+                    $invocation++;
+                    if ($invocation === 1) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["referenced sample", null], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 2) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["other referenced sample", 2], $param2);
+                        $this->assertEquals([], $param3);
+                    }
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('parseInsert');
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('parseUpdate');
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('lastInsertId')
+                ->willReturn(1);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapper = new DataMapper();
+        $referencedSample = new ReferencedSample();
+        $referencedSample->text = 'referenced sample';
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->id = 2;
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->id = 3;
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $baseSample->modified = false;
+        $dataMapper->save($baseSample);
+    }
+
+    public function testSaveNewBaseEntityWithNothingUpdateNothing()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) {
+                    static $invocation = 0;
+                    $invocation++;
+                    if ($invocation === 1) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["other referenced sample", 2], $param2);
+                        $this->assertEquals([], $param3);
+                    }
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('parseUpdate');
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapper = new DataMapper();
+        $referencedSample = new ReferencedSample();
+        $referencedSample->id = 1;
+        $referencedSample->text = 'referenced sample';
+        $referencedSample->modified = false;
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->id = 2;
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->id = 3;
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $baseSample->modified = false;
         $dataMapper->save($baseSample);
     }
 }

@@ -124,4 +124,6 @@ La classe `Router` invece di occupa del reindirizzamento verso un altro coltroll
 
 * * *
 
-[Indice](INDEX.md) | Precedente: [Struttura cartelle di progetto](PROJECT_FOLDER_STRUCTURE.md) | Successivo: [Classe Render](RENDER.md)
+[Indice](INDEX.md) | Precedente: [Struttura cartelle di progetto](PROJECT_FOLDER_STRUCTURE.md) | Successivo: [Viste](VIEWS.md)
+
+

@@ -4,7 +4,7 @@
 
 * [Installazione](INSTALLATION.md)
 
-* [Struttura cartella di progetto](PROJECT_FOLDER_STRUCTURE.md))
+* [Struttura cartella di progetto](PROJECT_FOLDER_STRUCTURE.md)
 
 * [Controllori](CONTROLLERS.md)
   
@@ -15,18 +15,18 @@
 * [Viste](VIEWS.md)
   
   * [Templates](VIEWS.md#templates)
-- [Forms](FORMS.md)
+
+* [Forms](FORMS.md)
   
   * [Request](FORMS.md#request)
-  - [Authentications](FORMS.md#authentications)
+  * [Authentications](FORMS.md#authentications)
 
-- [ORM](ORM.md)
+* [ORM](ORM.md)
   
   * [Entità](ORM_ENTITIES.md)
   
   * [Modelli](ORM_MODELS.md)
   
   * [Funzionalità aggiuntive](ORM_ADDITIONAL_FEATURES.md)
+
 * [Barra di debug](DEBUG_BAR.md)
-
-
