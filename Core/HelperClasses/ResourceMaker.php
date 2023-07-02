@@ -38,9 +38,6 @@ use SismaFramework\Core\Exceptions\AccessDeniedException;
 class ResourceMaker
 {
 
-    const CONTENT_DISPOSITION_DECLARATION = 'Content-Disposition: ';
-    const CONTENT_TYPE_DECLARATION = 'Content-type: ';
-
     private Request $request;
     private $streamContex = null;
     private int $fileGetContentMaxBytesLimit = \Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT;
@@ -83,8 +80,8 @@ class ResourceMaker
         if ($resource->isRenderable()) {
             header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
             header("Accept-Ranges: bytes");
-            header(self::CONTENT_TYPE_DECLARATION . $resource->getMime());
-            header(self::CONTENT_DISPOSITION_DECLARATION . "inline");
+            header("Content-type: " . $resource->getMime());
+            header("Content-Disposition: inline");
             header("Content-Length: " . filesize($filename));
             if (filesize($filename) < $this->fileGetContentMaxBytesLimit) {
                 echo file_get_contents($filename, false, $this->streamContex);

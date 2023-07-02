@@ -33,6 +33,7 @@ use SismaFramework\Sample\Entities\OtherReferencedSample;
 use SismaFramework\Sample\Enumerations\SampleType;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 
 /**
@@ -70,7 +71,6 @@ class DataMapperTest extends TestCase
                 ->method('lastInsertId')
                 ->willReturn(1);
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -83,6 +83,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
     
@@ -117,7 +118,6 @@ class DataMapperTest extends TestCase
                 ->method('lastInsertId')
                 ->willReturn(1);
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -131,6 +131,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
     
@@ -161,7 +162,6 @@ class DataMapperTest extends TestCase
                 ->method('lastInsertId')
                 ->willReturn(1);
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->id = 2;
         $referencedSample->text = 'referenced sample';
@@ -177,6 +177,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
 
@@ -211,7 +212,6 @@ class DataMapperTest extends TestCase
                 ->method('lastInsertId')
                 ->willReturn(1);
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -225,6 +225,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
 
@@ -259,7 +260,6 @@ class DataMapperTest extends TestCase
                 ->method('lastInsertId')
                 ->willReturn(1);
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -274,6 +274,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
 
@@ -299,7 +300,6 @@ class DataMapperTest extends TestCase
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('parseUpdate');
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->id = 1;
         $referencedSample->text = 'referenced sample';
@@ -316,6 +316,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
 
@@ -344,7 +345,6 @@ class DataMapperTest extends TestCase
                 ->method('lastInsertId')
                 ->willReturn(1);
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -359,6 +359,7 @@ class DataMapperTest extends TestCase
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
 
@@ -389,7 +390,6 @@ class DataMapperTest extends TestCase
                 ->method('lastInsertId')
                 ->willReturn(1);
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -405,6 +405,7 @@ class DataMapperTest extends TestCase
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
 
@@ -426,7 +427,6 @@ class DataMapperTest extends TestCase
         $baseAdapterMock->expects($this->exactly(1))
                 ->method('parseUpdate');
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapper = new DataMapper();
         $referencedSample = new ReferencedSample();
         $referencedSample->id = 1;
         $referencedSample->text = 'referenced sample';
@@ -444,6 +444,56 @@ class DataMapperTest extends TestCase
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
+        $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
+    }
+    
+    public function testNewReferencedEntityWithInsertInsertInsert()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) {
+                    static $invocation = 0;
+                    $invocation++;
+                    if ($invocation === 1) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["referenced sample", null], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 2) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals(["other referenced sample"], $param2);
+                        $this->assertEquals([], $param3);
+                    } elseif ($invocation === 3) {
+                        $this->assertEquals('', $param1);
+                        $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                        $this->assertEquals([], $param3);
+                    }
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('parseInsert');
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('lastInsertId')
+                ->willReturn(1);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $referencedSample = new ReferencedSample();
+        $referencedSample->text = 'referenced sample';
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $baseSampleCollection = new SismaCollection(BaseSample::class);
+        $baseSampleCollection->append($baseSample);
+        $referencedSample->setBaseSampleCollectionReferencedEntityWithoutInitialization($baseSampleCollection);
+        $referencedSample->setBaseSampleCollectionReferencedEntityWithInitialization($baseSampleCollection);
+        $dataMapper = new DataMapper();
+        $dataMapper->save($referencedSample);
     }
 }
