@@ -30,6 +30,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaTime;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 /**
@@ -56,6 +57,8 @@ class Parser
             return self::parseEnumeration($reflectionNamedType->getName(), $value);
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
             return new SismaDateTime($value);
+        } elseif (is_a($reflectionNamedType->getName(), SismaTime::class, true)) {
+            return SismaTime::createFromStandardTimeFormat($value);
         } elseif (($reflectionNamedType->getName() === 'array') && is_array($value)) {
             return $value;
         } else {
@@ -103,6 +106,8 @@ class Parser
             return $value->value;
         } elseif ($value instanceof SismaDateTime) {
             return $value->format("Y-m-d H:i:s");
+        } elseif ($value instanceof SismaTime) {
+            return $value->formatToStandardTimeFormat();
         } else {
             return $value;
         }

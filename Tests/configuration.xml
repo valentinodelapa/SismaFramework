@@ -37,6 +37,7 @@ THE SOFTWARE.
         <testsuite name="Application Test Suite">
             <directory suffix="Test.php">./Core</directory>
             <directory suffix="Test.php">./Orm</directory>
+            <directory suffix="Test.php">./ProprietaryTypes</directory>
         </testsuite>
     </testsuites>
     <coverage cacheDirectory="./report"
