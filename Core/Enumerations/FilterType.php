@@ -46,6 +46,7 @@ enum FilterType: string
     case isArray = 'isArray';
     case isDate = 'isDate';
     case isDatetime = 'isDatetime';
+    case isTime = 'isTime';
     case isUploadedFile = 'isUploadedFile';
     case isEnumeration = 'isEnumeration';
     case isEntity = 'isEntity';

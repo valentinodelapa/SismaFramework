@@ -29,7 +29,9 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\ProprietaryTypes\SismaDate;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Enumerations\SampleType;
 
@@ -248,7 +250,9 @@ class FilterTest extends TestCase
 
     public function testIsDate()
     {
-        $this->assertTrue(Filter::isDate(new SismaDateTime()));
+        $this->assertTrue(Filter::isDate(new SismaDate()));
+        $this->assertFalse(Filter::isDate(new SismaDateTime()));
+        $this->assertFalse(Filter::isDate(SismaTime::createFromStandardTimeFormat('20:15:50')));
         $this->assertFalse(Filter::isDate(['array']));
         $this->assertFalse(Filter::isDate(1.1));
         $this->assertFalse(Filter::isDate(1));
@@ -262,6 +266,8 @@ class FilterTest extends TestCase
     public function testIsDatetime()
     {
         $this->assertTrue(Filter::isDatetime(new SismaDateTime()));
+        $this->assertFalse(Filter::isDatetime(new SismaDate()));
+        $this->assertFalse(Filter::isDatetime(SismaTime::createFromStandardTimeFormat('20:15:50')));
         $this->assertFalse(Filter::isDatetime(['array']));
         $this->assertFalse(Filter::isDatetime(1.1));
         $this->assertFalse(Filter::isDatetime(1));
@@ -270,6 +276,21 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isDatetime(false));
         $this->assertFalse(Filter::isDatetime(null));
         $this->assertFalse(Filter::isDatetime(''));
+    }
+
+    public function testIsTime()
+    {
+        $this->assertTrue(Filter::isTime(SismaTime::createFromStandardTimeFormat('20:15:50')));
+        $this->assertFalse(Filter::isTime(new SismaDate()));
+        $this->assertFalse(Filter::isTime(new SismaDateTime()));
+        $this->assertFalse(Filter::isTime(['array']));
+        $this->assertFalse(Filter::isTime(1.1));
+        $this->assertFalse(Filter::isTime(1));
+        $this->assertFalse(Filter::isTime('string'));
+        $this->assertFalse(Filter::isTime(true));
+        $this->assertFalse(Filter::isTime(false));
+        $this->assertFalse(Filter::isTime(null));
+        $this->assertFalse(Filter::isTime(''));
     }
 
     public function testIsEntity()

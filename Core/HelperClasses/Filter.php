@@ -28,7 +28,9 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\FilterException;
+use SismaFramework\ProprietaryTypes\SismaDate;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaTime;
 
 /**
  *
@@ -218,7 +220,12 @@ class Filter
 
     public static function isDate($value): bool
     {
-        return self::isDatetime($value);
+        $result = true;
+        $result = (self::isNotEmpty($value)) ? $result : false;
+        if ($result) {
+            $result = $value instanceof SismaDate;
+        }
+        return $result;
     }
 
     public static function isDatetime($value): bool
@@ -227,6 +234,16 @@ class Filter
         $result = (self::isNotEmpty($value)) ? $result : false;
         if ($result) {
             $result = $value instanceof SismaDateTime;
+        }
+        return $result;
+    }
+
+    public static function isTime($value): bool
+    {
+        $result = true;
+        $result = (self::isNotEmpty($value)) ? $result : false;
+        if ($result) {
+            $result = $value instanceof SismaTime;
         }
         return $result;
     }
@@ -259,5 +276,4 @@ class Filter
         $result = is_subclass_of($value, \UnitEnum::class) ? $result : false;
         return $result;
     }
-
 }

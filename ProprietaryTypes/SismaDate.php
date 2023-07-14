@@ -29,17 +29,7 @@ namespace SismaFramework\ProprietaryTypes;
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaTime extends \DateInterval
+class SismaDate extends \DateTimeImmutable
 {
-
-    public static function createFromStandardTimeFormat(string $time): self
-    {
-        $timeParts = explode(':', $time);
-        return new SismaTime('PT' . $timeParts[0] . 'H' . $timeParts[1] . 'M' . $timeParts[2] . 'S');
-    }
-
-    public function formatToStandardTimeFormat(): string
-    {
-        return $this->format('%H:%I:%S');
-    }
+    //put your code here
 }

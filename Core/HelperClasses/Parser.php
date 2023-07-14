@@ -29,6 +29,7 @@ namespace SismaFramework\Core\HelperClasses;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\ProprietaryTypes\SismaDate;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\ProprietaryTypes\SismaTime;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
@@ -55,6 +56,8 @@ class Parser
             }
         } elseif (enum_exists($reflectionNamedType->getName())) {
             return self::parseEnumeration($reflectionNamedType->getName(), $value);
+        } elseif (is_a($reflectionNamedType->getName(), SismaDate::class, true)) {
+            return new SismaDate($value);
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
             return new SismaDateTime($value);
         } elseif (is_a($reflectionNamedType->getName(), SismaTime::class, true)) {
@@ -104,6 +107,8 @@ class Parser
             return $value->id;
         } elseif ($value instanceof \UnitEnum) {
             return $value->value;
+        } elseif ($value instanceof SismaDate) {
+            return $value->format("Y-m-d");
         } elseif ($value instanceof SismaDateTime) {
             return $value->format("Y-m-d H:i:s");
         } elseif ($value instanceof SismaTime) {

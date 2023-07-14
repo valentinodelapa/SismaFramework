@@ -24,22 +24,23 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ProprietaryTypes;
+namespace SismaFramework\Tests\ProprietaryTypes;
+
+use PHPUnit\Framework\TestCase;
+use SismaFramework\ProprietaryTypes\SismaDate;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaTime extends \DateInterval
+class SismaDateTest extends TestCase
 {
-
-    public static function createFromStandardTimeFormat(string $time): self
+    public function testSismaTime()
     {
-        $timeParts = explode(':', $time);
-        return new SismaTime('PT' . $timeParts[0] . 'H' . $timeParts[1] . 'M' . $timeParts[2] . 'S');
-    }
-
-    public function formatToStandardTimeFormat(): string
-    {
-        return $this->format('%H:%I:%S');
+        $originalDate = "2020-01-15";
+        $sismaDate = new SismaDate($originalDate);
+        $this->assertInstanceOf(SismaDate::class, $sismaDate);
+        $date = $sismaDate->format('Y-m-d');
+        $this->assertIsString($date);
+        $this->assertEquals($originalDate, $date);
     }
 }
