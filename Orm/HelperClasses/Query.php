@@ -44,7 +44,6 @@ class Query
 
     protected bool $distinct = false;
     protected array $columns = [];
-    protected array $columnAlias = [];
     protected array $tables = [];
     protected array $where = [];
     protected int $offset = 0;
@@ -72,7 +71,6 @@ class Query
     protected function reset(): void
     {
         $this->columns = array();
-        $this->columnAlias = array();
         $this->tables = array();
         $this->where = array();
         $this->offset = 0;
@@ -131,11 +129,23 @@ class Query
         return $this;
     }
 
-    public function &setSubqueryColumn(Query $subquery, ?string $columnAlias = null): self
+    public function &setFulltextIndexColumn(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null, bool $append = false): self
     {
-        $this->columns = [Keyword::openBlock->value . $subquery->getCommandToExecute() . Keyword::closeBlock->value];
-        if ($columnAlias !== null) {
-            $this->columnAlias[array_key_last($this->columns)] = $this->adapter->escapeColumn($columnAlias);
+        $escapedValue = $this->adapter->escapeValue($value, ComparisonOperator::against);
+        if ($append) {
+            $this->columns[] = $this->adapter->opFulltextIndex($columns, $escapedValue, $columnAlias);
+        } else {
+            $this->columns = [$this->adapter->opFulltextIndex($columns, $escapedValue, $columnAlias)];
+        }
+        return $this;
+    }
+
+    public function &setSubqueryColumn(Query $subquery, ?string $columnAlias = null, bool $append = false): self
+    {
+        if ($append) {
+            $this->columns[] = $this->adapter->opSubquery($subquery, $columnAlias);
+        } else {
+            $this->columns = [$this->adapter->opSubquery($subquery, $columnAlias)];
         }
         return $this;
     }
@@ -221,7 +231,7 @@ class Query
         return $this;
     }
 
-    public function &appendCondition(string $column, ComparisonOperator $operator, Keyword|string|null $value = null, bool $foreignKey = false): self
+    public function &appendCondition(string $column, ComparisonOperator $operator, Keyword|string $value = Keyword::placeholder, bool $foreignKey = false): self
     {
         $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
         $escapedValue = $this->adapter->escapeValue($value, $operator);
@@ -234,24 +244,20 @@ class Query
         return $this;
     }
 
-    public function &appendMatchCondition(array $columns, Keyword|string|null $value = null, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): self
+    public function &appendFulltextCondition(array $columns, Keyword|string|null $value = null): self
     {
-        foreach ($columns as &$column) {
-            $column = $this->adapter->escapeColumn($column);
-        }
-        $escapedValue = $this->adapter->escapeValue($value, ComparisonOperator::against);
-        $this->where[] = Keyword::match->value . ' ' . Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ComparisonOperator::against->value . Keyword::openBlock->value . $escapedValue . ' ' . $textSearchMode->value . Keyword::closeBlock->value;
+        $this->where[] = $this->adapter->fulltextConditionSintax($columns, $value);
         return $this;
     }
 
-    public function &appendSubqueryCondition(Query $query, ComparisonOperator $operator, Keyword|string|null $value = null): self
+    public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Keyword|string|null $value = null): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->current_conditions == Condition::where) {
-            $this->where[] = Keyword::openBlock->value . $query->getCommandToExecute() . Keyword::closeBlock->value . ' ' . $operator->value . ' ' . $escapedValue;
+            $this->where[] = $this->adapter->opSubquery($subquery) . ' ' . $operator->value . ' ' . $escapedValue;
         }
         if ($this->current_conditions == Condition::having) {
-            $this->having[] = Keyword::openBlock->value . $query->getCommandToExecute() . Keyword::closeBlock->value . ' ' . $operator->value . ' ' . $escapedValue;
+            $this->having[] = $this->adapter->opSubquery($subquery) . ' ' . $operator->value . ' ' . $escapedValue;
         }
         return $this;
     }
@@ -340,12 +346,11 @@ class Query
                 break;
             case Statement::select:
             default:
-                $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->columnAlias, $this->tables, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
+                $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->tables, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
                 break;
         }
         return $this->command;
     }
-
 }
 
 ?>

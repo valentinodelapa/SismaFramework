@@ -30,8 +30,11 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 
 /**
@@ -272,6 +275,20 @@ class AdapterMysql extends BaseAdapter
         return self::$connection->errorCode();
     }
 
+    public function opFulltextIndex(array $columns, Keyword|string|null $value = null, ?string $columnAlias = null): string
+    {
+        return $this->fulltextConditionSintax($columns, $value) . ' as '.($columnAlias ?? '_relevance');
+    }
+
+    public function fulltextConditionSintax(array $columns, Keyword|string|null $value = null): string
+    {
+        foreach ($columns as &$column) {
+            $column = $this->escapeColumn($column);
+        }
+        $escapedValue = $this->escapeValue($value, ComparisonOperator::against);
+        $condition = Keyword::match->value . ' ' . Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ' ' . ComparisonOperator::against->value . ' ' . Keyword::openBlock->value . $escapedValue . ' ' . TextSearchMode::inNaturaLanguageMode->value . Keyword::closeBlock->value;
+        return $condition;
+    }
 }
 
 ?>

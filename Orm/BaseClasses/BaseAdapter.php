@@ -35,6 +35,7 @@ use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\LogicalOperator;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\HelperClasses\Query;
 
 /**
  *
@@ -62,7 +63,7 @@ abstract class BaseAdapter
                         'password' => \Config\DATABASE_PASSWORD,
                         'port' => \Config\DATABASE_PORT,
                         'username' => \Config\DATABASE_USERNAME,
-                    ]);
+            ]);
             static::setDefault($defaultAdapter);
         }
         return static::$adapter;
@@ -188,12 +189,20 @@ abstract class BaseAdapter
         return AggregationFunction::count->value . Keyword::openBlock->value . ($distinct ? Keyword::distinct->value . ' ' : '') . $column . Keyword::closeBlock->value . ' as _numrows';
     }
 
-    public function parseSelect(bool $distinct, array $select, array $selectAlias, array $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
+    public function opSubquery(Query $subquery, ?string $columnAlias = null): string
+    {
+        $column = Keyword::openBlock->value . $subquery->getCommandToExecute() . Keyword::closeBlock->value;
+        if ($columnAlias !== null) {
+            $column .= ' as ' . $columnAlias;
+        }
+        return $column;
+    }
+
+    public function parseSelect(bool $distinct, array $select, array $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
     {
         foreach ($orderby as $k => $v) {
             $orderby[$k] = $k . ' ' . $v;
         }
-        $this->processSelectAlias($select, $selectAlias);
         $query = Statement::select->value . ' ' .
                 ($distinct ? ' ' . Keyword::distinct->value . ' ' : '') .
                 implode(',', $select) . ' ' .
@@ -205,17 +214,6 @@ abstract class BaseAdapter
                 ($limit > 0 ? ' ' . Keyword::limit->value . ' ' . $limit . ' ' : '') .
                 ($offset > 0 ? ' ' . Keyword::offset->value . ' ' . $offset . ' ' : '');
         return $query;
-    }
-
-    private function processSelectAlias(array &$select, array $selectAlias)
-    {
-        if (count($selectAlias) > 0) {
-            foreach ($select as $key => &$singleColumn) {
-                if (array_key_exists($key, $selectAlias)) {
-                    $singleColumn .= ' ' . Keyword::as->value . ' ' . $selectAlias[$key];
-                }
-            }
-        }
     }
 
     public function parseInsert(array $table, array $columns = [], array $values = []): string
@@ -260,6 +258,10 @@ abstract class BaseAdapter
     }
 
     abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
+
+    abstract public function opFulltextIndex(array $columns, Keyword|string|null $value = null, ?string $columnAlias): string;
+
+    abstract public function fulltextConditionSintax(array $columns, Keyword|string|null $value = null): string;
 
     abstract public function lastInsertId(): int;
 
