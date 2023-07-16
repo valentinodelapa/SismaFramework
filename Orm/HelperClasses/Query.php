@@ -131,11 +131,10 @@ class Query
 
     public function &setFulltextIndexColumn(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null, bool $append = false): self
     {
-        $escapedValue = $this->adapter->escapeValue($value, ComparisonOperator::against);
         if ($append) {
-            $this->columns[] = $this->adapter->opFulltextIndex($columns, $escapedValue, $columnAlias);
+            $this->columns[] = $this->adapter->opFulltextIndex($columns, $value, $columnAlias);
         } else {
-            $this->columns = [$this->adapter->opFulltextIndex($columns, $escapedValue, $columnAlias)];
+            $this->columns = [$this->adapter->opFulltextIndex($columns, $value, $columnAlias)];
         }
         return $this;
     }

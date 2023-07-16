@@ -214,11 +214,11 @@ class AdapterMysql extends BaseAdapter
         return $parsedName;
     }
 
-    public function escapeValue(mixed $value, ComparisonOperator $operator): string
+    public function escapeValue(mixed $value, ?ComparisonOperator $operator = null): string
     {
         $value = parent::escapeValue($value, $operator);
         if (!in_array($operator, [ComparisonOperator::in, ComparisonOperator::notIn, ComparisonOperator::isNull, ComparisonOperator::isNotNull])) {
-            $placeholder = ($value == '?' || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));
+            $placeholder = ($value === Keyword::placeholder->value || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));
             if ($placeholder) {
                 return $value;
             }
@@ -277,7 +277,8 @@ class AdapterMysql extends BaseAdapter
 
     public function opFulltextIndex(array $columns, Keyword|string|null $value = null, ?string $columnAlias = null): string
     {
-        return $this->fulltextConditionSintax($columns, $value) . ' as '.($columnAlias ?? '_relevance');
+        $escapedValue = $this->escapeValue($value, ComparisonOperator::against);
+        return $this->fulltextConditionSintax($columns, $escapedValue) . ' as '.($columnAlias ?? '_relevance');
     }
 
     public function fulltextConditionSintax(array $columns, Keyword|string|null $value = null): string

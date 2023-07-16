@@ -125,29 +125,29 @@ abstract class BaseAdapter
         return $implodedName;
     }
 
-    public function escapeValue(mixed $value, ComparisonOperator $operator): string
+    public function escapeValue(mixed $value, ?ComparisonOperator $operator = null): string
     {
-        if ($operator == ComparisonOperator::isNull || $operator == ComparisonOperator::isNotNull) {
+        if ($operator === ComparisonOperator::isNull || $operator === ComparisonOperator::isNotNull) {
             return '';
-        }
-        if ($operator == ComparisonOperator::in || $operator == ComparisonOperator::notIn) {
+        } elseif ($operator === ComparisonOperator::in || $operator === ComparisonOperator::notIn) {
             if (!is_array($value)) {
                 $value = [$value];
             }
             $vals = [];
             foreach ($value as $v) {
-                $vals[] = $this->escapeValue($v, '');
+                $vals[] = $this->escapeValue($v);
             }
             return $this->openBlock . implode(',', $vals) . $this->closeBlock;
-        }
-        if (is_array($value)) {
-            $val = array_shift($value);
-            $value = $val;
-        }
-        if ($value instanceof Keyword) {
-            $stringValue = $value->value;
         } else {
-            $stringValue = strval($value);
+            if (is_array($value)) {
+                $val = array_shift($value);
+                $value = $val;
+            }
+            if ($value instanceof Keyword) {
+                $stringValue = $value->value;
+            } else {
+                $stringValue = strval($value);
+            }
         }
         return $stringValue;
     }
