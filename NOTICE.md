@@ -1,6 +1,6 @@
 # NOTICE
 
-Parte di questo software è stata ispirata dalla repository [**MVC_todo**](https://github.com/ngrt/MVC_todo).
+Parte di questo software è ispirata alla repository [**MVC_todo**](https://github.com/ngrt/MVC_todo).
 
 Ringraziamo gli autori del progetto **MVC_todo** per aver condiviso il loro lavoro con la comunità open source.
 
@@ -8,13 +8,13 @@ La repository non risulta essere soggetta ad alcuna licenza e non riporta alcuna
 
 ---
 
-Parte di questo software è stata ispirata dalle lezioni riguardanti il pattern MVC presenti nella guida [**Creare un e-commerce con PHP**](https://www.html.it/guide/creare-un-e-commerce-con-php/) del sito HTML.it, a cura di Gabriele Romanato.
+Parte di questo software è ispirata alle lezioni riguardanti il pattern MVC presenti nella guida [**Creare un e-commerce con PHP**](https://www.html.it/guide/creare-un-e-commerce-con-php/) del sito HTML.it, a cura di Gabriele Romanato.
 
 Ringraziamo gli autori della guida.
 
 ---
 
-Parte di questo software è stata ispirata dalla repository [**Symfony**](https://github.com/symfony/symfony), rilasciato sotto licenza MIT.
+Parte di questo software è ispirata alla repository [**Symfony**](https://github.com/symfony/symfony), rilasciato sotto licenza MIT.
 
 Ringraziamo gli autori del progetto **Symfony** per aver condiviso il loro lavoro con la comunità open source.
 

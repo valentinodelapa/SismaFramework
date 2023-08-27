@@ -24,17 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Interfaces\Models;
+namespace SismaFramework\Core\Interfaces\Entities;
+
 /**
  *
  * @author Valentino de Lapa
  */
-interface UserModelInterface
+interface AuthenticableInterface
 {
-
-    public function testUniqueUsername(string $username);
-
-    public function testUniqueEmail(string $email);
-
-    public function getActiveUserByUsername(string $username);
+    
 }

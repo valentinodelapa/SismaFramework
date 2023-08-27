@@ -221,9 +221,10 @@ abstract class BaseEntity
 
     abstract protected function setEncryptedProperties(): void;
 
-    protected function addEncryptedProperty(string $columnName): void
+    protected function addEncryptedProperty(string $columnName): self
     {
         $this->encryptedColumns[] = $columnName;
+        return $this;
     }
 
     public function isEncryptedProperty(string $columnName): bool

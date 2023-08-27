@@ -27,12 +27,12 @@
 namespace SismaFramework\Core\Interfaces\Models;
 
 use SismaFramework\Core\Interfaces\Entities\AuthenticableInterface;
-use SismaFramework\Core\Interfaces\Entities\PasswordInterface;
+
 /**
- *
  * @author Valentino de Lapa
  */
-interface PasswordModelInterface
+interface AuthenticableModelInterface
 {
-    public function getPasswordByAuthenticableInterface(AuthenticableInterface $authenticableIntherface): ?PasswordInterface;
+    
+    public function getValidAuthenticableInterfaceByIdentifier(string $identifier): ?AuthenticableInterface;
 }

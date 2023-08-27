@@ -170,21 +170,21 @@ Anche in questo caso sono presenti tre diverse classi astratte dalle quali esten
 
 ## Contributi e Ringraziamenti
 
-Questa libreria è stata sviluppara prendendo spunto da alcune librerie open souce e guide presenti sul web. Vengono citate di seguito:
+Questo progetto è stato sviluppato prendendo spunto da alcune librerie open souce e guide presenti sul web. Vengono citate di seguito:
 
 * La libreria [**MVC_todo**](https://github.com/ngrt/MVC_todo).
   Questa libreria, consistente anch'essa in un semplice framework basato su patter MVC, è stata molto utile per un'iniziale panoramica su come organizzare l'albero delle classi che compongono la libreria.
-  Successivamente lo stesso è stato più volte rimaneggiato ma il contributo fornitoci dalla libreria citata è innegabile
+  Successivamente lo stesso è stato più volte rimaneggiato ma il contributo fornito dalla libreria citata è innegabile
 * La guida [**Creare un e-commerce con PHP**](https://www.html.it/guide/creare-un-e-commerce-con-php/) e, nello specifico le lezioni riguardanti il pattern MVC.
   Probabilmente lo sviluppo embrionale della classe Dispatcher della presente libreria deve molto alla relativa lezione di questa guida.
-  Anche il meccanismo di autoloading delle classi per mezzo del namespace è stato ispirato dalla presente guida.
+  Anche il meccanismo di autoloading delle classi per mezzo del namespace è ispirato alla presente guida.
 * La libreria [**Symfony**](https://github.com/symfony/symfony).
   Questa libreria, che non ha certo bisogno di presentazioni, è stata uno spunto prezioso per quanto riguarda alcune tecniche utilizzate (seppur con notevoli differenze) anche durante lo sviluppo del presente progetto.
 * La libreria [**SimpleORM**](https://github.com/davideairaghi/php/tree/master/library/Airaghi/DB/SimpleORM).
   Discorso a parte va fatto per questa libreria, che è stata utilizzata come punto di partenza per sviluppare l'ORM presente all'interno del progetto.
   Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreia orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
 
-Ringrazio tutti gli autori e gli sviluppatori delle fonti citate e facciamo riferimento al file `NOTICE.md` della presente repository per i dettagli riguardanti le licenze e le notifiche di copyright originali.
+Ringrazio tutti gli autori e gli sviluppatori delle fonti citate e facciamo riferimento al file [`NOTICE.md`](https://github.com/valentinodelapa/SismaFramework/blob/master/NOTICE.md) della presente repository per i dettagli riguardanti le licenze e le notifiche di copyright originali.
 
 Ringrazio il mio amico [Francesco Iezzi](https://github.com/Francesco997) per aver esaminato la libreria dal punto di vista della sicurezza ed aver fornito preziosi consigli in tale ambito.
 

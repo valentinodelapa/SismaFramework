@@ -28,7 +28,7 @@ namespace SismaFramework\Core\BaseClasses;
 
 use SismaFramework\Core\Enumerations\PermissionAttribute;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
-use SismaFramework\Core\Interfaces\Entities\UserInterface;
+use SismaFramework\Core\Interfaces\Entities\AuthenticableInterface;
 
 /**
  *
@@ -40,14 +40,14 @@ abstract class BasePermission
     private static BasePermission $instance;
     protected mixed $subject;
     protected PermissionAttribute $attribute;
-    protected ?UserInterface $user;
+    protected ?AuthenticableInterface $authenticable;
     protected bool $result = true;
 
-    public function __construct(mixed $subject, PermissionAttribute $attribute, ?UserInterface $user = null)
+    public function __construct(mixed $subject, PermissionAttribute $attribute, ?AuthenticableInterface $authenticable = null)
     {
         $this->subject = $subject;
         $this->attribute = $attribute;
-        $this->user = $user;
+        $this->authenticable = $authenticable;
         $this->callParentPermissions();
         $this->result = ($this->isInstancePermitted() === false) ? false : $this->result;
         $this->checkResult();
@@ -68,10 +68,10 @@ abstract class BasePermission
         }
     }
 
-    static public function isAllowed(mixed $subject, PermissionAttribute $attribute, ?UserInterface $user = null):void
+    static public function isAllowed(mixed $subject, PermissionAttribute $attribute, ?AuthenticableInterface $authenticable = null):void
     {
         $class = get_called_class();
-        self::$instance = new $class($subject, $attribute, $user);
+        self::$instance = new $class($subject, $attribute, $authenticable);
     }
 
 }

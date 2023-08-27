@@ -33,18 +33,29 @@ namespace SismaFramework\Core\HelperClasses;
 class Encryptor
 {
 
-    public static function getBlowfishHash(string $text, string $workload): string
+    public static function getSimpleHash(string $text, string $algorithm = \Config\SIMPLE_HASH_ALGORITHM): string
     {
-        $salt = substr(str_replace('+', '.', base64_encode(openssl_random_pseudo_bytes(16))), 0, 22);
-        return crypt($text, '$2y$' . $workload . '$' . $salt);
+        return hash($algorithm, $text);
+    }
+
+    public static function verifySimpleHash(string $text, string $hash, string $algorithm = \Config\SIMPLE_HASH_ALGORITHM): bool
+    {
+        return hash($algorithm, $text) === $hash;
+    }
+
+    public static function getBlowfishHash(string $text, string $workload = \Config\BLOWFISH_HASH_WORKLOAD): string
+    {
+        return password_hash($text, PASSWORD_BCRYPT, [
+            'const' => $workload
+        ]);
     }
 
     public static function verifyBlowfishHash(string $text, string $hash): bool
     {
         return password_verify($text, $hash);
     }
-    
-    public static function createInizializationVector():string
+
+    public static function createInizializationVector(): string
     {
         return openssl_random_pseudo_bytes(\Config\INITIALIZATION_VECTOR_BYTES);
     }
@@ -58,5 +69,4 @@ class Encryptor
     {
         return openssl_decrypt($cipherText, \Config\ENCRYPTION_ALGORITHM, \Config\ENCRYPTION_PASSPHRASE, 0, $initializationVector);
     }
-
 }

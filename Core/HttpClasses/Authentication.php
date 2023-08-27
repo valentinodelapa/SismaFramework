@@ -33,11 +33,11 @@ use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\Interfaces\Entities\MultiFactorInterface;
 use SismaFramework\Core\Interfaces\Entities\MultiFactorRecoveryInterface;
 use SismaFramework\Core\Interfaces\Entities\PasswordInterface;
-use SismaFramework\Core\Interfaces\Entities\UserInterface;
+use SismaFramework\Core\Interfaces\Entities\AuthenticableInterface;
 use SismaFramework\Core\Interfaces\Models\MultiFactorModelInterface;
 use SismaFramework\Core\Interfaces\Models\MultiFactorRecoveryModelInterface;
 use SismaFramework\Core\Interfaces\Models\PasswordModelInterface;
-use SismaFramework\Core\Interfaces\Models\UserModelInterface;
+use SismaFramework\Core\Interfaces\Models\AuthenticableModelInterface;
 use SismaFramework\Core\Interfaces\Wrappers\MultiFactorWrapperInterface;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -56,8 +56,8 @@ class Authentication
     private Request $request;
     private RequestType $requestType;
     private PasswordModelInterface $passwordModelInterface;
-    private ?UserInterface $userInterface;
-    private UserModelInterface $userModelInterface;
+    private ?AuthenticableInterface $authenticableInterface;
+    private AuthenticableModelInterface $authenticableModelInterface;
     private array $filterErrors = [
         "usernameError" => false,
         "passwordError" => false,
@@ -70,36 +70,36 @@ class Authentication
         $this->requestType = RequestType::from($request->server['REQUEST_METHOD']);
     }
 
-    public function setUserModel(UserModelInterface $userModelInterface): void
+    public function setAuthenticableModelInterface(AuthenticableModelInterface $authenticableModelInterface): void
     {
-        $this->userModelInterface = $userModelInterface;
+        $this->authenticableModelInterface = $authenticableModelInterface;
     }
 
-    public function setPasswordModel(PasswordModelInterface $passwordModelInterface): void
+    public function setPasswordModelInterface(PasswordModelInterface $passwordModelInterface): void
     {
         $this->passwordModelInterface = $passwordModelInterface;
     }
 
-    public function setMultiFactorModel(MultiFactorModelInterface $multiFactorModelInterface): void
+    public function setMultiFactorModelInterface(MultiFactorModelInterface $multiFactorModelInterface): void
     {
         $this->multiFactorModelInterface = $multiFactorModelInterface;
     }
 
-    public function setMultiFactorRecoveryModel(MultiFactorRecoveryModelInterface $multiFactorRecoveryModelInterface): void
+    public function setMultiFactorRecoveryModelInterface(MultiFactorRecoveryModelInterface $multiFactorRecoveryModelInterface): void
     {
         $this->multiFactorRecoveryModelInterface = $multiFactorRecoveryModelInterface;
     }
 
-    public function setMultiFactorWrapper(MultiFactorWrapperInterface $multiFactorWrapperInterface): void
+    public function setMultiFactorWrapperInterface(MultiFactorWrapperInterface $multiFactorWrapperInterface): void
     {
         $this->multiFactorWrapperInterface = $multiFactorWrapperInterface;
     }
 
     public function checkUser(): bool
     {
-        if (Filter::isString($this->request->request['username'])) {
-            $this->userInterface = $this->userModelInterface->getActiveUserByUsername($this->request->request['username']);
-            if (($this->userInterface instanceof UserInterface) && $this->checkPassword($this->userInterface)) {
+        if (Filter::isString($this->request->request['identifier'])) {
+            $this->authenticableInterface = $this->authenticableModelInterface->getValidAuthenticableInterfaceByIdentifier($this->request->request['identifier']);
+            if (($this->authenticableInterface instanceof AuthenticableInterface) && $this->checkPassword($this->authenticableInterface)) {
                 return true;
             } else {
                 $this->filterErrors['passwordError'] = true;
@@ -109,19 +109,19 @@ class Authentication
         return false;
     }
 
-    public function checkPassword(UserInterface $userInterface): bool
+    public function checkPassword(AuthenticableInterface $authenticableInterface): bool
     {
         if (Filter::isString($this->request->request['password'])) {
-            $passwordInterface = $this->passwordModelInterface->getLastPasswordByUserInterface($userInterface);
+            $passwordInterface = $this->passwordModelInterface->getPasswordByAuthenticableInterface($authenticableInterface);
             return Encryptor::verifyBlowfishHash($this->request->request['password'], $passwordInterface->password);
         }
         return false;
     }
 
-    public function checkMultiFactor(UserInterface $userInterface): bool
+    public function checkMultiFactor(AuthenticableInterface $authenticableInterface): bool
     {
         if (Filter::isString($this->request->request['code'])) {
-            $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByUserIterface($userInterface);
+            $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByUserIterface($authenticableInterface);
             if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->request['code'])){
                 return true;
             }elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->request['code'])) {
@@ -147,9 +147,9 @@ class Authentication
         return $result;
     }
 
-    public function getUserInterface(): UserInterface
+    public function getAuthenticableInterface(): AuthenticableInterface
     {
-        return $this->userInterface;
+        return $this->authenticableInterface;
     }
 
 }
