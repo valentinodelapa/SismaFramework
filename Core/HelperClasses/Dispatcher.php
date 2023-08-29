@@ -37,6 +37,7 @@ use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Authentication;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
+use SismaFramework\Core\Interfaces\Services\SitemapBuilderInterface;
 
 /**
  *
@@ -47,6 +48,7 @@ class Dispatcher
 
     private ResourceMaker $resourceMaker;
     private FixturesManager $fixturesManager;
+    private SitemapBuilderInterface $sitemapBuider;
     private static int $reloadAttempts = 0;
     private Request $request;
     private string $originalPath;
@@ -74,6 +76,11 @@ class Dispatcher
         $this->request = $request;
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;
+    }
+    
+    public function setSitemapBuilder(SitemapBuilderInterface $sitemapBuilder):void
+    {
+        $this->sitemapBuider = $sitemapBuilder;
     }
 
     public function run()
@@ -122,7 +129,7 @@ class Dispatcher
         ModuleManager::initializeApplicationModule();
         foreach (ModuleManager::getModuleList() as $module) {
             $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . NotationManager::convertToStudlyCaps($this->pathParts[0] . 'Controller');
-            if (($this->checkControllerPresence()) || ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
+            if ($this->checkControllerPresence() || ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
                 ModuleManager::setApplicationModule($module);
                 break;
             }
@@ -140,9 +147,11 @@ class Dispatcher
             $this->resourceMaker->makeRobotFile();
         }elseif ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
             $this->handleFile();
+        } elseif (isset($this->sitemapBuider) && ($this->sitemapBuider->isSitemap($this->pathParts))) {
+            $this->sitemapBuider->generate();
         } elseif ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
-        } elseif (($this->pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true)) {
+        } elseif ($this->fixturesManager->isFixtures($this->pathParts)) {
             $this->fixturesManager->run();
         } else {
             $this->switchNotFoundActions();

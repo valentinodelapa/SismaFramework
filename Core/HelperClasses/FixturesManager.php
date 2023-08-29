@@ -43,8 +43,13 @@ class FixturesManager
     {
         $this->dataMapper = $dataMapper;
     }
+    
+    public function isFixtures(array $pathParts):bool
+    {
+        return ($pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true);
+    }
 
-    public function run()
+    public function run():void
     {
         $this->getFixturesArray();
         $this->executeFixturesArray(array_keys($this->fixturesArray));
