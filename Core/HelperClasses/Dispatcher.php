@@ -136,7 +136,9 @@ class Dispatcher
 
     private function handle(): void
     {
-        if ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
+        if($this->resourceMaker->isRobotFile($this->path)){
+            $this->resourceMaker->makeRobotFile();
+        }elseif ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
             $this->handleFile();
         } elseif ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
