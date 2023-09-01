@@ -38,28 +38,32 @@ class FixturesManager
     private array $fixturesArray;
     private array $entitiesArray = [];
     private DataMapper $dataMapper;
-    
+
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
         $this->dataMapper = $dataMapper;
     }
-    
-    public function isFixtures(array $pathParts):bool
+
+    public function isFixtures(array $pathParts): bool
     {
-        return ($pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true);
+        if (count($pathParts) === 1) {
+            return ($pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true);
+        } else {
+            return false;
+        }
     }
 
-    public function run():void
+    public function run(): void
     {
         $this->getFixturesArray();
         $this->executeFixturesArray(array_keys($this->fixturesArray));
     }
-    
-    public function extecuted():bool
+
+    public function extecuted(): bool
     {
         $result = true;
         foreach ($this->fixturesArray as $fixture) {
-            if($fixture === false){
+            if ($fixture === false) {
                 $result = false;
             }
         }
@@ -73,7 +77,7 @@ class FixturesManager
             foreach ($fixturesFiles as $file) {
                 if (($file != '.') && ($file != '..')) {
                     $fixtureName = str_replace('.php', '', $file);
-                    $this->fixturesArray[$module.'\\'.\Config\FIXTURE_NAMESPACE . $fixtureName] = false;
+                    $this->fixturesArray[$module . '\\' . \Config\FIXTURE_NAMESPACE . $fixtureName] = false;
                 }
             }
         }
@@ -97,5 +101,4 @@ class FixturesManager
             $this->fixturesArray[$fixture] = true;
         }
     }
-
 }

@@ -61,6 +61,7 @@ enum Resource: string
     case woff2 = 'woff2';
     case xls = 'xls';
     case xlsx = 'xlsx';
+    case xml = 'xml';
     case zip = 'zip';
 
     public function getMime(): string
@@ -90,6 +91,7 @@ enum Resource: string
             self::woff2 => 'font/woff2',
             self::xls => 'application/vnd.ms-excel',
             self::xlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            self::xml => 'application/xml',
             self::zip => 'application/x-zip-compressed',
         };
     }
@@ -101,7 +103,7 @@ enum Resource: string
             self::ico, self::jpg, self::jpeg, self::js, self::jsm, self::json, self::map,
             self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
             self::rar, self::svg, self::ttf, self::woff, self::woff2, self::xls,
-            self::xlsx, self::zip => true,
+            self::xlsx, self::xml, self::zip => true,
             self::php => false,
         };
     }

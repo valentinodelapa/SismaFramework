@@ -96,18 +96,12 @@ class ResourceMaker
         }
     }
 
-    public function isRobotFile(string $filename): bool
+    public function isRobotsFile(array $pathParts): bool
     {
-        return $this->getFileName($filename) === \Config\ROBOTS_FILE;
+        return strtolower(end($pathParts)) === \Config\ROBOTS_FILE;
     }
 
-    public function getFileName(string $path): string
-    {
-        $splittedPath = explode('/', $path);
-        return strtolower(end($splittedPath));
-    }
-
-    public function makeRobotFile(): void
+    public function makeRobotsFile(): void
     {
         $filename = \Config\ROOT_PATH . DIRECTORY_SEPARATOR . \Config\ROBOTS_FILE;
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));

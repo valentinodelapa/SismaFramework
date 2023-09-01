@@ -35,8 +35,5 @@ use SismaFramework\Core\BaseClasses\BaseException;
  */
 class InvalidPropertyException extends BaseException
 {
-    protected function errorRedirect()
-    {
-        
-    }
+    
 }

@@ -77,8 +77,8 @@ class Dispatcher
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;
     }
-    
-    public function setSitemapBuilder(SitemapBuilderInterface $sitemapBuilder):void
+
+    public function setSitemapBuilder(SitemapBuilderInterface $sitemapBuilder): void
     {
         $this->sitemapBuider = $sitemapBuilder;
     }
@@ -143,12 +143,12 @@ class Dispatcher
 
     private function handle(): void
     {
-        if($this->resourceMaker->isRobotFile($this->path)){
-            $this->resourceMaker->makeRobotFile();
-        }elseif ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
-            $this->handleFile();
+        if ($this->resourceMaker->isRobotsFile($this->pathParts)) {
+            $this->resourceMaker->makeRobotsFile();
         } elseif (isset($this->sitemapBuider) && ($this->sitemapBuider->isSitemap($this->pathParts))) {
             $this->sitemapBuider->generate();
+        } elseif ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
+            $this->handleFile();
         } elseif ($this->checkControllerPresence() === true) {
             $this->resolveRouteCall();
         } elseif ($this->fixturesManager->isFixtures($this->pathParts)) {
