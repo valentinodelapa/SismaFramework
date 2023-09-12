@@ -39,5 +39,10 @@ class PageNotFoundException extends BaseException
     {
         parent::__construct("Pagina non trovata: " . $message, $code, $previous);
     }
+    
+    public function errorRedirect()
+    {
+        Router::redirect('error/message/Pagina+non+trovata');
+    }
 
 }
