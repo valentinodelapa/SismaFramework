@@ -121,7 +121,9 @@ class DataMapper
                 $this->columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
                 $parsedValue = Parser::unparseValue($reflectionProperty->getValue($this->entity), true);
                 if ($this->entity->isEncryptedProperty($reflectionProperty->getName())) {
-                    $this->entity->{$this->entity->initializationVectorPropertyName} = Encryptor::createInizializationVector();
+                    if (empty($this->entity->{$this->entity->initializationVectorPropertyName})) {
+                        $this->entity->{$this->entity->initializationVectorPropertyName} = Encryptor::createInizializationVector();
+                    }
                     $parsedValue = Encryptor::encryptString($parsedValue, $this->entity->{$this->entity->initializationVectorPropertyName});
                 }
                 $this->values[] = $parsedValue;
