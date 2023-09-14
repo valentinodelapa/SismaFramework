@@ -193,7 +193,7 @@ abstract class BaseAdapter
     {
         $column = Keyword::openBlock->value . $subquery->getCommandToExecute() . Keyword::closeBlock->value;
         if ($columnAlias !== null) {
-            $column .= ' as ' . $columnAlias;
+            $column .= ' as ' . $this->escapeColumn($columnAlias);
         }
         return $column;
     }
