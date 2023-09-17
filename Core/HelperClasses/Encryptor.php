@@ -43,10 +43,10 @@ class Encryptor
         return hash($algorithm, $text) === $hash;
     }
 
-    public static function getBlowfishHash(string $text, string $workload = \Config\BLOWFISH_HASH_WORKLOAD): string
+    public static function getBlowfishHash(string $text, int $workload = \Config\BLOWFISH_HASH_WORKLOAD): string
     {
         return password_hash($text, PASSWORD_BCRYPT, [
-            'const' => $workload
+            'cost' => $workload
         ]);
     }
 
