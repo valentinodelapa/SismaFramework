@@ -82,7 +82,13 @@ class Router
     public static function getRootUrl(): string
     {
         $request = new Request();
-        $protocol = (isset($request->server['HTTPS']) && ($request->server['HTTPS'] === 'on')) ? 'https://' : 'http://';
+        if (isset($request->server['HTTPS'])) {
+            $protocol = ($request->server['HTTPS'] === 'on') ? 'https://' : 'http://';
+        } elseif (isset($request->server['SERVER_PROTOCOL'])) {
+            $protocol = stripos($request->server['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://';
+        } else {
+            $protocol = \Config\DEVELOPMENT_ENVIRONMENT ? 'http://' : 'https://';
+        }
         $httpHost = $request->server['HTTP_HOST'];
         return $protocol . $httpHost . self::$metaUrl;
     }
@@ -102,5 +108,4 @@ class Router
         header("Location: " . self::$metaUrl . $parsedUrl);
         return new Response();
     }
-
 }
