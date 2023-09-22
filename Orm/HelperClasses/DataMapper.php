@@ -73,7 +73,7 @@ class DataMapper
         return $query;
     }
 
-    public function save(BaseEntity $entity, bool $nestedChangesTracking = true)
+    public function save(BaseEntity $entity, bool $nestedChangesTracking = true): bool
     {
         $this->entity = $entity;
         if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {

@@ -366,6 +366,9 @@ abstract class BaseForm
 
     public function getEntityDataToStandardEntity(): StandardEntity
     {
+        if(isset($this->entity->id)){
+            $this->entityData->id = $this->entity->id;
+        }
         return $this->entityData ?? new StandardEntity();
     }
 
