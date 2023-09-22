@@ -272,7 +272,13 @@ abstract class BaseForm
     {
         if ($this->entity->getCollectionDataInformation($propertyName) === $formPropertyClass::getEntityName()) {
             $entityCollectonToEmbed = $this->entity->$propertyName;
-            $sismaCollectionPropertyKeys = isset($this->request->request[$propertyName]) ? array_keys($this->request->request[$propertyName]) : $this->getBaseCollectionFormKeys($baseCollectionFormFromNumber);
+            if(isset($this->request->request[$propertyName])){
+                $sismaCollectionPropertyKeys = array_keys($this->request->request[$propertyName]);
+            }elseif(count($this->entity->{$propertyName}) > $baseCollectionFormFromNumber){
+                $sismaCollectionPropertyKeys = $this->getBaseCollectionFormKeys(count($this->entity->{$propertyName}));
+            }else{
+                $sismaCollectionPropertyKeys = $this->getBaseCollectionFormKeys($baseCollectionFormFromNumber);
+            }
             $this->generateSismaCollectionProperty($sismaCollectionPropertyKeys, $formPropertyClass, $entityCollectonToEmbed, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
         } else {
             throw new InvalidArgumentException();
