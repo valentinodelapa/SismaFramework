@@ -26,11 +26,11 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HttpClasses\Comunication;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 
 /**
- *
  * @author Valentino de Lapa
  */
 class Router
@@ -82,15 +82,8 @@ class Router
     public static function getRootUrl(): string
     {
         $request = new Request();
-        if (isset($request->server['HTTPS'])) {
-            $protocol = ($request->server['HTTPS'] === 'on') ? 'https://' : 'http://';
-        } elseif (isset($request->server['SERVER_PROTOCOL'])) {
-            $protocol = stripos($request->server['SERVER_PROTOCOL'], 'https') === 0 ? 'https://' : 'http://';
-        } else {
-            $protocol = \Config\DEVELOPMENT_ENVIRONMENT ? 'http://' : 'https://';
-        }
         $httpHost = $request->server['HTTP_HOST'];
-        return $protocol . $httpHost . self::$metaUrl;
+        return Comunication::getComunicationProtocol()->value . $httpHost . self::$metaUrl;
     }
 
     public static function getActualUrl()

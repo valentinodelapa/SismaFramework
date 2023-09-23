@@ -26,6 +26,10 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\Enumerations\ComunicationProtocol;
+use SismaFramework\Core\HttpClasses\Comunication;
+use SismaFramework\Core\HttpClasses\Request;
+
 /**
  *
  * @author Valentino de Lapa
@@ -35,17 +39,18 @@ class Session
 
     public static function start(): void
     {
+        $request = new Request();
         session_set_cookie_params([
             'lifetime' => 3600,
             'path' => '/',
-            'domain' => $_SERVER['HTTP_HOST'],
-            'secure' => (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] === 'on')) ? true : false,
+            'domain' => $request->server['HTTP_HOST'],
+            'secure' => (Comunication::getComunicationProtocol() === ComunicationProtocol::https),
             'httponly' => true,
             'samesite' => 'Strict'
         ]);
         session_start();
         session_regenerate_id();
-        self::setItem('token', hash("sha512", $_SERVER['HTTP_USER_AGENT'] . $_SERVER['REMOTE_ADDR']));
+        self::setItem('token', hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']));
     }
 
     public static function setItem($key, $value, $serialize = false): void
@@ -78,7 +83,8 @@ class Session
 
     public static function isValidSession(): bool
     {
-        $value = hash("sha512", $_SERVER['HTTP_USER_AGENT'] . $_SERVER['REMOTE_ADDR']);
+        $request = new Request();
+        $value = hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']);
         return (self::getItem('token') === $value);
     }
 
