@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\Exceptions;
 
 use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\Core\HelperClasses\Router;
 
 /**
  *
