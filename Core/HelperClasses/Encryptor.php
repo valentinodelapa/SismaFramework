@@ -33,6 +33,11 @@ namespace SismaFramework\Core\HelperClasses;
 class Encryptor
 {
 
+    public static function getSimpleRandomToken(): string
+    {
+        return md5(uniqid(mt_rand(), true));
+    }
+
     public static function getSimpleHash(string $text, string $algorithm = \Config\SIMPLE_HASH_ALGORITHM): string
     {
         return hash($algorithm, $text);

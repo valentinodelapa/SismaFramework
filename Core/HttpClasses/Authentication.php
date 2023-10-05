@@ -40,6 +40,7 @@ use SismaFramework\Core\Interfaces\Models\PasswordModelInterface;
 use SismaFramework\Core\Interfaces\Models\AuthenticableModelInterface;
 use SismaFramework\Core\Interfaces\Wrappers\MultiFactorWrapperInterface;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Core\HelperClasses\Session;
 
 /**
  *
@@ -97,6 +98,9 @@ class Authentication
 
     public function checkUser(): bool
     {
+        if($this->request->request['csrfToken'] !== Session::getItem('csrfToken')){
+            return false;
+        }
         if (Filter::isString($this->request->request['identifier'])) {
             $this->authenticableInterface = $this->authenticableModelInterface->getValidAuthenticableInterfaceByIdentifier($this->request->request['identifier']);
             if (($this->authenticableInterface instanceof AuthenticableInterface) && $this->checkPassword($this->authenticableInterface)) {
