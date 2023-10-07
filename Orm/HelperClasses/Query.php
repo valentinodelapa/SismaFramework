@@ -182,8 +182,12 @@ class Query
     public function &setOrderBy(?array $list = null): self
     {
         if (is_array($list)) {
-            foreach ($list as $column => $Indexing) {
-                $this->appendOrderByOption($column, $Indexing);
+            foreach ($list as $columnOrQuery => $Indexing) {
+                if($columnOrQuery instanceof Query){
+                    $this->appendOrderBySubquery($columnOrQuery, $Indexing);
+                }else{
+                    $this->appendOrderByOption($columnOrQuery, $Indexing);
+                }
             }
         }
         return $this;
