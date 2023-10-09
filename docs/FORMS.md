@@ -181,4 +181,4 @@ Espone i seguenti metodi pubblici:
 
 * * *
 
-[Indice](INDEX.md) | Precedente: [Viste](VIEWS.md) | Successivo: [ORM](ORM.md)
+[Indice](index.md) | Precedente: [Viste](views.md) | Successivo: [ORM](orm.md)

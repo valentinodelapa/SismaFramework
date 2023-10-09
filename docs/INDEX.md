@@ -1,33 +1,33 @@
 # Indice
 
-* [Introduzione](OVERVIEW.md)
+* [Introduzione](overview.md)
 
-* [Installazione](INSTALLATION.md)
+* [Installazione](installation.md)
 
-* [Struttura cartella di progetto](PROJECT_FOLDER_STRUCTURE.md)
+* [Struttura cartella di progetto](project-folder-structure.md)
 
-* [Controllori](CONTROLLERS.md)
+* [Controllori](controllers.md)
   
-  * [Classe Render](CONTROLLERS.md#classe-render)
+  * [Classe Render](controllers.md#classe-render)
   
-  * [Classe Router](CONTROLLERS.md#classe-router)
+  * [Classe Router](controllers.md#classe-router)
 
-* [Viste](VIEWS.md)
+* [Viste](views.md)
   
-  * [Templates](VIEWS.md#templates)
+  * [Templates](views.md#templates)
 
-* [Forms](FORMS.md)
+* [Forms](forms.md)
   
-  * [Request](FORMS.md#request)
+  * [Request](forms.md#request)
   
-  * [Authentications](FORMS.md#authentications)
+  * [Authentications](forms.md#authentications)
 
-* [ORM](ORM.md)
+* [ORM](orm.md)
   
-  * [Entità](ORM_ENTITIES.md)
+  * [Entità](orm-entites.md)
   
-  * [Modelli](ORM_MODELS.md)
+  * [Modelli](orm-models.md)
   
-  * [Funzionalità aggiuntive](ORM_ADDITIONAL_FEATURES.md)
+  * [Funzionalità aggiuntive](orm-additiona-features.md)
 
-* [Barra di debug](DEBUG_BAR.md)
+* [Barra di debug](debug-bar.md)

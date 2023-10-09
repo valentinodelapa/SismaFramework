@@ -14,4 +14,4 @@ Per la generazione di un template, come anticipato nel capitolo precedente, è p
 
 * * *
 
-[Indice](INDEX.md) | Precedente: [Controllori](CONTROLLERS.md) | Successivo: [ORM](ORM.md)
+[Indice](index.md) | Precedente: [Controllori](controllers.md) | Successivo: [ORM](orm.md)

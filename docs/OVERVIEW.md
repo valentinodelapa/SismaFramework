@@ -35,7 +35,6 @@ La libreria automatizza la maggior parte delle caratteristiche comuni ai progett
 * La gestione automatica dell’autenticazione aiuta a creare in modo semplice aree protette.
 
 * La gestione dell’url rewrite aiuta a creare indirizzi user-friendly evitando le query string.
-  
 
 ## Concetti fondamentali
 
@@ -56,6 +55,6 @@ Verranno analizzate in seguito le peculiarità del modulo ORM integrato nel prog
 
 ---
 
-[Indice](INDEX.md) | Successivo: [Installazione](INSTALLATION.md)
+[Indice](index.md) | Successivo: [Installazione](installation.md)
 
 

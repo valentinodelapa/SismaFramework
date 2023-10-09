@@ -219,4 +219,4 @@ Qualora la classe abbia più di una proprietà auto-referenziata, tale meccanism
 
 ---
 
-[Indice](INDEX.md) | Precedente: [ORM](ORM.md) | Successivo: [Modelli](ORM_MODELS.md)
+[Indice](index.md) | Precedente: [ORM](orm.md) | Successivo: [Modelli](orm-models.md)

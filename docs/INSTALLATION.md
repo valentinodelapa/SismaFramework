@@ -81,4 +81,4 @@ const DATABASE_USERNAME = '';
 
 ---
 
-[Indice](INDEX.md) | Precedente: [Introduzione](INTRODUCTION.md) | Successivo: [Struttura progetto](PROJECT_FOLDER_STRUCTURE.md)
+[Indice](index.md) | Precedente: [Introduzione](introduction.md) | Successivo: [Struttura progetto](project-folder-structure.md)

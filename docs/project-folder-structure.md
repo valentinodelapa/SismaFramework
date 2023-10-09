@@ -46,6 +46,6 @@ La classe `Autoloader`, richiesta dal file `index.php` si occupa di risolvere il
 
 ---
 
-[Indice](INDEX.md) | Precedente: [Installazione](INSTALLATION.md) | Successivo: [Controllori](CONTROLLERS.md)
+[Indice](index.md) | Precedente: [Installazione](installation.md) | Successivo: [Controllori](controllers.md)
 
 

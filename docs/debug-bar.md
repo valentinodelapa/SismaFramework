@@ -24,6 +24,8 @@ A destra della **Barra di Debug** sono invece presenti le seguenti sezioni:
 
 * Sezione Tempo: questa sezione riporta il tempo di esecuzione della pagina.
 
+* * *
 
+[Indice](index.md) | Precedente: [Funzionalita Aggiuntive](orm-additiona-features.md)
 
 

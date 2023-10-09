@@ -23,6 +23,6 @@ const REFERENCE_CACHE_PATH = '';
 
 * * *
 
-[Indice](INDEX.md) | Precedente: [Modelli](ORM_MODELS.md) | Successivo: [Barra di Debug](DEBUG_BAG.md)
+[Indice](index.md) | Precedente: [Modelli](orm-models.md) | Successivo: [Barra di Debug](debug-bar.md)
 
 

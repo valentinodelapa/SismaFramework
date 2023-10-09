@@ -6,6 +6,6 @@ L’ORM integrato nella libreria **SismaFramework** è basato su pattern *Data M
 
 ---
 
-[Indice](INDEX.md) | Precedente: [Struttura cartelle di progetto](PROJECT_FOLDER_STRUCTURE.md) | Successivo: [Entità](ORM_ENTITIES.md)
+[Indice](index.md) | Precedente: [Struttura cartelle di progetto](project-folder-structure.md) | Successivo: [Entità](orm-entities.md)
 
 

@@ -214,4 +214,4 @@ $success = $selfReferencedSampleModel ->deleteByParentAndBaseSample($parentSelfR
 
 ---
 
-[Indice](INDEX.md) | Precedente: [Entità](ORM_ENTITIES.md) | Successivo: [Funzionalità aggiuntive](ORM_ADDITIONAL_FEATURES.md)
+[Indice](index.md) | Precedente: [Entità](orm-entities.md) | Successivo: [Funzionalità aggiuntive](orm-additional-features.md)

@@ -68,7 +68,7 @@ Nel caso in cui si intendano aggiungere altri file di configurazione è nescessa
 ## Utilizzo
 
 Di seguito alcune informazioni base su come utilizzare la libreria.
-Per maggiori informazioni si faccia riferimento alla [documentazione ](docs/INDEX.md)ed agli esempi presenti nella cartella `Sample` del progetto.
+Per maggiori informazioni si faccia riferimento alla [documentazione ](docs/index.md)ed agli esempi presenti nella cartella `Sample` del progetto.
 
 ### Framework
 
@@ -184,7 +184,7 @@ Questo progetto è stato sviluppato prendendo spunto da alcune librerie open sou
   Discorso a parte va fatto per questa libreria, che è stata utilizzata come punto di partenza per sviluppare l'ORM presente all'interno del progetto.
   Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreia orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
 
-Ringrazio tutti gli autori e gli sviluppatori delle fonti citate e facciamo riferimento al file [`NOTICE.md`](https://github.com/valentinodelapa/SismaFramework/blob/master/NOTICE.md) della presente repository per i dettagli riguardanti le licenze e le notifiche di copyright originali.
+Ringrazio tutti gli autori e gli sviluppatori delle fonti citate e facciamo riferimento al file [`NOTICE.md`](NOTICE.md) della presente repository per i dettagli riguardanti le licenze e le notifiche di copyright originali.
 
 Ringrazio il mio amico [Francesco Iezzi](https://github.com/Francesco997) per aver esaminato la libreria dal punto di vista della sicurezza ed aver fornito preziosi consigli in tale ambito.
 
@@ -192,4 +192,4 @@ Ringrazio inoltre i miei amici e colleghi per i supporto, il confronto ed i feed
 
 ## Licenza
 
-[MIT](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE) Copyright (c) 2020-present Valentino de Lapa
+[MIT](LICENSE) Copyright (c) 2020-present Valentino de Lapa
