@@ -199,6 +199,8 @@ abstract class BaseForm
         } elseif (array_key_exists($property->name, $this->filterFiledsMode)) {
             if (($property->getType()->getName() === 'bool') && ($property->getType()->allowsNull()) === false) {
                 $this->entityData->{$property->name} = false;
+            }elseif($property->hasDefaultValue()){
+                $this->entityData->{$property->name} = $property->getDefaultValue();
             } else {
                 $this->entityData->{$property->name} = null;
             }
