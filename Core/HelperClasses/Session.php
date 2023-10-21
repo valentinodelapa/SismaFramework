@@ -37,6 +37,13 @@ use SismaFramework\Core\HttpClasses\Request;
 class Session
 {
 
+    public function __construct()
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            self::start();
+        }
+    }
+
     public static function start(): void
     {
         $request = new Request();
@@ -53,26 +60,65 @@ class Session
         self::setItem('token', hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']));
     }
 
-    public static function setItem($key, $value, $serialize = false): void
+    public function __set($name, $value)
     {
-        if (!$serialize) {
-            $_SESSION[$key] = $value;
-        } else {
+        self::setItem($name, $value);
+    }
+
+    public static function setItem(int|string $key, mixed $value, bool $serialize = false): void
+    {
+        preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        if ($serialize) {
             $_SESSION[$key] = serialize($value);
+        } elseif (count($matches[1]) > 0) {
+            preg_match("/^[^\\[]*/", $key, $match);
+            self::setItemRecursive($_SESSION[$match[0]], $matches[1], $value);
+        } else {
+            $_SESSION[$key] = $value;
         }
     }
 
-    public static function unsetItem($key): void
+    private static function setItemRecursive(mixed &$currentPosition, array $keys, mixed $value): void
+    {
+        if (count($keys) > 0) {
+            $actualKey = array_shift($keys);
+            self::setItemRecursive($currentPosition[$actualKey], $keys, $value);
+        } else {
+            $currentPosition = $value;
+        }
+    }
+
+    public static function unsetItem(int|string $key): void
     {
         unset($_SESSION[$key]);
     }
 
-    public static function getItem($key, $unserialize = false): string|array
+    public function __get($name)
     {
-        if (!$unserialize) {
-            return $_SESSION[$key];
-        } else {
+        self::getItem($name);
+    }
+
+    public static function getItem(int|string $key, $unserialize = false): mixed
+    {
+        preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        if ($unserialize) {
             return unserialize($_SESSION[$key]);
+        } elseif (count($matches[1]) > 0) {
+            preg_match("/^[^\\[]*/", $key, $match);
+            var_dump($matches);
+            self::getItemRecursive($_SESSION[$match[0]], $matches[1]);
+        } else {
+            return $_SESSION[$key];
+        }
+    }
+
+    private static function getItemRecursive(mixed &$currentPosition, array $keys): mixed
+    {
+        if (count($keys) > 0) {
+            $actualKey = array_shift($keys);
+            self::getItemRecursive($currentPosition[$actualKey], $keys);
+        } else {
+            return $currentPosition;
         }
     }
 
