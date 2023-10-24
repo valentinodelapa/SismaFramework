@@ -81,6 +81,7 @@ class ResourceMaker
             header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
             header("Accept-Ranges: bytes");
             header("Content-type: " . $resource->getMime());
+            header('X-Content-Type-Options: nosniff');
             header("Content-Disposition: inline");
             header("Content-Length: " . filesize($filename));
             if (filesize($filename) < $this->fileGetContentMaxBytesLimit) {
@@ -107,6 +108,7 @@ class ResourceMaker
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
         header("Content-type: text/plain");
+        header('X-Content-Type-Options: nosniff');
         header("Content-Disposition: inline");
         header("Content-Length: " . filesize($filename));
         echo file_get_contents($filename, false);
