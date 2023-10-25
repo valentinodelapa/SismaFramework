@@ -35,6 +35,12 @@ try {
     require_once(__DIR__ . '/../Config/config.php');
     require_once(__DIR__ . '/../Autoload/autoload.php');
 
+    if (\Config\DEVELOPMENT_ENVIRONMENT) {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL | E_STRICT);
+    }
+
     Session::start();
     $dispatcher = new Dispatcher();
     $dispatcher->run();
