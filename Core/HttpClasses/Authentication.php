@@ -98,7 +98,7 @@ class Authentication
 
     public function checkUser(): bool
     {
-        if($this->request->request['csrfToken'] !== Session::getItem('csrfToken')){
+        if((Session::hasItem('csrfToken') === false) || ($this->request->request['csrfToken'] !== Session::getItem('csrfToken'))){
             return false;
         }
         if (Filter::isString($this->request->request['identifier'])) {
