@@ -26,17 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class FilterException extends BaseException
+class FilterException extends StayException
 {
     
-    public function __construct()
-    {
-        parent::__construct("Filter Exception", 0);
-    }
 }

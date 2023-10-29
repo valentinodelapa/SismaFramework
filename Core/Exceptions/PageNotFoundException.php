@@ -26,24 +26,18 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
-use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\ExtendedClasses\StayException;
+use SismaFramework\Core\Enumerations\ResponseType;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class PageNotFoundException extends BaseException
+class PageNotFoundException extends StayException
 {
-
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = NULL)
-    {
-        parent::__construct("Pagina non trovata: " . $message, $code, $previous);
-    }
     
-    public function errorRedirect()
+    public function show()
     {
-        Router::redirect('error/message/Pagina+non+trovata');
+        $this->response->setResponseType(ResponseType::httpNotFound);
+        $this->controller->error("");
     }
-
 }

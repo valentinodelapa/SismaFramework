@@ -26,6 +26,8 @@
 
 namespace Config;
 
+use SismaFramework\Sample\Controllers\SampleController;
+
 /* Name Constant */
 const ADAPTERS = 'Adapters';
 const APPLICATION = 'Sample';
@@ -36,6 +38,7 @@ const CORE = 'Core';
 const DEFAULT_PATH = 'sample';
 const DEFAULT_ACTION = 'index';
 const DEFAULT_CONTROLLER = 'SampleController';
+const DEFAULT_EXCEPTION_CONTROLLER = SampleController::class;
 const DEFAULT_LOCALE_TYPE = 'json';
 const ENTITIES = 'Entities';
 const FIXTURES = 'Fixtures';

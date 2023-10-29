@@ -24,30 +24,26 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
+namespace SismaFramework\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Logger;
-use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HttpClasses\Response;
 
 /**
  * @author Valentino de Lapa
  */
-class BaseException extends \Exception
+abstract class BaseException extends \Exception
 {
+    protected Response $response;
 
     public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
+        $this->response = new Response();
         Logger::saveLog($message, $code);
         if (\Config\DEVELOPMENT_ENVIRONMENT) {
             Logger::saveTrace($this->getTrace());
         }
-        $this->errorRedirect();
-    }
-
-    protected function errorRedirect()
-    {
-        Router::redirect('error/message/Errore');
     }
 
 }

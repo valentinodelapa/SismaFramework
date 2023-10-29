@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
@@ -53,10 +54,11 @@ class FixturesManager
         }
     }
 
-    public function run(): void
+    public function run(): Response
     {
         $this->getFixturesArray();
         $this->executeFixturesArray(array_keys($this->fixturesArray));
+        return Response;
     }
 
     public function extecuted(): bool

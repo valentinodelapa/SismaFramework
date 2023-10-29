@@ -26,14 +26,12 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- * Description of InvalidPropertyException
- *
- * @author valen
+ * @author Valentino de Lapa
  */
-class InvalidPropertyException extends BaseException
+class InvalidPropertyException extends StayException
 {
     
 }

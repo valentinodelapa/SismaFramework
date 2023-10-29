@@ -28,6 +28,7 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
 
 /**
@@ -74,7 +75,7 @@ class ResourceMaker
         return strtolower(end($splittedPath));
     }
 
-    public function makeResource(string $filename): void
+    public function makeResource(string $filename): Response
     {
         $resource = Resource::from($this->getExtension($filename));
         if ($resource->isRenderable()) {
@@ -92,6 +93,7 @@ class ResourceMaker
                 $stream = fopen($filename, 'rb', false, $this->streamContex);
                 fpassthru($stream);
             }
+            return new Response();
         } else {
             throw new AccessDeniedException();
         }
@@ -102,7 +104,7 @@ class ResourceMaker
         return strtolower(end($pathParts)) === \Config\ROBOTS_FILE;
     }
 
-    public function makeRobotsFile(): void
+    public function makeRobotsFile(): Response
     {
         $filename = \Config\ROOT_PATH . DIRECTORY_SEPARATOR . \Config\ROBOTS_FILE;
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
@@ -112,5 +114,6 @@ class ResourceMaker
         header("Content-Disposition: inline");
         header("Content-Length: " . filesize($filename));
         echo file_get_contents($filename, false);
+        return new Response();
     }
 }

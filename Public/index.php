@@ -26,9 +26,11 @@
 
 namespace SismaFramework;
 
-use \Exception;
+use SismaFramework\BaseClasses\BaseException;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\Session;
+use SismaFramework\ExtendedClasses\RedirectException;
+use SismaFramework\ExtendedClasses\StayException;
 
 try {
 
@@ -44,7 +46,10 @@ try {
     Session::start();
     $dispatcher = new Dispatcher();
     $dispatcher->run();
-    
-} catch (Exception $exception) {
-    
+} catch (RedirectException $exception) {
+    $exception->redirect();
+} catch (StayException $exception) {
+    $exception->show();
+} catch (Throwable $throwable) {
+    echo $throwable->getMessage();
 }

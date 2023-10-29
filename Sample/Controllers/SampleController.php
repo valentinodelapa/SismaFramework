@@ -6,8 +6,9 @@ use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\Interfaces\Controllers\ExceptionControllerInterface;
 
-class SampleController extends BaseController
+class SampleController extends BaseController implements ExceptionControllerInterface
 {
     
     public function __construct()

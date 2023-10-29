@@ -26,16 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class InvalidArgumentException extends BaseException
+class InvalidArgumentException extends StayException
 {
-    public function __construct()
-    {
-        parent::__construct('Siamo spiacenti ma i parametri inviati non corrispondono con quelli richiesti dalla funzione', 0);
-    }
+    
 }

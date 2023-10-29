@@ -26,17 +26,12 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- * Description of InvalidPropertyException
- *
  * @author valen
  */
-class CacheException extends BaseException
+class CacheException extends StayException
 {
-    protected function errorRedirect()
-    {
-        
-    }
+    
 }

@@ -26,17 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class FormException extends BaseException
+class FormException extends StayException
 {
     
-    public function __construct()
-    {
-        parent::__construct("FormException", 0);
-    }
 }

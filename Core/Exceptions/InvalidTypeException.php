@@ -26,16 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class InvalidTypeException extends BaseException
+class InvalidTypeException extends StayException
 {
-    public function __construct()
-    {
-        parent::__construct('Siamo spiacenti ma la variabile non è del tipo giusto', 0);
-    }
+    
 }

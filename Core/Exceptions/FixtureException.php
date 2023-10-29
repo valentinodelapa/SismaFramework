@@ -26,17 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class FixtureException extends BaseException
+class FixtureException extends StayException
 {
     
-    public function __construct()
-    {
-        parent::__construct("FxtureException", 0);
-    }
 }

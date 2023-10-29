@@ -26,15 +26,14 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Core\BaseClasses\BaseException;
 use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\ExtendedClasses\RedirectException;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class ReferencedEntityDeletionException extends BaseException
+class ReferencedEntityDeletionException extends RedirectException
 {
 
     private BaseEntity $entity;
@@ -45,7 +44,7 @@ class ReferencedEntityDeletionException extends BaseException
         parent::__construct($message, $code, $previous);
     }
 
-    protected function errorRedirect()
+    public function redirect()
     {
         $reflectionEntity = new \ReflectionClass($this->entity);
         $entityShortNameParts = array_diff(preg_split('/(?=[A-Z])/',$reflectionEntity->getShortName()), ['']);

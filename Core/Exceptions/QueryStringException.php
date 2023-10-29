@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\RedirectException;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
 
@@ -35,10 +35,10 @@ use SismaFramework\Core\HttpClasses\Request;
  *
  * @author Valentino de Lapa
  */
-class QueryStringException extends BaseException
+class QueryStringException extends RedirectException
 {
     
-    protected function errorRedirect()
+    public function redirect()
     {
         $request = new Request();
         Router::reloadWithParsedQueryString($request->server['REQUEST_URI']);

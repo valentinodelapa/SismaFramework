@@ -26,14 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- * Description of RenderException
- *
  * @author Valentino de Lapa
  */
-class RenderException extends BaseException
+class RenderException extends StayException
 {
     
 }

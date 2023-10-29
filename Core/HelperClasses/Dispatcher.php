@@ -36,6 +36,7 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Authentication;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\Interfaces\Services\SitemapBuilderInterface;
 
@@ -83,7 +84,7 @@ class Dispatcher
         $this->sitemapBuider = $sitemapBuilder;
     }
 
-    public function run()
+    public function run(): Response
     {
         Debugger::startExecutionTimeCalculation();
         $this->originalPath = $this->path = strtok($this->request->server['REQUEST_URI'], '?');
@@ -95,7 +96,7 @@ class Dispatcher
             }
         }
         $this->parsePath();
-        $this->handle();
+        return $this->handle();
     }
 
     private function parsePath(): void
@@ -141,50 +142,50 @@ class Dispatcher
         return class_exists($this->controllerName);
     }
 
-    private function handle(): void
+    private function handle(): Response
     {
         if ($this->resourceMaker->isRobotsFile($this->pathParts)) {
-            $this->resourceMaker->makeRobotsFile();
+            return $this->resourceMaker->makeRobotsFile();
         } elseif (isset($this->sitemapBuider) && ($this->sitemapBuider->isSitemap($this->pathParts))) {
-            $this->sitemapBuider->generate();
+            return $this->sitemapBuider->generate();
         } elseif ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
-            $this->handleFile();
+            return $this->handleFile();
         } elseif ($this->checkControllerPresence() === true) {
-            $this->resolveRouteCall();
+            return $this->resolveRouteCall();
         } elseif ($this->fixturesManager->isFixtures($this->pathParts)) {
-            $this->fixturesManager->run();
+            return $this->fixturesManager->run();
         } else {
-            $this->switchNotFoundActions();
+            return $this->switchNotFoundActions();
         }
     }
 
-    private function handleFile(): void
+    private function handleFile(): Response
     {
         if (file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            $this->resourceMaker->makeResource(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+            return $this->resourceMaker->makeResource(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
         } elseif ((count($this->pathParts) === 2) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            $this->resourceMaker->makeResource(\Config\STRUCTURAL_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+            return $this->resourceMaker->makeResource(\Config\STRUCTURAL_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
         } elseif ((count($this->pathParts) === 2) && file_exists(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            $this->resourceMaker->makeResource(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+            return $this->resourceMaker->makeResource(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
         } else {
-            $this->switchNotFoundActions();
+            return $this->switchNotFoundActions();
         }
     }
 
-    private function switchNotFoundActions(): void
+    private function switchNotFoundActions(): Response
     {
         if (self::$reloadAttempts < \Config\MAX_RELOAD_ATTEMPTS) {
-            $this->reloadDispatcher();
+            return $this->reloadDispatcher();
         } else {
             throw new PageNotFoundException($this->originalPath);
         }
     }
 
-    private function reloadDispatcher(): void
+    private function reloadDispatcher(): Response
     {
         $this->switchPath();
         $this->parsePath();
-        $this->handle();
+        return $this->handle();
     }
 
     private function switchPath(): void
@@ -211,13 +212,13 @@ class Dispatcher
         }
     }
 
-    private function resolveRouteCall(): void
+    private function resolveRouteCall(): Response
     {
         if ($this->checkActionPresenceInController()) {
             $this->instanceControllerClass();
-            $this->callControllerMethod();
+            return $this->callControllerMethod();
         } else {
-            $this->switchNotFoundActions();
+            return $this->switchNotFoundActions();
         }
     }
 
@@ -262,14 +263,14 @@ class Dispatcher
         }
     }
 
-    private function callControllerMethod(): void
+    private function callControllerMethod(): Response
     {
         $this->getActionArguments();
         if (count($this->reflectionActionArguments) > 0) {
-            $this->callControllerMethodWithArguments();
+            return $this->callControllerMethodWithArguments();
         } else {
             $currentAction = $this->action;
-            $this->controllerInstance->$currentAction();
+            return $this->controllerInstance->$currentAction();
         }
     }
 
@@ -283,11 +284,11 @@ class Dispatcher
         }
     }
 
-    private function callControllerMethodWithArguments(): void
+    private function callControllerMethodWithArguments(): Response
     {
         $this->setArrayOddToKeyEvenToValue();
         $this->parseArgsAssociativeArray();
-        call_user_func_array([$this->controllerInstance, $this->action], $this->actionArguments);
+        return call_user_func_array([$this->controllerInstance, $this->action], $this->actionArguments);
     }
 
     private function setArrayOddToKeyEvenToValue(): void

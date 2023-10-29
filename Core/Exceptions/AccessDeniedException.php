@@ -26,16 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\StayException;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class AccessDeniedException extends BaseException
+class AccessDeniedException extends StayException
 {
-    public function __construct()
-    {
-        parent::__construct("Accesso negato", 0);
-    }
+    
 }

@@ -40,4 +40,10 @@ class Response
     {
         $this->responseType = ResponseType::from(intval(http_response_code()));
     }
+    
+    public function setResponseType(ResponseType $responseType):void
+    {
+        $this->responseType = $responseType;
+        http_response_code($this->responseType->value);
+    }
 }
