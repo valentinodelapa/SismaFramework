@@ -13,8 +13,10 @@ use SismaFramework\Core\HttpClasses\Response;
  *
  * @author Valentino de Lapa
  */
-interface ExceptionControllerInterface
+interface DefaultControllerInterface
 {
 
     public function error(string $message): Response;
+
+    public function notify(string $message): Response;
 }

@@ -24,13 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework;
+namespace SismaFramework\Public;
 
 use SismaFramework\BaseClasses\BaseException;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Dispatcher;
+use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Session;
-use SismaFramework\ExtendedClasses\RedirectException;
-use SismaFramework\ExtendedClasses\StayException;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Orm\Exceptions\ReferencedEntityDeletionException;
+use SismaFramework\Sample\Controllers\SampleController;
 
 try {
 
@@ -46,10 +49,18 @@ try {
     Session::start();
     $dispatcher = new Dispatcher();
     $dispatcher->run();
-} catch (RedirectException $exception) {
-    $exception->redirect();
-} catch (StayException $exception) {
-    $exception->show();
-} catch (Throwable $throwable) {
-    echo $throwable->getMessage();
+} catch (ReferencedEntityDeletionException $exception) {
+    
+} catch (BaseException $exception) {
+    $cmsController = new CmsController();
+    $cmsController->error('');
+} catch (\Throwable $throwable) {
+    Logger::saveLog($throwable->getMessage(), $throwable->getCode());
+    if (\Config\DEVELOPMENT_ENVIRONMENT) {
+        Logger::saveTrace($throwable->getTrace());
+    }
+    $response = new Response();
+    $response->setResponseType(ResponseType::httpInternalServerError);
+    $sampleController = new SampleController();
+    $sampleController->error('');
 }

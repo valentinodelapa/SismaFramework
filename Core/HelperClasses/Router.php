@@ -94,9 +94,10 @@ class Router
         return substr($relativeUrl, 1);
     }
 
-    public static function reloadWithParsedQueryString(string $url): Response
+    public function reloadWithParsedQueryString($request = new Request()): Response
     {
-        $parsedUrl = str_replace(["?", "=", "&"], '/', $url);
+        $requestUri = $request->server['REQUEST_URI'];
+        $parsedUrl = str_replace(["?", "=", "&"], '/', $requestUri);
         $parsedUrl = str_replace('//', '/', $parsedUrl);
         header("Location: " . self::$metaUrl . $parsedUrl);
         return new Response();

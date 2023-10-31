@@ -26,18 +26,16 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\ExtendedClasses\StayException;
+use SismaFramework\BaseClasses\BaseException;
 use SismaFramework\Core\Enumerations\ResponseType;
 
 /**
  * @author Valentino de Lapa
  */
-class PageNotFoundException extends StayException
+class PageNotFoundException extends BaseException
 {
-    
-    public function show()
+    public function setResponseType()
     {
         $this->response->setResponseType(ResponseType::httpNotFound);
-        $this->controller->error("");
     }
 }

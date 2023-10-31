@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\ExtendedClasses\StayException;
+use SismaFramework\BaseClasses\BaseException;
 
 /**
  * @author Valentino de Lapa
  */
-class AccessDeniedException extends StayException
+class AccessDeniedException extends BaseException
 {
     
 }

@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
-use SismaFramework\ExtendedClasses\StayException;
+use SismaFramework\BaseClasses\BaseException;
 
 /**
  * @author valen
  */
-class CacheException extends StayException
+class CacheException extends BaseException
 {
     
 }

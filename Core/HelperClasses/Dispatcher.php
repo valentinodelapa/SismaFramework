@@ -29,7 +29,6 @@ namespace SismaFramework\Core\HelperClasses;
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
-use SismaFramework\Core\Exceptions\QueryStringException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
@@ -84,7 +83,7 @@ class Dispatcher
         $this->sitemapBuider = $sitemapBuilder;
     }
 
-    public function run(): Response
+    public function run($router = new Router()): Response
     {
         Debugger::startExecutionTimeCalculation();
         $this->originalPath = $this->path = strtok($this->request->server['REQUEST_URI'], '?');
@@ -92,7 +91,8 @@ class Dispatcher
             if ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
                 $this->resourceMaker->setStreamContex($this->path);
             } else {
-                throw new QueryStringException();
+                $router->reloadWithParsedQueryString();
+                exit();
             }
         }
         $this->parsePath();

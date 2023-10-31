@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
-use SismaFramework\ExtendedClasses\StayException;
+use SismaFramework\BaseClasses\BaseException;
 
 /**
  * @author Valentino de Lapa
  */
-class AdapterException extends StayException
+class AdapterException extends BaseException
 {
     
 }

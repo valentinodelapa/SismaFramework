@@ -26,14 +26,14 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
+use SismaFramework\BaseClasses\BaseException;
 use SismaFramework\Core\HelperClasses\Router;
-use SismaFramework\ExtendedClasses\RedirectException;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
  * @author Valentino de Lapa
  */
-class ReferencedEntityDeletionException extends RedirectException
+class ReferencedEntityDeletionException extends BaseException
 {
 
     private BaseEntity $entity;

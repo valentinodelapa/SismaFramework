@@ -26,6 +26,7 @@
 
 namespace SismaFramework\BaseClasses;
 
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HttpClasses\Response;
 
@@ -34,6 +35,7 @@ use SismaFramework\Core\HttpClasses\Response;
  */
 abstract class BaseException extends \Exception
 {
+
     protected Response $response;
 
     public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
@@ -44,6 +46,11 @@ abstract class BaseException extends \Exception
         if (\Config\DEVELOPMENT_ENVIRONMENT) {
             Logger::saveTrace($this->getTrace());
         }
+        $this->setResponseType();
     }
 
+    public function setResponseType()
+    {
+        $this->response->setResponseType(ResponseType::httpInternalServerError);
+    }
 }
