@@ -32,7 +32,7 @@ use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Response;
-use SismaFramework\Orm\Exceptions\ReferencedEntityDeletionException;
+use SismaFramework\ExtendedClasses\RedirectException;
 use SismaFramework\Sample\Controllers\SampleController;
 
 try {
@@ -49,8 +49,8 @@ try {
     Session::start();
     $dispatcher = new Dispatcher();
     $dispatcher->run();
-} catch (ReferencedEntityDeletionException $exception) {
-    
+} catch (RedirectException $exception) {
+    $exception->redirect();
 } catch (BaseException $exception) {
     $cmsController = new CmsController();
     $cmsController->error('');

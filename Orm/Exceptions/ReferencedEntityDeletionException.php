@@ -26,14 +26,14 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
-use SismaFramework\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\LogException;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
  * @author Valentino de Lapa
  */
-class ReferencedEntityDeletionException extends BaseException
+class ReferencedEntityDeletionException extends LogException
 {
 
     private BaseEntity $entity;

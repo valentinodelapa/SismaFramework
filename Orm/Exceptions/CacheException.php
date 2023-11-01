@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
-use SismaFramework\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\LogException;
 
 /**
  * @author valen
  */
-class CacheException extends BaseException
+class CacheException extends LogException
 {
     
 }

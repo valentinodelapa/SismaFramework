@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\BaseClasses\BaseException;
+use SismaFramework\ExtendedClasses\LogException;
 
 /**
  * @author Valentino de Lapa
  */
-class AccessDeniedException extends BaseException
+class AccessDeniedException extends LogException
 {
     
 }
