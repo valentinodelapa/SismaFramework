@@ -68,7 +68,7 @@ abstract class BaseForm
     
     private function checkEntityName()
     {
-        if(is_subclass_of($this->getEntityName(), BaseEntity::class) === false){
+        if(is_subclass_of(static::getEntityName(), BaseEntity::class) === false){
             throw new FormException();
         }
     }

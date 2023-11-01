@@ -24,12 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Interfaces\Entities;
+namespace SismaFramework\Security\Interfaces\Entities;
+
 /**
  *
  * @author Valentino de Lapa
  */
-interface MultiFactorRecoveryInterface
+interface AuthenticableInterface
 {
     
 }

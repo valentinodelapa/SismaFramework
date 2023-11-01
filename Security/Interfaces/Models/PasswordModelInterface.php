@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Interfaces\Models;
+namespace SismaFramework\Security\Interfaces\Models;
 
-use SismaFramework\Core\Interfaces\Entities\AuthenticableInterface;
-
+use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
+use SismaFramework\Security\Interfaces\Entities\PasswordInterface;
 /**
+ *
  * @author Valentino de Lapa
  */
-interface AuthenticableModelInterface
+interface PasswordModelInterface
 {
-    
-    public function getValidAuthenticableInterfaceByIdentifier(string $identifier): ?AuthenticableInterface;
+    public function getPasswordByAuthenticableInterface(AuthenticableInterface $authenticableIntherface): ?PasswordInterface;
 }

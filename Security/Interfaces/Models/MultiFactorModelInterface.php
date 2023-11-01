@@ -24,15 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Interfaces\Models;
+namespace SismaFramework\Security\Interfaces\Models;
 
-use SismaFramework\Core\Interfaces\Entities\AuthenticableInterface;
-use SismaFramework\Core\Interfaces\Entities\PasswordInterface;
+use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
+use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
 /**
  *
  * @author Valentino de Lapa
  */
-interface PasswordModelInterface
+interface MultiFactorModelInterface
 {
-    public function getPasswordByAuthenticableInterface(AuthenticableInterface $authenticableIntherface): ?PasswordInterface;
+
+    public function getLastActiveMultiFactorByUserIterface(AuthenticableInterface $userInterface): ?MultiFactorInterface;
 }

@@ -24,15 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Interfaces\Wrappers;
-
-use SismaFramework\Core\Interfaces\Entities\MultiFactorInterface;
+namespace SismaFramework\Security\Interfaces\Entities;
 /**
  *
  * @author Valentino de Lapa
  */
-interface MultiFactorWrapperInterface
+interface PasswordInterface
 {
-
-    public function testCodeForLogin(MultiFactorInterface $multiFactorInterface, string $code): bool;
+    
 }

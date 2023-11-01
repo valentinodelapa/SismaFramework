@@ -33,7 +33,7 @@ use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\Router;
-use SismaFramework\Core\HttpClasses\Authentication;
+use SismaFramework\Security\HttpClasses\Authentication;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\ResourceMaker;

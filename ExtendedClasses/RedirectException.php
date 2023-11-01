@@ -21,6 +21,6 @@ abstract class RedirectException extends BaseException
     
     public function setResponseType()
     {
-        $this->response->setResponseType(ResponseType::httpTemporaryRedirect);
+        $this->response->setResponseType(ResponseType::httpFound);
     }
 }

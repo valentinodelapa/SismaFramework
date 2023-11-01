@@ -8,6 +8,7 @@
 namespace SismaFramework\ExtendedClasses;
 
 use SismaFramework\BaseClasses\BaseException;
+use SismaFramework\Core\HelperClasses\Logger;
 
 /**
  * @author Valentino de Lapa

@@ -28,7 +28,7 @@ namespace SismaFramework\Core\BaseClasses;
 
 use SismaFramework\Core\Enumerations\PermissionAttribute;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
-use SismaFramework\Core\Interfaces\Entities\AuthenticableInterface;
+use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
 
 /**
  *

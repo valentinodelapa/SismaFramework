@@ -30,7 +30,7 @@ use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Core\HttpClasses\Authentication;
+use SismaFramework\Security\HttpClasses\Authentication;
 
 /**
  * @author Valentino de Lapa

@@ -24,16 +24,18 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Interfaces\Models;
+namespace SismaFramework\Security\Interfaces\Models;
 
-use SismaFramework\Core\Interfaces\Entities\UserInterface;
-use SismaFramework\Core\Interfaces\Entities\MultiFactorInterface;
+use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
+use SismaFramework\Security\Interfaces\Entities\MultiFactorRecoveryInterface;
+use SismaFramework\ProprietaryTypes\SismaCollection;
+
 /**
  *
  * @author Valentino de Lapa
  */
-interface MultiFactorModelInterface
+interface MultiFactorRecoveryModelInterface
 {
 
-    public function getLastActiveMultiFactorByUserIterface(UserInterface $userInterface): ?MultiFactorInterface;
+    public function getMultiFactorRecoveryInterfaceCollectionByMultiFactorInterface(MultiFactorInterface $multiFactorInterface): SismaCollection;
 }

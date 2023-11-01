@@ -24,18 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Interfaces\Models;
+namespace SismaFramework\Security\Interfaces\Models;
 
-use SismaFramework\Core\Interfaces\Entities\MultiFactorInterface;
-use SismaFramework\Core\Interfaces\Entities\MultiFactorRecoveryInterface;
-use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
 
 /**
- *
  * @author Valentino de Lapa
  */
-interface MultiFactorRecoveryModelInterface
+interface AuthenticableModelInterface
 {
-
-    public function getMultiFactorRecoveryInterfaceCollectionByMultiFactorInterface(MultiFactorInterface $multiFactorInterface): SismaCollection;
+    
+    public function getValidAuthenticableInterfaceByIdentifier(string $identifier): ?AuthenticableInterface;
 }
