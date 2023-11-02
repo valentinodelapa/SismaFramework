@@ -2,8 +2,8 @@
 
 namespace SismaFramework\Sample\Permissions;
 
-use SismaFramework\Core\BaseClasses\BasePermission;
-use SismaFramework\Core\Enumerations\PermissionAttribute;
+use SismaFramework\Security\BaseClasses\BasePermission;
+use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\Sample\Entities\BaseSample;
 
 class SamplePermission extends BasePermission
@@ -17,9 +17,9 @@ class SamplePermission extends BasePermission
     protected function checkPermmisions(): bool
     {
         switch ($this->attribute) {
-            case PermissionAttribute::allow:
+            case AccessControlEntry::allow:
                 return isset($this->subject->text);
-            case PermissionAttribute::deny:
+            case AccessControlEntry::deny:
                 return !isset($this->subject->text);
             default:
                 return false;

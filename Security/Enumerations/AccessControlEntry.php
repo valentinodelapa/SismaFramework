@@ -24,13 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Enumerations;
+namespace SismaFramework\Security\Enumerations;
 
 /**
  *
  * @author Valentino de Lapa
  */
-enum PermissionAttribute
+enum AccessControlEntry
 {
 
     case allow;

@@ -24,34 +24,43 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Orm\Permissions;
+namespace SismaFramework\Orm\Voters;
 
-use SismaFramework\Orm\Exceptions\ReferencedEntityDeletionException;
-use SismaFramework\Orm\Voters\ReferencedEntityDeletionVoter;
-use SismaFramework\Security\BaseClasses\BasePermission;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\Security\BaseClasses\BaseVoter;
 
 /**
  *
  * @author Valentino de Lapa
  */
-class ReferencedEntityDeletionPermission extends BasePermission
+class ReferencedEntityDeletionVoter extends BaseVoter
 {
 
-    protected function callParentPermissions(): void
+    protected function checkVote(): bool
     {
-        
-    }
-
-    protected function checkResult(): void
-    {
-        if ($this->result === false) {
-            throw new ReferencedEntityDeletionException($this->subject, "Errore vincoli integrità");
+        switch ($this->accessControlEntry) {
+            case AccessControlEntry::allow:
+                return $this->canDeleteReferencedEntity($this->subject);
+            default:
+                return false;
         }
     }
 
-    protected function getVoter(): BaseVoter
+    private function canDeleteReferencedEntity(ReferencedEntity $referencedEntity): bool
     {
-        return new ReferencedEntityDeletionVoter();
+        $result = true;
+        foreach ($referencedEntity->getCollectionNames() as $collectionName) {
+            $methodName = 'count'.ucfirst($collectionName);
+            if($referencedEntity->$methodName() > 0){
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    protected function isInstancePermitted(): bool
+    {
+        return $this->subject instanceof ReferencedEntity;
     }
 }

@@ -24,11 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
+namespace SismaFramework\Security\BaseClasses;
 
-use SismaFramework\Core\Enumerations\PermissionAttribute;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
+use SismaFramework\Security\BaseClasses\BaseVoter;
+use SismaFramework\Security\Enumerations\AccessControlEntry;
 
 /**
  *
@@ -36,30 +37,29 @@ use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
  */
 abstract class BasePermission
 {
-
     private static BasePermission $instance;
     protected mixed $subject;
-    protected PermissionAttribute $attribute;
+    protected AccessControlEntry $accessControlEntry;
     protected ?AuthenticableInterface $authenticable;
     protected bool $result = true;
 
-    public function __construct(mixed $subject, PermissionAttribute $attribute, ?AuthenticableInterface $authenticable = null)
+    public function __construct(mixed $subject, AccessControlEntry $accessControlEntry, ?AuthenticableInterface $authenticable = null)
     {
         $this->subject = $subject;
-        $this->attribute = $attribute;
+        $this->accessControlEntry = $accessControlEntry;
         $this->authenticable = $authenticable;
         $this->callParentPermissions();
-        $this->result = ($this->isInstancePermitted() === false) ? false : $this->result;
-        $this->checkResult();
-        $this->result = ($this->checkPermmisions() === false) ? false : $this->result;
+        $voter = $this->getVoter();
+        $voter->setSubject($subject);
+        $voter->setAccessControlEntry($accessControlEntry);
+        $voter->setAuthenticable($authenticable);
+        $this->result = $voter->returnResult();
         $this->checkResult();
     }
-    
-    abstract protected function callParentPermissions():void;
 
-    abstract protected function isInstancePermitted(): bool;
+    abstract protected function callParentPermissions(): void;
 
-    abstract protected function checkPermmisions(): bool;
+    abstract protected function getVoter(): BaseVoter;
 
     protected function checkResult(): void
     {
@@ -68,10 +68,9 @@ abstract class BasePermission
         }
     }
 
-    static public function isAllowed(mixed $subject, PermissionAttribute $attribute, ?AuthenticableInterface $authenticable = null):void
+    static public function isAllowed(mixed $subject, AccessControlEntry $accessControlEntry, ?AuthenticableInterface $authenticable = null): void
     {
         $class = get_called_class();
-        self::$instance = new $class($subject, $attribute, $authenticable);
+        self::$instance = new $class($subject, $accessControlEntry, $authenticable);
     }
-
 }

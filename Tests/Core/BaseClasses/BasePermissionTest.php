@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Core\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\Enumerations\PermissionAttribute;
+use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Sample\Entities\BaseSample;
@@ -47,7 +47,7 @@ class BasePermissionTest extends TestCase
     {
         $this->expectException(AccessDeniedException::class);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        SamplePermission::isAllowed(new ReferencedSample($baseAdapterMock), PermissionAttribute::allow);
+        SamplePermission::isAllowed(new ReferencedSample($baseAdapterMock), AccessControlEntry::allow);
     }
 
     /**
@@ -57,7 +57,7 @@ class BasePermissionTest extends TestCase
     {
         $this->expectException(AccessDeniedException::class);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        SamplePermission::isAllowed(new BaseSample($baseAdapterMock), PermissionAttribute::allow);
+        SamplePermission::isAllowed(new BaseSample($baseAdapterMock), AccessControlEntry::allow);
     }
 
     /**
@@ -67,7 +67,7 @@ class BasePermissionTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        SamplePermission::isAllowed(new BaseSample($baseAdapterMock), PermissionAttribute::deny);
+        SamplePermission::isAllowed(new BaseSample($baseAdapterMock), AccessControlEntry::deny);
     }
 
 }
