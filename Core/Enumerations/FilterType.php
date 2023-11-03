@@ -36,6 +36,7 @@ enum FilterType: string
     case noFilter = 'noFilter';
     case isString = 'isString';
     case isAlphabeticString = 'isAlphabeticString';
+    case isStrictAlphanumericString = 'isStrictAlphanumericString';
     case isAlphanumericString = 'isAlphanumericString';
     case isSecurePassword = 'isSecurePassword';
     case isEmail = 'isEmail';
