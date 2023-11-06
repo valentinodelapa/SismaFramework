@@ -94,7 +94,7 @@ class Authentication
         $this->multiFactorWrapperInterface = $multiFactorWrapperInterface;
     }
 
-    public function checkUser(): bool
+    public function checkAuthenticable(): bool
     {
         if((Session::hasItem('csrfToken') === false) || ($this->request->request['csrfToken'] !== Session::getItem('csrfToken'))){
             return false;
@@ -123,7 +123,7 @@ class Authentication
     public function checkMultiFactor(AuthenticableInterface $authenticableInterface): bool
     {
         if (Filter::isString($this->request->request['code'])) {
-            $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByUserIterface($authenticableInterface);
+            $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByAuthenticableInterface($authenticableInterface);
             if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->request['code'])){
                 return true;
             }elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->request['code'])) {

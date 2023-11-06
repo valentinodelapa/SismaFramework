@@ -35,5 +35,5 @@ use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
 interface MultiFactorModelInterface
 {
 
-    public function getLastActiveMultiFactorByUserIterface(AuthenticableInterface $userInterface): ?MultiFactorInterface;
+    public function getLastActiveMultiFactorByAuthenticableInterface(AuthenticableInterface $userInterface): ?MultiFactorInterface;
 }
