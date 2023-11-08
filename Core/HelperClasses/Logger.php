@@ -34,18 +34,18 @@ class Logger
 {
 
     private static int $maxRows = \Config\DEVELOPMENT_ENVIRONMENT ? \Config\LOG_DEVELOPEMENT_MAX_ROW : \Config\LOG_PRODUCTION_MAX_ROW;
-    
-    public static function setMaxRows(int $maxRows):void
+
+    public static function setMaxRows(int $maxRows): void
     {
         self::$maxRows = $maxRows;
     }
 
-    public static function saveLog(string $message, int $code, string $file = ''): void
+    public static function saveLog(string $message, int|string $code, string $file, string $line): void
     {
         self::createLogDirectory();
         $handle = fopen(\Config\LOG_PATH, 'a');
         if ($handle !== false) {
-            fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "\n");
+            fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "(" . $line . ")" . "\n");
             fclose($handle);
         }
         self::truncateLog();
@@ -76,7 +76,7 @@ class Logger
         if ($handle !== false) {
             foreach ($trace as $call) {
                 $row = "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "\n";
-                $row .= isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "\n" : ';';
+                $row .= isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "\n" : '';
                 fwrite($handle, $row);
             }
             fclose($handle);
@@ -106,5 +106,4 @@ class Logger
         self::createLogDirectory();
         return count(file(\Config\LOG_PATH));
     }
-
 }

@@ -18,7 +18,7 @@ abstract class LogException extends BaseException
     public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
-        Logger::saveLog($message, $code);
+        Logger::saveLog($message, $code, $this->getFile(), $this->getLine());
         if (\Config\DEVELOPMENT_ENVIRONMENT) {
             Logger::saveTrace($this->getTrace());
         }

@@ -27,7 +27,6 @@
 namespace SismaFramework\Orm\Exceptions;
 
 use SismaFramework\ExtendedClasses\LogException;
-use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
@@ -42,17 +41,6 @@ class ReferencedEntityDeletionException extends LogException
     {
         $this->entity = $entity;
         parent::__construct($message, $code, $previous);
-    }
-
-    public function redirect()
-    {
-        $reflectionEntity = new \ReflectionClass($this->entity);
-        $entityShortNameParts = array_diff(preg_split('/(?=[A-Z])/',$reflectionEntity->getShortName()), ['']);
-        array_walk($entityShortNameParts, function(&$value){
-            $value = strtolower($value);
-        });
-        $entityShortName = implode('-', $entityShortNameParts);
-        return Router::redirect($entityShortName.'/view-relations/'.$entityShortName.'/'.$this->entity->id.'/');
     }
 
 }

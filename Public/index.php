@@ -52,15 +52,29 @@ try {
 } catch (RedirectException $exception) {
     $exception->redirect();
 } catch (BaseException $exception) {
-    $cmsController = new CmsController();
-    $cmsController->error('');
-} catch (\Throwable $throwable) {
-    Logger::saveLog($throwable->getMessage(), $throwable->getCode());
     if (\Config\DEVELOPMENT_ENVIRONMENT) {
-        Logger::saveTrace($throwable->getTrace());
+        echo $exception->getCode().' - '.$exception->getMessage().' - '.$exception->getFile().'(' . $exception->getLine() . ')'."<br />";
+        foreach ($exception->getTrace() as $call) {
+            echo "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "<br />";
+            echo isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "<br />" : ';';
+        }
+    } else {
+        $sampleController = new SampleController();
+        $sampleController->error('');
     }
+} catch (\Throwable $throwable) {
     $response = new Response();
     $response->setResponseType(ResponseType::httpInternalServerError);
-    $sampleController = new SampleController();
-    $sampleController->error('');
+    Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
+    if (\Config\DEVELOPMENT_ENVIRONMENT) {
+        Logger::saveTrace($throwable->getTrace());
+        echo $throwable->getCode().' - '.$throwable->getMessage().' - '.$throwable->getFile().'(' . $throwable->getLine() . ')'."<br />";
+        foreach ($exception->getTrace() as $call) {
+            echo "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "<br />";
+            echo isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "<br />" : ';';
+        }
+    } else {
+        $sampleController = new SampleController();
+        $sampleController->error('');
+    }
 }

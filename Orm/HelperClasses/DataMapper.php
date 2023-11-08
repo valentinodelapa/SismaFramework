@@ -39,6 +39,8 @@ use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\Orm\Permissions\ReferencedEntityDeletionPermission;
+use SismaFramework\Security\Enumerations\AccessControlEntry;
 
 /**
  * @author Valentino de Lapa
@@ -227,6 +229,9 @@ class DataMapper
 
     public function delete(BaseEntity $entity, Query $query = new Query()): bool
     {
+        if ($entity instanceof ReferencedEntity) {
+            ReferencedEntityDeletionPermission::isAllowed($entity, AccessControlEntry::allow);
+        }
         $this->entity = $entity;
         $query->setTable(NotationManager::convertEntityToTableName($this->entity));
         if ($this->entity->getPrimaryKeyPropertyName() == '') {
