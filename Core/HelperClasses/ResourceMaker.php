@@ -59,7 +59,7 @@ class ResourceMaker
         $this->readfileMaxBytesLimit = $readfileMaxBytesLimit;
     }
 
-    public function setStreamContex(string $path): void
+    public function setStreamContex(): void
     {
         $this->streamContex = $this->request->getStreamContentResource();
     }
@@ -78,7 +78,7 @@ class ResourceMaker
     public function makeResource(string $filename): Response
     {
         $resource = Resource::from($this->getExtension($filename));
-        if ($resource->isRenderable()) {
+        if ($resource->isRenderable() && ($this->folderIsLocked($filename) === false)) {
             header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
             header("Accept-Ranges: bytes");
             header("Content-type: " . $resource->getMime());
@@ -97,6 +97,11 @@ class ResourceMaker
         } else {
             throw new AccessDeniedException();
         }
+    }
+    
+    private function folderIsLocked(string $filename):bool
+    {
+        return file_exists(dirname($filename).DIRECTORY_SEPARATOR.'.lock');
     }
 
     public function isRobotsFile(array $pathParts): bool

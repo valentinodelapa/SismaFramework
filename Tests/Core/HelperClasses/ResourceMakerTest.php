@@ -97,7 +97,7 @@ class ResourceMakerTest extends TestCase
         $_SERVER['QUERY_STRING'] = 'resource=resource';
         \ob_start();
         $resourceMaker = new ResourceMaker();
-        $resourceMaker->setStreamContex(__DIR__ . '/../../../Sample/Assets/javascript/sample.js');
+        $resourceMaker->setStreamContex();
         $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/javascript/sample.js');
         $result = \ob_get_contents();
         \ob_end_clean();

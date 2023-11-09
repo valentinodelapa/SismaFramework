@@ -55,8 +55,8 @@ try {
     if (\Config\DEVELOPMENT_ENVIRONMENT) {
         echo $exception->getCode().' - '.$exception->getMessage().' - '.$exception->getFile().'(' . $exception->getLine() . ')'."<br />";
         foreach ($exception->getTrace() as $call) {
-            echo "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "<br />";
-            echo isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "<br />" : ';';
+            echo "&nbsp;&nbsp;&nbsp;&nbsp;" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "<br />";
+            echo isset($call['file']) ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $call['file'] . '(' . $call['line'] . ')' . "<br />" : '';
         }
     } else {
         $sampleController = new SampleController();
@@ -69,11 +69,12 @@ try {
     if (\Config\DEVELOPMENT_ENVIRONMENT) {
         Logger::saveTrace($throwable->getTrace());
         echo $throwable->getCode().' - '.$throwable->getMessage().' - '.$throwable->getFile().'(' . $throwable->getLine() . ')'."<br />";
-        foreach ($exception->getTrace() as $call) {
-            echo "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "<br />";
-            echo isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "<br />" : ';';
+        foreach ($throwable->getTrace() as $call) {
+            echo "&nbsp;&nbsp;&nbsp;&nbsp;" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "<br />";
+            echo isset($call['file']) ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $call['file'] . '(' . $call['line'] . ')' . "<br />" : '';
         }
     } else {
+        Router::setActualCleanUrl('cms', 'error');
         $sampleController = new SampleController();
         $sampleController->error('');
     }
