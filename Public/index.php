@@ -26,41 +26,54 @@
 
 namespace SismaFramework\Public;
 
+ini_set('display_errors', 'off');
+ini_set('display_startup_errors', 'off');
+error_reporting(0);
+
 use SismaFramework\BaseClasses\BaseException;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Structural\Controllers\FrameworkController;
 use SismaFramework\ExtendedClasses\RedirectException;
 use SismaFramework\Sample\Controllers\SampleController;
 
 try {
 
     require_once(__DIR__ . '/../Config/config.php');
+    register_shutdown_function(function () {
+        $error = error_get_last();
+        $backtrace = debug_backtrace();
+        if (is_array($error)) {
+            if (\Config\DEVELOPMENT_ENVIRONMENT) {
+                Router::setActualCleanUrl('framework', 'nonThowableError');
+                $frameworkController = new FrameworkController();
+                $frameworkController->nonThrowableError($error, $backtrace);
+            } else {
+                Router::setActualCleanUrl('framework', 'internalServerError');
+                $frameworkController = new FrameworkController();
+                $frameworkController->internalServerError();
+            }
+        }
+    });
     require_once(__DIR__ . '/../Autoload/autoload.php');
-
-    if (\Config\DEVELOPMENT_ENVIRONMENT) {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL | E_STRICT);
-    }
 
     Session::start();
     $dispatcher = new Dispatcher();
-    $dispatcher->run();
+    return $dispatcher->run();
 } catch (RedirectException $exception) {
-    $exception->redirect();
+    return $exception->redirect();
 } catch (BaseException $exception) {
     if (\Config\DEVELOPMENT_ENVIRONMENT) {
-        echo $exception->getCode().' - '.$exception->getMessage().' - '.$exception->getFile().'(' . $exception->getLine() . ')'."<br />";
-        foreach ($exception->getTrace() as $call) {
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "<br />";
-            echo isset($call['file']) ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $call['file'] . '(' . $call['line'] . ')' . "<br />" : '';
-        }
+        Router::setActualCleanUrl('framework', 'thowableError');
+        $frameworkController = new FrameworkController();
+        return $frameworkController->throwableError($exception);
     } else {
+        Router::setActualCleanUrl('sample', 'error');
         $sampleController = new SampleController();
-        $sampleController->error('');
+        return $sampleController->error('');
     }
 } catch (\Throwable $throwable) {
     $response = new Response();
@@ -68,14 +81,12 @@ try {
     Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
     if (\Config\DEVELOPMENT_ENVIRONMENT) {
         Logger::saveTrace($throwable->getTrace());
-        echo $throwable->getCode().' - '.$throwable->getMessage().' - '.$throwable->getFile().'(' . $throwable->getLine() . ')'."<br />";
-        foreach ($throwable->getTrace() as $call) {
-            echo "&nbsp;&nbsp;&nbsp;&nbsp;" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "<br />";
-            echo isset($call['file']) ? "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $call['file'] . '(' . $call['line'] . ')' . "<br />" : '';
-        }
+        Router::setActualCleanUrl('framework', 'thowableError');
+        $frameworkController = new FrameworkController();
+        return $frameworkController->throwableError($throwable);
     } else {
-        Router::setActualCleanUrl('cms', 'error');
+        Router::setActualCleanUrl('sample', 'error');
         $sampleController = new SampleController();
-        $sampleController->error('');
+        return $sampleController->error('');
     }
 }

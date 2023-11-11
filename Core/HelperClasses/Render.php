@@ -40,6 +40,7 @@ class Render
 
     private static Resource $localeType;
     private static string $view;
+    private static $isStructural = false;
 
     public static function generateView(string $view, array $vars): Response
     {
@@ -47,12 +48,23 @@ class Render
         Debugger::setVars($vars);
         $deviceClass = self::getDeviceClass();
         $viewPath = self::getViewPath(self::$view);
-        $locale = self::getActualLocaleArray(self::$view);
-        extract($locale);
+        if (self::$isStructural === false) {
+            $locale = self::getActualLocaleArray(self::$view);
+            extract($locale);
+        }
         extract($vars);
         $debugBar = static::generateDebugBar();
         include($viewPath);
         return new Response();
+    }
+
+    private static function getViewPath(string $view): string
+    {
+        if (self::$isStructural) {
+            return \Config\STRUCTURAL_VIEWS_PATH . $view . '.' . Resource::php->value;
+        } else {
+            return ModuleManager::getExistingFilePath(\Config\VIEWS_PATH . $view, Resource::php);
+        }
     }
 
     private static function getDeviceClass(): string
@@ -75,8 +87,8 @@ class Render
         }
         return array_merge($commonLocale, $actualLocale);
     }
-    
-    private static function getLocale():array
+
+    private static function getLocale(): array
     {
         $languagePath = self::getLanguagePath();
         switch (self::$localeType) {
@@ -116,11 +128,6 @@ class Render
         }
     }
 
-    private static function getViewPath(string $view): string
-    {
-        return ModuleManager::getExistingFilePath(\Config\VIEWS_PATH . $view, Resource::php);
-    }
-
     public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
     {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
@@ -149,4 +156,8 @@ class Render
         return new Response();
     }
 
+    public static function setStructural(bool $isStructural = true)
+    {
+        self::$isStructural = $isStructural;
+    }
 }

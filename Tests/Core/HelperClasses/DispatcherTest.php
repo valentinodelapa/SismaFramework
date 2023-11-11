@@ -55,14 +55,14 @@ class DispatcherTest extends TestCase
      */
     public function testStructuralFileFopen()
     {
-        $_SERVER['REQUEST_URI'] = '/css/DebugBar.css';
+        $_SERVER['REQUEST_URI'] = '/css/debugBar.css';
         $resourceMakerMock = $this->createMock(ResourceMaker::class);
         $resourceMakerMock->expects($this->once())
                 ->method('isAcceptedResourceFile')
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with(\Config\STRUCTURAL_ASSETS_PATH . 'css'.DIRECTORY_SEPARATOR.'DebugBar.css');
+                ->with(\Config\STRUCTURAL_ASSETS_PATH . 'css'.DIRECTORY_SEPARATOR.'debugBar.css');
         $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
         $dispatcher->run();
     }

@@ -34,8 +34,9 @@ use SismaFramework\Core\Enumerations\Resource;
  */
 class Templater
 {
+
     private static $isStructural = false;
-    
+
     public static function setStructural(bool $isStructural = true)
     {
         self::$isStructural = $isStructural;
@@ -56,14 +57,13 @@ class Templater
         $path = self::getTemplatePath($template);
         return file_get_contents($path);
     }
-    
+
     private static function getTemplatePath(string $template)
     {
-        if(self::$isStructural){
-            return \Config\STRUCTURAL_TEMPLATES_PATH . $template . '.html';
-        }else{
-            return ModuleManager::getExistingFilePath(\Config\TEMPLATES_PATH.$template, Resource::html);
+        if (self::$isStructural) {
+            return \Config\STRUCTURAL_TEMPLATES_PATH . $template . '.' . Resource::html->value;
+        } else {
+            return ModuleManager::getExistingFilePath(\Config\TEMPLATES_PATH . $template, Resource::html);
         }
     }
-
 }

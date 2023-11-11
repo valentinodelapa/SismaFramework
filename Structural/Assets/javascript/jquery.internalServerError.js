@@ -26,16 +26,8 @@
  Author     : Valentino de Lapa
  */
 
-$(document).ready(function () {
-
-    $('.debug-information-label').on('click', function () {
-        var bodyInformationType = $(this).data('body-type');
-        $.each($('.debug-bar-body'), function () {
-            if ($(this).hasClass(bodyInformationType) === false) {
-                $(this).hide();
-            }
-        });
-        $(this).closest('.debug-bar').find('.' + bodyInformationType).toggle();
-    });
-
+$(function () {
+    setTimeout(function () {
+        $('body').removeClass('loading');
+    }, 1000);
 });

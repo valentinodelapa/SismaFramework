@@ -1,26 +1,34 @@
 <div class="debug-bar">
     <div class="debug-bar-header">
         <div class="debug-bar-header-left">
-            <label>Database</label><div class="debug-information-label" id="debug-information-database">{{queryExecutedNumber}}</div>
-            <label>Log</label><div class="debug-information-label" id="debug-information-log">{{logRowNumber}}</div>
-            <label>Form</label><div class="debug-information-label" id="debug-information-form">{{formFilterNumber}}</div>
-            <label>Variables</label><div class="debug-information-label" id="debug-information-vars">{{varsNumber}}</div>
+            <label>Database</label>
+            <div class="debug-information-label"
+                 data-body-type="debug-body-database">{{queryExecutedNumber}}</div>
+            <label>Log</label>
+            <div class="debug-information-label"
+                 data-body-type="debug-body-log">{{logRowNumber}}</div>
+            <label>Form</label>
+            <div class="debug-information-label"
+                 data-body-type="debug-body-form">{{formFilterNumber}}</div>
+            <label>Variables</label>
+            <div class="debug-information-label"
+                 data-body-type="debug-body-vars">{{varsNumber}}</div>
         </div>
         <div class="debug-bar-header-right">
             <div>{{memoryUsed}} MB</div>
             <div>{{executionTime}} ms</div>
         </div>
     </div>
-    <div class="debug-bar-body" id="debug-body-database">
+    <div class="debug-bar-body debug-body-database">
         <pre>{{debugBarQuery}}</pre>
     </div>
-    <div class="debug-bar-body" id="debug-body-log">
+    <div class="debug-bar-body debug-body-log">
         <pre>{{debugBarLog}}</pre>
     </div>
-    <div class="debug-bar-body" id="debug-body-form">
+    <div class="debug-bar-body debug-body-form">
         <pre>{{debugBarForm}}</pre>
     </div>
-    <div class="debug-bar-body" id="debug-body-vars">
+    <div class="debug-bar-body debug-body-vars">
         <pre>{{debugBarVars}}</pre>
     </div>
 </div>
