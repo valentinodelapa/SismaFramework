@@ -40,7 +40,7 @@
                     <tbody>
                         <tr>
                             <td class="text-start"><?php echo $error['message']; ?></td>
-                            <td><?php echo $error['code']; ?></td>
+                            <td><?php echo $error['type']; ?></td>
                         </tr>
                     </tbody>
                 </table>

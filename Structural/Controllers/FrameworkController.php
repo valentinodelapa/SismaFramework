@@ -47,7 +47,7 @@ class FrameworkController extends BaseController
         $this->vars['project'] = \Config\PROJECT;
         $this->vars['error'] = [
             'message' => $throwable->getMessage(),
-            'code' => $throwable->getCode(),
+            'type' => $throwable->getCode(),
             'file' => $throwable->getFile(),
             'line' => $throwable->getLine(),
         ];
