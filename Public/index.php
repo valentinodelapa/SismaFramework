@@ -47,7 +47,7 @@ try {
         $error = error_get_last();
         $backtrace = debug_backtrace();
         if (is_array($error)) {
-            Logger::saveLog($error['message'], $error['code'], $error['file'], $error['line']);
+            Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
             if (\Config\DEVELOPMENT_ENVIRONMENT) {
                 Logger::saveTrace($backtrace);
                 Router::setActualCleanUrl('framework', 'nonThowableError');
