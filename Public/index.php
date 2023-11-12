@@ -41,27 +41,9 @@ use SismaFramework\ExtendedClasses\RedirectException;
 use SismaFramework\Sample\Controllers\SampleController;
 
 try {
-
     require_once(__DIR__ . '/../Config/config.php');
-    register_shutdown_function(function () {
-        $error = error_get_last();
-        $backtrace = debug_backtrace();
-        if (is_array($error)) {
-            Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
-            if (\Config\DEVELOPMENT_ENVIRONMENT) {
-                Logger::saveTrace($backtrace);
-                Router::setActualCleanUrl('framework', 'nonThowableError');
-                $frameworkController = new FrameworkController();
-                $frameworkController->nonThrowableError($error, $backtrace);
-            } else {
-                Router::setActualCleanUrl('framework', 'internalServerError');
-                $frameworkController = new FrameworkController();
-                $frameworkController->internalServerError();
-            }
-        }
-    });
     require_once(__DIR__ . '/../Autoload/autoload.php');
-
+    require_once(__DIR__ . '/../ErrorHandling/errorHandling.php');
     Session::start();
     $dispatcher = new Dispatcher();
     return $dispatcher->run();
