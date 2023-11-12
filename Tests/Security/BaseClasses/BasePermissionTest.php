@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Tests\Core\BaseClasses;
+namespace SismaFramework\Tests\Security\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Security\Enumerations\AccessControlEntry;

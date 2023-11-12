@@ -28,7 +28,6 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Filter;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\ProprietaryTypes\SismaDate;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\ProprietaryTypes\SismaTime;
@@ -135,36 +134,71 @@ class FilterTest extends TestCase
     public function testIsAlphanumericString()
     {
         $this->assertTrue(Filter::isAlphanumericString('123alphanumericStringValue'));
+        $this->assertTrue(Filter::isAlphanumericString('alphabeticStringValue'));
+        $this->assertTrue(Filter::isAlphanumericString('123'));
         $this->assertFalse(Filter::isAlphanumericString('123 alphanumeric string value'));
-        $this->assertFalse(Filter::isAlphanumericString('alphabeticStringValue'));
         $this->assertFalse(Filter::isAlphanumericString('alphabetic string value with spaces'));
-        $this->assertFalse(Filter::isAlphanumericString('123'));
     }
 
     public function testIsMinLimitAlphanumericString()
     {
         $this->assertTrue(Filter::isMinLimitAlphanumericString('123stringMinLimitValue', 10));
+        $this->assertTrue(Filter::isMinLimitAlphanumericString('stringMaxLimitValue', 10));
         $this->assertFalse(Filter::isMinLimitAlphanumericString('123 string min limit value', 10));
-        $this->assertFalse(Filter::isMinLimitAlphanumericString('stringMaxLimitValue', 10));
         $this->assertFalse(Filter::isMinLimitAlphanumericString('fake', 10));
     }
 
     public function testIsMaxLimitAlphanumericString()
     {
         $this->assertTrue(Filter::isMaxLimitAlphanumericString('123stringMaxLimitValue', 30));
+        $this->assertTrue(Filter::isMaxLimitAlphanumericString('stringMaxLimitValue', 30));
         $this->assertFalse(Filter::isMaxLimitAlphanumericString('123 string max limit value', 30));
-        $this->assertFalse(Filter::isMaxLimitAlphanumericString('stringMaxLimitValue', 30));
         $this->assertFalse(Filter::isMaxLimitAlphanumericString('fake', 3));
     }
 
     public function testLimitAlphanumericString()
     {
         $this->assertTrue(Filter::isLimitAlphanumericString('123stringLimitValue', 10, 30));
+        $this->assertTrue(Filter::isLimitAlphanumericString('stringMaxLimitValue', 10, 30));
         $this->assertFalse(Filter::isLimitAlphanumericString('123 string limit value', 10, 30));
-        $this->assertFalse(Filter::isLimitAlphanumericString('stringMaxLimitValue', 10, 30));
         $this->assertFalse(Filter::isLimitAlphanumericString('fake', 1, 3));
         $this->assertFalse(Filter::isLimitAlphanumericString('fake', 10, 30));
         $this->assertFalse(Filter::isLimitAlphanumericString('fake', 10, 3));
+    }
+
+    public function testIsStrictAlphanumericString()
+    {
+        $this->assertTrue(Filter::isStrictAlphanumericString('123alphanumericStringValue'));
+        $this->assertFalse(Filter::isStrictAlphanumericString('123 alphanumeric string value'));
+        $this->assertFalse(Filter::isStrictAlphanumericString('alphabeticStringValue'));
+        $this->assertFalse(Filter::isStrictAlphanumericString('alphabetic string value with spaces'));
+        $this->assertFalse(Filter::isStrictAlphanumericString('123'));
+    }
+
+    public function testIsMinLimitStrictAlphanumericString()
+    {
+        $this->assertTrue(Filter::isMinLimitStrictAlphanumericString('123stringMinLimitValue', 10));
+        $this->assertFalse(Filter::isMinLimitStrictAlphanumericString('123 string min limit value', 10));
+        $this->assertFalse(Filter::isMinLimitStrictAlphanumericString('stringMaxLimitValue', 10));
+        $this->assertFalse(Filter::isMinLimitStrictAlphanumericString('fake', 10));
+    }
+
+    public function testIsMaxLimitStrictAlphanumericString()
+    {
+        $this->assertTrue(Filter::isMaxLimitStrictAlphanumericString('123stringMaxLimitValue', 30));
+        $this->assertFalse(Filter::isMaxLimitStrictAlphanumericString('123 string max limit value', 30));
+        $this->assertFalse(Filter::isMaxLimitStrictAlphanumericString('stringMaxLimitValue', 30));
+        $this->assertFalse(Filter::isMaxLimitStrictAlphanumericString('fake', 3));
+    }
+
+    public function testLimitStrictAlphanumericString()
+    {
+        $this->assertTrue(Filter::isLimitStrictAlphanumericString('123stringLimitValue', 10, 30));
+        $this->assertFalse(Filter::isLimitStrictAlphanumericString('123 string limit value', 10, 30));
+        $this->assertFalse(Filter::isLimitStrictAlphanumericString('stringMaxLimitValue', 10, 30));
+        $this->assertFalse(Filter::isLimitStrictAlphanumericString('fake', 1, 3));
+        $this->assertFalse(Filter::isLimitStrictAlphanumericString('fake', 10, 30));
+        $this->assertFalse(Filter::isLimitStrictAlphanumericString('fake', 10, 3));
     }
 
     public function testIsSecurePassword()

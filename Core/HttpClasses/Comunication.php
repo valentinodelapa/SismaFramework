@@ -40,9 +40,9 @@ class Comunication
         if (isset($request->server['HTTPS'])) {
             return ($request->server['HTTPS'] === 'on') ? ComunicationProtocol::https : ComunicationProtocol::http;
         } elseif (isset($request->server['SERVER_PROTOCOL'])) {
-            $protocol = stripos($request->server['SERVER_PROTOCOL'], 'https') === 0 ? ComunicationProtocol::https : ComunicationProtocol::http;
+            return stripos($request->server['SERVER_PROTOCOL'], 'https') === 0 ? ComunicationProtocol::https : ComunicationProtocol::http;
         } else {
-            $protocol = \Config\DEVELOPMENT_ENVIRONMENT ? ComunicationProtocol::http : ComunicationProtocol::https;
+            return \Config\DEVELOPMENT_ENVIRONMENT ? ComunicationProtocol::http : ComunicationProtocol::https;
         }
     }
 }

@@ -91,8 +91,7 @@ class Dispatcher
             if ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
                 $this->resourceMaker->setStreamContex();
             } else {
-                $router->reloadWithParsedQueryString();
-                exit();
+                return $router->reloadWithParsedQueryString();
             }
         }
         $this->parsePath();
@@ -118,7 +117,7 @@ class Dispatcher
         $this->selectModule();
         if (isset($this->pathParts[1])) {
             $this->action = NotationManager::convertToCamelCase($this->pathParts[1]);
-        } else {
+        } elseif ($this->fixturesManager->isFixtures($this->pathParts) === false) {
             $this->defaultActionInjected = true;
             $this->action = $this->pathParts[1] = \Config\DEFAULT_ACTION;
         }

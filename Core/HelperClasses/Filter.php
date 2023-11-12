@@ -168,6 +168,30 @@ class Filter
         return $result;
     }
 
+    public static function isMinLimitStrictAlphanumericString($value, int $minLimit): bool
+    {
+        $result = true;
+        $result = (self::isStrictAlphanumericString($value)) ? $result : false;
+        $result = (strlen($value) >= $minLimit) ? $result : false;
+        return $result;
+    }
+
+    public static function isMaxLimitStrictAlphanumericString($value, int $maxLimit): bool
+    {
+        $result = true;
+        $result = (self::isStrictAlphanumericString($value)) ? $result : false;
+        $result = (strlen($value) <= $maxLimit) ? $result : false;
+        return $result;
+    }
+
+    public static function isLimitStrictAlphanumericString($value, int $minLimit, int $maxLimit): bool
+    {
+        $result = true;
+        $result = (self::isMinLimitStrictAlphanumericString($value, $minLimit)) ? $result : false;
+        $result = (self::isMaxLimitStrictAlphanumericString($value, $maxLimit)) ? $result : false;
+        return $result;
+    }
+
     public static function isSecurePassword($value): bool
     {
         $result = true;

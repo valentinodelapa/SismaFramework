@@ -32,6 +32,7 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
+use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 
@@ -48,6 +49,25 @@ class DispatcherTest extends TestCase
         parent::__construct($name, $data, $dataName);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    
+    public function testRunWithReloadQueryString()
+    {
+        $_SERVER['REQUEST_URI'] = 'sample/error?message=error';
+        $_SERVER['QUERY_STRING'] = 'message=error';
+        $resourceMakerMock = $this->createMock(ResourceMaker::class);
+        $resourceMakerMock->expects($this->once())
+                ->method('isAcceptedResourceFile')
+                ->willReturn(false);
+        $routerMock = $this->createMock(Router::class);
+        $routerMock->expects($this->once())
+                ->method('reloadWithParsedQueryString');
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher->run($routerMock);
     }
 
     /**
@@ -139,10 +159,13 @@ class DispatcherTest extends TestCase
     public function testRunFixture()
     {
         $fixturesManagerMock = $this->createMock(FixturesManager::class);
+        $fixturesManagerMock->expects($this->exactly(2))
+                ->method('isFixtures')
+                ->willReturn(true);
         $fixturesManagerMock->expects($this->once())
                 ->method('run');
         $_SERVER['REQUEST_URI'] = '/fixtures/';
-        $dispatcher = new Dispatcher( new Request(), new ResourceMaker, $fixturesManagerMock);
+        $dispatcher = new Dispatcher( new Request(), new ResourceMaker(), $fixturesManagerMock);
         $dispatcher->run();
     }
 

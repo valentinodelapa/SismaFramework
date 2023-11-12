@@ -6,23 +6,24 @@ La struttura predefinita completa delle cartelle di configurazione è la seguent
 
 ```bash
 NomeCartellaProgetto
-|__ NomeCartellaApplicazione
-    |__ Assets
-    |   |__ css
-    |   |__ javascript
-    |   |__ jpeg
-    |   |__ png
-    |__ Controllers
-    |__ Entites
-    |__ Enumerations
-    |__ Forms
-    |__ Locales
-    |__ Models
-    |__ Permissions
-    |__ Services
-    |__ Templates
-    |__ Views
-    |__ Wrappers
+└── NomeCartellaApplicazione
+    ├── Assets
+    │   ├── css
+    │   ├── javascript
+    │   ├── jpeg
+    │   └── png
+    ├── Controllers
+    ├── Entites
+    ├── Enumerations
+    ├── Forms
+    ├── Locales
+    ├── Models
+    ├── Permissions
+    ├── Services
+    ├── Templates
+    ├── Views
+    ├── Voters
+    └── Wrappers
 ```
 
 Mantenendo tale struttura le uniche modifiche da effettuare nel file di configurazione sono:

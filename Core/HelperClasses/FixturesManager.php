@@ -48,7 +48,7 @@ class FixturesManager
     public function isFixtures(array $pathParts): bool
     {
         if (count($pathParts) === 1) {
-            return ($pathParts[0] === strtolower(\Config\FIXTURES)) && (\Config\DEVELOPMENT_ENVIRONMENT === true);
+            return ($pathParts[0] === strtolower(\Config\FIXTURES)) && \Config\DEVELOPMENT_ENVIRONMENT;
         } else {
             return false;
         }
@@ -58,7 +58,7 @@ class FixturesManager
     {
         $this->getFixturesArray();
         $this->executeFixturesArray(array_keys($this->fixturesArray));
-        return Response;
+        return new Response();
     }
 
     public function extecuted(): bool

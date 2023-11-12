@@ -37,9 +37,9 @@ class LoggerTest extends TestCase
     public function testSaveLogAndGetLog()
     {
         Logger::clearLog();
-        Logger::saveLog('sample message', 1);
+        Logger::saveLog('sample message', 1, 'filePath', 0);
         $log = Logger::getLog();
-        $this->assertStringContainsString('sample message', $log);
+        $this->assertStringContainsString("1\tsample message\tfilePath(0)\n", $log);
     }
     
     public function testCreateLogDirectory()
@@ -56,11 +56,11 @@ class LoggerTest extends TestCase
         Logger::setMaxRows(2);
         Logger::clearLog();
         $this->assertEquals(0, count(Logger::getLogRowByRow()));
-        Logger::saveLog('sample message', 1);
+        Logger::saveLog('sample message', 1, 'filePath', 0);
         $this->assertEquals(1, count(Logger::getLogRowByRow()));
-        Logger::saveLog('sample message', 1);
+        Logger::saveLog('sample message', 1, 'filePath', 0);
         $this->assertEquals(2, count(Logger::getLogRowByRow()));
-        Logger::saveLog('sample message', 1);
+        Logger::saveLog('sample message', 1, 'filePath', 0);
         $this->assertEquals(2, count(Logger::getLogRowByRow()));
     }
     
@@ -82,8 +82,8 @@ class LoggerTest extends TestCase
     public function testGetLogRowByRow()
     {
         Logger::clearLog();
-        Logger::saveLog('sample message', 1);
-        Logger::saveLog('sample message', 1);
+        Logger::saveLog('sample message', 1, 'filePath', 0);
+        Logger::saveLog('sample message', 1, 'filePath', 0);
         $log = Logger::getLogRowByRow();
         $this->assertIsArray($log);
         $this->assertCount(2, $log);

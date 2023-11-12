@@ -2,7 +2,7 @@
 
 I controllori si occupano di elaborare i dati e le informazioni e fornirle all'interfaccia grafia dell'applicazione.
 
-Facendo riferimento alla stuttura standard illustrata nel capitolo [Struttura cartelle di progetto](PROJECT_FOLDER_STRUCTURE.md), la cartella `Controllers` è quella deputata a contenere le classi di questo tipo. Per modificare tale comportamento prodefinito bisogna agire sulle constanti di configurazione come segue:
+Facendo riferimento alla stuttura standard illustrata nel capitolo [Struttura cartelle di progetto](project-folder-structure.md), la cartella `Controllers` è quella deputata a contenere le classi di questo tipo. Per modificare tale comportamento prodefinito bisogna agire sulle constanti di configurazione come segue:
 
 * nel caso si intenda variare esclusivamente il nome della cartella contenitore è sufficiente modificare la seguente costante
   
@@ -30,7 +30,7 @@ use SismaFramework\Core\BaseClasses\BaseController;
 
 class SampleController extends BaseController
 {
-    
+	
 }
 ```
 
@@ -42,7 +42,7 @@ I metodi della classi Controllore sono chiamati *action*: essi si occupano di im
 
 * enumerazioni di tipo `\BackedEnum`, che vengono parsate mediante il valore dichiarato per il singolo case;
 
-* entità, che vengono parsate in base al tipo ed all'id passato come parametro (si veda il capitolo [ORM](ORM.md)).
+* entità, che vengono parsate in base al tipo ed all'id passato come parametro (si veda il capitolo [ORM](orm.md)).
 
 Il meccanismo di passaggio dei parametri avviene mediante la sintassi `/nome-argomento/valore/` inserira nella barra degli indirizzi dopo il nome del *controller* e quello dell'*action*:
 
@@ -124,6 +124,6 @@ La classe `Router` invece di occupa del reindirizzamento verso un altro coltroll
 
 * * *
 
-[Indice](index.md) | Precedente: [Struttura cartelle di progetto](project-fonder-structure.md) | Successivo: [Viste](views.md)
+[Indice](index.md) | Precedente: [Struttura cartelle di progetto](project-folder-structure.md) | Successivo: [Viste](views.md)
 
 

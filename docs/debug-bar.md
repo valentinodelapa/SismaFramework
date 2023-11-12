@@ -26,6 +26,6 @@ A destra della **Barra di Debug** sono invece presenti le seguenti sezioni:
 
 * * *
 
-[Indice](index.md) | Precedente: [Funzionalita Aggiuntive](orm-additiona-features.md)
+[Indice](index.md) | Precedente: [Funzionalita Aggiuntive](orm-additional-features.md)
 
 

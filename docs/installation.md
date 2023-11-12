@@ -8,7 +8,7 @@ Alla luce di ciò, l'utilizzo della tecnica del **submodule** è da preferire al
 
 Come noto, in genere il pattern MVC presenta un unico punto di accesso dell'applicazione. In questo progetto il punto di accesso è rappresentato dal file `index.php` presente nella cartella `Public`. Un file `.htaccess` configurato a dovere ed inserito nella root del progetto si dovrà occupare di rindirizare le richieste al file indicato.
 
-Per mantenere l'integrita della libreria e quindi mantenere la configurazione personalizzata qualora siano disponibili aggiornamenti e si intenda eseguirli (azione ovviamente consigliata) è possibile creare una copia della cartella `Public` nella root del progetto e configurare il file `.htaccess` in modo che punti ad esso.
+Per mantenere l'integrita della libreria e quindi mantenere la configurazione personalizzata qualora siano disponibili aggiornamenti e si intenda eseguirli (azione ovviamente consigliata), è possibile creare una copia della cartella `Public` nella root del progetto e configurare il file `.htaccess` in modo che punti ad esso.
 
 Qualora di intenda procedere verso tale scenario è necessario apportare alcune modifiche alla copia effettuata del file `index.php`, ovvero sostituire la seguenteriga di codice:
 
@@ -81,4 +81,4 @@ const DATABASE_USERNAME = '';
 
 ---
 
-[Indice](index.md) | Precedente: [Introduzione](introduction.md) | Successivo: [Struttura progetto](project-folder-structure.md)
+[Indice](index.md) | Precedente: [Introduzione](overview.md) | Successivo: [Struttura progetto](project-folder-structure.md)

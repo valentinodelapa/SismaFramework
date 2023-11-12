@@ -3,8 +3,8 @@
 namespace SismaFramework\Sample\Permissions;
 
 use SismaFramework\Security\BaseClasses\BasePermission;
-use SismaFramework\Security\Enumerations\AccessControlEntry;
-use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Security\BaseClasses\BaseVoter;
+use SismaFramework\Sample\Voters\SampleVoter;
 
 class SamplePermission extends BasePermission
 {
@@ -14,21 +14,8 @@ class SamplePermission extends BasePermission
         
     }
 
-    protected function checkPermmisions(): bool
+    protected function getVoter(): BaseVoter
     {
-        switch ($this->attribute) {
-            case AccessControlEntry::allow:
-                return isset($this->subject->text);
-            case AccessControlEntry::deny:
-                return !isset($this->subject->text);
-            default:
-                return false;
-        }
+        return new SampleVoter();
     }
-
-    protected function isInstancePermitted(): bool
-    {
-        return $this->subject instanceof BaseSample;
-    }
-
 }

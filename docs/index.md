@@ -24,10 +24,10 @@
 
 * [ORM](orm.md)
   
-  * [Entità](orm-entites.md)
+  * [Entità](orm-entities.md)
   
   * [Modelli](orm-models.md)
   
-  * [Funzionalità aggiuntive](orm-additiona-features.md)
+  * [Funzionalità aggiuntive](orm-additional-features.md)
 
 * [Barra di debug](debug-bar.md)
