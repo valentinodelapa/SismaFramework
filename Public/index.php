@@ -26,10 +26,6 @@
 
 namespace SismaFramework\Public;
 
-ini_set('display_errors', 'off');
-ini_set('display_startup_errors', 'off');
-error_reporting(0);
-
 use SismaFramework\BaseClasses\BaseException;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Dispatcher;
@@ -39,6 +35,10 @@ use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Structural\Controllers\FrameworkController;
 use SismaFramework\ExtendedClasses\RedirectException;
 use SismaFramework\Sample\Controllers\SampleController;
+
+ini_set('display_errors', 'off');
+ini_set('display_startup_errors', 'off');
+error_reporting(0);
 
 try {
     require_once(__DIR__ . '/../Config/config.php');
