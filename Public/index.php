@@ -69,8 +69,8 @@ try {
         $frameworkController = new FrameworkController();
         return $frameworkController->throwableError($throwable);
     } else {
-        Router::setActualCleanUrl('sample', 'error');
-        $sampleController = new SampleController();
-        return $sampleController->error('');
+        Router::setActualCleanUrl('framework', 'internalServerError');
+        $frameworkController = new FrameworkController();
+        return $frameworkController->internalServerError();
     }
 }
