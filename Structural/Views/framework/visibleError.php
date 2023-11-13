@@ -7,8 +7,6 @@
         <title><?php echo $project; ?> - Developement Environment Error Handling1</title>
         <!-- Bootstrap 5 -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-        <!-- Debug Bar -->
-        <link rel="stylesheet" type="text/css"  href="<?php echo $metaUrl; ?>/css/debugBar.css">
     </head>
     <body>
         <header>
@@ -80,7 +78,6 @@
                 </div>
             </div>
         </footer>
-        <?php echo $debugBar; ?>
     </body>
     <!-- jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script>
@@ -88,6 +85,4 @@
     <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/js/all.min.js" integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc" crossorigin="anonymous"></script>
     <!-- Bootstrap 5 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <!-- Debug Bar -->
-    <script src="<?php echo $metaUrl; ?>/javascript/jquery.debugBar.js" integrity="sha384-G56xiExbkq/IQm5RuP7Wqez1p+SOJDZcunm96/06PmCmslHzuHWBktncrpLiEU8q" crossorigin="anonymous"></script>
 </html>
