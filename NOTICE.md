@@ -18,16 +18,24 @@ Parte di questo software è ispirata alla repository [**Symfony**](https://githu
 
 Ringraziamo gli autori del progetto **Symfony** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](third-party-licenses/Symfony/LICENSE) è inclusa nella cartella third-party-licenses/SimpleORM con indicata la notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](https://github.com/symfony/symfony/blob/6.4/LICENSE) è inclusa nella cartella third-party-licenses/Symfony/ con indicata la notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2004-present Fabien Potencier
 
 ---
 
-La componente *ORM* è stata sviluppata basandosi su codice originale presente nella repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze.
+La componente *ORM* è stata sviluppata basandosi su codice originale presente nella repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze, come ad esempio:
+
+* Modifiche alla struttura del codice, che hanno comportato la riorganizzazione delle classi e delle interfacce.
+* Modifiche alla funzionalità del codice, che hanno comportato l'aggiunta di nuove funzionalità e la rimozione di funzionalità non necessarie e/o fuori contesto.
+* Modifiche dell'approccio che hanno comportato un cambiamento radicale del modo in cui il codice interagisce con il database, passando dal pattern active records al pattern data mapper.
+
+Le modifiche apportate al codice originale riguardano l'intero codice, pertanto non è possibile elencarle tutte in modo dettagliato
 
 Ringraziamo gli autori del progetto **SimpleORM** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](third-party-licenses/SimpleORM/LICENSE) è inclusa nella cartella third-party-licenses/Symfony con indicata notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](https://github.com/davideairaghi/php/blob/master/LICENSE) è inclusa nella cartella third-party-licenses/SimpleOrm/ con indicata notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2015-present Davide Airaghi
+
+
