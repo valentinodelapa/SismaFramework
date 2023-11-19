@@ -215,6 +215,7 @@ abstract class BaseForm
     private function switchFilter(string $propertyName): void
     {
         if (array_key_exists($propertyName, $this->filterFiledsMode) && property_exists($this->entityData, $propertyName)) {
+                $this->filterErrors[$propertyName . "ErrorCustomMessage"] = null;
             if ($this->filterHasFailed($propertyName) && ($this->isNullButNotNullable($propertyName))) {
                 $this->filterResult = false;
                 $this->filterErrors[$propertyName . "Error"] = true;
