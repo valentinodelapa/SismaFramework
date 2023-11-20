@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\ExtendedClasses\LogException;
+use SismaFramework\Security\ExtendedClasses\LogException;
 
 /**
  * @author Valentino de Lapa

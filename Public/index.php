@@ -26,14 +26,14 @@
 
 namespace SismaFramework\Public;
 
-use SismaFramework\BaseClasses\BaseException;
+use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Structural\Controllers\FrameworkController;
-use SismaFramework\ExtendedClasses\RedirectException;
+use SismaFramework\Security\ExtendedClasses\RedirectException;
 use SismaFramework\Sample\Controllers\SampleController;
 
 ini_set('display_errors', 'off');

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa.
+ * Copyright (c) 2020-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,22 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Exceptions;
+namespace SismaFramework\Security\ExtendedClasses;
 
-use SismaFramework\Security\ExtendedClasses\LogException;
+use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Core\HelperClasses\Logger;
 
 /**
  * @author Valentino de Lapa
  */
-class ModuleException extends LogException
+abstract class LogException extends BaseException
 {
-    
+    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        Logger::saveLog($message, $code, $this->getFile(), $this->getLine());
+        if (\Config\DEVELOPMENT_ENVIRONMENT) {
+            Logger::saveTrace($this->getTrace());
+        }
+    }
 }

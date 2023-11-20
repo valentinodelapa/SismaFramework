@@ -24,10 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\BaseClasses;
+namespace SismaFramework\Security\BaseClasses;
 
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HttpClasses\Response;
 
 /**
