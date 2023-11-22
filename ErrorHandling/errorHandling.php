@@ -34,6 +34,8 @@ register_shutdown_function(function () {
     $error = error_get_last();
     $backtrace = debug_backtrace();
     if (is_array($error)) {
+        \ob_end_clean();
+        \ob_start();
         Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
         if (\Config\DEVELOPMENT_ENVIRONMENT) {
             Logger::saveTrace($backtrace);

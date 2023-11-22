@@ -39,6 +39,8 @@ abstract class BaseException extends \Exception
 
     public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
     {
+        \ob_end_clean();
+        \ob_start();
         $this->response = new Response();
         $this->setResponseType();
     }

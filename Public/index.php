@@ -46,6 +46,7 @@ try {
     require_once(__DIR__ . '/../ErrorHandling/errorHandling.php');
     Session::start();
     $dispatcher = new Dispatcher();
+    \ob_start();
     return $dispatcher->run();
 } catch (RedirectException $exception) {
     return $exception->redirect();
@@ -60,6 +61,8 @@ try {
         return $sampleController->error('');
     }
 } catch (\Throwable $throwable) {
+    \ob_end_clean();
+    \ob_start();
     $response = new Response();
     $response->setResponseType(ResponseType::httpInternalServerError);
     Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
