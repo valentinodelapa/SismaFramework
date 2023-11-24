@@ -38,7 +38,7 @@ abstract class LogException extends BaseException
     {
         parent::__construct($message, $code, $previous);
         Logger::saveLog($message, $code, $this->getFile(), $this->getLine());
-        if (\Config\DEVELOPMENT_ENVIRONMENT) {
+        if (\Config\LOG_VERBOSE_ACTIVE) {
             Logger::saveTrace($this->getTrace());
         }
     }

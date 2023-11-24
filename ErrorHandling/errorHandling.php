@@ -37,7 +37,7 @@ register_shutdown_function(function () {
         \ob_end_clean();
         \ob_start();
         Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
-        if (\Config\DEVELOPMENT_ENVIRONMENT) {
+        if (\Config\LOG_VERBOSE_ACTIVE) {
             Logger::saveTrace($backtrace);
             Router::setActualCleanUrl('framework', 'nonThowableError');
             $frameworkController = new FrameworkController();

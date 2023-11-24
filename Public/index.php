@@ -65,7 +65,7 @@ try {
     $response = new Response();
     $response->setResponseType(ResponseType::httpInternalServerError);
     Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
-    if (\Config\DEVELOPMENT_ENVIRONMENT) {
+    if (\Config\LOG_VERBOSE_ACTIVE) {
         Logger::saveTrace($throwable->getTrace());
         Router::setActualCleanUrl('framework', 'thowableError');
         $frameworkController = new FrameworkController();
