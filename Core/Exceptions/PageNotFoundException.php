@@ -26,13 +26,13 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Security\ExtendedClasses\LogException;
+use SismaFramework\Security\ExtendedClasses\NoLogException;
 use SismaFramework\Core\Enumerations\ResponseType;
 
 /**
  * @author Valentino de Lapa
  */
-class PageNotFoundException extends LogException
+class PageNotFoundException extends NoLogException
 {
     public function setResponseType()
     {

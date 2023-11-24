@@ -44,6 +44,7 @@ class Render
 
     public static function generateView(string $view, array $vars): Response
     {
+        \ob_start();
         self::$view = $view;
         Debugger::setVars($vars);
         $deviceClass = self::getDeviceClass();

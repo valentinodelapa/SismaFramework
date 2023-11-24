@@ -46,7 +46,6 @@ try {
     require_once(__DIR__ . '/../ErrorHandling/errorHandling.php');
     Session::start();
     $dispatcher = new Dispatcher();
-    \ob_start();
     return $dispatcher->run();
 } catch (RedirectException $exception) {
     return $exception->redirect();
