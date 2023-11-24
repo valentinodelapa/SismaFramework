@@ -178,8 +178,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('sample - index', $result);
         $this->assertStringContainsString('Hello World', $result);
     }
@@ -193,8 +192,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('sample - index', $result);
         $this->assertStringContainsString('Hello World', $result);
     }
@@ -208,8 +206,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('sample - index', $result);
         $this->assertStringContainsString('Hello World', $result);
     }
@@ -223,8 +220,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('sample - index', $result);
         $this->assertStringContainsString('Hello World', $result);
     }
@@ -238,8 +234,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('sample - notify', $result);
         $this->assertStringContainsString('test message', $result);
     }
@@ -253,8 +248,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('other - index', $result);
         $this->assertStringContainsString('test message', $result);
     }
@@ -268,8 +262,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('other - index', $result);
         $this->assertStringContainsString('other test message', $result);
     }
@@ -284,8 +277,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('other - action-with-request', $result);
         $this->assertStringContainsString('test parameter', $result);
     }
@@ -300,8 +292,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('other - action-with-authentication', $result);
         $this->assertStringContainsString('is not submitted', $result);
     }
@@ -315,8 +306,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('other - action-with-default-value', $result);
         $this->assertStringContainsString('is default', $result);
     }
@@ -330,8 +320,7 @@ class DispatcherTest extends TestCase
         \ob_start();
         $dispatcher = new Dispatcher();
         $dispatcher->run();
-        $result = \ob_get_contents();
-        \ob_end_clean();
+        $result = \ob_get_clean();
         $this->assertStringContainsString('other - action-with-array', $result);
         $this->assertStringContainsString('<div>0: first</div>', $result);
         $this->assertStringContainsString('<div>1: second</div>', $result);

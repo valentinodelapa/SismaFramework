@@ -27,6 +27,7 @@ Copyright (c) 2004-present Fabien Potencier
 La componente *ORM* è stata sviluppata basandosi su codice originale presente nella repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze, come ad esempio:
 
 * Modifiche alla struttura del codice, che hanno comportato la riorganizzazione delle classi e delle interfacce.
+* Modifiche alla gestione dei risultati delle query tramite l'elaborazione degli stessi in modo da soddisfare le esigenze del progetto.
 * Modifiche alla funzionalità del codice, che hanno comportato l'aggiunta di nuove funzionalità e la rimozione di funzionalità non necessarie e/o fuori contesto.
 * Modifiche dell'approccio che hanno comportato un cambiamento radicale del modo in cui il codice interagisce con il database, passando dal pattern active records al pattern data mapper.
 
