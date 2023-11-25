@@ -27,8 +27,10 @@
 namespace SismaFramework\Structural\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Security\BaseClasses\BaseException;
 
 /**
  * @author Valentino de Lapa
@@ -39,7 +41,7 @@ class FrameworkController extends BaseController
     public function internalServerError():Response
     {
         Render::setStructural();
-        return Render::generateView('framework/internalServerError', $this->vars);
+        return Render::generateView('framework/internalServerError', $this->vars, ResponseType::httpInternalServerError);
     }
 
     public function throwableError(\Throwable $throwable): Response
@@ -53,7 +55,7 @@ class FrameworkController extends BaseController
         ];
         $this->vars['backtrace'] = $throwable->getTrace();
         Render::setStructural();
-        return Render::generateView('framework/visibleError', $this->vars);
+        return Render::generateView('framework/visibleError', $this->vars, ($throwable instanceof BaseException) ? $throwable->getResponseType() : ResponseType::httpInternalServerError);
     }
 
     public function nonThrowableError(array $error, array $backtrace): Response
@@ -62,6 +64,6 @@ class FrameworkController extends BaseController
         $this->vars['error'] = $error;
         $this->vars['backtrace'] = $backtrace;
         Render::setStructural();
-        return Render::generateView('framework/visibleError', $this->vars);
+        return Render::generateView('framework/visibleError', $this->vars, ResponseType::httpInternalServerError);
     }
 }

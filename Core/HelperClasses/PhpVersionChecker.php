@@ -24,27 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Security\BaseClasses;
+namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\Exceptions\PhpVersionException;
 
 /**
  * @author Valentino de Lapa
  */
-abstract class BaseException extends \Exception
+class PhpVersionChecker
 {
-
-    protected Response $response;
-
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+    public static function checkPhpVersion():void
     {
-        \ob_end_clean();
-        $this->response = new Response();
-    }
-    
-    public function getResponseType(): ResponseType
-    {
-        return ResponseType::httpInternalServerError;
+        if (PHP_MAJOR_VERSION < \Config\MINIMUM_MAJOR_PHP_VERSION){
+            throw  new PhpVersionException();
+        }elseif(PHP_MAJOR_VERSION === \Config\MINIMUM_MAJOR_PHP_VERSION){
+            if(PHP_MINOR_VERSION < \Config\MINIMUM_MINOR_PHP_VERSION){
+                throw  new PhpVersionException();
+            }elseif(PHP_MINOR_VERSION === \Config\MINIMUM_MINOR_PHP_VERSION){
+                if(PHP_RELEASE_VERSION < \Config\MINIMUM_RELEASE_PHP_VERSION){
+                    throw  new PhpVersionException();
+                }
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@
 
 namespace SismaFramework\Core\Interfaces\Controllers;
 
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HttpClasses\Response;
 
 /**
@@ -16,7 +17,7 @@ use SismaFramework\Core\HttpClasses\Response;
 interface DefaultControllerInterface
 {
 
-    public function error(string $message): Response;
+    public function error(string $message, ResponseType $responseType): Response;
 
     public function notify(string $message): Response;
 }

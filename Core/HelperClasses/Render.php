@@ -28,6 +28,7 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\RenderException;
 use SismaFramework\Core\HttpClasses\Response;
 
@@ -42,9 +43,8 @@ class Render
     private static string $view;
     private static $isStructural = false;
 
-    public static function generateView(string $view, array $vars): Response
+    public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
     {
-        \ob_start();
         self::$view = $view;
         Debugger::setVars($vars);
         $deviceClass = self::getDeviceClass();
@@ -54,9 +54,12 @@ class Render
             extract($locale);
         }
         extract($vars);
-        $debugBar = static::generateDebugBar();
+        \ob_start();
         include($viewPath);
-        return new Response();
+        echo static::generateDebugBar();
+        $response = new Response();
+        $response->setResponseType($responseType);
+        return $response;
     }
 
     private static function getViewPath(string $view): string
@@ -148,13 +151,15 @@ class Render
         }
     }
 
-    public static function generateData(string $view, array $vars): Response
+    public static function generateData(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
     {
         self::$view = $view;
         extract($vars);
         $viewPath = self::getViewPath(self::$view);
         include($viewPath);
-        return new Response();
+        $response = new Response();
+        $response->setResponseType($responseType);
+        return $response;
     }
 
     public static function setStructural(bool $isStructural = true)

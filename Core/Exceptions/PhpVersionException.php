@@ -24,27 +24,18 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Security\BaseClasses;
-
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HttpClasses\Response;
+namespace SismaFramework\Core\Exceptions;
 
 /**
  * @author Valentino de Lapa
  */
-abstract class BaseException extends \Exception
+class PhpVersionException extends \Exception
 {
-
-    protected Response $response;
-
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+    public function __construct()
     {
-        \ob_end_clean();
-        $this->response = new Response();
-    }
-    
-    public function getResponseType(): ResponseType
-    {
-        return ResponseType::httpInternalServerError;
+        $phpMinimumVersionRequired = \Config\MINIMUM_MAJOR_PHP_VERSION.'.'.\Config\MINIMUM_MINOR_PHP_VERSION.'.'.\Config\MINIMUM_RELEASE_PHP_VERSION;
+        $phpActualVersion = PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.'.'.PHP_RELEASE_VERSION;
+        $message = "The minimum required version of PHP is ".$phpMinimumVersionRequired.". Your version of PHP is ".$phpActualVersion.".<br />Please update your PHP version to ".$phpMinimumVersionRequired." or higher in order to use this application.";
+        return parent::__construct($message);
     }
 }

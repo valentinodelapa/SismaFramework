@@ -38,8 +38,8 @@ abstract class RedirectException extends BaseException
 {
     abstract public function redirect();
     
-    public function setResponseType()
+    public function getResponseType(): ResponseType
     {
-        $this->response->setResponseType(ResponseType::httpFound);
+        return ResponseType::httpFound;
     }
 }

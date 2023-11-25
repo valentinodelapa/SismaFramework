@@ -35,10 +35,11 @@ register_shutdown_function(function () {
     $backtrace = debug_backtrace();
     if (is_array($error)) {
         \ob_end_clean();
-        \ob_start();
         Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
         if (\Config\LOG_VERBOSE_ACTIVE) {
             Logger::saveTrace($backtrace);
+        }
+        if (\Config\DEVELOPMENT_ENVIRONMENT) {
             Router::setActualCleanUrl('framework', 'nonThowableError');
             $frameworkController = new FrameworkController();
             $frameworkController->nonThrowableError($error, $backtrace);

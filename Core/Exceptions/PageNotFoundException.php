@@ -34,8 +34,9 @@ use SismaFramework\Core\Enumerations\ResponseType;
  */
 class PageNotFoundException extends NoLogException
 {
-    public function setResponseType()
+
+    public function getResponseType(): ResponseType
     {
-        $this->response->setResponseType(ResponseType::httpNotFound);
+        return ResponseType::httpNotFound;
     }
 }
