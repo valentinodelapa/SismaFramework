@@ -45,8 +45,15 @@ class Render
 
     public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
     {
-        self::$view = $view;
         Debugger::setVars($vars);
+        self::assemblesComponents($view, $vars);
+        echo static::generateDebugBar();
+        return self::getResponse($responseType);
+    }
+    
+    private static function assemblesComponents(string $view, array $vars):void
+    {
+        self::$view = $view;
         $deviceClass = self::getDeviceClass();
         $viewPath = self::getViewPath(self::$view);
         if (self::$isStructural === false) {
@@ -56,10 +63,6 @@ class Render
         extract($vars);
         \ob_start();
         include($viewPath);
-        echo static::generateDebugBar();
-        $response = new Response();
-        $response->setResponseType($responseType);
-        return $response;
     }
 
     private static function getViewPath(string $view): string
@@ -87,7 +90,7 @@ class Render
             if (isset($actualLocale['common'])) {
                 $commonLocale = array_merge($commonLocale, $actualLocale['common']);
             }
-            $actualLocale = $actualLocale[$part] ?? $actualLocale;
+            $actualLocale = $actualLocale[$part] ?? [];
         }
         return array_merge($commonLocale, $actualLocale);
     }
@@ -132,15 +135,6 @@ class Render
         }
     }
 
-    public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
-    {
-        $reflectionEnumeration = new \ReflectionClass($enumeration);
-        $enumerationName = $reflectionEnumeration->getShortName();
-        $locale = self::getLocale();
-        $field = $locale['enumerations'][$enumerationName];
-        return $field[$enumeration];
-    }
-
     private static function generateDebugBar(): string
     {
         Debugger::endExecutionTimeCalculation();
@@ -150,16 +144,27 @@ class Render
             return '';
         }
     }
-
-    public static function generateData(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
+    
+    private static function getResponse(ResponseType $responseType):Response
     {
-        self::$view = $view;
-        extract($vars);
-        $viewPath = self::getViewPath(self::$view);
-        include($viewPath);
         $response = new Response();
         $response->setResponseType($responseType);
         return $response;
+    }
+
+    public static function generateData(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
+    {
+        self::assemblesComponents($view, $vars);
+        return self::getResponse($responseType);
+    }
+
+    public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
+    {
+        $reflectionEnumeration = new \ReflectionClass($enumeration);
+        $enumerationName = $reflectionEnumeration->getShortName();
+        $locale = self::getLocale();
+        $field = $locale['enumerations'][$enumerationName];
+        return $field[$enumeration];
     }
 
     public static function setStructural(bool $isStructural = true)
