@@ -19,8 +19,6 @@
 * [Forms](forms.md)
   
   * [Request](forms.md#request)
-  
-  * [Authentications](forms.md#authentications)
 
 * [ORM](orm.md)
   
@@ -29,5 +27,13 @@
   * [Modelli](orm-models.md)
   
   * [Funzionalità aggiuntive](orm-additional-features.md)
+
+* [Sicurezza](security.md)
+  
+  * [Voters](security.md#voters)
+  
+  * [Permissions](security.md#permissions)
+  
+  * [Authentications](security.md#authentications)
 
 * [Barra di debug](debug-bar.md)

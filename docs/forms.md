@@ -155,29 +155,7 @@ La classe `Request` consiste nella rappresentazione sotto forma di struttura di 
 
 * `$this->server`: fornisce la variabile super-globale `$_SERVER`
 
-## Authentications
-
-La classe `Authentication `serve per implementare i meccanismi di login in area riservata tramite username e password; supporta inoltre inplementazione dell'autenticazione a due fattori. Essa viene implementata direttamente dall'action che si occupa dell'autenticazione e richiama automaicamente al suo interno la classe `Request` dalla quale ottiene le informazioni necessarie per procedere.
-
-Espone i seguenti metodi pubblici:
-
-* `setUserModel()`: questo metodo inietta all'interno dellìoggetto il modello che si occuperà di reperire le informazioni dell'account per il quale il processo di autenticazione è implementato. Accetta come argomento un oggetto di tipo `BaseModel` che implementa l'interfaccia `UserModelInterface`.
-
-* `setPasswordModel()`: questo metodo inietta all'interno dell'oggetto il modello che si occuperà di reperire la password dell'account per il quale il processo di autenticazione è implementato. Accetta come argomento un oggetto di tipo `BaseModel` che implementa l'interfaccia `PasswordModelInterface`.
-
-* `setMultiFactorModel()`: questo metodo inietta all'interno dell'oggetto il modello che si occuperà di reperire, qualora sia implementato e settato l'accesso a più fattori, il token OPT collegato all'account per il quale il processo di autenticazione è implementato. Accetta come argomento un oggetto di tipo `BaseModel` che implementa l'interfaccia `MultiFactorModelInterface`.
-
-* `setMultiFactorRecoveryModel()`: questo metodo inietta all'interno dell'oggetto il modello che si occuperà di reperire, qualora sia implementato e settato l'accesso a più fattori, i token di backup collegati all'account per il quale il processo di autenticazione è implementato, utili in caso di smarrimento e/o impossibilità di utilizzo del secondo fattore. Accetta come argomento un oggetto di tipo `BaseModel` che implementa l'interfaccia `MultiFactorRecoveryModelInterface`.
-
-* `setMultiFactorWrapper()`: questo metodo inetta il wrapper che si occuperà, nel caso di implementazione di un servizio di accesso multi-fattore esterno, di interfacciarsi con il suddetto servizio e fornire le sue funzionalità al sistema. L'oggetto che il metodo accetta come argomento deve implementare l'interfaccia `MultiFactorWrapperInterface`.
-
-* `checkUser()`: questo metodo controlla che ci sia una corrispondenza tra l'username ricevuto dal form *html* e un qualche untente registrato a sistema. Restituisce un valore di tipo `bool` che rappresenta l'esito della ricerca.
-
-* `checkPassword()`: questo metodo, dato un oggetto di tipo `BaseEntity` che implementi l'interfaccia `UserInterface`, controlla la corrispondenza tra l'ultima password presente a sistema per l'utente il questione e quella inviata tramite form *html*. Restituisce un valore `bool` che rappresenta l'esito del confronto.
-
-* `checkMultiFactor()`: questo metodo, dato un oggetto di tipo `BaseEntity` che implementi l'interfaccia `UserInterface`, in presenza dell'implementazione multi-fattore e dell'attivazione della stessa, controlla la che il token inserito framite form *html* corrisponda a quello fornito da sistema. Restituisce un valore `bool` che rappresenta l'esito del confronto.
-
-* `checkMultiFactorRecovery()`: questo metodo, dato un oggetto di tipo `BaseEntity` che implementa l'interfaccia `MultiFactorInterface`, in presenza dell'implementazione multi-fattore e dell'attivazione della stessa, controlla la che il token inserito framite form *html* corrisponda ad uno dei codici di backup generati in fase si attivazione del secondo fattore di autenticazione, da utilizzare in caso di smarrimento e/o impossibilità di utilizzo dello stesso. Restituisce un valore `bool` che rappresenta l'esito del confronto.
+# 
 
 * * *
 
