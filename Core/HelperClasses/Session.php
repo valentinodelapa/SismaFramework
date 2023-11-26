@@ -87,6 +87,29 @@ class Session
             $currentPosition[$actualKey] = $value;
         }
     }
+    
+    public static function appendItem(int|string $key, mixed $value, bool $serialize = false): void
+    {
+        preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        if ($serialize) {
+            $_SESSION[$key][] = serialize($value);
+        } elseif (count($matches[1]) > 0) {
+            preg_match("/^[^\\[]*/", $key, $match);
+            self::appendItemRecursive($_SESSION[$match[0]], $matches[1], $value);
+        } elseif((isset($_SESSION[$key]) && is_array($_SESSION[$key]) && (in_array($value, $_SESSION[$key]) === false)) || (isset($_SESSION[$key]) === false)) {
+            $_SESSION[$key][] = $value;
+        }
+    }
+
+    private static function appendItemRecursive(mixed &$currentPosition, array $keys, mixed $value): void
+    {
+        $actualKey = array_shift($keys);
+        if (count($keys) > 0) {
+            self::setItemRecursive($currentPosition[$actualKey], $keys, $value);
+        } elseif(( isset($currentPosition[$actualKey]) && is_array($currentPosition[$actualKey]) && (in_array($value, $currentPosition[$actualKey]) === false)) || (isset($currentPosition[$actualKey]) === false)) {
+            $currentPosition[$actualKey][] = $value;
+        }
+    }
 
     public function __unset($name)
     {
