@@ -3,6 +3,7 @@
 namespace SismaFramework\Sample\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
@@ -22,10 +23,10 @@ class SampleController extends BaseController implements DefaultControllerInterf
         return Render::generateView('sample/index', $this->vars);
     }
     
-    public function error(string $message): Response
+    public function error(string $message, ResponseType $responseType): Response
     {
         $this->vars['message'] = urldecode($message);
-        return Render::generateView('sample/error', $this->vars);
+        return Render::generateView('sample/error', $this->vars, $responseType);
     }
 
     public function notify(string $message): Response
