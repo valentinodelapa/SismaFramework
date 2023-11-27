@@ -63,6 +63,7 @@ class Render
         extract($vars);
         \ob_start();
         include($viewPath);
+        \ob_end_flush();
     }
 
     private static function getViewPath(string $view): string
