@@ -28,11 +28,10 @@ namespace SismaFramework\Public;
 
 use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Core\HelperClasses\Dispatcher;
-use SismaFramework\Core\HelperClasses\Logger;
+use SismaFramework\Core\HelperClasses\ErrorHandler;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HelperClasses\Session;
-use SismaFramework\Structural\Controllers\FrameworkController;
 use SismaFramework\Security\ExtendedClasses\RedirectException;
 use SismaFramework\Sample\Controllers\SampleController;
 
@@ -43,7 +42,7 @@ error_reporting(0);
 try {
     require_once(__DIR__ . '/../Config/config.php');
     require_once(__DIR__ . '/../Autoload/autoload.php');
-    require_once(__DIR__ . '/../ErrorHandling/errorHandling.php');
+    ErrorHandler::handleNonThrowableError();
     PhpVersionChecker::checkPhpVersion();
     Session::start();
     $dispatcher = new Dispatcher();
@@ -54,27 +53,12 @@ try {
     return $exception->redirect();
 } catch (BaseException $exception) {
     if (\Config\DEVELOPMENT_ENVIRONMENT) {
-        Router::setActualCleanUrl('framework', 'thowableError');
-        $frameworkController = new FrameworkController();
-        return $frameworkController->throwableError($exception);
+        ErrorHandler::callThrowableErrorAction($throwable);
     } else {
         Router::setActualCleanUrl('sample', 'error');
         $sampleController = new SampleController();
         return $sampleController->error('', $exception->getResponseType());
     }
 } catch (\Throwable $throwable) {
-    \ob_end_clean();
-    Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
-    if (\Config\LOG_VERBOSE_ACTIVE) {
-        Logger::saveTrace($throwable->getTrace());
-    }
-    if (\Config\DEVELOPMENT_ENVIRONMENT) {
-        Router::setActualCleanUrl('framework', 'thowableError');
-        $frameworkController = new FrameworkController();
-        return $frameworkController->throwableError($throwable);
-    } else {
-        Router::setActualCleanUrl('framework', 'internalServerError');
-        $frameworkController = new FrameworkController();
-        return $frameworkController->internalServerError();
-    }
+    ErrorHandler::handleThrowableError($throwable);
 }

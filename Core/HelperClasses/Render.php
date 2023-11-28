@@ -46,6 +46,7 @@ class Render
     public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
     {
         Debugger::setVars($vars);
+        \ob_start();
         self::assemblesComponents($view, $vars);
         echo static::generateDebugBar();
         return self::getResponse($responseType);
@@ -61,9 +62,7 @@ class Render
             extract($locale);
         }
         extract($vars);
-        \ob_start();
         include($viewPath);
-        \ob_end_flush();
     }
 
     private static function getViewPath(string $view): string
