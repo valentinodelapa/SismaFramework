@@ -27,8 +27,9 @@
 namespace SismaFramework\Tests\Orm\ExtendedClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\OtherReferencedSample;
 
 /**
@@ -36,6 +37,20 @@ use SismaFramework\Sample\Entities\OtherReferencedSample;
  */
 class ReferencedEntityTest extends TestCase
 {
+    
+    public function testGetInvalidProperty()
+    {
+        $this->expectException(InvalidPropertyException::class);
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->inexistentProperty;
+    }
+    
+    public function testSetInvalidProperty()
+    {
+        $this->expectException(InvalidPropertyException::class);
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->inexistentProperty = 'value';
+    }
 
     public function testModifyCollectionNestedChanges()
     {

@@ -26,8 +26,6 @@
 
 namespace SismaFramework\Core\ExtendedClasses;
 
-use SismaFramework\Core\Exceptions\MethodNotFoundException;
-use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaStandardClass;
 

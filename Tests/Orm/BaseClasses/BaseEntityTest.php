@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
@@ -38,6 +39,28 @@ use SismaFramework\Sample\Enumerations\SampleType;
  */
 class BaseEntityTest extends TestCase
 {
+    
+    public function testUnsetPrimaryKey()
+    {
+        $baseSample = new BaseSample();
+        $baseSample->id = 1;
+        $baseSample->unsetPrimaryKey();
+        $this->assertFalse(isset($baseSample->id));
+    }
+    
+    public function testGetInvalidProperty()
+    {
+        $this->expectException(InvalidPropertyException::class);
+        $baseSample = new BaseSample();
+        $baseSample->inexistentProperty;
+    }
+    
+    public function testSetInvalidProperty()
+    {
+        $this->expectException(InvalidPropertyException::class);
+        $baseSample = new BaseSample();
+        $baseSample->inexistentProperty = 'value';
+    }
 
     public function testEntityWithEntityNotConvertedProperty()
     {

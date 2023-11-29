@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright (c) 2023-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,14 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Security\BaseClasses;
-
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HttpClasses\Response;
+namespace SismaFramework\Tests\Core\BaseClasses;
 
 /**
+ * Description of BaseControllerTest
+ *
  * @author Valentino de Lapa
  */
-abstract class BaseException extends \Exception
+class BaseControllerTest
 {
-
-    protected Response $response;
-
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
-    {
-        \ob_clean();
-        $this->response = new Response();
-    }
-
-    public function getResponseType(): ResponseType
-    {
-        return ResponseType::httpInternalServerError;
-    }
+    //put your code here
 }

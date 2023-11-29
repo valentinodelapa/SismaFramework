@@ -33,18 +33,38 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
  */
 class PhpVersionChecker
 {
-    public static function checkPhpVersion():void
+
+    private static $currentMajorVersion = PHP_MAJOR_VERSION;
+    private static $currentMinorVersion = PHP_MINOR_VERSION;
+    private static $currentReleaseVersion = PHP_RELEASE_VERSION;
+
+    public static function checkPhpVersion(): void
     {
-        if (PHP_MAJOR_VERSION < \Config\MINIMUM_MAJOR_PHP_VERSION){
-            throw  new PhpVersionException();
-        }elseif(PHP_MAJOR_VERSION === \Config\MINIMUM_MAJOR_PHP_VERSION){
-            if(PHP_MINOR_VERSION < \Config\MINIMUM_MINOR_PHP_VERSION){
-                throw  new PhpVersionException();
-            }elseif(PHP_MINOR_VERSION === \Config\MINIMUM_MINOR_PHP_VERSION){
-                if(PHP_RELEASE_VERSION < \Config\MINIMUM_RELEASE_PHP_VERSION){
-                    throw  new PhpVersionException();
+        if (self::$currentMajorVersion < \Config\MINIMUM_MAJOR_PHP_VERSION) {
+            throw new PhpVersionException();
+        } elseif (self::$currentMajorVersion === \Config\MINIMUM_MAJOR_PHP_VERSION) {
+            if (self::$currentMinorVersion < \Config\MINIMUM_MINOR_PHP_VERSION) {
+                throw new PhpVersionException();
+            } elseif (self::$currentMinorVersion === \Config\MINIMUM_MINOR_PHP_VERSION) {
+                if (self::$currentReleaseVersion < \Config\MINIMUM_RELEASE_PHP_VERSION) {
+                    throw new PhpVersionException();
                 }
             }
         }
+    }
+    
+    public static function forceCurrentMajorVersionValue(int $customCurrentMajorVersion):void
+    {
+        self::$currentMajorVersion = $customCurrentMajorVersion;
+    }
+    
+    public static function forceCurrentMinorVersionValue(int $customCurrentMinorVersion):void
+    {
+        self::$currentMinorVersion = $customCurrentMinorVersion;
+    }
+    
+    public static function forceCurrentReleaseVersionValue(int $customCurrentReleaseVersion):void
+    {
+        self::$currentReleaseVersion = $customCurrentReleaseVersion;
     }
 }

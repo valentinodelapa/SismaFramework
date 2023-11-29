@@ -87,7 +87,7 @@ abstract class BaseEntity
     protected function checkFinalClassProperty(string $propertyName): bool
     {
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
-        return $reflectionProperty->class === get_class($this);
+        return $reflectionProperty->getDeclaringClass()->isAbstract() === false;
     }
 
     protected function forceForeignKeyPropertySet(string $propertyName): void
@@ -247,26 +247,6 @@ abstract class BaseEntity
     public function getPrimaryKeyPropertyName(): string
     {
         return $this->primaryKey;
-    }
-
-    static public function create(): BaseEntity
-    {
-        $class = get_called_class();
-        if ((static::$instance === null) || ((static::$instance instanceof $class) === false)) {
-            static::$instance = new $class();
-        }
-        $ret = clone static::$instance;
-        return $ret;
-    }
-
-    public function getField(string $name)
-    {
-        $prop = new \ReflectionProperty(get_called_class(), $name);
-        if ($prop->class !== get_called_class()) {
-            return null;
-        }
-        unset($prop);
-        return $this->$name;
     }
 
     public function getForeignKeyIndexes(): array

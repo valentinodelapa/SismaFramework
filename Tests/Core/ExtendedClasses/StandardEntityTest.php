@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright (c) 2023-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,26 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Security\BaseClasses;
+namespace SismaFramework\Tests\Core\ExtendedClasses;
 
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HttpClasses\Response;
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\ProprietaryTypes\SismaCollection;
 
 /**
+ * Description of StandardEntityTest
+ *
  * @author Valentino de Lapa
  */
-abstract class BaseException extends \Exception
+class StandardEntityTest extends TestCase
 {
-
-    protected Response $response;
-
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+    public function testStandardEntity()
     {
-        \ob_clean();
-        $this->response = new Response();
-    }
-
-    public function getResponseType(): ResponseType
-    {
-        return ResponseType::httpInternalServerError;
+        $standardEntity = new StandardEntity();
+        $standardEntity->standardEntityCollection = new SismaCollection(StandardEntity::class);
+        $this->assertInstanceOf(SismaCollection::class, $standardEntity->standardEntityCollection);
+        $standardEntity->sampleSettedProperty = 'value';
+        $this->assertEquals('value', $standardEntity->sampleSettedProperty);
+        $this->assertNull($standardEntity->sampleUnsettedProperty);
     }
 }
