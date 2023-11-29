@@ -48,8 +48,7 @@ abstract class BaseEntity
     protected string $primaryKey = 'id';
     protected static ?BaseEntity $instance = null;
     protected bool $isActiveTransaction = false;
-    protected ?BaseAdapter $adapter = null;
-    protected array $foreignKeyIndexes = [];
+    private array $foreignKeyIndexes = [];
     private array $encryptedColumns = [];
 
     public function __construct()
