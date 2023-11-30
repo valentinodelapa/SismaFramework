@@ -28,7 +28,6 @@ namespace SismaFramework\Orm\ResultSets;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\ExtendedClasses\StandardEntity;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 
 /**

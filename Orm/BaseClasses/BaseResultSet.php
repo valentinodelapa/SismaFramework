@@ -40,7 +40,7 @@ abstract class BaseResultSet implements \Iterator
 
     protected string $returnType = StandardEntity::class;
     protected int $currentRecord = 0;
-    protected int $maxRecord;
+    protected int $maxRecord = -1;
     
     public function __construct()
     {
