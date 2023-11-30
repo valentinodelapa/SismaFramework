@@ -36,6 +36,7 @@ use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\ProprietaryTypes\SismaCollection;
@@ -100,8 +101,8 @@ class DataMapper
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::insert, array('columns' => $this->columns, 'values' => $this->markers));
         $this->checkStartTransaction();
-        $ok = $this->adapter->execute($cmd, $this->values);
-        if ($ok) {
+        $result = $this->adapter->execute($cmd, $this->values);
+        if ($result) {
             $this->entity->{$this->entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
             $this->entity->modified = false;
             $this->checkIsReferencedEntity();
@@ -110,7 +111,7 @@ class DataMapper
                 Cache::setEntity($this->entity);
             }
         }
-        return $ok;
+        return $result;
     }
 
     private function parseValues(): void
@@ -191,8 +192,8 @@ class DataMapper
         $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $this->columns, 'values' => $this->markers));
         $this->values[] = $this->entity->{$this->entity->getPrimaryKeyPropertyName()};
         $this->checkStartTransaction();
-        $ok = $this->adapter->execute($cmd, $this->values);
-        if ($ok) {
+        $result = $this->adapter->execute($cmd, $this->values);
+        if ($result) {
             $this->entity->modified = false;
             $this->checkIsReferencedEntity();
             $this->checkEndTransaction();
@@ -200,7 +201,7 @@ class DataMapper
                 Cache::setEntity($this->entity);
             }
         }
-        return $ok;
+        return $result;
     }
 
     public function startTransaction(): void
@@ -244,11 +245,11 @@ class DataMapper
         $bindValues = [$this->entity];
         $bindTypes = [DataType::typeEntity];
         Parser::unparseValues($bindValues);
-        $ok = $this->adapter->execute($cmd, $bindValues, $bindTypes);
-        if ($ok) {
+        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        if ($result) {
             $this->entity->unsetPrimaryKey();
         }
-        return $ok;
+        return $result;
     }
 
     public function deleteBatch(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): bool
@@ -256,8 +257,8 @@ class DataMapper
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::delete);
         Parser::unparseValues($bindValues);
-        $ok = $this->adapter->execute($cmd, $bindValues, $bindTypes);
-        return $ok;
+        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        return $result;
     }
 
     public function find(Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
@@ -270,7 +271,7 @@ class DataMapper
         return $collection;
     }
 
-    private function getResultSet(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): BaseResultSet
+    private function getResultSet(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): ?BaseResultSet
     {
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::select);
@@ -306,15 +307,14 @@ class DataMapper
     {
         $query->setOffset(0);
         $query->setLimit(1);
-        $list = $this->getResultSet($query, $bindValues, $bindTypes);
-        if (!$list) {
-            return null;
+        $result = $this->getResultSet($query, $bindValues, $bindTypes);
+        switch ($result->numRows()) {
+            case 0:
+                return null;
+            case 1:
+                return $result->fetch();
+            default:
+                throw new DataMapperException();
         }
-        $ret = null;
-        foreach ($list as $x) {
-            $ret = $x;
-            break;
-        }
-        return $ret;
     }
 }

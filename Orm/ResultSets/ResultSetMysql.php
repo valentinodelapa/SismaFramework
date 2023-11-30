@@ -43,8 +43,12 @@ class ResultSetMysql extends BaseResultSet
     public function __construct(\PDOStatement &$result)
     {
         $this->result = &$result;
-        $this->maxRecord = $this->result->rowCount() - 1;
-        $this->currentRecord = 0;
+        parent::__construct();
+    }
+
+    public function numRows(): int
+    {
+        return $this->result->rowCount();
     }
 
     public function release(): void
@@ -66,7 +70,6 @@ class ResultSetMysql extends BaseResultSet
         $dbdata = $this->result->fetch(\PDO::FETCH_OBJ, \PDO::FETCH_ORI_ABS, $this->currentRecord);
         return $this->transformResult($dbdata);
     }
-
 }
 
 ?>

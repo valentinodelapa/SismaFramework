@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaCollection;
@@ -69,10 +70,10 @@ class Parser
         }
     }
 
-    public static function parseEntity(string $entityName, int $value): BaseEntity
+    public static function parseEntity(string $entityName, int $value, ?BaseAdapter $adapter = null): BaseEntity
     {
         $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
-        $modelInstance = new $modelName();
+        $modelInstance = new $modelName($adapter);
         $entity = $modelInstance->getEntityById($value);
         if ($entity instanceof BaseEntity) {
             return $entity;

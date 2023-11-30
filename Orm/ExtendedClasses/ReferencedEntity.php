@@ -42,7 +42,6 @@ abstract class ReferencedEntity extends BaseEntity
     public bool $collectionNestedChanges = false;
     protected array $collectionPropertiesSetted = [];
     protected array $collections = [];
-    protected ?BaseAdapter $adapter = null;
 
     public const FOREIGN_KEY_TYPE = 'foreignKeyType';
     public const FOREIGN_KEY_NAME = 'foreignKeyName';

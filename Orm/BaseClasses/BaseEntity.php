@@ -43,16 +43,18 @@ abstract class BaseEntity
     public bool $propertyNestedChanges = false;
     public array $foreignKeys = [];
     public string $initializationVectorPropertyName = 'initializationVector';
+    protected ?BaseAdapter $adapter = null;
     protected ?BaseEntity $propertyCallingEntity = null;
     protected ?ReferencedEntity $collectionCallingEntity = null;
-    protected string $primaryKey = 'id';
     protected static ?BaseEntity $instance = null;
+    protected string $primaryKey = 'id';
     protected bool $isActiveTransaction = false;
-    private array $foreignKeyIndexes = [];
     private array $encryptedColumns = [];
+    private array $foreignKeyIndexes = [];
 
-    public function __construct()
+    public function __construct(?BaseAdapter $adapter = null)
     {
+        $this->adapter = $adapter;
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
         $reflectionClass = new \ReflectionClass($this);
@@ -94,7 +96,7 @@ abstract class BaseEntity
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         $reflectionTypeName = $reflectionProperty->getType()->getName();
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
-            $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName]);
+            $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName], $this->adapter);
             $this->$propertyName->propertyCallingEntity = $this;
             unset($this->foreignKeyIndexes[$propertyName]);
         }

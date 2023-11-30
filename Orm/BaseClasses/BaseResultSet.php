@@ -40,12 +40,14 @@ abstract class BaseResultSet implements \Iterator
 
     protected string $returnType = StandardEntity::class;
     protected int $currentRecord = 0;
-    protected int $maxRecord = -1;
-
-    public function numRows(): int
+    protected int $maxRecord;
+    
+    public function __construct()
     {
-        return 0;
+        $this->maxRecord = $this->numRows() - 1;
     }
+
+    abstract public function numRows(): int;
 
     public function setReturnType(string $type): void
     {
