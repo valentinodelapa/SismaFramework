@@ -72,7 +72,7 @@ abstract class BaseResultSet implements \Iterator
     {
         if ($recordIndex < 0) {
             $recordIndex = 0;
-        } elseif ($n > $this->maxRecord) {
+        } elseif ($recordIndex > $this->maxRecord) {
             $recordIndex = $this->maxRecord;
         }
         $this->currentRecord = $recordIndex;
