@@ -42,14 +42,12 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 abstract class BaseModel
 {
-
-    protected ?BaseAdapter $adapter = null;
+    
     protected DataMapper $dataMapper;
     protected readonly string $entityName;
 
-    public function __construct(?BaseAdapter $adapter = null, DataMapper $dataMapper = new DataMapper())
+    public function __construct(DataMapper $dataMapper = new DataMapper())
     {
-        $this->adapter = $adapter ?? BaseAdapter::getDefault();
         $this->dataMapper = $dataMapper;
         $this->entityName = $this->getEntityName();
         $this->checkEntityName();

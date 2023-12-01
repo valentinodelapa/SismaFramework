@@ -32,6 +32,7 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Enumerations\SampleType;
@@ -192,8 +193,8 @@ class ParserTest extends TestCase
     
     public function testUnparseValue()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseSample = new BaseSample($baseAdapterMock);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $baseSample = new BaseSample($dataMapperMock);
         $baseSample->id = 1;
         $sampleType = SampleType::one;
         $sismaDatetme = new SismaDateTime();

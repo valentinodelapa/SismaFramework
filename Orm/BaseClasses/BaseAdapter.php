@@ -57,7 +57,7 @@ abstract class BaseAdapter
     public static function &getDefault(): ?BaseAdapter
     {
         if (static::$adapter === null) {
-            $defaultAdapter = static::create(\Config\DATABASE_ADAPTER_TYPE, [
+            $defaultAdapter = static::create(\Config\DEFAULT_ADAPTER, [
                         'database' => \Config\DATABASE_NAME,
                         'hostname' => \Config\DATABASE_HOST,
                         'password' => \Config\DATABASE_PASSWORD,
@@ -74,11 +74,9 @@ abstract class BaseAdapter
         static::$adapter = &$adapter;
     }
 
-    public static function create(string $type, array $options = []): BaseAdapter
+    public static function create(string $adapterClass, array $options = []): BaseAdapter
     {
-        $parsedType = ucwords(strtolower($type));
-        $class = \Config\ADAPTER_NAMESPACE . 'Adapter' . $parsedType;
-        return new $class($options);
+        return new $adapterClass($options);
     }
 
     abstract public function close(): void;

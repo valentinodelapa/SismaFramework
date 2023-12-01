@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="/bootstrap.php" colors="true" cacheResult="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="/bootstrap.php" colors="true" cacheResult="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
   <testsuites>
     <testsuite name="Application Test Suite">
       <directory suffix="Test.php">./Core</directory>
@@ -32,6 +32,11 @@ THE SOFTWARE.
     </testsuite>
   </testsuites>
   <coverage includeUncoveredFiles="true" pathCoverage="false" ignoreDeprecatedCodeUnits="true" disableCodeCoverageIgnore="true">
+    <include>
+      <directory suffix=".php">../Autoload</directory>
+      <directory suffix=".php">../Core</directory>
+      <directory suffix=".php">../Orm</directory>
+    </include>
     <report>
       <clover outputFile="coverage-report/clover.xml"/>
       <cobertura outputFile="coverage-report/cobertura.xml"/>
@@ -51,11 +56,4 @@ THE SOFTWARE.
     <server name="REQUEST_URI" value="/"/>
     <server name="SERVER_PROTOCOL" value=""/>
   </php>
-  <source>
-    <include>
-      <directory suffix=".php">../Autoload</directory>
-      <directory suffix=".php">../Core</directory>
-      <directory suffix=".php">../Orm</directory>
-    </include>
-  </source>
 </phpunit>

@@ -56,7 +56,7 @@ class BaseSample extends BaseEntity
 
     protected function setPropertyDefaultValue(): void
     {
-        $this->referencedEntityWithInitialization = new ReferencedSample();
+        $this->referencedEntityWithInitialization = new ReferencedSample($this->dataMapper);
         $this->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
     }
 

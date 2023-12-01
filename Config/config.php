@@ -145,7 +145,6 @@ const ENCRYPTION_ALGORITHM = 'AES-256-CBC';
 const INITIALIZATION_VECTOR_BYTES = 16;
 
 /* Database Constant */
-const DATABASE_ADAPTER_TYPE = '';
 const DATABASE_HOST = '';
 const DATABASE_NAME = '';
 const DATABASE_PASSWORD = '';

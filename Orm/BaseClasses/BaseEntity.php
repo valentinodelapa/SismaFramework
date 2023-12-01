@@ -27,9 +27,9 @@
 namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Parser;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
@@ -43,7 +43,7 @@ abstract class BaseEntity
     public bool $propertyNestedChanges = false;
     public array $foreignKeys = [];
     public string $initializationVectorPropertyName = 'initializationVector';
-    protected ?BaseAdapter $adapter = null;
+    protected DataMapper $dataMapper;
     protected ?BaseEntity $propertyCallingEntity = null;
     protected ?ReferencedEntity $collectionCallingEntity = null;
     protected static ?BaseEntity $instance = null;
@@ -52,9 +52,9 @@ abstract class BaseEntity
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
 
-    public function __construct(?BaseAdapter $adapter = null)
+    public function __construct(DataMapper $dataMapper = new DataMapper())
     {
-        $this->adapter = $adapter;
+        $this->dataMapper = $dataMapper;
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
         $reflectionClass = new \ReflectionClass($this);
@@ -96,7 +96,7 @@ abstract class BaseEntity
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         $reflectionTypeName = $reflectionProperty->getType()->getName();
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
-            $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName], $this->adapter);
+            $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName], $this->dataMapper);
             $this->$propertyName->propertyCallingEntity = $this;
             unset($this->foreignKeyIndexes[$propertyName]);
         }

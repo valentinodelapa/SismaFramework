@@ -45,7 +45,7 @@ class BaseSampleFixture extends BaseFixture
 
     public function setEntity(): void
     {
-        $baseSample = new BaseSample();
+        $baseSample = new BaseSample($this->dataMapper);
         $baseSample->referencedEntityWithoutInitialization = $this->getEntityByFixtureName(ReferencedSampleFixture::class);
         $baseSample->referencedEntityWithInitialization = $this->getEntityByFixtureName(ReferencedSampleFixture::class);
         $baseSample->otherReferencedSample = $this->getEntityByFixtureName(OtherReferencedSampleFixture::class);

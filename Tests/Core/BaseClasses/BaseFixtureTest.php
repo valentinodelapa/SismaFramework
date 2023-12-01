@@ -80,7 +80,7 @@ class BaseFixtureTest extends TestCase
                 ->onlyMethods(['save'])
                 ->getMock();
         $entitesArray = [
-            FakeReferencedSampleFixture::class => new FakeReferencedSample(),
+            FakeReferencedSampleFixture::class => new FakeReferencedSample($dataMapperMock),
         ];
         $fakeBaseSampleFixture = new FakeBaseSampleFixture($dataMapperMock);
         $fakeBaseSampleFixture->execute($entitesArray);

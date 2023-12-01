@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
@@ -60,6 +61,11 @@ class BaseEntityTest extends TestCase
         $this->expectException(InvalidPropertyException::class);
         $baseSample = new BaseSample();
         $baseSample->inexistentProperty = 'value';
+    }
+    
+    public function testForceForeignKey()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
     }
 
     public function testEntityWithEntityNotConvertedProperty()

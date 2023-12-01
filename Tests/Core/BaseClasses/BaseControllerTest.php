@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Tests\Core\BaseClasses;
 
+use PHPUnit\Framework\TestCase;
+
 /**
- * Description of BaseControllerTest
- *
  * @author Valentino de Lapa
  */
-class BaseControllerTest
+class BaseControllerTest extends TestCase
 {
-    //put your code here
+    
 }

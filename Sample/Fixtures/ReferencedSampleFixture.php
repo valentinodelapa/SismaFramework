@@ -41,7 +41,7 @@ class ReferencedSampleFixture extends BaseFixture
 
     public function setEntity(): void
     {
-        $referencedSample = new ReferencedSample();
+        $referencedSample = new ReferencedSample($this->dataMapper);
         $referencedSample->text = 'referenced sample text';
         $this->addEntity($referencedSample);
     }

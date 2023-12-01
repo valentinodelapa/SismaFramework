@@ -28,8 +28,7 @@ namespace SismaFramework\Tests\Security\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
-use SismaFramework\Core\Exceptions\AccessDeniedException;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Sample\Voters\SampleVoter;
@@ -45,8 +44,11 @@ class BaseVoterTest extends TestCase
      */
     public function testIstanceNotPermitted()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $this->assertFalse(SampleVoter::isAllowed(new ReferencedSample($baseAdapterMock), AccessControlEntry::allow));
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods([])
+                ->getMock();
+        $this->assertFalse(SampleVoter::isAllowed(new ReferencedSample($dataMapperMock), AccessControlEntry::allow));
     }
 
     /**
@@ -54,8 +56,11 @@ class BaseVoterTest extends TestCase
      */
     public function testCheckVoterFalse()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $this->assertFalse(SampleVoter::isAllowed(new BaseSample($baseAdapterMock), AccessControlEntry::allow));
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods([])
+                ->getMock();
+        $this->assertFalse(SampleVoter::isAllowed(new BaseSample($dataMapperMock), AccessControlEntry::allow));
     }
 
     /**
@@ -63,8 +68,11 @@ class BaseVoterTest extends TestCase
      */
     public function testCheckVoterTrue()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $this->assertTrue(SampleVoter::isAllowed(new BaseSample($baseAdapterMock), AccessControlEntry::deny));
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods([])
+                ->getMock();
+        $this->assertTrue(SampleVoter::isAllowed(new BaseSample($dataMapperMock), AccessControlEntry::deny));
     }
 
 }
