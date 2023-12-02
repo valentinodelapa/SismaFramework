@@ -85,7 +85,6 @@ class Dispatcher
 
     public function run($router = new Router()): Response
     {
-        Debugger::startExecutionTimeCalculation();
         $this->originalPath = $this->path = strtok($this->request->server['REQUEST_URI'], '?');
         if (strlen($this->request->server['QUERY_STRING']) > 0) {
             if ($this->resourceMaker->isAcceptedResourceFile($this->path)) {

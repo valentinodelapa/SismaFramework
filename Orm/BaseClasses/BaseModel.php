@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\ProprietaryTypes\SismaCollection;
@@ -158,10 +157,5 @@ abstract class BaseModel
                         ], [
                     DataType::typeInteger,
         ]);
-    }
-
-    public function __destruct()
-    {
-        $this->adapter = null;
     }
 }

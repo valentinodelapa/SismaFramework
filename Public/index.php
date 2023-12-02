@@ -27,6 +27,7 @@
 namespace SismaFramework\Public;
 
 use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
@@ -42,6 +43,7 @@ error_reporting(0);
 try {
     require_once(__DIR__ . '/../Config/config.php');
     require_once(__DIR__ . '/../Autoload/autoload.php');
+    Debugger::startExecutionTimeCalculation();
     ErrorHandler::handleNonThrowableError();
     PhpVersionChecker::checkPhpVersion();
     Session::start();
@@ -53,7 +55,7 @@ try {
     return $exception->redirect();
 } catch (BaseException $exception) {
     if (\Config\DEVELOPMENT_ENVIRONMENT) {
-        ErrorHandler::callThrowableErrorAction($throwable);
+        ErrorHandler::callThrowableErrorAction($exception);
     } else {
         Router::setActualCleanUrl('sample', 'error');
         $sampleController = new SampleController();

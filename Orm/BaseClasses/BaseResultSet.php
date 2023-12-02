@@ -142,5 +142,3 @@ abstract class BaseResultSet implements \Iterator
         return $StandardEntity;
     }
 }
-
-?>

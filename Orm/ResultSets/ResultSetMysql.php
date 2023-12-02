@@ -70,5 +70,3 @@ class ResultSetMysql extends BaseResultSet
         return $this->transformResult($dbdata);
     }
 }
-
-?>
