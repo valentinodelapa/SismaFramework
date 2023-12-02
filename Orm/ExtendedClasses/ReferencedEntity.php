@@ -58,7 +58,7 @@ abstract class ReferencedEntity extends BaseEntity
         $collections = Cache::getForeignKeyData(get_called_class());
         foreach ($collections as $collectionName => $reference) {
             foreach (array_keys($reference) as $refenrenceName) {
-                $collectionNames[] = $collectionName . self::FOREIGN_KEY_SUFFIX . $refenrenceName;
+                $collectionNames[] = $collectionName . self::FOREIGN_KEY_SUFFIX . ucfirst($refenrenceName);
             }
         }
         return $collectionNames;
@@ -188,18 +188,7 @@ abstract class ReferencedEntity extends BaseEntity
             case 'count':
                 return $this->countEntityCollection($propertyName);
             default:
-                throw new EntityException('Metodo non trovato');
-        }
-    }
-
-    public function saveEntityCollection(): void
-    {
-        foreach ($this->collections as $foreignKey) {
-            foreach ($foreignKey as $collection) {
-                foreach ($collection as $entity) {
-                    $entity->save();
-                }
-            }
+                throw new EntityException('method not found');
         }
     }
 

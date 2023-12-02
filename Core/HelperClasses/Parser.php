@@ -41,7 +41,7 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 class Parser
 {
 
-    public static function parseValue(\ReflectionNamedType $reflectionNamedType, null|string|array $value, $parseEntity = true): mixed
+    public static function parseValue(\ReflectionNamedType $reflectionNamedType, null|string|array $value, $parseEntity = true, DataMapper $dataMapper = new DataMapper()): mixed
     {
         if (($value === null) || ($reflectionNamedType->allowsNull() && ($value === ''))) {
             return null;
@@ -50,7 +50,7 @@ class Parser
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             if ($parseEntity) {
-                return self::parseEntity($reflectionNamedType->getName(), intval($value));
+                return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper);
             } else {
                 return intval($value);
             }

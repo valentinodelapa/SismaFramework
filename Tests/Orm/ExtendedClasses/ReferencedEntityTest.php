@@ -38,6 +38,13 @@ use SismaFramework\Sample\Entities\OtherReferencedSample;
 class ReferencedEntityTest extends TestCase
 {
     
+    public function testGetCollectionNames()
+    {
+        $otherReferencedSample = new OtherReferencedSample();
+        $this->assertIsArray($otherReferencedSample->getCollectionNames());
+        $this->assertContains('baseSampleCollectionOtherReferencedSample', $otherReferencedSample->getCollectionNames());
+    }
+    
     public function testGetInvalidProperty()
     {
         $this->expectException(InvalidPropertyException::class);

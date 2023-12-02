@@ -27,9 +27,9 @@
 namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
@@ -65,7 +65,18 @@ class BaseEntityTest extends TestCase
     
     public function testForceForeignKey()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['findFirst'])
+                ->getMock();
+        $referencedSample = new ReferencedSample($dataMapperMock);
+        $referencedSample->id = 10;
+        $dataMapperMock->expects($this->any())
+                ->method ('findFirst')
+                ->will($this->returnValue($referencedSample));
+        $baseSample = new BaseSample($dataMapperMock);
+        $baseSample->referencedEntityWithInitialization = 10;
+        $this->assertEquals($referencedSample, $baseSample->referencedEntityWithInitialization);
     }
 
     public function testEntityWithEntityNotConvertedProperty()
@@ -246,41 +257,38 @@ class BaseEntityTest extends TestCase
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample modified';
         $this->assertTrue($baseSampleOne->propertyNestedChanges);
 
-        $baseSampleTwo = new BaseSample();
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['findFirst'])
+                ->getMock();
+        $baseSampleTwo = new BaseSample($dataMapperMock);
         $referencedSampleOne = new ReferencedSample();
         $referencedSampleOne->id = 1;
         $referencedSampleOne->text = 'referenced sample';
         $this->assertTrue($referencedSampleOne->modified);
+        $dataMapperMock->expects($this->any())
+                ->method ('findFirst')
+                ->willReturn($referencedSampleOne);
+        $baseSampleTwo->referencedEntityWithoutInitialization = 1;
+        $this->assertInstanceOf(ReferencedSample::class, $baseSampleTwo->referencedEntityWithoutInitialization);
+        $this->assertTrue($baseSampleTwo->propertyNestedChanges);
+        
         $referencedSampleOne->modified = false;
-        Cache::setEntity($referencedSampleOne);
+        $baseSampleTwo->propertyNestedChanges = false;
         $baseSampleTwo->referencedEntityWithoutInitialization = 1;
         $this->assertFalse($baseSampleTwo->propertyNestedChanges);
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
         $this->assertFalse($baseSampleTwo->propertyNestedChanges);
         $baseSampleTwo->referencedEntityWithoutInitialization->text = 'referenced sample modified';
         $this->assertTrue($baseSampleTwo->propertyNestedChanges);
-
-        $baseSampleThree = new BaseSample();
-        $referencedSampleTwo = new ReferencedSample();
-        $referencedSampleTwo->id = 1;
-        $referencedSampleTwo->text = 'referenced sample';
-        $this->assertTrue($referencedSampleTwo->modified);
-        $referencedSampleTwo->modified = false;
-        Cache::setEntity($referencedSampleTwo);
-        $baseSampleThree->referencedEntityWithoutInitialization = 1;
-        $this->assertFalse($baseSampleThree->propertyNestedChanges);
-        $referencedSampleTwo->text = 'referenced sample';
-        $this->assertFalse($baseSampleThree->propertyNestedChanges);
-        $referencedSampleTwo->text = 'referenced sample modified';
-        $this->assertTrue($baseSampleThree->propertyNestedChanges);
         
-        $baseSampleFour = new BaseSample();
-        $referencedSampleThree = new ReferencedSample();
-        $referencedSampleThree->id = 1;
-        $referencedSampleThree->text = 'referenced sample';
-        $this->assertTrue($referencedSampleTwo->modified);
-        Cache::setEntity($referencedSampleThree);
-        $baseSampleFour->referencedEntityWithoutInitialization = 1;
-        $this->assertTrue($baseSampleFour->propertyNestedChanges);
+        $referencedSampleOne->modified = false;
+        $baseSampleTwo->propertyNestedChanges = false;
+        $baseSampleTwo->referencedEntityWithoutInitialization = 1;
+        $this->assertFalse($baseSampleTwo->propertyNestedChanges);
+        $referencedSampleOne->text = 'referenced sample modified';
+        $this->assertFalse($baseSampleTwo->propertyNestedChanges);
+        $referencedSampleOne->text = 'referenced sample';
+        $this->assertTrue($baseSampleTwo->propertyNestedChanges);
     }
 }

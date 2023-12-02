@@ -31,7 +31,6 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
-use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
@@ -105,15 +104,20 @@ class ParserTest extends TestCase
 
     public function testParseValueWithEntity()
     {
-        $baseSample = new BaseSample();
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['findFirst'])
+                ->getMock();
+        $baseSample = new BaseSample($dataMapperMock);
         $baseSample->id = 1;
-        Cache::setEntity($baseSample);
+        $dataMapperMock->expects($this->any())
+                ->method ('findFirst')
+                ->willReturn($baseSample);
         $baseResultSetMock = $this->createMock(BaseResultSet::class);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->any())
                 ->method('select')
                 ->willReturn($baseResultSetMock);
-        BaseAdapter::setDefault($baseAdapterMock);
         $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
@@ -121,8 +125,8 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn(BaseSample::class);
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1));
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1'));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $dataMapperMock));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $dataMapperMock));
         $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false));
         $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false));
         $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false));
@@ -171,6 +175,10 @@ class ParserTest extends TestCase
      */
     public function testParseValueWithException()
     {
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods([])
+                ->getMock();
         $this->expectException(InvalidArgumentException::class);
         $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
@@ -179,7 +187,7 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn('array');
-        Parser::parseValue($reflectionNamedTypeMock, '');
+        Parser::parseValue($reflectionNamedTypeMock, '', true, $dataMapperMock);
     }
 
     /**
