@@ -73,6 +73,7 @@ class Dispatcher
             ResourceMaker $resourceMaker = new ResourceMaker,
             FixturesManager $fixtureManager = new FixturesManager())
     {
+        Debugger::startExecutionTimeCalculation();
         $this->request = $request;
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;
