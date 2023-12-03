@@ -1,7 +1,9 @@
 # SismaFramework
 
-[![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE)
-![Packagist PHP Version Support](https://img.shields.io/badge/php-%3E%3D8.1-blue)
+![PHPUnit tests status](https://img.shields.io/badge/tests-passing-green)
+![Code coverage status](https://img.shields.io/badge/coverage-%3E50%25-yellow)
+![PHP Version Support](https://img.shields.io/badge/php-%3E%3D8.1-blue)
+[![license](https://img.shields.io/badge/license-MIT-yellowgreen)](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE)
 
 ## Descrizione
 

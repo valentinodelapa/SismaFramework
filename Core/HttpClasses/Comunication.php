@@ -39,8 +39,8 @@ class Comunication
         $request = new Request();
         if (isset($request->server['HTTPS'])) {
             return ($request->server['HTTPS'] === 'on') ? ComunicationProtocol::https : ComunicationProtocol::http;
-        } elseif (isset($request->server['SERVER_PROTOCOL'])) {
-            return stripos($request->server['SERVER_PROTOCOL'], 'https') === 0 ? ComunicationProtocol::https : ComunicationProtocol::http;
+        } elseif (isset($request->server['SERVER_PORT'])) {
+            return (intval($request->server['SERVER_PORT']) === 443) ? ComunicationProtocol::https : ComunicationProtocol::http;
         } else {
             return \Config\DEVELOPMENT_ENVIRONMENT ? ComunicationProtocol::http : ComunicationProtocol::https;
         }
