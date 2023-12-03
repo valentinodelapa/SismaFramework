@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2023 Valentino de Lapa.
+ * Copyright (c) 2023-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,14 +28,19 @@ namespace SismaFramework\Sample\Models;
 
 use SismaFramework\Orm\ExtendedClasses\ReferencedModel;
 use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Sample\Entities\OtherReferencedSample;
 
-class BaseSampleModel extends ReferencedModel
+/**
+ * Description of OtherRefetencedSampleModel
+ *
+ * @author Valentino de Lapa
+ */
+class OtherRefetencedSampleModel extends ReferencedModel
 {
 
     protected function getEntityName(): string
     {
-        return BaseSample::class;
+        return OtherReferencedSample::class;
     }
 
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
@@ -44,3 +49,4 @@ class BaseSampleModel extends ReferencedModel
     }
 
 }
+

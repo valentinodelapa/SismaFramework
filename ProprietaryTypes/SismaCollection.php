@@ -41,6 +41,11 @@ class SismaCollection extends \ArrayObject
         $this->restrictiveType = $restrictiveType;
         return parent::__construct($array, $flags, $iteratorClass);
     }
+    
+    public function getRestrictiveType():string
+    {
+        return $this->restrictiveType;
+    }
 
     public function append(mixed $value): void
     {

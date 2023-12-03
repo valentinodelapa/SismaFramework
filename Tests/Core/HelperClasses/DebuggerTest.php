@@ -98,7 +98,7 @@ class DebuggerTest extends TestCase
         $varsProperty->setAccessible(true);
         $varsProperty->setValue(new Debugger, ['sampleVars' => 'sample value']);
         $generateDebugBarVarsMethod = $this->debuggerReflection->getMethod('generateDebugBarVars');
-        $result = $generateDebugBarVarsMethod->invoke(new Debugger);
+        $result = $generateDebugBarVarsMethod->invoke(new Debugger());
         $this->assertIsString($result);
         $this->assertStringContainsString('sampleVars', $result);
         $this->assertStringContainsString('sample value', $result);

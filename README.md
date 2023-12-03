@@ -184,7 +184,7 @@ Questo progetto è stato sviluppato prendendo spunto da alcune librerie open sou
   Questa libreria, che non ha certo bisogno di presentazioni, è stata uno spunto prezioso per quanto riguarda alcune tecniche utilizzate (seppur con notevoli differenze) anche durante lo sviluppo del presente progetto.
 * La libreria [**SimpleORM**](https://github.com/davideairaghi/php/tree/master/library/Airaghi/DB/SimpleORM).
   Discorso a parte va fatto per questa libreria, che è stata utilizzata come punto di partenza per sviluppare l'ORM presente all'interno del progetto.
-  Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreia orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
+  Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreria orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
 
 Ringrazio tutti gli autori e gli sviluppatori delle fonti citate e facciamo riferimento al file [`NOTICE.md`](NOTICE.md) della presente repository per i dettagli riguardanti le informazioni aggiuntive, le licenze e le notifiche di copyright originali.
 

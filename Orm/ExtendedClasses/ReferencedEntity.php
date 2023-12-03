@@ -141,32 +141,20 @@ abstract class ReferencedEntity extends BaseEntity
     {
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
             $this->switchSettingType($name, $value);
-        } elseif ($this->checkCollectionExists($name)) {
+        } elseif ($this->checkCollectionExists($name) && ($value instanceof SismaCollection)) {
+            $this->checkCollectionTypeConsistency($name, $value);
             $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = true;
             $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
         } else {
             throw new InvalidPropertyException();
         }
     }
-
-    private function checkCollectionDataConsistency(string $collectionName): void
+    
+    protected function checkCollectionTypeConsistency(string $collectionName, SismaCollection $value)
     {
-        if (($this->checkRelatedPropertyPresence($collectionName) === false) ||
-                ($this->checkRelatedPropertyName($collectionName) === false)) {
+        if(is_a($value->getRestrictiveType(), $this->getCollectionDataInformation($collectionName), true) === false){
             throw new InvalidArgumentException();
         }
-    }
-
-    private function checkRelatedPropertyPresence(string $collectionName): bool
-    {
-        return (property_exists($this->collectionData[$collectionName][static::FOREIGN_KEY_TYPE], $this->collectionData[$collectionName][static::FOREIGN_KEY_NAME]));
-    }
-
-    private function checkRelatedPropertyName(string $collectionName): bool
-    {
-        $calledClassName = get_called_class();
-        $reflectionRelatedProperty = new \ReflectionProperty($this->collectionData[$collectionName][static::FOREIGN_KEY_TYPE], $this->collectionData[$collectionName][static::FOREIGN_KEY_NAME]);
-        return ($reflectionRelatedProperty->getType()->getName() === $calledClassName);
     }
 
     public function __call($methodName, $arguments)
@@ -247,7 +235,7 @@ abstract class ReferencedEntity extends BaseEntity
     {
         $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
         $foreignKeyName = static::getForeignKeyName($propertyName);
-        $model = new $modelName();
+        $model = new $modelName($this->dataMapper);
         return $model->countEntityCollectionByEntity([$foreignKeyName => $this]);
     }
 }

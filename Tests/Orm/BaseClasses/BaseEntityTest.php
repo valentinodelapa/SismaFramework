@@ -73,7 +73,7 @@ class BaseEntityTest extends TestCase
         $referencedSample->id = 10;
         $dataMapperMock->expects($this->any())
                 ->method ('findFirst')
-                ->will($this->returnValue($referencedSample));
+                ->willReturn($referencedSample);
         $baseSample = new BaseSample($dataMapperMock);
         $baseSample->referencedEntityWithInitialization = 10;
         $this->assertEquals($referencedSample, $baseSample->referencedEntityWithInitialization);

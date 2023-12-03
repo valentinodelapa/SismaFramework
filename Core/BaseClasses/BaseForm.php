@@ -39,6 +39,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  *
@@ -56,11 +57,13 @@ abstract class BaseForm
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     protected array $filterErrors = [];
+    private DataMapper $dataMapper;
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
 
-    public function __construct(?BaseEntity $baseEntity = null)
+    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper())
     {
+        $this->dataMapper = $dataMapper;
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
         $this->setFilterFieldsMode();
@@ -81,7 +84,7 @@ abstract class BaseForm
         if ($baseEntity instanceof $entityClassName) {
             $this->entity = $baseEntity;
         } elseif ($baseEntity === null) {
-            $this->entity = new $entityClassName();
+            $this->entity = new $entityClassName($this->dataMapper);
         } else {
             throw new InvalidArgumentException();
         }
@@ -320,7 +323,7 @@ abstract class BaseForm
 
     private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed, ?self &$entityFromForm, ?array &$filterErrors): void
     {
-        $entityFromForm = new $formPropertyClass($entityToEmbed);
+        $entityFromForm = new $formPropertyClass($entityToEmbed, $this->dataMapper);
         $filterErrors = $entityFromForm->returnFilterErrors();
     }
 

@@ -91,10 +91,10 @@ class Parser
         }
     }
 
-    public static function unparseValues(array &$arrayValues): void
+    public static function unparseValues(array &$arrayValues, bool $persistentUnparse = false, DataMapper $dataMapper = new DataMapper()): void
     {
         foreach ($arrayValues as &$value) {
-            $value = self::unparseValue($value);
+            $value = self::unparseValue($value, $persistentUnparse, $dataMapper);
         }
     }
 

@@ -27,9 +27,12 @@
 namespace SismaFramework\Tests\Orm\ExtendedClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Sample\Entities\OtherReferencedSample;
 
 /**
@@ -52,11 +55,64 @@ class ReferencedEntityTest extends TestCase
         $otherReferencedSample->inexistentProperty;
     }
     
+    public function testSetCollectionProperty()
+    {
+        $baseSampleCollection = new SismaCollection(BaseSample::class);
+        $referencedSample = new ReferencedSample();
+        $referencedSample->baseSampleCollectionReferencedEntityWithoutInitialization = $baseSampleCollection;
+        $this->assertEquals($baseSampleCollection, $referencedSample->baseSampleCollectionReferencedEntityWithoutInitialization);
+        $referencedSample->baseSampleCollectionReferencedEntityWithInitialization = $baseSampleCollection;
+        $this->assertEquals($baseSampleCollection, $referencedSample->baseSampleCollectionReferencedEntityWithInitialization);
+        $referencedSample->baseSampleCollectionNullableReferencedEntityWithInitialization = $baseSampleCollection;
+        $this->assertEquals($baseSampleCollection, $referencedSample->baseSampleCollectionNullableReferencedEntityWithInitialization);
+        
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->baseSampleCollection = $baseSampleCollection;
+        $this->assertEquals($baseSampleCollection, $otherReferencedSample->baseSampleCollection);
+    }
+    
+    public function testSetInconsistentEntityInCollection()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $referencedSampleCollection = new SismaCollection(ReferencedSample::class);
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->baseSampleCollection = $referencedSampleCollection;
+    }
+    
     public function testSetInvalidProperty()
     {
         $this->expectException(InvalidPropertyException::class);
         $otherReferencedSample = new OtherReferencedSample();
         $otherReferencedSample->inexistentProperty = 'value';
+    }
+    
+    public function testCheckCollectionExsists()
+    {
+        $referencedSample = new ReferencedSample();
+        $this->assertTrue($referencedSample->checkCollectionExists('baseSampleCollectionReferencedEntityWithoutInitialization'));
+        $this->assertTrue($referencedSample->checkCollectionExists('baseSampleCollectionReferencedEntityWithInitialization'));
+        $this->assertTrue($referencedSample->checkCollectionExists('baseSampleCollectionNullableReferencedEntityWithInitialization'));
+        $this->assertFalse($referencedSample->checkCollectionExists('baseSampleCollection'));
+        
+        $otherReferencedSample = new OtherReferencedSample();
+        $this->assertTrue($otherReferencedSample->checkCollectionExists('baseSampleCollection'));
+    }
+    
+    public function testCheckIssetAndCountCollectionProperty()
+    {
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->disableOriginalConstructor()
+                ->onlyMethods(['getCount'])
+                ->getMock();
+        $otherReferencedSample = new OtherReferencedSample($dataMapperMock);
+        $dataMapperMock->expects($this->exactly(2))
+                ->method ('getCount')
+                ->willReturnOnConsecutiveCalls(0, 1);
+        $this->assertTrue(isset($otherReferencedSample->baseSampleCollection));
+        $this->assertInstanceOf(SismaCollection::class, $otherReferencedSample->baseSampleCollection);
+        $this->assertEquals(0, $otherReferencedSample->countEntityCollection('baseSampleCollection'));
+        $this->assertTrue(isset($otherReferencedSample->baseSampleCollection));
+        $this->assertEquals(1, $otherReferencedSample->countEntityCollection('baseSampleCollection'));
     }
 
     public function testModifyCollectionNestedChanges()
