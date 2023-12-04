@@ -31,6 +31,7 @@ use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\RenderException;
 use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  *
@@ -43,12 +44,12 @@ class Render
     private static string $view;
     private static $isStructural = false;
 
-    public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
+    public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk, DataMapper $dataMapper = new DataMapper()): Response
     {
         Debugger::setVars($vars);
         \ob_start();
         self::assemblesComponents($view, $vars);
-        echo static::generateDebugBar();
+        echo static::generateDebugBar($dataMapper);
         return self::getResponse($responseType);
     }
     
@@ -135,11 +136,11 @@ class Render
         }
     }
 
-    private static function generateDebugBar(): string
+    private static function generateDebugBar(DataMapper $dataMapper = new DataMapper()): string
     {
         Debugger::endExecutionTimeCalculation();
         if (\Config\DEVELOPMENT_ENVIRONMENT) {
-            return Debugger::generateDebugBar();
+            return Debugger::generateDebugBar($dataMapper);
         } else {
             return '';
         }

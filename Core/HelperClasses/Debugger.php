@@ -29,6 +29,7 @@ namespace SismaFramework\Core\HelperClasses;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Templater;
 use SismaFramework\Core\HelperClasses\Parser;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  *
@@ -58,7 +59,7 @@ class Debugger
         static::$executionTime = round($executionTime, 2);
     }
 
-    public static function generateDebugBar()
+    public static function generateDebugBar(DataMapper $dataMapper = new DataMapper())
     {
         Templater::setStructural();
         $debugBarQuery = $debugBarLog = $debugBarForm = $debugBarVars = '';
@@ -71,7 +72,7 @@ class Debugger
         }
         $debugBarForm = self::generateDebugBarForm(self::$formFilter);
         self::$varsNumber = count(self::$vars);
-        $debugBarVars = self::generateDebugBarVars();
+        $debugBarVars = self::generateDebugBarVars($dataMapper);
         $vars = array_merge(self::getInformations(), [
             'debugBarQuery' => $debugBarQuery,
             'debugBarLog' => $debugBarLog,
@@ -96,13 +97,13 @@ class Debugger
         return $debugBarForm;
     }
 
-    private static function generateDebugBarVars()
+    private static function generateDebugBarVars(DataMapper $dataMapper = new DataMapper())
     {
         $vars = [];
         foreach (self::$vars as $key => $value) {
             $vars[$key] = $value;
         }
-        Parser::unparseValues($vars);
+        Parser::unparseValues($vars, $dataMapper);
         $debugBarVars = '';
         foreach ($vars as $field => $information) {
             $debugBarVars .= Templater::generateTemplate('debugBarBody', ['information' => $field . ': ' . print_r($information, true)]);

@@ -33,11 +33,12 @@ use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\Router;
-use SismaFramework\Security\HttpClasses\Authentication;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\Interfaces\Services\SitemapBuilderInterface;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Security\HttpClasses\Authentication;
 
 /**
  *
@@ -48,6 +49,7 @@ class Dispatcher
 
     private ResourceMaker $resourceMaker;
     private FixturesManager $fixturesManager;
+    private DataMapper $dataMapper;
     private SitemapBuilderInterface $sitemapBuider;
     private static int $reloadAttempts = 0;
     private Request $request;
@@ -71,12 +73,14 @@ class Dispatcher
 
     public function __construct(Request $request = new Request,
             ResourceMaker $resourceMaker = new ResourceMaker,
-            FixturesManager $fixtureManager = new FixturesManager())
+            FixturesManager $fixtureManager = new FixturesManager(),
+            DataMapper $dataMapper = new DataMapper())
     {
         Debugger::startExecutionTimeCalculation();
         $this->request = $request;
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;
+        $this->dataMapper = $dataMapper;
     }
 
     public function setSitemapBuilder(SitemapBuilderInterface $sitemapBuilder): void
@@ -214,7 +218,7 @@ class Dispatcher
     private function resolveRouteCall(): Response
     {
         if ($this->checkActionPresenceInController()) {
-            $this->instanceControllerClass();
+            $this->controllerInstance = $this->instanceControllerClass();
             return $this->callControllerMethod();
         } else {
             return $this->switchNotFoundActions();
@@ -225,20 +229,20 @@ class Dispatcher
     {
         Router::setActualCleanUrl($this->pathParts[0], $this->pathParts[1]);
         if ($this->defaultControllerInjected && (count($this->pathParts) === 2) && (str_contains(\Config\ROOT_PATH, $this->pathParts[1]) === false)) {
-            return is_callable([new $this->controllerName, $this->action]);
+            return is_callable([$this->instanceControllerClass(), $this->action]);
         } else {
             return method_exists($this->controllerName, $this->action);
         }
     }
 
-    private function instanceControllerClass(): void
+    private function instanceControllerClass(): BaseController
     {
         $this->getControllerConstructorArguments();
-        if (count($this->reflectionConstructorArguments) == 0) {
-            $this->controllerInstance = new $this->controllerName;
+        if ((count($this->reflectionConstructorArguments) == 0) || (is_a($this->reflectionConstructorArguments[0]->getType()->getName(), DataMapper::class, true))) {
+            return new $this->controllerName($this->dataMapper);
         } else {
             $this->getAutoDependecyInjectionClass();
-            $this->controllerInstance = $this->reflectionController->newInstanceArgs($this->constructorArguments);
+            return $this->reflectionController->newInstanceArgs($this->constructorArguments);
         }
     }
 
@@ -253,7 +257,9 @@ class Dispatcher
     {
         foreach ($this->reflectionConstructorArguments as $argument) {
             $argumentType = $argument->getType();
-            if ($argumentType->isBuiltin() === false) {
+            if(is_a($argumentType->getName(), DataMapper::class, true)){
+                $this->constructorArguments[] = $this->dataMapper;
+            }elseif ($argumentType->isBuiltin() === false) {
                 $className = $argumentType->getName();
                 $this->constructorArguments[] = new $className();
             } else {
@@ -326,7 +332,7 @@ class Dispatcher
                 $currentActionArguments[$argument->name] = new Authentication($this->request);
             } elseif (array_key_exists($argument->name, $this->actionArguments)) {
                 $reflectionType = $argument->getType();
-                $currentActionArguments[$argument->name] = Parser::parseValue($reflectionType, $this->actionArguments[$argument->name]);
+                $currentActionArguments[$argument->name] = Parser::parseValue($reflectionType, $this->actionArguments[$argument->name], true, $this->dataMapper);
             } elseif ($argument->isDefaultValueAvailable()) {
                 $currentActionArguments[$argument->name] = $argument->getDefaultValue();
             } else {

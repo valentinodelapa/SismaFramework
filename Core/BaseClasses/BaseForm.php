@@ -196,7 +196,7 @@ abstract class BaseForm
     {
         if (array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== '')) {
             $reflectionType = $property->getType();
-            $this->entityData->{$property->name} = Parser::parseValue($reflectionType, $this->request->request[$property->name]);
+            $this->entityData->{$property->name} = Parser::parseValue($reflectionType, $this->request->request[$property->name], true, $this->dataMapper);
         } elseif (array_key_exists($property->name, $this->request->files)) {
             $this->entityData->{$property->name} = $this->request->files[$property->name];
         } elseif (array_key_exists($property->name, $this->filterFiledsMode)) {
