@@ -132,7 +132,7 @@ abstract class ReferencedModel extends BaseModel
             $query->setLimit($limit);
         }
         $query->close();
-        return $this->dataMapper->find($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     public function deleteEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): bool
@@ -180,7 +180,7 @@ abstract class ReferencedModel extends BaseModel
             $bindTypes = [DataType::typeEntity];
         }
         $query->close();
-        return $this->dataMapper->find($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
 }

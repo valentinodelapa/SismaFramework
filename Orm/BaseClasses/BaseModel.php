@@ -50,7 +50,6 @@ abstract class BaseModel
         $this->dataMapper = $dataMapper;
         $this->entityName = $this->getEntityName();
         $this->checkEntityName();
-        $this->dataMapper->setEntityName($this->entityName);
     }
 
     private function checkEntityName()
@@ -76,7 +75,7 @@ abstract class BaseModel
 
     protected function initQuery(): Query
     {
-        $query = $this->dataMapper->initQuery();
+        $query = $this->dataMapper->initQuery($this->entityName);
         return $query;
     }
 
@@ -96,7 +95,7 @@ abstract class BaseModel
             $query->setLimit($limit);
         }
         $query->close();
-        return $this->dataMapper->find($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     abstract protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void;
@@ -113,7 +112,7 @@ abstract class BaseModel
             DataType::typeEntity,
         ];
         $query->close();
-        return $this->dataMapper->find($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     public function convertArrayIntoEntityCollection(array $entitiesId): SismaCollection
@@ -134,7 +133,7 @@ abstract class BaseModel
             $query->setWhere();
             $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
             $query->close();
-            $entity = $this->dataMapper->findFirst($query, [
+            $entity = $this->dataMapper->findFirst($this->entityName, $query, [
                 $id,
                     ], [
                 DataType::typeInteger,

@@ -145,7 +145,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             $query->setLimit($limit);
         }
         $query->close();
-        return $this->dataMapper->find($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     public function getEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
@@ -185,7 +185,7 @@ abstract class SelfReferencedModel extends ReferencedModel
             $query->setLimit($limit);
         }
         $query->close();
-        return $this->dataMapper->find($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     public function getOtherEntityCollectionByParent(BaseEntity $excludedEntity, ?BaseEntity $parentEntity = null, ?array $order = null): SismaCollection
@@ -209,7 +209,7 @@ abstract class SelfReferencedModel extends ReferencedModel
         }
         $query->setOrderBy($order);
         $query->close();
-        return $this->dataMapper->find($query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     public function getEntityTree(?BaseEntity $parentEntity = null, array $order = null): SismaCollection

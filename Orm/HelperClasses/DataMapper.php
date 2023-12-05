@@ -53,7 +53,6 @@ class DataMapper
     private array $columns = [];
     private array $values = [];
     private array $markers = [];
-    private string $entityName;
     private BaseEntity $entity;
     private BaseAdapter $adapter;
     protected bool $isActiveTransaction = false;
@@ -65,14 +64,9 @@ class DataMapper
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
     }
 
-    public function setEntityName(string $entityName): void
+    public function initQuery(string $entityName, Query $query = new Query()): Query
     {
-        $this->entityName = $entityName;
-    }
-
-    public function initQuery(Query $query = new Query()): Query
-    {
-        $query->setTable(NotationManager::convertEntityNameToTableName($this->entityName));
+        $query->setTable(NotationManager::convertEntityNameToTableName($entityName));
         return $query;
     }
 
@@ -261,17 +255,17 @@ class DataMapper
         return $result;
     }
 
-    public function find(Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
+    public function find($entityName, Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
     {
-        $result = $this->getResultSet($query, $bindValues, $bindTypes);
-        $collection = new SismaCollection($this->entityName);
+        $result = $this->getResultSet($entityName, $query, $bindValues, $bindTypes);
+        $collection = new SismaCollection($entityName);
         foreach ($result as $entity) {
             $collection->append($entity);
         }
         return $collection;
     }
 
-    private function getResultSet(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): ?BaseResultSet
+    private function getResultSet($entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
     {
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::select);
@@ -280,7 +274,7 @@ class DataMapper
         if (!$result) {
             return null;
         }
-        $result->setReturnType($this->entityName);
+        $result->setReturnType($entityName);
         return $result;
     }
 
@@ -303,11 +297,11 @@ class DataMapper
         return $data->_numrows;
     }
 
-    public function findFirst(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): ?BaseEntity
+    public function findFirst($entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseEntity
     {
         $query->setOffset(0);
         $query->setLimit(1);
-        $result = $this->getResultSet($query, $bindValues, $bindTypes);
+        $result = $this->getResultSet($entityName, $query, $bindValues, $bindTypes);
         switch ($result->numRows()) {
             case 0:
                 return null;

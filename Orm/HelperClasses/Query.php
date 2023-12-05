@@ -59,37 +59,12 @@ class Query
 
     public function __construct(?BaseAdapter &$adapter = null)
     {
-        $this->reset();
         if ($adapter === null) {
             $this->adapter = &BaseAdapter::getDefault();
         } else {
             $this->adapter = &$adapter;
         }
         $this->setColumn($this->adapter->allColumns());
-    }
-
-    protected function reset(): void
-    {
-        $this->columns = array();
-        $this->tables = array();
-        $this->where = array();
-        $this->offset = 0;
-        $this->limit = 0;
-        $this->group = array();
-        $this->having = array();
-        $this->order = array();
-        $this->current_conditions = null;
-        $this->closed = false;
-        $this->command = '';
-    }
-
-    public static function create(?BaseAdapter &$adapter = null): self
-    {
-        if (static::$instance === null) {
-            static::$instance = new self($adapter);
-        }
-        $ret = clone static::$instance;
-        return $ret;
     }
 
     public function &getAdapter(): BaseAdapter
