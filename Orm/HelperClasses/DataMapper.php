@@ -53,7 +53,6 @@ class DataMapper
     private array $columns = [];
     private array $values = [];
     private array $markers = [];
-    private BaseEntity $entity;
     private BaseAdapter $adapter;
     protected bool $isActiveTransaction = false;
     private static bool $isFirstExecutedEntity = true;
@@ -72,65 +71,64 @@ class DataMapper
 
     public function save(BaseEntity $entity, bool $nestedChangesTracking = true): bool
     {
-        $this->entity = $entity;
         if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
-            return $this->insert();
+            return $this->insert($entity);
         } elseif ($entity->modified) {
-            return $this->update();
+            return $this->update($entity);
         } else {
             if ($nestedChangesTracking) {
-                $this->saveForeignKeys();
-                $this->checkIsReferencedEntity();
+                $this->saveForeignKeys($entity);
+                $this->checkIsReferencedEntity($entity);
             }
             return true;
         }
     }
 
-    private function insert(Query $query = new Query()): bool
+    private function insert(BaseEntity $entity, Query $query = new Query()): bool
     {
-        $query->setTable(NotationManager::convertEntityToTableName($this->entity));
+        $query->setTable(NotationManager::convertEntityToTableName($entity));
         $this->columns = $this->values = $this->markers = [];
-        $this->parseValues();
-        $this->parseForeignKeyIndexes();
+        $this->parseValues($entity);
+        $this->parseForeignKeyIndexes($entity);
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::insert, array('columns' => $this->columns, 'values' => $this->markers));
         $this->checkStartTransaction();
         $result = $this->adapter->execute($cmd, $this->values);
         if ($result) {
-            $this->entity->{$this->entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
-            $this->entity->modified = false;
-            $this->checkIsReferencedEntity();
+            $entity->{$entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
+            $entity->modified = false;
+            $this->checkIsReferencedEntity($entity);
             $this->checkEndTransaction();
             if ($this->ormCacheStatus) {
-                Cache::setEntity($this->entity);
+                Cache::setEntity($entity);
             }
         }
         return $result;
     }
 
-    private function parseValues(): void
+    private function parseValues(BaseEntity $entity): void
     {
-        $this->entity->propertyNestedChanges = false;
-        $reflectionClass = new \ReflectionClass($this->entity);
+        $entity->propertyNestedChanges = false;
+        $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (($reflectionProperty->class === get_class($this->entity)) && ($this->entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
+            if (($reflectionProperty->class === get_class($entity)) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
                 $this->markers[] = '?';
                 $this->columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
-                $parsedValue = Parser::unparseValue($reflectionProperty->getValue($this->entity), true);
-                if ($this->entity->isEncryptedProperty($reflectionProperty->getName())) {
-                    if (empty($this->entity->{$this->entity->initializationVectorPropertyName})) {
-                        $this->entity->{$this->entity->initializationVectorPropertyName} = Encryptor::createInizializationVector();
+                $parsedValue = Parser::unparseValue($reflectionProperty->getValue($entity), true);
+                if ($entity->isEncryptedProperty($reflectionProperty->getName())) {
+                    if (empty($entity->{$entity->initializationVectorPropertyName})) {
+                        $entity->{$entity->initializationVectorPropertyName} = Encryptor::createInizializationVector();
                     }
-                    $parsedValue = Encryptor::encryptString($parsedValue, $this->entity->{$this->entity->initializationVectorPropertyName});
+                    $parsedValue = Encryptor::encryptString($parsedValue, $entity->{$entity->initializationVectorPropertyName});
                 }
                 $this->values[] = $parsedValue;
             }
         }
     }
 
-    private function parseForeignKeyIndexes(): void
+    private function parseForeignKeyIndexes(BaseEntity $entity): void
     {
-        foreach ($this->entity->getForeignKeyIndexes() as $propertyName => $propertyValue) {
+        foreach ($entity->getForeignKeyIndexes() as $propertyName => $propertyValue) {
             $this->markers[] = '?';
             $this->columns[] = $this->adapter->escapeColumn($propertyName, true);
             $this->values[] = $propertyValue;
@@ -146,20 +144,20 @@ class DataMapper
         }
     }
 
-    private function checkIsReferencedEntity()
+    private function checkIsReferencedEntity(BaseEntity $entity)
     {
-        if (($this->entity instanceof ReferencedEntity) && $this->entity->collectionNestedChanges) {
-            $this->entity->collectionNestedChanges = false;
-            $this->saveEntityCollection();
+        if (($entity instanceof ReferencedEntity) && $entity->collectionNestedChanges) {
+            $entity->collectionNestedChanges = false;
+            $this->saveEntityCollection($entity);
         }
     }
 
-    private function saveEntityCollection(self $dataMapper = new DataMapper()): void
+    private function saveEntityCollection(BaseEntity $entity): void
     {
-        foreach ($this->entity->getCollections() as $foreignKey) {
+        foreach ($entity->getCollections() as $foreignKey) {
             foreach ($foreignKey as $collection) {
-                foreach ($collection as $entity) {
-                    $dataMapper->save($entity);
+                foreach ($collection as $entityFromCollection) {
+                    $this->save($entityFromCollection);
                 }
             }
         }
@@ -174,25 +172,25 @@ class DataMapper
         }
     }
 
-    public function update(Query $query = new Query()): bool
+    public function update(BaseEntity $entity, Query $query = new Query()): bool
     {
-        $query->setTable(NotationManager::convertEntityToTableName($this->entity));
+        $query->setTable(NotationManager::convertEntityToTableName($entity));
         $this->columns = $this->values = $this->markers = [];
-        $this->parseValues();
-        $this->parseForeignKeyIndexes();
+        $this->parseValues($entity);
+        $this->parseForeignKeyIndexes($entity);
         $query->setWhere();
-        $query->appendCondition($this->entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
+        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $this->columns, 'values' => $this->markers));
-        $this->values[] = $this->entity->{$this->entity->getPrimaryKeyPropertyName()};
+        $this->values[] = $entity->{$entity->getPrimaryKeyPropertyName()};
         $this->checkStartTransaction();
         $result = $this->adapter->execute($cmd, $this->values);
         if ($result) {
-            $this->entity->modified = false;
-            $this->checkIsReferencedEntity();
+            $entity->modified = false;
+            $this->checkIsReferencedEntity($entity);
             $this->checkEndTransaction();
             if ($this->ormCacheStatus) {
-                Cache::setEntity($this->entity);
+                Cache::setEntity($entity);
             }
         }
         return $result;
@@ -210,13 +208,13 @@ class DataMapper
         self::$manualTransactionStarted = false;
     }
 
-    private function saveForeignKeys(self $dataMapper = new DataMapper())
+    private function saveForeignKeys(BaseEntity $entity)
     {
-        if ($this->entity->propertyNestedChanges) {
-            $this->entity->propertyNestedChanges = false;
-            foreach ($this->entity->foreignKeys as $foreignKey) {
-                if ($this->entity->$foreignKey instanceof BaseEntity) {
-                    $dataMapper->save($this->entity->$foreignKey);
+        if ($entity->propertyNestedChanges) {
+            $entity->propertyNestedChanges = false;
+            foreach ($entity->foreignKeys as $foreignKey) {
+                if ($entity->$foreignKey instanceof BaseEntity) {
+                    $this->save($entity->$foreignKey);
                 }
             }
         }
@@ -227,21 +225,20 @@ class DataMapper
         if ($entity instanceof ReferencedEntity) {
             ReferencedEntityDeletionPermission::isAllowed($entity, AccessControlEntry::allow);
         }
-        $this->entity = $entity;
-        $query->setTable(NotationManager::convertEntityToTableName($this->entity));
-        if ($this->entity->getPrimaryKeyPropertyName() == '') {
+        $query->setTable(NotationManager::convertEntityToTableName($entity));
+        if ($entity->getPrimaryKeyPropertyName() == '') {
             return false;
         }
         $query->setWhere();
-        $query->appendCondition($this->entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
+        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::delete);
-        $bindValues = [$this->entity];
+        $bindValues = [$entity];
         $bindTypes = [DataType::typeEntity];
         Parser::unparseValues($bindValues);
         $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
-            $this->entity->unsetPrimaryKey();
+            $entity->unsetPrimaryKey();
         }
         return $result;
     }
