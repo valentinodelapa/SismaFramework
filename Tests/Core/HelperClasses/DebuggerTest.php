@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Templater;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  * Description of DebuggerTest
@@ -73,7 +74,10 @@ class DebuggerTest extends TestCase
         $generateDebugBarMethod = $this->debuggerReflection->getMethod('generateDebugBar');
         Debugger::startExecutionTimeCalculation();
         Debugger::endExecutionTimeCalculation();
-        $result = $generateDebugBarMethod->invoke(new Debugger);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $result = $generateDebugBarMethod->invoke(new Debugger(), $dataMapperMock);
         $this->assertIsString($result);
         $this->assertStringContainsString('sample query', $result);
     }

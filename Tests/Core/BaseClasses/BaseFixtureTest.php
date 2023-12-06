@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Core\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\FixtureException;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\FakeReferencedSample;
@@ -47,21 +48,27 @@ use SismaFramework\Sample\Fixtures\ReferencedSampleFixture;
 class BaseFixtureTest extends TestCase
 {
 
+    private DataMapper $dataMapperMock;
+    
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
+    }
+
     public function testBaseSampleFixture()
     {
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['save'])
-                ->getMock();
-        $referencedSample = new ReferencedSample();
+        $referencedSample = new ReferencedSample($this->dataMapperMock);
         $referencedSample->text = 'referenced sample text';
-        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $otherReferencedSample->text = 'other referenced sample text';
         $entitesArray = [
             ReferencedSampleFixture::class => $referencedSample,
             OtherReferencedSampleFixture::class => $otherReferencedSample,
         ];
-        $baseSampleFixture = new BaseSampleFixture($dataMapperMock);
+        $baseSampleFixture = new BaseSampleFixture($this->dataMapperMock);
         $baseSample = $baseSampleFixture->execute($entitesArray);
         $this->assertInstanceOf(BaseSample::class, $baseSample);
         $this->assertInstanceOf(ReferencedSample::class, $baseSample->referencedEntityWithoutInitialization);
@@ -75,14 +82,10 @@ class BaseFixtureTest extends TestCase
     public function testFakeBaseSampleFixtureWithException()
     {
         $this->expectException(FixtureException::class);
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['save'])
-                ->getMock();
         $entitesArray = [
-            FakeReferencedSampleFixture::class => new FakeReferencedSample($dataMapperMock),
+            FakeReferencedSampleFixture::class => new FakeReferencedSample($this->dataMapperMock),
         ];
-        $fakeBaseSampleFixture = new FakeBaseSampleFixture($dataMapperMock);
+        $fakeBaseSampleFixture = new FakeBaseSampleFixture($this->dataMapperMock);
         $fakeBaseSampleFixture->execute($entitesArray);
     }
 

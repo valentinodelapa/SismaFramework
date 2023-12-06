@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\FixturesManager;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
@@ -40,6 +41,8 @@ class FixturesManagerTest extends TestCase
 
     public function testFixtureManager()
     {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
         $dataMapperMock = $this->createMock(DataMapper::class);
         $dataMapperMock->method('save')
                 ->willReturn(true);

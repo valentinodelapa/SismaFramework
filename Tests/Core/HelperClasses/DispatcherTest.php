@@ -35,6 +35,8 @@ use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+
 
 /**
  * Description of DispatcherTest
@@ -43,18 +45,22 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
  */
 class DispatcherTest extends TestCase
 {
-    
+    private FixturesManager $fixturesManagerMock;
+    private DataMapper $dataMapperMock;
+
+
     public function __construct($name = null, $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
+        $this->fixturesManagerMock = $this->createMock(FixturesManager::class);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
 
     /**
      * @runInSeparateProcess
      */
-    
     public function testRunWithReloadQueryString()
     {
         $_SERVER['REQUEST_URI'] = 'sample/error?message=error';
@@ -66,7 +72,7 @@ class DispatcherTest extends TestCase
         $routerMock = $this->createMock(Router::class);
         $routerMock->expects($this->once())
                 ->method('reloadWithParsedQueryString');
-        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run($routerMock);
     }
 
@@ -83,7 +89,7 @@ class DispatcherTest extends TestCase
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
                 ->with(\Config\STRUCTURAL_ASSETS_PATH . 'css'.DIRECTORY_SEPARATOR.'debugBar.css');
-        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
 
@@ -100,7 +106,7 @@ class DispatcherTest extends TestCase
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
                 ->with(\Config\SYSTEM_PATH.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'css'.DIRECTORY_SEPARATOR.'sample.css');
-        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
 
@@ -117,7 +123,7 @@ class DispatcherTest extends TestCase
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
                 ->with(\Config\SYSTEM_PATH.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'css'.DIRECTORY_SEPARATOR.'sample.css');
-        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
 
@@ -137,7 +143,7 @@ class DispatcherTest extends TestCase
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
                 ->with(\Config\SYSTEM_PATH.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'javascript'.DIRECTORY_SEPARATOR.'sample.js');
-        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock);
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
 
@@ -149,7 +155,7 @@ class DispatcherTest extends TestCase
         $_SERVER['REQUEST_URI'] = 'fake/fake/fake/fake/fake.css';
         $_SERVER['QUERY_STRING'] = '';
         $this->expectException(PageNotFoundException::class);
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
 
@@ -158,14 +164,13 @@ class DispatcherTest extends TestCase
      */
     public function testRunFixture()
     {
-        $fixturesManagerMock = $this->createMock(FixturesManager::class);
-        $fixturesManagerMock->expects($this->exactly(2))
+        $this->fixturesManagerMock->expects($this->exactly(2))
                 ->method('isFixtures')
                 ->willReturn(true);
-        $fixturesManagerMock->expects($this->once())
+        $this->fixturesManagerMock->expects($this->once())
                 ->method('run');
         $_SERVER['REQUEST_URI'] = '/fixtures/';
-        $dispatcher = new Dispatcher( new Request(), new ResourceMaker(), $fixturesManagerMock);
+        $dispatcher = new Dispatcher( new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
 
@@ -176,7 +181,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -191,7 +196,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/sample/index/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -206,7 +211,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/index/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -221,7 +226,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/sample/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -236,7 +241,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/notify/message/test+message';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -251,7 +256,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/other/parameter/test+message/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -266,7 +271,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/fake/other/index/parameter/other+test+message/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -282,7 +287,7 @@ class DispatcherTest extends TestCase
         $_POST['parameter'] = 'test parameter';
         $_SERVER['REQUEST_URI'] = '/other/action-with-request/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -298,7 +303,7 @@ class DispatcherTest extends TestCase
         $_POST['username'] = 'username';
         $_SERVER['REQUEST_URI'] = '/other/action-with-authentication/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -313,7 +318,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/other/action-with-default-value/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -328,7 +333,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/other/action-with-array/array/first/array/second/array/third/';
         \ob_start();
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
         $result = \ob_get_clean();
         \ob_end_clean();
@@ -345,7 +350,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/other/fake/test/';
         $this->expectException(InvalidArgumentException::class);
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
 
@@ -356,7 +361,7 @@ class DispatcherTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/fake/fake/fake/fake/fake/fake/';
         $this->expectException(PageNotFoundException::class);
-        $dispatcher = new Dispatcher();
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
 

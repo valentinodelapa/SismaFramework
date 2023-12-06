@@ -30,8 +30,8 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Enumerations\SampleType;
@@ -41,14 +41,23 @@ use SismaFramework\Sample\Enumerations\SampleType;
  */
 class ParserTest extends TestCase
 {
+    private DataMapper $dataMapperMock;
+    
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
+    }
 
     public function testParseValueWithEmpty()
     {
         $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(true);
-        $this->assertNull(Parser::parseValue($reflectionNamedTypeMock, ''));
-        $this->assertNull(Parser::parseValue($reflectionNamedTypeMock, null));
+        $this->assertNull(Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
+        $this->assertNull(Parser::parseValue($reflectionNamedTypeMock, null, true, $this->dataMapperMock));
     }
 
     public function testParseValueWithBuiltinInt()
@@ -60,12 +69,12 @@ class ParserTest extends TestCase
                 ->willReturn(true);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn('int');
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1'));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1'));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, ''));
-        $this->assertEquals(0, Parser::parseValue($reflectionNamedTypeMock, ''));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
+        $this->assertEquals(0, Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
     }
 
     public function testParseValueWithBuiltinString()
@@ -77,12 +86,12 @@ class ParserTest extends TestCase
                 ->willReturn(true);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn('string');
-        $this->assertIsString(Parser::parseValue($reflectionNamedTypeMock, 'sample string'));
-        $this->assertEquals('sample string', Parser::parseValue($reflectionNamedTypeMock, 'sample string'));
-        $this->assertIsString(Parser::parseValue($reflectionNamedTypeMock, 1));
-        $this->assertEquals('1', Parser::parseValue($reflectionNamedTypeMock, 1));
-        $this->assertIsString(Parser::parseValue($reflectionNamedTypeMock, ''));
-        $this->assertEquals('', Parser::parseValue($reflectionNamedTypeMock, ''));
+        $this->assertIsString(Parser::parseValue($reflectionNamedTypeMock, 'sample string', true, $this->dataMapperMock));
+        $this->assertEquals('sample string', Parser::parseValue($reflectionNamedTypeMock, 'sample string', true, $this->dataMapperMock));
+        $this->assertIsString(Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock));
+        $this->assertEquals('1', Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock));
+        $this->assertIsString(Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
+        $this->assertEquals('', Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
     }
 
     public function testParseValueWithBuiltinFloat()
@@ -94,30 +103,26 @@ class ParserTest extends TestCase
                 ->willReturn(true);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn('float');
-        $this->assertIsFloat(Parser::parseValue($reflectionNamedTypeMock, 1.1));
-        $this->assertEquals(1.1, Parser::parseValue($reflectionNamedTypeMock, 1.1));
-        $this->assertIsFloat(Parser::parseValue($reflectionNamedTypeMock, '1.1'));
-        $this->assertEquals(1.1, Parser::parseValue($reflectionNamedTypeMock, '1.1'));
-        $this->assertIsFloat(Parser::parseValue($reflectionNamedTypeMock, ''));
-        $this->assertEquals(0.0, Parser::parseValue($reflectionNamedTypeMock, ''));
+        $this->assertIsFloat(Parser::parseValue($reflectionNamedTypeMock, 1.1, true, $this->dataMapperMock));
+        $this->assertEquals(1.1, Parser::parseValue($reflectionNamedTypeMock, 1.1, true, $this->dataMapperMock));
+        $this->assertIsFloat(Parser::parseValue($reflectionNamedTypeMock, '1.1', true, $this->dataMapperMock));
+        $this->assertEquals(1.1, Parser::parseValue($reflectionNamedTypeMock, '1.1', true, $this->dataMapperMock));
+        $this->assertIsFloat(Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
+        $this->assertEquals(0.0, Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testParseValueWithEntity()
     {
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['findFirst'])
-                ->getMock();
-        $baseSample = new BaseSample($dataMapperMock);
+        $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->id = 1;
-        $dataMapperMock->expects($this->any())
+        $this->dataMapperMock->expects($this->any())
+                ->method('initQuery');
+        $this->dataMapperMock->expects($this->any())
                 ->method ('findFirst')
                 ->willReturn($baseSample);
-        $baseResultSetMock = $this->createMock(BaseResultSet::class);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('select')
-                ->willReturn($baseResultSetMock);
         $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
@@ -125,12 +130,12 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn(BaseSample::class);
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $dataMapperMock));
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $dataMapperMock));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', false));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock));
     }
 
     public function testParseValueWithEnumeration()
@@ -142,7 +147,7 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn(SampleType::class);
-        $this->assertInstanceOf(SampleType::class, Parser::parseValue($reflectionNamedTypeMock, 'O'));
+        $this->assertInstanceOf(SampleType::class, Parser::parseValue($reflectionNamedTypeMock, 'O', true, $this->dataMapperMock));
     }
 
     public function testParseValueWithSismaDateTime()
@@ -154,8 +159,8 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn(SismaDateTime::class);
-        $this->assertInstanceOf(SismaDateTime::class, Parser::parseValue($reflectionNamedTypeMock, '2000-01-01 00:00:00'));
-        $this->assertInstanceOf(SismaDateTime::class, Parser::parseValue($reflectionNamedTypeMock, '2000-01-01'));
+        $this->assertInstanceOf(SismaDateTime::class, Parser::parseValue($reflectionNamedTypeMock, '2000-01-01 00:00:00', true, $this->dataMapperMock));
+        $this->assertInstanceOf(SismaDateTime::class, Parser::parseValue($reflectionNamedTypeMock, '2000-01-01', true, $this->dataMapperMock));
     }
 
     public function testParseValueWithArray()
@@ -167,7 +172,7 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn('array');
-        $this->assertIsArray(Parser::parseValue($reflectionNamedTypeMock, []));
+        $this->assertIsArray(Parser::parseValue($reflectionNamedTypeMock, [], true, $this->dataMapperMock));
     }
 
     /**
@@ -175,10 +180,6 @@ class ParserTest extends TestCase
      */
     public function testParseValueWithException()
     {
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([])
-                ->getMock();
         $this->expectException(InvalidArgumentException::class);
         $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
@@ -187,7 +188,7 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn('array');
-        Parser::parseValue($reflectionNamedTypeMock, '', true, $dataMapperMock);
+        Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock);
     }
 
     /**
@@ -196,13 +197,12 @@ class ParserTest extends TestCase
     public function testParseEnumerationWithException()
     {
         $this->expectException(InvalidArgumentException::class);
-        Parser::parseEnumeration(SampleType::class, 'F');
+        Parser::parseEnumeration(SampleType::class, 'F', true, $this->dataMapperMock);
     }
     
     public function testUnparseValue()
     {
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $baseSample = new BaseSample($dataMapperMock);
+        $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->id = 1;
         $sampleType = SampleType::one;
         $sismaDatetme = new SismaDateTime();
@@ -211,7 +211,7 @@ class ParserTest extends TestCase
             'sampleType' => $sampleType,
             'sismaDatetime' => $sismaDatetme,
         ];
-        Parser::unparseValues($array);
+        Parser::unparseValues($array, $this->dataMapperMock);
         $this->assertEquals(1, $array['baseSample']);
         $this->assertEquals('O', $array['sampleType']);
         $this->assertEquals($sismaDatetme->format('Y-m-d H:i:s'), $array['sismaDatetime']);

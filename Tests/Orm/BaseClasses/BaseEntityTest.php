@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
-use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
@@ -40,48 +40,54 @@ use SismaFramework\Sample\Enumerations\SampleType;
  */
 class BaseEntityTest extends TestCase
 {
-    
+
+    private DataMapper $dataMapperMock;
+
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
+    }
+
     public function testUnsetPrimaryKey()
     {
-        $baseSample = new BaseSample();
+        $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->id = 1;
         $baseSample->unsetPrimaryKey();
         $this->assertFalse(isset($baseSample->id));
     }
-    
+
     public function testGetInvalidProperty()
     {
         $this->expectException(InvalidPropertyException::class);
-        $baseSample = new BaseSample();
+        $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->inexistentProperty;
     }
-    
+
     public function testSetInvalidProperty()
     {
         $this->expectException(InvalidPropertyException::class);
-        $baseSample = new BaseSample();
+        $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->inexistentProperty = 'value';
     }
-    
+
     public function testForceForeignKey()
     {
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['findFirst'])
-                ->getMock();
-        $referencedSample = new ReferencedSample($dataMapperMock);
+        $referencedSample = new ReferencedSample($this->dataMapperMock);
         $referencedSample->id = 10;
-        $dataMapperMock->expects($this->any())
-                ->method ('findFirst')
+        $this->dataMapperMock->expects($this->any())
+                ->method('findFirst')
                 ->willReturn($referencedSample);
-        $baseSample = new BaseSample($dataMapperMock);
+        $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->referencedEntityWithInitialization = 10;
         $this->assertEquals($referencedSample, $baseSample->referencedEntityWithInitialization);
     }
 
     public function testEntityWithEntityNotConvertedProperty()
     {
-        $baseSampleOne = new BaseSample();
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleOne->modified);
         $baseSampleOne->referencedEntityWithoutInitialization = 1;
         $this->assertTrue($baseSampleOne->modified);
@@ -91,7 +97,7 @@ class BaseEntityTest extends TestCase
         $baseSampleOne->referencedEntityWithoutInitialization = 2;
         $this->assertTrue($baseSampleOne->modified);
 
-        $baseSampleTwo = new BaseSample();
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
         $baseSampleTwo->referencedEntityWithInitialization->id = 1;
         $this->assertFalse($baseSampleTwo->modified);
         $baseSampleTwo->referencedEntityWithInitialization = 1;
@@ -99,7 +105,7 @@ class BaseEntityTest extends TestCase
         $baseSampleTwo->referencedEntityWithInitialization = 2;
         $this->assertTrue($baseSampleTwo->modified);
 
-        $baseSampleThree = new BaseSample();
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->nullableReferencedEntityWithInitialization = 1;
         $this->assertTrue($baseSampleThree->modified);
@@ -112,34 +118,34 @@ class BaseEntityTest extends TestCase
 
     public function testEntityWithEntityConvertedPropertyModifiedOne()
     {
-        $referencedSampleOne = new ReferencedSample();
+        $referencedSampleOne = new ReferencedSample($this->dataMapperMock);
         $referencedSampleOne->id = 1;
-        $baseSampleOne = new BaseSample();
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleOne->modified);
         $baseSampleOne->referencedEntityWithoutInitialization = $referencedSampleOne;
         $this->assertTrue($baseSampleOne->modified);
         $baseSampleOne->modified = false;
         $baseSampleOne->referencedEntityWithoutInitialization = $referencedSampleOne;
         $this->assertFalse($baseSampleOne->modified);
-        $referencedSampleTwo = new ReferencedSample();
+        $referencedSampleTwo = new ReferencedSample($this->dataMapperMock);
         $referencedSampleTwo->id = 2;
         $baseSampleOne->referencedEntityWithoutInitialization = $referencedSampleTwo;
         $this->assertTrue($baseSampleOne->modified);
         $baseSampleOne->modified = false;
-        $baseSampleOne->referencedEntityWithoutInitialization = new ReferencedSample();
+        $baseSampleOne->referencedEntityWithoutInitialization = new ReferencedSample($this->dataMapperMock);
         $this->assertTrue($baseSampleOne->modified);
 
-        $baseSampleTwo = new BaseSample();
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
         $baseSampleTwo->referencedEntityWithInitialization->id = 1;
         $this->assertFalse($baseSampleTwo->modified);
         $baseSampleTwo->referencedEntityWithInitialization = $baseSampleTwo->referencedEntityWithInitialization;
         $this->assertFalse($baseSampleTwo->modified);
-        $baseSampleTwo->referencedEntityWithInitialization = new ReferencedSample();
+        $baseSampleTwo->referencedEntityWithInitialization = new ReferencedSample($this->dataMapperMock);
         $this->assertTrue($baseSampleTwo->modified);
 
-        $referencedSampleFour = new ReferencedSample();
+        $referencedSampleFour = new ReferencedSample($this->dataMapperMock);
         $referencedSampleFour->id = 1;
-        $baseSampleThree = new BaseSample();
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->nullableReferencedEntityWithInitialization = null;
         $this->assertFalse($baseSampleThree->modified);
@@ -154,7 +160,7 @@ class BaseEntityTest extends TestCase
 
     public function testEntityWithBuiltInProperty()
     {
-        $baseSampleOne = new BaseSample();
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleOne->modified);
         $baseSampleOne->stringWithoutInizialization = 'base sample';
         $this->assertTrue($baseSampleOne->modified);
@@ -164,13 +170,13 @@ class BaseEntityTest extends TestCase
         $baseSampleOne->stringWithoutInizialization = 'base sample modified';
         $this->assertTrue($baseSampleOne->modified);
 
-        $baseSampleTwo = new BaseSample();
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
         $baseSampleTwo->stringWithInizialization = 'base sample';
         $this->assertFalse($baseSampleTwo->modified);
         $baseSampleTwo->stringWithInizialization = 'base sample modified';
         $this->assertTrue($baseSampleTwo->modified);
 
-        $baseSampleThree = new BaseSample();
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
         $baseSampleThree->nullableStringWithInizialization = null;
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->nullableStringWithInizialization = 'nullable string';
@@ -184,7 +190,7 @@ class BaseEntityTest extends TestCase
 
     public function testEntityWithEnumProperty()
     {
-        $baseSampleOne = new BaseSample();
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleOne->modified);
         $baseSampleOne->enumWithoutInitialization = SampleType::one;
         $this->assertTrue($baseSampleOne->modified);
@@ -194,14 +200,14 @@ class BaseEntityTest extends TestCase
         $baseSampleOne->enumWithoutInitialization = SampleType::two;
         $this->assertTrue($baseSampleOne->modified);
 
-        $baseSampleTwo = new BaseSample();
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleTwo->modified);
         $baseSampleTwo->enumWithInitialization = SampleType::one;
         $this->assertFalse($baseSampleTwo->modified);
         $baseSampleTwo->enumWithInitialization = SampleType::two;
         $this->assertTrue($baseSampleTwo->modified);
 
-        $baseSampleThree = new BaseSample();
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
         $baseSampleThree->enumNullableWithInitialization = null;
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->enumNullableWithInitialization = SampleType::one;
@@ -215,7 +221,7 @@ class BaseEntityTest extends TestCase
 
     public function testEntityWithSismaDateTimeProperty()
     {
-        $baseSampleOne = new BaseSample();
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleOne->modified);
         $baseSampleOne->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
         $this->assertTrue($baseSampleOne->modified);
@@ -225,14 +231,14 @@ class BaseEntityTest extends TestCase
         $baseSampleOne->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
         $this->assertTrue($baseSampleOne->modified);
 
-        $baseSampleTwo = new BaseSample();
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleTwo->modified);
         $baseSampleTwo->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
         $this->assertFalse($baseSampleTwo->modified);
         $baseSampleTwo->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
         $this->assertTrue($baseSampleTwo->modified);
 
-        $baseSampleThree = new BaseSample();
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
         $baseSampleThree->datetimeNullableWithInitialization = null;
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->datetimeNullableWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
@@ -246,9 +252,9 @@ class BaseEntityTest extends TestCase
 
     public function testForeignKeyNestedChanges()
     {
-        $baseSampleOne = new BaseSample();
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
         $this->assertFalse($baseSampleOne->propertyNestedChanges);
-        $baseSampleOne->referencedEntityWithoutInitialization = new ReferencedSample();
+        $baseSampleOne->referencedEntityWithoutInitialization = new ReferencedSample($this->dataMapperMock);
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
         $this->assertTrue($baseSampleOne->propertyNestedChanges);
         $baseSampleOne->propertyNestedChanges = false;
@@ -256,23 +262,18 @@ class BaseEntityTest extends TestCase
         $this->assertFalse($baseSampleOne->propertyNestedChanges);
         $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample modified';
         $this->assertTrue($baseSampleOne->propertyNestedChanges);
-
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods(['findFirst'])
-                ->getMock();
-        $baseSampleTwo = new BaseSample($dataMapperMock);
-        $referencedSampleOne = new ReferencedSample();
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
+        $referencedSampleOne = new ReferencedSample($this->dataMapperMock);
         $referencedSampleOne->id = 1;
         $referencedSampleOne->text = 'referenced sample';
         $this->assertTrue($referencedSampleOne->modified);
-        $dataMapperMock->expects($this->any())
-                ->method ('findFirst')
+        $this->dataMapperMock->expects($this->any())
+                ->method('findFirst')
                 ->willReturn($referencedSampleOne);
         $baseSampleTwo->referencedEntityWithoutInitialization = 1;
         $this->assertInstanceOf(ReferencedSample::class, $baseSampleTwo->referencedEntityWithoutInitialization);
         $this->assertTrue($baseSampleTwo->propertyNestedChanges);
-        
+
         $referencedSampleOne->modified = false;
         $baseSampleTwo->propertyNestedChanges = false;
         $baseSampleTwo->referencedEntityWithoutInitialization = 1;
@@ -281,7 +282,7 @@ class BaseEntityTest extends TestCase
         $this->assertFalse($baseSampleTwo->propertyNestedChanges);
         $baseSampleTwo->referencedEntityWithoutInitialization->text = 'referenced sample modified';
         $this->assertTrue($baseSampleTwo->propertyNestedChanges);
-        
+
         $referencedSampleOne->modified = false;
         $baseSampleTwo->propertyNestedChanges = false;
         $baseSampleTwo->referencedEntityWithoutInitialization = 1;

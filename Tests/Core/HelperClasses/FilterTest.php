@@ -28,6 +28,8 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDate;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\ProprietaryTypes\SismaTime;
@@ -329,7 +331,10 @@ class FilterTest extends TestCase
 
     public function testIsEntity()
     {
-        $this->assertTrue(Filter::isEntity(new BaseSample()));
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $this->assertTrue(Filter::isEntity(new BaseSample($dataMapperMock)));
         $this->assertFalse(Filter::isEntity(['array']));
         $this->assertFalse(Filter::isEntity(1.1));
         $this->assertFalse(Filter::isEntity(1));

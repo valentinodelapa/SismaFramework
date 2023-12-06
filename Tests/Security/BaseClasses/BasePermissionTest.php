@@ -41,17 +41,23 @@ use SismaFramework\Sample\Permissions\SamplePermission;
 class BasePermissionTest extends TestCase
 {
 
+    private DataMapper $dataMapperMock;
+    
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
+    }
+
     /**
      * @runInSeparateProcess
      */
     public function testIstanceNotPermitted()
     {
         $this->expectException(AccessDeniedException::class);
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([])
-                ->getMock();
-        SamplePermission::isAllowed(new ReferencedSample($dataMapperMock), AccessControlEntry::allow);
+        SamplePermission::isAllowed(new ReferencedSample($this->dataMapperMock), AccessControlEntry::allow);
     }
 
     /**
@@ -60,11 +66,7 @@ class BasePermissionTest extends TestCase
     public function testCheckPermissionFalse()
     {
         $this->expectException(AccessDeniedException::class);
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([])
-                ->getMock();
-        SamplePermission::isAllowed(new BaseSample($dataMapperMock), AccessControlEntry::allow);
+        SamplePermission::isAllowed(new BaseSample($this->dataMapperMock), AccessControlEntry::allow);
     }
 
     /**
@@ -73,10 +75,6 @@ class BasePermissionTest extends TestCase
     public function testCheckPermissionTrue()
     {
         $this->expectNotToPerformAssertions();
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([])
-                ->getMock();
-        SamplePermission::isAllowed(new BaseSample($dataMapperMock), AccessControlEntry::deny);
+        SamplePermission::isAllowed(new BaseSample($this->dataMapperMock), AccessControlEntry::deny);
     }
 }
