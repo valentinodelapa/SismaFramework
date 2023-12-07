@@ -1,4 +1,4 @@
-# Sicurezza
+# Componente Sicurezza
 
 Tale modulo racchiude le funzionalità di sicurezza e di autenticazione, implementate a livello framework, di seguito descritte.
 

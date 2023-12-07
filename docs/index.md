@@ -28,12 +28,12 @@
   
   * [Funzionalità aggiuntive](orm-additional-features.md)
 
-* [Sicurezza](security.md)
+* [Sicurezza](security-component.md)
   
-  * [Voters](security.md#voters)
+  * [Voters](security-component.md#voters)
   
-  * [Permissions](security.md#permissions)
+  * [Permissions](security-component.md#permissions)
   
-  * [Authentications](security.md#authentications)
+  * [Authentications](security-component.md#authentications)
 
 * [Barra di debug](debug-bar.md)
