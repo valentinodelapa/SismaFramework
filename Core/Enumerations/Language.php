@@ -44,30 +44,39 @@ enum Language: string
     {
         return match ($this) {
             self::italian => match ($language) {
-                Language::italian => "Italiano",
-                Language::americanEnglish => "Italian",
-                Language::spanish => "Italiano",
-                Language::german => "Italienisch",
+                self::italian => "Italiano",
+                self::americanEnglish => "Italian",
+                self::spanish => "Italiano",
+                self::german => "Italienisch",
             },
             self::americanEnglish => match ($language) {
-                Language::italian => "Inglese americano",
-                Language::americanEnglish => "American english",
-                Language::spanish => "Inglés americano",
-                Language::german => "Amerikanisches englisch",
+                self::italian => "Inglese americano",
+                self::americanEnglish => "American english",
+                self::spanish => "Inglés americano",
+                self::german => "Amerikanisches englisch",
             },
             self::spanish => match ($language) {
-                Language::italian => "Spagnolo",
-                Language::americanEnglish => "Spanish",
-                Language::spanish => "Español",
-                Language::german => "Spanisch",
+                self::italian => "Spagnolo",
+                self::americanEnglish => "Spanish",
+                self::spanish => "Español",
+                self::german => "Spanisch",
             },
             self::german => match ($language) {
-                Language::italian => "Tedesco",
-                Language::americanEnglish => "German",
-                Language::spanish => "Alemán",
-                Language::german => "Deutsch",
+                self::italian => "Tedesco",
+                self::americanEnglish => "German",
+                self::spanish => "Alemán",
+                self::german => "Deutsch",
             },
         };
     }
 
+    public function getISO6391Label(): string
+    {
+        return match ($this) {
+            self::italian => "IT",
+            self::americanEnglish => "EN",
+            self::spanish => "ES",
+            self::german => "DE",
+        };
+    }
 }

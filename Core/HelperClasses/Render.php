@@ -40,9 +40,15 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class Render
 {
 
+    private static Language $language;
     private static Resource $localeType;
     private static string $view;
     private static $isStructural = false;
+    
+    public static function setLanguage(Language $language):void
+    {
+        self::$language = $language;
+    }
 
     public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk, DataMapper $dataMapper = new DataMapper()): Response
     {
@@ -113,17 +119,15 @@ class Render
 
     private static function getLanguagePath(): string
     {
-        if (Session::hasItem('lang')) {
-            $configLanguage = Language::tryFrom(Session::getItem('lang')) ?? Language::tryFrom(\Config\LANGUAGE);
-        } else {
-            $configLanguage = Language::tryFrom(\Config\LANGUAGE);
+        if (isset(self::$language) === false) {
+            $defaultLanguage = Language::tryFrom(\Config\LANGUAGE);
+            if($defaultLanguage instanceof Language){
+                self::$language = $defaultLanguage;
+            }else{
+                throw new RenderException('Formato lingua non corretto');
+            }
         }
-        if ($configLanguage !== null) {
-            Session::setItem('lang', $configLanguage->value);
-        } else {
-            throw new RenderException('Formato lingua non corretto');
-        }
-        return self::getLocalePath($configLanguage);
+        return self::getLocalePath(self::$language);
     }
 
     private static function getLocalePath(Language $language): string
