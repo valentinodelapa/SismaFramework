@@ -34,6 +34,21 @@ use SismaFramework\Core\HelperClasses\Encryptor;
  */
 class EncryptorTest extends TestCase
 {
+    
+    public function testGetSimpleRandomToken()
+    {
+        $this->assertIsString(Encryptor::getSimpleRandomToken());
+    }
+    
+    public function testGetVerifySimpleHash()
+    {
+        $testString = 'sample';
+        $fakeTestString = 'fakeSample';
+        $testStringHash = Encryptor::getSimpleHash($testString);
+        $this->assertTrue(Encryptor::verifySimpleHash($testString, $testStringHash));
+        $this->assertFalse(Encryptor::verifySimpleHash($fakeTestString, $testStringHash));
+    }
+    
     public function testGetVerifyBlowfishHash()
     {
         $testString = 'sample';
@@ -47,7 +62,7 @@ class EncryptorTest extends TestCase
     {
         $testString = 'sample';
         $fakeTestString = 'fakeSample';
-        $initializationVector = openssl_random_pseudo_bytes(\Config\INITIALIZATION_VECTOR_BYTES);
+        $initializationVector = Encryptor::createInizializationVector();
         $cryptTestString = Encryptor::encryptString($testString, $initializationVector);
         $this->assertEquals($testString, Encryptor::decryptString($cryptTestString, $initializationVector));
         $this->assertNotEquals($fakeTestString, Encryptor::decryptString($cryptTestString, $initializationVector));

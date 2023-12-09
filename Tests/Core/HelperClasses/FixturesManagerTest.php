@@ -38,6 +38,17 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class FixturesManagerTest extends TestCase
 {
+    
+    public function testIsFixtures()
+    {
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $fixtureManager = new FixturesManager($dataMapperMock);
+        $this->assertTrue($fixtureManager->isFixtures(['fixtures']));
+        $this->assertFalse($fixtureManager->isFixtures(['fixtures', 'fixtures']));
+        $this->assertFalse($fixtureManager->isFixtures(['cms', 'fixtures']));
+        $this->assertFalse($fixtureManager->isFixtures(['index']));
+        $this->assertFalse($fixtureManager->isFixtures([]));
+    }
 
     public function testFixtureManager()
     {

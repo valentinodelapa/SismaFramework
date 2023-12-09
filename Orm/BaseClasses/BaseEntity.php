@@ -88,6 +88,11 @@ abstract class BaseEntity
     protected function checkFinalClassProperty(string $propertyName): bool
     {
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
+        return self::checkFinalClassReflectionProperty($reflectionProperty);
+    }
+    
+    public static function checkFinalClassReflectionProperty(\ReflectionProperty $reflectionProperty):bool
+    {
         return $reflectionProperty->getDeclaringClass()->isAbstract() === false;
     }
 

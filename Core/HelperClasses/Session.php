@@ -203,6 +203,10 @@ class Session
     public static function end(): void
     {
         session_destroy();
-        $_SESSION = [];
+    }
+    
+    public function __destruct()
+    {
+        self::end();
     }
 }

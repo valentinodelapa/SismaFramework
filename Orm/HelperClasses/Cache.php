@@ -27,6 +27,7 @@
 namespace SismaFramework\Orm\HelperClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\Exceptions\CacheException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 
@@ -123,11 +124,16 @@ class Cache
             $entityName = $module . '\\' . \Config\ENTITY_NAMESPACE . $entitySimpleName;
             $reflectionEntity = new \ReflectionClass($entityName);
             foreach ($reflectionEntity->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-                if (is_subclass_of($property->getType()->getName(), BaseEntity::class, true)) {
+                if (BaseEntity::checkFinalClassReflectionProperty($property) && (is_subclass_of($property->getType()->getName(), BaseEntity::class, true))) {
                     static::$foreighKeyDataCache[$property->getType()->getName()][lcfirst($entitySimpleName)][$property->getName()] = $entityName;
                 }
             }
         }
+    }
+    
+    public static function clearForeighKeyDataCache()
+    {
+        self::$foreighKeyDataCache = [];
     }
 
 }

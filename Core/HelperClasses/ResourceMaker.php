@@ -111,7 +111,7 @@ class ResourceMaker
 
     public function makeRobotsFile(): Response
     {
-        $filename = \Config\ROOT_PATH . DIRECTORY_SEPARATOR . \Config\ROBOTS_FILE;
+        $filename = \Config\ROOT_PATH . \Config\ROBOTS_FILE;
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
         header("Content-type: text/plain");

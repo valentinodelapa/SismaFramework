@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\NotationManager;
+use SismaFramework\Sample\Entities\BaseSample;
 
 /**
  * @author Valentino de Lapa
@@ -52,5 +53,32 @@ class NotationManagerTest extends TestCase
     {
         $result = NotationManager::convertToKebabCase('fakeFakeFake');
         $this->assertEquals('fake-fake-fake', $result);
+    }
+    
+    public function testConvertToSnakeCase()
+    {
+        $result = NotationManager::convertToSnakeCase('StudlyCaps');
+        $this->assertEquals('studly_caps', $result);
+        $result = NotationManager::convertToSnakeCase('camelCase');
+        $this->assertEquals('camel_case', $result);
+    }
+    
+    public function testConvertEntityToTableName()
+    {
+        $baseSample = new BaseSample();
+        $result =NotationManager::convertEntityToTableName($baseSample);
+        $this->assertEquals('base_sample', $result);
+    }
+    
+    public function testConvertEntityNameToTableName()
+    {
+        $result = NotationManager::convertEntityNameToTableName(BaseSample::class);
+        $this->assertEquals('base_sample', $result);
+    }
+    
+    public function testConvertColumnNameToPropertyName()
+    {
+        $result = NotationManager::convertColumnNameToPropertyName('referenced_entity_without_initialization_id');
+        $this->assertEquals('referencedEntityWithoutInitialization', $result);
     }
 }

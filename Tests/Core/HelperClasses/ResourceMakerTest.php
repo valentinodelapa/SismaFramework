@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
 
 /**
@@ -50,14 +51,31 @@ class ResourceMakerTest extends TestCase
     /**
      * @runInSeparateProcess
      */
+    public function testMakeResourceNotRenderable()
+    {
+        $resourceMaker = new ResourceMaker();
+        $this->expectException(AccessDeniedException::class);
+        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Controllers/SampleController.php');
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testMakeResourceWithFolderNotAccessible()
+    {
+        $resourceMaker = new ResourceMaker();
+        $this->expectException(AccessDeniedException::class);
+        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Cache/referencedCache.json');
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testMakeResourceViaFileGetContent()
     {
-        \ob_start();
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'));
         $resourceMaker = new ResourceMaker();
         $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/css/sample.css');
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'), $result);
     }
 
     /**
@@ -65,13 +83,10 @@ class ResourceMakerTest extends TestCase
      */
     public function testMakeResourceViaReadFile()
     {
-        \ob_start();
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'));
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setFileGetContentMaxBytesLimit(4);
         $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/css/sample.css');
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'), $result);
     }
 
     /**
@@ -79,14 +94,11 @@ class ResourceMakerTest extends TestCase
      */
     public function testMakeResourceViaFopen()
     {
-        \ob_start();
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'));
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setFileGetContentMaxBytesLimit(4);
         $resourceMaker->setReadfileMaxBytesLimit(4);
         $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/css/sample.css');
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'), $result);
     }
 
     /**
@@ -94,14 +106,20 @@ class ResourceMakerTest extends TestCase
      */
     public function testFileWithStreamContent()
     {
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../Sample/Assets/javascript/sample.js'));
         $_SERVER['QUERY_STRING'] = 'resource=resource';
-        \ob_start();
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setStreamContex();
         $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/javascript/sample.js');
-        $result = \ob_get_contents();
-        \ob_end_clean();
-        $this->assertEquals(file_get_contents(__DIR__ . '/../../../Sample/Assets/javascript/sample.js'), $result);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
+    public function testRobotFile()
+    {
+        $this->expectOutputString(file_get_contents(\Config\ROOT_PATH . \Config\ROBOTS_FILE));
+        $resourceMaker = new ResourceMaker();
+        $resourceMaker->makeRobotsFile();
+    }
 }

@@ -34,6 +34,7 @@ use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\Interfaces\Services\SitemapBuilderInterface;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -173,20 +174,43 @@ class DispatcherTest extends TestCase
         $dispatcher = new Dispatcher( new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
+    
+    public function testRobotsFile()
+    {
+        $resourceMakerMock = $this->createMock(ResourceMaker::class);
+        $resourceMakerMock->expects($this->once())
+                ->method('isRobotsFile')
+                ->willReturn(true);
+        $resourceMakerMock->expects($this->once())
+                ->method('makeRobotsFile');
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock);
+        $dispatcher->run();
+    }
+    
+    public function testSitemapBuilder()
+    {
+        $sitemapBuilderMock = $this->createMock(SitemapBuilderInterface::class);
+        $sitemapBuilderMock->expects($this->once())
+                ->method('isSitemap')
+                ->willReturn(true);
+        $sitemapBuilderMock->expects($this->once())
+                ->method('generate');
+        $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
+        $dispatcher->setSitemapBuilder($sitemapBuilderMock);
+        $dispatcher->run();
+    }
 
     /**
      * @runInSeparateProcess
      */
     public function testRootPath()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/Hello World/');
         $_SERVER['REQUEST_URI'] = '/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('sample - index', $result);
-        $this->assertStringContainsString('Hello World', $result);
     }
 
     /**
@@ -194,14 +218,12 @@ class DispatcherTest extends TestCase
      */
     public function testIndexPath()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/Hello World/');
         $_SERVER['REQUEST_URI'] = '/sample/index/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('sample - index', $result);
-        $this->assertStringContainsString('Hello World', $result);
     }
 
     /**
@@ -209,14 +231,12 @@ class DispatcherTest extends TestCase
      */
     public function testIndexPathTwo()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/Hello World/');
         $_SERVER['REQUEST_URI'] = '/index/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('sample - index', $result);
-        $this->assertStringContainsString('Hello World', $result);
     }
 
     /**
@@ -224,14 +244,12 @@ class DispatcherTest extends TestCase
      */
     public function testIndexPathThree()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/Hello World/');
         $_SERVER['REQUEST_URI'] = '/sample/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('sample - index', $result);
-        $this->assertStringContainsString('Hello World', $result);
     }
 
     /**
@@ -239,14 +257,12 @@ class DispatcherTest extends TestCase
      */
     public function testNotifyPath()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/test message/');
         $_SERVER['REQUEST_URI'] = '/notify/message/test+message';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('sample - notify', $result);
-        $this->assertStringContainsString('test message', $result);
     }
 
     /**
@@ -254,14 +270,12 @@ class DispatcherTest extends TestCase
      */
     public function testOtherIndexPath()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/other - index/');
+        $this->expectOutputRegex('/test message/');
         $_SERVER['REQUEST_URI'] = '/other/parameter/test+message/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('other - index', $result);
-        $this->assertStringContainsString('test message', $result);
     }
 
     /**
@@ -269,30 +283,26 @@ class DispatcherTest extends TestCase
      */
     public function testPathWithReload()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/other - index/');
+        $this->expectOutputRegex('/other test message/');
         $_SERVER['REQUEST_URI'] = '/fake/other/index/parameter/other+test+message/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('other - index', $result);
-        $this->assertStringContainsString('other test message', $result);
     }
 
     /**
      * @runInSeparateProcess
      */
     public function testPathWithRequestParameter()
-    {
+    {   
+        \ob_end_clean();
+        $this->expectOutputRegex('/other - action-with-request/');
+        $this->expectOutputRegex('/test parameter/');
         $_POST['parameter'] = 'test parameter';
         $_SERVER['REQUEST_URI'] = '/other/action-with-request/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('other - action-with-request', $result);
-        $this->assertStringContainsString('test parameter', $result);
     }
 
     /**
@@ -300,15 +310,13 @@ class DispatcherTest extends TestCase
      */
     public function testPathWithAuthenticationParameter()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/other - action-with-authentication/');
+        $this->expectOutputRegex('/is not submitted/');
         $_POST['username'] = 'username';
         $_SERVER['REQUEST_URI'] = '/other/action-with-authentication/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('other - action-with-authentication', $result);
-        $this->assertStringContainsString('is not submitted', $result);
     }
 
     /**
@@ -316,14 +324,12 @@ class DispatcherTest extends TestCase
      */
     public function testPathWithDefaultValueParameter()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/other - action-with-default-value/');
+        $this->expectOutputRegex('/is default/');
         $_SERVER['REQUEST_URI'] = '/other/action-with-default-value/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('other - action-with-default-value', $result);
-        $this->assertStringContainsString('is default', $result);
     }
 
     /**
@@ -331,16 +337,14 @@ class DispatcherTest extends TestCase
      */
     public function testPathWithArrayParameter()
     {
+        \ob_end_clean();
+        $this->expectOutputRegex('/other - action-with-array/');
+        $this->expectOutputRegex('/0: first/');
+        $this->expectOutputRegex('/1: second/');
+        $this->expectOutputRegex('/2: third/');
         $_SERVER['REQUEST_URI'] = '/other/action-with-array/array/first/array/second/array/third/';
-        \ob_start();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
-        $result = \ob_get_clean();
-        \ob_end_clean();
-        $this->assertStringContainsString('other - action-with-array', $result);
-        $this->assertStringContainsString('<div>0: first</div>', $result);
-        $this->assertStringContainsString('<div>1: second</div>', $result);
-        $this->assertStringContainsString('<div>2: third</div>', $result);
     }
 
     /**
