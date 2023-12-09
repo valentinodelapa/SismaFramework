@@ -186,7 +186,7 @@ Questo progetto è stato sviluppato prendendo spunto da alcune librerie open sou
   Discorso a parte va fatto per questa libreria, che è stata utilizzata come punto di partenza per sviluppare l'ORM presente all'interno del progetto.
   Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreria orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
 
-Ringrazio tutti gli autori e gli sviluppatori delle fonti citate e facciamo riferimento al file [`NOTICE.md`](NOTICE.md) della presente repository per i dettagli riguardanti le informazioni aggiuntive, le licenze e le notifiche di copyright originali.
+Ringrazio tutti gli autori e gli sviluppatori delle fonti citate e faccio riferimento al file [`NOTICE.md`](NOTICE.md) della presente repository per i dettagli riguardanti le informazioni aggiuntive, le licenze e le notifiche di copyright originali.
 
 Ringrazio il mio amico [Francesco Iezzi](https://github.com/Francesco997) per aver esaminato la libreria dal punto di vista della sicurezza ed aver fornito preziosi consigli in tale ambito.
 
