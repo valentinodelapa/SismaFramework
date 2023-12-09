@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright (c) 2023-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,26 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\ExtendedClasses;
+namespace SismaFramework\Tests\Orm\ExtendedClasses;
 
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\ProprietaryTypes\SismaCollection;
-use SismaFramework\ProprietaryTypes\SismaStandardClass;
 
 /**
- * Description of StandardEntity
+ * Description of StandardEntityTest
  *
  * @author Valentino de Lapa
  */
-class StandardEntity extends SismaStandardClass
+class StandardEntityTest extends TestCase
 {
-
-    public function __get($name)
+    public function testStandardEntity()
     {
-        if (str_contains($name, 'Collection')) {
-            return isset($this->$name) ? new SismaCollection(self::class, $this->$name) : new SismaCollection(self::class);
-        }elseif(isset($this->$name)){
-            return $this->$name;
-        }else{
-            return null;
-        }
+        $standardEntity = new StandardEntity();
+        $standardEntity->standardEntityCollection = new SismaCollection(StandardEntity::class);
+        $this->assertInstanceOf(SismaCollection::class, $standardEntity->standardEntityCollection);
+        $standardEntity->sampleSettedProperty = 'value';
+        $this->assertEquals('value', $standardEntity->sampleSettedProperty);
+        $this->assertNull($standardEntity->sampleUnsettedProperty);
     }
-
 }

@@ -27,7 +27,7 @@
 namespace SismaFramework\Orm\ResultSets;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 
 /**
@@ -61,12 +61,18 @@ class ResultSetMysql extends BaseResultSet
         $this->result = null;
     }
 
-    public function fetch(): StandardEntity|BaseEntity
+    public function fetch(): null|StandardEntity|BaseEntity
     {
-        if (($this->result === null) || ($this->currentRecord > $this->maxRecord)) {
+        if (($this->result instanceof \PDOStatement) && ($this->currentRecord <= $this->maxRecord)) {
+            $dbdata = $this->result->fetch(\PDO::FETCH_OBJ, \PDO::FETCH_ORI_ABS, $this->currentRecord);
+            if ($dbdata instanceof \stdClass) {
+                $this->currentRecord++;
+                return $this->transformResult($dbdata);
+            } else {
+                return null;
+            }
+        } else {
             return null;
         }
-        $dbdata = $this->result->fetch(\PDO::FETCH_OBJ, \PDO::FETCH_ORI_ABS, $this->currentRecord);
-        return $this->transformResult($dbdata);
     }
 }

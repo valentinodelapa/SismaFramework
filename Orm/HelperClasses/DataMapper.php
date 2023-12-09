@@ -39,8 +39,8 @@ use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Orm\Permissions\ReferencedEntityDeletionPermission;
+use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 
 /**

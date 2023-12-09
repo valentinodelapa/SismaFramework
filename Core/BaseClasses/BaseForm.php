@@ -34,7 +34,7 @@ use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;

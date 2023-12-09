@@ -27,7 +27,7 @@
 namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
@@ -60,15 +60,9 @@ abstract class BaseResultSet implements \Iterator
         $this->currentRecord = 0;
     }
 
-    public function fetchNext(): BaseEntity
-    {
-        $this->currentRecord++;
-        return $this->fetch();
-    }
+    abstract public function fetch(): null|StandardEntity|BaseEntity;
 
-    abstract public function fetch(): StandardEntity|BaseEntity;
-
-    public function seek(int $recordIndex): BaseEntity
+    public function seek(int $recordIndex): void
     {
         if ($recordIndex < 0) {
             $recordIndex = 0;
@@ -100,45 +94,48 @@ abstract class BaseResultSet implements \Iterator
 
     public function valid(): bool
     {
-        if ($this->currentRecord >= 0 && $this->currentRecord <= $this->maxRecord) {
+        if (($this->currentRecord >= 0) && ($this->currentRecord <= $this->maxRecord)) {
             return true;
         } else {
             return false;
         }
     }
 
-    protected function transformResult(&$result): StandardEntity|BaseEntity
+    protected function transformResult(\stdClass &$result): StandardEntity|BaseEntity
     {
-        if (!$result) {
-            return null;
-        }
         if ($this->returnType == StandardEntity::class) {
             return $this->convertToStandardEntity($result);
+        }else{
+            return $this->convertToBaseEntity($result);
         }
+    }
+
+    private function convertToStandardEntity(\stdClass $standardClass): StandardEntity
+    {
+        $standardEntity = new StandardEntity();
+        foreach ($standardClass as $property => $value) {
+            $standardEntity->$property = $value;
+        }
+        return $standardEntity;
+    }
+    
+    private function convertToBaseEntity(\stdClass $standardClass): BaseEntity
+    {
         $class = $this->returnType;
         $entity = new $class();
-        foreach ($result as $property => $value) {
+        foreach ($standardClass as $property => $value) {
             $property = NotationManager::convertColumnNameToPropertyName($property);
             if (property_exists($entity, $property)) {
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
                 $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
-                if ($entity->isEncryptedProperty($property) && ($result->$initializationVectorColumnName !== null)) {
-                    $value = Encryptor::decryptString($value, $result->$initializationVectorColumnName);
+                if ($entity->isEncryptedProperty($property) && ($standardClass->$initializationVectorColumnName !== null)) {
+                    $value = Encryptor::decryptString($value, $standardClass->$initializationVectorColumnName);
                 }
                 $entity->$property = Parser::parseValue($reflectionType, $value, false);
             }
         }
         $entity->modified = false;
         return $entity;
-    }
-
-    private function convertToStandardEntity($standardClass): StandardEntity
-    {
-        $StandardEntity = new StandardEntity();
-        foreach ($standardClass as $property => $value) {
-            $StandardEntity->$property = $value;
-        }
-        return $StandardEntity;
     }
 }

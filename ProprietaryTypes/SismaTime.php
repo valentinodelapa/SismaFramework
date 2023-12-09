@@ -35,7 +35,7 @@ class SismaTime extends \DateInterval
     public static function createFromStandardTimeFormat(string $time): self
     {
         $timeParts = explode(':', $time);
-        return new SismaTime('PT' . $timeParts[0] . 'H' . $timeParts[1] . 'M' . $timeParts[2] . 'S');
+        return new SismaTime('PT' . intval($timeParts[0]) . 'H' . intval($timeParts[1]) . 'M' . intval($timeParts[2]) . 'S');
     }
 
     public function formatToStandardTimeFormat(): string

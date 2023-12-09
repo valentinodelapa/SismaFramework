@@ -42,7 +42,7 @@ use SismaFramework\Sample\Forms\ReferencedSampleForm;
 use SismaFramework\Sample\Forms\SelfReferencedSampleForm;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Core\ExtendedClasses\StandardEntity;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;

@@ -31,8 +31,9 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\ProprietaryTypes\SismaDate;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Enumerations\SampleType;
 
@@ -150,6 +151,19 @@ class ParserTest extends TestCase
         $this->assertInstanceOf(SampleType::class, Parser::parseValue($reflectionNamedTypeMock, 'O', true, $this->dataMapperMock));
     }
 
+    public function testParseValueWithSismaDate()
+    {
+        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock->method('allowsNull')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('isBuiltin')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('getName')
+                ->willReturn(SismaDate::class);
+        $this->assertInstanceOf(SismaDate::class, Parser::parseValue($reflectionNamedTypeMock, '2000-01-01 00:00:00', true, $this->dataMapperMock));
+        $this->assertInstanceOf(SismaDate::class, Parser::parseValue($reflectionNamedTypeMock, '2000-01-01', true, $this->dataMapperMock));
+    }
+
     public function testParseValueWithSismaDateTime()
     {
         $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
@@ -161,6 +175,18 @@ class ParserTest extends TestCase
                 ->willReturn(SismaDateTime::class);
         $this->assertInstanceOf(SismaDateTime::class, Parser::parseValue($reflectionNamedTypeMock, '2000-01-01 00:00:00', true, $this->dataMapperMock));
         $this->assertInstanceOf(SismaDateTime::class, Parser::parseValue($reflectionNamedTypeMock, '2000-01-01', true, $this->dataMapperMock));
+    }
+
+    public function testParseValueWithSismaTime()
+    {
+        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock->method('allowsNull')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('isBuiltin')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('getName')
+                ->willReturn(SismaTime::class);
+        $this->assertInstanceOf(SismaTime::class, Parser::parseValue($reflectionNamedTypeMock, '1:00:00', true, $this->dataMapperMock));
     }
 
     public function testParseValueWithArray()
@@ -205,16 +231,22 @@ class ParserTest extends TestCase
         $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->id = 1;
         $sampleType = SampleType::one;
-        $sismaDatetme = new SismaDateTime();
+        $sismaDate = new SismaDate();
+        $sismaDateTime = new SismaDateTime();
+        $sismaTime = SismaTime::createFromStandardTimeFormat('1:00:00');
         $array = [
             'baseSample' => $baseSample,
             'sampleType' => $sampleType,
-            'sismaDatetime' => $sismaDatetme,
+            'sismaDate' => $sismaDate,
+            'sismaDateTime' => $sismaDateTime,
+            'sismaTime' => $sismaTime,
         ];
         Parser::unparseValues($array, $this->dataMapperMock);
         $this->assertEquals(1, $array['baseSample']);
-        $this->assertEquals('O', $array['sampleType']);
-        $this->assertEquals($sismaDatetme->format('Y-m-d H:i:s'), $array['sismaDatetime']);
+        $this->assertEquals($sampleType->value, $array['sampleType']);
+        $this->assertEquals($sismaDate->format('Y-m-d'), $array['sismaDate']);
+        $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $array['sismaDateTime']);
+        $this->assertEquals($sismaTime->formatToStandardTimeFormat(), $array['sismaTime']);
     }
 
 }
