@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Response;
@@ -42,7 +43,7 @@ class ErrorHandler
 
     public static function handleThrowableError(Throwable $throwable): Response
     {
-        \ob_clean();
+        BufferManager::clear();
         Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
         if (\Config\LOG_VERBOSE_ACTIVE) {
             Logger::saveTrace($throwable->getTrace());
@@ -75,7 +76,7 @@ class ErrorHandler
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error)) {
-                \ob_clean();
+                BufferManager::clear();
                 Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
                 if (\Config\LOG_VERBOSE_ACTIVE) {
                     Logger::saveTrace($backtrace);

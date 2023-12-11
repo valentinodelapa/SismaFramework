@@ -24,21 +24,32 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Security\ExtendedClasses;
-
-use SismaFramework\Security\BaseClasses\BaseException;
-use SismaFramework\Core\HelperClasses\BufferManager;
+namespace SismaFramework\Core\HelperClasses;
 
 /**
- * Description of NoLogException
- *
  * @author Valentino de Lapa
  */
-class NoLogException extends BaseException
+class BufferManager
 {
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+
+    public static function start(): void
     {
-        parent::__construct($message, $code, $previous);
-        BufferManager::clear();
+        \ob_start();
+    }
+
+    public static function clear(): void
+    {
+        $status = \ob_get_status();
+        if($status['active']){
+            \ob_clean();
+        }
+    }
+
+    public static function flush(): void
+    {
+        $status = \ob_get_status();
+        if($status['active']){
+            \ob_flush();
+        }
     }
 }

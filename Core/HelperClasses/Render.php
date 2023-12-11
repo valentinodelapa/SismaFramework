@@ -30,6 +30,7 @@ use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\RenderException;
+use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -53,7 +54,7 @@ class Render
     public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk, DataMapper $dataMapper = new DataMapper()): Response
     {
         Debugger::setVars($vars);
-        \ob_start();
+        BufferManager::start();
         self::assemblesComponents($view, $vars);
         echo static::generateDebugBar($dataMapper);
         return self::getResponse($responseType);
