@@ -39,16 +39,14 @@ class BufferManager
 
     public static function clear(): void
     {
-        $status = \ob_get_status();
-        if($status['active']){
+        if(\ob_get_level() > 0){
             \ob_clean();
         }
     }
 
     public static function flush(): void
     {
-        $status = \ob_get_status();
-        if($status['active']){
+        if(\ob_get_level() > 0){
             \ob_flush();
         }
     }
