@@ -61,12 +61,14 @@ class ResultSetMysql extends BaseResultSet
         $this->result = null;
     }
 
-    public function fetch(): null|StandardEntity|BaseEntity
+    public function fetch(bool $autoNext = true): null|StandardEntity|BaseEntity
     {
         if (($this->result instanceof \PDOStatement) && ($this->currentRecord <= $this->maxRecord)) {
             $dbdata = $this->result->fetch(\PDO::FETCH_OBJ, \PDO::FETCH_ORI_ABS, $this->currentRecord);
             if ($dbdata instanceof \stdClass) {
-                $this->currentRecord++;
+                if ($autoNext) {
+                    $this->next();
+                }
                 return $this->transformResult($dbdata);
             } else {
                 return null;

@@ -41,7 +41,7 @@ abstract class BaseResultSet implements \Iterator
     protected string $returnType = StandardEntity::class;
     protected int $currentRecord = 0;
     protected int $maxRecord = -1;
-    
+
     public function __construct()
     {
         $this->maxRecord = $this->numRows() - 1;
@@ -60,7 +60,7 @@ abstract class BaseResultSet implements \Iterator
         $this->currentRecord = 0;
     }
 
-    abstract public function fetch(): null|StandardEntity|BaseEntity;
+    abstract public function fetch(bool $autoNext = true): null|StandardEntity|BaseEntity;
 
     public function seek(int $recordIndex): void
     {
@@ -72,9 +72,9 @@ abstract class BaseResultSet implements \Iterator
         $this->currentRecord = $recordIndex;
     }
 
-    public function current(): BaseEntity
+    public function current(): null|StandardEntity|BaseEntity
     {
-        return $this->fetch();
+        return $this->fetch(false);
     }
 
     public function next(): void
@@ -105,7 +105,7 @@ abstract class BaseResultSet implements \Iterator
     {
         if ($this->returnType == StandardEntity::class) {
             return $this->convertToStandardEntity($result);
-        }else{
+        } else {
             return $this->convertToBaseEntity($result);
         }
     }
@@ -118,7 +118,7 @@ abstract class BaseResultSet implements \Iterator
         }
         return $standardEntity;
     }
-    
+
     private function convertToBaseEntity(\stdClass $standardClass): BaseEntity
     {
         $class = $this->returnType;

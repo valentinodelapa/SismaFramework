@@ -1,6 +1,6 @@
  {
     "name": "valentinodelapa/sismaframework",
-    "version" : "6.12.4",
+    "version" : "6.12.5",
     "description": "PHP MVC framework with ORM",
     "type": "library",
     "license": "MIT",
