@@ -145,18 +145,20 @@ class ResultSetMysqlTest extends TestCase
                     $rowsNum--;
                     return $actualRowsNum;
                 });
-        $PDOStatementMock->expects($this->exactly(2))
+        $PDOStatementMock->expects($this->exactly(4))
                 ->method('fetch')
                 ->willReturnCallback(function () {
                     static $invocation = 0;
                     $invocation++;
                     switch ($invocation) {
                         case 1:
+                        case 2:
                             $result = new \stdClass();
                             $result->id = 1;
                             $result->stringWithoutInizialization = 'name';
                             return $result;
-                        case 2:
+                        case 3:
+                        case 4:
                             $result = new \stdClass();
                             $result->id = 2;
                             $result->stringWithoutInizialization = 'name';
@@ -169,13 +171,19 @@ class ResultSetMysqlTest extends TestCase
         $this->assertEquals(0, $resultSetMysql->key());
         $this->assertInstanceOf(BaseSample::class, $resultSetMysql->current());
         $this->assertTrue($resultSetMysql->valid());
+        $this->assertEquals(0, $resultSetMysql->key());
+        $this->assertInstanceOf(BaseSample::class, $resultSetMysql->fetch());
+        $this->assertTrue($resultSetMysql->valid());
         $this->assertEquals(1, $resultSetMysql->key());
         $this->assertInstanceOf(BaseSample::class, $resultSetMysql->current());
+        $this->assertTrue($resultSetMysql->valid());
+        $this->assertEquals(1, $resultSetMysql->key());
+        $this->assertInstanceOf(BaseSample::class, $resultSetMysql->fetch());
         $this->assertFalse($resultSetMysql->valid());
         $this->assertEquals(2, $resultSetMysql->key());
         $this->assertNull($resultSetMysql->fetch());
     }
-    
+
     public function testIndexNavigation()
     {
         $PDOStatementMock = $this->createMock(\PDOStatement::class);
@@ -195,5 +203,27 @@ class ResultSetMysqlTest extends TestCase
         $this->assertEquals(5, $resultSetMysql->key());
         $resultSetMysql->rewind();
         $this->assertEquals(0, $resultSetMysql->key());
+    }
+
+    public function testWithForeach()
+    {
+        $PDOStatementMock = $this->createMock(\PDOStatement::class);
+        $PDOStatementMock->expects($this->any())
+                ->method('rowCount')
+                ->willReturn(10);
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->stringWithoutInizialization = 'name';
+        $PDOStatementMock->expects($this->exactly(10))
+                ->method('fetch')
+                ->willReturn($result);
+        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql->setReturnType(BaseSample::class);
+        $current = 0;
+        foreach ($resultSetMysql as $baseSample) {
+            $this->assertEquals($current, $resultSetMysql->key());
+            $this->assertInstanceOf(BaseSample::class, $baseSample);
+            $current++;
+        }
     }
 }
