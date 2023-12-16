@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright (c) 2023-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,40 +24,25 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HttpClasses;
+namespace SismaFramework\Tests\Core\HelperClasses;
+
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Router;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class Request
+class RouterTest extends TestCase
 {
-
-    public $query;
-    public $request;
-    public $cookie;
-    public $files;
-    public $server;
-    public $headers;
-
-    public function __construct()
+    public function testRedirect()
     {
-        $this->query = $_GET;
-        $this->request = $_POST;
-        $this->cookie = $_COOKIE;
-        $this->files = $_FILES;
-        $this->server = $_SERVER;
+        
     }
-
-    public function getStreamContentResource()
+    
+    public function testGetActualUrl()
     {
-        $opts = [
-            $this->server['SERVER_PROTOCOL'] => [
-                'method' => 'GET',
-                'content' => $this->query
-            ]
-        ];
-        return stream_context_create($opts);
+        Router::concatenateMetaUrl('/meta/url');
+        $_SERVER['REQUEST_URI'] = '/meta/url/sample/error/';
+        $this->assertEquals('sample/error/', Router::getActualUrl());
     }
-
 }

@@ -47,6 +47,7 @@ use SismaFramework\Security\HttpClasses\Authentication;
 class Dispatcher
 {
 
+    private $rootPath = \Config\ROOT_PATH;
     private ResourceMaker $resourceMaker;
     private FixturesManager $fixturesManager;
     private DataMapper $dataMapper;
@@ -81,6 +82,11 @@ class Dispatcher
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;
         $this->dataMapper = $dataMapper;
+    }
+    
+    public function setCustomRootPath(string $customRootPath):void
+    {
+        $this->rootPath = $customRootPath;
     }
 
     public function setSitemapBuilder(SitemapBuilderInterface $sitemapBuilder): void
@@ -133,7 +139,7 @@ class Dispatcher
         ModuleManager::initializeApplicationModule();
         foreach (ModuleManager::getModuleList() as $module) {
             $this->controllerName = $module . '\\' . \Config\CONTROLLER_NAMESPACE . NotationManager::convertToStudlyCaps($this->pathParts[0] . 'Controller');
-            if ($this->checkControllerPresence() || ((count($this->pathParts) === 2) && (file_exists(\Config\ROOT_PATH . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
+            if ($this->checkControllerPresence() || ((count($this->pathParts) === 2) && (file_exists($this->rootPath . $module . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
                 ModuleManager::setApplicationModule($module);
                 break;
             }
@@ -164,12 +170,12 @@ class Dispatcher
 
     private function handleFile(): Response
     {
-        if (file_exists(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            return $this->resourceMaker->makeResource(\Config\ROOT_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
-        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\STRUCTURAL_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
+        if (file_exists($this->rootPath . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
+            return $this->resourceMaker->makeResource($this->rootPath . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+        } elseif (file_exists(\Config\STRUCTURAL_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
             return $this->resourceMaker->makeResource(\Config\STRUCTURAL_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
-        } elseif ((count($this->pathParts) === 2) && file_exists(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
-            return $this->resourceMaker->makeResource(\Config\ROOT_PATH . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
+        } elseif (file_exists($this->rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts))) {
+            return $this->resourceMaker->makeResource($this->rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . \Config\APPLICATION_ASSETS_PATH . implode(DIRECTORY_SEPARATOR, $this->pathParts));
         } else {
             return $this->switchNotFoundActions();
         }
@@ -228,7 +234,7 @@ class Dispatcher
     private function checkActionPresenceInController(): bool
     {
         Router::setActualCleanUrl($this->pathParts[0], $this->pathParts[1]);
-        if ($this->defaultControllerInjected && (count($this->pathParts) === 2) && (str_contains(\Config\ROOT_PATH, $this->pathParts[1]) === false)) {
+        if ($this->defaultControllerInjected && (count($this->pathParts) === 2) && (str_contains($this->rootPath, $this->pathParts[1]) === false)) {
             return is_callable([$this->instanceControllerClass(), $this->action]);
         } else {
             return method_exists($this->controllerName, $this->action);

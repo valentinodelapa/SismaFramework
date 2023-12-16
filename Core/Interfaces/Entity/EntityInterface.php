@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright (c) 2023-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,40 +24,10 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HttpClasses;
-
 /**
- *
  * @author Valentino de Lapa
  */
-class Request
+interface EntityInterface
 {
-
-    public $query;
-    public $request;
-    public $cookie;
-    public $files;
-    public $server;
-    public $headers;
-
-    public function __construct()
-    {
-        $this->query = $_GET;
-        $this->request = $_POST;
-        $this->cookie = $_COOKIE;
-        $this->files = $_FILES;
-        $this->server = $_SERVER;
-    }
-
-    public function getStreamContentResource()
-    {
-        $opts = [
-            $this->server['SERVER_PROTOCOL'] => [
-                'method' => 'GET',
-                'content' => $this->query
-            ]
-        ];
-        return stream_context_create($opts);
-    }
-
+    
 }

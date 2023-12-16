@@ -106,8 +106,27 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with(\Config\SYSTEM_PATH.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'css'.DIRECTORY_SEPARATOR.'sample.css');
+                ->with(dirname(__DIR__, 3).DIRECTORY_SEPARATOR.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'css'.DIRECTORY_SEPARATOR.'sample.css');
         $dispatcher = new Dispatcher(new Request(), $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock);
+        $dispatcher->setCustomRootPath(dirname(__DIR__, 3));
+        $dispatcher->run();
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
+    public function testModuleFileInSubfolder()
+    {
+        $_SERVER['REQUEST_URI'] = '/vendor/sample-vendor/sample-vendor.css';
+        $resourceMakerMock = $this->createMock(ResourceMaker::class);
+        $resourceMakerMock->expects($this->once())
+                ->method('isAcceptedResourceFile')
+                ->willReturn(true);
+        $resourceMakerMock->expects($this->once())
+                ->method('makeResource')
+                ->with(dirname(__DIR__, 3).DIRECTORY_SEPARATOR.\Config\APPLICATION_PATH. \Config\ASSETS. DIRECTORY_SEPARATOR . 'vendor'.DIRECTORY_SEPARATOR.'sample-vendor'.DIRECTORY_SEPARATOR.'sample-vendor.css');
+        $dispatcher = new Dispatcher(new Request(), $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock);
+        $dispatcher->setCustomRootPath(dirname(__DIR__, 3));
         $dispatcher->run();
     }
 

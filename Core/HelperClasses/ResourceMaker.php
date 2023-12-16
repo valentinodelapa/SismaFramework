@@ -65,7 +65,7 @@ class ResourceMaker
     }
 
     public function isAcceptedResourceFile(string $path): bool
-    {
+    {   
         return Resource::tryFrom($this->getExtension($path)) instanceof Resource;
     }
 
