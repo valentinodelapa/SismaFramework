@@ -27,6 +27,7 @@
 namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Condition;
@@ -53,6 +54,11 @@ abstract class BaseAdapter
     }
 
     abstract protected function connect(array $options = []): void;
+    
+    public static function setConnection(mixed $connection):void
+    {
+        self::$connection = $connection;
+    }
 
     public static function &getDefault(): ?BaseAdapter
     {
@@ -104,23 +110,18 @@ abstract class BaseAdapter
         }
     }
 
-    public function escapeColumns(array $cols): array
+    public function escapeColumns(array $columns): array
     {
-        $ret = [];
-        foreach ($cols as $col) {
-            $ret[] = $this->escapeColumn($col);
+        $parsedColumns = [];
+        foreach ($columns as $column) {
+            $parsedColumns[] = $this->escapeColumn($column);
         }
-        return $ret;
+        return $parsedColumns;
     }
 
     public function escapeColumn(string $name, bool $foreignKey = false): string
     {
-        $arrayName = preg_split('/(?=[A-Z])/', $this->escapeIdentifier(($foreignKey) ? $name . 'Id' : $name));
-        array_walk($arrayName, function (&$value) {
-            $value = strtolower($value);
-        });
-        $implodedName = implode('_', $arrayName);
-        return $implodedName;
+        return NotationManager::convertToSnakeCase($this->escapeIdentifier(($foreignKey) ? $name . 'Id' : $name));
     }
 
     public function escapeValue(mixed $value, ?ComparisonOperator $operator = null): string
