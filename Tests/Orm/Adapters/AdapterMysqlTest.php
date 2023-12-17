@@ -28,18 +28,25 @@ namespace SismaFramework\Tests\Orm\Adapters;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Sample\Entities\BaseSample;
 
 /**
  * @author Valentino de Lapa
  */
 class AdapterMysqlTest extends TestCase
 {
+    private \PDO $connectionMock;
+    
     public function __construct(string $name)
     {
         parent::__construct($name);
-        $connectionMock = $this->createMock(\PDOStatement::class);
-        AdapterMysql::setConnection($connectionMock);
+        $this->connectionMock = $this->createMock(\PDO::class);
+        AdapterMysql::setConnection($this->connectionMock);
     }
 
     public function testAllColumns()
@@ -60,8 +67,10 @@ class AdapterMysqlTest extends TestCase
     public function testEscapeOrderIndexing()
     {
         $adapterMysql = new AdapterMysql();
-        $this->assertEquals("ASC", $adapterMysql->escapeOrderIndexing("ASC"));
+        $this->assertEquals("ASC", $adapterMysql->escapeOrderIndexing(Indexing::asc));
         $this->assertEquals("DESC", $adapterMysql->escapeOrderIndexing(Indexing::desc));
+        $this->assertEquals("ASC", $adapterMysql->escapeOrderIndexing("ASC"));
+        $this->assertEquals("DESC", $adapterMysql->escapeOrderIndexing("DESC"));
         $this->assertEmpty($adapterMysql->escapeOrderIndexing("B"));
         $this->assertEmpty($adapterMysql->escapeOrderIndexing());
     }
@@ -83,5 +92,111 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('`column_name`', $adapterMysql->escapeColumn('columnName'));
         $this->assertEquals('`table_name`.`column_name_id`', $adapterMysql->escapeColumn('tableName.column#Name', true));
         $this->assertEquals('`table_name`.`column_name`', $adapterMysql->escapeColumn('tableName.column#Name'));
+    }
+    
+    public function testEscapeValue()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEmpty($adapterMysql->escapeValue(null, ComparisonOperator::isNull));
+        $this->assertEmpty($adapterMysql->escapeValue(null, ComparisonOperator::isNotNull));
+        $this->assertEmpty($adapterMysql->escapeValue(1, ComparisonOperator::isNull));
+        $this->assertEmpty($adapterMysql->escapeValue(1, ComparisonOperator::isNotNull));
+        $this->assertEmpty($adapterMysql->escapeValue('sample', ComparisonOperator::isNull));
+        $this->assertEmpty($adapterMysql->escapeValue('sample', ComparisonOperator::isNotNull));
+        $this->assertEmpty($adapterMysql->escapeValue(Keyword::placeholder, ComparisonOperator::isNull));
+        $this->assertEmpty($adapterMysql->escapeValue(Keyword::placeholder, ComparisonOperator::isNotNull));
+        
+        $this->assertEquals('1,sample,?',$adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::in));
+        $this->assertEquals('1,sample,?',$adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::notIn));
+        $this->assertEquals('sample',$adapterMysql->escapeValue('sample', ComparisonOperator::in));
+        $this->assertEquals('sample',$adapterMysql->escapeValue('sample', ComparisonOperator::notIn));
+        
+        $this->assertEquals('1', $adapterMysql->escapeValue(1));
+        $this->assertEquals('sample', $adapterMysql->escapeValue('sample'));
+        $this->assertEquals(Keyword::placeholder->value, $adapterMysql->escapeValue(Keyword::placeholder));
+        $sismaDateTime = new SismaDateTime();
+        $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $adapterMysql->escapeValue($sismaDateTime));
+        $baseSample = new BaseSample();
+        $baseSample->id = 1;
+        $this->assertEquals('1', $adapterMysql->escapeValue($baseSample));
+        $this->assertEquals('1', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder]));
+    }
+    
+    public function testOpenBlock()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('( ', $adapterMysql->openBlock());
+    }
+    
+    public function testCloseBlock()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals(' )', $adapterMysql->closeBlock());
+    }
+    
+    public function testOpAnd()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('AND', $adapterMysql->opAND());
+    }
+    
+    public function testOpOr()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('OR', $adapterMysql->opOR());
+    }
+    
+    public function testOpNot()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('NOT', $adapterMysql->opNOT());
+    }
+    
+    public function testOpCount()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('COUNT(*) as _numrows', $adapterMysql->opCOUNT('', false));
+        $this->assertEquals('COUNT(*) as _numrows', $adapterMysql->opCOUNT('*', false));
+        $this->assertEquals('COUNT(`column_name`) as _numrows', $adapterMysql->opCOUNT('column#Name', false));
+        $this->assertEquals('COUNT(`table_name`.`column_name`) as _numrows', $adapterMysql->opCOUNT('table-Name.column#Name', false));
+        $this->assertEquals('COUNT(DISTINCT `column_name`) as _numrows', $adapterMysql->opCOUNT('column#Name', true));
+        $this->assertEquals('COUNT(DISTINCT `table_name`.`column_name`) as _numrows', $adapterMysql->opCOUNT('table-Name.column#Name', true));
+    }
+    
+    public function testOpSubquery()
+    {
+        $queryMock = $this->createMock(Query::class);
+        $queryMock->expects($this->any())
+                ->method('getCommandToExecute')
+                ->willReturn('subquery');
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('(subquery)', $adapterMysql->opSubquery($queryMock));
+        $this->assertEquals('(subquery) as `alias`', $adapterMysql->opSubquery($queryMock, 'alias'));
+    }
+    
+    public function testParseSelect()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('SELECT * FROM `table_name` WHERE `table_name`.`id` = 1 ', $adapterMysql->parseSelect(false, ['*'], ['`table_name`'], ['`table_name`.`id` = 1'], [], [], [], 0, 0));
+        $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP_BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
+                $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], ['`table_name`'], ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id`' => 'ASC'], 1, 10));
+    }
+    
+    public function testParseInsert()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('INSERT INTO `table_name` (`column_name_one`,`column_name_two`) VALUES (`valueOne`,`valueTwo`)', $adapterMysql->parseInsert(['`table_name`'], ['`column_name_one`','`column_name_two`'], ['`valueOne`', '`valueTwo`']));
+    }
+    
+    public function testParseUpdate()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('UPDATE `table_name` SET `column_name_one` = `valueOne`,`column_name_two` = `valueTwo` WHERE `table_name`.`id` = 1', $adapterMysql->parseUpdate(['`table_name`'], ['`column_name_one`','`column_name_two`'], ['`valueOne`', '`valueTwo`'], ['`table_name`.`id` = 1']));
+    }
+    
+    public function testParseDelete()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('DELETE FROM `table_name` WHERE `table_name`.`id` = 1', $adapterMysql->parseDelete(['`table_name`'], ['`table_name`.`id` = 1']));
     }
 }

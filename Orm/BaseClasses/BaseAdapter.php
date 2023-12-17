@@ -27,6 +27,7 @@
 namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
@@ -54,8 +55,8 @@ abstract class BaseAdapter
     }
 
     abstract protected function connect(array $options = []): void;
-    
-    public static function setConnection(mixed $connection):void
+
+    public static function setConnection(mixed $connection): void
     {
         self::$connection = $connection;
     }
@@ -126,29 +127,29 @@ abstract class BaseAdapter
 
     public function escapeValue(mixed $value, ?ComparisonOperator $operator = null): string
     {
-        if ($operator === ComparisonOperator::isNull || $operator === ComparisonOperator::isNotNull) {
-            return '';
-        } elseif ($operator === ComparisonOperator::in || $operator === ComparisonOperator::notIn) {
-            if (!is_array($value)) {
-                $value = [$value];
-            }
-            $vals = [];
-            foreach ($value as $v) {
-                $vals[] = $this->escapeValue($v);
-            }
-            return $this->openBlock . implode(',', $vals) . $this->closeBlock;
-        } else {
-            if (is_array($value)) {
-                $val = array_shift($value);
-                $value = $val;
-            }
-            if ($value instanceof Keyword) {
-                $stringValue = $value->value;
-            } else {
-                $stringValue = strval($value);
-            }
+        switch ($operator) {
+            case ComparisonOperator::isNull:
+            case ComparisonOperator::isNotNull:
+                return '';
+            case ComparisonOperator::in:
+            case ComparisonOperator::notIn:
+                if (is_array($value)) {
+                    foreach ($value as &$singleValue) {
+                        $singleValue = $this->escapeValue($singleValue);
+                    }
+                    return $this->openBlock . implode(',', $value) . $this->closeBlock;
+                } else {
+                    return $this->openBlock . $this->escapeValue($value) . $this->closeBlock;
+                }
+            default:
+                if ($value instanceof Keyword) {
+                    return $value->value;
+                }elseif (is_array($value)) {
+                    return Parser::unparseValue(array_shift($value));
+                } else {
+                    return Parser::unparseValue($value);
+                }
         }
-        return $stringValue;
     }
 
     public function openBlock(): string
@@ -203,15 +204,15 @@ abstract class BaseAdapter
             $orderby[$k] = $k . ' ' . $v;
         }
         $query = Statement::select->value . ' ' .
-                ($distinct ? ' ' . Keyword::distinct->value . ' ' : '') .
+                ($distinct ? Keyword::distinct->value . ' ' : '') .
                 implode(',', $select) . ' ' .
                 Keyword::from->value . ' ' . implode(',', $from) . ' ' .
                 ((count($where) > 0) ? Condition::where->value . ' ' . implode(' ', $where) : '' ) . ' ' .
-                ($groupby ? ' ' . Keyword::groupBy->value . ' ' . implode(',', $groupby) . ' ' : '') .
+                ($groupby ? Keyword::groupBy->value . ' ' . implode(',', $groupby) . ' ' : '') .
                 ($groupby && $having ? Condition::having->value . ' ' . implode(' ', $having) . ' ' : '') .
-                (count($orderby) > 0 ? ' ' . Keyword::orderBy->value . ' ' . implode(',', $orderby) . ' ' : '') .
-                ($limit > 0 ? ' ' . Keyword::limit->value . ' ' . $limit . ' ' : '') .
-                ($offset > 0 ? ' ' . Keyword::offset->value . ' ' . $offset . ' ' : '');
+                (count($orderby) > 0 ? Keyword::orderBy->value . ' ' . implode(',', $orderby) . ' ' : '') .
+                ($limit > 0 ? Keyword::limit->value . ' ' . $limit . ' ' : '') .
+                ($offset > 0 ? Keyword::offset->value . ' ' . $offset . ' ' : '');
         return $query;
     }
 
@@ -231,14 +232,14 @@ abstract class BaseAdapter
         }
         $query = Statement::update->value . ' ' . implode(',', $table) . ' ' .
                 Keyword::set->value . ' ' . implode(',', $cmd) . ' ' .
-                ($where ? ' ' . Condition::where->value . ' ' . implode(' ', $where) : '');
+                ($where ? Condition::where->value . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
     public function parseDelete(array $from, array $where = []): string
     {
         $query = Statement::delete->value . ' ' . implode(',', $from) . ' ' .
-                ($where ? ' ' . Condition::where->value . ' ' . implode(' ', $where) : '');
+                ($where ? Condition::where->value . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
