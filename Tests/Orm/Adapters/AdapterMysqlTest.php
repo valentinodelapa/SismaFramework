@@ -31,7 +31,9 @@ use SismaFramework\Orm\Adapters\AdapterMysql;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
 
@@ -198,5 +200,53 @@ class AdapterMysqlTest extends TestCase
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('DELETE FROM `table_name` WHERE `table_name`.`id` = 1', $adapterMysql->parseDelete(['`table_name`'], ['`table_name`.`id` = 1']));
+    }
+    
+    public function testSelect()
+    {
+        $pdoStatementMock = $this->createMock(\PDOStatement::class);
+        $pdoStatementMock->expects($this->any())
+                ->method('execute');
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->any())
+                ->method('prepare')
+                ->willReturn($pdoStatementMock);
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertInstanceOf(ResultSetMysql::class, $adapterMysql->select(''));
+    }
+    
+    public function testExecuteTrue()
+    {
+        $pdoStatementMock = $this->createMock(\PDOStatement::class);
+        $pdoStatementMock->expects($this->any())
+                ->method('execute')
+                ->willReturn(true);
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->any())
+                ->method('prepare')
+                ->willReturn($pdoStatementMock);
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertTrue($adapterMysql->execute(''));
+    }
+    
+    public function testExecute()
+    {
+        $this->expectException(AdapterException::class);
+        $pdoStatementMock = $this->createMock(\PDOStatement::class);
+        $pdoStatementMock->expects($this->any())
+                ->method('execute')
+                ->willReturn(false);
+        $pdoStatementMock->expects($this->any())
+                ->method('errorInfo')
+                ->willReturn(['error', '000', 'message']);
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->any())
+                ->method('prepare')
+                ->willReturn($pdoStatementMock);
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $adapterMysql->execute('');
     }
 }

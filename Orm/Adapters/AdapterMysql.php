@@ -197,7 +197,7 @@ class AdapterMysql extends BaseAdapter
             return true;
         } else {
             $errorInfo = $statement->errorInfo();
-            Throw new AdapterException($errorInfo[0] . ' - ' . $errorInfo[2] . ' - ' . $cmd, $errorInfo[1]);
+            Throw new AdapterException($errorInfo[0] . ' - ' . $errorInfo[2] . ' - ' . $cmd, intval($errorInfo[1]));
         }
     }
 
