@@ -29,6 +29,7 @@ namespace SismaFramework\Tests\Orm\Adapters;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\Adapters\AdapterMysql;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Exceptions\AdapterException;
@@ -36,19 +37,19 @@ use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Sample\Enumerations\SampleType;
 
 /**
  * @author Valentino de Lapa
  */
 class AdapterMysqlTest extends TestCase
 {
-    private \PDO $connectionMock;
-    
+
     public function __construct(string $name)
     {
         parent::__construct($name);
-        $this->connectionMock = $this->createMock(\PDO::class);
-        AdapterMysql::setConnection($this->connectionMock);
+        $connectionMock = $this->createMock(\PDO::class);
+        AdapterMysql::setConnection($connectionMock);
     }
 
     public function testAllColumns()
@@ -65,7 +66,7 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('1.1', $adapterMysql->escapeIdentifier("1.1"));
         $this->assertEquals('`Table`.`column_name`', $adapterMysql->escapeIdentifier("T-a#b@l4e.c#o8l(umn_name"));
     }
-    
+
     public function testEscapeOrderIndexing()
     {
         $adapterMysql = new AdapterMysql();
@@ -76,7 +77,7 @@ class AdapterMysqlTest extends TestCase
         $this->assertEmpty($adapterMysql->escapeOrderIndexing("B"));
         $this->assertEmpty($adapterMysql->escapeOrderIndexing());
     }
-    
+
     public function testEscapeColumns()
     {
         $adapterMysql = new AdapterMysql();
@@ -85,17 +86,17 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('`column_name`', $escapedColumns[0]);
         $this->assertEquals('`table_name`.`column_name`', $escapedColumns[1]);
     }
-    
+
     public function testEscapeColumn()
     {
-        
+
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('`column_name_id`', $adapterMysql->escapeColumn('columnName', true));
         $this->assertEquals('`column_name`', $adapterMysql->escapeColumn('columnName'));
         $this->assertEquals('`table_name`.`column_name_id`', $adapterMysql->escapeColumn('tableName.column#Name', true));
         $this->assertEquals('`table_name`.`column_name`', $adapterMysql->escapeColumn('tableName.column#Name'));
     }
-    
+
     public function testEscapeValue()
     {
         $adapterMysql = new AdapterMysql();
@@ -107,12 +108,12 @@ class AdapterMysqlTest extends TestCase
         $this->assertEmpty($adapterMysql->escapeValue('sample', ComparisonOperator::isNotNull));
         $this->assertEmpty($adapterMysql->escapeValue(Keyword::placeholder, ComparisonOperator::isNull));
         $this->assertEmpty($adapterMysql->escapeValue(Keyword::placeholder, ComparisonOperator::isNotNull));
-        
-        $this->assertEquals('1,sample,?',$adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::in));
-        $this->assertEquals('1,sample,?',$adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::notIn));
-        $this->assertEquals('sample',$adapterMysql->escapeValue('sample', ComparisonOperator::in));
-        $this->assertEquals('sample',$adapterMysql->escapeValue('sample', ComparisonOperator::notIn));
-        
+
+        $this->assertEquals('1,sample,?', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::in));
+        $this->assertEquals('1,sample,?', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::notIn));
+        $this->assertEquals('sample', $adapterMysql->escapeValue('sample', ComparisonOperator::in));
+        $this->assertEquals('sample', $adapterMysql->escapeValue('sample', ComparisonOperator::notIn));
+
         $this->assertEquals('1', $adapterMysql->escapeValue(1));
         $this->assertEquals('sample', $adapterMysql->escapeValue('sample'));
         $this->assertEquals(Keyword::placeholder->value, $adapterMysql->escapeValue(Keyword::placeholder));
@@ -123,37 +124,37 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('1', $adapterMysql->escapeValue($baseSample));
         $this->assertEquals('1', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder]));
     }
-    
+
     public function testOpenBlock()
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('( ', $adapterMysql->openBlock());
     }
-    
+
     public function testCloseBlock()
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals(' )', $adapterMysql->closeBlock());
     }
-    
+
     public function testOpAnd()
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('AND', $adapterMysql->opAND());
     }
-    
+
     public function testOpOr()
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('OR', $adapterMysql->opOR());
     }
-    
+
     public function testOpNot()
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('NOT', $adapterMysql->opNOT());
     }
-    
+
     public function testOpCount()
     {
         $adapterMysql = new AdapterMysql();
@@ -164,7 +165,7 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('COUNT(DISTINCT `column_name`) as _numrows', $adapterMysql->opCOUNT('column#Name', true));
         $this->assertEquals('COUNT(DISTINCT `table_name`.`column_name`) as _numrows', $adapterMysql->opCOUNT('table-Name.column#Name', true));
     }
-    
+
     public function testOpSubquery()
     {
         $queryMock = $this->createMock(Query::class);
@@ -175,7 +176,7 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('(subquery)', $adapterMysql->opSubquery($queryMock));
         $this->assertEquals('(subquery) as `alias`', $adapterMysql->opSubquery($queryMock, 'alias'));
     }
-    
+
     public function testParseSelect()
     {
         $adapterMysql = new AdapterMysql();
@@ -183,54 +184,250 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP_BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
                 $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], ['`table_name`'], ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id`' => 'ASC'], 1, 10));
     }
-    
+
     public function testParseInsert()
     {
         $adapterMysql = new AdapterMysql();
-        $this->assertEquals('INSERT INTO `table_name` (`column_name_one`,`column_name_two`) VALUES (`valueOne`,`valueTwo`)', $adapterMysql->parseInsert(['`table_name`'], ['`column_name_one`','`column_name_two`'], ['`valueOne`', '`valueTwo`']));
+        $this->assertEquals('INSERT INTO `table_name` (`column_name_one`,`column_name_two`) VALUES (`valueOne`,`valueTwo`)', $adapterMysql->parseInsert(['`table_name`'], ['`column_name_one`', '`column_name_two`'], ['`valueOne`', '`valueTwo`']));
     }
-    
+
     public function testParseUpdate()
     {
         $adapterMysql = new AdapterMysql();
-        $this->assertEquals('UPDATE `table_name` SET `column_name_one` = `valueOne`,`column_name_two` = `valueTwo` WHERE `table_name`.`id` = 1', $adapterMysql->parseUpdate(['`table_name`'], ['`column_name_one`','`column_name_two`'], ['`valueOne`', '`valueTwo`'], ['`table_name`.`id` = 1']));
+        $this->assertEquals('UPDATE `table_name` SET `column_name_one` = `valueOne`,`column_name_two` = `valueTwo` WHERE `table_name`.`id` = 1', $adapterMysql->parseUpdate(['`table_name`'], ['`column_name_one`', '`column_name_two`'], ['`valueOne`', '`valueTwo`'], ['`table_name`.`id` = 1']));
     }
-    
+
     public function testParseDelete()
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('DELETE FROM `table_name` WHERE `table_name`.`id` = 1', $adapterMysql->parseDelete(['`table_name`'], ['`table_name`.`id` = 1']));
     }
-    
+
     public function testSelect()
     {
+        $sismaDateTime = new SismaDateTime();
+        $baseSample = new BaseSample();
+        $baseSample->id = 1;
+        $standardClass = new \stdClass();
         $pdoStatementMock = $this->createMock(\PDOStatement::class);
         $pdoStatementMock->expects($this->any())
                 ->method('execute');
+        $matcher = $this->exactly(18);
+        $pdoStatementMock->expects($matcher)
+                ->method('bindParam')
+                ->willReturnCallback(function ($key, $value, $type) use ($matcher, $sismaDateTime, $baseSample, $standardClass) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 18:
+                            $this->assertEquals($key, '*');
+                            break;
+                        default :
+                            $this->assertEquals($key, $matcher->numberOfInvocations());
+                        break;
+                    }
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1 :
+                        case 9:
+                            $this->assertEquals($value, 1);
+                            $this->assertEquals($type, \PDO::PARAM_INT);
+                            break;
+                        case 2 :
+                        case 10:
+                            $this->assertEquals($value, 1.1);
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 3 :
+                        case 11:
+                            $this->assertEquals($value, true);
+                            $this->assertEquals($type, \PDO::PARAM_BOOL);
+                            break;
+                        case 4 :
+                        case 12:
+                            $this->assertEquals($value, 'string');
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 5 :
+                        case 13:
+                            $this->assertEquals($value, $sismaDateTime);
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 6 :
+                        case 14:
+                            $this->assertEquals($value, SampleType::one);
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 7 :
+                        case 15:
+                            $this->assertEquals($value, $baseSample);
+                            $this->assertEquals($type, \PDO::PARAM_INT);
+                            break;
+                        case 8 :
+                        case 16:
+                            $this->assertEquals($value, null);
+                            $this->assertEquals($type, \PDO::PARAM_NULL);
+                            break;
+                        case 17:
+                            $this->assertEquals($value, $standardClass);
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 18:
+                            $this->assertEquals($value, 'associativeIndexString');
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                    }
+                    return true;
+                });
         $connectionMock = $this->createMock(\PDO::class);
         $connectionMock->expects($this->any())
                 ->method('prepare')
                 ->willReturn($pdoStatementMock);
         AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
-        $this->assertInstanceOf(ResultSetMysql::class, $adapterMysql->select(''));
+        $bindValues = [
+            0 => 1,
+            1 => 1.1,
+            2 => true,
+            3 => 'string',
+            4 => $sismaDateTime,
+            5 => SampleType::one,
+            6 => $baseSample,
+            7 => null,
+            8 => 1,
+            9 => 1.1,
+            10 => true,
+            11 => 'string',
+            12 => $sismaDateTime,
+            13 => SampleType::one,
+            14 => $baseSample,
+            15 => null,
+            16 => $standardClass,
+            '*' => 'associativeIndexString',
+        ];
+        $bindTypes = [
+            0 => DataType::typeInteger,
+            1 => DataType::typeDecimal,
+            2 => DataType::typeBoolean,
+            3 => DataType::typeString,
+            4 => DataType::typeDate,
+            5 => DataType::typeEnumeration,
+            6 => DataType::typeEntity,
+            7 => DataType::typeNull,
+        ];
+        $this->assertInstanceOf(ResultSetMysql::class, $adapterMysql->select('', $bindValues, $bindTypes));
     }
-    
+
     public function testExecuteTrue()
     {
+        $sismaDateTime = new SismaDateTime();
+        $baseSample = new BaseSample();
+        $baseSample->id = 1;
+        $standardClass = new \stdClass();
         $pdoStatementMock = $this->createMock(\PDOStatement::class);
         $pdoStatementMock->expects($this->any())
                 ->method('execute')
                 ->willReturn(true);
+        $matcher = $this->exactly(18);
+        $pdoStatementMock->expects($matcher)
+                ->method('bindParam')
+                ->willReturnCallback(function ($key, $value, $type) use ($matcher, $sismaDateTime, $baseSample, $standardClass) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 18:
+                            $this->assertEquals($key, '*');
+                            break;
+                        default :
+                            $this->assertEquals($key, $matcher->numberOfInvocations());
+                        break;
+                    }
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1 :
+                        case 9:
+                            $this->assertEquals($value, 1);
+                            $this->assertEquals($type, \PDO::PARAM_INT);
+                            break;
+                        case 2 :
+                        case 10:
+                            $this->assertEquals($value, 1.1);
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 3 :
+                        case 11:
+                            $this->assertEquals($value, true);
+                            $this->assertEquals($type, \PDO::PARAM_BOOL);
+                            break;
+                        case 4 :
+                        case 12:
+                            $this->assertEquals($value, 'string');
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 5 :
+                        case 13:
+                            $this->assertEquals($value, $sismaDateTime);
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 6 :
+                        case 14:
+                            $this->assertEquals($value, SampleType::one);
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 7 :
+                        case 15:
+                            $this->assertEquals($value, $baseSample);
+                            $this->assertEquals($type, \PDO::PARAM_INT);
+                            break;
+                        case 8 :
+                        case 16:
+                            $this->assertEquals($value, null);
+                            $this->assertEquals($type, \PDO::PARAM_NULL);
+                            break;
+                        case 17:
+                            $this->assertEquals($value, $standardClass);
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                        case 18:
+                            $this->assertEquals($value, 'associativeIndexString');
+                            $this->assertEquals($type, \PDO::PARAM_STR);
+                            break;
+                    }
+                    return true;
+                });
         $connectionMock = $this->createMock(\PDO::class);
         $connectionMock->expects($this->any())
                 ->method('prepare')
                 ->willReturn($pdoStatementMock);
         AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
-        $this->assertTrue($adapterMysql->execute(''));
+        $bindValues = [
+            0 => 1,
+            1 => 1.1,
+            2 => true,
+            3 => 'string',
+            4 => $sismaDateTime,
+            5 => SampleType::one,
+            6 => $baseSample,
+            7 => null,
+            8 => 1,
+            9 => 1.1,
+            10 => true,
+            11 => 'string',
+            12 => $sismaDateTime,
+            13 => SampleType::one,
+            14 => $baseSample,
+            15 => null,
+            16 => $standardClass,
+            '*' => 'associativeIndexString',
+        ];
+        $bindTypes = [
+            0 => DataType::typeInteger,
+            1 => DataType::typeDecimal,
+            2 => DataType::typeBoolean,
+            3 => DataType::typeString,
+            4 => DataType::typeDate,
+            5 => DataType::typeEnumeration,
+            6 => DataType::typeEntity,
+            7 => DataType::typeNull,
+        ];
+        $this->assertTrue($adapterMysql->execute('', $bindValues, $bindTypes));
     }
-    
+
     public function testExecute()
     {
         $this->expectException(AdapterException::class);

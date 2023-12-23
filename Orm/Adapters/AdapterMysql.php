@@ -77,7 +77,7 @@ class AdapterMysql extends BaseAdapter
         }
     }
 
-    protected function translateDataType(DataType $ormType): int
+    protected function translateDataType(DataType $ormType): int|false
     {
 
         switch ($ormType) {
@@ -105,13 +105,12 @@ class AdapterMysql extends BaseAdapter
 
     protected function parseBind(array &$bindValues = [], array &$bindTypes = []): void
     {
-        $zero = false;
         foreach ($bindValues as $key => $value) {
             if (!isset($bindTypes[$key])) {
                 $bindTypes[$key] = DataType::typeGeneric;
             }
             if ($bindTypes[$key] === DataType::typeGeneric) {
-                $this->parseGenericBindType($bindTypes[$key], $value);
+                $bindTypes[$key] = $this->parseGenericBindType($value);
             }
             $bindTypes[$key] = $this->translateDataType($bindTypes[$key]);
         }
@@ -120,24 +119,26 @@ class AdapterMysql extends BaseAdapter
         }
     }
 
-    private function parseGenericBindType(DataType &$bindType, mixed $value): void
+    private function parseGenericBindType(mixed $value): DataType
     {
         if (is_integer($value)) {
-            $bindType = DataType::typeInteger;
+            return DataType::typeInteger;
         } elseif (is_float($value)) {
-            $bindType = DataType::typeDecimal;
+            return DataType::typeDecimal;
         } elseif (is_string($value)) {
-            $bindType = DataType::typeString;
+            return DataType::typeString;
         } elseif (is_bool($value)) {
-            $bindType = DataType::typeBoolean;
+            return DataType::typeBoolean;
         } elseif ($value instanceof BaseEntity) {
-            $bindType = DataType::typeEntity;
+            return DataType::typeEntity;
         } elseif (is_subclass_of($value, \UnitEnum::class)) {
-            $bindType = DataType::typeEnumeration;
+            return DataType::typeEnumeration;
         } elseif ($value instanceof SismaDateTime) {
-            $bindType = DataType::typeDate;
+            return DataType::typeDate;
+        }elseif($value === null){
+            return DataType::typeNull;
         } else {
-            $bindType = DataType::typeGeneric;
+            return DataType::typeGeneric;
         }
     }
 
@@ -166,10 +167,8 @@ class AdapterMysql extends BaseAdapter
         $this->parseBind($bindValues, $bindTypes);
         foreach ($bindValues as $key => &$value) {
             if ($bindTypes[$key] !== false) {
-                $statement->bindValue($key, $value, $bindTypes[$key]);
                 $statement->bindParam($key, $value, $bindTypes[$key]);
             } else {
-                $statement->bindValue($key, $value);
                 $statement->bindParam($key, $value);
             }
         }
@@ -186,10 +185,8 @@ class AdapterMysql extends BaseAdapter
         $this->parseBind($bindValues, $bindTypes);
         foreach ($bindValues as $key => &$value) {
             if ($bindTypes[$key] !== false) {
-                $statement->bindValue($key, $value, $bindTypes[$key]);
                 $statement->bindParam($key, $value, $bindTypes[$key]);
             } else {
-                $statement->bindValue($key, $value);
                 $statement->bindParam($key, $value);
             }
         }
@@ -291,5 +288,3 @@ class AdapterMysql extends BaseAdapter
         return $condition;
     }
 }
-
-?>
