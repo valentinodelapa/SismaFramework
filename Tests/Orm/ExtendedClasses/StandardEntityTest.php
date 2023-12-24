@@ -42,6 +42,7 @@ class StandardEntityTest extends TestCase
         $standardEntity = new StandardEntity();
         $standardEntity->standardEntityCollection = new SismaCollection(StandardEntity::class);
         $this->assertInstanceOf(SismaCollection::class, $standardEntity->standardEntityCollection);
+        $this->assertInstanceOf(SismaCollection::class, $standardEntity->otherStandardEntityCollection);
         $standardEntity->sampleSettedProperty = 'value';
         $this->assertEquals('value', $standardEntity->sampleSettedProperty);
         $this->assertNull($standardEntity->sampleUnsettedProperty);

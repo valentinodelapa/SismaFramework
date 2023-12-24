@@ -55,7 +55,7 @@ class Query
     protected string $command = '';
     static protected ?Query $instance = null;
     protected BaseAdapter $adapter;
-    private ?Condition $current_conditions = null;
+    private ?Condition $currentCondition = null;
 
     public function __construct(?BaseAdapter &$adapter = null)
     {
@@ -64,7 +64,7 @@ class Query
         } else {
             $this->adapter = &$adapter;
         }
-        $this->setColumn($this->adapter->allColumns());
+        $this->setColumn();
     }
 
     public function &getAdapter(): BaseAdapter
@@ -195,7 +195,7 @@ class Query
     public function &setHaving(): self
     {
         $this->having = array();
-        $this->current_conditions = Condition::having;
+        $this->currentCondition = Condition::having;
         return $this;
     }
 
@@ -205,18 +205,18 @@ class Query
         if ($condition !== '') {
             $this->where[] = $condition;
         }
-        $this->current_conditions = Condition::where;
+        $this->currentCondition = Condition::where;
         return $this;
     }
 
-    public function &appendCondition(string $column, ComparisonOperator $operator, Keyword|string $value = Keyword::placeholder, bool $foreignKey = false): self
+    public function &appendCondition(string $column, ComparisonOperator $operator, Keyword|string|array $value = Keyword::placeholder, bool $foreignKey = false): self
     {
         $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
         $escapedValue = $this->adapter->escapeValue($value, $operator);
-        if ($this->current_conditions == Condition::where) {
+        if ($this->currentCondition == Condition::where) {
             $this->where[] = $escapedColumn . ' ' . $operator->value . ' ' . $escapedValue;
         }
-        if ($this->current_conditions == Condition::having) {
+        if ($this->currentCondition == Condition::having) {
             $this->having[] = $escapedColumn . ' ' . $operator->value . ' ' . $escapedValue;
         }
         return $this;
@@ -231,10 +231,10 @@ class Query
     public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Keyword|string|null $value = null): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
-        if ($this->current_conditions == Condition::where) {
+        if ($this->currentCondition == Condition::where) {
             $this->where[] = $this->adapter->opSubquery($subquery) . ' ' . $operator->value . ' ' . $escapedValue;
         }
-        if ($this->current_conditions == Condition::having) {
+        if ($this->currentCondition == Condition::having) {
             $this->having[] = $this->adapter->opSubquery($subquery) . ' ' . $operator->value . ' ' . $escapedValue;
         }
         return $this;
@@ -242,10 +242,10 @@ class Query
 
     public function &appendOpenBlock(): self
     {
-        if ($this->current_conditions == Condition::where) {
+        if ($this->currentCondition == Condition::where) {
             $this->where[] = $this->adapter->openBlock();
         }
-        if ($this->current_conditions == Condition::having) {
+        if ($this->currentCondition == Condition::having) {
             $this->having[] = $this->adapter->openBlock();
         }
         return $this;
@@ -253,10 +253,10 @@ class Query
 
     public function &appendCloseBlock(): self
     {
-        if ($this->current_conditions == Condition::where) {
+        if ($this->currentCondition == Condition::where) {
             $this->where[] = $this->adapter->closeBlock();
         }
-        if ($this->current_conditions == Condition::having) {
+        if ($this->currentCondition == Condition::having) {
             $this->having[] = $this->adapter->closeBlock();
         }
         return $this;
@@ -264,10 +264,10 @@ class Query
 
     public function &appendAnd(): self
     {
-        if ($this->current_conditions == Condition::where) {
+        if ($this->currentCondition == Condition::where) {
             $this->where[] = $this->adapter->opAND();
         }
-        if ($this->current_conditions == Condition::having) {
+        if ($this->currentCondition == Condition::having) {
             $this->having[] = $this->adapter->opAND();
         }
         return $this;
@@ -275,10 +275,10 @@ class Query
 
     public function &appendOr(): self
     {
-        if ($this->current_conditions == Condition::where) {
+        if ($this->currentCondition == Condition::where) {
             $this->where[] = $this->adapter->opOR();
         }
-        if ($this->current_conditions == Condition::having) {
+        if ($this->currentCondition == Condition::having) {
             $this->having[] = $this->adapter->opOR();
         }
         return $this;
@@ -286,10 +286,10 @@ class Query
 
     public function &appendNot(): self
     {
-        if ($this->current_conditions == Condition::where) {
+        if ($this->currentCondition == Condition::where) {
             $this->where[] = $this->adapter->opNOT();
         }
-        if ($this->current_conditions == Condition::having) {
+        if ($this->currentCondition == Condition::having) {
             $this->having[] = $this->adapter->opNOT();
         }
         return $this;
