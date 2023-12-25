@@ -45,23 +45,26 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertInsertInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(3))
+        $matcher = $this->exactly(3);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["referenced sample", null], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample"], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 3) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["referenced sample", null], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample"], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 3:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -86,27 +89,30 @@ class DataMapperTest extends TestCase
         $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
-    
+
     public function testSaveNewBaseEntityWithInsertUpdateInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(3))
+        $matcher = $this->exactly(3);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["referenced sample", null], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample", 2], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 3) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["referenced sample", null], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample", 2], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 3:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -134,23 +140,25 @@ class DataMapperTest extends TestCase
         $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
-    
+
     public function testSaveNewBaseEntityWithNothingUpdateInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(2))
+        $matcher = $this->exactly(2);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample", 3], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals([2, 2, null, 3, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample", 3], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals([2, 2, null, 3, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -184,23 +192,26 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertInsertUpdate()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(3))
+        $matcher = $this->exactly(3);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["referenced sample", null], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample"], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 3) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 2], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["referenced sample", null], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample"], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 3:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 2], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -232,23 +243,26 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertUpdateUpdate()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(3))
+        $matcher = $this->exactly(3);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["referenced sample", null], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample", 2], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 3) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["referenced sample", null], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample", 2], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 3:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -281,19 +295,21 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithNothingUpdateUpdate()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(2))
+        $matcher = $this->exactly(2);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample", 2], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample", 2], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -323,19 +339,21 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertInsertNothing()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(2))
+        $matcher = $this->exactly(2);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["referenced sample", null], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample"], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["referenced sample", null], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample"], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -366,19 +384,21 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertUpdateNothing()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(2))
+        $matcher = $this->exactly(2);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["referenced sample", null], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample", 2], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["referenced sample", null], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample", 2], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -412,15 +432,16 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithNothingUpdateNothing()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(1))
+        $matcher = $this->exactly(1);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample", 2], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample", 2], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });
@@ -447,27 +468,30 @@ class DataMapperTest extends TestCase
         $dataMapper = new DataMapper();
         $dataMapper->save($baseSample);
     }
-    
+
     public function testNewReferencedEntityWithInsertInsertInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(3))
+        $matcher = $this->exactly(3);
+        $baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) {
-                    static $invocation = 0;
-                    $invocation++;
-                    if ($invocation === 1) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["referenced sample", null], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 2) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals(["other referenced sample"], $param2);
-                        $this->assertEquals([], $param3);
-                    } elseif ($invocation === 3) {
-                        $this->assertEquals('', $param1);
-                        $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
-                        $this->assertEquals([], $param3);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["referenced sample", null], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 2:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals(["other referenced sample"], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
+                        case 3:
+                            $this->assertEquals('', $param1);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([], $param3);
+                            break;
                     }
                     return true;
                 });

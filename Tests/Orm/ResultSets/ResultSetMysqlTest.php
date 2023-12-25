@@ -145,12 +145,11 @@ class ResultSetMysqlTest extends TestCase
                     $rowsNum--;
                     return $actualRowsNum;
                 });
-        $PDOStatementMock->expects($this->exactly(4))
+                $matcher = $this->exactly(4);
+        $PDOStatementMock->expects($matcher)
                 ->method('fetch')
-                ->willReturnCallback(function () {
-                    static $invocation = 0;
-                    $invocation++;
-                    switch ($invocation) {
+                ->willReturnCallback(function () use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
                         case 1:
                         case 2:
                             $result = new \stdClass();
