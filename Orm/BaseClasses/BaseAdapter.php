@@ -183,7 +183,6 @@ abstract class BaseAdapter
             $column = $this->allColumns();
         }
         if ($column !== $this->allColumns()) {
-            //$column = $this->escapeIdentifier($column);
             $column = $this->escapeColumn($column);
         }
         return AggregationFunction::count->value . Keyword::openBlock->value . ($distinct ? Keyword::distinct->value . ' ' : '') . $column . Keyword::closeBlock->value . ' as _numrows';

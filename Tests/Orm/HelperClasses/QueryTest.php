@@ -38,41 +38,121 @@ use SismaFramework\Orm\Enumerations\Keyword;
  */
 class QueryTest extends TestCase
 {
-    public function testSelectAllColumns()
+
+    public function testGetAdapter()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $query = new Query($baseAdapterMock);
+        $this->assertEquals($baseAdapterMock, $query->getAdapter());
+    }
+
+    public function testSelectDistinct()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
                 ->willReturn('*');
         $baseAdapterMock->expects($this->once())
-                ->method('escapeIdentifier')
-                ->with('tableName')
-                ->willReturn('table_name');
-        $matcherOne = $this->exactly(5);
+                ->method('parseSelect')
+                ->with(true, ['*'], [], [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setDistinct()
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectCount()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('opCOUNT')
+                ->with('id')
+                ->willReturn('COUNT(id)');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['COUNT(id)'], [], [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setCount('id')
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectAllColumns()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(5))
+                ->method('allColumns')
+                ->willReturn('*');
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('parseSelect')
+                ->with(false, ['*'], [], [], [], [], [], 0, 0);
+        $queryOne = new Query($baseAdapterMock);
+        $queryOne->close();
+        $this->assertEquals('', $queryOne->getCommandToExecute());
+        $queryTwo = new Query($baseAdapterMock);
+        $queryTwo->setColumns()
+                ->close();
+        $this->assertEquals('', $queryTwo->getCommandToExecute());
+        $queryTree = new Query($baseAdapterMock);
+        $queryTree->setColumn()
+                ->close();
+        $this->assertEquals('', $queryTree->getCommandToExecute());
+    }
+
+    public function testSelectColumns()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $matcherOne = $this->once();
+        $baseAdapterMock->expects($matcherOne)
+                ->method('escapeColumns')
+                ->willReturnCallback(function ($list) use ($matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals(['columnOne', 'columnTwo'], $list);
+                            return ['column_one', 'column_two'];
+                    }
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['column_one', 'column_two'], [], [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setColumns(['columnOne', 'columnTwo'])
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectColumn()
+    {
+        
+    }
+
+    public function testSelectWhere()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $matcherOne = $this->exactly(4);
         $baseAdapterMock->expects($matcherOne)
                 ->method('escapeColumn')
                 ->willReturnCallback(function ($column, $foreignKey) use ($matcherOne) {
                     switch ($matcherOne->numberOfInvocations()) {
                         case 1:
-                            $this->assertEquals('columnNameOne', $column);
+                            $this->assertEquals('columnOne', $column);
                             $this->assertFalse($foreignKey);
-                            return 'column_name_one';
+                            return 'column_one';
                         case 2:
-                            $this->assertEquals('columnNameTwo', $column);
+                            $this->assertEquals('columnTwo', $column);
                             $this->assertFalse($foreignKey);
-                            return 'column_name_two';
+                            return 'column_two';
                         case 3:
-                            $this->assertEquals('columnNameTree', $column);
+                            $this->assertEquals('columnTree', $column);
                             $this->assertFalse($foreignKey);
-                            return 'column_name_tree';
+                            return 'column_tree';
                         case 4:
-                            $this->assertEquals('columnNameFour', $column);
+                            $this->assertEquals('columnFour', $column);
                             $this->assertTrue($foreignKey);
-                            return 'column_name_four_id';
-                        case 5:
-                            $this->assertEquals('id', $column);
-                            $this->assertFalse($foreignKey);
-                            return 'id';
+                            return 'column_four_id';
                     }
                 });
         $matcherTwo = $this->exactly(4);
@@ -114,42 +194,241 @@ class QueryTest extends TestCase
                 ->method('opNOT')
                 ->willReturn('NOT');
         $baseAdapterMock->expects($this->once())
-                ->method('escapeColumns')
-                ->with(['columnNameOne', 'columnNameTwo'])
-                ->willReturn(['column_name_one', 'column_name_two']);
+                ->method('parseSelect')
+                ->with(false, ['*'], [], [
+                    'column_one = ?',
+                    'AND',
+                    '(',
+                    'column_two > 1',
+                    'OR',
+                    'column_tree <= value',
+                    ')',
+                    'NOT',
+                    'column_four_id IS NULL ',
+                        ], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setWhere()
+                ->appendCondition('columnOne', ComparisonOperator::equal)
+                ->appendAnd()
+                ->appendOpenBlock()
+                ->appendCondition('columnTwo', ComparisonOperator::greater, 1)
+                ->appendOr()
+                ->appendCondition('columnTree', ComparisonOperator::lessOrEqual, 'value')
+                ->appendCloseBlock()
+                ->appendNot()
+                ->appendCondition('columnFour', ComparisonOperator::isNull, Keyword::placeholder, true)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectHaving()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $matcherOne = $this->exactly(4);
+        $baseAdapterMock->expects($matcherOne)
+                ->method('escapeColumn')
+                ->willReturnCallback(function ($column, $foreignKey) use ($matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('columnOne', $column);
+                            $this->assertFalse($foreignKey);
+                            return 'column_one';
+                        case 2:
+                            $this->assertEquals('columnTwo', $column);
+                            $this->assertFalse($foreignKey);
+                            return 'column_two';
+                        case 3:
+                            $this->assertEquals('columnTree', $column);
+                            $this->assertFalse($foreignKey);
+                            return 'column_tree';
+                        case 4:
+                            $this->assertEquals('columnFour', $column);
+                            $this->assertTrue($foreignKey);
+                            return 'column_four_id';
+                    }
+                });
+        $matcherTwo = $this->exactly(4);
+        $baseAdapterMock->expects($matcherTwo)
+                ->method('escapeValue')
+                ->willReturnCallback(function ($value, $operator) use ($matcherTwo) {
+                    switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertEquals(ComparisonOperator::equal, $operator);
+                            return $value->value;
+                        case 2:
+                            $this->assertEquals(1, $value);
+                            $this->assertEquals(ComparisonOperator::greater, $operator);
+                            return $value;
+                        case 3:
+                            $this->assertEquals('value', $value);
+                            $this->assertEquals(ComparisonOperator::lessOrEqual, $operator);
+                            return $value;
+                        case 4:
+                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertEquals(ComparisonOperator::isNull, $operator);
+                            return '';
+                    }
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('openBlock')
+                ->willReturn('(');
+        $baseAdapterMock->expects($this->once())
+                ->method('closeBlock')
+                ->willReturn(')');
+        $baseAdapterMock->expects($this->once())
+                ->method('opAND')
+                ->willReturn('AND');
+        $baseAdapterMock->expects($this->once())
+                ->method('opOR')
+                ->willReturn('OR');
+        $baseAdapterMock->expects($this->once())
+                ->method('opNOT')
+                ->willReturn('NOT');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*'], [], [], [], [
+                    'column_one = ?',
+                    'AND',
+                    '(',
+                    'column_two > 1',
+                    'OR',
+                    'column_tree <= value',
+                    ')',
+                    'NOT',
+                    'column_four_id IS NULL ',
+                        ], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setHaving()
+                ->appendCondition('columnOne', ComparisonOperator::equal)
+                ->appendAnd()
+                ->appendOpenBlock()
+                ->appendCondition('columnTwo', ComparisonOperator::greater, 1)
+                ->appendOr()
+                ->appendCondition('columnTree', ComparisonOperator::lessOrEqual, 'value')
+                ->appendCloseBlock()
+                ->appendNot()
+                ->appendCondition('columnFour', ComparisonOperator::isNull, Keyword::placeholder, true)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSetTables()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $matcher = $this->exactly(2);
+        $baseAdapterMock->expects($matcher)
+                ->method('escapeIdentifier')
+                ->willReturnCallback(function ($name) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('tableNameOne', $name);
+                            return 'table_name_one';
+                        case 2:
+                            $this->assertEquals('tableNameTwo', $name);
+                            return 'table_name_two';
+                    }
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*'], ['table_name_one', 'table_name_two'], [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setTables(['tableNameOne', 'tableNameTwo'])
+                ->setWhere()
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSetTable()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeIdentifier')
+                ->with('tableName')
+                ->willReturn('table_name');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*'], ['table_name'], [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName')
+                ->setWhere()
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testOffsetLimit()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*'], [], [], [], [], [], 5, 10);
+        $query = new Query($baseAdapterMock);
+        $query->setWhere()
+                ->setOffset(5)
+                ->setLimit(10)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testOrderBy()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $matcherOne = $this->once();
+        $baseAdapterMock->expects($matcherOne)
+                ->method('escapeColumn')
+                ->willReturnCallback(function ($column, $foreignKey) use ($matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('id', $column);
+                            $this->assertFalse($foreignKey);
+                            return 'id';
+                    }
+                });
         $baseAdapterMock->expects($this->once())
                 ->method('escapeOrderIndexing')
                 ->with(Indexing::asc)
                 ->willReturn('ASC');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], ['table_name'], [
-                    'column_name_one = ?',
-                    'AND',
-                    '(',
-                    'column_name_two > 1',
-                    'OR',
-                    'column_name_tree <= value',
-                    ')',
-                    'NOT',
-                    'column_name_four_id IS NULL ',
-                ], ['column_name_one', 'column_name_two'], [], ['id' => 'ASC'], 5, 10);
+                ->with(false, ['*'], [], [], [], [], ['id' => 'ASC'], 0, 0);
         $query = new Query($baseAdapterMock);
-        $query->setTable('tableName')
-                ->setWhere()
-                ->appendCondition('columnNameOne', ComparisonOperator::equal)
-                ->appendAnd()
-                ->appendOpenBlock()
-                ->appendCondition('columnNameTwo', ComparisonOperator::greater, 1)
-                ->appendOr()
-                ->appendCondition('columnNameTree', ComparisonOperator::lessOrEqual, 'value')
-                ->appendCloseBlock()
-                ->appendNot()
-                ->appendCondition('columnNameFour', ComparisonOperator::isNull, Keyword::placeholder, true)
-                ->setGroupBy(['columnNameOne', 'columnNameTwo'])
+        $query->setWhere()
                 ->setOrderBy(['id' => Indexing::asc])
-                ->setOffset(5)
-                ->setLimit(10)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testGroupBy()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeColumns')
+                ->with(['columnNameOne', 'columnNameTwo'])
+                ->willReturn(['column_name_one', 'column_name_two']);
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*'], [], [], ['column_name_one', 'column_name_two'], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setWhere()
+                ->setGroupBy(['columnNameOne', 'columnNameTwo'])
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
     }
