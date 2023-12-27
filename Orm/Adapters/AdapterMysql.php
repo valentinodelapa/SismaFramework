@@ -274,8 +274,7 @@ class AdapterMysql extends BaseAdapter
 
     public function opFulltextIndex(array $columns, Keyword|string|null $value = null, ?string $columnAlias = null): string
     {
-        $escapedValue = $this->escapeValue($value, ComparisonOperator::against);
-        return $this->fulltextConditionSintax($columns, $escapedValue) . ' as '.($columnAlias ?? '_relevance');
+        return $this->fulltextConditionSintax($columns, $value) . ' as '.($columnAlias ?? '_relevance');
     }
 
     public function fulltextConditionSintax(array $columns, Keyword|string|null $value = null): string

@@ -102,11 +102,11 @@ class QueryTest extends TestCase
     public function testSelectColumns()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $matcherOne = $this->once();
-        $baseAdapterMock->expects($matcherOne)
+        $matcher = $this->once();
+        $baseAdapterMock->expects($matcher)
                 ->method('escapeColumns')
-                ->willReturnCallback(function ($list) use ($matcherOne) {
-                    switch ($matcherOne->numberOfInvocations()) {
+                ->willReturnCallback(function ($list) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals(['columnOne', 'columnTwo'], $list);
                             return ['column_one', 'column_two'];
@@ -123,7 +123,88 @@ class QueryTest extends TestCase
 
     public function testSelectColumn()
     {
-        
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $matcher = $this->once();
+        $baseAdapterMock->expects($matcher)
+                ->method('escapeColumn')
+                ->willReturnCallback(function ($name, $foreignKey) use ($matcher) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('columnOne', $name);
+                            $this->assertFalse($foreignKey);
+                            return 'column_one';
+                    }
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['column_one'], [], [], [], [], [], 0, 0);
+        $queryOne = new Query($baseAdapterMock);
+        $queryOne->setColumn('columnOne')
+                ->close();
+        $this->assertEquals('', $queryOne->getCommandToExecute());
+    }
+    
+    public function testSelectSetFullIndexColumn()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->any())
+                ->method('allColumns')
+                ->willReturn('*');
+        $matcherOne = $this->exactly(2);
+        $baseAdapterMock->expects($matcherOne)
+                ->method('opFulltextIndex')
+                ->willReturnCallback(function ($columns, $value, $columnAlias) use ($matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals(['fulltextColumn'], $columns);
+                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertNull($columnAlias);
+                            return 'MATCH (filltext_column) AGAINST ?';
+                        case 2:
+                            $this->assertEquals(['fulltextColumn'], $columns);
+                            $this->assertEquals('value', $value);
+                            $this->assertEquals('columnAlias', $columnAlias);
+                            return 'MATCH (filltext_column) AGAINST value as column_alias';
+                    }
+                });
+        $matcherTwo = $this->exactly(2);
+        $baseAdapterMock->expects($matcherTwo)
+                ->method('parseSelect')
+                ->willReturnCallback(function ($distinct, $select, $from, $where, $groupby, $having, $orderby, $offset, $limit) use ($matcherTwo) {
+                    switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                            $this->assertFalse($distinct);
+                            $this->assertEquals(['MATCH (filltext_column) AGAINST ?'], $select);
+                            $this->assertEquals([], $from);
+                            $this->assertEquals([], $where);
+                            $this->assertEquals([], $groupby);
+                            $this->assertEquals([], $having);
+                            $this->assertEquals([], $orderby);
+                            $this->assertEquals(0, $offset);
+                            $this->assertEquals(0, $limit);
+                            break;
+                        case 2:
+                            $this->assertFalse($distinct);
+                            $this->assertEquals(['*', 'MATCH (filltext_column) AGAINST value as column_alias'], $select);
+                            $this->assertEquals([], $from);
+                            $this->assertEquals([], $where);
+                            $this->assertEquals([], $groupby);
+                            $this->assertEquals([], $having);
+                            $this->assertEquals([], $orderby);
+                            $this->assertEquals(0, $offset);
+                            $this->assertEquals(0, $limit);
+                            break;
+                    }
+                    return '';
+                });
+        $queryOne = new Query($baseAdapterMock);
+        $queryOne->setFulltextIndexColumn(['fulltextColumn'])
+                ->close();
+        $this->assertEquals('', $queryOne->getCommandToExecute());
+        $queryTwo = new Query($baseAdapterMock);
+        $queryTwo->setFulltextIndexColumn(['fulltextColumn'], 'value', 'columnAlias', true)
+                ->close();
+        $this->assertEquals('', $queryTwo->getCommandToExecute());
     }
 
     public function testSelectWhere()

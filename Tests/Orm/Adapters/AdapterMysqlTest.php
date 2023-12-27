@@ -446,4 +446,82 @@ class AdapterMysqlTest extends TestCase
         $adapterMysql = new AdapterMysql();
         $adapterMysql->execute('');
     }
+    
+    public function testLastInsertId()
+    {
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->once())
+                ->method('lastInsertId')
+                ->willReturn('1');
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('1', $adapterMysql->lastInsertId(''));
+        AdapterMysql::setConnection(null);
+        $this->assertEquals(-1, $adapterMysql->lastInsertId(''));
+    }
+    
+    public function testBeginTransaction()
+    {
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->once())
+                ->method('beginTransaction')
+                ->willReturn(true);
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertTrue($adapterMysql->beginTransaction());
+        AdapterMysql::setConnection(null);
+        $this->assertfalse($adapterMysql->beginTransaction());
+    }
+    
+    public function testCommittTransaction()
+    {
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->once())
+                ->method('commit')
+                ->willReturn(true);
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertTrue($adapterMysql->commitTransaction());
+        AdapterMysql::setConnection(null);
+        $this->assertFalse($adapterMysql->commitTransaction());
+    }
+    
+    public function testRollbackTransaction()
+    {
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->once())
+                ->method('rollBack')
+                ->willReturn(true);
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertTrue($adapterMysql->rollbackTransaction());
+        AdapterMysql::setConnection(null);
+        $this->assertFalse($adapterMysql->rollbackTransaction());
+    }
+    
+    public function testGetLastErrorMsg()
+    {
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->once())
+                ->method('errorInfo')
+                ->willReturn(['error message']);
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('error message', $adapterMysql->getLastErrorMsg());
+        AdapterMysql::setConnection(null);
+        $this->assertEquals('', $adapterMysql->getLastErrorMsg());
+    }
+    
+    public function testGetLastErrorCode()
+    {
+        $connectionMock = $this->createMock(\PDO::class);
+        $connectionMock->expects($this->once())
+                ->method('errorCode')
+                ->willReturn('code');
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('code', $adapterMysql->getLastErrorCode());
+        AdapterMysql::setConnection(null);
+        $this->assertEquals(-1, $adapterMysql->getLastErrorCode());
+    }
 }
