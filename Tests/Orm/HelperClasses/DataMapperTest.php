@@ -32,6 +32,7 @@ use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Sample\Entities\OtherReferencedSample;
 use SismaFramework\Sample\Enumerations\SampleType;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
@@ -519,5 +520,121 @@ class DataMapperTest extends TestCase
         $referencedSample->setBaseSampleCollectionReferencedEntityWithInitialization($baseSampleCollection);
         $dataMapper = new DataMapper();
         $dataMapper->save($referencedSample);
+    }
+    
+    public function testInitQuery()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $query = $this->createMock(Query::class);
+        $query->expects($this->any())
+                ->method('setTable')
+                ->with('entity_name');
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $this->assertInstanceOf(Query::class, $dataMapper->initQuery('EntitiName'));
+    }
+    
+    public function testInsertAutomaticStartTransaction()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('beginTransaction')
+                ->willReturn(true);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('execute')
+                ->willReturn(true);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('lastInsertId')
+                ->willReturn(1);
+        $baseAdapterMock->expects($this->once())
+                ->method('commitTransaction')
+                ->willReturn(true);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $referencedSample = new ReferencedSample();
+        $referencedSample->text = 'referenced sample';
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $dataMapper->save($baseSample);
+    }
+    
+    public function testInsertManualStartTransaction()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('beginTransaction')
+                ->willReturn(true);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('execute')
+                ->willReturn(true);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('lastInsertId')
+                ->willReturn(1);
+        $baseAdapterMock->expects($this->once())
+                ->method('commitTransaction')
+                ->willReturn(true);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $referencedSample = new ReferencedSample();
+        $referencedSample->text = 'referenced sample';
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $dataMapper->startTransaction();
+        $dataMapper->save($baseSample);
+        $dataMapper->commitTransaction();
+    }
+    
+    public function testUpdateAutomaticStartTransaction()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('beginTransaction')
+                ->willReturn(true);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('execute')
+                ->willReturn(true);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('lastInsertId')
+                ->willReturn(1);
+        $baseAdapterMock->expects($this->once())
+                ->method('commitTransaction')
+                ->willReturn(true);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $referencedSample = new ReferencedSample();
+        $referencedSample->text = 'referenced sample';
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->text = 'other referenced sample';
+        $baseSample = new BaseSample();
+        $baseSample->id = 1;
+        $baseSample->referencedEntityWithoutInitialization = $referencedSample;
+        $baseSample->referencedEntityWithInitialization = $referencedSample;
+        $baseSample->otherReferencedSample = $otherReferencedSample;
+        $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->enumWithoutInitialization = SampleType::two;
+        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->boolean = true;
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $dataMapper->save($baseSample);
+    }
+    
+    public function testDelete()
+    {
+        
     }
 }
