@@ -249,6 +249,11 @@ abstract class BaseEntity
     {
         return ($propertyName === $this->primaryKey);
     }
+    
+    public function setPrimaryKeyPropertyName(string $propertyName):void
+    {
+        $this->primaryKey = $propertyName;
+    }
 
     public function getPrimaryKeyPropertyName(): string
     {

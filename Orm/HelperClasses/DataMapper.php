@@ -230,7 +230,7 @@ class DataMapper
             ReferencedEntityDeletionPermission::isAllowed($entity, AccessControlEntry::allow);
         }
         $query->setTable(NotationManager::convertEntityToTableName($entity));
-        if ($entity->getPrimaryKeyPropertyName() == '') {
+        if (empty($entity->getPrimaryKeyPropertyName())) {
             return false;
         }
         $query->setWhere();
