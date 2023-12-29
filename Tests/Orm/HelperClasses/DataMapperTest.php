@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\Exceptions\DataMapperException;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaCollection;
@@ -689,34 +691,42 @@ class DataMapperTest extends TestCase
 
     public function testFind()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseResultSetMock = $this->createMock(BaseResultSet::class);
-        $baseResultSetMock->expects($this->exactly(2))
+        $firstBaseResultSetMock = $this->createMock(BaseResultSet::class);
+        $firstBaseResultSetMock->expects($this->exactly(2))
                 ->method('current')
                 ->willReturnOnConsecutiveCalls(new BaseSample(), new BaseSample());
-        $baseResultSetMock->method('valid')
+        $firstBaseResultSetMock->expects($this->any())
+                ->method('valid')
                 ->willReturnOnConsecutiveCalls(true, true, false);
-        $baseResultSetMock->method('key')
+        $firstBaseResultSetMock->expects($this->any())
+                ->method('key')
                 ->willReturnOnConsecutiveCalls(0, 1);
-        $baseResultSetMock->method('next')
+        $firstBaseResultSetMock->expects($this->any())
+                ->method('next')
                 ->will($this->returnSelf());
-        $baseResultSetMock->method('rewind')
+        $firstBaseResultSetMock->expects($this->any())
+                ->method('rewind')
                 ->will($this->returnSelf());
         $secondBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $secondBaseResultSetMock->expects($this->exactly(1))
                 ->method('current')
                 ->willReturnOnConsecutiveCalls(new BaseSample());
-        $secondBaseResultSetMock->method('valid')
+        $secondBaseResultSetMock->expects($this->any())
+                ->method('valid')
                 ->willReturnOnConsecutiveCalls(true, false);
-        $secondBaseResultSetMock->method('key')
+        $secondBaseResultSetMock->expects($this->any())
+                ->method('key')
                 ->willReturnOnConsecutiveCalls(0);
-        $secondBaseResultSetMock->method('next')
+        $secondBaseResultSetMock->expects($this->any())
+                ->method('next')
                 ->will($this->returnSelf());
-        $secondBaseResultSetMock->method('rewind')
+        $secondBaseResultSetMock->expects($this->any())
+                ->method('rewind')
                 ->will($this->returnSelf());
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('select')
-                ->willReturnOnConsecutiveCalls(null, $baseResultSetMock, $secondBaseResultSetMock);
+                ->willReturnOnConsecutiveCalls(null, $firstBaseResultSetMock, $secondBaseResultSetMock);
         $queryMock = $this->createMock(Query::class);
         $queryMock->expects($this->exactly(3))
                 ->method('getCommandToExecute')
@@ -734,11 +744,56 @@ class DataMapperTest extends TestCase
 
     public function testGetCount()
     {
-        
+        $standardEntity = new StandardEntity();
+        $standardEntity->_numrows = 5;
+        $baseResultSetMock = $this->createMock(BaseResultSet::class);
+        $baseResultSetMock->expects($this->exactly(2))
+                ->method('fetch')
+                ->willReturnOnConsecutiveCalls(null, $standardEntity);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('select')
+                ->willReturnOnConsecutiveCalls(null, $baseResultSetMock, $baseResultSetMock);
+        $queryMock = $this->createMock(Query::class);
+        $queryMock->expects($this->exactly(3))
+                ->method('getCommandToExecute')
+                ->willReturn('');
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $this->assertEquals(0, $dataMapper->getCount($queryMock));
+        $this->assertEquals(0, $dataMapper->getCount($queryMock));
+        $this->assertEquals(5, $dataMapper->getCount($queryMock));
     }
 
     public function testFindFirst()
     {
-        
+        $firstBaseResultSetMock = $this->createMock(BaseResultSet::class);
+        $firstBaseResultSetMock->expects($this->any())
+                ->method('numRows')
+                ->willReturn(0);
+        $secondBaseResultSetMock = $this->createMock(BaseResultSet::class);
+        $secondBaseResultSetMock->expects($this->exactly(1))
+                ->method('fetch')
+                ->willReturn(new BaseSample());
+        $secondBaseResultSetMock->expects($this->any())
+                ->method('numRows')
+                ->willReturn(1);
+        $thidBaseResultSetMock = $this->createMock(BaseResultSet::class);
+        $thidBaseResultSetMock->expects($this->any())
+                ->method('numRows')
+                ->willReturn(2);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(4))
+                ->method('select')
+                ->willReturnOnConsecutiveCalls(null, $firstBaseResultSetMock, $secondBaseResultSetMock, $thidBaseResultSetMock);
+        $queryMock = $this->createMock(Query::class);
+        $queryMock->expects($this->exactly(4))
+                ->method('getCommandToExecute')
+                ->willReturn('');
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $this->assertNull($dataMapper->findFirst(BaseSample::class, $queryMock));
+        $this->assertNull($dataMapper->findFirst(BaseSample::class, $queryMock));
+        $this->assertInstanceOf(BaseSample::class, $dataMapper->findFirst(BaseSample::class, $queryMock));
+        $this->expectException(DataMapperException::class);
+        $dataMapper->findFirst(BaseSample::class, $queryMock);
     }
 }

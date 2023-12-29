@@ -104,7 +104,7 @@ class DataMapper
         return $result;
     }
 
-    private function parseValues(BaseEntity $entity, array &$columns, array &$values, array&$markers): void
+    private function parseValues(BaseEntity $entity, array &$columns, array &$values, array &$markers): void
     {
         $entity->propertyNestedChanges = false;
         $reflectionClass = new \ReflectionClass($entity);
@@ -124,7 +124,7 @@ class DataMapper
         }
     }
 
-    private function parseForeignKeyIndexes(BaseEntity $entity, array &$columns, array &$values, array&$markers): void
+    private function parseForeignKeyIndexes(BaseEntity $entity, array &$columns, array &$values, array &$markers): void
     {
         foreach ($entity->getForeignKeyIndexes() as $propertyName => $propertyValue) {
             $markers[] = Keyword::placeholder->value;
@@ -286,13 +286,13 @@ class DataMapper
         $cmd = $query->getCommandToExecute(Statement::select);
         Parser::unparseValues($bindValues);
         $result = $this->adapter->select($cmd, $bindValues, $bindTypes);
-        if (!$result) {
+        if ($result === null) {
             return 0;
         }
         $data = $result->fetch();
         $result->release();
         unset($result);
-        if (!$data) {
+        if ($data === null) {
             return 0;
         }
         return $data->_numrows;
@@ -303,13 +303,17 @@ class DataMapper
         $query->setOffset(0);
         $query->setLimit(1);
         $result = $this->getResultSet($entityName, $query, $bindValues, $bindTypes);
-        switch ($result->numRows()) {
-            case 0:
-                return null;
-            case 1:
-                return $result->fetch();
-            default:
-                throw new DataMapperException();
+        if ($result === null) {
+            return null;
+        } else {
+            switch ($result->numRows()) {
+                case 0:
+                    return null;
+                case 1:
+                    return $result->fetch();
+                default:
+                    throw new DataMapperException();
+            }
         }
     }
 }
