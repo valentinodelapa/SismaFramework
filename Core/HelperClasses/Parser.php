@@ -28,7 +28,7 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\ProprietaryTypes\SismaDate;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
 use SismaFramework\ProprietaryTypes\SismaTime;
@@ -91,18 +91,18 @@ class Parser
         }
     }
 
-    public static function unparseValues(array &$arrayValues, DataMapper $dataMapper = new DataMapper()): void
+    public static function unparseValues(array &$arrayValues, DataMapper $dataMapper = new DataMapper(), Query $query = new Query()): void
     {
         foreach ($arrayValues as &$value) {
-            $value = self::unparseValue($value, false, $dataMapper);
+            $value = self::unparseValue($value, false, $dataMapper, $query);
         }
     }
 
-    public static function unparseValue(mixed $value, bool $persistentUnparse = false, DataMapper $dataMapper = new DataMapper()): null|int|float|string
+    public static function unparseValue(mixed $value, bool $persistentUnparse = false, DataMapper $dataMapper = new DataMapper(), Query $query = new Query()): null|int|float|string
     {
         if ($value instanceof BaseEntity) {
             if ($persistentUnparse) {
-                self::saveEntityModification($value, $dataMapper);
+                self::saveEntityModification($value, $dataMapper, $query);
             }
             return $value->id;
         } elseif ($value instanceof \UnitEnum) {
@@ -118,8 +118,8 @@ class Parser
         }
     }
 
-    private static function saveEntityModification(BaseEntity $entity, DataMapper $dataMapper): void
+    private static function saveEntityModification(BaseEntity $entity, DataMapper $dataMapper, Query $query = new Query()): void
     {
-        $dataMapper->save($entity, false);
+        $dataMapper->save($entity, $query, false);
     }
 }
