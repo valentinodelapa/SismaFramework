@@ -143,8 +143,8 @@ class QueryTest extends TestCase
                 ->close();
         $this->assertEquals('', $queryOne->getCommandToExecute());
     }
-    
-    public function testSelectSetFullIndexColumn()
+
+    public function testSelectSetFullIndexColumnAndCondition()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->any())
@@ -169,12 +169,93 @@ class QueryTest extends TestCase
                 });
         $matcherTwo = $this->exactly(2);
         $baseAdapterMock->expects($matcherTwo)
+                ->method('fulltextConditionSintax')
+                ->willReturnCallback(function ($columns, $value) use ($matcherTwo) {
+                    switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals(['fulltextColumn'], $columns);
+                            $this->assertEquals(Keyword::placeholder, $value);
+                            return 'MATCH (filltext_column) AGAINST ?';
+                        case 2:
+                            $this->assertEquals(['fulltextColumn'], $columns);
+                            $this->assertEquals('value', $value);
+                            return 'MATCH (filltext_column) AGAINST value';
+                    }
+                });
+        $matcherTree = $this->exactly(2);
+        $baseAdapterMock->expects($matcherTree)
+                ->method('parseSelect')
+                ->willReturnCallback(function ($distinct, $select, $from, $where, $groupby, $having, $orderby, $offset, $limit) use ($matcherTree) {
+                    switch ($matcherTree->numberOfInvocations()) {
+                        case 1:
+                            $this->assertFalse($distinct);
+                            $this->assertEquals(['MATCH (filltext_column) AGAINST ?'], $select);
+                            $this->assertEquals([], $from);
+                            $this->assertEquals(['MATCH (filltext_column) AGAINST ?'], $where);
+                            $this->assertEquals([], $groupby);
+                            $this->assertEquals([], $having);
+                            $this->assertEquals([], $orderby);
+                            $this->assertEquals(0, $offset);
+                            $this->assertEquals(0, $limit);
+                            break;
+                        case 2:
+                            $this->assertFalse($distinct);
+                            $this->assertEquals(['*', 'MATCH (filltext_column) AGAINST value as column_alias'], $select);
+                            $this->assertEquals([], $from);
+                            $this->assertEquals(['MATCH (filltext_column) AGAINST value'], $where);
+                            $this->assertEquals([], $groupby);
+                            $this->assertEquals([], $having);
+                            $this->assertEquals([], $orderby);
+                            $this->assertEquals(0, $offset);
+                            $this->assertEquals(0, $limit);
+                            break;
+                    }
+                    return '';
+                });
+        $queryOne = new Query($baseAdapterMock);
+        $queryOne->setWhere()
+                ->setFulltextIndexColumn(['fulltextColumn'])
+                ->appendFulltextCondition(['fulltextColumn'])
+                ->close();
+        $this->assertEquals('', $queryOne->getCommandToExecute());
+        $queryTwo = new Query($baseAdapterMock);
+        $queryTwo->setWhere()
+                ->setFulltextIndexColumn(['fulltextColumn'], 'value', 'columnAlias', true)
+                ->appendFulltextCondition(['fulltextColumn'], 'value')
+                ->close();
+        $this->assertEquals('', $queryTwo->getCommandToExecute());
+    }
+
+    public function testSelectSetSubqueryColumn()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->any())
+                ->method('allColumns')
+                ->willReturn('*');
+        $subquery = new Query();
+        $matcherOne = $this->exactly(2);
+        $baseAdapterMock->expects($matcherOne)
+                ->method('opSubquery')
+                ->willReturnCallback(function ($columns, $columnAlias) use ($matcherOne, $subquery) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals($subquery, $columns);
+                            $this->assertNull($columnAlias);
+                            return 'subquery';
+                        case 2:
+                            $this->assertEquals($subquery, $columns);
+                            $this->assertEquals('columnAlias', $columnAlias);
+                            return 'subquery';
+                    }
+                });
+        $matcherTwo = $this->exactly(2);
+        $baseAdapterMock->expects($matcherTwo)
                 ->method('parseSelect')
                 ->willReturnCallback(function ($distinct, $select, $from, $where, $groupby, $having, $orderby, $offset, $limit) use ($matcherTwo) {
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
                             $this->assertFalse($distinct);
-                            $this->assertEquals(['MATCH (filltext_column) AGAINST ?'], $select);
+                            $this->assertEquals(['subquery'], $select);
                             $this->assertEquals([], $from);
                             $this->assertEquals([], $where);
                             $this->assertEquals([], $groupby);
@@ -185,7 +266,7 @@ class QueryTest extends TestCase
                             break;
                         case 2:
                             $this->assertFalse($distinct);
-                            $this->assertEquals(['*', 'MATCH (filltext_column) AGAINST value as column_alias'], $select);
+                            $this->assertEquals(['*', 'subquery'], $select);
                             $this->assertEquals([], $from);
                             $this->assertEquals([], $where);
                             $this->assertEquals([], $groupby);
@@ -198,11 +279,11 @@ class QueryTest extends TestCase
                     return '';
                 });
         $queryOne = new Query($baseAdapterMock);
-        $queryOne->setFulltextIndexColumn(['fulltextColumn'])
+        $queryOne->setSubqueryColumn($subquery)
                 ->close();
         $this->assertEquals('', $queryOne->getCommandToExecute());
         $queryTwo = new Query($baseAdapterMock);
-        $queryTwo->setFulltextIndexColumn(['fulltextColumn'], 'value', 'columnAlias', true)
+        $queryTwo->setSubqueryColumn($subquery, 'columnAlias', true)
                 ->close();
         $this->assertEquals('', $queryTwo->getCommandToExecute());
     }
@@ -480,16 +561,21 @@ class QueryTest extends TestCase
                             return 'id';
                     }
                 });
-        $baseAdapterMock->expects($this->once())
+        $baseAdapterMock->expects($this->exactly(2))
                 ->method('escapeOrderIndexing')
                 ->with(Indexing::asc)
                 ->willReturn('ASC');
+        $subqueryMock = $this->createMock(Query::class);
+        $subqueryMock->expects($this->once())
+                ->method('getCommandToExecute')
+                ->willReturn('subquery');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], [], [], [], [], ['id' => 'ASC'], 0, 0);
+                ->with(false, ['*'], [], [], [], [], ['id' => 'ASC', '(subquery)' => 'ASC'], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setWhere()
                 ->setOrderBy(['id' => Indexing::asc])
+                ->appendOrderBySubquery($subqueryMock, Indexing::asc)
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
     }

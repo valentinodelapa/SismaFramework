@@ -258,9 +258,9 @@ abstract class BaseAdapter
 
     abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
 
-    abstract public function opFulltextIndex(array $columns, Keyword|string|null $value = null, ?string $columnAlias): string;
+    abstract public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string;
 
-    abstract public function fulltextConditionSintax(array $columns, Keyword|string|null $value = null): string;
+    abstract public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string;
 
     abstract public function lastInsertId(): int;
 

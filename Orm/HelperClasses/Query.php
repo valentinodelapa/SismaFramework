@@ -158,11 +158,7 @@ class Query
     {
         if (is_array($list)) {
             foreach ($list as $columnOrQuery => $Indexing) {
-                if($columnOrQuery instanceof Query){
-                    $this->appendOrderBySubquery($columnOrQuery, $Indexing);
-                }else{
-                    $this->appendOrderByOption($columnOrQuery, $Indexing);
-                }
+                $this->appendOrderByOption($columnOrQuery, $Indexing);
             }
         }
         return $this;
@@ -178,7 +174,7 @@ class Query
 
     public function &appendOrderBySubquery(Query $query, null|string|Indexing $Indexing = null): self
     {
-        $parsedQuery = '(' . $query->getCommandToExecute() . ')';
+        $parsedQuery = Keyword::openBlock->value . $query->getCommandToExecute() . Keyword::closeBlock->value;
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
         $this->order[$parsedQuery] = $parsedIndexing;
         return $this;
@@ -222,13 +218,13 @@ class Query
         return $this;
     }
 
-    public function &appendFulltextCondition(array $columns, Keyword|string|null $value = null): self
+    public function &appendFulltextCondition(array $columns, Keyword|string $value = Keyword::placeholder): self
     {
         $this->where[] = $this->adapter->fulltextConditionSintax($columns, $value);
         return $this;
     }
 
-    public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Keyword|string|null $value = null): self
+    public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Keyword|string|array $value = Keyword::placeholder,): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {

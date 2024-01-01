@@ -272,12 +272,12 @@ class AdapterMysql extends BaseAdapter
         return self::$connection->errorCode();
     }
 
-    public function opFulltextIndex(array $columns, Keyword|string|null $value = null, ?string $columnAlias = null): string
+    public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string
     {
         return $this->fulltextConditionSintax($columns, $value) . ' as '.($columnAlias ?? '_relevance');
     }
 
-    public function fulltextConditionSintax(array $columns, Keyword|string|null $value = null): string
+    public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string
     {
         foreach ($columns as &$column) {
             $column = $this->escapeColumn($column);
