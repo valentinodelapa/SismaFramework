@@ -40,8 +40,8 @@ ini_set('display_startup_errors', 'off');
 error_reporting(0);
 
 try {
-    require_once(__DIR__ . '/../Config/config.php');
-    require_once(__DIR__ . '/../Autoload/autoload.php');
+    require_once(dirname(__DIR__) . '/Config/config.php');
+    require_once(dirname(__DIR__) . '/Autoload/autoload.php');
     ErrorHandler::handleNonThrowableError();
     PhpVersionChecker::checkPhpVersion();
     Session::start();

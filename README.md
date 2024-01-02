@@ -23,14 +23,14 @@ All'interno del file `index.php`, presente nella cartella `Public` copiata nella
 
 ```php
 // codice originale
-require_once(__DIR__ . '/../Autoload/autoload.php');
+require_once(dirname(__DIR__) . '/Autoload/autoload.php');
 ```
 
 con la seguente:
 
 ```php
 // codice modificato
-require_once(__DIR__ . '/../SismaFramework/Autoload/autoload.php');
+require_once(dirname(__DIR__) . '/SismaFramework/Autoload/autoload.php');
 ```
 
 Anche nel file di configurazione `config.php`, presente nella cartella `Config` copiata nella root del progetto, è necessario fare alcune modifiche.
