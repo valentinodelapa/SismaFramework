@@ -289,6 +289,7 @@ class Dispatcher
     {
         if (method_exists($this->controllerInstance, $this->action)) {
             $this->reflectionAction = $this->reflectionController->getMethod($this->action);
+            ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
             $this->reflectionActionArguments = $this->reflectionAction->getParameters();
         } else {
             $this->reflectionActionArguments = [];

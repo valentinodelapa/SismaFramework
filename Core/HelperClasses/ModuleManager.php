@@ -54,6 +54,12 @@ class ModuleManager
     {
         self::$applicationModule = $module;
     }
+    
+    public static function setApplicationModuleByClassName(string $className):void
+    {
+        $module = strtok($className, "\\");
+        self::setApplicationModule($module);
+    }
 
     public static function getApplicationModule(): string
     {
