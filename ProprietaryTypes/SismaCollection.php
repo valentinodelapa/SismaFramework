@@ -29,10 +29,9 @@ namespace SismaFramework\ProprietaryTypes;
 use SismaFramework\Core\Exceptions\InvalidTypeException;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class SismaCollection extends \ArrayObject
+class SismaCollection extends \ArrayObject implements ProprietaryTypeInterface
 {
     private string $restrictiveType;
 

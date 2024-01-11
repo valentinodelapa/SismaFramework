@@ -29,7 +29,7 @@ namespace SismaFramework\ProprietaryTypes;
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaDate extends \DateTimeImmutable
+class SismaDate extends \DateTimeImmutable implements ProprietaryTypeInterface
 {
     //put your code here
 }

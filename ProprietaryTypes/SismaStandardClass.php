@@ -30,7 +30,7 @@ namespace SismaFramework\ProprietaryTypes;
  *
  * @author Valentino de Lapa
  */
-class SismaStandardClass extends \stdClass
+class SismaStandardClass extends \stdClass implements ProprietaryTypeInterface
 {
     
 }

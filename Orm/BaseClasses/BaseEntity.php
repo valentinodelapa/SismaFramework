@@ -31,6 +31,7 @@ use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\ProprietaryTypeInterface;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
 /**
@@ -197,7 +198,7 @@ abstract class BaseEntity
     private function trackOtherPropertyChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
     {
         if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
-                $this->checkSismaDateTimePropertyChange($reflectionNamedType, $name, $value)) {
+                $this->checkProprietaryTypePropertyChange($reflectionNamedType, $name, $value)) {
             $this->modified = true;
             $this->setNestedChangesOnCallingEntityWhenEntityChanges();
         }
@@ -210,10 +211,10 @@ abstract class BaseEntity
                 ((isset($this->$name) === false) && ($value !== null))));
     }
 
-    private function checkSismaDateTimePropertyChange(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): bool
+    private function checkProprietaryTypePropertyChange(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): bool
     {
-        return (is_a($reflectionNamedType->getName(), SismaDateTime::class, true) &&
-                ((isset($this->$name) && ((($value instanceof SismaDateTime) && ($this->$name != $value)) || ($value === null))) ||
+        return (is_a($reflectionNamedType->getName(), ProprietaryTypeInterface::class, true) &&
+                ((isset($this->$name) && ((($value instanceof $reflectionNamedType) && ($this->$name != $value)) || ($value === null))) ||
                 ((isset($this->$name) === false) && ($value !== null))));
     }
 

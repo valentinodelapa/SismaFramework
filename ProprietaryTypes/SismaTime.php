@@ -29,7 +29,7 @@ namespace SismaFramework\ProprietaryTypes;
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaTime extends \DateInterval
+class SismaTime extends \DateInterval implements ProprietaryTypeInterface
 {
 
     public static function createFromStandardTimeFormat(string $time): self

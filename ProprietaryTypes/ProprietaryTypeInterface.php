@@ -27,10 +27,9 @@
 namespace SismaFramework\ProprietaryTypes;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class SismaDateTime extends \DateTime implements ProprietaryTypeInterface
+interface ProprietaryTypeInterface
 {
     
 }
