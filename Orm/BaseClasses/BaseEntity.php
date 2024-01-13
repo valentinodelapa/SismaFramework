@@ -178,7 +178,7 @@ abstract class BaseEntity
         }
     }
 
-    private function trackForeignKeyPropertyWithIndexConvertedChanges(mixed $name, mixed $value): void
+    private function trackForeignKeyPropertyWithIndexConvertedChanges(string $name, mixed $value): void
     {
         if (((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name != $value)))))) {
@@ -187,7 +187,7 @@ abstract class BaseEntity
         }
     }
 
-    private function trackForeignKeyPropertyWithNullValueChanges(mixed $name): void
+    private function trackForeignKeyPropertyWithNullValueChanges(string $name): void
     {
         if ((isset($this->foreignKeyIndexes[$name]) || isset($this->$name))) {
             $this->modified = true;
@@ -195,7 +195,7 @@ abstract class BaseEntity
         }
     }
 
-    private function trackOtherPropertyChanges(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): void
+    private function trackOtherPropertyChanges(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): void
     {
         if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
                 $this->checkProprietaryTypePropertyChange($reflectionNamedType, $name, $value)) {
@@ -204,17 +204,17 @@ abstract class BaseEntity
         }
     }
 
-    private function checkBuiltinOrEnumPropertyChange(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): bool
+    private function checkBuiltinOrEnumPropertyChange(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): bool
     {
         return (($reflectionNamedType->isBuiltin() || enum_exists($reflectionNamedType->getName())) &&
                 ((isset($this->$name) && ($this->$name !== $value)) ||
                 ((isset($this->$name) === false) && ($value !== null))));
     }
 
-    private function checkProprietaryTypePropertyChange(\ReflectionNamedType $reflectionNamedType, mixed $name, mixed $value): bool
+    private function checkProprietaryTypePropertyChange(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): bool
     {
         return (is_a($reflectionNamedType->getName(), ProprietaryTypeInterface::class, true) &&
-                ((isset($this->$name) && ((($value instanceof $reflectionNamedType) && ($this->$name != $value)) || ($value === null))) ||
+                ((isset($this->$name) && ((is_a($value, $reflectionNamedType->getName()) && ($this->$name != $value)) || ($value === null))) ||
                 ((isset($this->$name) === false) && ($value !== null))));
     }
 
