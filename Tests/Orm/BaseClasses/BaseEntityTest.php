@@ -31,6 +31,8 @@ use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaDate;
+use SismaFramework\ProprietaryTypes\SismaTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Sample\Enumerations\SampleType;
@@ -247,6 +249,68 @@ class BaseEntityTest extends TestCase
         $baseSampleThree->datetimeNullableWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->datetimeNullableWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $this->assertTrue($baseSampleThree->modified);
+    }
+
+    public function testEntityWithSismaDateProperty()
+    {
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-01');
+        $this->assertTrue($baseSampleOne->modified);
+        $baseSampleOne->modified = false;
+        $baseSampleOne->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-01');
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $this->assertTrue($baseSampleOne->modified);
+
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->dateWithInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-01');
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->dateWithInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $this->assertTrue($baseSampleTwo->modified);
+
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
+        $baseSampleThree->dateNullableWithInitialization = null;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->dateNullableWithInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-01');
+        $this->assertTrue($baseSampleThree->modified);
+        $baseSampleThree->modified = false;
+        $baseSampleThree->dateNullableWithInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-01');
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->dateNullableWithInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $this->assertTrue($baseSampleThree->modified);
+    }
+
+    public function testEntityWithSismaTimeProperty()
+    {
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:31:25');
+        $this->assertTrue($baseSampleOne->modified);
+        $baseSampleOne->modified = false;
+        $baseSampleOne->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:31:25');
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
+        $this->assertTrue($baseSampleOne->modified);
+
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->timeWithInitialization = SismaTime::createFromStandardTimeFormat('10:31:25');
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->timeWithInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
+        $this->assertTrue($baseSampleTwo->modified);
+
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
+        $baseSampleThree->timeNullableWithInitialization = null;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->timeNullableWithInitialization = SismaTime::createFromStandardTimeFormat('10:31:25');
+        $this->assertTrue($baseSampleThree->modified);
+        $baseSampleThree->modified = false;
+        $baseSampleThree->timeNullableWithInitialization = SismaTime::createFromStandardTimeFormat('10:31:25');
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->timeNullableWithInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $this->assertTrue($baseSampleThree->modified);
     }
 

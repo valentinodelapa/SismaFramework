@@ -27,6 +27,7 @@
 namespace SismaFramework\ProprietaryTypes;
 
 use SismaFramework\Core\Exceptions\InvalidTypeException;
+use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryTypeInterface;
 
 /**
  * @author Valentino de Lapa

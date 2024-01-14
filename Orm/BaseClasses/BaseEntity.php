@@ -30,8 +30,7 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\ProprietaryTypes\SismaDateTime;
-use SismaFramework\ProprietaryTypes\ProprietaryTypeInterface;
+use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryDateTimeEcosystem;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
 /**
@@ -198,7 +197,7 @@ abstract class BaseEntity
     private function trackOtherPropertyChanges(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): void
     {
         if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
-                $this->checkProprietaryTypePropertyChange($reflectionNamedType, $name, $value)) {
+                $this->checkProprietaryDateTimeEcosystemPropertyChange($reflectionNamedType, $name, $value)) {
             $this->modified = true;
             $this->setNestedChangesOnCallingEntityWhenEntityChanges();
         }
@@ -211,10 +210,10 @@ abstract class BaseEntity
                 ((isset($this->$name) === false) && ($value !== null))));
     }
 
-    private function checkProprietaryTypePropertyChange(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): bool
+    private function checkProprietaryDateTimeEcosystemPropertyChange(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): bool
     {
-        return (is_a($reflectionNamedType->getName(), ProprietaryTypeInterface::class, true) &&
-                ((isset($this->$name) && ((is_a($value, $reflectionNamedType->getName()) && ($this->$name != $value)) || ($value === null))) ||
+        return (is_a($reflectionNamedType->getName(), ProprietaryDateTimeEcosystem::class, true) &&
+                ((isset($this->$name) && ((is_a($value, $reflectionNamedType->getName()) && ($this->$name->equals($value) === false)) || ($value === null))) ||
                 ((isset($this->$name) === false) && ($value !== null))));
     }
 

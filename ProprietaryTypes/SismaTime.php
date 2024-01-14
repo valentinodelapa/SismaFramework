@@ -26,10 +26,13 @@
 
 namespace SismaFramework\ProprietaryTypes;
 
+use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryTypeInterface;
+use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryDateTimeEcosystem;
+
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaTime extends \DateInterval implements ProprietaryTypeInterface
+class SismaTime extends \DateInterval implements ProprietaryTypeInterface, ProprietaryDateTimeEcosystem
 {
 
     public static function createFromStandardTimeFormat(string $time): self
@@ -41,5 +44,18 @@ class SismaTime extends \DateInterval implements ProprietaryTypeInterface
     public function formatToStandardTimeFormat(): string
     {
         return $this->format('%H:%I:%S');
+    }
+
+    public function equals(ProprietaryDateTimeEcosystem $other):bool
+    {
+        return $this->y === $other->y &&
+                $this->m === $other->m &&
+                $this->d === $other->d &&
+                $this->h === $other->h &&
+                $this->i === $other->i &&
+                $this->s === $other->s &&
+                $this->f === $other->f &&
+                $this->invert === $other->invert &&
+                $this->days === $other->days;
     }
 }

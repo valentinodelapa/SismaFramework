@@ -28,6 +28,8 @@ namespace SismaFramework\Sample\Entities;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaDate;
+use SismaFramework\ProprietaryTypes\SismaTime;
 use SismaFramework\Sample\Enumerations\SampleType;
 
 /**
@@ -43,8 +45,14 @@ class BaseSample extends BaseEntity
     protected ?ReferencedSample $nullableReferencedEntityWithInitialization = null;
     protected OtherReferencedSample $otherReferencedSample;
     protected SismaDateTime $datetimeWithoutInitialization;
+    protected SismaDate $dateWithoutInitialization;
+    protected SismaTime $timeWithoutInitialization;
     protected SismaDateTime $datetimeWithInitialization;
+    protected SismaDate $dateWithInitialization;
+    protected SismaTime $timeWithInitialization;
     protected ?SismaDateTime $datetimeNullableWithInitialization = null;
+    protected ?SismaDate $dateNullableWithInitialization = null;
+    protected ?SismaTime $timeNullableWithInitialization = null;
     protected SampleType $enumWithoutInitialization;
     protected SampleType $enumWithInitialization = SampleType::one;
     protected ?SampleType $enumNullableWithInitialization = null;
@@ -58,6 +66,8 @@ class BaseSample extends BaseEntity
     {
         $this->referencedEntityWithInitialization = new ReferencedSample($this->dataMapper);
         $this->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
+        $this->dateWithInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-01');
+        $this->timeWithInitialization = SismaTime::createFromStandardTimeFormat('10:31:25');
     }
 
     protected function setEncryptedProperties(): void

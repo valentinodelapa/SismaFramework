@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ProprietaryTypes;
+namespace SismaFramework\ProprietaryTypes\Interfaces;
 
 /**
  * @author Valentino de Lapa

@@ -45,4 +45,9 @@ class RouterTest extends TestCase
         $_SERVER['REQUEST_URI'] = '/meta/url/sample/error/';
         $this->assertEquals('sample/error/', Router::getActualUrl());
     }
+    
+    public function testReloadWithParsedQueryString()
+    {
+        
+    }
 }

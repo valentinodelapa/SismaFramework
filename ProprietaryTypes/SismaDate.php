@@ -26,10 +26,17 @@
 
 namespace SismaFramework\ProprietaryTypes;
 
+use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryTypeInterface;
+use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryDateTimeEcosystem;
+
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaDate extends \DateTimeImmutable implements ProprietaryTypeInterface
+class SismaDate extends \DateTimeImmutable implements ProprietaryTypeInterface, ProprietaryDateTimeEcosystem
 {
-    //put your code here
+
+    public function equals(ProprietaryDateTimeEcosystem $other): bool
+    {
+        return $this->getTimestamp() === $other->getTimestamp();
+    }
 }

@@ -26,6 +26,8 @@
 
 namespace SismaFramework\ProprietaryTypes;
 
+use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryTypeInterface;
+
 /**
  *
  * @author Valentino de Lapa

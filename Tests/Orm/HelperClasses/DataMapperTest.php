@@ -36,6 +36,8 @@ use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\ProprietaryTypes\SismaCollection;
 use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\ProprietaryTypes\SismaDate;
+use SismaFramework\ProprietaryTypes\SismaTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Sample\Entities\OtherReferencedSample;
@@ -67,7 +69,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
                             $this->assertEquals([], $param3);
                             break;
                     }
@@ -88,6 +90,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -115,7 +119,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
                             $this->assertEquals([], $param3);
                             break;
                     }
@@ -139,6 +143,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -161,7 +167,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([2, 2, null, 3, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([2, 2, null, 3, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
                             $this->assertEquals([], $param3);
                             break;
                     }
@@ -187,6 +193,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -214,7 +222,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 2], $param2);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 2], $param2);
                             $this->assertEquals([], $param3);
                             break;
                     }
@@ -238,6 +246,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -265,7 +275,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
                             $this->assertEquals([], $param3);
                             break;
                     }
@@ -290,6 +300,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -312,7 +324,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
                             $this->assertEquals([], $param3);
                             break;
                     }
@@ -334,6 +346,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -378,6 +392,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -426,6 +442,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -466,6 +484,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -494,7 +514,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-01 00:00:00', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
                             $this->assertEquals([], $param3);
                             break;
                     }
@@ -515,6 +535,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -563,6 +585,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -608,6 +632,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
@@ -644,6 +670,8 @@ class DataMapperTest extends TestCase
         $baseSample->referencedEntityWithInitialization = $referencedSample;
         $baseSample->otherReferencedSample = $otherReferencedSample;
         $baseSample->datetimeWithoutInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-02 00:00:00');
+        $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
+        $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
