@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\Exceptions\CacheException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Sample\Entities\ExtendedReferencedSample;
+use SismaFramework\Sample\Entities\OtherBaseSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
 
 /**
@@ -65,6 +67,19 @@ class CacheTest extends TestCase
         $this->assertIsArray($cacheInformationsTwo);
         $this->assertArrayHasKey('referencedEntityWithoutInitialization', $cacheInformationsTwo);
         $this->assertSame($cacheInformationsTwo, $cacheInformationsOne['baseSample']);
+        
+        $cacheInformationsThree = Cache::getForeignKeyData(ExtendedReferencedSample::class);
+        $this->assertIsArray($cacheInformationsThree);
+        $this->assertArrayHasKey('otherBaseSample', $cacheInformationsThree);
+        $this->assertIsArray($cacheInformationsThree['otherBaseSample']);
+        $cacheInformationsFour = Cache::getForeignKeyData(ExtendedReferencedSample::class, 'otherBaseSample');
+        $this->assertIsArray($cacheInformationsFour);
+        $this->assertArrayHasKey('extendedReferencedSample', $cacheInformationsFour);
+        $this->assertSame($cacheInformationsFour, $cacheInformationsThree['otherBaseSample']);
+        $cacheInformationsFifth = Cache::getForeignKeyData(ExtendedReferencedSample::class, 'baseSample');
+        $this->assertIsArray($cacheInformationsFifth);
+        $this->assertArrayHasKey('referencedEntityWithoutInitialization', $cacheInformationsFifth);
+        $this->assertSame($cacheInformationsFifth, $cacheInformationsThree['baseSample']);
     }
     
     public function testGenerateReferencedCacheFile()

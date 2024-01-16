@@ -29,6 +29,7 @@ namespace SismaFramework\Orm\HelperClasses;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\Exceptions\CacheException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 
 /**
@@ -87,11 +88,11 @@ class Cache
         if($parentReflectionClass->isAbstract()){
             return ($propertyName === null) ? static::$foreighKeyDataCache[$referencedEntityName] : static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
         }elseif($propertyName === null){
-            return array_merge(static::$foreighKeyDataCache[$referencedEntityName], self::getForeignKeyDataWithParents($referencedEntityName));
-        }elseif(array_key_exists($propertyName, $referencedEntityName)){
-            static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+            return array_merge(static::$foreighKeyDataCache[$referencedEntityName], self::getForeignKeyDataWithParents($parentReferencedEntityName));
+        }elseif(array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])){
+            return static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
         }else{
-            self::getForeignKeyDataWithParents($parentReferencedEntityName, $propertyName);
+            return self::getForeignKeyDataWithParents($parentReferencedEntityName, $propertyName);
         }
     }
 
@@ -110,8 +111,8 @@ class Cache
             return true;
         } else {
             $parentEntityName = get_parent_class($referencedEntityName);
-            $reflectionParent = new \ReflectionClass($parentEntityName);
-            if($reflectionParent->isAbstract()){
+            $parentReflectionClass = new \ReflectionClass($parentEntityName);
+            if($parentReflectionClass->isAbstract()){
                 return array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName]);
             }elseif(array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])){
                 return true;
