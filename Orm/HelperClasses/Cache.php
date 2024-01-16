@@ -74,9 +74,24 @@ class Cache
                     static::setForeignKeyDataFromEntities();
                 }
             }
-            return ($propertyName === null) ? static::$foreighKeyDataCache[$referencedEntityName] : static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+            return self::getForeignKeyDataWithParents($referencedEntityName, $propertyName);
         } else {
             throw new CacheException();
+        }
+    }
+    
+    private static function getForeignKeyDataWithParents(string $referencedEntityName, ?string $propertyName = null) :array
+    {
+        $parentReferencedEntityName = get_parent_class($referencedEntityName);
+        $parentReflectionClass = new \ReflectionClass($parentReferencedEntityName);
+        if($parentReflectionClass->isAbstract()){
+            return ($propertyName === null) ? static::$foreighKeyDataCache[$referencedEntityName] : static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+        }elseif($propertyName === null){
+            return array_merge(static::$foreighKeyDataCache[$referencedEntityName], self::getForeignKeyDataWithParents($referencedEntityName));
+        }elseif(array_key_exists($propertyName, $referencedEntityName)){
+            static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+        }else{
+            self::getForeignKeyDataWithParents($parentReferencedEntityName, $propertyName);
         }
     }
 
@@ -94,7 +109,15 @@ class Cache
         if ($propertyName === null) {
             return true;
         } else {
-            return array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName]);
+            $parentEntityName = get_parent_class($referencedEntityName);
+            $reflectionParent = new \ReflectionClass($parentEntityName);
+            if($reflectionParent->isAbstract()){
+                return array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName]);
+            }elseif(array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])){
+                return true;
+            }else{
+                return self::checkEntityPresence($parentEntityName, $propertyName);
+            }
         }
     }
 

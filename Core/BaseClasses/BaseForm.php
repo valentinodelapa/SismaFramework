@@ -175,16 +175,11 @@ abstract class BaseForm
         foreach ($reflectionProperties as $property) {
             if (array_key_exists($property->name, $this->entityFromForm)) {
                 $this->switchFormPropertyType($property->name);
-            } elseif ($this->isFieldProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property)) {
+            } elseif (BaseEntity::checkFinalClassReflectionProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property)) {
                 $this->parseSingleStandardProperty($property);
                 $this->switchFilter($property->name);
             }
         }
-    }
-
-    private function isFieldProperty(\ReflectionProperty $property): bool
-    {
-        return ($property->class === get_class($this->entity));
     }
 
     private function isNotPrimaryKeyOrPassIsActive(\ReflectionProperty $property): bool
@@ -295,7 +290,7 @@ abstract class BaseForm
     {
         $reflectionEntity = new \ReflectionClass($this->entity);
         $reflectionEntityProperty = $reflectionEntity->getProperty($propertyName);
-        if ($reflectionEntityProperty->class === get_class($this->entity)) {
+        if (BaseEntity::checkFinalClassReflectionProperty($reflectionEntityProperty)) {
             if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::getEntityName()) {
                 $this->generateFormProperty($formPropertyClass, $this->entity->$propertyName ?? null, $this->entityFromForm[$propertyName], $this->filterErrors[$propertyName . "Error"]);
             } else {
