@@ -331,7 +331,7 @@ abstract class BaseForm
 
     private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed): BaseForm
     {
-        return $entityFromForm = new $formPropertyClass($entityToEmbed, $this->dataMapper);
+        return new $formPropertyClass($entityToEmbed, $this->dataMapper);
     }
 
     private function generateFormFilerErrors(BaseForm $entityFromForm): array
