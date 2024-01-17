@@ -66,7 +66,6 @@ abstract class BaseForm
         $this->dataMapper = $dataMapper;
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
-        $this->setFilterFieldsMode();
     }
     
     private function checkEntityName()
@@ -90,16 +89,17 @@ abstract class BaseForm
         }
     }
 
-    abstract protected function setFilterFieldsMode(): void;
-
     public function handleRequest(Request $request): void
     {
         $this->request = $request;
         $this->injectRequest();
+        $this->setFilterFieldsMode();
         $this->setEntityFromForm();
     }
 
     abstract protected function injectRequest(): void;
+
+    abstract protected function setFilterFieldsMode(): void;
 
     abstract protected function setEntityFromForm(): void;
 
