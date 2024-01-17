@@ -137,9 +137,9 @@ abstract class BaseAdapter
                     foreach ($value as &$singleValue) {
                         $singleValue = $this->escapeValue($singleValue);
                     }
-                    return $this->openBlock . implode(',', $value) . $this->closeBlock;
+                    return $this->openBlock() . implode(',', $value) . $this->closeBlock();
                 } else {
-                    return $this->openBlock . $this->escapeValue($value) . $this->closeBlock;
+                    return $this->openBlock() . $this->escapeValue($value) . $this->closeBlock();
                 }
             default:
                 if ($value instanceof Keyword) {

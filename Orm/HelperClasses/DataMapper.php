@@ -260,8 +260,10 @@ class DataMapper
     {
         $result = $this->getResultSet($entityName, $query, $bindValues, $bindTypes);
         $collection = new SismaCollection($entityName);
-        foreach ($result as $entity) {
-            $collection->append($entity);
+        if ($result instanceof BaseResultSet) {
+            foreach ($result as $entity) {
+                $collection->append($entity);
+            }
         }
         return $collection;
     }

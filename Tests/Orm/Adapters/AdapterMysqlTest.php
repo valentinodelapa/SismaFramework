@@ -109,10 +109,10 @@ class AdapterMysqlTest extends TestCase
         $this->assertEmpty($adapterMysql->escapeValue(Keyword::placeholder, ComparisonOperator::isNull));
         $this->assertEmpty($adapterMysql->escapeValue(Keyword::placeholder, ComparisonOperator::isNotNull));
 
-        $this->assertEquals('1,sample,?', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::in));
-        $this->assertEquals('1,sample,?', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::notIn));
-        $this->assertEquals('sample', $adapterMysql->escapeValue('sample', ComparisonOperator::in));
-        $this->assertEquals('sample', $adapterMysql->escapeValue('sample', ComparisonOperator::notIn));
+        $this->assertEquals('( 1,sample,? )', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::in));
+        $this->assertEquals('( 1,sample,? )', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::notIn));
+        $this->assertEquals('( sample )', $adapterMysql->escapeValue('sample', ComparisonOperator::in));
+        $this->assertEquals('( sample )', $adapterMysql->escapeValue('sample', ComparisonOperator::notIn));
 
         $this->assertEquals('1', $adapterMysql->escapeValue(1));
         $this->assertEquals('sample', $adapterMysql->escapeValue('sample'));
