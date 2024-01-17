@@ -109,7 +109,7 @@ class DataMapper
         $entity->propertyNestedChanges = false;
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (($reflectionProperty->class === get_class($entity)) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
+            if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
                 $markers[] = Keyword::placeholder->value;
                 $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
                 $parsedValue = Parser::unparseValue($reflectionProperty->getValue($entity), true);
