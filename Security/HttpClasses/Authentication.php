@@ -58,6 +58,7 @@ class Authentication extends Submittable
 
     public function __construct(Request $request)
     {
+        parent::__construct();
         $this->request = $request;
         $this->requestType = RequestType::from($request->server['REQUEST_METHOD']);
     }
