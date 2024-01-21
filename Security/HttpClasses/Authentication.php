@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Security\HttpClasses;
 
+use SismaFramework\Core\AbstractClasses\Submittable;
 use SismaFramework\Core\Enumerations\RequestType;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Filter;
@@ -44,24 +45,16 @@ use SismaFramework\Core\HelperClasses\Session;
  *
  * @author Valentino de Lapa
  */
-class Authentication
+class Authentication extends Submittable
 {
-
-    use \SismaFramework\Core\Traits\Submitted;
 
     private MultiFactorModelInterface $multiFactorModelInterface;
     private MultiFactorRecoveryModelInterface $multiFactorRecoveryModelInterface;
     private MultiFactorWrapperInterface $multiFactorWrapperInterface;
-    private Request $request;
     private RequestType $requestType;
     private PasswordModelInterface $passwordModelInterface;
     private ?AuthenticableInterface $authenticableInterface;
     private AuthenticableModelInterface $authenticableModelInterface;
-    private array $filterErrors = [
-        "usernameError" => false,
-        "passwordError" => false,
-        "codeError" => false,
-    ];
 
     public function __construct(Request $request)
     {
@@ -104,10 +97,10 @@ class Authentication
             if (($this->authenticableInterface instanceof AuthenticableInterface) && $this->checkPassword($this->authenticableInterface)) {
                 return true;
             } else {
-                $this->filterErrors['passwordError'] = true;
+                $this->formFilterErrorManager->passwordError = true;
             }
         }
-        $this->filterErrors['usernameError'] = true;
+        $this->formFilterErrorManager->usernameError = true;
         return false;
     }
 
@@ -129,10 +122,10 @@ class Authentication
             }elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->request['code'])) {
                 return true;
             } else {
-                $this->filterErrors['codeError'] = true;
+                $this->formFilterErrorManager->codeError = true;
             }
         }
-        $this->filterErrors['codeError'] = true;
+        $this->formFilterErrorManager->codeError = true;
         return false;
     }
 

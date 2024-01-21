@@ -32,7 +32,6 @@ use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\HelperClasses\Query;
 
 /**

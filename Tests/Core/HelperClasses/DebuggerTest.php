@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Core\HelperClasses\FormFilterErrorManager;
 use SismaFramework\Core\HelperClasses\Templater;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
@@ -136,12 +137,14 @@ class DebuggerTest extends TestCase
     
     public function testSetFormFilter()
     {
+        $formFilterErrorManager = new FormFilterErrorManager();
+        $formFilterErrorManager->sampleFieldError = false;
         $setFormFilterMethod = $this->debuggerReflection->getMethod('setFormFilter');
-        $setFormFilterMethod->invoke(new Debugger, ['sampleField' => false]);
+        $setFormFilterMethod->invoke(new Debugger, $formFilterErrorManager);
         $formFilterProperty = $this->debuggerReflection->getProperty('formFilter');
         $formFilterProperty->setAccessible(true);
         $this->assertIsArray($formFilterProperty->getValue());
-        $this->assertArrayHasKey('sampleField', $formFilterProperty->getValue());
+        $this->assertArrayHasKey('sampleFieldError', $formFilterProperty->getValue());
     }
     
     public function testSetVars()

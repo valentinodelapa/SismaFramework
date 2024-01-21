@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\FormFilterErrorManager;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Templater;
 use SismaFramework\Core\HelperClasses\Parser;
@@ -140,9 +141,9 @@ class Debugger
         self::$queryExecutedNumber = self::$queryExecutedNumber + 1;
     }
 
-    public static function setFormFilter(array $formFilter): void
+    public static function setFormFilter(FormFilterErrorManager $formFilter): void
     {
-        self::$formFilter = $formFilter;
+        self::$formFilter = $formFilter->getErrorsToArray();
     }
 
     public static function setVars(array $vars): void

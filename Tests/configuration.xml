@@ -22,41 +22,54 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="/bootstrap.php" colors="true" cacheResult="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false"     
-  displayDetailsOnTestsThatTriggerWarnings="true">
-  <testsuites>
-    <testsuite name="Application Test Suite">
-      <directory suffix="Test.php">./Core</directory>
-      <directory suffix="Test.php">./Orm</directory>
-      <directory suffix="Test.php">./ProprietaryTypes</directory>
-      <directory suffix="Test.php">./Security</directory>
-    </testsuite>
-  </testsuites>
-  <coverage includeUncoveredFiles="true" pathCoverage="false" ignoreDeprecatedCodeUnits="true" disableCodeCoverageIgnore="true">
-    <report>
-      <clover outputFile="coverage-report/clover.xml"/>
-      <cobertura outputFile="coverage-report/cobertura.xml"/>
-      <crap4j outputFile="coverage-report/crap4j.xml" threshold="50"/>
-      <html outputDirectory="coverage-report/html-coverage" lowUpperBound="50" highLowerBound="90"/>
-      <php outputFile="coverage-report/coverage.php"/>
-      <text outputFile="coverage-report/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
-      <xml outputDirectory="coverage-report/xml-coverage"/>
-    </report>
-  </coverage>
-  <php>
-    <server name="HTTP_USER_AGENT" value=""/>
-    <server name="HTTP_HOST" value="localhost"/>
-    <server name="QUERY_STRING" value=""/>
-    <server name="REMOTE_ADDR" value=""/>
-    <server name="REQUEST_METHOD" value="POST"/>
-    <server name="REQUEST_URI" value="/"/>
-    <server name="SERVER_PROTOCOL" value=""/>
-  </php>
-  <source>
-    <include>
-      <directory suffix=".php">../Autoload</directory>
-      <directory suffix=".php">../Core</directory>
-      <directory suffix=".php">../Orm</directory>
-    </include>
-  </source>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         backupGlobals="false"
+         bootstrap="/bootstrap.php"
+         colors="true"
+         cacheResult="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         cacheDirectory=".phpunit.cache"
+         backupStaticProperties="false"     
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true">
+    <testsuites>
+        <testsuite name="Application Test Suite">
+            <directory suffix="Test.php">./Core</directory>
+            <directory suffix="Test.php">./Orm</directory>
+            <directory suffix="Test.php">./ProprietaryTypes</directory>
+            <directory suffix="Test.php">./Security</directory>
+        </testsuite>
+    </testsuites>
+    <coverage includeUncoveredFiles="true"
+              pathCoverage="false" ignoreDeprecatedCodeUnits="true" disableCodeCoverageIgnore="true">
+        <report>
+            <clover outputFile="coverage-report/clover.xml"/>
+            <cobertura outputFile="coverage-report/cobertura.xml"/>
+            <crap4j outputFile="coverage-report/crap4j.xml" threshold="50"/>
+            <html outputDirectory="coverage-report/html-coverage" lowUpperBound="50" highLowerBound="90"/>
+            <php outputFile="coverage-report/coverage.php"/>
+            <text outputFile="coverage-report/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="coverage-report/xml-coverage"/>
+        </report>
+    </coverage>
+    <php>
+        <server name="HTTP_USER_AGENT" value=""/>
+        <server name="HTTP_HOST" value="localhost"/>
+        <server name="QUERY_STRING" value=""/>
+        <server name="REMOTE_ADDR" value=""/>
+        <server name="REQUEST_METHOD" value="POST"/>
+        <server name="REQUEST_URI" value="/"/>
+        <server name="SERVER_PROTOCOL" value=""/>
+    </php>
+    <source>
+        <include>
+            <directory suffix=".php">../Autoload</directory>
+            <directory suffix=".php">../Core</directory>
+            <directory suffix=".php">../Orm</directory>
+        </include>
+    </source>
 </phpunit>

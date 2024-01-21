@@ -42,6 +42,7 @@ use SismaFramework\Sample\Forms\ReferencedSampleForm;
 use SismaFramework\Sample\Forms\SelfReferencedSampleForm;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\HelperClasses\FormFilterError;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
@@ -88,11 +89,9 @@ class BaseFormTest extends TestCase
         $baseSampleForm->handleRequest($requestMock);
         $this->assertTrue($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());
-        $filterErrors = $baseSampleForm->returnFilterErrors();
-        $this->assertArrayHasKey('nullableSecureStringError', $filterErrors);
-        $this->assertTrue($filterErrors['nullableSecureStringError']);
-        $this->assertArrayHasKey('referencedEntityWithoutInitializationError', $filterErrors);
-        $this->assertTrue($filterErrors['referencedEntityWithoutInitializationError']['textError']);
+        $filterErrors = $baseSampleForm->getFilterErrors();
+        $this->assertTrue($filterErrors->nullableSecureStringError);
+        $this->assertTrue($filterErrors->referencedEntityWithoutInitialization->textError);
     }
 
     public function testFormForBaseEntityWithForeignKeySubmittedNotValid()
@@ -109,9 +108,8 @@ class BaseFormTest extends TestCase
         $baseSampleForm->handleRequest($requestMock);
         $this->assertTrue($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());
-        $filterErrors = $baseSampleForm->returnFilterErrors();
-        $this->assertArrayHasKey('stringWithoutInizializationError', $filterErrors);
-        $this->assertTrue($filterErrors['stringWithoutInizializationError']);
+        $filterErrors = $baseSampleForm->getFilterErrors();;
+        $this->assertTrue($filterErrors->stringWithoutInizializationError);
         $baseSampleResult = $baseSampleForm->getEntityDataToStandardEntity();
         $this->assertInstanceOf(StandardEntity::class, $baseSampleResult);
         $this->assertInstanceOf(StandardEntity::class, $baseSampleResult->referencedEntityWithoutInitialization);
@@ -194,11 +192,10 @@ class BaseFormTest extends TestCase
         $referencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($referencedSampleForm->isSubmitted());
         $this->assertFalse($referencedSampleForm->isValid());
-        $filterErrors = $referencedSampleForm->returnFilterErrors();
-        $this->assertArrayHasKey('baseSampleCollectionReferencedEntityWithoutInitializationError', $filterErrors);
-        $this->assertCount(2, $filterErrors['baseSampleCollectionReferencedEntityWithoutInitializationError']);
-        $this->assertFalse($filterErrors['baseSampleCollectionReferencedEntityWithoutInitializationError'][0]['stringWithoutInizializationError']);
-        $this->assertTrue($filterErrors['baseSampleCollectionReferencedEntityWithoutInitializationError'][1]['stringWithoutInizializationError']);
+        $filterErrors = $referencedSampleForm->getFilterErrors();
+        $this->assertCount(2, $filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization);
+        $this->assertFalse($filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInizializationError);
+        $this->assertTrue($filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization[1]->stringWithoutInizializationError);
         $referencedSampleResult = $referencedSampleForm->getEntityDataToStandardEntity();
         $this->assertEquals('base sample one', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInizialization);
     }
@@ -274,11 +271,10 @@ class BaseFormTest extends TestCase
         $otherReferencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($otherReferencedSampleForm->isSubmitted());
         $this->assertFalse($otherReferencedSampleForm->isValid());
-        $filterErrors = $otherReferencedSampleForm->returnFilterErrors();
-        $this->assertArrayHasKey('baseSampleCollectionError', $filterErrors);
-        $this->assertCount(2, $filterErrors['baseSampleCollectionError']);
-        $this->assertTrue($filterErrors['baseSampleCollectionError'][0]['stringWithoutInizializationError']);
-        $this->assertTrue($filterErrors['baseSampleCollectionError'][1]['stringWithoutInizializationError']);
+        $filterErrors = $otherReferencedSampleForm->getFilterErrors();
+        $this->assertCount(2, $filterErrors->baseSampleCollection);
+        $this->assertTrue($filterErrors->baseSampleCollection[0]->stringWithoutInizializationError);
+        $this->assertTrue($filterErrors->baseSampleCollection[1]->stringWithoutInizializationError);
     }
 
     public function testFormForOtherReferencedEntityWithCollectionValid()
@@ -353,11 +349,10 @@ class BaseFormTest extends TestCase
         $selfReferencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($selfReferencedSampleForm->isSubmitted());
         $this->assertFalse($selfReferencedSampleForm->isValid());
-        $filterErrors = $selfReferencedSampleForm->returnFilterErrors();
-        $this->assertArrayHasKey('sonCollectionError', $filterErrors);
-        $this->assertCount(2, $filterErrors['sonCollectionError']);
-        $this->assertTrue($filterErrors['sonCollectionError'][0]['textError']);
-        $this->assertTrue($filterErrors['sonCollectionError'][1]['textError']);
+        $filterErrors = $selfReferencedSampleForm->getFilterErrors();
+        $this->assertCount(2, $filterErrors->sonCollection);
+        $this->assertTrue($filterErrors->sonCollection[0]->textError);
+        $this->assertTrue($filterErrors->sonCollection[1]->textError);
     }
 
     public function testFormForSelfReferencedEntityValid()

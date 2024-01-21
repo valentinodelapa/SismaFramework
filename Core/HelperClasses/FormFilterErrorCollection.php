@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright (c) 2024-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,23 +24,20 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;
+namespace SismaFramework\Core\HelperClasses;
 
 /**
- *
  * @author Valentino de Lapa
  */
-trait Submitted
+class FormFilterErrorCollection extends \ArrayObject
 {
 
-    public function isSubmitted(): bool
+    public function offsetGet(mixed $key): mixed
     {
-        return isset($this->request->request['submitted']);
+        if (!isset($this[$key])) {
+            return new FormFilterErrorManager();
+        } else {
+            return parent::offsetGet($key);
+        }
     }
-
-    public function returnFilterErrors(): array
-    {
-        return $this->filterErrors;
-    }
-
 }
