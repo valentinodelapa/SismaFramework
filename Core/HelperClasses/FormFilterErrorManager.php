@@ -38,16 +38,22 @@ class FormFilterErrorManager
 
     public function generateFormFilterErrorManagerFromForm(array $entityFromForm): void
     {
-        foreach ($entityFromForm as $propertyName => $keyOrForm) {
-            if (is_array($keyOrForm)) {
-                $this->formFilterErrorManagerFromForm[$propertyName] = new FormFilterErrorCollection();
-                foreach ($keyOrForm as $form) {
-                    $this->formFilterErrorManagerFromForm[$propertyName]->append($form->getFilterErrors());
-                }
+        foreach ($entityFromForm as $key => $value) {
+            if (is_array($value)) {
+                $this->formFilterErrorManagerFromForm[$key] = $this->generateFormFilterErrorCollectionFromForm($value);
             } else {
-                $this->formFilterErrorManagerFromForm[$propertyName] = $keyOrForm->getFilterErrors();
+                $this->formFilterErrorManagerFromForm[$key] = $value->getFilterErrors();
             }
         }
+    }
+
+    private function generateFormFilterErrorCollectionFromForm(array $formArray): FormFilterErrorCollection
+    {
+        $formFilterErrorCollection = new FormFilterErrorCollection();
+        foreach ($formArray as $form) {
+            $formFilterErrorCollection->append($form->getFilterErrors());
+        }
+        return $formFilterErrorCollection;
     }
 
     public function __set($name, $value)
@@ -78,17 +84,33 @@ class FormFilterErrorManager
                 return $this->customMessages[$propertyName] ?? false;
             } elseif (str_contains($name, 'Collection')) {
                 return new FormFilterErrorCollection();
-            }else{
+            } else {
                 return new FormFilterErrorManager();
             }
         }
     }
 
-    public function getErrorsToArray()
+    public function getErrorsToArray(): array
     {
         $parsedErrors = [];
         foreach ($this->errors as $key => $value) {
             $parsedErrors[$key . "Error"] = $value;
+        }
+        foreach ($this->formFilterErrorManagerFromForm as $key => $value) {
+            if ($value instanceof FormFilterErrorManager) {
+                $parsedErrors[$key] = $value->getErrorsToArray();
+            } elseif ($value instanceof FormFilterErrorCollection) {
+                $parsedErrors[$key] = $this->getErrorCollectionToArray($value);
+            }
+        }
+        return $parsedErrors;
+    }
+
+    private function getErrorCollectionToArray(FormFilterErrorCollection $errorCollection): array
+    {
+        $parsedErrors = [];
+        foreach ($errorCollection as $key => $value) {
+            $parsedErrors[$key] = $value->getErrorsToArray();
         }
         return $parsedErrors;
     }

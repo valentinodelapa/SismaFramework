@@ -59,6 +59,9 @@ class FormFilterErrorManagerTest extends TestCase
                 ->method('getFilterErrors')
                 ->willReturn($foreignKeyFormFilterErrorManager);
         $formFilterErrorManager = new FormFilterErrorManager();
+        $this->assertInstanceOf(FormFilterErrorManager::class, $formFilterErrorManager->foreignKeyForm);
+        $this->assertFalse($formFilterErrorManager->foreignKeyForm->errorNotInitializedError);
+        $this->assertFalse($formFilterErrorManager->foreignKeyForm->errorNotInitializedCustomMessage);
         $formFilterErrorManager->generateFormFilterErrorManagerFromForm(['foreignKeyForm' => $foreignKeyFormMock]);
         $this->assertInstanceOf(FormFilterErrorManager::class, $formFilterErrorManager->foreignKeyForm);
         $this->assertFalse($formFilterErrorManager->foreignKeyForm->errorNotInitializedError);
@@ -105,6 +108,9 @@ class FormFilterErrorManagerTest extends TestCase
                 ->method('getFilterErrors')
                 ->willReturn($sismaCollectionFormFilterErrorManager);
         $formFilterErrorManager = new FormFilterErrorManager();
+        $this->assertInstanceOf(FormFilterErrorManager::class, $formFilterErrorManager->sismaCollectionForm[0]);
+        $this->assertFalse($formFilterErrorManager->sismaCollectionForm[0]->errorNotInitializedError);
+        $this->assertFalse($formFilterErrorManager->sismaCollectionForm[0]->errorNotInitializedCustomMessage);
         $formFilterErrorManager->generateFormFilterErrorManagerFromForm(['sismaCollectionForm' => [$sismaCollectionFormMock]]);
         $this->assertInstanceOf(FormFilterErrorManager::class, $formFilterErrorManager->sismaCollectionForm[0]);
         $this->assertFalse($formFilterErrorManager->sismaCollectionForm[0]->errorNotInitializedError);
@@ -143,5 +149,35 @@ class FormFilterErrorManagerTest extends TestCase
         $this->assertInstanceOf(FormFilterErrorManager::class, $formFilterErrorManager->sismaCollectionForm[0]);
         $this->assertTrue($formFilterErrorManager->sismaCollectionForm[0]->errorInitializedError);
         $this->assertEquals('custom message', $formFilterErrorManager->sismaCollectionForm[0]->errorInitializedCustomMessage);
+    }
+    
+    public function testGetErrorsToArray()
+    {
+        $foreignKeyFormFilterErrorManager = new FormFilterErrorManager();
+        $foreignKeyFormFilterErrorManager->errorInitializedError = true;
+        $foreignKeyFormFilterErrorManager->errorInitializedCustomMessage = 'custom message';
+        $foreignKeyFormMock = $this->createMock(BaseForm::class);
+        $foreignKeyFormMock->expects($this->once())
+                ->method('getFilterErrors')
+                ->willReturn($foreignKeyFormFilterErrorManager);
+        $sismaCollectionFormFilterErrorManager = new FormFilterErrorManager();
+        $sismaCollectionFormFilterErrorManager->errorInitializedError = true;
+        $sismaCollectionFormFilterErrorManager->errorInitializedCustomMessage = 'custom message';
+        $sismaCollectionFormMock = $this->createMock(BaseForm::class);
+        $sismaCollectionFormMock->expects($this->once())
+                ->method('getFilterErrors')
+                ->willReturn($sismaCollectionFormFilterErrorManager);
+        $formFilterErrorManager = new FormFilterErrorManager();
+        $formFilterErrorManager->errorInitializedError = true;
+        $formFilterErrorManager->errorInitializedCustomMessage = 'custom message';
+        $formFilterErrorManager->generateFormFilterErrorManagerFromForm(['foreignKeyForm' => $foreignKeyFormMock]);
+        $formFilterErrorManager->generateFormFilterErrorManagerFromForm(['sismaCollectionForm' => [$sismaCollectionFormMock]]);
+        $errorArray = $formFilterErrorManager->getErrorsToArray();
+        $this->assertArrayHasKey('errorInitializedError', $errorArray);
+        $this->assertArrayHasKey('foreignKeyForm', $errorArray);
+        $this->assertArrayHasKey('errorInitializedError', $errorArray['foreignKeyForm']);
+        $this->assertArrayHasKey('sismaCollectionForm', $errorArray);
+        $this->assertArrayHasKey(0, $errorArray['sismaCollectionForm']);
+        $this->assertArrayHasKey('errorInitializedError', $errorArray['sismaCollectionForm'][0]);
     }
 }
