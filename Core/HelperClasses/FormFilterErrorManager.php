@@ -76,8 +76,10 @@ class FormFilterErrorManager
                 return $this->errors[$propertyName] ?? false;
             } elseif (str_contains($name, 'CustomMessage')) {
                 return $this->customMessages[$propertyName] ?? false;
-            } else {
-                return false;
+            } elseif (str_contains($name, 'Collection')) {
+                return new FormFilterErrorCollection();
+            }else{
+                return new FormFilterErrorManager();
             }
         }
     }
