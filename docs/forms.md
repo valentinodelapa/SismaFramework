@@ -119,7 +119,7 @@ I metodi esposti dalla classe `BaseForm` sono i seguenti:
 
 * `getEntityDataToStandardEntity()`: questo metodo, da richiamare nel caso in cui almeno uno dei due metodi `isSubmitted()` o `isValid()` restituisca `false`, restituisce un oggetto di tipo `StandardEntity` (un'entità non specializzata e non tipizzata) che, data la sua essenza, può accettare anche proprietà errate. Questa funzionalità è utile al ripopolamento automatico del form *html* in caso di errore.
 
-* `returnFilterErrors()`: questo metodo, anch'esso da richiamare nel caso in cui almeno uno dei due metodi `isSubmitted()` o `isValid()` restituisca `false`, restituisce un array che contiene l'esito della validazione di ogni singola proprietà processata dall'oggetto di tipo `BaseForm`.
+* `returnFilterErrors()`: questo metodo, anch'esso da richiamare nel caso in cui almeno uno dei due metodi `isSubmitted()` o `isValid()` restituisca `false`, restituisce un oggetto FormFilterErrorManager che contiene l'esito della validazione di ogni singola proprietà processata dall'oggetto di tipo `BaseForm`.
 
 Di seguito l'impementazione completa dell'interazione tra un controllore ed un oggetto di tipo `BaseForm`.
 

@@ -65,7 +65,7 @@ class Parser
         } elseif (($reflectionNamedType->getName() === 'array') && is_array($value)) {
             return $value;
         } else {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException($reflectionNamedType->getName());
         }
     }
 
@@ -77,7 +77,7 @@ class Parser
         if ($entity instanceof BaseEntity) {
             return $entity;
         } else {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException($entityName);
         }
     }
 
@@ -87,7 +87,7 @@ class Parser
         if (($enumerationInstance instanceof \BackedEnum)) {
             return $enumerationInstance;
         } else {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException($enumerationName);
         }
     }
 

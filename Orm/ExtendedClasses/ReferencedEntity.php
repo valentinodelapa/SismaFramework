@@ -146,7 +146,7 @@ abstract class ReferencedEntity extends BaseEntity
             $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = true;
             $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
         } else {
-            throw new InvalidPropertyException();
+            throw new InvalidPropertyException($name);
         }
     }
     
@@ -176,7 +176,7 @@ abstract class ReferencedEntity extends BaseEntity
             case 'count':
                 return $this->countEntityCollection($propertyName);
             default:
-                throw new EntityException('method not found');
+                throw new EntityException($methodName);
         }
     }
 

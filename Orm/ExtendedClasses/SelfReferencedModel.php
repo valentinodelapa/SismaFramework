@@ -61,7 +61,7 @@ abstract class SelfReferencedModel extends ReferencedModel
                 case 'delete':
                     return $this->deleteEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, ...$arguments);
                 default:
-                    throw new ModelException('Metodo non trovato');
+                    throw new ModelException($name);
             }
         } else {
             return parent::__call($name, $arguments);

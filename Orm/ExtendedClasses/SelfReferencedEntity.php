@@ -71,7 +71,7 @@ abstract class SelfReferencedEntity extends ReferencedEntity
             $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = true;
             $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
         } else {
-            throw new InvalidPropertyException();
+            throw new InvalidPropertyException($name);
         }
     }
 

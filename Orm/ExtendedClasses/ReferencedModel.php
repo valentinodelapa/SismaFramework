@@ -58,7 +58,7 @@ abstract class ReferencedModel extends BaseModel
             case 'delete':
                 return $this->deleteEntityCollectionByEntity($referencedEntities, ...$arguments);
             default:
-                throw new ModelException('Metodo non trovato');
+                throw new ModelException($name);
         }
     }
 
