@@ -27,7 +27,7 @@
 namespace SismaFramework\Core\AbstractClasses;
 
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Core\HelperClasses\FormFilterErrorManager;
+use SismaFramework\Core\CustomTypes\FormFilterError;
 
 /**
  * Description of Submittable
@@ -37,11 +37,11 @@ use SismaFramework\Core\HelperClasses\FormFilterErrorManager;
 abstract class Submittable
 {
     protected Request $request;
-    protected FormFilterErrorManager $formFilterErrorManager;
+    protected FormFilterError $formFilterError;
     
     public function __construct()
     {
-        $this->formFilterErrorManager = new FormFilterErrorManager();
+        $this->formFilterError = new FormFilterError();
     }
 
     public function isSubmitted(): bool
@@ -49,8 +49,8 @@ abstract class Submittable
         return isset($this->request->request['submitted']);
     }
     
-    public function getFilterErrors(): FormFilterErrorManager
+    public function getFilterErrors(): FormFilterError
     {
-        return $this->formFilterErrorManager;
+        return $this->formFilterError;
     }
 }

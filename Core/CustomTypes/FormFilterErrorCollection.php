@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HelperClasses;
+namespace SismaFramework\Core\CustomTypes;
 
 /**
  * @author Valentino de Lapa
@@ -35,7 +35,7 @@ class FormFilterErrorCollection extends \ArrayObject
     public function offsetGet(mixed $key): mixed
     {
         if (!isset($this[$key])) {
-            return new FormFilterErrorManager();
+            return new FormFilterError();
         } else {
             return parent::offsetGet($key);
         }

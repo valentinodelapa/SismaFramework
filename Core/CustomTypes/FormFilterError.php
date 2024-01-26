@@ -24,25 +24,28 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HelperClasses;
+namespace SismaFramework\Core\CustomTypes;
 
 /**
  * @author Valentino de Lapa
  */
-class FormFilterErrorManager
+class FormFilterError
 {
+    const ERROR_PLACEHOLDER = 'Error';
+    const CUSTOM_MESSAGE_PLACEHOLDER = 'CustomMessage';
+    const COLLECTION_PLACEHOLDER = 'Collection';
 
     private array $errors = [];
     private array $customMessages = [];
-    private array $formFilterErrorManagerFromForm = [];
+    private array $formFilterErrorFromForm = [];
 
-    public function generateFormFilterErrorManagerFromForm(array $entityFromForm): void
+    public function generateFormFilterErrorFromForm(array $entityFromForm): void
     {
         foreach ($entityFromForm as $key => $value) {
             if (is_array($value)) {
-                $this->formFilterErrorManagerFromForm[$key] = $this->generateFormFilterErrorCollectionFromForm($value);
+                $this->formFilterErrorFromForm[$key] = $this->generateFormFilterErrorCollectionFromForm($value);
             } else {
-                $this->formFilterErrorManagerFromForm[$key] = $value->getFilterErrors();
+                $this->formFilterErrorFromForm[$key] = $value->getFilterErrors();
             }
         }
     }
@@ -58,13 +61,13 @@ class FormFilterErrorManager
 
     public function __set($name, $value)
     {
-        if (array_key_exists($name, $this->formFilterErrorManagerFromForm)) {
-            $this->formFilterErrorManagerFromForm[$name] = $value;
+        if (array_key_exists($name, $this->formFilterErrorFromForm)) {
+            $this->formFilterErrorFromForm[$name] = $value;
         } else {
-            $propertyName = str_replace(['Error', 'CustomMessage'], '', $name);
-            if (str_contains($name, 'Error')) {
+            $propertyName = str_replace([self::ERROR_PLACEHOLDER, self::CUSTOM_MESSAGE_PLACEHOLDER], '', $name);
+            if (str_contains($name, self::ERROR_PLACEHOLDER)) {
                 $this->errors[$propertyName] = $value;
-            } elseif (str_contains($name, 'CustomMessage')) {
+            } elseif (str_contains($name, self::CUSTOM_MESSAGE_PLACEHOLDER)) {
                 $this->customMessages[$propertyName] = $value;
             } else {
                 
@@ -74,18 +77,18 @@ class FormFilterErrorManager
 
     public function __get($name)
     {
-        if (array_key_exists($name, $this->formFilterErrorManagerFromForm)) {
-            return $this->formFilterErrorManagerFromForm[$name];
+        if (array_key_exists($name, $this->formFilterErrorFromForm)) {
+            return $this->formFilterErrorFromForm[$name];
         } else {
-            $propertyName = str_replace(['Error', 'CustomMessage'], '', $name);
-            if (str_contains($name, 'Error')) {
+            $propertyName = str_replace([self::ERROR_PLACEHOLDER, self::CUSTOM_MESSAGE_PLACEHOLDER], '', $name);
+            if (str_contains($name, self::ERROR_PLACEHOLDER)) {
                 return $this->errors[$propertyName] ?? false;
-            } elseif (str_contains($name, 'CustomMessage')) {
+            } elseif (str_contains($name, self::CUSTOM_MESSAGE_PLACEHOLDER)) {
                 return $this->customMessages[$propertyName] ?? false;
-            } elseif (str_contains($name, 'Collection')) {
+            } elseif (str_contains($name, self::COLLECTION_PLACEHOLDER)) {
                 return new FormFilterErrorCollection();
             } else {
-                return new FormFilterErrorManager();
+                return new FormFilterError();
             }
         }
     }
@@ -94,10 +97,13 @@ class FormFilterErrorManager
     {
         $parsedErrors = [];
         foreach ($this->errors as $key => $value) {
-            $parsedErrors[$key . "Error"] = $value;
+            $parsedErrors[$key . self::ERROR_PLACEHOLDER] = $value;
         }
-        foreach ($this->formFilterErrorManagerFromForm as $key => $value) {
-            if ($value instanceof FormFilterErrorManager) {
+        foreach ($this->customMessages as $key => $value) {
+            $parsedErrors[$key . self::CUSTOM_MESSAGE_PLACEHOLDER] = $value;
+        }
+        foreach ($this->formFilterErrorFromForm as $key => $value) {
+            if ($value instanceof FormFilterError) {
                 $parsedErrors[$key] = $value->getErrorsToArray();
             } elseif ($value instanceof FormFilterErrorCollection) {
                 $parsedErrors[$key] = $this->getErrorCollectionToArray($value);

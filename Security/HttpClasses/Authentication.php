@@ -98,10 +98,10 @@ class Authentication extends Submittable
             if (($this->authenticableInterface instanceof AuthenticableInterface) && $this->checkPassword($this->authenticableInterface)) {
                 return true;
             } else {
-                $this->formFilterErrorManager->passwordError = true;
+                $this->formFilterError->passwordError = true;
             }
         }
-        $this->formFilterErrorManager->usernameError = true;
+        $this->formFilterError->usernameError = true;
         return false;
     }
 
@@ -123,10 +123,10 @@ class Authentication extends Submittable
             }elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->request['code'])) {
                 return true;
             } else {
-                $this->formFilterErrorManager->codeError = true;
+                $this->formFilterError->codeError = true;
             }
         }
-        $this->formFilterErrorManager->codeError = true;
+        $this->formFilterError->codeError = true;
         return false;
     }
 

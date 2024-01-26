@@ -30,7 +30,7 @@ use SismaFramework\Core\AbstractClasses\Submittable;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Filter;
-use SismaFramework\Core\HelperClasses\FormFilterErrorCollection;
+use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\ProprietaryTypes\SismaCollection;
@@ -94,7 +94,7 @@ abstract class BaseForm extends Submittable
         $this->injectRequest();
         $this->setFilterFieldsMode();
         $this->setEntityFromForm();
-        $this->formFilterErrorManager->generateFormFilterErrorManagerFromForm($this->entityFromForm);
+        $this->formFilterError->generateFormFilterErrorFromForm($this->entityFromForm);
     }
 
     abstract protected function injectRequest(): void;
@@ -196,7 +196,7 @@ abstract class BaseForm extends Submittable
         }
         $this->parseStandardProperties();
         $this->customFilter();
-        Debugger::setFormFilter($this->formFilterErrorManager);
+        Debugger::setFormFilter($this->formFilterError);
         return $this->filterResult;
     }
 
@@ -221,7 +221,7 @@ abstract class BaseForm extends Submittable
         } else {
             $currentForm = $this->entityFromForm[$propertyName];
             $this->entityData->{$propertyName} = $this->switchForm($currentForm);
-            $this->formFilterErrorManager->$propertyName = $currentForm->getFilterErrors();
+            $this->formFilterError->$propertyName = $currentForm->getFilterErrors();
             array_push($this->entityToResolve, $propertyName);
         }
     }
@@ -230,11 +230,11 @@ abstract class BaseForm extends Submittable
     {
         $this->entityData->{$propertyName} = new SismaCollection(StandardEntity::class);
         if (isset($this->request->request[$propertyName])) {
-            $this->formFilterErrorManager->$propertyName = new FormFilterErrorCollection();
+            $this->formFilterError->$propertyName = new FormFilterErrorCollection();
             foreach (array_keys($this->request->request[$propertyName]) as $key) {
                 $currentForm = $this->entityFromForm[$propertyName][$key];
                 $this->entityData->{$propertyName}[$key] = $this->switchForm($currentForm);
-                $this->formFilterErrorManager->$propertyName[$key] = $currentForm->getFilterErrors();
+                $this->formFilterError->$propertyName[$key] = $currentForm->getFilterErrors();
                 array_push($this->sismaCollectionToResolve, $propertyName);
             }
         }
@@ -304,13 +304,13 @@ abstract class BaseForm extends Submittable
     {
         if (array_key_exists($propertyName, $this->filterFiledsMode) && property_exists($this->entityData, $propertyName)) {
             $customMessagePropertyName = $propertyName . "CustomMessage";
-            $this->formFilterErrorManager->$customMessagePropertyName = false;
+            $this->formFilterError->$customMessagePropertyName = false;
             $errorPropertyName = $propertyName . "Error";
             if ($this->filterHasFailed($propertyName) && ($this->isNullButNotNullable($propertyName))) {
                 $this->filterResult = false;
-                $this->formFilterErrorManager->$errorPropertyName = true;
+                $this->formFilterError->$errorPropertyName = true;
             } else {
-                $this->formFilterErrorManager->$errorPropertyName = false;
+                $this->formFilterError->$errorPropertyName = false;
             }
         }
     }
