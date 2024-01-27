@@ -36,6 +36,7 @@ use SismaFramework\Core\HttpClasses\Request;
  */
 class Session
 {
+    private \stdClass $sessionProperties;
 
     public function __construct()
     {
@@ -62,7 +63,7 @@ class Session
 
     public function __set($name, $value)
     {
-        self::setItem($name, $value);
+        $_SESSION[$name] = $value;
     }
 
     public static function setItem(int|string $key, mixed $value, bool $serialize = false): void
@@ -113,7 +114,7 @@ class Session
 
     public function __unset($name)
     {
-        self::unsetItem($name);
+        unset($_SESSION[$name]);
     }
 
     public static function unsetItem(int|string $key): void
@@ -141,7 +142,7 @@ class Session
 
     public function __get($name)
     {
-        return self::getItem($name);
+        return $_SESSION[$name];
     }
 
     public static function getItem(int|string $key, $unserialize = false): mixed
@@ -169,7 +170,7 @@ class Session
 
     public function __isset($name)
     {
-        return self::hasItem($name);
+        return isset($_SESSION[$name]);
     }
 
     public static function hasItem($key): bool
@@ -199,14 +200,14 @@ class Session
         $value = hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']);
         return (self::getItem('token') === $value);
     }
-
-    public static function end(): void
-    {
-        session_destroy();
-    }
     
     public function __destruct()
     {
         self::end();
+    }
+
+    public static function end(): void
+    {
+        session_destroy();
     }
 }
