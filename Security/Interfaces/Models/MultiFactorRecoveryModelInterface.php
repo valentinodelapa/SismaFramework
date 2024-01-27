@@ -28,7 +28,7 @@ namespace SismaFramework\Security\Interfaces\Models;
 
 use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
 use SismaFramework\Security\Interfaces\Entities\MultiFactorRecoveryInterface;
-use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 
 /**
  *

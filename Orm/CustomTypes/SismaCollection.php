@@ -24,15 +24,14 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ProprietaryTypes;
+namespace SismaFramework\Orm\CustomTypes;
 
 use SismaFramework\Core\Exceptions\InvalidTypeException;
-use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryTypeInterface;
 
 /**
  * @author Valentino de Lapa
  */
-class SismaCollection extends \ArrayObject implements ProprietaryTypeInterface
+class SismaCollection extends \ArrayObject
 {
     private string $restrictiveType;
 

@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Orm\ExtendedClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
-use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 
 /**
  * Description of StandardEntityTest

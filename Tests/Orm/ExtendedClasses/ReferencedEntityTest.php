@@ -31,7 +31,7 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Sample\Entities\OtherReferencedSample;

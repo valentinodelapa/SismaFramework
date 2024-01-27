@@ -27,7 +27,7 @@
 namespace SismaFramework\Orm\ExtendedClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\ProprietaryTypes\SismaCollection;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Core\Exceptions\EntityException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;

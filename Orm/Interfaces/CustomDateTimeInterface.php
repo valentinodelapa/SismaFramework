@@ -24,12 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ProprietaryTypes\Interfaces;
+namespace SismaFramework\Orm\Interfaces;
 
 /**
  * @author Valentino de Lapa
  */
-interface ProprietaryDateTimeEcosystem
+interface CustomDateTimeInterface
 {
 
     public function equals(self $other): bool;

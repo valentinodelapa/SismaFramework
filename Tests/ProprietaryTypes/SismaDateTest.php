@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\ProprietaryTypes;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\ProprietaryTypes\SismaDate;
+use SismaFramework\Orm\CustomTypes\SismaDate;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>

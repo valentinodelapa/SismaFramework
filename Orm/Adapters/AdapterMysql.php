@@ -27,7 +27,7 @@
 namespace SismaFramework\Orm\Adapters;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\AggregationFunction;

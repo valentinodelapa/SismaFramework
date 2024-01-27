@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Orm\ExtendedClasses;
 
-use SismaFramework\ProprietaryTypes\SismaCollection;
-use SismaFramework\ProprietaryTypes\SismaStandardClass;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
+use SismaFramework\Orm\CustomTypes\SismaStandardClass;
 
 /**
  * Description of StandardEntity

@@ -24,19 +24,37 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ProprietaryTypes;
+namespace SismaFramework\Orm\CustomTypes;
 
-use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryTypeInterface;
-use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryDateTimeEcosystem;
+use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaDate extends \DateTimeImmutable implements ProprietaryTypeInterface, ProprietaryDateTimeEcosystem
+class SismaTime extends \DateInterval implements CustomDateTimeInterface
 {
 
-    public function equals(ProprietaryDateTimeEcosystem $other): bool
+    public static function createFromStandardTimeFormat(string $time): self
     {
-        return $this->getTimestamp() === $other->getTimestamp();
+        $timeParts = explode(':', $time);
+        return new SismaTime('PT' . intval($timeParts[0]) . 'H' . intval($timeParts[1]) . 'M' . intval($timeParts[2]) . 'S');
+    }
+
+    public function formatToStandardTimeFormat(): string
+    {
+        return $this->format('%H:%I:%S');
+    }
+
+    public function equals(CustomDateTimeInterface $other):bool
+    {
+        return $this->y === $other->y &&
+                $this->m === $other->m &&
+                $this->d === $other->d &&
+                $this->h === $other->h &&
+                $this->i === $other->i &&
+                $this->s === $other->s &&
+                $this->f === $other->f &&
+                $this->invert === $other->invert &&
+                $this->days === $other->days;
     }
 }

@@ -31,9 +31,9 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\ProprietaryTypes\SismaDate;
-use SismaFramework\ProprietaryTypes\SismaDateTime;
-use SismaFramework\ProprietaryTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaDate;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Enumerations\SampleType;
 

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,19 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ProprietaryTypes;
+namespace SismaFramework\Orm\CustomTypes;
 
-use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryTypeInterface;
-use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryDateTimeEcosystem;
+use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 
 /**
- *
- * @author Valentino de Lapa
+ * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaDateTime extends \DateTime implements ProprietaryTypeInterface, ProprietaryDateTimeEcosystem
+class SismaDate extends \DateTimeImmutable implements CustomDateTimeInterface
 {
 
-    public function equals(ProprietaryDateTimeEcosystem $other): bool
+    public function equals(CustomDateTimeInterface $other): bool
     {
         return $this->getTimestamp() === $other->getTimestamp();
     }

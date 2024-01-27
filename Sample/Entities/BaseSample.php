@@ -27,9 +27,9 @@
 namespace SismaFramework\Sample\Entities;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\ProprietaryTypes\SismaDateTime;
-use SismaFramework\ProprietaryTypes\SismaDate;
-use SismaFramework\ProprietaryTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaDate;
+use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\Sample\Enumerations\SampleType;
 
 /**

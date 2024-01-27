@@ -29,9 +29,9 @@ namespace SismaFramework\Core\HelperClasses;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\ProprietaryTypes\SismaDate;
-use SismaFramework\ProprietaryTypes\SismaDateTime;
-use SismaFramework\ProprietaryTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaDate;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 /**

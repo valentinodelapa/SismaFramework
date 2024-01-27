@@ -24,15 +24,19 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ProprietaryTypes;
+namespace SismaFramework\Orm\CustomTypes;
 
-use SismaFramework\ProprietaryTypes\Interfaces\ProprietaryTypeInterface;
+use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 
 /**
  *
  * @author Valentino de Lapa
  */
-class SismaStandardClass extends \stdClass implements ProprietaryTypeInterface
+class SismaDateTime extends \DateTime implements CustomDateTimeInterface
 {
-    
+
+    public function equals(CustomDateTimeInterface $other): bool
+    {
+        return $this->getTimestamp() === $other->getTimestamp();
+    }
 }

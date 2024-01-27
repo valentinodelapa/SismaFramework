@@ -24,12 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\ProprietaryTypes\Interfaces;
+namespace SismaFramework\Orm\CustomTypes;
 
 /**
+ *
  * @author Valentino de Lapa
  */
-interface ProprietaryTypeInterface
+class SismaStandardClass extends \stdClass
 {
     
 }

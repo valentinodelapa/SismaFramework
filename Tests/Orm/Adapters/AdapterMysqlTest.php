@@ -35,7 +35,7 @@ use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
-use SismaFramework\ProprietaryTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Sample\Entities\BaseSample;
 use SismaFramework\Sample\Enumerations\SampleType;
 
