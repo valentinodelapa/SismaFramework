@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Tests\ProprietaryTypes;
+namespace SismaFramework\Tests\Orm\CustomTypes;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\CustomTypes\SismaTime;
