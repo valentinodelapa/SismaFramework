@@ -95,7 +95,7 @@ class ResourceMaker
             }
             return new Response();
         } else {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException($filename);
         }
     }
     

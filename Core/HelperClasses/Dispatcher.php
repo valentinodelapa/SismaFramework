@@ -269,7 +269,7 @@ class Dispatcher
                 $className = $argumentType->getName();
                 $this->constructorArguments[] = new $className();
             } else {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException($argumentType->getName());
             }
         }
     }
@@ -343,7 +343,7 @@ class Dispatcher
             } elseif ($argument->isDefaultValueAvailable()) {
                 $currentActionArguments[$argument->name] = $argument->getDefaultValue();
             } else {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException($argument->name);
             }
         }
         $this->actionArguments = $currentActionArguments;

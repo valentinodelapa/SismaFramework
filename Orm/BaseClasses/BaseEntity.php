@@ -112,7 +112,7 @@ abstract class BaseEntity
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
             $this->switchSettingType($name, $value);
         } else {
-            throw new InvalidPropertyException();
+            throw new InvalidPropertyException($name);
         }
     }
 

@@ -73,7 +73,7 @@ abstract class ReferencedModel extends BaseModel
                 $propertyName = strtolower(implode('_', $entityNameParts));
                 $referencedEntities[$propertyName] = $entity;
             } else {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException($entityName);
             }
         }
     }

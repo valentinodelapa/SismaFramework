@@ -138,7 +138,7 @@ abstract class BaseForm extends Submittable
             }
             $this->entityFromForm[$propertyName] = $this->generateSismaCollectionProperty($sismaCollectionPropertyKeys, $formPropertyClass, $entityCollectonToEmbed, $propertyName);
         } else {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException($propertyName);
         }
     }
 
@@ -183,7 +183,7 @@ abstract class BaseForm extends Submittable
             if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::getEntityName()) {
                 $this->entityFromForm[$propertyName] = $this->generateFormProperty($formPropertyClass, $entityToEmbedded, $this->request->request[$propertyName] ?? []);
             } else {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException($propertyName);
             }
         }
     }
