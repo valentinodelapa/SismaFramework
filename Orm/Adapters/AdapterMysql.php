@@ -135,7 +135,7 @@ class AdapterMysql extends BaseAdapter
             return DataType::typeEnumeration;
         } elseif ($value instanceof SismaDateTime) {
             return DataType::typeDate;
-        }elseif($value === null){
+        } elseif ($value === null) {
             return DataType::typeNull;
         } else {
             return DataType::typeGeneric;
@@ -274,7 +274,7 @@ class AdapterMysql extends BaseAdapter
 
     public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string
     {
-        return $this->fulltextConditionSintax($columns, $value) . ' as '.($columnAlias ?? '_relevance');
+        return $this->fulltextConditionSintax($columns, $value) . ' as ' . ($columnAlias ?? '_relevance');
     }
 
     public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string
@@ -285,5 +285,22 @@ class AdapterMysql extends BaseAdapter
         $escapedValue = $this->escapeValue($value, ComparisonOperator::against);
         $condition = Keyword::match->value . ' ' . Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ' ' . ComparisonOperator::against->value . ' ' . Keyword::openBlock->value . $escapedValue . ' ' . TextSearchMode::inNaturaLanguageMode->value . Keyword::closeBlock->value;
         return $condition;
+    }
+
+    public function opDecryptFunction(string $column, string $initializationVectorColumn): string
+    {
+        return 'AES_DECRYPT' . $this->openBlock() . $this->opBase64DecodeFunction($column) . ', ' . Keyword::placeholder->value . ', ' . $this->opConvertBlobToHex($initializationVectorColumn) . ', ' . Keyword::placeholder->value . $this->closeBlock();
+    }
+
+    private function opBase64DecodeFunction(string $column): string
+    {
+        $escapedColumn = $this->escapeColumn($column);
+        return 'FROM_BASE64' . $this->openBlock() . $escapedColumn . $this->closeBlock();
+    }
+
+    private function opConvertBlobToHex(string $column): string
+    {
+        $escapedColumn = $this->escapeColumn($column);
+        return 'UNHEX' . $this->openBlock() . 'HEX' . $this->openBlock() . $escapedColumn . $this->closeBlock() . $this->closeBlock();
     }
 }

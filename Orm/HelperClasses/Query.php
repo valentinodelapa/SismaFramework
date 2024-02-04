@@ -204,6 +204,18 @@ class Query
         return $this;
     }
 
+    public function &appendConditionOnEncryptedColumn(string $column, string $initializationVectorColumn, ComparisonOperator $operator, Keyword|string|array $value = Keyword::placeholder): self
+    {
+        $escapedValue = $this->adapter->escapeValue($value, $operator);
+        if ($this->currentCondition == Condition::where) {
+            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn). ' ' . $operator->value . ' ' . $escapedValue;
+        }
+        if ($this->currentCondition == Condition::having) {
+            $this->having[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $operator->value . ' ' . $escapedValue;
+        }
+        return $this;
+    }
+
     public function &appendFulltextCondition(array $columns, Keyword|string $value = Keyword::placeholder): self
     {
         $this->where[] = $this->adapter->fulltextConditionSintax($columns, $value);

@@ -259,6 +259,8 @@ abstract class BaseAdapter
     abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
 
     abstract public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string;
+    
+    abstract public function opDecryptFunction(string $column, string $initializationVectorColumn): string;
 
     abstract public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string;
 
