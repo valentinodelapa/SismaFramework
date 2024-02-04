@@ -180,27 +180,27 @@ class AdapterMysqlTest extends TestCase
     public function testParseSelect()
     {
         $adapterMysql = new AdapterMysql();
-        $this->assertEquals('SELECT * FROM `table_name` WHERE `table_name`.`id` = 1 ', $adapterMysql->parseSelect(false, ['*'], ['`table_name`'], ['`table_name`.`id` = 1'], [], [], [], 0, 0));
+        $this->assertEquals('SELECT * FROM `table_name` WHERE `table_name`.`id` = 1 ', $adapterMysql->parseSelect(false, ['*'], '`table_name`', ['`table_name`.`id` = 1'], [], [], [], 0, 0));
         $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP_BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
-                $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], ['`table_name`'], ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id`' => 'ASC'], 1, 10));
+                $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], '`table_name`', ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id`' => 'ASC'], 1, 10));
     }
 
     public function testParseInsert()
     {
         $adapterMysql = new AdapterMysql();
-        $this->assertEquals('INSERT INTO `table_name` (`column_name_one`,`column_name_two`) VALUES (`valueOne`,`valueTwo`)', $adapterMysql->parseInsert(['`table_name`'], ['`column_name_one`', '`column_name_two`'], ['`valueOne`', '`valueTwo`']));
+        $this->assertEquals('INSERT INTO `table_name` (`column_name_one`,`column_name_two`) VALUES (`valueOne`,`valueTwo`)', $adapterMysql->parseInsert('`table_name`', ['`column_name_one`', '`column_name_two`'], ['`valueOne`', '`valueTwo`']));
     }
 
     public function testParseUpdate()
     {
         $adapterMysql = new AdapterMysql();
-        $this->assertEquals('UPDATE `table_name` SET `column_name_one` = `valueOne`,`column_name_two` = `valueTwo` WHERE `table_name`.`id` = 1', $adapterMysql->parseUpdate(['`table_name`'], ['`column_name_one`', '`column_name_two`'], ['`valueOne`', '`valueTwo`'], ['`table_name`.`id` = 1']));
+        $this->assertEquals('UPDATE `table_name` SET `column_name_one` = `valueOne`,`column_name_two` = `valueTwo` WHERE `table_name`.`id` = 1', $adapterMysql->parseUpdate('`table_name`', ['`column_name_one`', '`column_name_two`'], ['`valueOne`', '`valueTwo`'], ['`table_name`.`id` = 1']));
     }
 
     public function testParseDelete()
     {
         $adapterMysql = new AdapterMysql();
-        $this->assertEquals('DELETE FROM `table_name` WHERE `table_name`.`id` = 1', $adapterMysql->parseDelete(['`table_name`'], ['`table_name`.`id` = 1']));
+        $this->assertEquals('DELETE FROM `table_name` WHERE `table_name`.`id` = 1', $adapterMysql->parseDelete('`table_name`', ['`table_name`.`id` = 1']));
     }
 
     public function testSelect()

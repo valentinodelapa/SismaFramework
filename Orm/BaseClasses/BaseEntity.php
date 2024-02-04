@@ -42,12 +42,12 @@ abstract class BaseEntity
     public bool $modified = false;
     public bool $propertyNestedChanges = false;
     public array $foreignKeys = [];
-    public string $initializationVectorPropertyName = 'initializationVector';
     protected DataMapper $dataMapper;
     protected ?BaseEntity $propertyCallingEntity = null;
     protected ?ReferencedEntity $collectionCallingEntity = null;
     protected static ?BaseEntity $instance = null;
     protected string $primaryKey = 'id';
+    protected string $initializationVectorPropertyName = 'initializationVector';
     protected bool $isActiveTransaction = false;
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];

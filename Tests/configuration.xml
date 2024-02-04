@@ -40,7 +40,6 @@ THE SOFTWARE.
         <testsuite name="Application Test Suite">
             <directory suffix="Test.php">./Core</directory>
             <directory suffix="Test.php">./Orm</directory>
-            <directory suffix="Test.php">./ProprietaryTypes</directory>
             <directory suffix="Test.php">./Security</directory>
         </testsuite>
     </testsuites>

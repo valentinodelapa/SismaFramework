@@ -35,15 +35,14 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\HelperClasses\Query;
 
 /**
- *
  * @author Valentino de Lapa
  */
 class Query
 {
 
+    protected string $table = '';
     protected bool $distinct = false;
     protected array $columns = [];
-    protected array $tables = [];
     protected array $where = [];
     protected int $offset = 0;
     protected int $limit = 0;
@@ -123,21 +122,9 @@ class Query
         return $this;
     }
 
-    public function &setTables(array $list): self
-    {
-        $tables = [];
-        foreach ($list as $t) {
-            $tables[] = $this->adapter->escapeIdentifier($t);
-        }
-        $this->tables = $tables;
-        return $this;
-    }
-
     public function &setTable(string $table): self
     {
-        $tables = [];
-        $tables[] = $this->adapter->escapeIdentifier($table);
-        $this->tables = $tables;
+        $this->table = $this->adapter->escapeIdentifier($table);
         return $this;
     }
 
@@ -309,17 +296,17 @@ class Query
         }
         switch ($cmdType) {
             case Statement::insert:
-                $this->command = $this->adapter->parseInsert($this->tables, $extra['columns'], $extra['values']);
+                $this->command = $this->adapter->parseInsert($this->table, $extra['columns'], $extra['values']);
                 break;
             case Statement::update:
-                $this->command = $this->adapter->parseUpdate($this->tables, $extra['columns'], $extra['values'], $this->where);
+                $this->command = $this->adapter->parseUpdate($this->table, $extra['columns'], $extra['values'], $this->where);
                 break;
             case Statement::delete:
-                $this->command = $this->adapter->parseDelete($this->tables, $this->where);
+                $this->command = $this->adapter->parseDelete($this->table, $this->where);
                 break;
             case Statement::select:
             default:
-                $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->tables, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
+                $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
                 break;
         }
         return $this->command;

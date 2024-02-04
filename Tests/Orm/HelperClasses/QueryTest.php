@@ -54,7 +54,7 @@ class QueryTest extends TestCase
                 ->willReturn('*');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(true, ['*'], [], [], [], [], [], 0, 0);
+                ->with(true, ['*'], '', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setDistinct()
                 ->close();
@@ -70,7 +70,7 @@ class QueryTest extends TestCase
                 ->willReturn('COUNT(id)');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['COUNT(id)'], [], [], [], [], [], 0, 0);
+                ->with(false, ['COUNT(id)'], '', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setCount('id')
                 ->close();
@@ -85,7 +85,7 @@ class QueryTest extends TestCase
                 ->willReturn('*');
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('parseSelect')
-                ->with(false, ['*'], [], [], [], [], [], 0, 0);
+                ->with(false, ['*'], '', [], [], [], [], 0, 0);
         $queryOne = new Query($baseAdapterMock);
         $queryOne->close();
         $this->assertEquals('', $queryOne->getCommandToExecute());
@@ -114,7 +114,7 @@ class QueryTest extends TestCase
                 });
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['column_one', 'column_two'], [], [], [], [], [], 0, 0);
+                ->with(false, ['column_one', 'column_two'], '', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setColumns(['columnOne', 'columnTwo'])
                 ->close();
@@ -137,7 +137,7 @@ class QueryTest extends TestCase
                 });
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['column_one'], [], [], [], [], [], 0, 0);
+                ->with(false, ['column_one'], '', [], [], [], [], 0, 0);
         $queryOne = new Query($baseAdapterMock);
         $queryOne->setColumn('columnOne')
                 ->close();
@@ -190,7 +190,7 @@ class QueryTest extends TestCase
                         case 1:
                             $this->assertFalse($distinct);
                             $this->assertEquals(['MATCH (filltext_column) AGAINST ?'], $select);
-                            $this->assertEquals([], $from);
+                            $this->assertEquals('', $from);
                             $this->assertEquals(['MATCH (filltext_column) AGAINST ?'], $where);
                             $this->assertEquals([], $groupby);
                             $this->assertEquals([], $having);
@@ -201,7 +201,7 @@ class QueryTest extends TestCase
                         case 2:
                             $this->assertFalse($distinct);
                             $this->assertEquals(['*', 'MATCH (filltext_column) AGAINST value as column_alias'], $select);
-                            $this->assertEquals([], $from);
+                            $this->assertEquals('', $from);
                             $this->assertEquals(['MATCH (filltext_column) AGAINST value'], $where);
                             $this->assertEquals([], $groupby);
                             $this->assertEquals([], $having);
@@ -256,7 +256,7 @@ class QueryTest extends TestCase
                         case 1:
                             $this->assertFalse($distinct);
                             $this->assertEquals(['subquery'], $select);
-                            $this->assertEquals([], $from);
+                            $this->assertEquals('', $from);
                             $this->assertEquals([], $where);
                             $this->assertEquals([], $groupby);
                             $this->assertEquals([], $having);
@@ -267,7 +267,7 @@ class QueryTest extends TestCase
                         case 2:
                             $this->assertFalse($distinct);
                             $this->assertEquals(['*', 'subquery'], $select);
-                            $this->assertEquals([], $from);
+                            $this->assertEquals('', $from);
                             $this->assertEquals([], $where);
                             $this->assertEquals([], $groupby);
                             $this->assertEquals([], $having);
@@ -357,7 +357,7 @@ class QueryTest extends TestCase
                 ->willReturn('NOT');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], [], [
+                ->with(false, ['*'], '', [
                     'column_one = ?',
                     'AND',
                     '(',
@@ -452,7 +452,7 @@ class QueryTest extends TestCase
                 ->willReturn('NOT');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], [], [], [], [
+                ->with(false, ['*'], '', [], [], [
                     'column_one = ?',
                     'AND',
                     '(',
@@ -478,35 +478,6 @@ class QueryTest extends TestCase
         $this->assertEquals('', $query->getCommandToExecute());
     }
 
-    public function testSetTables()
-    {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->once())
-                ->method('allColumns')
-                ->willReturn('*');
-        $matcher = $this->exactly(2);
-        $baseAdapterMock->expects($matcher)
-                ->method('escapeIdentifier')
-                ->willReturnCallback(function ($name) use ($matcher) {
-                    switch ($matcher->numberOfInvocations()) {
-                        case 1:
-                            $this->assertEquals('tableNameOne', $name);
-                            return 'table_name_one';
-                        case 2:
-                            $this->assertEquals('tableNameTwo', $name);
-                            return 'table_name_two';
-                    }
-                });
-        $baseAdapterMock->expects($this->once())
-                ->method('parseSelect')
-                ->with(false, ['*'], ['table_name_one', 'table_name_two'], [], [], [], [], 0, 0);
-        $query = new Query($baseAdapterMock);
-        $query->setTables(['tableNameOne', 'tableNameTwo'])
-                ->setWhere()
-                ->close();
-        $this->assertEquals('', $query->getCommandToExecute());
-    }
-
     public function testSetTable()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
@@ -519,7 +490,7 @@ class QueryTest extends TestCase
                 ->willReturn('table_name');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], ['table_name'], [], [], [], [], 0, 0);
+                ->with(false, ['*'], 'table_name', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setTable('tableName')
                 ->setWhere()
@@ -535,7 +506,7 @@ class QueryTest extends TestCase
                 ->willReturn('*');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], [], [], [], [], [], 5, 10);
+                ->with(false, ['*'], '', [], [], [], [], 5, 10);
         $query = new Query($baseAdapterMock);
         $query->setWhere()
                 ->setOffset(5)
@@ -571,7 +542,7 @@ class QueryTest extends TestCase
                 ->willReturn('subquery');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], [], [], [], [], ['id' => 'ASC', '(subquery)' => 'ASC'], 0, 0);
+                ->with(false, ['*'], '', [], [], [], ['id' => 'ASC', '(subquery)' => 'ASC'], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setWhere()
                 ->setOrderBy(['id' => Indexing::asc])
@@ -592,7 +563,7 @@ class QueryTest extends TestCase
                 ->willReturn(['column_name_one', 'column_name_two']);
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], [], [], ['column_name_one', 'column_name_two'], [], [], 0, 0);
+                ->with(false, ['*'], '', [], ['column_name_one', 'column_name_two'], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setWhere()
                 ->setGroupBy(['columnNameOne', 'columnNameTwo'])

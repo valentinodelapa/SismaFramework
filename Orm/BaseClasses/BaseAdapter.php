@@ -197,7 +197,7 @@ abstract class BaseAdapter
         return $column;
     }
 
-    public function parseSelect(bool $distinct, array $select, array $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
+    public function parseSelect(bool $distinct, array $select, string $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
     {
         foreach ($orderby as $k => $v) {
             $orderby[$k] = $k . ' ' . $v;
@@ -205,7 +205,7 @@ abstract class BaseAdapter
         $query = Statement::select->value . ' ' .
                 ($distinct ? Keyword::distinct->value . ' ' : '') .
                 implode(',', $select) . ' ' .
-                Keyword::from->value . ' ' . implode(',', $from) . ' ' .
+                Keyword::from->value . ' ' . $from . ' ' .
                 ((count($where) > 0) ? Condition::where->value . ' ' . implode(' ', $where) : '' ) . ' ' .
                 ($groupby ? Keyword::groupBy->value . ' ' . implode(',', $groupby) . ' ' : '') .
                 ($groupby && $having ? Condition::having->value . ' ' . implode(' ', $having) . ' ' : '') .
@@ -215,29 +215,29 @@ abstract class BaseAdapter
         return $query;
     }
 
-    public function parseInsert(array $table, array $columns = [], array $values = []): string
+    public function parseInsert(string $table, array $columns = [], array $values = []): string
     {
-        $query = Statement::insert->value . ' ' . implode(',', $table) . ' ' .
+        $query = Statement::insert->value . ' ' . $table . ' ' .
                 Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ' ' . Keyword::insertValue->value . ' ' .
                 Keyword::openBlock->value . implode(',', $values) . Keyword::closeBlock->value;
         return $query;
     }
 
-    public function parseUpdate(array $table, array $columns = [], array $values = [], array $where = []): string
+    public function parseUpdate(string $table, array $columns = [], array $values = [], array $where = []): string
     {
         $cmd = [];
         foreach ($columns as $k => $col) {
             $cmd[] = $col . ' = ' . $values[$k];
         }
-        $query = Statement::update->value . ' ' . implode(',', $table) . ' ' .
+        $query = Statement::update->value . ' ' . $table . ' ' .
                 Keyword::set->value . ' ' . implode(',', $cmd) . ' ' .
                 ($where ? Condition::where->value . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
-    public function parseDelete(array $from, array $where = []): string
+    public function parseDelete(string $from, array $where = []): string
     {
-        $query = Statement::delete->value . ' ' . implode(',', $from) . ' ' .
+        $query = Statement::delete->value . ' ' . $from . ' ' .
                 ($where ? Condition::where->value . ' ' . implode(' ', $where) : '');
         return $query;
     }
@@ -259,6 +259,8 @@ abstract class BaseAdapter
     abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
 
     abstract public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string;
+    
+    abstract public function opDecryptfunction(string $column, string $initializationVectorColumn): string;
 
     abstract public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string;
 

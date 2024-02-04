@@ -557,7 +557,7 @@ class DataMapperTest extends TestCase
                 ->method('setTable')
                 ->with('entity_name');
         $dataMapper = new DataMapper($baseAdapterMock);
-        $this->assertInstanceOf(Query::class, $dataMapper->initQuery('EntitiName'));
+        $this->assertInstanceOf(Query::class, $dataMapper->initQuery(BaseSample::class));
     }
 
     public function testInsertAutomaticStartTransaction()

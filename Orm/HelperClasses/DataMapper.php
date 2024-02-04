@@ -61,8 +61,12 @@ class DataMapper
 
     public function initQuery(string $entityName, Query $query = new Query()): Query
     {
-        $query->setTable(NotationManager::convertEntityNameToTableName($entityName));
-        return $query;
+        if (is_a($entityName, BaseEntity::class, true)) {
+            $query->setTable(NotationManager::convertEntityNameToTableName($entityName));
+            return $query;
+        } else {
+            throw new DataMapperException($entityName);
+        }
     }
 
     public function save(BaseEntity $entity, Query $query = new Query(), bool $nestedChangesTracking = true): bool
@@ -114,10 +118,10 @@ class DataMapper
                 $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
                 $parsedValue = Parser::unparseValue($reflectionProperty->getValue($entity), true);
                 if ($entity->isEncryptedProperty($reflectionProperty->getName())) {
-                    if (empty($entity->{$entity->initializationVectorPropertyName})) {
-                        $entity->{$entity->initializationVectorPropertyName} = Encryptor::createInizializationVector();
+                    if (empty($entity->{$entity->getInitializationVectorPropertyName()})) {
+                        $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInizializationVector();
                     }
-                    $parsedValue = Encryptor::encryptString($parsedValue, $entity->{$entity->initializationVectorPropertyName});
+                    $parsedValue = Encryptor::encryptString($parsedValue, $entity->{$entity->getInitializationVectorPropertyName()});
                 }
                 $values[] = $parsedValue;
             }
