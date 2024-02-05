@@ -68,6 +68,15 @@ class DataMapper
             throw new DataMapperException($entityName);
         }
     }
+    
+    public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()):bool
+    {
+        $query->close();
+        $cmd = $query->getCommandToExecute(Statement::set, ["variable" => $variable, "value" => Keyword::placeholder->value]);
+        Parser::unparseValue($bindValue);
+        $result = $this->adapter->execute($cmd, [$bindValue], [$bindType]);
+        return $result;
+    }
 
     public function save(BaseEntity $entity, Query $query = new Query(), bool $nestedChangesTracking = true): bool
     {
@@ -92,7 +101,7 @@ class DataMapper
         $columns = $values = $markers = [];
         $this->parseValues($entity, $columns, $values, $markers);
         $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
-        $cmd = $query->getCommandToExecute(Statement::insert, array('columns' => $columns, 'values' => $markers));
+        $cmd = $query->getCommandToExecute(Statement::insert, ['columns' => $columns, 'values' => $markers]);
         $result = $this->adapter->execute($cmd, $values);
         if ($result) {
             $entity->{$entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();

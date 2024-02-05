@@ -316,6 +316,9 @@ class Query
             case Statement::delete:
                 $this->command = $this->adapter->parseDelete($this->table, $this->where);
                 break;
+            case Statement::set:
+                $this->command = $this->adapter->parseSet($extra['variable'], $extra['value']);
+                break;
             case Statement::select:
             default:
                 $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);

@@ -289,7 +289,7 @@ class AdapterMysql extends BaseAdapter
 
     public function opDecryptFunction(string $column, string $initializationVectorColumn): string
     {
-        return 'AES_DECRYPT' . $this->openBlock() . $this->opBase64DecodeFunction($column) . ', ' . Keyword::placeholder->value . ', ' . $this->opConvertBlobToHex($initializationVectorColumn) . ', ' . Keyword::placeholder->value . $this->closeBlock();
+        return 'AES_DECRYPT' . $this->openBlock() . $this->opBase64DecodeFunction($column) . ', ' . Keyword::placeholder->value . ', ' . $this->opConvertBlobToHex($initializationVectorColumn) . $this->closeBlock();
     }
 
     private function opBase64DecodeFunction(string $column): string

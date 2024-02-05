@@ -144,7 +144,7 @@ abstract class BaseAdapter
             default:
                 if ($value instanceof Keyword) {
                     return $value->value;
-                }elseif (is_array($value)) {
+                } elseif (is_array($value)) {
                     return Parser::unparseValue(array_shift($value));
                 } else {
                     return Parser::unparseValue($value);
@@ -195,6 +195,11 @@ abstract class BaseAdapter
             $column .= ' as ' . $this->escapeColumn($columnAlias);
         }
         return $column;
+    }
+
+    public function parseSet(string $variable, string $value): string
+    {
+        return Statement::set->value . ' ' . $variable . ' = ' . $value;
     }
 
     public function parseSelect(bool $distinct, array $select, string $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
@@ -259,7 +264,7 @@ abstract class BaseAdapter
     abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
 
     abstract public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string;
-    
+
     abstract public function opDecryptFunction(string $column, string $initializationVectorColumn): string;
 
     abstract public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string;
