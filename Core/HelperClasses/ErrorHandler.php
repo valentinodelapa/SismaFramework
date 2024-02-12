@@ -40,15 +40,17 @@ use Throwable;
  */
 class ErrorHandler
 {
+    private static string $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
+    private static string $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
 
     public static function handleThrowableError(Throwable $throwable): Response
     {
         BufferManager::clear();
         Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
-        if (\Config\LOG_VERBOSE_ACTIVE) {
+        if (self::$logVerboseActive) {
             Logger::saveTrace($throwable->getTrace());
         }
-        if (\Config\DEVELOPMENT_ENVIRONMENT) {
+        if (self::$developementEnvironment) {
             return self::callThrowableErrorAction($throwable);
         } else {
             return self::callInternalServerErrorAction();
@@ -78,10 +80,10 @@ class ErrorHandler
             if (is_array($error)) {
                 BufferManager::clear();
                 Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
-                if (\Config\LOG_VERBOSE_ACTIVE) {
+                if (self::$logVerboseActive) {
                     Logger::saveTrace($backtrace);
                 }
-                if (\Config\DEVELOPMENT_ENVIRONMENT) {
+                if (self::$developementEnvironment) {
                     self::callNonThrowableErrorAction($error, $backtrace);
                 } else {
                     self::callInternalServerErrorAction();

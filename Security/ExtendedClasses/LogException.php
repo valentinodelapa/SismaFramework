@@ -35,12 +35,14 @@ use SismaFramework\Core\HelperClasses\Logger;
  */
 abstract class LogException extends BaseException
 {
+    protected static bool $logVerboseActive =  \Config\LOG_VERBOSE_ACTIVE;
+    
     public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         BufferManager::clear();
         Logger::saveLog($message, $code, $this->getFile(), $this->getLine());
-        if (\Config\LOG_VERBOSE_ACTIVE) {
+        if (self::$logVerboseActive) {
             Logger::saveTrace($this->getTrace());
         }
     }

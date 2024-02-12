@@ -35,6 +35,10 @@ class Autoloader
 
     private string $className;
     private string $classPath;
+    
+    private static array $autoloadClassMapper = \Config\AUTOLOAD_CLASS_MAPPER;
+    private static array $autoloadNamespaceMapper = \Config\AUTOLOAD_NAMESPACE_MAPPER;
+    private static string $rootPath = \Config\ROOT_PATH;
 
     public function __construct(string $className)
     {
@@ -43,7 +47,7 @@ class Autoloader
 
     public function findClass(): bool
     {
-        $actualClassPath = \Config\ROOT_PATH . str_replace('\\', DIRECTORY_SEPARATOR, $this->className) . '.php';
+        $actualClassPath = self::$rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $this->className) . '.php';
         if ($this->classExsist($actualClassPath)) {
             return true;
         } elseif ($this->mapNamespace()) {
@@ -65,10 +69,10 @@ class Autoloader
 
     private function mapNamespace(): bool
     {
-        foreach (\Config\AUTOLOAD_NAMESPACE_MAPPER as $key => $value) {
+        foreach (self::$autoloadNamespaceMapper as $key => $value) {
             if (str_contains($this->className, $key)) {
                 $actualClassName = str_replace($key, '', $this->className);
-                $actualClassPath = \Config\ROOT_PATH . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php';
+                $actualClassPath = self::$rootPath . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php';
                 if ($this->classExsist($actualClassPath)) {
                     return true;
                 }
@@ -79,8 +83,8 @@ class Autoloader
 
     private function mapClass(): bool
     {
-        if (array_key_exists($this->className, \Config\AUTOLOAD_CLASS_MAPPER)) {
-            $actualClassPath = \Config\ROOT_PATH . \Config\AUTOLOAD_CLASS_MAPPER[$this->className] . '.php';
+        if (array_key_exists($this->className, self::$autoloadClassMapper)) {
+            $actualClassPath = self::$rootPath . self::$autoloadClassMapper[$this->className] . '.php';
             if ($this->classExsist($actualClassPath)) {
                 return true;
             }

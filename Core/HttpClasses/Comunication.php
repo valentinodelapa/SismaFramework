@@ -33,6 +33,7 @@ use SismaFramework\Core\Enumerations\ComunicationProtocol;
  */
 class Comunication
 {
+    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
 
     public static function getComunicationProtocol(): ComunicationProtocol
     {
@@ -42,7 +43,7 @@ class Comunication
         } elseif (isset($request->server['SERVER_PORT'])) {
             return (intval($request->server['SERVER_PORT']) === 443) ? ComunicationProtocol::https : ComunicationProtocol::http;
         } else {
-            return \Config\DEVELOPMENT_ENVIRONMENT ? ComunicationProtocol::http : ComunicationProtocol::https;
+            return self::$developementEnvironment ? ComunicationProtocol::http : ComunicationProtocol::https;
         }
     }
 }

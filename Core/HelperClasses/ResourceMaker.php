@@ -43,6 +43,9 @@ class ResourceMaker
     private $streamContex = null;
     private int $fileGetContentMaxBytesLimit = \Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT;
     private int $readfileMaxBytesLimit = \Config\READFILE_MAX_BYTES_LIMIT;
+    
+    private static string $robotsFile = \Config\ROBOTS_FILE;
+    private static string $rootPath = \Config\ROOT_PATH;
 
     public function __construct(Request $request = new Request())
     {
@@ -106,12 +109,12 @@ class ResourceMaker
 
     public function isRobotsFile(array $pathParts): bool
     {
-        return strtolower(end($pathParts)) === \Config\ROBOTS_FILE;
+        return strtolower(end($pathParts)) === self::$robotsFile;
     }
 
     public function makeRobotsFile(): Response
     {
-        $filename = \Config\ROOT_PATH . \Config\ROBOTS_FILE;
+        $filename = self::$rootPath . self::$robotsFile;
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
         header("Content-type: text/plain");

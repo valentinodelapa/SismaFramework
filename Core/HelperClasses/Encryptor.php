@@ -32,6 +32,10 @@ namespace SismaFramework\Core\HelperClasses;
  */
 class Encryptor
 {
+    
+    private static string $encryptionAlgorithm = \Config\ENCRYPTION_ALGORITHM;
+    private static string $encryptionPassphrase = \Config\ENCRYPTION_PASSPHRASE;
+    private static int $initializazionVectorBytes = \Config\INITIALIZATION_VECTOR_BYTES;
 
     public static function getSimpleRandomToken(): string
     {
@@ -62,16 +66,16 @@ class Encryptor
 
     public static function createInizializationVector(): string
     {
-        return openssl_random_pseudo_bytes(\Config\INITIALIZATION_VECTOR_BYTES);
+        return openssl_random_pseudo_bytes(self::$initializazionVectorBytes);
     }
 
     public static function encryptString(string $plainText, string $initializationVector): string
     {
-        return openssl_encrypt($plainText, \Config\ENCRYPTION_ALGORITHM, \Config\ENCRYPTION_PASSPHRASE, 0, $initializationVector);
+        return openssl_encrypt($plainText, self::$encryptionAlgorithm, self::$encryptionPassphrase, 0, $initializationVector);
     }
 
     public static function decryptString(string $cipherText, string $initializationVector): string
     {
-        return openssl_decrypt($cipherText, \Config\ENCRYPTION_ALGORITHM, \Config\ENCRYPTION_PASSPHRASE, 0, $initializationVector);
+        return openssl_decrypt($cipherText, self::$encryptionAlgorithm, self::$encryptionPassphrase, 0, $initializationVector);
     }
 }

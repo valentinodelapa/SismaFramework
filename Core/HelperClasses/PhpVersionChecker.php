@@ -34,19 +34,22 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
 class PhpVersionChecker
 {
 
-    private static $currentMajorVersion = PHP_MAJOR_VERSION;
-    private static $currentMinorVersion = PHP_MINOR_VERSION;
-    private static $currentReleaseVersion = PHP_RELEASE_VERSION;
+    private static int $currentMajorVersion = PHP_MAJOR_VERSION;
+    private static int $currentMinorVersion = PHP_MINOR_VERSION;
+    private static int $currentReleaseVersion = PHP_RELEASE_VERSION;
+    private static int $minimumMajorPhpVersion = \Config\MINIMUM_MAJOR_PHP_VERSION;
+    private static int $minimumMinorPhpVersion = \Config\MINIMUM_MINOR_PHP_VERSION;
+    private static int $minimumReleasePhpVersion = \Config\MINIMUM_RELEASE_PHP_VERSION;
 
     public static function checkPhpVersion(): void
     {
-        if (self::$currentMajorVersion < \Config\MINIMUM_MAJOR_PHP_VERSION) {
+        if (self::$currentMajorVersion < self::$minimumMajorPhpVersion) {
             throw new PhpVersionException();
-        } elseif (self::$currentMajorVersion === \Config\MINIMUM_MAJOR_PHP_VERSION) {
-            if (self::$currentMinorVersion < \Config\MINIMUM_MINOR_PHP_VERSION) {
+        } elseif (self::$currentMajorVersion === self::$minimumMajorPhpVersion) {
+            if (self::$currentMinorVersion < self::$minimumMinorPhpVersion) {
                 throw new PhpVersionException();
-            } elseif (self::$currentMinorVersion === \Config\MINIMUM_MINOR_PHP_VERSION) {
-                if (self::$currentReleaseVersion < \Config\MINIMUM_RELEASE_PHP_VERSION) {
+            } elseif (self::$currentMinorVersion === self::$minimumMinorPhpVersion) {
+                if (self::$currentReleaseVersion < self::$minimumReleasePhpVersion) {
                     throw new PhpVersionException();
                 }
             }

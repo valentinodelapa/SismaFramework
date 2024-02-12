@@ -41,10 +41,15 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class Render
 {
 
+    private static string $defaultLocaleType = \Config\DEFAULT_LOCALE_TYPE;
+    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
+    private static bool $isStructural = false;
     private static Language $language;
+    private static string $localesPath = \Config\LOCALES_PATH;
     private static Resource $localeType;
+    private static string $structuralViewsPath = \Config\STRUCTURAL_VIEWS_PATH;
     private static string $view;
-    private static $isStructural = false;
+    private static string $viewsPath = \Config\VIEWS_PATH;
     
     public static function setLanguage(Language $language):void
     {
@@ -76,9 +81,9 @@ class Render
     private static function getViewPath(string $view): string
     {
         if (self::$isStructural) {
-            return \Config\STRUCTURAL_VIEWS_PATH . $view . '.' . Resource::php->value;
+            return self::$structuralViewsPath . $view . '.' . Resource::php->value;
         } else {
-            return ModuleManager::getExistingFilePath(\Config\VIEWS_PATH . $view, Resource::php);
+            return ModuleManager::getExistingFilePath(self::$viewsPath . $view, Resource::php);
         }
     }
 
@@ -133,9 +138,9 @@ class Render
 
     private static function getLocalePath(Language $language): string
     {
-        self::$localeType = Resource::tryFrom(\Config\DEFAULT_LOCALE_TYPE);
+        self::$localeType = Resource::tryFrom(self::$defaultLocaleType);
         if (self::$localeType !== null) {
-            return ModuleManager::getConsequentFilePath(\Config\LOCALES_PATH . $language->value, self::$localeType);
+            return ModuleManager::getConsequentFilePath(self::$localesPath . $language->value, self::$localeType);
         } else {
             throw new RenderException('File non trovato');
         }
@@ -144,7 +149,7 @@ class Render
     private static function generateDebugBar(DataMapper $dataMapper = new DataMapper()): string
     {
         Debugger::endExecutionTimeCalculation();
-        if (\Config\DEVELOPMENT_ENVIRONMENT) {
+        if (self::$developementEnvironment) {
             return Debugger::generateDebugBar($dataMapper);
         } else {
             return '';

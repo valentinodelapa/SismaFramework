@@ -40,6 +40,8 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
  */
 class Parser
 {
+    private static string $entityNamespace = \Config\ENTITY_NAMESPACE;
+    private static string $modelNamespace = \Config\MODEL_NAMESPACE;
 
     public static function parseValue(\ReflectionNamedType $reflectionNamedType, null|string|array $value, $parseEntity = true, DataMapper $dataMapper = new DataMapper()): mixed
     {
@@ -71,7 +73,7 @@ class Parser
 
     public static function parseEntity(string $entityName, int $value, DataMapper $dataMapper = new DataMapper()): BaseEntity
     {
-        $modelName = str_replace(\Config\ENTITY_NAMESPACE, \Config\MODEL_NAMESPACE, $entityName) . 'Model';
+        $modelName = str_replace(self::$entityNamespace, self::$modelNamespace, $entityName) . 'Model';
         $modelInstance = new $modelName($dataMapper);
         $entity = $modelInstance->getEntityById($value);
         if ($entity instanceof BaseEntity) {

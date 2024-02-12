@@ -39,6 +39,12 @@ class FixturesManager
     private array $fixturesArray;
     private array $entitiesArray = [];
     private DataMapper $dataMapper;
+    
+    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
+    private static string $fixtures = \Config\FIXTURES;
+    private static string $fixtureNamespace = \Config\FIXTURE_NAMESPACE;
+    private static string $fixturePath = \Config\FIXTURE_PATH;
+    private static string $rootPath = \Config\ROOT_PATH;
 
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
@@ -48,7 +54,7 @@ class FixturesManager
     public function isFixtures(array $pathParts): bool
     {
         if (count($pathParts) === 1) {
-            return ($pathParts[0] === strtolower(\Config\FIXTURES)) && \Config\DEVELOPMENT_ENVIRONMENT;
+            return ($pathParts[0] === strtolower(self::$fixtures)) && self::$developementEnvironment;
         } else {
             return false;
         }
@@ -75,11 +81,11 @@ class FixturesManager
     private function getFixturesArray(): void
     {
         foreach (ModuleManager::getModuleList() as $module) {
-            $fixturesFiles = scandir(\Config\ROOT_PATH . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . \Config\FIXTURE_PATH);
+            $fixturesFiles = scandir(self::$rootPath . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . self::$fixturePath);
             foreach ($fixturesFiles as $file) {
                 if (($file != '.') && ($file != '..')) {
                     $fixtureName = str_replace('.php', '', $file);
-                    $this->fixturesArray[$module . '\\' . \Config\FIXTURE_NAMESPACE . $fixtureName] = false;
+                    $this->fixturesArray[$module . '\\' . self::$fixtureNamespace . $fixtureName] = false;
                 }
             }
         }

@@ -51,6 +51,8 @@ abstract class BaseEntity
     protected bool $isActiveTransaction = false;
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
+    
+    private static string $encryptionPassphrase = \Config\ENCRYPTION_PASSPHRASE;
 
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
@@ -235,7 +237,7 @@ abstract class BaseEntity
 
     public function isEncryptedProperty(string $columnName): bool
     {
-        return (in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->initializationVectorPropertyName)));
+        return ((empty(self::$encryptionPassphrase) === false) && in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->initializationVectorPropertyName)));
     }
 
     public function getInitializationVectorPropertyName(): string

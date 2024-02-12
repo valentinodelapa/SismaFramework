@@ -9,7 +9,7 @@
 
 Benvenuto nel progetto! Questa libreria consiste in un framework basato su pattern MVC che integra un ORM per l'interazione con il database.
 Utilizza in modo massiccio la tipizzazione, che risulta necessaria al funzionamento della libreria stessa.
-Utilizza anche le enumerazioni, introdotte nel linguaggi php dalla versione 8.1.
+Utilizza anche le enumerazioni, introdotte nel linguaggio php dalla versione 8.1.
 Supporta nativamente i link parlanti con notazione kebab case.
 
 ## Installazione

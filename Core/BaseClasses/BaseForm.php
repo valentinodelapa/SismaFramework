@@ -58,6 +58,8 @@ abstract class BaseForm extends Submittable
     private DataMapper $dataMapper;
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
+    
+    private static bool $primaryKeyPassAccepted = \Config\PRIMARY_KEY_PASS_ACCEPTED;
 
     public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper())
     {
@@ -274,7 +276,7 @@ abstract class BaseForm extends Submittable
 
     private function isNotPrimaryKeyOrPassIsActive(\ReflectionProperty $property): bool
     {
-        return (($this->entity->isPrimaryKey($property->name) === false) || (\Config\PRIMARY_KEY_PASS_ACCEPTED));
+        return (($this->entity->isPrimaryKey($property->name) === false) || (self::$primaryKeyPassAccepted));
     }
 
     private function parseSingleStandardProperty(\ReflectionProperty $property): void
