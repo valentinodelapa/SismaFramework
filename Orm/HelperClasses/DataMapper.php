@@ -281,7 +281,7 @@ class DataMapper
         return $collection;
     }
 
-    private function getResultSet($entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
+    private function getResultSet(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
     {
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::select);
@@ -313,7 +313,7 @@ class DataMapper
         return $data->_numrows;
     }
 
-    public function findFirst($entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseEntity
+    public function findFirst(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseEntity
     {
         $query->setOffset(0);
         $query->setLimit(1);
