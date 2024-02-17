@@ -39,8 +39,8 @@ use SismaFramework\Sample\Controllers\SampleController;
 require_once(dirname(__DIR__) . '/Config/config.php');
 require_once(dirname(__DIR__) . '/Autoload/autoload.php');
 
-ini_set('display_errors', 'off');
-ini_set('display_startup_errors', 'off');
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
 error_reporting(0);
 
 try {
@@ -64,4 +64,10 @@ try {
     }
 } catch (\Throwable $throwable) {
     ErrorHandler::handleThrowableError($throwable);
+} finally {
+    if (\Config\DEVELOPMENT_ENVIRONMENT) {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL | E_STRICT);
+    }
 }
