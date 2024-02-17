@@ -26,22 +26,32 @@
 
 namespace SismaFramework\Structural\Controllers;
 
-use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Render;
+use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Security\BaseClasses\BaseException;
 
 /**
  * @author Valentino de Lapa
  */
-class FrameworkController extends BaseController
+class FrameworkController
 {
+    protected array $vars;
+    
+    public function __construct()
+    {
+        $this->vars['controllerUrl'] = Router::getControllerUrl();
+        $this->vars['actionUrl'] = Router::getActionUrl();
+        $this->vars['metaUrl'] = Router::getMetaUrl();
+        $this->vars['actualCleanUrl'] = Router::getActualCleanUrl();
+        $this->vars['rootUrl'] = Router::getRootUrl();
+    }
     
     public function internalServerError():Response
     {
         Render::setStructural();
-        return Render::generateView('framework/internalServerError', $this->vars, ResponseType::httpInternalServerError);
+        return Render::generateData('framework/internalServerError', $this->vars, ResponseType::httpInternalServerError);
     }
 
     public function throwableError(\Throwable $throwable): Response
@@ -55,7 +65,7 @@ class FrameworkController extends BaseController
         ];
         $this->vars['backtrace'] = $throwable->getTrace();
         Render::setStructural();
-        return Render::generateView('framework/visibleError', $this->vars, ($throwable instanceof BaseException) ? $throwable->getResponseType() : ResponseType::httpInternalServerError);
+        return Render::generateData('framework/visibleError', $this->vars, ($throwable instanceof BaseException) ? $throwable->getResponseType() : ResponseType::httpInternalServerError);
     }
 
     public function nonThrowableError(array $error, array $backtrace): Response
@@ -64,6 +74,6 @@ class FrameworkController extends BaseController
         $this->vars['error'] = $error;
         $this->vars['backtrace'] = $backtrace;
         Render::setStructural();
-        return Render::generateView('framework/visibleError', $this->vars, ResponseType::httpInternalServerError);
+        return Render::generateData('framework/visibleError', $this->vars, ResponseType::httpInternalServerError);
     }
 }
