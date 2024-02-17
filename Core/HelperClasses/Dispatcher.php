@@ -29,7 +29,6 @@ namespace SismaFramework\Core\HelperClasses;
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
-use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\Router;
@@ -84,7 +83,6 @@ class Dispatcher
             FixturesManager $fixtureManager = new FixturesManager(),
             DataMapper $dataMapper = new DataMapper())
     {
-        Debugger::startExecutionTimeCalculation();
         $this->request = $request;
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;

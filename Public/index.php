@@ -27,6 +27,7 @@
 namespace SismaFramework\Public;
 
 use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
@@ -35,14 +36,16 @@ use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Security\ExtendedClasses\RedirectException;
 use SismaFramework\Sample\Controllers\SampleController;
 
+require_once(dirname(__DIR__) . '/Config/config.php');
+require_once(dirname(__DIR__) . '/Autoload/autoload.php');
+
 ini_set('display_errors', 'off');
 ini_set('display_startup_errors', 'off');
 error_reporting(0);
 
 try {
-    require_once(dirname(__DIR__) . '/Config/config.php');
-    require_once(dirname(__DIR__) . '/Autoload/autoload.php');
     ErrorHandler::handleNonThrowableError();
+    Debugger::startExecutionTimeCalculation();
     PhpVersionChecker::checkPhpVersion();
     Session::start();
     $dispatcher = new Dispatcher();

@@ -40,8 +40,8 @@ use Throwable;
  */
 class ErrorHandler
 {
-    private static string $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
-    private static string $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
+    private static bool $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
+    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
 
     public static function handleThrowableError(Throwable $throwable): Response
     {
