@@ -29,6 +29,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
@@ -228,6 +229,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
         $_SERVER['REQUEST_URI'] = '/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -241,6 +243,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
         $_SERVER['REQUEST_URI'] = '/sample/index/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -254,6 +257,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
         $_SERVER['REQUEST_URI'] = '/index/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -267,6 +271,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
         $_SERVER['REQUEST_URI'] = '/sample/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -280,6 +285,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/test message/');
         $_SERVER['REQUEST_URI'] = '/notify/message/test+message';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -293,6 +299,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/other - index/');
         $this->expectOutputRegex('/test message/');
         $_SERVER['REQUEST_URI'] = '/other/parameter/test+message/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -306,6 +313,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/other - index/');
         $this->expectOutputRegex('/other test message/');
         $_SERVER['REQUEST_URI'] = '/fake/other/index/parameter/other+test+message/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -320,6 +328,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/test parameter/');
         $_POST['parameter'] = 'test parameter';
         $_SERVER['REQUEST_URI'] = '/other/action-with-request/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -334,6 +343,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/is not submitted/');
         $_POST['username'] = 'username';
         $_SERVER['REQUEST_URI'] = '/other/action-with-authentication/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -347,6 +357,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/other - action-with-default-value/');
         $this->expectOutputRegex('/is default/');
         $_SERVER['REQUEST_URI'] = '/other/action-with-default-value/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
@@ -362,6 +373,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/1: second/');
         $this->expectOutputRegex('/2: third/');
         $_SERVER['REQUEST_URI'] = '/other/action-with-array/array/first/array/second/array/third/';
+        Debugger::startExecutionTimeCalculation();
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
