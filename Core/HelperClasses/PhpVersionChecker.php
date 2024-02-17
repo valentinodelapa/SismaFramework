@@ -70,4 +70,19 @@ class PhpVersionChecker
     {
         self::$currentReleaseVersion = $customCurrentReleaseVersion;
     }
+    
+    public static function forceMinimumMajorVersionValue(int $customMinimumMajorVersion):void
+    {
+        self::$minimumMajorPhpVersion = $customMinimumMajorVersion;
+    }
+    
+    public static function forceMinimumMinorVersionValue(int $customMinimumMinorVersion):void
+    {
+        self::$minimumMinorPhpVersion = $customMinimumMinorVersion;
+    }
+    
+    public static function forceMinimumReleaseVersionValue(int $customMinimumReleaseVersion):void
+    {
+        self::$minimumReleasePhpVersion = $customMinimumReleaseVersion;
+    }
 }

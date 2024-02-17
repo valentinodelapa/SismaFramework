@@ -68,6 +68,7 @@ class PhpVersionCheckerTest extends TestCase
         PhpVersionChecker::forceCurrentMajorVersionValue(8);
         PhpVersionChecker::forceCurrentMinorVersionValue(1);
         PhpVersionChecker::forceCurrentReleaseVersionValue(0);
+        PhpVersionChecker::forceMinimumReleaseVersionValue(1);
         PhpVersionChecker::checkPhpVersion();
     }
 }
