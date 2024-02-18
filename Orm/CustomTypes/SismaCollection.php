@@ -33,6 +33,7 @@ use SismaFramework\Core\Exceptions\InvalidTypeException;
  */
 class SismaCollection extends \ArrayObject
 {
+
     private string $restrictiveType;
 
     public function __construct(string $restrictiveType, array|object $array = [], int $flags = 0, string $iteratorClass = \ArrayIterator::class)
@@ -40,8 +41,8 @@ class SismaCollection extends \ArrayObject
         $this->restrictiveType = $restrictiveType;
         return parent::__construct($array, $flags, $iteratorClass);
     }
-    
-    public function getRestrictiveType():string
+
+    public function getRestrictiveType(): string
     {
         return $this->restrictiveType;
     }
@@ -95,4 +96,15 @@ class SismaCollection extends \ArrayObject
         $this->exchangeArray($arraySliced);
     }
 
+    public function isFirst($key)
+    {
+        $keys = array_keys($this->getArrayCopy());
+        return $key === array_key_first($keys);
+    }
+
+    public function isLast($key)
+    {
+        $keys = array_keys($this->getArrayCopy());
+        return $key === array_last_first($keys);
+    }
 }
