@@ -26,11 +26,11 @@
 
 namespace SismaFramework\Sample\Models;
 
-use SismaFramework\Orm\ExtendedClasses\ReferencedModel;
+use SismaFramework\Orm\ExtendedClasses\DependentModel;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Sample\Entities\BaseSample;
 
-class BaseSampleModel extends ReferencedModel
+class BaseSampleModel extends DependentModel
 {
 
     protected function getEntityName(): string

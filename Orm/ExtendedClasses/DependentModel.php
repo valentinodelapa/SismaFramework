@@ -39,7 +39,7 @@ use SismaFramework\Orm\Enumerations\DataType;
  *
  * @author Valentino de Lapa
  */
-abstract class ReferencedModel extends BaseModel
+abstract class DependentModel extends BaseModel
 {
 
     public function __call($name, $arguments): SismaCollection|int|bool

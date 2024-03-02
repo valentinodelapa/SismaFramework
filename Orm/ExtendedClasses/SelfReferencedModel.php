@@ -27,7 +27,7 @@
 namespace SismaFramework\Orm\ExtendedClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\ExtendedClasses\ReferencedModel;
+use SismaFramework\Orm\ExtendedClasses\DependentModel;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
@@ -37,7 +37,7 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
  *
  * @author Valentino de Lapa
  */
-abstract class SelfReferencedModel extends ReferencedModel
+abstract class SelfReferencedModel extends DependentModel
 {
 
     private const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';

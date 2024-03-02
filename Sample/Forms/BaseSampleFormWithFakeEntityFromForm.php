@@ -6,7 +6,7 @@ use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Sample\Entities\BaseSample;
 
-class BaseSampleForm extends BaseForm
+class BaseSampleFormWithFakeEntityFromForm extends BaseForm
 {
 
     protected static function getEntityName(): string
@@ -26,7 +26,7 @@ class BaseSampleForm extends BaseForm
 
     protected function setEntityFromForm(): void
     {
-        $this->addEntityFromForm('referencedEntityWithoutInitialization', ReferencedSampleFormFromOtherForm::class);
+        $this->addEntityFromForm('fakeReferencedEntity', ReferencedSampleFormFromOtherForm::class);
     }
 
     protected function setFilterFieldsMode(): void

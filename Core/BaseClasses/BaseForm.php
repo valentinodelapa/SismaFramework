@@ -58,7 +58,6 @@ abstract class BaseForm extends Submittable
     private DataMapper $dataMapper;
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
-    
     private static bool $primaryKeyPassAccepted = \Config\PRIMARY_KEY_PASS_ACCEPTED;
 
     public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper())
@@ -117,10 +116,12 @@ abstract class BaseForm extends Submittable
 
     protected function addEntityFromForm(string $propertyName, string $formPropertyClass, bool $embedEntity = true): self
     {
-        if ($this->entity->checkCollectionExists($propertyName)) {
+        if (($this->entity instanceof ReferencedEntity) && ($this->entity->checkCollectionExists($propertyName))) {
             $this->addEntityCollectionFromForm($propertyName, $formPropertyClass, $embedEntity);
         } elseif (property_exists($this->entity, $propertyName)) {
             $this->addEntityFromFormViaForeignKey($propertyName, $formPropertyClass, $embedEntity);
+        } else {
+            throw new FormException($propertyName . ' - ' . $formPropertyClass);
         }
         return $this;
     }
@@ -218,7 +219,7 @@ abstract class BaseForm extends Submittable
     private function switchFormPropertyType(string $propertyName): void
     {
         $this->entityData->{$propertyName} = new StandardEntity();
-        if ($this->entity->checkCollectionExists($propertyName)) {
+        if (($this->entity instanceof ReferencedEntity) && ($this->entity->checkCollectionExists($propertyName))) {
             $this->switchFormOfCollection($propertyName);
         } else {
             $currentForm = $this->entityFromForm[$propertyName];

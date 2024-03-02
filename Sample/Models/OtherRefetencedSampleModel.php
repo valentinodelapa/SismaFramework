@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Sample\Models;
 
-use SismaFramework\Orm\ExtendedClasses\ReferencedModel;
+use SismaFramework\Orm\ExtendedClasses\DependentModel;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Sample\Entities\OtherReferencedSample;
 
@@ -35,7 +35,7 @@ use SismaFramework\Sample\Entities\OtherReferencedSample;
  *
  * @author Valentino de Lapa
  */
-class OtherRefetencedSampleModel extends ReferencedModel
+class OtherRefetencedSampleModel extends DependentModel
 {
 
     protected function getEntityName(): string

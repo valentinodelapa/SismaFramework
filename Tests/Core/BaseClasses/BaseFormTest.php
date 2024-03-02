@@ -34,6 +34,7 @@ use SismaFramework\Sample\Entities\OtherReferencedSample;
 use SismaFramework\Sample\Entities\ReferencedSample;
 use SismaFramework\Sample\Entities\SelfReferencedSample;
 use SismaFramework\Sample\Forms\BaseSampleForm;
+use SismaFramework\Sample\Forms\BaseSampleFormWithFakeEntityFromForm;
 use SismaFramework\Sample\Forms\EntityNotInitializedForm;
 use SismaFramework\Sample\Forms\FakeBaseSampleForm;
 use SismaFramework\Sample\Forms\FakeReferencedSampleForm;
@@ -42,7 +43,6 @@ use SismaFramework\Sample\Forms\ReferencedSampleForm;
 use SismaFramework\Sample\Forms\SelfReferencedSampleForm;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Core\HelperClasses\FormFilterError;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
@@ -65,6 +65,13 @@ class BaseFormTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
+    }
+    
+    public function testAddEntityFromFormWithException()
+    {
+        $this->expectException(FormException::class);
+        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm();
+        $baseSampleFormWithFakeEntityFromForm->handleRequest(new Request());
     }
 
     public function testFormForBaseEntityNotSubmitted()

@@ -72,11 +72,6 @@ abstract class BaseEntity
         unset($this->{$this->primaryKey});
     }
 
-    public function checkCollectionExists(string $collectionName): bool
-    {
-        return false;
-    }
-
     public function __get($name)
     {
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
