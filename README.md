@@ -4,7 +4,7 @@
 ![Code coverage status](https://img.shields.io/badge/coverage-%3E75%25-yellow)
 ![PHP Version Support](https://img.shields.io/badge/php-%3E%3D8.1-blue)
 [![license](https://img.shields.io/badge/license-MIT-yellowgreen)](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE)
-[![Documentation](https://img.shields.io/badge/Documentation-phpDocumentor-blue)](https://github.com/valentinodelapa/SismaFramework/blob/master/docs-phpdoc/index.html)
+[![Documentation](https://img.shields.io/badge/documentation-phpDocumentor-blue)](https://github.com/valentinodelapa/SismaFramework/blob/master/docs-phpdoc/index.html)
 
 
 ## Descrizione

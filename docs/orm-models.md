@@ -102,15 +102,15 @@ Implementa i seguenti metodi standard
   $baseSampleModel->deleteEntityById(1);
   ```
 
-## Modelli per entità con referenze
+## Modelli per entità dipendenti
 
 Nei casi in cui le entità abbiano chiavi esterne e si voglia sfruttarle per effettuare interrogazioni al database, è possibile scegliere di estendere, per il relativo modello, la classe ReferencedModel: essa fornisce metodi predefiniti aggiuntivi che vanno ad implementare tali interrogazioni:
 
 * `getEntityCollectionByEntity()`: questo metodo, dato un array associativo di entità ed una serie di altri parametri aggiuntivi, restituisce una collezione di entità che soddisfano i requisiti indicati.
   
   ```php
-  $referencedSampleModel = new ReferencedSampleModel;
-  $referencedSampleCollection = $referencedSampleModel->getEntityCollectionByEntity();
+  $dependentSampleModel = new DependentSampleModel;
+  $dependentSampleCollection = $dependentSampleModel->getEntityCollectionByEntity();
   ```
   
   La sintassi per il popolamento dell’array associativo delle entità è `[nomeProprietà => entità]` mentre i parametri aggiuntivi sono i medesimi già descritti nell’ambito del metodo `getEntityCollection()` nel paragrafo relativo ai modelli per entità semplici.
@@ -125,15 +125,15 @@ Nei casi in cui le entità abbiano chiavi esterne e si voglia sfruttarle per eff
 * `countEntityCollectionByEntity()`: questo metodo, dato un array associativo di entità (che utilizza la sintassi illustrata in precedenza) ed un’eventuale chiave di ricerca testuale (che sfrutta sempre in meccanismo di ricerca testuale illustrato in precedenza), restituisce un valore intero che indica il numero di entità che soddisfano i requisiti indicati.
   
   ```php
-  $referencedSampleModel = new ReferencedSampleModel();
-  $referencedSampleCollectionNumber = $referencedSampleModel->countEntityCollectionByEntity();
+  $dependentSampleModel = new DependentSampleModel();
+  $dependentSampleCollectionNumber = $dependentSampleModel->countEntityCollectionByEntity();
   ```
 
 * `deleteEntityCollectionByEntity()`: questo metodo, dato un array associativo di entità (che utilizza la sintassi illustrata in precedenza) ed un’eventuale chiave di ricerca testuale (che sfrutta sempre in meccanismo di ricerca testuale illustrato in precedenza), provvede ad eliminare le entità che soddisfano i requisiti indicati. Restituisce un valore booleano che indica il successo od il fallimento dell’operazione.
   
   ```php
-  $referencedSampleModel = new ReferencedSampleModel();
-  $success = $referencedSampleModel->deleteEntityCollectionByEntity();
+  $dependentSampleModel = new DependentSampleModel();
+  $success = $dependentSampleModel->deleteEntityCollectionByEntity();
   ```
 
 Esiste una funzionalità che, per mezzo di una specifica sintassi, permette di automatizzare i processi illustrati in precedenza. Essa prevede l'utilizzo in sequenza di una serie di parole chiave di seguito illustrate:
@@ -145,10 +145,10 @@ Esiste una funzionalità che, per mezzo di una specifica sintassi, permette di a
 * l'entità che dovrà essere passato come parametro in formato *camelCase* (`nomeEntità`); è possibile gestirne anche più di una ed in tal caso verrà utilizzato il separatore `And`.
 
 ```php
-$referencedSampleModel = new ReferencedSampleModel;
-$referencedSampleCollection = $referencedSampleModel->getByBaseSample($baseSample);
-$referencedSampleCollectionNumber = $referencedSampleModel->countByBaseSample($baseSample);
-$success = $referencedSampleModel->deleteByBaseSample($baseSample);
+$dependentSampleModel = new DependentSampleModel;
+$dependentSampleCollection = $dependentSampleModel->getByBaseSample($baseSample);
+$dependentSampleCollectionNumber = $dependentSampleModel->countByBaseSample($baseSample);
+$success = $dependentSampleModel->deleteByBaseSample($baseSample);
 ```
 
 ## Modelli per entità auto-referenziate
