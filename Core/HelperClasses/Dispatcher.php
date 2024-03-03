@@ -35,7 +35,7 @@ use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
-use SismaFramework\Core\Interfaces\Services\SitemapBuilderInterface;
+use SismaFramework\Core\Interfaces\Services\SitemapMakerInterface;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Security\HttpClasses\Authentication;
 
@@ -49,7 +49,7 @@ class Dispatcher
     private ResourceMaker $resourceMaker;
     private FixturesManager $fixturesManager;
     private DataMapper $dataMapper;
-    private SitemapBuilderInterface $sitemapBuider;
+    private SitemapMakerInterface $sitemapBuider;
     private static int $reloadAttempts = 0;
     private Request $request;
     private string $originalPath;
@@ -94,7 +94,7 @@ class Dispatcher
         self::$rootPath = $customRootPath;
     }
 
-    public function setSitemapBuilder(SitemapBuilderInterface $sitemapBuilder): void
+    public function setSitemapMaker(SitemapMakerInterface $sitemapBuilder): void
     {
         $this->sitemapBuider = $sitemapBuilder;
     }

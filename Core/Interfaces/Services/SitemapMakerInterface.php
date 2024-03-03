@@ -32,7 +32,7 @@ use SismaFramework\Core\HttpClasses\Response;
  *
  * @author Valentino de Lapa
  */
-interface SitemapBuilderInterface
+interface SitemapMakerInterface
 {
 
     public function isSitemap(array $pathParts): bool;

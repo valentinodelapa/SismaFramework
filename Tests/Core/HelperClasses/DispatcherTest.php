@@ -35,7 +35,7 @@ use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Core\Interfaces\Services\SitemapBuilderInterface;
+use SismaFramework\Core\Interfaces\Services\SitemapMakerInterface;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -207,16 +207,16 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
     
-    public function testSitemapBuilder()
+    public function testSitemapMaker()
     {
-        $sitemapBuilderMock = $this->createMock(SitemapBuilderInterface::class);
+        $sitemapBuilderMock = $this->createMock(SitemapMakerInterface::class);
         $sitemapBuilderMock->expects($this->once())
                 ->method('isSitemap')
                 ->willReturn(true);
         $sitemapBuilderMock->expects($this->once())
                 ->method('generate');
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
-        $dispatcher->setSitemapBuilder($sitemapBuilderMock);
+        $dispatcher->setSitemapMaker($sitemapBuilderMock);
         $dispatcher->run();
     }
 
