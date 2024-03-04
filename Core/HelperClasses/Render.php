@@ -58,11 +58,12 @@ class Render
 
     public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk, DataMapper $dataMapper = new DataMapper()): Response
     {
+        $response = self::getResponse($responseType);
         Debugger::setVars($vars);
         BufferManager::start();
         self::assemblesComponents($view, $vars);
         echo static::generateDebugBar($dataMapper);
-        return self::getResponse($responseType);
+        return $response;
     }
     
     private static function assemblesComponents(string $view, array $vars):void
@@ -165,8 +166,9 @@ class Render
 
     public static function generateData(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
     {
+        $response = self::getResponse($responseType);
         self::assemblesComponents($view, $vars);
-        return self::getResponse($responseType);
+        return $response;
     }
 
     public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
