@@ -60,7 +60,6 @@ class Render
     {
         $response = self::getResponse($responseType);
         Debugger::setVars($vars);
-        BufferManager::start();
         self::assemblesComponents($view, $vars);
         echo static::generateDebugBar($dataMapper);
         return $response;
@@ -68,6 +67,7 @@ class Render
     
     private static function assemblesComponents(string $view, array $vars):void
     {
+        BufferManager::start();
         self::$view = $view;
         $deviceClass = self::getDeviceClass();
         $viewPath = self::getViewPath(self::$view);
