@@ -92,7 +92,7 @@ class ModuleManager
             self::$customVisualizationFileExists = false;
             return self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } else {
-            throw new ModuleException('File non trovato');
+            throw new ModuleException('File not found: '.$path . '.' . $resource->value);
         }
     }
 
@@ -103,7 +103,7 @@ class ModuleManager
         } elseif ((self::$customVisualizationFileExists === false) && file_exists(self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             return self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } else {
-            throw new ModuleException('File non trovato');
+            throw new ModuleException('File not found: '.$path . '.' . $resource->value);
         }
     }
 
