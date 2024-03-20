@@ -46,12 +46,20 @@ class Templater
 
     public static function generateTemplate(string $template, array $vars): string
     {
+        $varsAndLocales = array_merge($vars, self::getActualLocaleArray($template));
         $templateContent = self::getTemplateContent($template);
-        $templateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($vars) {
+        $parsedTemplateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($varsAndLocales) {
             $var = str_replace(['{{', '}}'], '', $varName[0]);
-            return $vars[$var];
+            return $varsAndLocales[$var];
         }, $templateContent);
-        return $templateContent;
+        return $parsedTemplateContent;
+    }
+
+    private static function getActualLocaleArray(string $template): array
+    {
+        $locale = Localizator::getLocale();
+        $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
+        return $actualLocale;
     }
 
     private static function getTemplateContent(string $template): string

@@ -29,8 +29,8 @@ namespace SismaFramework\Core\HelperClasses;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\Exceptions\RenderException;
 use SismaFramework\Core\HelperClasses\BufferManager;
+use SismaFramework\Core\HelperClasses\Localizator;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -41,20 +41,11 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class Render
 {
 
-    private static string $defaultLocaleType = \Config\DEFAULT_LOCALE_TYPE;
     private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
     private static bool $isStructural = false;
-    private static Language $language;
-    private static string $localesPath = \Config\LOCALES_PATH;
-    private static Resource $localeType;
     private static string $structuralViewsPath = \Config\STRUCTURAL_VIEWS_PATH;
     private static string $view;
     private static string $viewsPath = \Config\VIEWS_PATH;
-    
-    public static function setLanguage(Language $language):void
-    {
-        self::$language = $language;
-    }
 
     public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk, DataMapper $dataMapper = new DataMapper()): Response
     {
@@ -97,7 +88,7 @@ class Render
     private static function getActualLocaleArray(string $view): array
     {
         $viewParts = \explode('/', $view);
-        $locale = self::getLocale();
+        $locale = Localizator::getLocale();
         $actualLocale = $locale['pages'];
         $commonLocale = $locale['pages']['common'];
         foreach ($viewParts as $part) {
@@ -107,44 +98,6 @@ class Render
             $actualLocale = $actualLocale[$part] ?? [];
         }
         return array_merge($commonLocale, $actualLocale);
-    }
-
-    private static function getLocale(): array
-    {
-        $languagePath = self::getLanguagePath();
-        switch (self::$localeType) {
-            case Resource::json:
-                $locale = json_decode(file_get_contents($languagePath), true);
-                break;
-            case Resource::php:
-            default:
-                include($languagePath);
-                break;
-        }
-        return $locale;
-    }
-
-    private static function getLanguagePath(): string
-    {
-        if (isset(self::$language) === false) {
-            $defaultLanguage = Language::tryFrom(\Config\LANGUAGE);
-            if($defaultLanguage instanceof Language){
-                self::$language = $defaultLanguage;
-            }else{
-                throw new RenderException('Formato lingua non corretto');
-            }
-        }
-        return self::getLocalePath(self::$language);
-    }
-
-    private static function getLocalePath(Language $language): string
-    {
-        self::$localeType = Resource::tryFrom(self::$defaultLocaleType);
-        if (self::$localeType !== null) {
-            return ModuleManager::getConsequentFilePath(self::$localesPath . $language->value, self::$localeType);
-        } else {
-            throw new RenderException('File non trovato');
-        }
     }
 
     private static function generateDebugBar(DataMapper $dataMapper = new DataMapper()): string

@@ -27,8 +27,9 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\CustomTypes\FormFilterError;
+use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HelperClasses\Templater;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
@@ -69,6 +70,7 @@ class DebuggerTest extends TestCase
     
     public function testGenerateDebugBar()
     {
+        ModuleManager::setRootPath(dirname(__DIR__, 3).'/');
         $queryExecutedProperty = $this->debuggerReflection->getProperty('queryExecuted');
         $queryExecutedProperty->setAccessible(true);
         $queryExecutedProperty->setValue(new Debugger, ['sample query']);
@@ -85,6 +87,7 @@ class DebuggerTest extends TestCase
     
     public function testGenerateDebugBarForm()
     {
+        ModuleManager::setRootPath(dirname(__DIR__, 3).'/');
         Templater::setStructural();
         $generateDebugBarFormMethod = $this->debuggerReflection->getMethod('generateDebugBarForm');
         $result = $generateDebugBarFormMethod->invoke(new Debugger, ['sampleSimpleField' => false, 'sampleComplexField' => ['sampleSubField' => true]]);
@@ -96,6 +99,7 @@ class DebuggerTest extends TestCase
     
     public function testGenerateDebugBarVars()
     {
+        ModuleManager::setRootPath(dirname(__DIR__, 3).'/');
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         Templater::setStructural();

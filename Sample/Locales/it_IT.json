@@ -1,5 +1,8 @@
 {
     "pages": {
+        "common": {
+
+        },
         "sample": {
             "index": {
                 "title": "Homepage"
@@ -15,9 +18,12 @@
                 "projectTitle": "Sisma",
                 "title": "Progetto"
             }
-        },
-        "common": {
-
         }
+    },
+    "common": {
+
+    },
+    "templates": {
+
     }
 }

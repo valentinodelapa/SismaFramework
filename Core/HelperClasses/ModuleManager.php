@@ -82,6 +82,11 @@ class ModuleManager
     {
         return self::$customVisualizationModule;
     }
+    
+    public static function setRootPath(string $rootPath):void
+    {
+        self::$rootPath = $rootPath;
+    }
 
     public static function getExistingFilePath(string $path, Resource $resource): string
     {
