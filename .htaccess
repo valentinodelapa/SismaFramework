@@ -1,6 +1,11 @@
 <IfModule mod_rewrite.c>
-RewriteEngine On 
+RewriteEngine On
+RewriteCond %{QUERY_STRING} fbclid= [NC]
+RewriteRule ^(.*)$ /$1? [R=301,L]
+RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php\/(.*)$ [NC]
+RewriteRule ^(.+/)?index\.php\/(.*)$ /$1$2 [R=301,L]
+RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php(.*)$ [NC]
+RewriteRule ^(.+/)?index\.php(.*)$ /$1$2 [R=301,L]
+RewriteCond %{REQUEST_URI} !^/Public/
 RewriteRule ^(.*)$ Public/ [L]
-RewriteCond %{QUERY_STRING} "fbclid=" [NC]
-RewriteRule (.*) /$1? [R=301,L]
 </IfModule>
