@@ -29,7 +29,6 @@ namespace SismaFramework\Orm\HelperClasses;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\Exceptions\CacheException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 
 /**
@@ -91,13 +90,24 @@ class Cache
         $parentReferencedEntityName = get_parent_class($referencedEntityName);
         $parentReflectionClass = new \ReflectionClass($parentReferencedEntityName);
         if ($parentReflectionClass->isAbstract()) {
-            return ($propertyName === null) ? static::$foreighKeyDataCache[$referencedEntityName] : static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+            return self::getForeignKeyDataWithAbstractParent($referencedEntityName, $propertyName);
         } elseif ($propertyName === null) {
             return array_merge(static::$foreighKeyDataCache[$referencedEntityName], self::getForeignKeyDataWithParents($parentReferencedEntityName));
         } elseif (array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])) {
             return static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
         } else {
             return self::getForeignKeyDataWithParents($parentReferencedEntityName, $propertyName);
+        }
+    }
+    
+    private static function getForeignKeyDataWithAbstractParent(string $referencedEntityName, ?string $propertyName = null): array
+    {
+        if($propertyName === null){
+            return static::$foreighKeyDataCache[$referencedEntityName];
+        }elseif(array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])){
+            return static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+        }else{
+            throw new CacheException($referencedEntityName . (($propertyName !== null) ? ' - ' . $propertyName : ''));
         }
     }
 

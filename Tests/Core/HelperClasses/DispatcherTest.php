@@ -28,7 +28,6 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
-use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\FixturesManager;
@@ -51,9 +50,9 @@ class DispatcherTest extends TestCase
     private DataMapper $dataMapperMock;
 
 
-    public function __construct($name = null, $data = [], $dataName = '')
+    public function __construct($name = null)
     {
-        parent::__construct($name, $data, $dataName);
+        parent::__construct($name);
         $this->fixturesManagerMock = $this->createMock(FixturesManager::class);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
@@ -384,7 +383,7 @@ class DispatcherTest extends TestCase
     public function testPathWithInvalidParameter()
     {
         $_SERVER['REQUEST_URI'] = '/other/fake/test/';
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(PageNotFoundException::class);
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }

@@ -348,7 +348,7 @@ class Dispatcher
             } elseif ($argument->isDefaultValueAvailable()) {
                 $currentActionArguments[$argument->name] = $argument->getDefaultValue();
             } else {
-                throw new InvalidArgumentException($argument->name);
+                throw new PageNotFoundException($argument->name);
             }
         }
         $this->actionArguments = $currentActionArguments;
