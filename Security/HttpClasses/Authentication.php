@@ -31,8 +31,9 @@ use SismaFramework\Core\Enumerations\RequestType;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
 use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
+use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
+use SismaFramework\Security\Interfaces\Entities\PasswordInterface;
 use SismaFramework\Security\Interfaces\Models\MultiFactorModelInterface;
 use SismaFramework\Security\Interfaces\Models\MultiFactorRecoveryModelInterface;
 use SismaFramework\Security\Interfaces\Models\PasswordModelInterface;
@@ -109,7 +110,9 @@ class Authentication extends Submittable
     {
         if (Filter::isString($this->request->request['password'])) {
             $passwordInterface = $this->passwordModelInterface->getPasswordByAuthenticableInterface($authenticableInterface);
-            return Encryptor::verifyBlowfishHash($this->request->request['password'], $passwordInterface->password);
+            if($passwordInterface instanceof PasswordInterface){
+                return Encryptor::verifyBlowfishHash($this->request->request['password'], $passwordInterface->password);
+            }
         }
         return false;
     }
