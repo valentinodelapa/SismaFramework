@@ -68,8 +68,8 @@ class DataMapper
             throw new DataMapperException($entityName);
         }
     }
-    
-    public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()):bool
+
+    public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()): bool
     {
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::set, ["variable" => $variable, "value" => Keyword::placeholder->value]);

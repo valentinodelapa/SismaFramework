@@ -41,10 +41,9 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 abstract class BaseModel
 {
-    
+
     protected DataMapper $dataMapper;
     protected readonly string $entityName;
-    
     protected static bool $ormCache = \Config\ORM_CACHE;
 
     public function __construct(DataMapper $dataMapper = new DataMapper())
@@ -158,5 +157,13 @@ abstract class BaseModel
                         ], [
                     DataType::typeInteger,
         ]);
+    }
+
+    public function findSingleColumn(string $entityName, string $columnName, bool $isForeignKey): ?BaseEntity
+    {
+        $query = $this->initQuery();
+        $query->setColumn($columnName . (($isForeignKey) ? 'Id' : null))
+                ->setLimit(1);
+        return $this->dataMapper->findFirst($entityName, $query);
     }
 }
