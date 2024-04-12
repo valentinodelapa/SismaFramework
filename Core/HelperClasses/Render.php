@@ -31,6 +31,7 @@ use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Localizator;
+use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -55,8 +56,8 @@ class Render
         echo static::generateDebugBar($dataMapper);
         return $response;
     }
-    
-    private static function assemblesComponents(string $view, array $vars):void
+
+    private static function assemblesComponents(string $view, array $vars): void
     {
         BufferManager::start();
         self::$view = $view;
@@ -79,10 +80,15 @@ class Render
         }
     }
 
-    private static function getDeviceClass(): string
+    private static function getDeviceClass(): string|false
     {
-        $ua = $_SERVER['HTTP_USER_AGENT'];
-        return (stristr($ua, 'mobile') !== false ) ? 'mobile' : 'desktop';
+        $request = new Request();
+        if (isset($request->server['HTTP_USER_AGENT'])) {
+            $ua = $request->server['HTTP_USER_AGENT'];
+            return (stristr($ua, 'mobile') !== false ) ? 'mobile' : 'desktop';
+        } else {
+            return false;
+        }
     }
 
     private static function getActualLocaleArray(string $view): array
@@ -109,8 +115,8 @@ class Render
             return '';
         }
     }
-    
-    private static function getResponse(ResponseType $responseType):Response
+
+    private static function getResponse(ResponseType $responseType): Response
     {
         $response = new Response();
         $response->setResponseType($responseType);
