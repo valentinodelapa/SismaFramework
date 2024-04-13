@@ -58,7 +58,7 @@ class Session
         ]);
         session_start();
         session_regenerate_id();
-        self::setItem('token', hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']));
+        self::setItem('token', hash("sha512", ($request->server['HTTP_USER_AGENT'] ?? null) . ($request->server['REMOTE_ADDR'] ?? null)));
     }
 
     public function __set($name, $value)
