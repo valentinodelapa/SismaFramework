@@ -95,10 +95,22 @@ enum Resource: string
             self::zip => 'application/x-zip-compressed',
         };
     }
-    
-    public function isRenderable():bool
+
+    public function isRenderable(): bool
     {
-         return match ($this) {
+        return match ($this) {
+            self::css, self::doc, self::docx, self::geojson, self::htm, self::html,
+            self::ico, self::jpg, self::jpeg, self::js, self::jsm, self::json, self::map,
+            self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
+            self::rar, self::svg, self::ttf, self::woff, self::woff2, self::xls,
+            self::xlsx, self::xml => true,
+            self::php, self::zip => false,
+        };
+    }
+
+    public function isDownloadable(): bool
+    {
+        return match ($this) {
             self::css, self::doc, self::docx, self::geojson, self::htm, self::html,
             self::ico, self::jpg, self::jpeg, self::js, self::jsm, self::json, self::map,
             self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
@@ -107,5 +119,4 @@ enum Resource: string
             self::php => false,
         };
     }
-
 }

@@ -61,6 +61,16 @@ class ResourceMakerTest extends TestCase
     /**
      * @runInSeparateProcess
      */
+    public function testMakeResourceNotDownloadable()
+    {
+        $resourceMaker = new ResourceMaker();
+        $this->expectException(AccessDeniedException::class);
+        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Controllers/SampleController.php', true);
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testMakeResourceWithFolderNotAccessible()
     {
         $resourceMaker = new ResourceMaker();

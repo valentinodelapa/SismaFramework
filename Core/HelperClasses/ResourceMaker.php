@@ -43,7 +43,6 @@ class ResourceMaker
     private $streamContex = null;
     private int $fileGetContentMaxBytesLimit = \Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT;
     private int $readfileMaxBytesLimit = \Config\READFILE_MAX_BYTES_LIMIT;
-    
     private static string $robotsFile = \Config\ROBOTS_FILE;
     private static string $rootPath = \Config\ROOT_PATH;
 
@@ -68,7 +67,7 @@ class ResourceMaker
     }
 
     public function isAcceptedResourceFile(string $path): bool
-    {   
+    {
         return Resource::tryFrom($this->getExtension($path)) instanceof Resource;
     }
 
@@ -78,33 +77,61 @@ class ResourceMaker
         return strtolower(end($splittedPath));
     }
 
-    public function makeResource(string $filename): Response
+    public function makeResource(string $filename, $forceDownload = false): Response
     {
         $resource = Resource::from($this->getExtension($filename));
-        if ($resource->isRenderable() && ($this->folderIsLocked($filename) === false)) {
-            header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
-            header("Accept-Ranges: bytes");
-            header("Content-type: " . $resource->getMime());
-            header('X-Content-Type-Options: nosniff');
-            header("Content-Disposition: inline");
-            header("Content-Length: " . filesize($filename));
-            if (filesize($filename) < $this->fileGetContentMaxBytesLimit) {
-                echo file_get_contents($filename, false, $this->streamContex);
-            } elseif (filesize($filename) < $this->readfileMaxBytesLimit) {
-                readfile($filename, false, $this->streamContex);
+        if ($this->folderIsLocked($filename) === false) {
+            if ($resource->isRenderable() && ($forceDownload === false)) {
+                return $this->viewResource($filename, $resource);
+            } elseif ($resource->isDownloadable()) {
+                return $this->downloadResource($filename, $resource);
             } else {
-                $stream = fopen($filename, 'rb', false, $this->streamContex);
-                fpassthru($stream);
+                throw new AccessDeniedException($filename);
             }
-            return new Response();
         } else {
             throw new AccessDeniedException($filename);
         }
     }
-    
-    private function folderIsLocked(string $filename):bool
+
+    private function folderIsLocked(string $filename): bool
     {
-        return file_exists(dirname($filename).DIRECTORY_SEPARATOR.'.lock');
+        return file_exists(dirname($filename) . DIRECTORY_SEPARATOR . '.lock');
+    }
+
+    private function viewResource(string $filename, Resource $resource): Response
+    {
+        header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
+        header("Accept-Ranges: bytes");
+        header("Content-type: " . $resource->getMime());
+        header('X-Content-Type-Options: nosniff');
+        header("Content-Disposition: inline");
+        header("Content-Length: " . filesize($filename));
+        $this->getResourceData($filename);
+        return new Response();
+    }
+
+    private function getResourceData(string $filename): void
+    {
+        if (filesize($filename) < $this->fileGetContentMaxBytesLimit) {
+            echo file_get_contents($filename, false, $this->streamContex);
+        } elseif (filesize($filename) < $this->readfileMaxBytesLimit) {
+            readfile($filename, false, $this->streamContex);
+        } else {
+            $stream = fopen($filename, 'rb', false, $this->streamContex);
+            fpassthru($stream);
+        }
+    }
+
+    public function downloadResource(string $filename, Resource $resource): Response
+    {
+        header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
+        header("Accept-Ranges: bytes");
+        header("Content-type: " . $resource->getMime());
+        header('X-Content-Type-Options: nosniff');
+        header("Content-Disposition: attachment; filename=\"" . basename($filename) . "\"");
+        header("Content-Length: " . filesize($filename));
+        $this->getResourceData($filename);
+        return new Response();
     }
 
     public function isRobotsFile(array $pathParts): bool
