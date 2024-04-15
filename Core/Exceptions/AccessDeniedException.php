@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\Exceptions;
 
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Security\ExtendedClasses\LogException;
 
 /**
@@ -34,4 +35,9 @@ use SismaFramework\Security\ExtendedClasses\LogException;
 class AccessDeniedException extends LogException
 {
     
+
+    public function getResponseType(): ResponseType
+    {
+        return ResponseType::httpForbidden;
+    }
 }

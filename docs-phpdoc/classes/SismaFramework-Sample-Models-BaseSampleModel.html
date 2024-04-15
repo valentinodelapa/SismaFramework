@@ -253,6 +253,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_findSingleColumn">findSingleColumn()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>|null    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_getEntityById">getEntityById()</a>
     <span>
                                 &nbsp;: <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>|null    </span>
@@ -409,7 +415,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">48</span>
+    <span class="phpdocumentor-element-found-in__line">47</span>
 
     </aside>
 
@@ -499,7 +505,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">50</span>
+    <span class="phpdocumentor-element-found-in__line">49</span>
 
     </aside>
 
@@ -540,7 +546,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">120</span>
+    <span class="phpdocumentor-element-found-in__line">119</span>
 
     </aside>
 
@@ -585,7 +591,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">66</span>
+    <span class="phpdocumentor-element-found-in__line">65</span>
 
     </aside>
 
@@ -682,7 +688,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">150</span>
+    <span class="phpdocumentor-element-found-in__line">149</span>
 
     </aside>
 
@@ -771,6 +777,65 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_findSingleColumn">
+        findSingleColumn()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_findSingleColumn" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">162</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">findSingleColumn</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entityName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$columnName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$isForeignKey</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>|null</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$entityName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$columnName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$isForeignKey</span>
+                : <span class="phpdocumentor-signature__argument__return-type">bool</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>|null</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_getEntityById">
         getEntityById()
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_getEntityById" class="headerlink"><i class="fas fa-link"></i></a>
@@ -779,7 +844,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">129</span>
+    <span class="phpdocumentor-element-found-in__line">128</span>
 
     </aside>
 
@@ -824,7 +889,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">84</span>
+    <span class="phpdocumentor-element-found-in__line">83</span>
 
     </aside>
 
@@ -963,7 +1028,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">105</span>
+    <span class="phpdocumentor-element-found-in__line">104</span>
 
     </aside>
 
@@ -1219,7 +1284,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">78</span>
+    <span class="phpdocumentor-element-found-in__line">77</span>
 
     </aside>
 
@@ -1254,7 +1319,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">57</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -1400,6 +1465,7 @@
                                             <li><a href="classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_countEntityCollectionByEntity">countEntityCollectionByEntity()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_deleteEntityById">deleteEntityById()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_deleteEntityCollectionByEntity">deleteEntityCollectionByEntity()</a></li>
+                                            <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_findSingleColumn">findSingleColumn()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_getEntityById">getEntityById()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_getEntityCollection">getEntityCollection()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_getEntityCollectionByEntity">getEntityCollectionByEntity()</a></li>

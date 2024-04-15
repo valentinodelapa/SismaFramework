@@ -1141,6 +1141,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Resource.html#method_isRenderable"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Resource\u003A\u003AisDownloadable\u0028\u0029",
+            "name": "isDownloadable",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Resource.html#method_isDownloadable"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Resource\u003A\u003Acss",
             "name": "css",
             "summary": "",
@@ -1621,6 +1626,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Exceptions-AccessDeniedException.html"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Exceptions\\AccessDeniedException\u003A\u003AgetResponseType\u0028\u0029",
+            "name": "getResponseType",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Exceptions-AccessDeniedException.html#method_getResponseType"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Exceptions\\EntityException",
             "name": "EntityException",
             "summary": "",
@@ -1655,6 +1665,11 @@ Search.appendIndex(
             "name": "InvalidTypeException",
             "summary": "",
             "url": "classes/SismaFramework-Core-Exceptions-InvalidTypeException.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Exceptions\\LocalizatorException",
+            "name": "LocalizatorException",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Exceptions-LocalizatorException.html"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Exceptions\\MethodNotFoundException",
             "name": "MethodNotFoundException",
@@ -2461,6 +2476,51 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_rootPath"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator",
+            "name": "Localizator",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003AsetLanguage\u0028\u0029",
+            "name": "setLanguage",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#method_setLanguage"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003AgetLocale\u0028\u0029",
+            "name": "getLocale",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#method_getLocale"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003AgetLanguagePath\u0028\u0029",
+            "name": "getLanguagePath",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#method_getLanguagePath"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003AgetLocalePath\u0028\u0029",
+            "name": "getLocalePath",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#method_getLocalePath"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003A\u0024defaultLocaleType",
+            "name": "defaultLocaleType",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#property_defaultLocaleType"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003A\u0024language",
+            "name": "language",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#property_language"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003A\u0024localesPath",
+            "name": "localesPath",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#property_localesPath"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003A\u0024localeType",
+            "name": "localeType",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#property_localeType"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Logger",
             "name": "Logger",
             "summary": "",
@@ -2570,6 +2630,11 @@ Search.appendIndex(
             "name": "getCustomVisualizationModule",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-ModuleManager.html#method_getCustomVisualizationModule"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ModuleManager\u003A\u003AsetRootPath\u0028\u0029",
+            "name": "setRootPath",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ModuleManager.html#method_setRootPath"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ModuleManager\u003A\u003AgetExistingFilePath\u0028\u0029",
             "name": "getExistingFilePath",
@@ -2766,11 +2831,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Render.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AsetLanguage\u0028\u0029",
-            "name": "setLanguage",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_setLanguage"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AgenerateView\u0028\u0029",
             "name": "generateView",
             "summary": "",
@@ -2795,21 +2855,6 @@ Search.appendIndex(
             "name": "getActualLocaleArray",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_getActualLocaleArray"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AgetLocale\u0028\u0029",
-            "name": "getLocale",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_getLocale"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AgetLanguagePath\u0028\u0029",
-            "name": "getLanguagePath",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_getLanguagePath"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AgetLocalePath\u0028\u0029",
-            "name": "getLocalePath",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_getLocalePath"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AgenerateDebugBar\u0028\u0029",
             "name": "generateDebugBar",
@@ -2836,11 +2881,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_setStructural"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024defaultLocaleType",
-            "name": "defaultLocaleType",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_defaultLocaleType"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024developementEnvironment",
             "name": "developementEnvironment",
             "summary": "",
@@ -2850,21 +2890,6 @@ Search.appendIndex(
             "name": "isStructural",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_isStructural"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024language",
-            "name": "language",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_language"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024localesPath",
-            "name": "localesPath",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_localesPath"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024localeType",
-            "name": "localeType",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_localeType"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024structuralViewsPath",
             "name": "structuralViewsPath",
@@ -2925,6 +2950,21 @@ Search.appendIndex(
             "name": "folderIsLocked",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-ResourceMaker.html#method_folderIsLocked"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ResourceMaker\u003A\u003AviewResource\u0028\u0029",
+            "name": "viewResource",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ResourceMaker.html#method_viewResource"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ResourceMaker\u003A\u003AgetResourceData\u0028\u0029",
+            "name": "getResourceData",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ResourceMaker.html#method_getResourceData"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ResourceMaker\u003A\u003AdownloadResource\u0028\u0029",
+            "name": "downloadResource",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ResourceMaker.html#method_downloadResource"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ResourceMaker\u003A\u003AisRobotsFile\u0028\u0029",
             "name": "isRobotsFile",
@@ -3160,6 +3200,11 @@ Search.appendIndex(
             "name": "generateTemplate",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateTemplate"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgetActualLocaleArray\u0028\u0029",
+            "name": "getActualLocaleArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_getActualLocaleArray"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgetTemplateContent\u0028\u0029",
             "name": "getTemplateContent",
@@ -3965,6 +4010,11 @@ Search.appendIndex(
             "name": "deleteEntityById",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_deleteEntityById"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AfindSingleColumn\u0028\u0029",
+            "name": "findSingleColumn",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_findSingleColumn"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003A\u0024dataMapper",
             "name": "dataMapper",
@@ -4840,6 +4890,11 @@ Search.appendIndex(
             "name": "getForeignKeyDataWithParents",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Cache.html#method_getForeignKeyDataWithParents"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Cache\u003A\u003AgetForeignKeyDataWithAbstractParent\u0028\u0029",
+            "name": "getForeignKeyDataWithAbstractParent",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Cache.html#method_getForeignKeyDataWithAbstractParent"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Cache\u003A\u003AcheckEntityPresence\u0028\u0029",
             "name": "checkEntityPresence",
@@ -7500,6 +7555,11 @@ Search.appendIndex(
             "name": "testMakeResourceNotRenderable",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceNotRenderable"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestMakeResourceNotDownloadable\u0028\u0029",
+            "name": "testMakeResourceNotDownloadable",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceNotDownloadable"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestMakeResourceWithFolderNotAccessible\u0028\u0029",
             "name": "testMakeResourceWithFolderNotAccessible",
