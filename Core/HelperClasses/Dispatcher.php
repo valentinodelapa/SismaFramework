@@ -27,7 +27,7 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\BaseClasses\BaseController;
-use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
@@ -274,7 +274,7 @@ class Dispatcher
                 $className = $argumentType->getName();
                 $this->constructorArguments[] = new $className();
             } else {
-                throw new InvalidArgumentException($argumentType->getName());
+                throw new BadRequestException($argumentType->getName());
             }
         }
     }
@@ -348,7 +348,7 @@ class Dispatcher
             } elseif ($argument->isDefaultValueAvailable()) {
                 $currentActionArguments[$argument->name] = $argument->getDefaultValue();
             } else {
-                throw new PageNotFoundException($argument->name);
+                throw new BadRequestException($argument->name);
             }
         }
         $this->actionArguments = $currentActionArguments;

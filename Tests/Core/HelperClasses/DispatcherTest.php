@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
@@ -383,7 +384,7 @@ class DispatcherTest extends TestCase
     public function testPathWithInvalidParameter()
     {
         $_SERVER['REQUEST_URI'] = '/other/fake/test/';
-        $this->expectException(PageNotFoundException::class);
+        $this->expectException(BadRequestException::class);
         $dispatcher = new Dispatcher(new Request(), new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
         $dispatcher->run();
     }
