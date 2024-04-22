@@ -316,6 +316,7 @@ class Dispatcher
             $even[] = array_shift($this->actionArguments);
         }
         $this->actionArguments = $this->combineArrayToAssociativeArray($odd, $even);
+        $this->request->setQuery($this->actionArguments);
     }
 
     private function combineArrayToAssociativeArray(array $keys, array $values): array

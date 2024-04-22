@@ -48,6 +48,12 @@ class Request
         $this->files = $_FILES;
         $this->server = $_SERVER;
     }
+    
+    public function setQuery(array $query):void
+    {
+        $_GET = $query;
+        $this->query = $query;
+    }
 
     public function getStreamContentResource()
     {
