@@ -42,17 +42,11 @@ class Request
 
     public function __construct()
     {
-        $this->query = $_GET;
+        $this->query = &$_GET;
         $this->request = $_POST;
         $this->cookie = $_COOKIE;
         $this->files = $_FILES;
         $this->server = $_SERVER;
-    }
-    
-    public function setQuery(array $query):void
-    {
-        $_GET = $query;
-        $this->query = $query;
     }
 
     public function getStreamContentResource()

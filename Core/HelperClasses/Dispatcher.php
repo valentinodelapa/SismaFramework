@@ -69,7 +69,6 @@ class Dispatcher
     private array $reflectionConstructorArguments;
     private \ReflectionMethod $reflectionAction;
     private array $reflectionActionArguments;
-    
     private static string $applicationAssetsPath = \Config\APPLICATION_ASSETS_PATH;
     private static string $controllerNamespace = \Config\CONTROLLER_NAMESPACE;
     private static string $defaultAction = \Config\DEFAULT_ACTION;
@@ -88,8 +87,8 @@ class Dispatcher
         $this->fixturesManager = $fixtureManager;
         $this->dataMapper = $dataMapper;
     }
-    
-    public static function setCustomRootPath(string $customRootPath):void
+
+    public static function setCustomRootPath(string $customRootPath): void
     {
         self::$rootPath = $customRootPath;
     }
@@ -268,9 +267,9 @@ class Dispatcher
     {
         foreach ($this->reflectionConstructorArguments as $argument) {
             $argumentType = $argument->getType();
-            if(is_a($argumentType->getName(), DataMapper::class, true)){
+            if (is_a($argumentType->getName(), DataMapper::class, true)) {
                 $this->constructorArguments[] = $this->dataMapper;
-            }elseif ($argumentType->isBuiltin() === false) {
+            } elseif ($argumentType->isBuiltin() === false) {
                 $className = $argumentType->getName();
                 $this->constructorArguments[] = new $className();
             } else {
@@ -316,7 +315,7 @@ class Dispatcher
             $even[] = array_shift($this->actionArguments);
         }
         $this->actionArguments = $this->combineArrayToAssociativeArray($odd, $even);
-        $this->request->setQuery($this->actionArguments);
+        $this->request->query = $this->actionArguments;
     }
 
     private function combineArrayToAssociativeArray(array $keys, array $values): array
