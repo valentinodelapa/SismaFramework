@@ -75,4 +75,10 @@ class NotationManager
         $parsedColumnName = (substr($columnName, -3, 3) == '_id') ? substr($columnName, 0, -3) : $columnName;
         return self::convertToCamelCase($parsedColumnName);
     }
+    
+    public static function convertPropertyNameToColumnName(string $propertyName, bool $foreignKey = false):string
+    {
+        $parsedPropertyName = ($foreignKey) ? $propertyName.'Id' : $propertyName;
+        return self::convertToSnakeCase($parsedPropertyName);
+    }
 }

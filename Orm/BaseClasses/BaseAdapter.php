@@ -122,7 +122,7 @@ abstract class BaseAdapter
 
     public function escapeColumn(string $name, bool $foreignKey = false): string
     {
-        return NotationManager::convertToSnakeCase($this->escapeIdentifier(($foreignKey) ? $name . 'Id' : $name));
+        return $this->escapeIdentifier(NotationManager::convertPropertyNameToColumnName($name, $foreignKey));
     }
 
     public function escapeValue(mixed $value, ?ComparisonOperator $operator = null): string
