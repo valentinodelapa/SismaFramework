@@ -46,7 +46,7 @@ class ModuleManager
     {
         return self::$moduleFolder;
     }
-    
+
     public static function initializeApplicationModule()
     {
         self::$applicationModule = '';
@@ -56,8 +56,8 @@ class ModuleManager
     {
         self::$applicationModule = $module;
     }
-    
-    public static function setApplicationModuleByClassName(string $className):void
+
+    public static function setApplicationModuleByClassName(string $className): void
     {
         $module = strtok($className, "\\");
         self::setApplicationModule($module);
@@ -82,8 +82,8 @@ class ModuleManager
     {
         return self::$customVisualizationModule;
     }
-    
-    public static function setRootPath(string $rootPath):void
+
+    public static function setRootPath(string $rootPath): void
     {
         self::$rootPath = $rootPath;
     }
@@ -97,7 +97,7 @@ class ModuleManager
             self::$customVisualizationFileExists = false;
             return self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } else {
-            throw new ModuleException('File not found: '.$path . '.' . $resource->value);
+            throw new ModuleException('File not found: {' . self::$customVisualizationModule . '}{' . self::$applicationModule . '}' . $path . '.' . $resource->value);
         }
     }
 
@@ -108,8 +108,7 @@ class ModuleManager
         } elseif ((self::$customVisualizationFileExists === false) && file_exists(self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             return self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } else {
-            throw new ModuleException('File not found: '.$path . '.' . $resource->value);
+            throw new ModuleException('File not found: {' . self::$customVisualizationModule . '}{' . self::$applicationModule . '}' . $path . '.' . $resource->value);
         }
     }
-
 }
