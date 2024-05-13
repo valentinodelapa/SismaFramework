@@ -96,6 +96,38 @@ enum Resource: string
         };
     }
 
+    public static function getByMime(string $mime): self
+    {
+        return  match ($mime) {
+            'text/css' => self::css,
+            'application/msword' => self::doc,
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => self::docx,
+            'application/geo+json' => self::geojson,
+            'text/html' => self::html,
+            'image/x-icon' => self::ico,
+            'image/jpeg' => self::jpg,
+            'application/javascript', 'text/javascript' => self::js,
+            'application/json' => self::json,
+            'audio/mp3' => self::mp3,
+            'video/mp4' => self::mp4,
+            'font/otf' => self::otf,
+            'application/pdf' => self::pdf,
+            'application/x-httpd-php' => self::php,
+            'image/png' => self::png,
+            'application/vnd.ms-powerpoint' => self::ppt,
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => self::pptx,
+            'application/x-rar-compressed' => self::rar,
+            'image/svg+xml' => self::svg,
+            'font/ttf' => self::ttf,
+            'font/woff' => self::woff,
+            'font/woff2' => self::woff2,
+            'application/vnd.ms-excel' => self::xls,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => self::xlsx,
+            'application/xml' => self::xml,
+            'application/x-zip-compressed' => self::zip,
+        };
+    }
+
     public function isRenderable(): bool
     {
         return match ($this) {
