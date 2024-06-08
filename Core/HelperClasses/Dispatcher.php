@@ -143,7 +143,7 @@ class Dispatcher
         ModuleManager::initializeApplicationModule();
         foreach (ModuleManager::getModuleList() as $module) {
             $this->controllerName = $module . '\\' . self::$controllerNamespace . NotationManager::convertToStudlyCaps($this->pathParts[0] . 'Controller');
-            if ($this->checkControllerPresence() || ((count($this->pathParts) === 2) && (file_exists(self::$rootPath . $module . DIRECTORY_SEPARATOR . self::$applicationAssetsPath . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1])))) {
+            if ($this->checkControllerPresence() || $this->checkFilePresence($module)) {
                 ModuleManager::setApplicationModule($module);
                 break;
             }
@@ -153,6 +153,11 @@ class Dispatcher
     private function checkControllerPresence(): bool
     {
         return class_exists($this->controllerName);
+    }
+
+    private function checkFilePresence(string $module): bool
+    {
+        return (count($this->pathParts) === 2) && (file_exists(self::$rootPath . $module . DIRECTORY_SEPARATOR . self::$applicationAssetsPath . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]));
     }
 
     private function handle(): Response
