@@ -232,6 +232,7 @@ class Dispatcher
 
     private function resolveRouteCall(): Response
     {
+        $this->getControllerConstructorArguments();
         if ($this->checkActionPresenceInController()) {
             $this->controllerInstance = $this->instanceControllerClass();
             return $this->callControllerMethod();
@@ -240,32 +241,37 @@ class Dispatcher
         }
     }
 
+    private function getControllerConstructorArguments(): void
+    {
+        $this->reflectionController = new \ReflectionClass($this->controllerName);
+        $this->reflectionConstructor = $this->reflectionController->getConstructor();
+        $this->reflectionConstructorArguments = $this->reflectionConstructor->getParameters();
+    }
+
     private function checkActionPresenceInController(): bool
     {
         Router::setActualCleanUrl($this->pathParts[0], $this->pathParts[1]);
+        $methodExsist = false;
+        if (method_exists($this->controllerName, $this->action)) {
+            $this->reflectionAction = $this->reflectionController->getMethod($this->action);
+            ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
+            $methodExsist = true;
+        }
         if ($this->defaultControllerInjected && (count($this->pathParts) === 2) && (str_contains(self::$rootPath, $this->pathParts[1]) === false)) {
             return is_callable([$this->instanceControllerClass(), $this->action]);
         } else {
-            return method_exists($this->controllerName, $this->action);
+            return $methodExsist;
         }
     }
 
     private function instanceControllerClass(): BaseController
     {
-        $this->getControllerConstructorArguments();
         if ((count($this->reflectionConstructorArguments) == 0) || (is_a($this->reflectionConstructorArguments[0]->getType()->getName(), DataMapper::class, true))) {
             return new $this->controllerName($this->dataMapper);
         } else {
             $this->getAutoDependecyInjectionClass();
             return $this->reflectionController->newInstanceArgs($this->constructorArguments);
         }
-    }
-
-    private function getControllerConstructorArguments(): void
-    {
-        $this->reflectionController = new \ReflectionClass($this->controllerName);
-        $this->reflectionConstructor = $this->reflectionController->getConstructor();
-        $this->reflectionConstructorArguments = $this->reflectionConstructor->getParameters();
     }
 
     private function getAutoDependecyInjectionClass(): void
@@ -297,8 +303,6 @@ class Dispatcher
     private function getActionArguments(): void
     {
         if (method_exists($this->controllerInstance, $this->action)) {
-            $this->reflectionAction = $this->reflectionController->getMethod($this->action);
-            ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
             $this->reflectionActionArguments = $this->reflectionAction->getParameters();
         } else {
             $this->reflectionActionArguments = [];
