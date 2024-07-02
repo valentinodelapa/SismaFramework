@@ -31,9 +31,8 @@ use SismaFramework\Core\Enumerations\RequestType;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
 use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
-use SismaFramework\Security\Interfaces\Entities\PasswordInterface;
+use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
 use SismaFramework\Security\Interfaces\Models\MultiFactorModelInterface;
 use SismaFramework\Security\Interfaces\Models\MultiFactorRecoveryModelInterface;
 use SismaFramework\Security\Interfaces\Models\PasswordModelInterface;
@@ -89,12 +88,12 @@ class Authentication extends Submittable
         $this->multiFactorWrapperInterface = $multiFactorWrapperInterface;
     }
 
-    public function checkAuthenticable(): bool
+    public function checkAuthenticable(bool $withCsrfToken = true): bool
     {
-        if((Session::hasItem('csrfToken') === false) || ($this->request->request['csrfToken'] !== Session::getItem('csrfToken'))){
+        if ($withCsrfToken && ($this->checkCsrfToken() === false)) {
             return false;
         }
-        if (Filter::isString($this->request->request['identifier'])) {
+        if (array_key_exists('identifier', $this->request->request) && Filter::isString($this->request->request['identifier'])) {
             $this->authenticableInterface = $this->authenticableModelInterface->getValidAuthenticableInterfaceByIdentifier($this->request->request['identifier']);
             if (($this->authenticableInterface instanceof AuthenticableInterface) && $this->checkPassword($this->authenticableInterface)) {
                 return true;
@@ -106,24 +105,33 @@ class Authentication extends Submittable
         return false;
     }
 
+    public function checkCsrfToken(): bool
+    {
+        if (Session::hasItem('csrfToken') === false) {
+            return false;
+        } elseif (array_key_exists('csrfToken', $this->request->request) === false) {
+            return false;
+        } else {
+            return $this->request->request['csrfToken'] === Session::getItem('csrfToken');
+        }
+    }
+
     public function checkPassword(AuthenticableInterface $authenticableInterface): bool
     {
-        if (Filter::isString($this->request->request['password'])) {
+        if (array_key_exists('password', $this->request->request) && Filter::isString($this->request->request['password'])) {
             $passwordInterface = $this->passwordModelInterface->getPasswordByAuthenticableInterface($authenticableInterface);
-            if($passwordInterface instanceof PasswordInterface){
-                return Encryptor::verifyBlowfishHash($this->request->request['password'], $passwordInterface->password);
-            }
+            return Encryptor::verifyBlowfishHash($this->request->request['password'], $passwordInterface->password);
         }
         return false;
     }
 
     public function checkMultiFactor(AuthenticableInterface $authenticableInterface): bool
     {
-        if (Filter::isString($this->request->request['code'])) {
+        if (array_key_exists('code', $this->request->request) && Filter::isString($this->request->request['code'])) {
             $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByAuthenticableInterface($authenticableInterface);
-            if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->request['code'])){
+            if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->request['code'])) {
                 return true;
-            }elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->request['code'])) {
+            } elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->request['code'])) {
                 return true;
             } else {
                 $this->formFilterError->codeError = true;
@@ -138,7 +146,7 @@ class Authentication extends Submittable
         $result = false;
         $multiFactorRecoveryInterfaceCollection = $this->multiFactorRecoveryModelInterface->getMultiFactorRecoveryInterfaceCollectionByMultiFactorInterface($multiFactorInterface);
         foreach ($multiFactorRecoveryInterfaceCollection as $multiFactorRecoveryInterface) {
-            if(Encryptor::verifyBlowfishHash($code, $multiFactorRecoveryInterface->token)){
+            if (Encryptor::verifyBlowfishHash($code, $multiFactorRecoveryInterface->token)) {
                 $dataMapper->delete($multiFactorRecoveryInterface);
                 $result = true;
             }
@@ -150,5 +158,4 @@ class Authentication extends Submittable
     {
         return $this->authenticableInterface;
     }
-
 }
