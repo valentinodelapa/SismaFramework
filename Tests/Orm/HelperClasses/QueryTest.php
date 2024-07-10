@@ -485,7 +485,7 @@ class QueryTest extends TestCase
                 ->method('allColumns')
                 ->willReturn('*');
         $baseAdapterMock->expects($this->once())
-                ->method('escapeIdentifier')
+                ->method('escapeTable')
                 ->with('tableName')
                 ->willReturn('table_name');
         $baseAdapterMock->expects($this->once())
@@ -493,6 +493,26 @@ class QueryTest extends TestCase
                 ->with(false, ['*'], 'table_name', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setTable('tableName')
+                ->setWhere()
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSetTableWithAlias()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeTable')
+                ->with('tableName', 'A')
+                ->willReturn('table_name as A');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*'], 'table_name as A', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName', 'A')
                 ->setWhere()
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());

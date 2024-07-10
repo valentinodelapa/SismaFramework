@@ -122,9 +122,9 @@ class Query
         return $this;
     }
 
-    public function &setTable(string $table): self
+    public function &setTable(string $table, ?string $tableAlias = null): self
     {
-        $this->table = $this->adapter->escapeIdentifier($table);
+        $this->table = $this->adapter->escapeTable($table, $tableAlias);
         return $this;
     }
 

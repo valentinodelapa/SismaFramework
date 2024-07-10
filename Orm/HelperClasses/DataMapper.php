@@ -62,7 +62,7 @@ class DataMapper
     public function initQuery(string $entityName, Query $query = new Query()): Query
     {
         if (is_a($entityName, BaseEntity::class, true)) {
-            $query->setTable(NotationManager::convertEntityNameToTableName($entityName));
+            $query->setTable($entityName);
             return $query;
         } else {
             throw new DataMapperException($entityName);

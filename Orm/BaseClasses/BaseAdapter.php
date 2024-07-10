@@ -98,6 +98,15 @@ abstract class BaseAdapter
         $parsedName = preg_replace("/([^a-zA-Z_]+)/", "", $name);
         return $parsedName;
     }
+    
+    public function escapeTable(string $table, ?string $tableAlias = null): string
+    {
+        $parsedTable = $this->escapeIdentifier(NotationManager::convertEntityNameToTableName($table));
+        if ($tableAlias !== null) {
+            $parsedTable .= ' as ' . $this->escapeIdentifier(NotationManager::convertEntityNameToTableName($tableAlias));
+        }
+        return $parsedTable;
+    }
 
     public function escapeOrderIndexing(null|string|Indexing $order = null): string
     {

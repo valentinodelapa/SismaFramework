@@ -66,6 +66,15 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('1.1', $adapterMysql->escapeIdentifier("1.1"));
         $this->assertEquals('`Table`.`column_name`', $adapterMysql->escapeIdentifier("T-a#b@l4e.c#o8l(umn_name"));
     }
+    
+    public function testEscapeTable()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('`table_name`', $adapterMysql->escapeTable("tableName"));
+        $this->assertEquals('`table_name`', $adapterMysql->escapeTable("table#Name"));
+        $this->assertEquals('`table_name` as `alias`', $adapterMysql->escapeTable("TableName", "Alias"));
+        $this->assertEquals('`table_name` as `alias`', $adapterMysql->escapeTable("Table#Name", "Ali@as"));
+    }
 
     public function testEscapeOrderIndexing()
     {
