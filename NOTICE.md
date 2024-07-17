@@ -29,7 +29,7 @@ La componente *ORM* è stata sviluppata basandosi su codice originale presente n
 * Modifiche alla struttura del codice, che hanno comportato la riorganizzazione delle classi e delle interfacce.
 * Modifiche alla gestione dei risultati delle query tramite l'elaborazione degli stessi in modo da soddisfare le esigenze del progetto.
 * Modifiche alla funzionalità del codice, che hanno comportato l'aggiunta di nuove funzionalità e la rimozione di funzionalità non necessarie e/o fuori contesto.
-* Modifiche dell'approccio che hanno comportato un cambiamento radicale del modo in cui il codice interagisce con il database, passando dal pattern active records al pattern data mapper.
+* Modifiche dell'approccio che hanno comportato un cambiamento radicale del modo in cui il codice interagisce con il database, passando dal pattern active records al pattern *Data Mapper a mappatura implicita*.
 
 Le modifiche apportate al codice originale riguardano l'intero codice, pertanto non è possibile elencarle tutte in modo dettagliato
 

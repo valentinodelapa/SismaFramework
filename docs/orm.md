@@ -2,7 +2,7 @@
 
 Come già detto in precedenza un *ORM* fornisce un’interfaccia ad oggetti con la quale interagire con il database.
 
-L’ORM integrato nella libreria **SismaFramework** è basato su pattern *Data Mapper* che consente di mantenere indipendenti la rappresentazione in memoria e lo store dei dati. In particolare, il *Data Mapper* è un livello di accesso ai dati che si occupa del trasferimento bidirezionale dei dati tra uno store persistente (spesso un database relazionale) e una rappresentazione in memoria dei dati (il livello di dominio). Il *Data Mapper* in questione è composto da un mapper gestisce, tramite classi ausiliarie, le interazioni principali al database, quali *INSERT*, *CREATE*, *UPDATE*, e *DELETE*.
+L'ORM integrato nella libreria **SismaFramework** si basa sul pattern *Data Mapper a mappatura implicita*, che mantiene separate la rappresentazione in memoria e lo storage dei dati. Il **Data Mapper** funge da livello di astrazione intermedio, gestendo il trasferimento bidirezionale dei dati tra uno storage persistente (tipicamente un database relazionale) e la rappresentazione in memoria (il livello di dominio). Attraverso classi ausiliarie, gestisce le operazioni CRUD (**Create**, **Read**, **Update**, **Delete**) sul database. La mappatura è implicita, non utilizzando file esterni per la corrispondenza tra tabelle del database ed entità del modello.
 
 ---
 

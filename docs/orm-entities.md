@@ -38,7 +38,7 @@ Nella classe genitore sono presenti due metodi astratti che devono essere implem
   }
   ```
 
-Le entità sono dotate di un meccanismo che intercetta le variazioni dei valori delle proprietà in modo tale che il data mapper non effettui operazioni di update inutili su entità i cui dati non presentano alcuna differenza con i dati presenti nella relativa tabella.
+Le entità sono dotate di un meccanismo che intercetta le variazioni dei valori delle proprietà in modo tale che la classe *DataMapper* non effettui operazioni di update inutili su entità i cui dati non presentano alcuna differenza con i dati presenti nella relativa tabella.
 
 È inoltre presente un meccanismo che permette di intercettare le modifiche delle entità referenziate in modo tale che il salvataggio di un’entità contente una chiave esterna effettui il salvataggio anche delle modifiche effettuate all’entità alla quale la chiave esterna fa riferimento.
 

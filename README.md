@@ -6,7 +6,6 @@
 [![license](https://img.shields.io/badge/license-MIT-yellowgreen)](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE)
 [![Documentation](https://img.shields.io/badge/documentation-phpDocumentor-blue)](https://github.com/valentinodelapa/SismaFramework/blob/master/docs-phpdoc/index.html)
 
-
 ## Descrizione
 
 Benvenuto nel progetto! Questa libreria consiste in un framework basato su pattern MVC che integra un ORM per l'interazione con il database.
@@ -158,7 +157,7 @@ I segnaposto sono racchiusi in una coppia di doppie parentesi graffe.
 
 ### ORM
 
-La componente orm è basata su pattern Data Mapper i cui oggetti di dominio sono denominati entità.
+La componente orm è basata su pattern *Data Mapper a mappatura implicita*, i cui oggetti di dominio sono denominati entità.
 
 #### Entità
 
