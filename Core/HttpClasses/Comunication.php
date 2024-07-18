@@ -33,12 +33,16 @@ use SismaFramework\Core\Enumerations\ComunicationProtocol;
  */
 class Comunication
 {
+
+    private static bool $httpsIsForced = \Config\HTTPS_IS_FORCED;
     private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
 
     public static function getComunicationProtocol(): ComunicationProtocol
     {
         $request = new Request();
-        if (isset($request->server['HTTPS'])) {
+        if (self::$httpsIsForced) {
+            return ComunicationProtocol::https;
+        } elseif (isset($request->server['HTTPS'])) {
             return ($request->server['HTTPS'] === 'on') ? ComunicationProtocol::https : ComunicationProtocol::http;
         } elseif (isset($request->server['SERVER_PORT'])) {
             return (intval($request->server['SERVER_PORT']) === 443) ? ComunicationProtocol::https : ComunicationProtocol::http;
