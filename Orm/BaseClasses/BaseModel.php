@@ -44,7 +44,7 @@ abstract class BaseModel
 
     protected DataMapper $dataMapper;
     protected readonly string $entityName;
-    protected static bool $ormCache = \Config\ORM_CACHE;
+    protected static bool $ormCacheStatus = \Config\ORM_CACHE;
 
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
@@ -127,7 +127,7 @@ abstract class BaseModel
 
     public function getEntityById(int $id): ?BaseEntity
     {
-        if (self::$ormCache && Cache::checkEntityPresenceInCache($this->entityName, $id)) {
+        if (self::$ormCacheStatus && Cache::checkEntityPresenceInCache($this->entityName, $id)) {
             return Cache::getEntityById($this->entityName, $id);
         } else {
             $query = $this->initQuery();
@@ -139,9 +139,6 @@ abstract class BaseModel
                     ], [
                 DataType::typeInteger,
             ]);
-            if (self::$ormCache && ($entity instanceof $this->entityName)) {
-                Cache::setEntity($entity);
-            }
             return $entity;
         }
     }

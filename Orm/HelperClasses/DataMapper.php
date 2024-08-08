@@ -269,16 +269,26 @@ class DataMapper
         return $result;
     }
 
-    public function find($entityName, Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
+    public function find(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
     {
         $result = $this->getResultSet($entityName, $query, $bindValues, $bindTypes);
         $collection = new SismaCollection($entityName);
         if ($result instanceof BaseResultSet) {
             foreach ($result as $entity) {
-                $collection->append($entity);
+                $collection->append($this->selectLastModifiedEntity($entityName, $entity));
             }
         }
         return $collection;
+    }
+
+    private function selectLastModifiedEntity(string $entityName, BaseEntity $entity): BaseEntity
+    {
+        if ($this->ormCacheStatus && Cache::checkEntityPresenceInCache($entityName, $entity->id)) {
+            return Cache::getEntityById($entityName, $entity->id);
+        } else {
+            Cache::setEntity($entity);
+            return $entity;
+        }
     }
 
     private function getResultSet(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
@@ -325,7 +335,7 @@ class DataMapper
                 case 0:
                     return null;
                 case 1:
-                    return $result->fetch();
+                    return $this->selectLastModifiedEntity($entityName, $result->fetch());
                 default:
                     throw new DataMapperException();
             }

@@ -719,10 +719,16 @@ class DataMapperTest extends TestCase
 
     public function testFind()
     {
+        $firstInitializedBaseSample = new BaseSample();
+        $firstInitializedBaseSample->id = 1;
+        $secondInitializedBaseSample = new BaseSample();
+        $secondInitializedBaseSample->id = 2;
+        $thirdInitializedBaseSample = new BaseSample();
+        $thirdInitializedBaseSample->id = 2;
         $firstBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $firstBaseResultSetMock->expects($this->exactly(2))
                 ->method('current')
-                ->willReturnOnConsecutiveCalls(new BaseSample(), new BaseSample());
+                ->willReturnOnConsecutiveCalls($firstInitializedBaseSample, $secondInitializedBaseSample);
         $firstBaseResultSetMock->expects($this->any())
                 ->method('valid')
                 ->willReturnOnConsecutiveCalls(true, true, false);
@@ -738,7 +744,7 @@ class DataMapperTest extends TestCase
         $secondBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $secondBaseResultSetMock->expects($this->exactly(1))
                 ->method('current')
-                ->willReturnOnConsecutiveCalls(new BaseSample());
+                ->willReturnOnConsecutiveCalls($thirdInitializedBaseSample);
         $secondBaseResultSetMock->expects($this->any())
                 ->method('valid')
                 ->willReturnOnConsecutiveCalls(true, false);
@@ -794,6 +800,8 @@ class DataMapperTest extends TestCase
 
     public function testFindFirst()
     {
+        $initializedBaseSample = new BaseSample();
+        $initializedBaseSample->id = 1;
         $firstBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $firstBaseResultSetMock->expects($this->any())
                 ->method('numRows')
@@ -801,7 +809,7 @@ class DataMapperTest extends TestCase
         $secondBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $secondBaseResultSetMock->expects($this->exactly(1))
                 ->method('fetch')
-                ->willReturn(new BaseSample());
+                ->willReturn($initializedBaseSample);
         $secondBaseResultSetMock->expects($this->any())
                 ->method('numRows')
                 ->willReturn(1);
