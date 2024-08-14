@@ -24,42 +24,14 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HelperClasses;
+namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\Exceptions\FilesystemPermissionException;
+use SismaFramework\Security\ExtendedClasses\NoLogException;
 
 /**
- * Description of Locker
- *
  * @author Valentino de Lapa
  */
-class Locker
+class FilesystemPermissionException extends NoLogException
 {
-
-    public static function lockFolder(string $dirname): void
-    {
-        $file = fopen($dirname . DIRECTORY_SEPARATOR . '.lock', 'w');
-        if ($file) {
-            fclose($file);
-        } else {
-            throw new FilesystemPermissionException();
-        }
-    }
-
-    public static function unlockFolder(string $dirname): void
-    {
-        if (file_exists($dirname . DIRECTORY_SEPARATOR . '.lock')) {
-            $result = unlink($dirname . DIRECTORY_SEPARATOR . '.lock');
-            if ($result === false) {
-                throw new FilesystemPermissionException();
-            }
-        } else {
-            throw new FilesystemPermissionException();
-        }
-    }
-
-    public static function folderIsLocked(string $dirname): bool
-    {
-        return file_exists($dirname . DIRECTORY_SEPARATOR . '.lock');
-    }
+    
 }
