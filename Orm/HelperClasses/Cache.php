@@ -26,10 +26,11 @@
 
 namespace SismaFramework\Orm\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\Locker;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\Exceptions\CacheException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
-use SismaFramework\Core\HelperClasses\ModuleManager;
 
 /**
  * Description of EntityCache
@@ -154,6 +155,7 @@ class Cache
             }
         }
         file_put_contents(self::$referencedCachePath, json_encode(static::$foreighKeyDataCache));
+        Locker::lockFolder(self::$referencedCacheDirectory);
     }
 
     private static function scanModuleEntities($module, $directory): void

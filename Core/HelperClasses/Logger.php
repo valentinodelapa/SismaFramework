@@ -44,7 +44,7 @@ class Logger
 
     public static function saveLog(string $message, int|string $code, string $file, string $line): void
     {
-        self::createLogDirectory();
+        self::createLogStructure();
         $handle = fopen(self::$logPath, 'a');
         if ($handle !== false) {
             fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "(" . $line . ")" . "\n");
@@ -52,13 +52,32 @@ class Logger
         }
         self::truncateLog();
     }
+    
+    private static function createLogStructure():void
+    {
+        self::createLogDirectory();
+        self::createLogFile();
+    }
 
-    public static function createLogDirectory()
+    private static function createLogDirectory(): void
     {
         if (is_dir(self::$logDirectoryPath) === false) {
             mkdir(self::$logDirectoryPath);
             $handle = fopen(self::$logPath, 'a');
             fclose($handle);
+        }
+        Locker::lockFolder(self::$logDirectoryPath);
+    }
+
+    private static function createLogFile(): void
+    {
+        if (file_exists(self::$logPath) === false) {
+            $file = fopen(self::$logPath, 'w');
+            if ($file) {
+                fclose($file);
+            } else {
+                
+            }
         }
     }
 
@@ -87,25 +106,25 @@ class Logger
 
     public static function clearLog(): void
     {
-        self::createLogDirectory();
+        self::createLogStructure();
         file_put_contents(self::$logPath, '');
     }
 
     public static function getLog(): string|false
     {
-        self::createLogDirectory();
+        self::createLogStructure();
         return file_get_contents(self::$logPath);
     }
 
     public static function getLogRowByRow(): array|false
     {
-        self::createLogDirectory();
+        self::createLogStructure();
         return file(self::$logPath);
     }
 
     public static function getLogRowNumber(): int
     {
-        self::createLogDirectory();
+        self::createLogStructure();
         return count(file(self::$logPath));
     }
 }

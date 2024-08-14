@@ -80,7 +80,7 @@ class ResourceMaker
     public function makeResource(string $filename, $forceDownload = false): Response
     {
         $resource = Resource::from($this->getExtension($filename));
-        if ($this->folderIsLocked($filename) === false) {
+        if (Locker::folderIsLocked(dirname($filename)) === false) {
             if ($resource->isRenderable() && ($forceDownload === false)) {
                 return $this->viewResource($filename, $resource);
             } elseif ($resource->isDownloadable()) {
@@ -91,11 +91,6 @@ class ResourceMaker
         } else {
             throw new AccessDeniedException($filename);
         }
-    }
-
-    private function folderIsLocked(string $filename): bool
-    {
-        return file_exists(dirname($filename) . DIRECTORY_SEPARATOR . '.lock');
     }
 
     private function viewResource(string $filename, Resource $resource): Response

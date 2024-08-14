@@ -42,15 +42,6 @@ class LoggerTest extends TestCase
         $this->assertStringContainsString("1\tsample message\tfilePath(0)\n", $log);
     }
     
-    public function testCreateLogDirectory()
-    {
-        unlink(\Config\LOG_PATH);
-        rmdir(\Config\LOG_DIRECTORY_PATH);
-        $this->assertFalse(is_dir(\Config\LOG_DIRECTORY_PATH));
-        Logger::createLogDirectory();
-        $this->assertTrue(is_dir(\Config\LOG_DIRECTORY_PATH));
-    }
-    
     public function testTruncateLog()
     {
         Logger::setMaxRows(2);
