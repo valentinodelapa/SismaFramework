@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Render;
 
 /**
@@ -34,5 +35,104 @@ use SismaFramework\Core\HelperClasses\Render;
  */
 class RenderTest extends TestCase
 {
+    public function testGenerateViewInDevelopementEnvironment()
+    {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/Database/');
+        $this->expectOutputRegex('/Log/');
+        $this->expectOutputRegex('/Form/');
+        $this->expectOutputRegex('/Variables/');
+        $vars = [
+            'metaUrl' => '',
+            'controllerUrl' => 'sample',
+            'actionUrl' => 'index',
+        ];
+        Debugger::startExecutionTimeCalculation();
+        Render::setDevelopementEnvironment();
+        Render::generateView('sample/index', $vars);
+    }
     
+    public function testGenerateViewNotInDevelopementEnvironment()
+    {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
+        $vars = [
+            'metaUrl' => '',
+            'controllerUrl' => 'sample',
+            'actionUrl' => 'index',
+        ];
+        Debugger::startExecutionTimeCalculation();
+        Render::setDevelopementEnvironment(false);
+        Render::generateView('sample/index', $vars);
+    }
+    
+    public function testGenerateViewStructural()
+    {
+        \ob_end_clean();
+        $this->expectOutputRegex('/Unexpected Error/');
+        Render::setStructural();
+        Render::generateView('framnework/internalServerError', []);
+        Render::setStructural(false);
+    }
+    
+    public function testGenerateDataInDevelopementEnvironment()
+    {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
+        $vars = [
+            'metaUrl' => '',
+            'controllerUrl' => 'sample',
+            'actionUrl' => 'index',
+        ];
+        Debugger::startExecutionTimeCalculation();
+        Render::setDevelopementEnvironment();
+        Render::generateData('sample/index', $vars);
+    }
+    
+    public function testGenerateDataNotInDevelopementEnvironment()
+    {
+        \ob_end_clean();
+        $this->expectOutputRegex('/sample - index/');
+        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
+        $vars = [
+            'metaUrl' => '',
+            'controllerUrl' => 'sample',
+            'actionUrl' => 'index',
+        ];
+        Debugger::startExecutionTimeCalculation();
+        Render::setDevelopementEnvironment(false);
+        Render::generateData('sample/index', $vars);
+    }
+    
+    public function testGenerareJsonInDevelopementEnvironment()
+    {
+        \ob_end_clean();
+        $this->expectOutputString('{"title":"Homepage","message":"test"}');
+        Render::setDevelopementEnvironment();
+        Render::generateJson(['message' => 'test']);
+    }
+    
+    public function testGenerareJsonNotInDevelopementEnvironment()
+    {
+        \ob_end_clean();
+        $this->expectOutputString('{"title":"Homepage","message":"test"}');
+        Render::setDevelopementEnvironment(false);
+        Render::generateJson(['message' => 'test']);
+    }
+    
+    public function testGenerareJsonStructural()
+    {
+        \ob_end_clean();
+        $this->expectOutputString('{"message":"test"}');
+        Render::setStructural();
+        Render::generateJson(['message' => 'test']);
+        Render::setStructural(false);
+    }
 }

@@ -129,16 +129,42 @@ class Render
         return $response;
     }
 
+    public static function generateJson(array $vars, ResponseType $responseType = ResponseType::httpOk): Response
+    {
+        $response = self::getResponse($responseType);
+        BufferManager::start();
+        if (self::$isStructural) {
+            $jsonData = $vars;
+        } else {
+            $locale = self::getActualLocaleArray(self::$view);
+            $jsonData = array_merge($locale, $vars);
+        }
+        $encodedJsonData = json_encode($jsonData);
+        header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
+        header("Accept-Ranges: bytes");
+        header("Content-type: " . Resource::json->getMime());
+        header('X-Content-Type-Options: nosniff');
+        header("Content-Disposition: inline");
+        header("Content-Length: " . strlen($encodedJsonData));
+        echo $encodedJsonData;
+        return $response;
+    }
+
     public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
     {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
         $enumerationName = $reflectionEnumeration->getShortName();
-        $locale = self::getLocale();
+        $locale = Localizator::getLocale();
         $field = $locale['enumerations'][$enumerationName];
         return $field[$enumeration];
     }
 
-    public static function setStructural(bool $isStructural = true)
+    public static function setDevelopementEnvironment(bool $developementEnvironment = true): void
+    {
+        self::$developementEnvironment = $developementEnvironment;
+    }
+
+    public static function setStructural(bool $isStructural = true): void
     {
         self::$isStructural = $isStructural;
     }

@@ -40,6 +40,7 @@ class Router
     private static $controllerUrl;
     private static $actionUrl;
     private static $actualCleanUrl;
+    private $parsedUrl;
 
     public static function redirect(string $relativeUrl): Response
     {
@@ -99,7 +100,13 @@ class Router
         $requestUri = $request->server['REQUEST_URI'];
         $parsedUrl = str_replace(["?", "=", "&"], '/', $requestUri);
         $parsedUrl = str_replace('//', '/', $parsedUrl);
-        header("Location: " . self::$metaUrl . $parsedUrl);
+        $this->parsedUrl = str_ends_with($parsedUrl, '/') ?: $parsedUrl . '/';
+        header("Location: " . self::$metaUrl . $this->parsedUrl);
         return new Response();
+    }
+
+    public function getParsedUrl(): string
+    {
+        return $this->parsedUrl;
     }
 }

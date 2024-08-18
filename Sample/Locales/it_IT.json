@@ -1,4 +1,10 @@
 {
+    "common": {
+
+    },
+    "enumerations": {
+
+    },
     "pages": {
         "common": {
 
@@ -19,9 +25,6 @@
                 "title": "Progetto"
             }
         }
-    },
-    "common": {
-
     },
     "templates": {
 

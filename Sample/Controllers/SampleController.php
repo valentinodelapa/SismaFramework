@@ -38,7 +38,6 @@ class SampleController extends BaseController implements DefaultControllerInterf
 
     public function project(): Response
     {
-        
         return Render::generateView('sample/project', $this->vars, ResponseType::httpOk, $this->dataMapper);
     }
 

@@ -28,6 +28,9 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\Enumerations\ResponseType;
 
 /**
  * @author Valentino de Lapa
@@ -36,7 +39,9 @@ class RouterTest extends TestCase
 {
     public function testRedirect()
     {
-        
+        $response = Router::redirect('sample/notify/message/notify/');
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals(ResponseType::httpFound->value, http_response_code());
     }
     
     public function testGetActualUrl()
@@ -48,6 +53,12 @@ class RouterTest extends TestCase
     
     public function testReloadWithParsedQueryString()
     {
-        
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->server['REQUEST_URI'] = '/sample/notify?message=notify';
+        $router = new Router();
+        $response = $router->reloadWithParsedQueryString($requestMock);
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals(ResponseType::httpFound->value, http_response_code());
+        $this->assertEquals('/sample/notify/message/notify/', $router->getParsedUrl());
     }
 }
