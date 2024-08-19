@@ -35,15 +35,10 @@ use SismaFramework\Core\HelperClasses\ModuleManager;
  */
 class Localizator
 {
+
     private static string $defaultLocaleType = \Config\DEFAULT_LOCALE_TYPE;
-    private static Language $language;
     private static string $localesPath = \Config\LOCALES_PATH;
     private static Resource $localeType;
-    
-    public static function setLanguage(Language $language):void
-    {
-        self::$language = $language;
-    }
 
     public static function getPageLocaleArray(string $view): array
     {
@@ -60,32 +55,30 @@ class Localizator
         return array_merge($commonLocale, $actualLocale);
     }
 
-    private static function getLocale(): array
+    private static function getLocale(?Language $customLanguage = null): array
     {
-        $languagePath = self::getLanguagePath();
+        $language = $customLanguage ?? self::getDefaultLanguage();
+        $localePath = self::getLocalePath($language);
         switch (self::$localeType) {
             case Resource::json:
-                $locale = json_decode(file_get_contents($languagePath), true);
+                $locale = json_decode(file_get_contents($localePath), true);
                 break;
             case Resource::php:
             default:
-                include($languagePath);
+                include($localePath);
                 break;
         }
         return $locale;
     }
 
-    private static function getLanguagePath(): string
+    private static function getDefaultLanguage(): Language
     {
-        if (isset(self::$language) === false) {
-            $defaultLanguage = Language::tryFrom(\Config\LANGUAGE);
-            if($defaultLanguage instanceof Language){
-                self::$language = $defaultLanguage;
-            }else{
-                throw new LocalizatorException('Formato lingua non corretto');
-            }
+        $defaultLanguage = Language::tryFrom(\Config\LANGUAGE);
+        if ($defaultLanguage instanceof Language) {
+            return $defaultLanguage;
+        } else {
+            throw new LocalizatorException('Formato lingua non corretto');
         }
-        return self::getLocalePath(self::$language);
     }
 
     private static function getLocalePath(Language $language): string
