@@ -45,7 +45,22 @@ class Localizator
         self::$language = $language;
     }
 
-    public static function getLocale(): array
+    public static function getPageLocaleArray(string $view): array
+    {
+        $viewParts = \explode('/', $view);
+        $locale = self::getLocale();
+        $actualLocale = $locale['pages'];
+        $commonLocale = $locale['pages']['common'];
+        foreach ($viewParts as $part) {
+            if (isset($actualLocale['common'])) {
+                $commonLocale = array_merge($commonLocale, $actualLocale['common']);
+            }
+            $actualLocale = $actualLocale[$part] ?? [];
+        }
+        return array_merge($commonLocale, $actualLocale);
+    }
+
+    private static function getLocale(): array
     {
         $languagePath = self::getLanguagePath();
         switch (self::$localeType) {
@@ -81,5 +96,21 @@ class Localizator
         } else {
             throw new LocalizatorException('File non trovato');
         }
+    }
+
+    public static function getTemplateLocaleArray(string $template): array
+    {
+        $locale = Localizator::getLocale();
+        $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
+        return $actualLocale;
+    }
+
+    public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
+    {
+        $reflectionEnumeration = new \ReflectionClass($enumeration);
+        $enumerationName = $reflectionEnumeration->getShortName();
+        $locale = self::getLocale();
+        $field = $locale['enumerations'][$enumerationName];
+        return $field[$enumeration];
     }
 }

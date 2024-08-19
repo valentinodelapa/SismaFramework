@@ -63,7 +63,7 @@ class Render
         $deviceClass = self::getDeviceClass();
         $viewPath = self::getViewPath(self::$view);
         if (self::$isStructural === false) {
-            $locale = self::getActualLocaleArray(self::$view);
+            $locale = Localizator::getPageLocaleArray(self::$view);
             extract($locale);
         }
         extract($vars);
@@ -88,21 +88,6 @@ class Render
         } else {
             return false;
         }
-    }
-
-    private static function getActualLocaleArray(string $view): array
-    {
-        $viewParts = \explode('/', $view);
-        $locale = Localizator::getLocale();
-        $actualLocale = $locale['pages'];
-        $commonLocale = $locale['pages']['common'];
-        foreach ($viewParts as $part) {
-            if (isset($actualLocale['common'])) {
-                $commonLocale = array_merge($commonLocale, $actualLocale['common']);
-            }
-            $actualLocale = $actualLocale[$part] ?? [];
-        }
-        return array_merge($commonLocale, $actualLocale);
     }
 
     private static function generateDebugBar(DataMapper $dataMapper = new DataMapper()): string
@@ -136,7 +121,7 @@ class Render
         if (self::$isStructural) {
             $jsonData = $vars;
         } else {
-            $locale = self::getActualLocaleArray(self::$view);
+            $locale = Localizator::getPageLocaleArray(self::$view);
             $jsonData = array_merge($locale, $vars);
         }
         $encodedJsonData = json_encode($jsonData);
@@ -148,15 +133,6 @@ class Render
         header("Content-Length: " . strlen($encodedJsonData));
         echo $encodedJsonData;
         return $response;
-    }
-
-    public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
-    {
-        $reflectionEnumeration = new \ReflectionClass($enumeration);
-        $enumerationName = $reflectionEnumeration->getShortName();
-        $locale = Localizator::getLocale();
-        $field = $locale['enumerations'][$enumerationName];
-        return $field[$enumeration];
     }
 
     public static function setDevelopementEnvironment(bool $developementEnvironment = true): void
