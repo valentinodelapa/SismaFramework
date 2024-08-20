@@ -75,7 +75,7 @@ class RenderTest extends TestCase
         \ob_end_clean();
         $this->expectOutputRegex('/Unexpected Error/');
         Render::setStructural();
-        Render::generateView('framnework/internalServerError', []);
+        Render::generateView('framework/internalServerError', []);
         Render::setStructural(false);
     }
     
