@@ -32,7 +32,6 @@ use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Localizator;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
-use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  *
@@ -47,12 +46,12 @@ class Render
     private static string $view;
     private static string $viewsPath = \Config\VIEWS_PATH;
 
-    public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk, DataMapper $dataMapper = new DataMapper()): Response
+    public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
     {
         $response = self::getResponse($responseType);
         Debugger::setVars($vars);
         self::assemblesComponents($view, $vars);
-        echo static::generateDebugBar($dataMapper);
+        echo static::generateDebugBar();
         return $response;
     }
 
@@ -70,15 +69,6 @@ class Render
         include($viewPath);
     }
 
-    private static function getViewPath(string $view): string
-    {
-        if (self::$isStructural) {
-            return self::$structuralViewsPath . $view . '.' . Resource::php->value;
-        } else {
-            return ModuleManager::getExistingFilePath(self::$viewsPath . $view, Resource::php);
-        }
-    }
-
     private static function getDeviceClass(): string|false
     {
         $request = new Request();
@@ -89,12 +79,36 @@ class Render
             return false;
         }
     }
+	
+    private static function getViewPath(string $view): string
+    {
+        if (self::$isStructural) {
+            return self::$structuralViewsPath . $view . '.' . Resource::php->value;
+        } else {
+            return ModuleManager::getExistingFilePath(self::$viewsPath . $view, Resource::php);
+        }
+    }
 
-    private static function generateDebugBar(DataMapper $dataMapper = new DataMapper()): string
+    private static function getActualLocaleArray(string $view): array
+    {
+        $viewParts = \explode('/', $view);
+        $locale = Localizator::getLocale();
+        $actualLocale = $locale['pages'];
+        $commonLocale = $locale['pages']['common'];
+        foreach ($viewParts as $part) {
+            if (isset($actualLocale['common'])) {
+                $commonLocale = array_merge($commonLocale, $actualLocale['common']);
+            }
+            $actualLocale = $actualLocale[$part] ?? [];
+        }
+        return array_merge($commonLocale, $actualLocale);
+    }
+
+    private static function generateDebugBar(): string
     {
         Debugger::endExecutionTimeCalculation();
         if (self::$developementEnvironment) {
-            return Debugger::generateDebugBar($dataMapper);
+            return Debugger::generateDebugBar();
         } else {
             return '';
         }

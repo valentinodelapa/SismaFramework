@@ -28,7 +28,6 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
@@ -93,19 +92,16 @@ class Parser
         }
     }
 
-    public static function unparseValues(array &$arrayValues, DataMapper $dataMapper = new DataMapper(), Query $query = new Query()): void
+    public static function unparseValues(array &$arrayValues): void
     {
         foreach ($arrayValues as &$value) {
-            $value = self::unparseValue($value, false, $dataMapper, $query);
+            $value = self::unparseValue($value);
         }
     }
 
-    public static function unparseValue(mixed $value, bool $persistentUnparse = false, DataMapper $dataMapper = new DataMapper(), Query $query = new Query()): null|int|float|string
+    public static function unparseValue(mixed $value): null|int|float|string
     {
         if ($value instanceof BaseEntity) {
-            if ($persistentUnparse) {
-                self::saveEntityModification($value, $dataMapper, $query);
-            }
             return $value->id;
         } elseif ($value instanceof \UnitEnum) {
             return $value->value;
@@ -118,10 +114,5 @@ class Parser
         } else {
             return $value;
         }
-    }
-
-    private static function saveEntityModification(BaseEntity $entity, DataMapper $dataMapper, Query $query = new Query()): void
-    {
-        $dataMapper->save($entity, $query, false);
     }
 }

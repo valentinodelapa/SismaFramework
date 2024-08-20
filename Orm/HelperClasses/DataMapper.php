@@ -125,7 +125,11 @@ class DataMapper
             if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
                 $markers[] = Keyword::placeholder->value;
                 $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
-                $parsedValue = Parser::unparseValue($reflectionProperty->getValue($entity), true);
+                $currentValue = $reflectionProperty->getValue($entity);
+                if ($currentValue instanceof BaseEntity) {
+                    $this->save($currentValue);
+                }
+                $parsedValue = Parser::unparseValue($currentValue);
                 if ($entity->isEncryptedProperty($reflectionProperty->getName())) {
                     if (empty($entity->{$entity->getInitializationVectorPropertyName()})) {
                         $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInizializationVector();
