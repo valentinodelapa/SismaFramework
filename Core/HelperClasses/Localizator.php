@@ -35,25 +35,22 @@ use SismaFramework\Core\Enumerations\Resource;
 class Localizator
 {
 
+    private static Language $injectedLanguage;
+    private Resource $localeType;
+    private ?Language $customLanguage;
     private static string $defaultLocaleType = \Config\DEFAULT_LOCALE_TYPE;
     private static string $localesPath = \Config\LOCALES_PATH;
-    private static Language $injectedLanguage;
-    private static Resource $localeType;
-    
-    public static function setLanguage(Language $language):void
+
+    public function __construct(?Resource $localeType = null, ?Language $customLanguage = null)
     {
-        self::$injectedLanguage = $language;
-    }
-    
-    public static function unsetLanguage():void
-    {
-        unset(self::$injectedLanguage);
+        $this->localeType = $localeType ?? Resource::tryFrom(self::$defaultLocaleType);
+        $this->customLanguage = $customLanguage;
     }
 
-    public function getPageLocaleArray(string $view, ?Language $customLanguage = null): array
+    public function getPageLocaleArray(string $view): array
     {
         $viewParts = \explode('/', $view);
-        $locale = self::getLocale($customLanguage);
+        $locale = $this->getLocale();
         $actualLocale = $locale['pages'];
         $commonLocale = $locale['pages']['common'];
         foreach ($viewParts as $part) {
@@ -65,11 +62,11 @@ class Localizator
         return array_merge($commonLocale, $actualLocale);
     }
 
-    private static function getLocale(?Language $customLanguage = null): array
+    private function getLocale(): array
     {
-        $language = $customLanguage ?? self::$injectedLanguage ?? self::getDefaultLanguage();
-        $localePath = self::getLocalePath($language);
-        switch (self::$localeType) {
+        $language = $this->customLanguage ?? self::$injectedLanguage ?? self::getDefaultLanguage();
+        $localePath = $this->getLocalePath($language);
+        switch ($this->localeType) {
             case Resource::json:
                 $locale = json_decode(file_get_contents($localePath), true);
                 break;
@@ -91,11 +88,10 @@ class Localizator
         }
     }
 
-    private static function getLocalePath(Language $language): string
+    private function getLocalePath(Language $language): string
     {
-        self::$localeType = Resource::tryFrom(self::$defaultLocaleType);
-        if (self::$localeType !== null) {
-            return ModuleManager::getConsequentFilePath(self::$localesPath . $language->value, self::$localeType);
+        if ($this->localeType !== null) {
+            return ModuleManager::getConsequentFilePath(self::$localesPath . $language->value, $this->localeType);
         } else {
             throw new LocalizatorException('File non trovato');
         }
@@ -103,7 +99,7 @@ class Localizator
 
     public function getTemplateLocaleArray(string $template, ?Language $customLanguage = null): array
     {
-        $locale = Localizator::getLocale($customLanguage);
+        $locale = $this->getLocale();
         $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
         return $actualLocale;
     }
@@ -112,8 +108,18 @@ class Localizator
     {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
         $enumerationName = $reflectionEnumeration->getShortName();
-        $locale = self::getLocale($customLanguage);
+        $locale = $this->getLocale();
         $field = $locale['enumerations'][$enumerationName];
         return $field[$enumeration];
+    }
+
+    public static function setLanguage(Language $language): void
+    {
+        self::$injectedLanguage = $language;
+    }
+
+    public static function unsetLanguage(): void
+    {
+        unset(self::$injectedLanguage);
     }
 }
