@@ -241,7 +241,7 @@ class ParserTest extends TestCase
             'sismaDateTime' => $sismaDateTime,
             'sismaTime' => $sismaTime,
         ];
-        Parser::unparseValues($array, $this->dataMapperMock);
+        Parser::unparseValues($array);
         $this->assertEquals(1, $array['baseSample']);
         $this->assertEquals($sampleType->value, $array['sampleType']);
         $this->assertEquals($sismaDate->format('Y-m-d'), $array['sismaDate']);

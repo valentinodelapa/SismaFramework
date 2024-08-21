@@ -21,24 +21,24 @@ class SampleController extends BaseController implements DefaultControllerInterf
 
     public function index(): Response
     {
-        return Render::generateView('sample/index', $this->vars, ResponseType::httpOk, $this->dataMapper);
+        return Render::generateView('sample/index', $this->vars);
     }
     
     public function error(string $message, ResponseType $responseType): Response
     {
         $this->vars['message'] = urldecode($message);
-        return Render::generateView('sample/error', $this->vars, $responseType, $this->dataMapper);
+        return Render::generateView('sample/error', $this->vars, $responseType);
     }
 
     public function notify(string $message): Response
     {
         $this->vars['message'] = urldecode($message);
-        return Render::generateView('sample/notify', $this->vars, ResponseType::httpOk, $this->dataMapper);
+        return Render::generateView('sample/notify', $this->vars);
     }
 
     public function project(): Response
     {
-        return Render::generateView('sample/project', $this->vars, ResponseType::httpOk, $this->dataMapper);
+        return Render::generateView('sample/project', $this->vars);
     }
 
 }

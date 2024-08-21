@@ -28,8 +28,6 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HelperClasses\BufferManager;
-use SismaFramework\Core\HelperClasses\Localizator;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 
@@ -46,23 +44,34 @@ class Render
     private static string $view;
     private static string $viewsPath = \Config\VIEWS_PATH;
 
-    public static function generateView(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
+    public static function generateView(string $view,
+            array $vars,
+            ResponseType $responseType = ResponseType::httpOk,
+            Localizator $localizator = new Localizator(),
+            Debugger $debugger = new Debugger()): Response
     {
         $response = self::getResponse($responseType);
         Debugger::setVars($vars);
-        self::assemblesComponents($view, $vars);
-        echo static::generateDebugBar();
+        self::assemblesComponents($view, $localizator, $vars);
+        echo static::generateDebugBar($debugger);
         return $response;
     }
 
-    private static function assemblesComponents(string $view, array $vars): void
+    private static function getResponse(ResponseType $responseType): Response
+    {
+        $response = new Response();
+        $response->setResponseType($responseType);
+        return $response;
+    }
+
+    private static function assemblesComponents(string $view, Localizator $localizator, array $vars): void
     {
         BufferManager::start();
         self::$view = $view;
         $deviceClass = self::getDeviceClass();
         $viewPath = self::getViewPath(self::$view);
         if (self::$isStructural === false) {
-            $locale = Localizator::getPageLocaleArray(self::$view);
+            $locale = $localizator->getPageLocaleArray(self::$view);
             extract($locale);
         }
         extract($vars);
@@ -88,54 +97,34 @@ class Render
             return ModuleManager::getExistingFilePath(self::$viewsPath . $view, Resource::php);
         }
     }
-
-    private static function getActualLocaleArray(string $view): array
+    private static function generateDebugBar(Debugger $debugger): string
     {
-        $viewParts = \explode('/', $view);
-        $locale = Localizator::getLocale();
-        $actualLocale = $locale['pages'];
-        $commonLocale = $locale['pages']['common'];
-        foreach ($viewParts as $part) {
-            if (isset($actualLocale['common'])) {
-                $commonLocale = array_merge($commonLocale, $actualLocale['common']);
-            }
-            $actualLocale = $actualLocale[$part] ?? [];
-        }
-        return array_merge($commonLocale, $actualLocale);
-    }
-
-    private static function generateDebugBar(): string
-    {
-        Debugger::endExecutionTimeCalculation();
         if (self::$developementEnvironment) {
-            return Debugger::generateDebugBar();
+            return $debugger->generateDebugBar();
         } else {
             return '';
         }
     }
 
-    private static function getResponse(ResponseType $responseType): Response
-    {
-        $response = new Response();
-        $response->setResponseType($responseType);
-        return $response;
-    }
-
-    public static function generateData(string $view, array $vars, ResponseType $responseType = ResponseType::httpOk): Response
+    public static function generateData(string $view, array $vars,
+            ResponseType $responseType = ResponseType::httpOk,
+            Localizator $localizator = new Localizator()): Response
     {
         $response = self::getResponse($responseType);
-        self::assemblesComponents($view, $vars);
+        self::assemblesComponents($view, $localizator, $vars);
         return $response;
     }
 
-    public static function generateJson(array $vars, ResponseType $responseType = ResponseType::httpOk): Response
+    public static function generateJson(array $vars,
+            ResponseType $responseType = ResponseType::httpOk,
+            Localizator $localizator = new Localizator()): Response
     {
         $response = self::getResponse($responseType);
         BufferManager::start();
         if (self::$isStructural) {
             $jsonData = $vars;
         } else {
-            $locale = Localizator::getPageLocaleArray(self::$view);
+            $locale = $localizator->getPageLocaleArray(self::$view);
             $jsonData = array_merge($locale, $vars);
         }
         $encodedJsonData = json_encode($jsonData);

@@ -28,7 +28,6 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
-use SismaFramework\Core\HelperClasses\ModuleManager;
 
 /**
  * @author Valentino de Lapa
@@ -38,12 +37,23 @@ class Localizator
 
     private static string $defaultLocaleType = \Config\DEFAULT_LOCALE_TYPE;
     private static string $localesPath = \Config\LOCALES_PATH;
+    private static Language $injectedLanguage;
     private static Resource $localeType;
+    
+    public static function setLanguage(Language $language):void
+    {
+        self::$injectedLanguage = $language;
+    }
+    
+    public static function unsetLanguage():void
+    {
+        unset(self::$injectedLanguage);
+    }
 
-    public static function getPageLocaleArray(string $view): array
+    public function getPageLocaleArray(string $view, ?Language $customLanguage = null): array
     {
         $viewParts = \explode('/', $view);
-        $locale = self::getLocale();
+        $locale = self::getLocale($customLanguage);
         $actualLocale = $locale['pages'];
         $commonLocale = $locale['pages']['common'];
         foreach ($viewParts as $part) {
@@ -57,7 +67,7 @@ class Localizator
 
     private static function getLocale(?Language $customLanguage = null): array
     {
-        $language = $customLanguage ?? self::getDefaultLanguage();
+        $language = $customLanguage ?? self::$injectedLanguage ?? self::getDefaultLanguage();
         $localePath = self::getLocalePath($language);
         switch (self::$localeType) {
             case Resource::json:
@@ -91,18 +101,18 @@ class Localizator
         }
     }
 
-    public static function getTemplateLocaleArray(string $template): array
+    public function getTemplateLocaleArray(string $template, ?Language $customLanguage = null): array
     {
-        $locale = Localizator::getLocale();
+        $locale = Localizator::getLocale($customLanguage);
         $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
         return $actualLocale;
     }
 
-    public static function getEnumerationLocaleArray(\UnitEnum $enumeration): array
+    public function getEnumerationLocaleArray(\UnitEnum $enumeration, ?Language $customLanguage = null): array
     {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
         $enumerationName = $reflectionEnumeration->getShortName();
-        $locale = self::getLocale();
+        $locale = self::getLocale($customLanguage);
         $field = $locale['enumerations'][$enumerationName];
         return $field[$enumeration];
     }

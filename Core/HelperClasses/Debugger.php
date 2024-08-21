@@ -38,7 +38,7 @@ use SismaFramework\Core\HelperClasses\Parser;
 class Debugger
 {
 
-    private static float $microtime;
+    private static float $startMicrotime;
     private static float $executionTime;
     private static int $queryExecutedNumber = 0;
     private static int $logRowNumber = 0;
@@ -50,16 +50,16 @@ class Debugger
 
     public static function startExecutionTimeCalculation(): void
     {
-        static::$microtime = microtime(true);
+        static::$startMicrotime = microtime(true);
     }
 
-    public static function endExecutionTimeCalculation(): void
+    public static function establishExecutionTimeCalculation(): void
     {
-        $executionTime = (microtime(true) - self::$microtime) * 1000;
+        $executionTime = (microtime(true) - self::$startMicrotime) * 1000;
         static::$executionTime = round($executionTime, 2);
     }
 
-    public static function generateDebugBar()
+    public function generateDebugBar()
     {
         Templater::setStructural();
         $debugBarQuery = $debugBarLog = $debugBarForm = $debugBarVars = '';
@@ -113,6 +113,7 @@ class Debugger
 
     public static function getInformations(): array
     {
+        self::establishExecutionTimeCalculation();
         return [
             "queryExecutedNumber" => self::$queryExecutedNumber,
             "logRowNumber" => self::$logRowNumber,
@@ -149,19 +150,12 @@ class Debugger
     {
         $parsedVars = [];
         foreach ($vars as $key => $value) {
-            switch (gettype($value)) {
-                case 'boolean':
-                case 'integer':
-                case 'double':
-                case 'string':
-                    $parsedVars[$key] = $value;
-                    break;
-                default:
-                    $parsedVars[$key] = gettype($value);
-                    break;
+            if (is_scalar($value)) {
+                $parsedVars[$key] = htmlentities($value);
+            } else {
+                $parsedVars[$key] = gettype($value);
             }
         }
         self::$vars = $parsedVars;
     }
-
 }

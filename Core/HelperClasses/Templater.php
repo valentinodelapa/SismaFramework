@@ -44,9 +44,9 @@ class Templater
         self::$isStructural = $isStructural;
     }
 
-    public static function generateTemplate(string $template, array $vars): string
+    public static function generateTemplate(string $template, array $vars, Localizator $localizator = new Localizator()): string
     {
-        $varsAndLocales = array_merge($vars, Localizator::getTemplateLocaleArray($template));
+        $varsAndLocales = array_merge($vars, $localizator->getTemplateLocaleArray($template));
         $templateContent = self::getTemplateContent($template);
         $parsedTemplateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($varsAndLocales) {
             $var = str_replace(['{{', '}}'], '', $varName[0]);

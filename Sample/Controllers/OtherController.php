@@ -27,10 +27,9 @@
 namespace SismaFramework\Sample\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Security\HttpClasses\Authentication;
 
@@ -51,31 +50,31 @@ class OtherController extends BaseController
     public function index(string $parameter): Response
     {
         $this->vars['parameter'] = urldecode($parameter);
-        return Render::generateView('other/index', $this->vars, ResponseType::httpOk);
+        return Render::generateView('other/index', $this->vars);
     }
 
     public function actionWithRequest(Request $request): Response
     {
         $this->vars['request'] = $request;
-        return Render::generateView('other/actionWithRequest', $this->vars, ResponseType::httpOk);
+        return Render::generateView('other/actionWithRequest', $this->vars);
     }
 
     public function actionWithAuthentication(Authentication $authentication): Response
     {
         $this->vars['authentication'] = $authentication->isSubmitted();
-        return Render::generateView('other/actionWithAuthentication', $this->vars, ResponseType::httpOk);
+        return Render::generateView('other/actionWithAuthentication', $this->vars);
     }
 
     public function actionWithDefaultValue(bool $isDefault = true): Response
     {
         $this->vars['isDefault'] = $isDefault;
-        return Render::generateView('other/actionWithDefaultValue', $this->vars, ResponseType::httpOk);
+        return Render::generateView('other/actionWithDefaultValue', $this->vars);
     }
 
     public function actionWithArray(array $array): Response
     {
         $this->vars['array'] = $array;
-        return Render::generateView('other/actionWithArray', $this->vars, ResponseType::httpOk);
+        return Render::generateView('other/actionWithArray', $this->vars);
     }
 
 }

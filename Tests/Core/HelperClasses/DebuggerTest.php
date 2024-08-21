@@ -53,19 +53,10 @@ class DebuggerTest extends TestCase
 
     public function testStartExecutionTimeCalculation()
     {
-        $microtimeProperty = $this->debuggerReflection->getProperty('microtime');
-        $microtimeProperty->setAccessible(true);
+        $startMicrotimeProperty = $this->debuggerReflection->getProperty('startMicrotime');
+        $startMicrotimeProperty->setAccessible(true);
         Debugger::startExecutionTimeCalculation();
-        $this->assertIsFloat($microtimeProperty->getValue());
-    }
-
-    public function testEndExecutionTimeCalculation()
-    {
-        $executionTimeProperty = $this->debuggerReflection->getProperty('executionTime');
-        $executionTimeProperty->setAccessible(true);
-        Debugger::startExecutionTimeCalculation();
-        Debugger::endExecutionTimeCalculation();
-        $this->assertIsFloat($executionTimeProperty->getValue());
+        $this->assertIsFloat($startMicrotimeProperty->getValue());
     }
     
     public function testGenerateDebugBar()
@@ -76,7 +67,6 @@ class DebuggerTest extends TestCase
         $queryExecutedProperty->setValue(new Debugger, ['sample query']);
         $generateDebugBarMethod = $this->debuggerReflection->getMethod('generateDebugBar');
         Debugger::startExecutionTimeCalculation();
-        Debugger::endExecutionTimeCalculation();
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $dataMapperMock = $this->createMock(DataMapper::class);
@@ -116,7 +106,6 @@ class DebuggerTest extends TestCase
     public function testGetInformations()
     {
         Debugger::startExecutionTimeCalculation();
-        Debugger::endExecutionTimeCalculation();
         $geInformationsMethod = $this->debuggerReflection->getMethod('getInformations');
         $result = $geInformationsMethod->invoke(new Debugger);
         $this->assertIsArray($result);

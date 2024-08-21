@@ -27,31 +27,48 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Core\HelperClasses\Localizator;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HelperClasses\Render;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  * @author Valentino de Lapa
  */
 class RenderTest extends TestCase
 {
+    public function __construct(string $name)
+    {
+        parent::__construct($name);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        ModuleManager::setApplicationModule('SismaFramework');
+    }
+
     public function testGenerateViewInDevelopementEnvironment()
     {
         \ob_end_clean();
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
-        $this->expectOutputRegex('/Database/');
-        $this->expectOutputRegex('/Log/');
-        $this->expectOutputRegex('/Form/');
-        $this->expectOutputRegex('/Variables/');
         $vars = [
             'metaUrl' => '',
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        Debugger::startExecutionTimeCalculation();
+        $localizatorMock = $this->createMock(Localizator::class);
+        $localizatorMock->expects($this->once())
+                ->method('getPageLocaleArray')
+                ->willReturn([]);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $debuggerMock = $this->createMock(Debugger::class);
+        $debuggerMock->expects($this->once())
+                ->method('generateDebugBar')
+                ->willReturn('');
         Render::setDevelopementEnvironment();
-        Render::generateView('sample/index', $vars);
+        Render::generateView('sample/index', $vars, ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
     }
     
     public function testGenerateViewNotInDevelopementEnvironment()
@@ -65,17 +82,29 @@ class RenderTest extends TestCase
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        Debugger::startExecutionTimeCalculation();
+        $localizatorMock = $this->createMock(Localizator::class);
+        $localizatorMock->expects($this->once())
+                ->method('getPageLocaleArray')
+                ->willReturn([]);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $debuggerMock = $this->createMock(Debugger::class);
+        $debuggerMock->expects($this->never())
+                ->method('generateDebugBar');
         Render::setDevelopementEnvironment(false);
-        Render::generateView('sample/index', $vars);
+        Render::generateView('sample/index', $vars, ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
     }
     
     public function testGenerateViewStructural()
     {
         \ob_end_clean();
         $this->expectOutputRegex('/Unexpected Error/');
+        $localizatorMock = $this->createMock(Localizator::class);
+        $localizatorMock->expects($this->never())
+                ->method('getPageLocaleArray');
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $debuggerMock = $this->createMock(Debugger::class);
         Render::setStructural();
-        Render::generateView('framework/internalServerError', []);
+        Render::generateView('framework/internalServerError', [], ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
         Render::setStructural(false);
     }
     
