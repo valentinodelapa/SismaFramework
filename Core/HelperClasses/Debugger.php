@@ -150,8 +150,10 @@ class Debugger
     {
         $parsedVars = [];
         foreach ($vars as $key => $value) {
-            if (is_scalar($value)) {
+            if(is_string($value)){
                 $parsedVars[$key] = htmlentities($value);
+            }elseif (is_scalar($value)) {
+                $parsedVars[$key] = $value;
             } else {
                 $parsedVars[$key] = gettype($value);
             }
