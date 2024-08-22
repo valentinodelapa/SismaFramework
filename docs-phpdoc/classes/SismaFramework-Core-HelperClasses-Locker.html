@@ -124,18 +124,14 @@
                                 <section>
                                         <ul class="phpdocumentor-breadcrumbs">
             <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework.html">SismaFramework</a></li>
-            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-tests.html">Tests</a></li>
-            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-tests-core.html">Core</a></li>
-            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-tests-core-helperclasses.html">HelperClasses</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-core.html">Core</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-core-helperclasses.html">HelperClasses</a></li>
     </ul>
 
     <article class="phpdocumentor-element -class">
         <h2 class="phpdocumentor-content__title">
-    RouterTest
+    Locker
 
-        <span class="phpdocumentor-element__extends">
-        extends <abbr title="\PHPUnit\Framework\TestCase">TestCase</abbr>
-    </span>
     
             <div class="phpdocumentor-element__package">
             in package
@@ -153,18 +149,19 @@
 </div>
 
         <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/RouterTest.php"><a href="files/tests-core-helperclasses-routertest.html"><abbr title="Tests/Core/HelperClasses/RouterTest.php">RouterTest.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Locker.php"><a href="files/core-helperclasses-locker.html"><abbr title="Core/HelperClasses/Locker.php">Locker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">38</span>
+    <span class="phpdocumentor-element-found-in__line">36</span>
 
     </aside>
 
-        
+            <p class="phpdocumentor-summary">Description of Locker</p>
+
 
 
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -183,7 +180,7 @@
 
 <h3 id="toc">
     Table of Contents
-    <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h3>
 
@@ -198,26 +195,26 @@
 
 <h4 id="toc-methods">
     Methods
-    <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testGetActualUrl">testGetActualUrl()</a>
+    <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_folderIsLocked">folderIsLocked()</a>
     <span>
-                                &nbsp;: mixed    </span>
+                                &nbsp;: bool    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testRedirect">testRedirect()</a>
+    <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_lockFolder">lockFolder()</a>
     <span>
-                                &nbsp;: mixed    </span>
+                                &nbsp;: void    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testReloadWithParsedQueryString">testReloadWithParsedQueryString()</a>
+    <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_unlockFolder">unlockFolder()</a>
     <span>
-                                &nbsp;: mixed    </span>
+                                &nbsp;: void    </span>
 </dt>
 
     </dl>
@@ -232,36 +229,91 @@
             <section class="phpdocumentor-methods">
         <h3 class="phpdocumentor-elements__header" id="methods">
             Methods
-            <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article
         class="phpdocumentor-element
             -method
             -public
-                                                        "
+                                    -static                    "
 >
-    <h4 class="phpdocumentor-element__name" id="method_testGetActualUrl">
-        testGetActualUrl()
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testGetActualUrl" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_folderIsLocked">
+        folderIsLocked()
+        <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_folderIsLocked" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/RouterTest.php"><a href="files/tests-core-helperclasses-routertest.html"><abbr title="Tests/Core/HelperClasses/RouterTest.php">RouterTest.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Locker.php"><a href="files/core-helperclasses-locker.html"><abbr title="Core/HelperClasses/Locker.php">Locker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">47</span>
+    <span class="phpdocumentor-element-found-in__line">61</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testGetActualUrl</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">folderIsLocked</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dirname</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$dirname</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
     
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_lockFolder">
+        lockFolder()
+        <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_lockFolder" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Locker.php"><a href="files/core-helperclasses-locker.html"><abbr title="Core/HelperClasses/Locker.php">Locker.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">39</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">lockFolder</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dirname</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$dirname</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
     
 
     
@@ -270,60 +322,39 @@
         class="phpdocumentor-element
             -method
             -public
-                                                        "
+                                    -static                    "
 >
-    <h4 class="phpdocumentor-element__name" id="method_testRedirect">
-        testRedirect()
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testRedirect" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_unlockFolder">
+        unlockFolder()
+        <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_unlockFolder" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/RouterTest.php"><a href="files/tests-core-helperclasses-routertest.html"><abbr title="Tests/Core/HelperClasses/RouterTest.php">RouterTest.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Locker.php"><a href="files/core-helperclasses-locker.html"><abbr title="Core/HelperClasses/Locker.php">Locker.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">40</span>
+    <span class="phpdocumentor-element-found-in__line">49</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testRedirect</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">unlockFolder</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dirname</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
     
-    
-    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$dirname</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
 
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_testReloadWithParsedQueryString">
-        testReloadWithParsedQueryString()
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testReloadWithParsedQueryString" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/RouterTest.php"><a href="files/tests-core-helperclasses-routertest.html"><abbr title="Tests/Core/HelperClasses/RouterTest.php">RouterTest.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">54</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testReloadWithParsedQueryString</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
     
 
     
@@ -334,7 +365,7 @@
     <div class="phpdocumentor-modal-bg" data-exit-button></div>
     <div class="phpdocumentor-modal-container">
         <div class="phpdocumentor-modal-content">
-            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/Tests/Core/HelperClasses/RouterTest.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
+            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/Core/HelperClasses/Locker.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
         </div>
         <button data-exit-button class="phpdocumentor-modal__close">&times;</button>
     </div>
@@ -433,7 +464,7 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                                                                <li><a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#toc-methods">Methods</a></li>
+                                                                                <li><a href="classes/SismaFramework-Core-HelperClasses-Locker.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
             
@@ -441,9 +472,9 @@
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                            <li><a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testGetActualUrl">testGetActualUrl()</a></li>
-                                            <li><a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testRedirect">testRedirect()</a></li>
-                                            <li><a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testReloadWithParsedQueryString">testReloadWithParsedQueryString()</a></li>
+                                            <li><a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_folderIsLocked">folderIsLocked()</a></li>
+                                            <li><a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_lockFolder">lockFolder()</a></li>
+                                            <li><a href="classes/SismaFramework-Core-HelperClasses-Locker.html#method_unlockFolder">unlockFolder()</a></li>
                                     </ul>
             </li>
                     </ul>
@@ -463,7 +494,7 @@
     </section>
 </section>
         </div>
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+        <a href="classes/SismaFramework-Core-HelperClasses-Locker.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
 
     </main>
 
