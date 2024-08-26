@@ -80,16 +80,14 @@ class Router
         return self::$actualCleanUrl;
     }
 
-    public static function getRootUrl(): string
+    public static function getRootUrl($request = new Request()): string
     {
-        $request = new Request();
         $httpHost = $request->server['HTTP_HOST'];
         return Comunication::getComunicationProtocol()->value . $httpHost . self::$metaUrl;
     }
 
-    public static function getActualUrl()
+    public static function getActualUrl($request = new Request()): string
     {
-        $request = new Request();
         $requestUri = $request->server['REQUEST_URI'];
         $relativeUrl = str_replace(self::$metaUrl, '', $requestUri);
         return substr($relativeUrl, 1);
@@ -97,10 +95,11 @@ class Router
 
     public function reloadWithParsedQueryString($request = new Request()): Response
     {
-        $requestUri = $request->server['REQUEST_URI'];
-        $parsedUrl = str_replace(["?", "=", "&"], '/', $requestUri);
-        $parsedUrl = str_replace('//', '/', $parsedUrl);
-        $this->parsedUrl = str_ends_with($parsedUrl, '/') ?: $parsedUrl . '/';
+        $baseUrl = strtok($request->server['REQUEST_URI'], '?');
+        $this->parsedUrl = str_ends_with($baseUrl, '/') ? $baseUrl : $baseUrl . '/';
+        foreach ($request->query as $key => $value) {
+            $this->parsedUrl .= $key . '/' . urlencode($value ?? 'empty') . '/';
+        }
         header("Location: " . self::$metaUrl . $this->parsedUrl);
         return new Response();
     }

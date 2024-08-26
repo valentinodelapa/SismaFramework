@@ -55,6 +55,9 @@ class RouterTest extends TestCase
     {
         $requestMock = $this->createMock(Request::class);
         $requestMock->server['REQUEST_URI'] = '/sample/notify?message=notify';
+        $requestMock->query = [
+            "message" => "notify",
+        ];
         $router = new Router();
         $response = $router->reloadWithParsedQueryString($requestMock);
         $this->assertInstanceOf(Response::class, $response);

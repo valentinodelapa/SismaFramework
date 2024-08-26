@@ -321,7 +321,7 @@ class Dispatcher
         $odd = $even = [];
         while (count($this->actionArguments) > 1) {
             $odd[] = NotationManager::convertToCamelCase(array_shift($this->actionArguments));
-            $even[] = array_shift($this->actionArguments);
+            $even[] = urldecode(array_shift($this->actionArguments));
         }
         $this->actionArguments = $this->combineArrayToAssociativeArray($odd, $even);
         $this->request->query = $this->actionArguments;
