@@ -41,6 +41,6 @@ class PhpVersionException extends \Exception
         $phpMinimumVersionRequired = self::$minimumMajorPhpVersion . '.' . self::$minimumMinorPhpVersion . '.' . self::$minimumReleasePhpVersion;
         $phpActualVersion = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION;
         $message = "The minimum required version of PHP is " . $phpMinimumVersionRequired . ". Your version of PHP is " . $phpActualVersion . ".<br />Please update your PHP version to " . $phpMinimumVersionRequired . " or higher in order to use this application.";
-        return parent::__construct($message);
+        parent::__construct($message);
     }
 }

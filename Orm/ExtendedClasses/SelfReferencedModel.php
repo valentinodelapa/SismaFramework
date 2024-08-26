@@ -27,10 +27,11 @@
 namespace SismaFramework\Orm\ExtendedClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\ExtendedClasses\DependentModel;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\ExtendedClasses\DependentModel;
+use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 
 /**

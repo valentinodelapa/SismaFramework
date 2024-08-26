@@ -28,6 +28,7 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
+use SismaFramework\Core\Exceptions\LocalizatorException;
 
 /**
  * @author Valentino de Lapa

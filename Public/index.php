@@ -27,6 +27,7 @@
 namespace SismaFramework\Public;
 
 use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Core\Exceptions\PhpVersionException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\ErrorHandler;

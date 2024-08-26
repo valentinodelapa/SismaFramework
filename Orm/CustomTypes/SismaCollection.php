@@ -39,7 +39,7 @@ class SismaCollection extends \ArrayObject
     public function __construct(string $restrictiveType, array|object $array = [], int $flags = 0, string $iteratorClass = \ArrayIterator::class)
     {
         $this->restrictiveType = $restrictiveType;
-        return parent::__construct($array, $flags, $iteratorClass);
+        parent::__construct($array, $flags, $iteratorClass);
     }
 
     public function getRestrictiveType(): string
@@ -96,15 +96,15 @@ class SismaCollection extends \ArrayObject
         $this->exchangeArray($arraySliced);
     }
 
-    public function isFirst($key)
+    public function isFirst($key): bool
     {
         $keys = array_keys($this->getArrayCopy());
         return $key === array_key_first($keys);
     }
 
-    public function isLast($key)
+    public function isLast($key): bool
     {
         $keys = array_keys($this->getArrayCopy());
-        return $key === array_last_first($keys);
+        return $key === array_key_first($keys);
     }
 }
