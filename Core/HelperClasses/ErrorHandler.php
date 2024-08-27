@@ -66,7 +66,6 @@ class ErrorHandler
 
     private static function callInternalServerErrorAction(): Response
     {
-
         Router::setActualCleanUrl('framework', 'internalServerError');
         $frameworkController = new FrameworkController();
         return $frameworkController->internalServerError();

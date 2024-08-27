@@ -59,6 +59,11 @@ class DataMapper
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
     }
 
+    public function setOrmCacheStatus(bool $ormCacheStatus = true): void
+    {
+        $this->ormCacheStatus = $ormCacheStatus;
+    }
+
     public function initQuery(string $entityName, Query $query = new Query()): Query
     {
         if (is_a($entityName, BaseEntity::class, true)) {
@@ -289,10 +294,10 @@ class DataMapper
     {
         if ($this->ormCacheStatus && Cache::checkEntityPresenceInCache($entityName, $entity->id)) {
             return Cache::getEntityById($entityName, $entity->id);
-        } else {
+        } elseif ($this->ormCacheStatus) {
             Cache::setEntity($entity);
-            return $entity;
         }
+        return $entity;
     }
 
     private function getResultSet(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
