@@ -162,6 +162,8 @@ abstract class BaseModel
         $query->setColumn($columnName . (($isForeignKey) ? 'Id' : null))
                 ->setLimit(1);
         $this->dataMapper->setOrmCacheStatus(false);
-        return $this->dataMapper->findFirst($entityName, $query);
+        $result = $this->dataMapper->findFirst($entityName, $query);
+        $this->dataMapper->setOrmCacheStatus(\Config\ORM_CACHE);
+        return $result;
     }
 }
