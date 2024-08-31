@@ -61,11 +61,6 @@ abstract class BaseAdapter
 
     abstract protected function setAdapterType(): AdapterType;
 
-    public function getAdapterType(): AdapterType
-    {
-        return $this->adapterType;
-    }
-
     public static function setConnection(mixed $connection): void
     {
         self::$connection = $connection;
@@ -170,6 +165,16 @@ abstract class BaseAdapter
                     return Parser::unparseValue($value);
                 }
         }
+    }
+    
+    public function getPlaceholder():string
+    {
+        return Keyword::placeholder->getAdapterVersion($this->adapterType);
+    }
+    
+    public function parseComparisonOperator(ComparisonOperator $comparisonOperator):string
+    {
+        return $comparisonOperator->getAdapterVersion($this->adapterType);
     }
 
     public function openBlock(): string

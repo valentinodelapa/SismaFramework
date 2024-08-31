@@ -77,7 +77,7 @@ class DataMapper
     public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()): bool
     {
         $query->close();
-        $cmd = $query->getCommandToExecute(Statement::set, ["variable" => $variable, "value" => Keyword::placeholder->getAdapterVersion($this->adapter->getAdapterType())]);
+        $cmd = $query->getCommandToExecute(Statement::set, ["variable" => $variable, "value" => $this->adapter->getPlaceholder()]);
         Parser::unparseValue($bindValue);
         $result = $this->adapter->execute($cmd, [$bindValue], [$bindType]);
         return $result;
@@ -128,7 +128,7 @@ class DataMapper
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
-                $markers[] = Keyword::placeholder->getAdapterVersion($this->adapter->getAdapterType());
+                $markers[] = $this->adapter->getPlaceholder();
                 $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
                 $currentValue = $reflectionProperty->getValue($entity);
                 if ($currentValue instanceof BaseEntity) {
@@ -149,7 +149,7 @@ class DataMapper
     private function parseForeignKeyIndexes(BaseEntity $entity, array &$columns, array &$values, array &$markers): void
     {
         foreach ($entity->getForeignKeyIndexes() as $propertyName => $propertyValue) {
-            $markers[] = Keyword::placeholder->getAdapterVersion($this->adapter->getAdapterType());
+            $markers[] = $this->adapter->getPlaceholder();
             $columns[] = $this->adapter->escapeColumn($propertyName, true);
             $values[] = $propertyValue;
         }

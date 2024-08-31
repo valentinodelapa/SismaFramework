@@ -159,7 +159,7 @@ class Query
 
     public function &appendOrderBySubquery(Query $query, null|string|Indexing $Indexing = null): self
     {
-        $parsedQuery = Keyword::openBlock->getAdapterVersion($this->adapter->getAdapterType()) . $query->getCommandToExecute() . Keyword::closeBlock->getAdapterVersion($this->adapter->getAdapterType());
+        $parsedQuery = $this->adapter->openBlock() . $query->getCommandToExecute() . $this->adapter->closeBlock();
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
         $this->order[$parsedQuery] = $parsedIndexing;
         return $this;
@@ -195,10 +195,10 @@ class Query
         $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
-            $this->where[] = $escapedColumn . ' ' . $operator->getAdapterVersion($this->adapter->getAdapterType()) . ' ' . $escapedValue;
+            $this->where[] = $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         if ($this->currentCondition == Condition::having) {
-            $this->having[] = $escapedColumn . ' ' . $operator->getAdapterVersion($this->adapter->getAdapterType()) . ' ' . $escapedValue;
+            $this->having[] = $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         return $this;
     }
@@ -207,10 +207,10 @@ class Query
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
-            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn). ' ' . $operator->getAdapterVersion($this->adapter->getAdapterType()) . ' ' . $escapedValue;
+            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn). ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         if ($this->currentCondition == Condition::having) {
-            $this->having[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $operator->getAdapterVersion($this->adapter->getAdapterType()) . ' ' . $escapedValue;
+            $this->having[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         return $this;
     }
@@ -225,10 +225,10 @@ class Query
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
-            $this->where[] = $this->adapter->opSubquery($subquery) . ' ' . $operator->getAdapterVersion($this->adapter->getAdapterType()) . ' ' . $escapedValue;
+            $this->where[] = $this->adapter->opSubquery($subquery) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         if ($this->currentCondition == Condition::having) {
-            $this->having[] = $this->adapter->opSubquery($subquery) . ' ' . $operator->getAdapterVersion($this->adapter->getAdapterType()) . ' ' . $escapedValue;
+            $this->having[] = $this->adapter->opSubquery($subquery) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         return $this;
     }

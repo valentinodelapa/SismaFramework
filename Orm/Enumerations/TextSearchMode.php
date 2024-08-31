@@ -32,6 +32,8 @@ namespace SismaFramework\Orm\Enumerations;
  */
 enum TextSearchMode
 {
+    use \SismaFramework\Orm\Traits\OrmKeyword;
+    
     case inNaturaLanguageMode;
     case withQueryExpansion;
     case inBooleanMode;

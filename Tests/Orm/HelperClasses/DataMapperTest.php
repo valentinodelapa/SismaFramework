@@ -53,9 +53,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertInsertInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(3);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -106,9 +103,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertUpdateInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(3);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -162,9 +156,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithNothingUpdateInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(2);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -215,9 +206,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertInsertUpdate()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(3);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -271,9 +259,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertUpdateUpdate()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(3);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -328,9 +313,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithNothingUpdateUpdate()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(2);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -377,9 +359,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertInsertNothing()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(2);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -427,9 +406,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithInsertUpdateNothing()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(2);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -480,9 +456,6 @@ class DataMapperTest extends TestCase
     public function testSaveNewBaseEntityWithNothingUpdateNothing()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(1);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -525,9 +498,6 @@ class DataMapperTest extends TestCase
     public function testNewReferencedEntityWithInsertInsertInsert()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $matcher = $this->exactly(3);
         $baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -582,9 +552,6 @@ class DataMapperTest extends TestCase
     public function testInitQuery()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         BaseAdapter::setDefault($baseAdapterMock);
         $query = $this->createMock(Query::class);
         $query->expects($this->any())
@@ -597,9 +564,6 @@ class DataMapperTest extends TestCase
     public function testInsertAutomaticStartTransaction()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
                 ->willReturn(true);
@@ -634,9 +598,6 @@ class DataMapperTest extends TestCase
     public function testInsertManualStartTransaction()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $callsOrder = [];
         $baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
@@ -687,9 +648,6 @@ class DataMapperTest extends TestCase
     public function testUpdateAutomaticStartTransaction()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
                 ->willReturn(true);
@@ -725,9 +683,6 @@ class DataMapperTest extends TestCase
     public function testDelete()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('execute')
                 ->willReturnOnConsecutiveCalls(false, true);
@@ -751,9 +706,6 @@ class DataMapperTest extends TestCase
     public function testDeleteBatch()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('execute')
                 ->willReturnOnConsecutiveCalls(false, true);
@@ -807,9 +759,6 @@ class DataMapperTest extends TestCase
                 ->method('rewind')
                 ->will($this->returnSelf());
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('select')
                 ->willReturnOnConsecutiveCalls(null, $firstBaseResultSetMock, $secondBaseResultSetMock);
@@ -837,9 +786,6 @@ class DataMapperTest extends TestCase
                 ->method('fetch')
                 ->willReturnOnConsecutiveCalls(null, $standardEntity);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('select')
                 ->willReturnOnConsecutiveCalls(null, $baseResultSetMock, $baseResultSetMock);
@@ -873,9 +819,6 @@ class DataMapperTest extends TestCase
                 ->method('numRows')
                 ->willReturn(2);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->exactly(4))
                 ->method('select')
                 ->willReturnOnConsecutiveCalls(null, $firstBaseResultSetMock, $secondBaseResultSetMock, $thidBaseResultSetMock);

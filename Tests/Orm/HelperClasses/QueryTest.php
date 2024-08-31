@@ -148,7 +148,7 @@ class QueryTest extends TestCase
     public function testSelectSetFullIndexColumnAndCondition()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
+        $baseAdapterMock->expects($this->exactly(2))
                 ->method('allColumns')
                 ->willReturn('*');
         $matcherOne = $this->exactly(2);
@@ -230,10 +230,10 @@ class QueryTest extends TestCase
     public function testSelectSetSubqueryColumn()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
+        $baseAdapterMock->expects($this->exactly(3))
                 ->method('allColumns')
                 ->willReturn('*');
-        $subquery = new Query();
+        $subquery = new Query($baseAdapterMock);
         $matcherOne = $this->exactly(2);
         $baseAdapterMock->expects($matcherOne)
                 ->method('opSubquery')
@@ -292,9 +292,6 @@ class QueryTest extends TestCase
     public function testSelectWhere()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
                 ->willReturn('*');
@@ -342,6 +339,25 @@ class QueryTest extends TestCase
                             $this->assertEquals(Keyword::placeholder, $value);
                             $this->assertEquals(ComparisonOperator::isNull, $operator);
                             return '';
+                    }
+                });
+        $matcherThree = $this->exactly(4);
+        $baseAdapterMock->expects($matcherThree)
+                ->method('parseComparisonOperator')
+                ->willReturnCallback(function ($operator) use ($matcherThree) {
+                    switch ($matcherThree->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals(ComparisonOperator::equal, $operator);
+                            return $operator->getAdapterVersion(AdapterType::mysql);
+                        case 2:
+                            $this->assertEquals(ComparisonOperator::greater, $operator);
+                            return $operator->getAdapterVersion(AdapterType::mysql);
+                        case 3:
+                            $this->assertEquals(ComparisonOperator::lessOrEqual, $operator);
+                            return $operator->getAdapterVersion(AdapterType::mysql);
+                        case 4:
+                            $this->assertEquals(ComparisonOperator::isNull, $operator);
+                            return $operator->getAdapterVersion(AdapterType::mysql);
                     }
                 });
         $baseAdapterMock->expects($this->once())
@@ -390,9 +406,6 @@ class QueryTest extends TestCase
     public function testSelectHaving()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
                 ->willReturn('*');
@@ -440,6 +453,25 @@ class QueryTest extends TestCase
                             $this->assertEquals(Keyword::placeholder, $value);
                             $this->assertEquals(ComparisonOperator::isNull, $operator);
                             return '';
+                    }
+                });
+        $matcherThree = $this->exactly(4);
+        $baseAdapterMock->expects($matcherThree)
+                ->method('parseComparisonOperator')
+                ->willReturnCallback(function ($operator) use ($matcherThree) {
+                    switch ($matcherThree->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals(ComparisonOperator::equal, $operator);
+                            return $operator->getAdapterVersion(AdapterType::mysql);
+                        case 2:
+                            $this->assertEquals(ComparisonOperator::greater, $operator);
+                            return $operator->getAdapterVersion(AdapterType::mysql);
+                        case 3:
+                            $this->assertEquals(ComparisonOperator::lessOrEqual, $operator);
+                            return $operator->getAdapterVersion(AdapterType::mysql);
+                        case 4:
+                            $this->assertEquals(ComparisonOperator::isNull, $operator);
+                            return $operator->getAdapterVersion(AdapterType::mysql);
                     }
                 });
         $baseAdapterMock->expects($this->once())
@@ -545,9 +577,6 @@ class QueryTest extends TestCase
     public function testOrderBy()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->any())
-                ->method('getAdapterType')
-                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
                 ->willReturn('*');
@@ -567,9 +596,15 @@ class QueryTest extends TestCase
                 ->with(Indexing::asc)
                 ->willReturn('ASC');
         $subqueryMock = $this->createMock(Query::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('openBlock')
+                ->willReturn('(');
         $subqueryMock->expects($this->once())
                 ->method('getCommandToExecute')
                 ->willReturn('subquery');
+        $baseAdapterMock->expects($this->once())
+                ->method('closeBlock')
+                ->willReturn(')');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
                 ->with(false, ['*'], '', [], [], [], ['id' => 'ASC', '(subquery)' => 'ASC'], 0, 0);
