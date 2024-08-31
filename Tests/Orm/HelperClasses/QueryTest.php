@@ -29,6 +29,7 @@ namespace SismaFramework\Tests\Orm\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Keyword;
@@ -291,6 +292,9 @@ class QueryTest extends TestCase
     public function testSelectWhere()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->any())
+                ->method('getAdapterType')
+                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
                 ->willReturn('*');
@@ -325,7 +329,7 @@ class QueryTest extends TestCase
                         case 1:
                             $this->assertEquals(Keyword::placeholder, $value);
                             $this->assertEquals(ComparisonOperator::equal, $operator);
-                            return $value->value;
+                            return $value->getAdapterVersion(AdapterType::mysql);
                         case 2:
                             $this->assertEquals(1, $value);
                             $this->assertEquals(ComparisonOperator::greater, $operator);
@@ -386,6 +390,9 @@ class QueryTest extends TestCase
     public function testSelectHaving()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->any())
+                ->method('getAdapterType')
+                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
                 ->willReturn('*');
@@ -420,7 +427,7 @@ class QueryTest extends TestCase
                         case 1:
                             $this->assertEquals(Keyword::placeholder, $value);
                             $this->assertEquals(ComparisonOperator::equal, $operator);
-                            return $value->value;
+                            return $value->getAdapterVersion(AdapterType::mysql);
                         case 2:
                             $this->assertEquals(1, $value);
                             $this->assertEquals(ComparisonOperator::greater, $operator);
@@ -538,6 +545,9 @@ class QueryTest extends TestCase
     public function testOrderBy()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->any())
+                ->method('getAdapterType')
+                ->willReturn(AdapterType::mysql);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
                 ->willReturn('*');

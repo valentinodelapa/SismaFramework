@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2024 Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,28 +26,21 @@
 
 namespace SismaFramework\Orm\Enumerations;
 
+use SismaFramework\Orm\Adapters\AdapterMysql;
+
 /**
  *
  * @author Valentino de Lapa
  */
-enum Condition
+enum AdapterType: string
 {
-    
-    use \SismaFramework\Orm\Traits\OrmKeyword;
 
-    case where;
-    case having;
+    case mysql = "mysql";
     
-    #[\Override]
-    public function getAdapterVersion(AdapterType $adapterType): string
+    public function getAdapterClass()
     {
         return match ($this) {
-            self::where => match ($adapterType) {
-                AdapterType::mysql => 'WHERE',
-            },
-            self::having => match ($adapterType) {
-                AdapterType::mysql => 'HAVING',
-            },
+            self::mysql => AdapterMysql::class
         };
     }
 }

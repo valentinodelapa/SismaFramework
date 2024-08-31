@@ -30,7 +30,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\Enumerations\AggregationFunction;
+use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Keyword;
@@ -67,6 +67,11 @@ class AdapterMysql extends BaseAdapter
                 BaseAdapter::setDefault($this);
             }
         }
+    }
+
+    protected function setAdapterType(): AdapterType
+    {
+        return AdapterType::mysql;
     }
 
     public function close(): void
@@ -215,7 +220,7 @@ class AdapterMysql extends BaseAdapter
     {
         $value = parent::escapeValue($value, $operator);
         if (!in_array($operator, [ComparisonOperator::in, ComparisonOperator::notIn, ComparisonOperator::isNull, ComparisonOperator::isNotNull])) {
-            $placeholder = ($value === Keyword::placeholder->value || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));
+            $placeholder = ($value === Keyword::placeholder->getAdapterVersion($this->adapterType) || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));
             if ($placeholder) {
                 return $value;
             }
@@ -283,13 +288,13 @@ class AdapterMysql extends BaseAdapter
             $column = $this->escapeColumn($column);
         }
         $escapedValue = $this->escapeValue($value, ComparisonOperator::against);
-        $condition = Keyword::match->value . ' ' . Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ' ' . ComparisonOperator::against->value . ' ' . Keyword::openBlock->value . $escapedValue . ' ' . TextSearchMode::inNaturaLanguageMode->value . Keyword::closeBlock->value;
+        $condition = Keyword::match->getAdapterVersion($this->adapterType) . ' ' . Keyword::openBlock->getAdapterVersion($this->adapterType) . implode(',', $columns) . Keyword::closeBlock->getAdapterVersion($this->adapterType) . ' ' . ComparisonOperator::against->getAdapterVersion($this->adapterType) . ' ' . Keyword::openBlock->getAdapterVersion($this->adapterType) . $escapedValue . ' ' . TextSearchMode::inNaturaLanguageMode->getAdapterVersion($this->adapterType) . Keyword::closeBlock->getAdapterVersion($this->adapterType);
         return $condition;
     }
 
     public function opDecryptFunction(string $column, string $initializationVectorColumn): string
     {
-        return 'AES_DECRYPT' . $this->openBlock() . $this->opBase64DecodeFunction($column) . ', ' . Keyword::placeholder->value . ', ' . $this->opConvertBlobToHex($initializationVectorColumn) . $this->closeBlock();
+        return 'AES_DECRYPT' . $this->openBlock() . $this->opBase64DecodeFunction($column) . ', ' . Keyword::placeholder->getAdapterVersion($this->adapterType) . ', ' . $this->opConvertBlobToHex($initializationVectorColumn) . $this->closeBlock();
     }
 
     private function opBase64DecodeFunction(string $column): string

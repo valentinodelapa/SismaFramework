@@ -30,21 +30,72 @@ namespace SismaFramework\Orm\Enumerations;
  *
  * @author Valentino de Lapa
  */
-enum Keyword: string
+enum Keyword
 {
-    case as = 'AS';
-    case insertValue = 'VALUES';
-    case set = 'SET';
-    case from = 'FROM';
-    case distinct = 'DISTINCT';
-    case join = 'JOIN';
-    case match = 'MATCH';
-    case orderBy = 'ORDER BY';
-    case groupBy = 'GROUP_BY';
-    case limit = 'LIMIT';
-    case offset = 'OFFSET';
-    case placeholder = '?';
-    case openBlock = '(';
-    case closeBlock = ')';
+    use \SismaFramework\Orm\Traits\OrmKeyword;
+    
+    case as;
+    case insertValue;
+    case set;
+    case from;
+    case distinct;
+    case join;
+    case match;
+    case orderBy;
+    case groupBy;
+    case limit;
+    case offset;
+    case placeholder;
+    case openBlock;
+    case closeBlock;
+
+    #[\Override]
+    public function getAdapterVersion(AdapterType $adapterType): string
+    {
+        return match ($this) {
+            self::as => match ($adapterType) {
+                AdapterType::mysql => 'AS',
+            },
+            self::insertValue => match ($adapterType) {
+                AdapterType::mysql => 'VALUES',
+            },
+            self::set => match ($adapterType) {
+                AdapterType::mysql => 'SET',
+            },
+            self::from => match ($adapterType) {
+                AdapterType::mysql => 'FROM',
+            },
+            self::distinct => match ($adapterType) {
+                AdapterType::mysql => 'DISTINCT',
+            },
+            self::join => match ($adapterType) {
+                AdapterType::mysql => 'JOIN',
+            },
+            self::match => match ($adapterType) {
+                AdapterType::mysql => 'MATCH',
+            },
+            self::orderBy => match ($adapterType) {
+                AdapterType::mysql => 'ORDER BY',
+            },
+            self::groupBy => match ($adapterType) {
+                AdapterType::mysql => 'GROUP_BY',
+            },
+            self::limit => match ($adapterType) {
+                AdapterType::mysql => 'LIMIT',
+            },
+            self::offset => match ($adapterType) {
+                AdapterType::mysql => 'OFFSET',
+            },
+            self::placeholder => match ($adapterType) {
+                AdapterType::mysql => '?',
+            },
+            self::openBlock => match ($adapterType) {
+                AdapterType::mysql => '(',
+            },
+            self::closeBlock => match ($adapterType) {
+                AdapterType::mysql => ')',
+            },
+        };
+    }
 
 }

@@ -30,13 +30,30 @@ namespace SismaFramework\Orm\Enumerations;
  *
  * @author Valentino de Lapa
  */
-enum LogicalOperator: string
+enum LogicalOperator
 {
-
-    case and = 'AND';
-    case or = 'OR';
-    case not = 'NOT';
     
+    use \SismaFramework\Orm\Traits\OrmKeyword;
+
+    case and;
+    case or;
+    case not;
+    
+    #[\Override]
+    public function getAdapterVersion(AdapterType $adapterType): string
+    {
+        return match ($this) {
+            self::and => match ($adapterType) {
+                AdapterType::mysql => 'AND',
+            },
+            self::or => match ($adapterType) {
+                AdapterType::mysql => 'OR',
+            },
+            self::not => match ($adapterType) {
+                AdapterType::mysql => 'NOT',
+            },
+        };
+    }
 }
 
     

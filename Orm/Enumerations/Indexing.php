@@ -32,8 +32,23 @@ namespace SismaFramework\Orm\Enumerations;
  */
 enum Indexing: string
 {
+    
+    use \SismaFramework\Orm\Traits\OrmKeyword;
 
     case asc = 'ASC';
     case desc = 'DESC';
+    
+    #[\Override]
+    public function getAdapterVersion(AdapterType $adapterType): string
+    {
+        return match ($this) {
+            self::asc => match ($adapterType) {
+                AdapterType::mysql => 'ASC',
+            },
+            self::desc => match ($adapterType) {
+                AdapterType::mysql => 'DESC',
+            },
+        };
+    }
 
 }

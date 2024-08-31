@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2024 Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,30 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Orm\Enumerations;
+namespace SismaFramework\Orm\Traits;
+
+use SismaFramework\Orm\Enumerations\AdapterType;
 
 /**
  *
  * @author Valentino de Lapa
  */
-enum Condition
+trait OrmKeyword
 {
-    
-    use \SismaFramework\Orm\Traits\OrmKeyword;
 
-    case where;
-    case having;
-    
-    #[\Override]
-    public function getAdapterVersion(AdapterType $adapterType): string
-    {
-        return match ($this) {
-            self::where => match ($adapterType) {
-                AdapterType::mysql => 'WHERE',
-            },
-            self::having => match ($adapterType) {
-                AdapterType::mysql => 'HAVING',
-            },
-        };
-    }
+    abstract public function getAdapterVersion(AdapterType $adapterType): string;
 }

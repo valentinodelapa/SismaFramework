@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Orm\Adapters;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
@@ -125,7 +126,7 @@ class AdapterMysqlTest extends TestCase
 
         $this->assertEquals('1', $adapterMysql->escapeValue(1));
         $this->assertEquals('sample', $adapterMysql->escapeValue('sample'));
-        $this->assertEquals(Keyword::placeholder->value, $adapterMysql->escapeValue(Keyword::placeholder));
+        $this->assertEquals(Keyword::placeholder->getAdapterVersion(AdapterType::mysql), $adapterMysql->escapeValue(Keyword::placeholder));
         $sismaDateTime = new SismaDateTime();
         $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $adapterMysql->escapeValue($sismaDateTime));
         $baseSample = new BaseSample();
