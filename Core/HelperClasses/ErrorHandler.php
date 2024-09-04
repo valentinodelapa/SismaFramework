@@ -30,6 +30,8 @@ use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
+use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Structural\Controllers\FrameworkController;
 use Throwable;
 
@@ -40,6 +42,7 @@ use Throwable;
  */
 class ErrorHandler
 {
+
     private static bool $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
     private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
 
@@ -57,7 +60,7 @@ class ErrorHandler
         }
     }
 
-    public static function callThrowableErrorAction(Throwable $throwable): Response
+    private static function callThrowableErrorAction(Throwable $throwable): Response
     {
         Router::setActualCleanUrl('framework', 'thowableError');
         $frameworkController = new FrameworkController();
@@ -69,6 +72,23 @@ class ErrorHandler
         Router::setActualCleanUrl('framework', 'internalServerError');
         $frameworkController = new FrameworkController();
         return $frameworkController->internalServerError();
+    }
+
+    public static function handleBaseException(BaseException $exception, DefaultControllerInterface $controller): Response
+    {
+        if (self::$developementEnvironment) {
+            return self::callThrowableErrorAction($exception);
+        } else {
+            return self::callDefaultControllerError($exception, $controller);
+        }
+    }
+
+    private static function callDefaultControllerError(BaseException $exception, DefaultControllerInterface $controller): Response
+    {
+        $fullControllerName = get_class($controller);
+        $controllerName = basename(str_replace('\\', DIRECTORY_SEPARATOR, $fullControllerName));
+        Router::setActualCleanUrl(str_replace('Controller', '', $controllerName), 'error');
+        return $controller->error('', $exception->getResponseType());
     }
 
     public static function handleNonThrowableError(): void

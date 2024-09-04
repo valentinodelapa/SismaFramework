@@ -57,13 +57,7 @@ try {
 } catch (RedirectException $exception) {
     return $exception->redirect();
 } catch (BaseException $exception) {
-    if (\Config\DEVELOPMENT_ENVIRONMENT) {
-        ErrorHandler::callThrowableErrorAction($exception);
-    } else {
-        Router::setActualCleanUrl('sample', 'error');
-        $sampleController = new SampleController();
-        return $sampleController->error('', $exception->getResponseType());
-    }
+    ErrorHandler::handleBaseException($exception, new SampleController());
 } catch (\Throwable $throwable) {
     ErrorHandler::handleThrowableError($throwable);
 } finally {
