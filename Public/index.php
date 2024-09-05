@@ -32,10 +32,8 @@ use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
-use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Security\ExtendedClasses\RedirectException;
-use SismaFramework\Sample\Controllers\SampleController;
 
 require_once(dirname(__DIR__) . '/Config/config.php');
 require_once(dirname(__DIR__) . '/Autoload/autoload.php');
@@ -57,7 +55,7 @@ try {
 } catch (RedirectException $exception) {
     return $exception->redirect();
 } catch (BaseException $exception) {
-    ErrorHandler::handleBaseException($exception, new SampleController());
+    ErrorHandler::handleBaseException($exception);
 } catch (\Throwable $throwable) {
     ErrorHandler::handleThrowableError($throwable);
 } finally {
