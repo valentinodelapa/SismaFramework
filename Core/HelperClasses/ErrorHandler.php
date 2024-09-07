@@ -28,7 +28,6 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
-use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
@@ -61,7 +60,7 @@ class ErrorHandler
 
     public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController()): void
     {
-        register_shutdown_function(function () {
+        register_shutdown_function(function () use ($controller) {
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error)) {
@@ -91,7 +90,7 @@ class ErrorHandler
         return $structuralController->internalServerError();
     }
 
-    public static function handleBaseException(BaseException $exception, 
+    public static function handleBaseException(BaseException $exception,
             DefaultControllerInterface $defaultController = new SampleController(),
             StructuralControllerInterface $structuralController = new FrameworkController()): Response
     {
