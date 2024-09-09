@@ -89,7 +89,7 @@ class DispatcherTest extends TestCase
     {
         $this->requestMock->server['REQUEST_URI'] = '/css/debugBar.css';
         $resourceMakerMock = $this->createMock(ResourceMaker::class);
-        $resourceMakerMock->expects($this->once())
+        $resourceMakerMock->expects($this->exactly(2))
                 ->method('isAcceptedResourceFile')
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
@@ -106,7 +106,7 @@ class DispatcherTest extends TestCase
     {
         $this->requestMock->server['REQUEST_URI'] = '/css/sample.css';
         $resourceMakerMock = $this->createMock(ResourceMaker::class);
-        $resourceMakerMock->expects($this->once())
+        $resourceMakerMock->expects($this->exactly(2))
                 ->method('isAcceptedResourceFile')
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
@@ -124,7 +124,7 @@ class DispatcherTest extends TestCase
     {
         $this->requestMock->server['REQUEST_URI'] = '/vendor/sample-vendor/sample-vendor.css';
         $resourceMakerMock = $this->createMock(ResourceMaker::class);
-        $resourceMakerMock->expects($this->once())
+        $resourceMakerMock->expects($this->exactly(2))
                 ->method('isAcceptedResourceFile')
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
@@ -143,7 +143,7 @@ class DispatcherTest extends TestCase
         $this->requestMock->server['REQUEST_URI'] = 'SismaFramework/Sample/Assets/css/sample.css';
         $this->requestMock->server['QUERY_STRING'] = '';
         $resourceMakerMock = $this->createMock(ResourceMaker::class);
-        $resourceMakerMock->expects($this->once())
+        $resourceMakerMock->expects($this->exactly(2))
                 ->method('isAcceptedResourceFile')
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
@@ -163,7 +163,7 @@ class DispatcherTest extends TestCase
         $resourceMakerMock = $this->createMock(ResourceMaker::class);
         $resourceMakerMock->expects($this->once())
                 ->method('setStreamContex');
-        $resourceMakerMock->expects($this->exactly(2))
+        $resourceMakerMock->expects($this->exactly(3))
                 ->method('isAcceptedResourceFile')
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())

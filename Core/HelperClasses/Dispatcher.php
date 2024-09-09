@@ -157,7 +157,7 @@ class Dispatcher
 
     private function checkFilePresence(string $module): bool
     {
-        return (count($this->pathParts) === 2) && (file_exists(self::$rootPath . $module . DIRECTORY_SEPARATOR . self::$applicationAssetsPath . $this->pathParts[0] . DIRECTORY_SEPARATOR . $this->pathParts[1]));
+        return ($this->resourceMaker->isAcceptedResourceFile($this->path) && (file_exists(self::$rootPath . $module . DIRECTORY_SEPARATOR . self::$applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->pathParts))));
     }
 
     private function handle(): Response
