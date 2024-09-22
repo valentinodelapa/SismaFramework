@@ -29,7 +29,7 @@ namespace SismaFramework\Orm\BaseClasses;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
-use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\HelperClasses\Cache;
@@ -105,7 +105,7 @@ abstract class BaseModel
     {
         $query = $this->initQuery();
         $query->setWhere();
-        $query->appendCondition('id', ComparisonOperator::notEqualTwo, Keyword::placeholder);
+        $query->appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder);
         $bindValues = [
             $excludedEntity,
         ];
@@ -132,7 +132,7 @@ abstract class BaseModel
         } else {
             $query = $this->initQuery();
             $query->setWhere();
-            $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
+            $query->appendCondition('id', ComparisonOperator::equal, Placeholder::placeholder);
             $query->close();
             $entity = $this->dataMapper->findFirst($this->entityName, $query, [
                 $id,
@@ -147,7 +147,7 @@ abstract class BaseModel
     {
         $query = $this->initQuery();
         $query->setWhere();
-        $query->appendCondition('id', ComparisonOperator::equal, Keyword::placeholder);
+        $query->appendCondition('id', ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
         return $this->dataMapper->deleteBatch($query, [
                     $id,

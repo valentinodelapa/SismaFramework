@@ -37,8 +37,7 @@ enum ComparisonOperator
 
     case against;
     case equal;
-    case notEqualOne;
-    case notEqualTwo;
+    case notEqual;
     case greater;
     case less;
     case greaterOrEqual;
@@ -60,10 +59,7 @@ enum ComparisonOperator
             self::equal => match ($adapterType) {
                 AdapterType::mysql => '=',
             },
-            self::notEqualOne => match ($adapterType) {
-                AdapterType::mysql => '!=',
-            },
-            self::notEqualTwo => match ($adapterType) {
+            self::notEqual => match ($adapterType) {
                 AdapterType::mysql => '<>',
             },
             self::greater => match ($adapterType) {

@@ -35,6 +35,7 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\LogicalOperator;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
@@ -157,7 +158,7 @@ abstract class BaseAdapter
                     return $this->openBlock() . $this->escapeValue($value) . $this->closeBlock();
                 }
             default:
-                if ($value instanceof Keyword) {
+                if ($value instanceof Placeholder) {
                     return $value->getAdapterVersion($this->adapterType);
                 } elseif (is_array($value)) {
                     return Parser::unparseValue(array_shift($value));
@@ -169,7 +170,7 @@ abstract class BaseAdapter
     
     public function getPlaceholder():string
     {
-        return Keyword::placeholder->getAdapterVersion($this->adapterType);
+        return Placeholder::placeholder->getAdapterVersion($this->adapterType);
     }
     
     public function parseComparisonOperator(ComparisonOperator $comparisonOperator):string
@@ -288,11 +289,11 @@ abstract class BaseAdapter
 
     abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
 
-    abstract public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string;
+    abstract public function opFulltextIndex(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null): string;
 
     abstract public function opDecryptFunction(string $column, string $initializationVectorColumn): string;
 
-    abstract public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string;
+    abstract public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder): string;
 
     abstract public function lastInsertId(): int;
 

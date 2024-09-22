@@ -34,6 +34,7 @@ use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 
@@ -220,7 +221,7 @@ class AdapterMysql extends BaseAdapter
     {
         $value = parent::escapeValue($value, $operator);
         if (!in_array($operator, [ComparisonOperator::in, ComparisonOperator::notIn, ComparisonOperator::isNull, ComparisonOperator::isNotNull])) {
-            $placeholder = ($value === Keyword::placeholder->getAdapterVersion($this->adapterType) || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));
+            $placeholder = ($value === Placeholder::placeholder->getAdapterVersion($this->adapterType) || preg_match('#^([\?\:])([0-9a-zA-Z]+)$#', $value) || preg_match('#^([\:])([0-9a-zA-Z]+)([\:])$#', $value));
             if ($placeholder) {
                 return $value;
             }
@@ -277,12 +278,12 @@ class AdapterMysql extends BaseAdapter
         return self::$connection->errorCode();
     }
 
-    public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string
+    public function opFulltextIndex(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null): string
     {
         return $this->fulltextConditionSintax($columns, $value) . ' as ' . ($columnAlias ?? '_relevance');
     }
 
-    public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string
+    public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder): string
     {
         foreach ($columns as &$column) {
             $column = $this->escapeColumn($column);
@@ -294,7 +295,7 @@ class AdapterMysql extends BaseAdapter
 
     public function opDecryptFunction(string $column, string $initializationVectorColumn): string
     {
-        return 'AES_DECRYPT' . $this->openBlock() . $this->opBase64DecodeFunction($column) . ', ' . Keyword::placeholder->getAdapterVersion($this->adapterType) . ', ' . $this->opConvertBlobToHex($initializationVectorColumn) . $this->closeBlock();
+        return 'AES_DECRYPT' . $this->openBlock() . $this->opBase64DecodeFunction($column) . ', ' . Placeholder::placeholder->getAdapterVersion($this->adapterType) . ', ' . $this->opConvertBlobToHex($initializationVectorColumn) . $this->closeBlock();
     }
 
     private function opBase64DecodeFunction(string $column): string

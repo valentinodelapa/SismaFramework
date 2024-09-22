@@ -32,7 +32,7 @@ use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
-use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
@@ -116,23 +116,23 @@ class AdapterMysqlTest extends TestCase
         $this->assertEmpty($adapterMysql->escapeValue(1, ComparisonOperator::isNotNull));
         $this->assertEmpty($adapterMysql->escapeValue('sample', ComparisonOperator::isNull));
         $this->assertEmpty($adapterMysql->escapeValue('sample', ComparisonOperator::isNotNull));
-        $this->assertEmpty($adapterMysql->escapeValue(Keyword::placeholder, ComparisonOperator::isNull));
-        $this->assertEmpty($adapterMysql->escapeValue(Keyword::placeholder, ComparisonOperator::isNotNull));
+        $this->assertEmpty($adapterMysql->escapeValue(Placeholder::placeholder, ComparisonOperator::isNull));
+        $this->assertEmpty($adapterMysql->escapeValue(Placeholder::placeholder, ComparisonOperator::isNotNull));
 
-        $this->assertEquals('( 1,sample,? )', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::in));
-        $this->assertEquals('( 1,sample,? )', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder], ComparisonOperator::notIn));
+        $this->assertEquals('( 1,sample,? )', $adapterMysql->escapeValue([1, 'sample', Placeholder::placeholder], ComparisonOperator::in));
+        $this->assertEquals('( 1,sample,? )', $adapterMysql->escapeValue([1, 'sample', Placeholder::placeholder], ComparisonOperator::notIn));
         $this->assertEquals('( sample )', $adapterMysql->escapeValue('sample', ComparisonOperator::in));
         $this->assertEquals('( sample )', $adapterMysql->escapeValue('sample', ComparisonOperator::notIn));
 
         $this->assertEquals('1', $adapterMysql->escapeValue(1));
         $this->assertEquals('sample', $adapterMysql->escapeValue('sample'));
-        $this->assertEquals(Keyword::placeholder->getAdapterVersion(AdapterType::mysql), $adapterMysql->escapeValue(Keyword::placeholder));
+        $this->assertEquals(Placeholder::placeholder->getAdapterVersion(AdapterType::mysql), $adapterMysql->escapeValue(Placeholder::placeholder));
         $sismaDateTime = new SismaDateTime();
         $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $adapterMysql->escapeValue($sismaDateTime));
         $baseSample = new BaseSample();
         $baseSample->id = 1;
         $this->assertEquals('1', $adapterMysql->escapeValue($baseSample));
-        $this->assertEquals('1', $adapterMysql->escapeValue([1, 'sample', Keyword::placeholder]));
+        $this->assertEquals('1', $adapterMysql->escapeValue([1, 'sample', Placeholder::placeholder]));
     }
 
     public function testOpenBlock()

@@ -27,7 +27,7 @@
 namespace SismaFramework\Orm\ExtendedClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\ExtendedClasses\DependentModel;
@@ -77,7 +77,7 @@ abstract class SelfReferencedModel extends DependentModel
         if ($parentEntity === null) {
             $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Placeholder::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -97,7 +97,7 @@ abstract class SelfReferencedModel extends DependentModel
         if ($parentEntity === null) {
             $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Placeholder::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -106,7 +106,7 @@ abstract class SelfReferencedModel extends DependentModel
             if ($baseEntity === null) {
                 $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
             } else {
-                $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
                 $bindValues[] = $baseEntity;
                 $bindTypes[] = DataType::typeEntity;
             }
@@ -130,7 +130,7 @@ abstract class SelfReferencedModel extends DependentModel
         if ($parentEntity === null) {
             $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Placeholder::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -157,7 +157,7 @@ abstract class SelfReferencedModel extends DependentModel
         if ($parentEntity === null) {
             $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Placeholder::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -166,7 +166,7 @@ abstract class SelfReferencedModel extends DependentModel
             if ($baseEntity === null) {
                 $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
             } else {
-                $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
                 $bindValues[] = $baseEntity;
                 $bindTypes[] = DataType::typeEntity;
             }
@@ -193,7 +193,7 @@ abstract class SelfReferencedModel extends DependentModel
     {
         $query = $this->initQuery();
         $query->setWhere();
-        $query->appendCondition('id', ComparisonOperator::notEqualTwo, Keyword::placeholder, true);
+        $query->appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder, true);
         $bindValues = [
             $excludedEntity,
         ];
@@ -204,7 +204,7 @@ abstract class SelfReferencedModel extends DependentModel
         if ($parentEntity === null) {
             $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Placeholder::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -230,7 +230,7 @@ abstract class SelfReferencedModel extends DependentModel
         if ($parentEntity === null) {
             $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Placeholder::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -250,7 +250,7 @@ abstract class SelfReferencedModel extends DependentModel
         if ($parentEntity === null) {
             $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::isNull, '', true);
         } else {
-            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Keyword::placeholder, true);
+            $query->appendCondition($this->entityName::getForeignKeyName(self::SON_COLLECTION_PROPERTY_NAME), ComparisonOperator::equal, Placeholder::placeholder, true);
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
@@ -259,7 +259,7 @@ abstract class SelfReferencedModel extends DependentModel
             if ($baseEntity === null) {
                 $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
             } else {
-                $query->appendCondition($propertyName, ComparisonOperator::equal, Keyword::placeholder, true);
+                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
                 $bindValues[] = $baseEntity;
                 $bindTypes[] = DataType::typeEntity;
             }

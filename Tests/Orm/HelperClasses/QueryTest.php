@@ -32,7 +32,7 @@ use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Indexing;
-use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 
 /**
  * Description of QueryTest
@@ -158,7 +158,7 @@ class QueryTest extends TestCase
                     switch ($matcherOne->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals(['fulltextColumn'], $columns);
-                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertEquals(Placeholder::placeholder, $value);
                             $this->assertNull($columnAlias);
                             return 'MATCH (filltext_column) AGAINST ?';
                         case 2:
@@ -175,7 +175,7 @@ class QueryTest extends TestCase
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals(['fulltextColumn'], $columns);
-                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertEquals(Placeholder::placeholder, $value);
                             return 'MATCH (filltext_column) AGAINST ?';
                         case 2:
                             $this->assertEquals(['fulltextColumn'], $columns);
@@ -324,7 +324,7 @@ class QueryTest extends TestCase
                 ->willReturnCallback(function ($value, $operator) use ($matcherTwo) {
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
-                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertEquals(Placeholder::placeholder, $value);
                             $this->assertEquals(ComparisonOperator::equal, $operator);
                             return $value->getAdapterVersion(AdapterType::mysql);
                         case 2:
@@ -336,7 +336,7 @@ class QueryTest extends TestCase
                             $this->assertEquals(ComparisonOperator::lessOrEqual, $operator);
                             return $value;
                         case 4:
-                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertEquals(Placeholder::placeholder, $value);
                             $this->assertEquals(ComparisonOperator::isNull, $operator);
                             return '';
                     }
@@ -398,7 +398,7 @@ class QueryTest extends TestCase
                 ->appendCondition('columnTree', ComparisonOperator::lessOrEqual, 'value')
                 ->appendCloseBlock()
                 ->appendNot()
-                ->appendCondition('columnFour', ComparisonOperator::isNull, Keyword::placeholder, true)
+                ->appendCondition('columnFour', ComparisonOperator::isNull, Placeholder::placeholder, true)
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
     }
@@ -438,7 +438,7 @@ class QueryTest extends TestCase
                 ->willReturnCallback(function ($value, $operator) use ($matcherTwo) {
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
-                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertEquals(Placeholder::placeholder, $value);
                             $this->assertEquals(ComparisonOperator::equal, $operator);
                             return $value->getAdapterVersion(AdapterType::mysql);
                         case 2:
@@ -450,7 +450,7 @@ class QueryTest extends TestCase
                             $this->assertEquals(ComparisonOperator::lessOrEqual, $operator);
                             return $value;
                         case 4:
-                            $this->assertEquals(Keyword::placeholder, $value);
+                            $this->assertEquals(Placeholder::placeholder, $value);
                             $this->assertEquals(ComparisonOperator::isNull, $operator);
                             return '';
                     }
@@ -512,7 +512,7 @@ class QueryTest extends TestCase
                 ->appendCondition('columnTree', ComparisonOperator::lessOrEqual, 'value')
                 ->appendCloseBlock()
                 ->appendNot()
-                ->appendCondition('columnFour', ComparisonOperator::isNull, Keyword::placeholder, true)
+                ->appendCondition('columnFour', ComparisonOperator::isNull, Placeholder::placeholder, true)
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
     }

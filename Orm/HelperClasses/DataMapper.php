@@ -35,7 +35,7 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Query;
@@ -198,7 +198,7 @@ class DataMapper
     {
         $query->setTable(NotationManager::convertEntityToTableName($entity));
         $query->setWhere();
-        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
+        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
         $isFirstExecution = $this->checkStartTransaction();
         $columns = $values = $markers = [];
@@ -256,7 +256,7 @@ class DataMapper
             return false;
         }
         $query->setWhere();
-        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
+        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::delete);
         $bindValues = [$entity];
