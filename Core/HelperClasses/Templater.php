@@ -46,19 +46,14 @@ class Templater
 
     public static function generateTemplate(string $template, array $vars, Localizator $localizator = new Localizator()): string
     {
+        $templatePath = self::getTemplatePath($template);
         $varsAndLocales = array_merge($vars, $localizator->getTemplateLocaleArray($template));
-        $templateContent = self::getTemplateContent($template);
+        $templateContent = file_get_contents($templatePath);
         $parsedTemplateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($varsAndLocales) {
             $var = str_replace(['{{', '}}'], '', $varName[0]);
             return $varsAndLocales[$var];
         }, $templateContent);
         return $parsedTemplateContent;
-    }
-
-    private static function getTemplateContent(string $template): string
-    {
-        $path = self::getTemplatePath($template);
-        return file_get_contents($path);
     }
 
     private static function getTemplatePath(string $template)
