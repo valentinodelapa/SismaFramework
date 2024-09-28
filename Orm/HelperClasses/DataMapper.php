@@ -96,7 +96,7 @@ class DataMapper
                 $this->checkIsReferencedEntity($entity);
                 return true;
             }
-        }else{
+        } else {
             return true;
         }
     }
@@ -115,9 +115,7 @@ class DataMapper
             $entity->{$entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
-            if ($isFirstExecution) {
-                $this->commitTransaction();
-            }
+            $this->commitTransaction($isFirstExecution);
             if ($this->ormCacheStatus) {
                 Cache::setEntity($entity);
             }
@@ -188,9 +186,9 @@ class DataMapper
         }
     }
 
-    public function commitTransaction(): void
+    public function commitTransaction(bool $checkAnnidation = true): void
     {
-        if (self::$isActiveTransaction) {
+        if (self::$isActiveTransaction && $checkAnnidation) {
             if ($this->adapter->commitTransaction()) {
                 self::$isActiveTransaction = false;
                 $this->processedEntity = [];
@@ -214,9 +212,7 @@ class DataMapper
         if ($result) {
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
-            if ($isFirstExecution) {
-                $this->commitTransaction();
-            }
+            $this->commitTransaction($isFirstExecution);
             if ($this->ormCacheStatus) {
                 Cache::setEntity($entity);
             }
