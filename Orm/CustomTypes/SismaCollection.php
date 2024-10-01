@@ -27,6 +27,7 @@
 namespace SismaFramework\Orm\CustomTypes;
 
 use SismaFramework\Core\Exceptions\InvalidTypeException;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
  * @author Valentino de Lapa
@@ -91,9 +92,9 @@ class SismaCollection extends \ArrayObject
         return $result;
     }
 
-    public function has($value): bool
+    public function has(BaseEntity $entity): bool
     {
-        return in_array($value, $this->getArrayCopy());
+        return in_array($entity, $this->getArrayCopy());
     }
 
     public function slice(int $offset, ?int $length = null): self
@@ -104,15 +105,17 @@ class SismaCollection extends \ArrayObject
         return $this;
     }
 
-    public function isFirst($key): bool
+    public function isFirst(BaseEntity $entity): bool
     {
-        $keys = array_keys($this->getArrayCopy());
-        return $key === array_key_first($keys);
+        $arrayCopy = $this->getArrayCopy();
+        $key = array_search($entity, $arrayCopy);
+        return $key === array_key_first($arrayCopy);
     }
 
-    public function isLast($key): bool
+    public function isLast(BaseEntity $entity): bool
     {
-        $keys = array_keys($this->getArrayCopy());
-        return $key === array_key_first($keys);
+        $arrayCopy = $this->getArrayCopy();
+        $key = array_search($entity, $arrayCopy);
+        return $key === array_key_last($arrayCopy);
     }
 }

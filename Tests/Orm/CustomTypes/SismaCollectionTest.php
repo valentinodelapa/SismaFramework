@@ -144,7 +144,34 @@ class SismaCollectionTest extends TestCase
         $this->assertCount(3, $sismaCollectionOne);
         $sismaCollectionOne->slice(1, 1);
         $this->assertCount(1, $sismaCollectionOne);
-        $this->assertEquals($baseSampleThree, $sismaCollectionOne[0]);
-        
+        $this->assertEquals($baseSampleThree, $sismaCollectionOne[0]);   
+    }
+    
+    public function testIsFirst()
+    {
+        $sismaCollection = new SismaCollection(BaseSample::class);
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
+        $sismaCollection->append($baseSampleOne);
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
+        $sismaCollection->append($baseSampleTwo);
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
+        $sismaCollection->append($baseSampleThree);
+        $this->assertTrue($sismaCollection->isFirst($baseSampleOne));
+        $this->assertFalse($sismaCollection->isFirst($baseSampleTwo));
+        $this->assertFalse($sismaCollection->isFirst($baseSampleThree));
+    }
+    
+    public function testIsLast()
+    {
+        $sismaCollection = new SismaCollection(BaseSample::class);
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
+        $sismaCollection->append($baseSampleOne);
+        $baseSampleTwo = new BaseSample($this->dataMapperMock);
+        $sismaCollection->append($baseSampleTwo);
+        $baseSampleThree = new BaseSample($this->dataMapperMock);
+        $sismaCollection->append($baseSampleThree);
+        $this->assertFalse($sismaCollection->isLast($baseSampleOne));
+        $this->assertFalse($sismaCollection->isLast($baseSampleTwo));
+        $this->assertTrue($sismaCollection->isLast($baseSampleThree));
     }
 }
