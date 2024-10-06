@@ -52,7 +52,7 @@ class DataMapper
     private bool $ormCacheStatus = \Config\ORM_CACHE;
     private BaseAdapter $adapter;
     private static bool $isActiveTransaction = false;
-    private static bool $manualTransactionStarted = false;
+    private array $processedEntity = [];
 
     public function __construct(?BaseAdapter $adapter = null)
     {
@@ -83,17 +83,20 @@ class DataMapper
         return $result;
     }
 
-    public function save(BaseEntity $entity, Query $query = new Query(), bool $nestedChangesTracking = true): bool
+    public function save(BaseEntity $entity, Query $query = new Query()): bool
     {
-        if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
-            return $this->insert($entity, $query);
-        } elseif ($entity->modified) {
-            return $this->update($entity, $query);
-        } else {
-            if ($nestedChangesTracking) {
+        if (in_array($entity, $this->processedEntity) === false) {
+            $this->processedEntity[] = $entity;
+            if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
+                return $this->insert($entity, $query);
+            } elseif ($entity->modified) {
+                return $this->update($entity, $query);
+            } else {
                 $this->saveForeignKeys($entity);
                 $this->checkIsReferencedEntity($entity);
+                return true;
             }
+        } else {
             return true;
         }
     }
@@ -102,7 +105,7 @@ class DataMapper
     {
         $query->setTable(NotationManager::convertEntityToTableName($entity));
         $query->close();
-        $isFirstExecution = $this->checkStartTransaction();
+        $isFirstExecution = $this->startTransaction();
         $columns = $values = $markers = [];
         $this->parseValues($entity, $columns, $values, $markers);
         $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
@@ -112,9 +115,7 @@ class DataMapper
             $entity->{$entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
-            if ($isFirstExecution) {
-                $this->checkEndTransaction();
-            }
+            $this->commitTransaction($isFirstExecution);
             if ($this->ormCacheStatus) {
                 Cache::setEntity($entity);
             }
@@ -155,9 +156,9 @@ class DataMapper
         }
     }
 
-    private function checkStartTransaction(): bool
+    public function startTransaction(): bool
     {
-        if ((self::$isActiveTransaction === false) && (self::$manualTransactionStarted === false)) {
+        if (self::$isActiveTransaction === false) {
             if ($this->adapter->beginTransaction()) {
                 self::$isActiveTransaction = true;
                 return true;
@@ -185,22 +186,23 @@ class DataMapper
         }
     }
 
-    private function checkEndTransaction(): void
+    public function commitTransaction(bool $checkAnnidation = true): void
     {
-        if (self::$isActiveTransaction && (self::$manualTransactionStarted === false)) {
+        if (self::$isActiveTransaction && $checkAnnidation) {
             if ($this->adapter->commitTransaction()) {
                 self::$isActiveTransaction = false;
+                $this->processedEntity = [];
             }
         }
     }
 
-    public function update(BaseEntity $entity, Query $query = new Query()): bool
+    private function update(BaseEntity $entity, Query $query = new Query()): bool
     {
         $query->setTable(NotationManager::convertEntityToTableName($entity));
         $query->setWhere();
         $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
-        $isFirstExecution = $this->checkStartTransaction();
+        $isFirstExecution = $this->startTransaction();
         $columns = $values = $markers = [];
         $this->parseValues($entity, $columns, $values, $markers);
         $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
@@ -210,28 +212,12 @@ class DataMapper
         if ($result) {
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
-            if ($isFirstExecution) {
-                $this->checkEndTransaction();
-            }
+            $this->commitTransaction($isFirstExecution);
             if ($this->ormCacheStatus) {
                 Cache::setEntity($entity);
             }
         }
         return $result;
-    }
-
-    public function startTransaction(): void
-    {
-        if ($this->adapter->beginTransaction()) {
-            self::$manualTransactionStarted = true;
-        }
-    }
-
-    public function commitTransaction(): void
-    {
-        if ($this->adapter->commitTransaction()) {
-            self::$manualTransactionStarted = false;
-        }
     }
 
     private function saveForeignKeys(BaseEntity $entity): void

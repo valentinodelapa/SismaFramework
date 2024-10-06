@@ -30,6 +30,10 @@ use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
+use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
+use SismaFramework\Sample\Controllers\SampleController;
+use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Structural\Controllers\FrameworkController;
 use Throwable;
 
@@ -40,40 +44,23 @@ use Throwable;
  */
 class ErrorHandler
 {
+
     private static bool $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
     private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
 
-    public static function handleThrowableError(Throwable $throwable): Response
+    public static function setLogVerboseActive(bool $logVerboseActive): void
     {
-        BufferManager::clear();
-        Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
-        if (self::$logVerboseActive) {
-            Logger::saveTrace($throwable->getTrace());
-        }
-        if (self::$developementEnvironment) {
-            return self::callThrowableErrorAction($throwable);
-        } else {
-            return self::callInternalServerErrorAction();
-        }
+        self::$logVerboseActive = $logVerboseActive;
     }
 
-    public static function callThrowableErrorAction(Throwable $throwable): Response
+    public static function setDevelopementEnvironment(bool $developementEnvironment): void
     {
-        Router::setActualCleanUrl('framework', 'thowableError');
-        $frameworkController = new FrameworkController();
-        return $frameworkController->throwableError($throwable);
+        self::$developementEnvironment = $developementEnvironment;
     }
 
-    private static function callInternalServerErrorAction(): Response
+    public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController()): void
     {
-        Router::setActualCleanUrl('framework', 'internalServerError');
-        $frameworkController = new FrameworkController();
-        return $frameworkController->internalServerError();
-    }
-
-    public static function handleNonThrowableError(): void
-    {
-        register_shutdown_function(function () {
+        register_shutdown_function(function () use ($controller) {
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error)) {
@@ -83,18 +70,63 @@ class ErrorHandler
                     Logger::saveTrace($backtrace);
                 }
                 if (self::$developementEnvironment) {
-                    self::callNonThrowableErrorAction($error, $backtrace);
+                    self::callNonThrowableErrorAction($controller, $error, $backtrace);
                 } else {
-                    self::callInternalServerErrorAction();
+                    self::callInternalServerErrorAction($controller);
                 }
             }
         });
     }
 
-    private static function callNonThrowableErrorAction(array $error, array $backtrace): Response
+    private static function callNonThrowableErrorAction(StructuralControllerInterface $controller, array $error, array $backtrace): Response
     {
         Router::setActualCleanUrl('framework', 'nonThowableError');
-        $frameworkController = new FrameworkController();
-        return $frameworkController->nonThrowableError($error, $backtrace);
+        return $controller->nonThrowableError($error, $backtrace);
+    }
+
+    private static function callInternalServerErrorAction($structuralController): Response
+    {
+        Router::setActualCleanUrl('framework', 'internalServerError');
+        return $structuralController->internalServerError();
+    }
+
+    public static function handleBaseException(BaseException $exception,
+            DefaultControllerInterface $defaultController = new SampleController(),
+            StructuralControllerInterface $structuralController = new FrameworkController()): Response
+    {
+        if (self::$developementEnvironment) {
+            return self::callThrowableErrorAction($structuralController, $exception);
+        } else {
+            return self::callDefaultControllerError($defaultController, $exception);
+        }
+    }
+
+    private static function callThrowableErrorAction(StructuralControllerInterface $controller, Throwable $throwable): Response
+    {
+        Router::setActualCleanUrl('framework', 'thowableError');
+        return $controller->throwableError($throwable);
+    }
+
+    private static function callDefaultControllerError(DefaultControllerInterface $controller, BaseException $exception): Response
+    {
+        $fullControllerName = get_class($controller);
+        $controllerName = basename(str_replace('\\', DIRECTORY_SEPARATOR, $fullControllerName));
+        Router::setActualCleanUrl(str_replace('Controller', '', $controllerName), 'error');
+        return $controller->error($exception->getMessage(), $exception->getResponseType());
+    }
+
+    public static function handleThrowableError(Throwable $throwable,
+            StructuralControllerInterface $structuralController = new FrameworkController()): Response
+    {
+        BufferManager::clear();
+        Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
+        if (self::$logVerboseActive) {
+            Logger::saveTrace($throwable->getTrace());
+        }
+        if (self::$developementEnvironment) {
+            return self::callThrowableErrorAction($structuralController, $throwable);
+        } else {
+            return self::callInternalServerErrorAction($structuralController);
+        }
     }
 }

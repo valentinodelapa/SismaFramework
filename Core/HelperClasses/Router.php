@@ -37,10 +37,10 @@ class Router
 {
 
     private static $metaUrl = \Config\DEFAULT_META_URL;
-    private static $controllerUrl;
-    private static $actionUrl;
-    private static $actualCleanUrl;
-    private $parsedUrl;
+    private static $controllerUrl = null;
+    private static $actionUrl = null;
+    private static $actualCleanUrl = null;
+    private $parsedUrl = null;
 
     public static function redirect(string $relativeUrl): Response
     {
@@ -65,17 +65,17 @@ class Router
         self::$actualCleanUrl = self::$metaUrl . '/' . $controllerUrl . '/' . $actionUrl . '/';
     }
 
-    public static function getControllerUrl(): string
+    public static function getControllerUrl(): ?string
     {
         return self::$controllerUrl;
     }
 
-    public static function getActionUrl(): string
+    public static function getActionUrl(): ?string
     {
         return self::$actionUrl;
     }
 
-    public static function getActualCleanUrl(): string
+    public static function getActualCleanUrl(): ?string
     {
         return self::$actualCleanUrl;
     }
@@ -104,7 +104,7 @@ class Router
         return new Response();
     }
 
-    public function getParsedUrl(): string
+    public function getParsedUrl(): ?string
     {
         return $this->parsedUrl;
     }

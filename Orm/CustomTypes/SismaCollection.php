@@ -27,6 +27,7 @@
 namespace SismaFramework\Orm\CustomTypes;
 
 use SismaFramework\Core\Exceptions\InvalidTypeException;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
  * @author Valentino de Lapa
@@ -47,6 +48,7 @@ class SismaCollection extends \ArrayObject
         return $this->restrictiveType;
     }
 
+    #[\Override]
     public function append(mixed $value): void
     {
         if ($value instanceof $this->restrictiveType) {
@@ -56,6 +58,7 @@ class SismaCollection extends \ArrayObject
         }
     }
 
+    #[\Override]
     public function exchangeArray(array|object $array): array
     {
         foreach ($array as $entity) {
@@ -66,45 +69,53 @@ class SismaCollection extends \ArrayObject
         return parent::exchangeArray($array);
     }
 
-    public function mergeWith(SismaCollection $sismaCollection): void
+    public function mergeWith(SismaCollection $sismaCollection): self
     {
-        foreach ($sismaCollection as $object) {
-            $this->append($object);
+        if ($this->restrictiveType === $sismaCollection->getRestrictiveType()) {
+            foreach ($sismaCollection as $object) {
+                $this->append($object);
+            }
+        } else {
+            throw new InvalidTypeException();
         }
+        return $this;
     }
 
-    public function findFromProperty(string $propertyName, mixed $propertyValue): mixed
+    public function findEntityFromProperty(string $propertyName, mixed $propertyValue): mixed
     {
         $result = null;
-        foreach ($this as $value) {
-            if ($value->$propertyName === $propertyValue) {
-                $result = $value;
+        foreach ($this as $entity) {
+            if ($entity->$propertyName === $propertyValue) {
+                $result = $entity;
             }
         }
         return $result;
     }
 
-    public function has($value): bool
+    public function has(BaseEntity $entity): bool
     {
-        return in_array($value, (array) $this);
+        return in_array($entity, $this->getArrayCopy());
     }
 
-    public function slice(int $offset, ?int $length = null): void
+    public function slice(int $offset, ?int $length = null): self
     {
         $arrayFromObgect = $this->getArrayCopy();
         $arraySliced = array_slice($arrayFromObgect, $offset, $length);
         $this->exchangeArray($arraySliced);
+        return $this;
     }
 
-    public function isFirst($key): bool
+    public function isFirst(BaseEntity $entity): bool
     {
-        $keys = array_keys($this->getArrayCopy());
-        return $key === array_key_first($keys);
+        $arrayCopy = $this->getArrayCopy();
+        $key = array_search($entity, $arrayCopy);
+        return $key === array_key_first($arrayCopy);
     }
 
-    public function isLast($key): bool
+    public function isLast(BaseEntity $entity): bool
     {
-        $keys = array_keys($this->getArrayCopy());
-        return $key === array_key_first($keys);
+        $arrayCopy = $this->getArrayCopy();
+        $key = array_search($entity, $arrayCopy);
+        return $key === array_key_last($arrayCopy);
     }
 }

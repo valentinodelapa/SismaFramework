@@ -30,12 +30,13 @@ use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
 use SismaFramework\Security\BaseClasses\BaseException;
 
 /**
  * @author Valentino de Lapa
  */
-class FrameworkController
+class FrameworkController implements StructuralControllerInterface
 {
     protected array $vars;
     
@@ -48,12 +49,14 @@ class FrameworkController
         $this->vars['rootUrl'] = Router::getRootUrl();
     }
     
+    #[\Override]
     public function internalServerError():Response
     {
         Render::setStructural();
         return Render::generateData('framework/internalServerError', $this->vars, ResponseType::httpInternalServerError);
     }
 
+    #[\Override]
     public function throwableError(\Throwable $throwable): Response
     {
         $this->vars['project'] = \Config\PROJECT;
@@ -68,6 +71,7 @@ class FrameworkController
         return Render::generateData('framework/visibleError', $this->vars, ($throwable instanceof BaseException) ? $throwable->getResponseType() : ResponseType::httpInternalServerError);
     }
 
+    #[\Override]
     public function nonThrowableError(array $error, array $backtrace): Response
     {
         $this->vars['project'] = \Config\PROJECT;
