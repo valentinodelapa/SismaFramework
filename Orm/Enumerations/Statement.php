@@ -30,13 +30,36 @@ namespace SismaFramework\Orm\Enumerations;
  *
  * @author Valentino de Lapa
  */
-enum Statement: string
+enum Statement
 {
+    
+    use \SismaFramework\Orm\Traits\OrmKeyword;
 
-    case delete = 'DELETE FROM';
-    case insert = 'INSERT INTO';
-    case select = 'SELECT';
-    case set = 'SET';
-    case update = 'UPDATE';
-
+    case delete;
+    case insert;
+    case select;
+    case set;
+    case update;
+    
+    #[\Override]
+    public function getAdapterVersion(AdapterType $adapterType): string
+    {
+        return match ($this) {
+            self::delete => match ($adapterType) {
+                AdapterType::mysql => 'DELETE FROM',
+            },
+            self::insert => match ($adapterType) {
+                AdapterType::mysql => 'INSERT INTO',
+            },
+            self::select => match ($adapterType) {
+                AdapterType::mysql => 'SELECT',
+            },
+            self::set => match ($adapterType) {
+                AdapterType::mysql => 'SET',
+            },
+            self::update => match ($adapterType) {
+                AdapterType::mysql => 'UPDATE',
+            },
+        };
+    }
 }

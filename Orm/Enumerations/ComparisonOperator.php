@@ -30,22 +30,68 @@ namespace SismaFramework\Orm\Enumerations;
  *
  * @author Valentino de Lapa
  */
-enum ComparisonOperator: string
+enum ComparisonOperator
 {
 
-    case against = 'AGAINST';
-    case equal = '=';
-    case notEqualOne = '!=';
-    case notEqualTwo = '<>';
-    case greater = '>';
-    case less = '<';
-    case greaterOrEqual = '>=';
-    case lessOrEqual = '<=';
-    case in = 'IN';
-    case notIn = 'NOT IN';
-    case like = 'LIKE';
-    case notLike = 'NOT LIKE';
-    case isNull = 'IS NULL';
-    case isNotNull = 'IS NOT NULL';
+    use \SismaFramework\Orm\Traits\OrmKeyword;
 
+    case against;
+    case equal;
+    case notEqual;
+    case greater;
+    case less;
+    case greaterOrEqual;
+    case lessOrEqual;
+    case in;
+    case notIn;
+    case like;
+    case notLike;
+    case isNull;
+    case isNotNull;
+
+    #[\Override]
+    public function getAdapterVersion(AdapterType $adapterType): string
+    {
+        return match ($this) {
+            self::against => match ($adapterType) {
+                AdapterType::mysql => 'AGAINST',
+            },
+            self::equal => match ($adapterType) {
+                AdapterType::mysql => '=',
+            },
+            self::notEqual => match ($adapterType) {
+                AdapterType::mysql => '<>',
+            },
+            self::greater => match ($adapterType) {
+                AdapterType::mysql => '>',
+            },
+            self::less => match ($adapterType) {
+                AdapterType::mysql => '<',
+            },
+            self::greaterOrEqual => match ($adapterType) {
+                AdapterType::mysql => '>=',
+            },
+            self::lessOrEqual => match ($adapterType) {
+                AdapterType::mysql => '<=',
+            },
+            self::in => match ($adapterType) {
+                AdapterType::mysql => 'IN',
+            },
+            self::notIn => match ($adapterType) {
+                AdapterType::mysql => 'NOT IN',
+            },
+            self::like => match ($adapterType) {
+                AdapterType::mysql => 'LIKE',
+            },
+            self::notLike => match ($adapterType) {
+                AdapterType::mysql => 'NOT LIKE',
+            },
+            self::isNull => match ($adapterType) {
+                AdapterType::mysql => 'IS NULL',
+            },
+            self::isNotNull => match ($adapterType) {
+                AdapterType::mysql => 'IS NOT NULL',
+            },
+        };
+    }
 }

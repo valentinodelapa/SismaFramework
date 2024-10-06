@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\HelperClasses\Query;

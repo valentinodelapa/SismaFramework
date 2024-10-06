@@ -31,6 +31,7 @@ use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 
 /**
@@ -101,7 +102,7 @@ class Query
         return $this;
     }
 
-    public function &setFulltextIndexColumn(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null, bool $append = false): self
+    public function &setFulltextIndexColumn(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null, bool $append = false): self
     {
         if ($append) {
             $this->columns[] = $this->adapter->opFulltextIndex($columns, $value, $columnAlias);
@@ -159,7 +160,7 @@ class Query
 
     public function &appendOrderBySubquery(Query $query, null|string|Indexing $Indexing = null): self
     {
-        $parsedQuery = Keyword::openBlock->value . $query->getCommandToExecute() . Keyword::closeBlock->value;
+        $parsedQuery = $this->adapter->openBlock() . $query->getCommandToExecute() . $this->adapter->closeBlock();
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
         $this->order[$parsedQuery] = $parsedIndexing;
         return $this;
@@ -190,45 +191,45 @@ class Query
         return $this;
     }
 
-    public function &appendCondition(string $column, ComparisonOperator $operator, Keyword|string|array $value = Keyword::placeholder, bool $foreignKey = false): self
+    public function &appendCondition(string $column, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder, bool $foreignKey = false): self
     {
         $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
-            $this->where[] = $escapedColumn . ' ' . $operator->value . ' ' . $escapedValue;
+            $this->where[] = $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         if ($this->currentCondition == Condition::having) {
-            $this->having[] = $escapedColumn . ' ' . $operator->value . ' ' . $escapedValue;
+            $this->having[] = $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         return $this;
     }
 
-    public function &appendConditionOnEncryptedColumn(string $column, string $initializationVectorColumn, ComparisonOperator $operator, Keyword|string|array $value = Keyword::placeholder): self
+    public function &appendConditionOnEncryptedColumn(string $column, string $initializationVectorColumn, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
-            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn). ' ' . $operator->value . ' ' . $escapedValue;
+            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn). ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         if ($this->currentCondition == Condition::having) {
-            $this->having[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $operator->value . ' ' . $escapedValue;
+            $this->having[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         return $this;
     }
 
-    public function &appendFulltextCondition(array $columns, Keyword|string $value = Keyword::placeholder): self
+    public function &appendFulltextCondition(array $columns, Placeholder|string $value = Placeholder::placeholder): self
     {
         $this->where[] = $this->adapter->fulltextConditionSintax($columns, $value);
         return $this;
     }
 
-    public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Keyword|string|array $value = Keyword::placeholder,): self
+    public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder,): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
-            $this->where[] = $this->adapter->opSubquery($subquery) . ' ' . $operator->value . ' ' . $escapedValue;
+            $this->where[] = $this->adapter->opSubquery($subquery) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         if ($this->currentCondition == Condition::having) {
-            $this->having[] = $this->adapter->opSubquery($subquery) . ' ' . $operator->value . ' ' . $escapedValue;
+            $this->having[] = $this->adapter->opSubquery($subquery) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         return $this;
     }

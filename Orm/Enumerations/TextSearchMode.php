@@ -30,9 +30,27 @@ namespace SismaFramework\Orm\Enumerations;
  *
  * @author Valentino de Lapa
  */
-enum TextSearchMode: string
+enum TextSearchMode
 {
-    case inNaturaLanguageMode = 'IN NATURAL LANGUAGE MODE';
-    case withQueryExpansion = 'WITH QUERY EXPANSION';
-    case inBooleanMode = 'IN BOOLEAN MODE';
+    use \SismaFramework\Orm\Traits\OrmKeyword;
+    
+    case inNaturaLanguageMode;
+    case withQueryExpansion;
+    case inBooleanMode;
+    
+    #[\Override]
+    public function getAdapterVersion(AdapterType $adapterType): string
+    {
+        return match ($this) {
+            self::inNaturaLanguageMode => match ($adapterType) {
+                AdapterType::mysql => 'IN NATURAL LANGUAGE MODE',
+            },
+            self::withQueryExpansion => match ($adapterType) {
+                AdapterType::mysql => 'WITH QUERY EXPANSION',
+            },
+            self::inBooleanMode => match ($adapterType) {
+                AdapterType::mysql => 'IN BOOLEAN MODE',
+            },
+        };
+    }
 }

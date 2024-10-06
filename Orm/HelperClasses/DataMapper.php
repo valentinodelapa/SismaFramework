@@ -35,7 +35,7 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Query;
@@ -52,7 +52,7 @@ class DataMapper
     private bool $ormCacheStatus = \Config\ORM_CACHE;
     private BaseAdapter $adapter;
     private static bool $isActiveTransaction = false;
-    private static bool $manualTransactionStarted = false;
+    private array $processedEntity = [];
 
     public function __construct(?BaseAdapter $adapter = null)
     {
@@ -77,23 +77,26 @@ class DataMapper
     public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()): bool
     {
         $query->close();
-        $cmd = $query->getCommandToExecute(Statement::set, ["variable" => $variable, "value" => Keyword::placeholder->value]);
+        $cmd = $query->getCommandToExecute(Statement::set, ["variable" => $variable, "value" => $this->adapter->getPlaceholder()]);
         Parser::unparseValue($bindValue);
         $result = $this->adapter->execute($cmd, [$bindValue], [$bindType]);
         return $result;
     }
 
-    public function save(BaseEntity $entity, Query $query = new Query(), bool $nestedChangesTracking = true): bool
+    public function save(BaseEntity $entity, Query $query = new Query()): bool
     {
-        if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
-            return $this->insert($entity, $query);
-        } elseif ($entity->modified) {
-            return $this->update($entity, $query);
-        } else {
-            if ($nestedChangesTracking) {
+        if (in_array($entity, $this->processedEntity) === false) {
+            $this->processedEntity[] = $entity;
+            if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
+                return $this->insert($entity, $query);
+            } elseif ($entity->modified) {
+                return $this->update($entity, $query);
+            } else {
                 $this->saveForeignKeys($entity);
                 $this->checkIsReferencedEntity($entity);
+                return true;
             }
+        } else {
             return true;
         }
     }
@@ -102,7 +105,7 @@ class DataMapper
     {
         $query->setTable(NotationManager::convertEntityToTableName($entity));
         $query->close();
-        $isFirstExecution = $this->checkStartTransaction();
+        $isFirstExecution = $this->startTransaction();
         $columns = $values = $markers = [];
         $this->parseValues($entity, $columns, $values, $markers);
         $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
@@ -112,9 +115,7 @@ class DataMapper
             $entity->{$entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
-            if ($isFirstExecution) {
-                $this->checkEndTransaction();
-            }
+            $this->commitTransaction($isFirstExecution);
             if ($this->ormCacheStatus) {
                 Cache::setEntity($entity);
             }
@@ -128,7 +129,7 @@ class DataMapper
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
-                $markers[] = Keyword::placeholder->value;
+                $markers[] = $this->adapter->getPlaceholder();
                 $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
                 $currentValue = $reflectionProperty->getValue($entity);
                 if ($currentValue instanceof BaseEntity) {
@@ -149,15 +150,15 @@ class DataMapper
     private function parseForeignKeyIndexes(BaseEntity $entity, array &$columns, array &$values, array &$markers): void
     {
         foreach ($entity->getForeignKeyIndexes() as $propertyName => $propertyValue) {
-            $markers[] = Keyword::placeholder->value;
+            $markers[] = $this->adapter->getPlaceholder();
             $columns[] = $this->adapter->escapeColumn($propertyName, true);
             $values[] = $propertyValue;
         }
     }
 
-    private function checkStartTransaction(): bool
+    public function startTransaction(): bool
     {
-        if ((self::$isActiveTransaction === false) && (self::$manualTransactionStarted === false)) {
+        if (self::$isActiveTransaction === false) {
             if ($this->adapter->beginTransaction()) {
                 self::$isActiveTransaction = true;
                 return true;
@@ -185,22 +186,23 @@ class DataMapper
         }
     }
 
-    private function checkEndTransaction(): void
+    public function commitTransaction(bool $checkAnnidation = true): void
     {
-        if (self::$isActiveTransaction && (self::$manualTransactionStarted === false)) {
+        if (self::$isActiveTransaction && $checkAnnidation) {
             if ($this->adapter->commitTransaction()) {
                 self::$isActiveTransaction = false;
+                $this->processedEntity = [];
             }
         }
     }
 
-    public function update(BaseEntity $entity, Query $query = new Query()): bool
+    private function update(BaseEntity $entity, Query $query = new Query()): bool
     {
         $query->setTable(NotationManager::convertEntityToTableName($entity));
         $query->setWhere();
-        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
+        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
-        $isFirstExecution = $this->checkStartTransaction();
+        $isFirstExecution = $this->startTransaction();
         $columns = $values = $markers = [];
         $this->parseValues($entity, $columns, $values, $markers);
         $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
@@ -210,28 +212,12 @@ class DataMapper
         if ($result) {
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
-            if ($isFirstExecution) {
-                $this->checkEndTransaction();
-            }
+            $this->commitTransaction($isFirstExecution);
             if ($this->ormCacheStatus) {
                 Cache::setEntity($entity);
             }
         }
         return $result;
-    }
-
-    public function startTransaction(): void
-    {
-        if ($this->adapter->beginTransaction()) {
-            self::$manualTransactionStarted = true;
-        }
-    }
-
-    public function commitTransaction(): void
-    {
-        if ($this->adapter->commitTransaction()) {
-            self::$manualTransactionStarted = false;
-        }
     }
 
     private function saveForeignKeys(BaseEntity $entity): void
@@ -256,7 +242,7 @@ class DataMapper
             return false;
         }
         $query->setWhere();
-        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Keyword::placeholder);
+        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::delete);
         $bindValues = [$entity];

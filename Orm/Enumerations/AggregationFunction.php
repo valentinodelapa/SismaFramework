@@ -30,11 +30,27 @@ namespace SismaFramework\Orm\Enumerations;
  *
  * @author Valentino de Lapa
  */
-enum AggregationFunction: string
+enum AggregationFunction
 {
+    
+    use \SismaFramework\Orm\Traits\OrmKeyword;
 
-    case count = 'COUNT';
-    case avg = 'AVG';
-    case sum = 'SUM';
+    case count;
+    case avg;
+    case sum;
 
+    public function getAdapterVersion(AdapterType $adapterType): string
+    {
+        return match ($this) {
+            self::count => match ($adapterType) {
+                AdapterType::mysql => 'COUNT',
+            },
+            self::avg => match ($adapterType) {
+                AdapterType::mysql => 'AVG',
+            },
+            self::sum => match ($adapterType) {
+                AdapterType::mysql => 'SUM',
+            },
+        };
+    }
 }

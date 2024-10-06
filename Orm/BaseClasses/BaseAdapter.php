@@ -29,11 +29,13 @@ namespace SismaFramework\Orm\BaseClasses;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\NotationManager;
+use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Keyword;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\LogicalOperator;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
@@ -46,15 +48,19 @@ use SismaFramework\Orm\HelperClasses\Query;
 abstract class BaseAdapter
 {
 
+    protected AdapterType $adapterType;
     protected static ?BaseAdapter $adapter = null;
     protected static mixed $connection = null;
 
     public function __construct(array $options = [])
     {
         $this->connect($options);
+        $this->adapterType = $this->setAdapterType();
     }
 
     abstract protected function connect(array $options = []): void;
+
+    abstract protected function setAdapterType(): AdapterType;
 
     public static function setConnection(mixed $connection): void
     {
@@ -64,7 +70,8 @@ abstract class BaseAdapter
     public static function &getDefault(): ?BaseAdapter
     {
         if (static::$adapter === null) {
-            $defaultAdapter = static::create(\Config\DEFAULT_ADAPTER, [
+            $defaultAdapterType = AdapterType::from(\Config\DEFAULT_ADAPTER_TYPE);
+            $defaultAdapter = static::create($defaultAdapterType->getAdapterClass(), [
                         'database' => \Config\DATABASE_NAME,
                         'hostname' => \Config\DATABASE_HOST,
                         'password' => \Config\DATABASE_PASSWORD,
@@ -98,7 +105,7 @@ abstract class BaseAdapter
         $parsedName = preg_replace("/([^a-zA-Z_]+)/", "", $name);
         return $parsedName;
     }
-    
+
     public function escapeTable(string $table, ?string $tableAlias = null): string
     {
         $parsedTable = $this->escapeIdentifier(NotationManager::convertEntityNameToTableName($table));
@@ -114,7 +121,7 @@ abstract class BaseAdapter
             $order = Indexing::tryFrom($order);
         }
         if ($order instanceof Indexing) {
-            return $order->value;
+            return $order->getAdapterVersion($this->adapterType);
         } else {
             return '';
         }
@@ -151,8 +158,8 @@ abstract class BaseAdapter
                     return $this->openBlock() . $this->escapeValue($value) . $this->closeBlock();
                 }
             default:
-                if ($value instanceof Keyword) {
-                    return $value->value;
+                if ($value instanceof Placeholder) {
+                    return $value->getAdapterVersion($this->adapterType);
                 } elseif (is_array($value)) {
                     return Parser::unparseValue(array_shift($value));
                 } else {
@@ -160,30 +167,40 @@ abstract class BaseAdapter
                 }
         }
     }
+    
+    public function getPlaceholder():string
+    {
+        return Placeholder::placeholder->getAdapterVersion($this->adapterType);
+    }
+    
+    public function parseComparisonOperator(ComparisonOperator $comparisonOperator):string
+    {
+        return $comparisonOperator->getAdapterVersion($this->adapterType);
+    }
 
     public function openBlock(): string
     {
-        return Keyword::openBlock->value . ' ';
+        return Keyword::openBlock->getAdapterVersion($this->adapterType) . ' ';
     }
 
     public function closeBlock(): string
     {
-        return ' ' . Keyword::closeBlock->value;
+        return ' ' . Keyword::closeBlock->getAdapterVersion($this->adapterType);
     }
 
     public function opAND(): string
     {
-        return LogicalOperator::and->value;
+        return LogicalOperator::and->getAdapterVersion($this->adapterType);
     }
 
     public function opOR(): string
     {
-        return LogicalOperator::or->value;
+        return LogicalOperator::or->getAdapterVersion($this->adapterType);
     }
 
     public function opNOT(): string
     {
-        return LogicalOperator::not->value;
+        return LogicalOperator::not->getAdapterVersion($this->adapterType);
     }
 
     public function opCOUNT(string $column, bool $distinct): string
@@ -194,12 +211,12 @@ abstract class BaseAdapter
         if ($column !== $this->allColumns()) {
             $column = $this->escapeColumn($column);
         }
-        return AggregationFunction::count->value . Keyword::openBlock->value . ($distinct ? Keyword::distinct->value . ' ' : '') . $column . Keyword::closeBlock->value . ' as _numrows';
+        return AggregationFunction::count->getAdapterVersion($this->adapterType) . Keyword::openBlock->getAdapterVersion($this->adapterType) . ($distinct ? Keyword::distinct->getAdapterVersion($this->adapterType) . ' ' : '') . $column . Keyword::closeBlock->getAdapterVersion($this->adapterType) . ' as _numrows';
     }
 
     public function opSubquery(Query $subquery, ?string $columnAlias = null): string
     {
-        $column = Keyword::openBlock->value . $subquery->getCommandToExecute() . Keyword::closeBlock->value;
+        $column = Keyword::openBlock->getAdapterVersion($this->adapterType) . $subquery->getCommandToExecute() . Keyword::closeBlock->getAdapterVersion($this->adapterType);
         if ($columnAlias !== null) {
             $column .= ' as ' . $this->escapeColumn($columnAlias);
         }
@@ -208,7 +225,7 @@ abstract class BaseAdapter
 
     public function parseSet(string $variable, string $value): string
     {
-        return Statement::set->value . ' ' . $variable . ' = ' . $value;
+        return Statement::set->getAdapterVersion($this->adapterType) . ' ' . $variable . ' = ' . $value;
     }
 
     public function parseSelect(bool $distinct, array $select, string $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
@@ -216,24 +233,24 @@ abstract class BaseAdapter
         foreach ($orderby as $k => $v) {
             $orderby[$k] = $k . ' ' . $v;
         }
-        $query = Statement::select->value . ' ' .
-                ($distinct ? Keyword::distinct->value . ' ' : '') .
+        $query = Statement::select->getAdapterVersion($this->adapterType) . ' ' .
+                ($distinct ? Keyword::distinct->getAdapterVersion($this->adapterType) . ' ' : '') .
                 implode(',', $select) . ' ' .
-                Keyword::from->value . ' ' . $from . ' ' .
-                ((count($where) > 0) ? Condition::where->value . ' ' . implode(' ', $where) : '' ) . ' ' .
-                ($groupby ? Keyword::groupBy->value . ' ' . implode(',', $groupby) . ' ' : '') .
-                ($groupby && $having ? Condition::having->value . ' ' . implode(' ', $having) . ' ' : '') .
-                (count($orderby) > 0 ? Keyword::orderBy->value . ' ' . implode(',', $orderby) . ' ' : '') .
-                ($limit > 0 ? Keyword::limit->value . ' ' . $limit . ' ' : '') .
-                ($offset > 0 ? Keyword::offset->value . ' ' . $offset . ' ' : '');
+                Keyword::from->getAdapterVersion($this->adapterType) . ' ' . $from . ' ' .
+                ((count($where) > 0) ? Condition::where->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $where) : '' ) . ' ' .
+                ($groupby ? Keyword::groupBy->getAdapterVersion($this->adapterType) . ' ' . implode(',', $groupby) . ' ' : '') .
+                ($groupby && $having ? Condition::having->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $having) . ' ' : '') .
+                (count($orderby) > 0 ? Keyword::orderBy->getAdapterVersion($this->adapterType) . ' ' . implode(',', $orderby) . ' ' : '') .
+                ($limit > 0 ? Keyword::limit->getAdapterVersion($this->adapterType) . ' ' . $limit . ' ' : '') .
+                ($offset > 0 ? Keyword::offset->getAdapterVersion($this->adapterType) . ' ' . $offset . ' ' : '');
         return $query;
     }
 
     public function parseInsert(string $table, array $columns = [], array $values = []): string
     {
-        $query = Statement::insert->value . ' ' . $table . ' ' .
-                Keyword::openBlock->value . implode(',', $columns) . Keyword::closeBlock->value . ' ' . Keyword::insertValue->value . ' ' .
-                Keyword::openBlock->value . implode(',', $values) . Keyword::closeBlock->value;
+        $query = Statement::insert->getAdapterVersion($this->adapterType) . ' ' . $table . ' ' .
+                Keyword::openBlock->getAdapterVersion($this->adapterType) . implode(',', $columns) . Keyword::closeBlock->getAdapterVersion($this->adapterType) . ' ' . Keyword::insertValue->getAdapterVersion($this->adapterType) . ' ' .
+                Keyword::openBlock->getAdapterVersion($this->adapterType) . implode(',', $values) . Keyword::closeBlock->getAdapterVersion($this->adapterType);
         return $query;
     }
 
@@ -243,16 +260,16 @@ abstract class BaseAdapter
         foreach ($columns as $k => $col) {
             $cmd[] = $col . ' = ' . $values[$k];
         }
-        $query = Statement::update->value . ' ' . $table . ' ' .
-                Keyword::set->value . ' ' . implode(',', $cmd) . ' ' .
-                ($where ? Condition::where->value . ' ' . implode(' ', $where) : '');
+        $query = Statement::update->getAdapterVersion($this->adapterType) . ' ' . $table . ' ' .
+                Keyword::set->getAdapterVersion($this->adapterType) . ' ' . implode(',', $cmd) . ' ' .
+                ($where ? Condition::where->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
     public function parseDelete(string $from, array $where = []): string
     {
-        $query = Statement::delete->value . ' ' . $from . ' ' .
-                ($where ? Condition::where->value . ' ' . implode(' ', $where) : '');
+        $query = Statement::delete->getAdapterVersion($this->adapterType) . ' ' . $from . ' ' .
+                ($where ? Condition::where->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $where) : '');
         return $query;
     }
 
@@ -272,11 +289,11 @@ abstract class BaseAdapter
 
     abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
 
-    abstract public function opFulltextIndex(array $columns, Keyword|string $value = Keyword::placeholder, ?string $columnAlias = null): string;
+    abstract public function opFulltextIndex(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null): string;
 
     abstract public function opDecryptFunction(string $column, string $initializationVectorColumn): string;
 
-    abstract public function fulltextConditionSintax(array $columns, Keyword|string $value = Keyword::placeholder): string;
+    abstract public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder): string;
 
     abstract public function lastInsertId(): int;
 

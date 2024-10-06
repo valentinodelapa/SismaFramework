@@ -30,10 +30,24 @@ namespace SismaFramework\Orm\Enumerations;
  *
  * @author Valentino de Lapa
  */
-enum Condition: string
+enum Condition
 {
+    
+    use \SismaFramework\Orm\Traits\OrmKeyword;
 
-    case where = 'WHERE';
-    case having = 'HAVING';
-
+    case where;
+    case having;
+    
+    #[\Override]
+    public function getAdapterVersion(AdapterType $adapterType): string
+    {
+        return match ($this) {
+            self::where => match ($adapterType) {
+                AdapterType::mysql => 'WHERE',
+            },
+            self::having => match ($adapterType) {
+                AdapterType::mysql => 'HAVING',
+            },
+        };
+    }
 }
