@@ -283,13 +283,13 @@ class AdapterMysql extends BaseAdapter
         return $this->fulltextConditionSintax($columns, $value) . ' as ' . ($columnAlias ?? '_relevance');
     }
 
-    public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder): string
+    public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): string
     {
         foreach ($columns as &$column) {
             $column = $this->escapeColumn($column);
         }
         $escapedValue = $this->escapeValue($value, ComparisonOperator::against);
-        $condition = Keyword::match->getAdapterVersion($this->adapterType) . ' ' . Keyword::openBlock->getAdapterVersion($this->adapterType) . implode(',', $columns) . Keyword::closeBlock->getAdapterVersion($this->adapterType) . ' ' . ComparisonOperator::against->getAdapterVersion($this->adapterType) . ' ' . Keyword::openBlock->getAdapterVersion($this->adapterType) . $escapedValue . ' ' . TextSearchMode::inNaturaLanguageMode->getAdapterVersion($this->adapterType) . Keyword::closeBlock->getAdapterVersion($this->adapterType);
+        $condition = Keyword::match->getAdapterVersion($this->adapterType) . ' ' . Keyword::openBlock->getAdapterVersion($this->adapterType) . implode(',', $columns) . Keyword::closeBlock->getAdapterVersion($this->adapterType) . ' ' . ComparisonOperator::against->getAdapterVersion($this->adapterType) . ' ' . Keyword::openBlock->getAdapterVersion($this->adapterType) . $escapedValue . ' ' . $textSearchMode->getAdapterVersion($this->adapterType) . Keyword::closeBlock->getAdapterVersion($this->adapterType);
         return $condition;
     }
 
