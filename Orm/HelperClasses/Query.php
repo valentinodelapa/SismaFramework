@@ -30,8 +30,8 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
-use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 
 /**
@@ -216,13 +216,13 @@ class Query
         return $this;
     }
 
-    public function &appendFulltextCondition(array $columns, Placeholder|string $value = Placeholder::placeholder): self
+    public function &appendFulltextCondition(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): self
     {
-        $this->where[] = $this->adapter->fulltextConditionSintax($columns, $value);
+        $this->where[] = $this->adapter->fulltextConditionSintax($columns, $value, $textSearchMode);
         return $this;
     }
 
-    public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder,): self
+    public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
