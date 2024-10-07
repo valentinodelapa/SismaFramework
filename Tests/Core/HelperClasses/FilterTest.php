@@ -33,8 +33,8 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Enumerations\SampleType;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
  * @author Valentino de Lapa

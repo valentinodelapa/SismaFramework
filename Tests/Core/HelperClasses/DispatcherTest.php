@@ -140,7 +140,7 @@ class DispatcherTest extends TestCase
      */
     public function testDirectAccessToFile()
     {
-        $this->requestMock->server['REQUEST_URI'] = 'SismaFramework/Sample/Assets/css/sample.css';
+        $this->requestMock->server['REQUEST_URI'] = 'SismaFramework/TestsApplication/Assets/css/sample.css';
         $this->requestMock->server['QUERY_STRING'] = '';
         $resourceMakerMock = $this->createMock(ResourceMaker::class);
         $resourceMakerMock->expects($this->exactly(2))

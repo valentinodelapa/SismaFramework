@@ -30,9 +30,9 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
-use SismaFramework\Sample\Voters\SampleVoter;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Voters\SampleVoter;
 
 /**
  * @author Valentino de Lapa

@@ -29,7 +29,7 @@ namespace SismaFramework\Tests\Orm\ResultSets;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
-use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\BaseSample;
 
 /**
  * @author Valentino de Lapa

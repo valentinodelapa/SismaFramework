@@ -35,7 +35,6 @@ class Autoloader
 
     private string $className;
     private string $classPath;
-    
     private static array $autoloadClassMapper = \Config\AUTOLOAD_CLASS_MAPPER;
     private static array $autoloadNamespaceMapper = \Config\AUTOLOAD_NAMESPACE_MAPPER;
     private static string $rootPath = \Config\ROOT_PATH;
@@ -96,5 +95,4 @@ class Autoloader
     {
         return $this->classPath;
     }
-
 }

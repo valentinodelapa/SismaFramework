@@ -51,7 +51,6 @@ abstract class BaseEntity
     protected bool $isActiveTransaction = false;
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
-    
     private static string $encryptionPassphrase = \Config\ENCRYPTION_PASSPHRASE;
 
     public function __construct(DataMapper $dataMapper = new DataMapper())
@@ -87,8 +86,8 @@ abstract class BaseEntity
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         return self::checkFinalClassReflectionProperty($reflectionProperty);
     }
-    
-    public static function checkFinalClassReflectionProperty(\ReflectionProperty $reflectionProperty):bool
+
+    public static function checkFinalClassReflectionProperty(\ReflectionProperty $reflectionProperty): bool
     {
         return $reflectionProperty->getDeclaringClass()->isAbstract() === false;
     }
@@ -143,9 +142,14 @@ abstract class BaseEntity
     {
         if (((isset($this->foreignKeyIndexes[$name]) && ($this->foreignKeyIndexes[$name] !== $value)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name->id !== $value))))) {
-            $this->modified = true;
-            $this->setNestedChangesOnCallingEntityWhenEntityChanges();
+            $this->trackChangeActions();
         }
+    }
+
+    private function trackChangeActions(): void
+    {
+        $this->modified = true;
+        $this->setNestedChangesOnCallingEntityWhenEntityChanges();
     }
 
     private function setNestedChangesOnCallingEntityWhenEntityChanges(): void
@@ -153,7 +157,7 @@ abstract class BaseEntity
         if (isset($this->propertyCallingEntity)) {
             $this->propertyCallingEntity->propertyNestedChanges = true;
         }
-        if(isset($this->collectionCallingEntity)){
+        if (isset($this->collectionCallingEntity)) {
             $this->collectionCallingEntity->collectionNestedChanges = true;
         }
     }
@@ -167,6 +171,14 @@ abstract class BaseEntity
         unset($this->foreignKeyIndexes[$name]);
     }
 
+    private function trackForeignKeyPropertyWithIndexConvertedChanges(string $name, mixed $value): void
+    {
+        if (((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
+                (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name != $value)))))) {
+            $this->trackChangeActions();
+        }
+    }
+
     protected function setNestedChangesOnEntityWhenCalledEntitiesIsModified(BaseEntity $entity)
     {
         if ((isset($entity->id) === false) || $entity->modified) {
@@ -174,20 +186,10 @@ abstract class BaseEntity
         }
     }
 
-    private function trackForeignKeyPropertyWithIndexConvertedChanges(string $name, mixed $value): void
-    {
-        if (((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
-                (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name != $value)))))) {
-            $this->modified = true;
-            $this->setNestedChangesOnCallingEntityWhenEntityChanges();
-        }
-    }
-
     private function trackForeignKeyPropertyWithNullValueChanges(string $name): void
     {
         if ((isset($this->foreignKeyIndexes[$name]) || isset($this->$name))) {
-            $this->modified = true;
-            $this->setNestedChangesOnCallingEntityWhenEntityChanges();
+            $this->trackChangeActions();
         }
     }
 
@@ -195,8 +197,7 @@ abstract class BaseEntity
     {
         if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
                 $this->checkCustomDateTimeInterfacePropertyChange($reflectionNamedType, $name, $value)) {
-            $this->modified = true;
-            $this->setNestedChangesOnCallingEntityWhenEntityChanges();
+            $this->trackChangeActions();
         }
     }
 
@@ -246,8 +247,8 @@ abstract class BaseEntity
     {
         return ($propertyName === $this->primaryKey);
     }
-    
-    public function setPrimaryKeyPropertyName(string $propertyName):void
+
+    public function setPrimaryKeyPropertyName(string $propertyName): void
     {
         $this->primaryKey = $propertyName;
     }

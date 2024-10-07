@@ -31,9 +31,9 @@ use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
-use SismaFramework\Sample\Permissions\SamplePermission;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Permissions\SamplePermission;
 
 /**
  * @author Valentino de Lapa

@@ -30,15 +30,15 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\FixtureException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\FakeReferencedSample;
-use SismaFramework\Sample\Entities\OtherReferencedSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
-use SismaFramework\Sample\FakeFixtures\FakeBaseSampleFixture;
-use SismaFramework\Sample\FakeFixtures\FakeReferencedSampleFixture;
-use SismaFramework\Sample\Fixtures\BaseSampleFixture;
-use SismaFramework\Sample\Fixtures\OtherReferencedSampleFixture;
-use SismaFramework\Sample\Fixtures\ReferencedSampleFixture;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\FakeReferencedSample;
+use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\FakeFixtures\FakeBaseSampleFixture;
+use SismaFramework\TestsApplication\FakeFixtures\FakeReferencedSampleFixture;
+use SismaFramework\TestsApplication\Fixtures\BaseSampleFixture;
+use SismaFramework\TestsApplication\Fixtures\OtherReferencedSampleFixture;
+use SismaFramework\TestsApplication\Fixtures\ReferencedSampleFixture;
 
 /**
  * Description of BaseFixtureTest

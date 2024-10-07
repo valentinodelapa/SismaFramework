@@ -55,7 +55,7 @@ class ResourceMakerTest extends TestCase
     {
         $resourceMaker = new ResourceMaker();
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Controllers/SampleController.php');
+        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Controllers/SampleController.php');
     }
 
     /**
@@ -65,7 +65,7 @@ class ResourceMakerTest extends TestCase
     {
         $resourceMaker = new ResourceMaker();
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Controllers/SampleController.php', true);
+        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Controllers/SampleController.php', true);
     }
 
     /**
@@ -75,7 +75,7 @@ class ResourceMakerTest extends TestCase
     {
         $resourceMaker = new ResourceMaker();
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Cache/referencedCache.json');
+        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Cache/referencedCache.json');
     }
 
     /**
@@ -83,9 +83,9 @@ class ResourceMakerTest extends TestCase
      */
     public function testMakeResourceViaFileGetContent()
     {
-        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'));
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css'));
         $resourceMaker = new ResourceMaker();
-        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/css/sample.css');
+        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css');
     }
 
     /**
@@ -93,10 +93,10 @@ class ResourceMakerTest extends TestCase
      */
     public function testMakeResourceViaReadFile()
     {
-        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'));
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css'));
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setFileGetContentMaxBytesLimit(4);
-        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/css/sample.css');
+        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css');
     }
 
     /**
@@ -104,11 +104,11 @@ class ResourceMakerTest extends TestCase
      */
     public function testMakeResourceViaFopen()
     {
-        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../Sample/Assets/css/sample.css'));
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css'));
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setFileGetContentMaxBytesLimit(4);
         $resourceMaker->setReadfileMaxBytesLimit(4);
-        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/css/sample.css');
+        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css');
     }
 
     /**
@@ -116,11 +116,11 @@ class ResourceMakerTest extends TestCase
      */
     public function testFileWithStreamContent()
     {
-        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../Sample/Assets/javascript/sample.js'));
+        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js'));
         $_SERVER['QUERY_STRING'] = 'resource=resource';
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setStreamContex();
-        $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/javascript/sample.js');
+        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js');
     }
 
     /**
