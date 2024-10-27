@@ -116,37 +116,38 @@ class Dispatcher
 
     private function parsePath(): void
     {
-        $this->pathParts = [];
-        if ($this->path == '/') {
-            $this->pathParts[] = self::$defaultPath;
-            $this->pathParts[] = self::$defaultAction;
-            $this->cleanPathParts = $this->pathParts;
+        $this->pathParts = explode('/', $this->path);
+        $this->cleanPathParts = array_values(array_filter($this->pathParts, function ($var) {
+                    return $var !== "";
+                }));
+        $cleanPathPartsNumber = count($this->cleanPathParts);
+        if ($cleanPathPartsNumber === 0) {
+            $this->controller = self::$defaultPath;
+            $this->action = self::$defaultAction;
         } else {
-            $this->pathParts = explode('/', $this->path);
-            $this->cleanPathParts = array_values(array_filter($this->pathParts, function ($var) {
-                        return $var !== "";
-                    }));
+            $this->parsePathWithMultipleCleanParts($cleanPathPartsNumber);
         }
-        $this->parsePathParts();
+        $this->selectModule();
     }
 
-    private function parsePathParts(): void
+    private function parsePathWithMultipleCleanParts(int $cleanPathPartsNumber)
     {
-        $this->selectModule();
-        $action = $this->cleanArrayShift($this->pathParts);
-        if ($action !== null) {
-            $this->action = NotationManager::convertToCamelCase($action);
-        } elseif ($this->fixturesManager->isFixtures($this->pathParts) === false) {
-            $this->defaultActionInjected = true;
-            $this->action = self::$defaultAction;
+        $this->controller = $this->cleanArrayShift($this->pathParts);
+        if ($cleanPathPartsNumber === 1) {
+            if (($this->resourceMaker->isAcceptedResourceFile($this->path) === false) &&
+                    ($this->fixturesManager->isFixtures($this->pathParts) === false)) {
+                $this->defaultActionInjected = true;
+                $this->action = self::$defaultAction;
+            }
+        } else {
+            $this->action = NotationManager::convertToCamelCase($this->cleanArrayShift($this->pathParts));
+            $this->actionArguments = $this->pathParts;
         }
-        $this->actionArguments = $this->pathParts;
     }
 
     private function selectModule(): void
     {
         ModuleManager::initializeApplicationModule();
-        $this->controller = $this->cleanArrayShift($this->pathParts);
         foreach (ModuleManager::getModuleList() as $module) {
             $this->controllerName = $module . '\\' . self::$controllerNamespace . NotationManager::convertToStudlyCaps($this->controller . 'Controller');
             if ($this->checkControllerPresence() || $this->checkFilePresence($module)) {
@@ -177,9 +178,7 @@ class Dispatcher
 
     private function handle(): Response
     {
-        if ($this->resourceMaker->isRobotsFile($this->cleanPathParts)) {
-            return $this->resourceMaker->makeRobotsFile();
-        } elseif (isset($this->sitemapBuider) && ($this->sitemapBuider->isSitemap($this->cleanPathParts))) {
+        if (isset($this->sitemapBuider) && ($this->sitemapBuider->isSitemap($this->cleanPathParts))) {
             return $this->sitemapBuider->generate();
         } elseif ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
             return $this->handleFile();

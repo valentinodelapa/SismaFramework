@@ -128,22 +128,4 @@ class ResourceMaker
         $this->getResourceData($filename);
         return new Response();
     }
-
-    public function isRobotsFile(array $pathParts): bool
-    {
-        return strtolower(end($pathParts)) === self::$robotsFile;
-    }
-
-    public function makeRobotsFile(): Response
-    {
-        $filename = self::$rootPath . self::$robotsFile;
-        header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
-        header("Accept-Ranges: bytes");
-        header("Content-type: text/plain");
-        header('X-Content-Type-Options: nosniff');
-        header("Content-Disposition: inline");
-        header("Content-Length: " . filesize($filename));
-        echo file_get_contents($filename, false);
-        return new Response();
-    }
 }
