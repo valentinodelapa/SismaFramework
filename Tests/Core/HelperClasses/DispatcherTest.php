@@ -35,7 +35,7 @@ use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Core\Interfaces\Services\SitemapMakerInterface;
+use SismaFramework\Core\Interfaces\Services\CrawlComponentMakerInterface;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -217,16 +217,16 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    public function testSitemapMaker()
+    public function testCrawlComponentMaker()
     {
-        $sitemapBuilderMock = $this->createMock(SitemapMakerInterface::class);
+        $sitemapBuilderMock = $this->createMock(CrawlComponentMakerInterface::class);
         $sitemapBuilderMock->expects($this->once())
-                ->method('isSitemap')
+                ->method('isCrawlComponent')
                 ->willReturn(true);
         $sitemapBuilderMock->expects($this->once())
                 ->method('generate');
         $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
-        $dispatcher->setSitemapMaker($sitemapBuilderMock);
+        $dispatcher->addCrawlComponentMaker($sitemapBuilderMock);
         $dispatcher->run();
     }
 

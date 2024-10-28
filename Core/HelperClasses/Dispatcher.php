@@ -35,7 +35,7 @@ use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
-use SismaFramework\Core\Interfaces\Services\SitemapMakerInterface;
+use SismaFramework\Core\Interfaces\Services\CrawlComponentMakerInterface;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Security\HttpClasses\Authentication;
 
@@ -49,7 +49,8 @@ class Dispatcher
     private ResourceMaker $resourceMaker;
     private FixturesManager $fixturesManager;
     private DataMapper $dataMapper;
-    private SitemapMakerInterface $sitemapBuider;
+    private array $crawlComponentMakerList = [];
+    private CrawlComponentMakerInterface $currentCrawlComponentMaker;
     private static int $reloadAttempts = 0;
     private Request $request;
     private string $originalPath;
@@ -95,9 +96,9 @@ class Dispatcher
         self::$rootPath = $customRootPath;
     }
 
-    public function setSitemapMaker(SitemapMakerInterface $sitemapBuilder): void
+    public function addCrawlComponentMaker(CrawlComponentMakerInterface $crawlComponentMaker): void
     {
-        $this->sitemapBuider = $sitemapBuilder;
+        $this->crawlComponentMakerList[] = $crawlComponentMaker;
     }
 
     public function run($router = new Router()): Response
@@ -178,8 +179,8 @@ class Dispatcher
 
     private function handle(): Response
     {
-        if (isset($this->sitemapBuider) && ($this->sitemapBuider->isSitemap($this->cleanPathParts))) {
-            return $this->sitemapBuider->generate();
+        if ($this->isCrawlComponent()) {
+            return $this->currentCrawlComponentMaker->generate();
         } elseif ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
             return $this->handleFile();
         } elseif ($this->checkControllerPresence() === true) {
@@ -189,6 +190,17 @@ class Dispatcher
         } else {
             return $this->switchNotFoundActions();
         }
+    }
+
+    private function isCrawlComponent(): bool
+    {
+        foreach ($this->crawlComponentMakerList as $crawlComponentMaker) {
+            if ($crawlComponentMaker->isCrawlComponent($this->cleanPathParts)) {
+                $this->currentCrawlComponentMaker = $crawlComponentMaker;
+                return true;
+            }
+        }
+        return false;
     }
 
     private function handleFile(): Response
