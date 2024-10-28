@@ -57,6 +57,7 @@ enum Resource: string
     case rar = 'rar';
     case svg = 'svg';
     case ttf = 'ttf';
+    case txt = 'txt';
     case woff = 'woff';
     case woff2 = 'woff2';
     case xls = 'xls';
@@ -87,6 +88,7 @@ enum Resource: string
             self::rar => 'application/x-rar-compressed',
             self::svg => 'image/svg+xml',
             self::ttf => 'font/ttf',
+            self::txt => 'text/plain',
             self::woff => 'font/woff',
             self::woff2 => 'font/woff2',
             self::xls => 'application/vnd.ms-excel',
@@ -119,6 +121,7 @@ enum Resource: string
             'application/x-rar-compressed' => self::rar,
             'image/svg+xml' => self::svg,
             'font/ttf' => self::ttf,
+            'text/plain' => self::txt,
             'font/woff' => self::woff,
             'font/woff2' => self::woff2,
             'application/vnd.ms-excel' => self::xls,
@@ -134,7 +137,7 @@ enum Resource: string
             self::css, self::doc, self::docx, self::geojson, self::htm, self::html,
             self::ico, self::jpg, self::jpeg, self::js, self::jsm, self::json, self::map,
             self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
-            self::rar, self::svg, self::ttf, self::woff, self::woff2, self::xls,
+            self::rar, self::svg, self::ttf, self::txt, self::woff, self::woff2, self::xls,
             self::xlsx, self::xml => true,
             self::php, self::zip => false,
         };
@@ -146,7 +149,7 @@ enum Resource: string
             self::css, self::doc, self::docx, self::geojson, self::htm, self::html,
             self::ico, self::jpg, self::jpeg, self::js, self::jsm, self::json, self::map,
             self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
-            self::rar, self::svg, self::ttf, self::woff, self::woff2, self::xls,
+            self::rar, self::svg, self::ttf, self::txt, self::woff, self::woff2, self::xls,
             self::xlsx, self::xml, self::zip => true,
             self::php => false,
         };

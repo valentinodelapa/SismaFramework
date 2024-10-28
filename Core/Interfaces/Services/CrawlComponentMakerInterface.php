@@ -32,10 +32,10 @@ use SismaFramework\Core\HttpClasses\Response;
  *
  * @author Valentino de Lapa
  */
-interface SitemapMakerInterface
+interface CrawlComponentMakerInterface
 {
 
-    public function isSitemap(array $pathParts): bool;
+    public function isCrawlComponent(array $pathParts): bool;
 
     public function generate(): Response;
 }

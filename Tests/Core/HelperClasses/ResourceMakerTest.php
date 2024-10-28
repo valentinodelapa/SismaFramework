@@ -122,14 +122,4 @@ class ResourceMakerTest extends TestCase
         $resourceMaker->setStreamContex();
         $resourceMaker->makeResource(__DIR__ . '/../../../Sample/Assets/javascript/sample.js');
     }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testRobotFile()
-    {
-        $this->expectOutputString(file_get_contents(\Config\ROOT_PATH . \Config\ROBOTS_FILE));
-        $resourceMaker = new ResourceMaker();
-        $resourceMaker->makeRobotsFile();
-    }
 }
