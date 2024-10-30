@@ -66,7 +66,7 @@ class Dispatcher
     private string $controllerName;
     private array $constructorArguments;
     private string $action;
-    private array $actionArguments;
+    private array $actionArguments = [];
     private \ReflectionClass $reflectionController;
     private \ReflectionMethod $reflectionConstructor;
     private array $reflectionConstructorArguments;
