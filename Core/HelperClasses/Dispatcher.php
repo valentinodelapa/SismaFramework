@@ -117,7 +117,7 @@ class Dispatcher
 
     private function parsePath(): void
     {
-        $this->pathParts = explode('/', $this->path);
+        $this->pathParts = explode('/', rtrim($this->path, '/'));
         $this->cleanPathParts = array_values(array_filter($this->pathParts, function ($var) {
                     return $var !== "";
                 }));
