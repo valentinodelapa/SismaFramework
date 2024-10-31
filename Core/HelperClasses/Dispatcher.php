@@ -221,6 +221,7 @@ class Dispatcher
         if (self::$reloadAttempts < self::$maxReoladAttempts) {
             return $this->reloadDispatcher();
         } else {
+            die();
             throw new PageNotFoundException($this->originalPath);
         }
     }
@@ -234,7 +235,7 @@ class Dispatcher
 
     private function switchPath(): void
     {
-        array_unshift($this->pathParts, $this->controller, $this->action);
+        array_unshift($this->pathParts, NotationManager::convertToKebabCase($this->controller), NotationManager::convertToKebabCase($this->action));
         if ($this->defaultControllerChecked && $this->defaultActionChecked) {
             Router::concatenateMetaUrl('/' . $this->pathParts[0]);
             $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
