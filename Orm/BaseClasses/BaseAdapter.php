@@ -38,6 +38,7 @@ use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\LogicalOperator;
 use SismaFramework\Orm\Enumerations\Statement;
+use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\HelperClasses\Query;
 
@@ -293,7 +294,7 @@ abstract class BaseAdapter
 
     abstract public function opDecryptFunction(string $column, string $initializationVectorColumn): string;
 
-    abstract public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder): string;
+    abstract public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): string;
 
     abstract public function lastInsertId(): int;
 
