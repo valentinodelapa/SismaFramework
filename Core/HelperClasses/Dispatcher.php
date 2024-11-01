@@ -62,11 +62,11 @@ class Dispatcher
     private ?BaseController $controllerInstance = null;
     private bool $defaultControllerChecked = false;
     private bool $defaultActionChecked = false;
-    private string $controller;
-    private string $controllerName;
+    private string $pathController;
+    private string $controllerClassName;
     private array $constructorArguments;
-    private string $unparsedAction;
-    private string $action;
+    private string $pathAction;
+    private string $parsedAction;
     private array $actionArguments = [];
     private \ReflectionClass $reflectionController;
     private \ReflectionMethod $reflectionConstructor;
@@ -124,8 +124,8 @@ class Dispatcher
                 }));
         $cleanPathPartsNumber = count($this->cleanPathParts);
         if ($cleanPathPartsNumber === 0) {
-            $this->controller = self::$defaultPath;
-            $this->action = $this->unparsedAction = self::$defaultAction;
+            $this->pathController = self::$defaultPath;
+            $this->parsedAction = $this->pathAction = self::$defaultAction;
         } else {
             $this->parsePathWithMultipleCleanParts($cleanPathPartsNumber);
         }
@@ -134,17 +134,17 @@ class Dispatcher
 
     private function parsePathWithMultipleCleanParts(int $cleanPathPartsNumber)
     {
-        $this->controller = $this->cleanArrayShift($this->pathParts);
+        $this->pathController = $this->cleanArrayShift($this->pathParts);
         if ($cleanPathPartsNumber === 1) {
-            $this->unparsedAction = self::$defaultAction;
+            $this->pathAction = self::$defaultAction;
             if (($this->resourceMaker->isAcceptedResourceFile($this->path) === false) &&
                     ($this->fixturesManager->isFixtures($this->pathParts) === false)) {
                 $this->defaultActionInjected = true;
-                $this->action = NotationManager::convertToCamelCase(self::$defaultAction);
+                $this->parsedAction = NotationManager::convertToCamelCase(self::$defaultAction);
             }
         } else {
-            $this->unparsedAction = $this->cleanArrayShift($this->pathParts);
-            $this->action = NotationManager::convertToCamelCase($this->unparsedAction);
+            $this->pathAction = $this->cleanArrayShift($this->pathParts);
+            $this->parsedAction = NotationManager::convertToCamelCase($this->pathAction);
             $this->actionArguments = $this->pathParts;
         }
     }
@@ -153,7 +153,7 @@ class Dispatcher
     {
         ModuleManager::initializeApplicationModule();
         foreach (ModuleManager::getModuleList() as $module) {
-            $this->controllerName = $module . '\\' . self::$controllerNamespace . NotationManager::convertToStudlyCaps($this->controller . 'Controller');
+            $this->controllerClassName = $module . '\\' . self::$controllerNamespace . NotationManager::convertToStudlyCaps($this->pathController . 'Controller');
             if ($this->checkControllerPresence() || $this->checkFilePresence($module)) {
                 ModuleManager::setApplicationModule($module);
                 break;
@@ -172,7 +172,7 @@ class Dispatcher
 
     private function checkControllerPresence(): bool
     {
-        return class_exists($this->controllerName);
+        return class_exists($this->controllerClassName);
     }
 
     private function checkFilePresence(string $module): bool
@@ -238,29 +238,44 @@ class Dispatcher
     private function switchPath(): void
     {
         if ($this->defaultControllerChecked && $this->defaultActionChecked) {
-            if ($this->resourceMaker->isAcceptedResourceFile($this->controller)) {
-                throw new PageNotFoundException($this->originalPath);
-            } else {
-                Router::concatenateMetaUrl('/' . $this->controller);
-                $this->path = '/' . implode('/', $this->pathParts);
-                $this->defaultControllerChecked = $this->defaultActionChecked = false;
-                self::$reloadAttempts++;
-            }
+            $this->slicePathElement();
         } elseif ($this->defaultControllerChecked === false) {
-            array_unshift($this->pathParts, self::$defaultPath, $this->controller, $this->unparsedAction);
-            $this->defaultControllerInjected = true;
-            if ($this->defaultActionInjected) {
-                $this->defaultActionInjected = false;
-                array_pop($this->pathParts);
-            }
-            $this->path = '/' . implode('/', $this->pathParts);
-            $this->defaultControllerChecked = true;
+            $this->injectDefaultController();
         } elseif ($this->defaultActionChecked === false) {
-            $this->defaultControllerInjected = false;
-            $this->pathParts = [$this->unparsedAction, self::$defaultAction, ...$this->pathParts];
-            $this->path = '/' . implode('/', $this->pathParts);
-            $this->defaultActionChecked = true;
+            $this->injectDefaultAction();
         }
+    }
+
+    public function slicePathElement(): void
+    {
+        if ($this->resourceMaker->isAcceptedResourceFile($this->pathController)) {
+            throw new PageNotFoundException($this->originalPath);
+        } else {
+            Router::concatenateMetaUrl('/' . $this->pathController);
+            $this->path = '/' . implode('/', $this->pathParts);
+            $this->defaultControllerChecked = $this->defaultActionChecked = false;
+            self::$reloadAttempts++;
+        }
+    }
+
+    private function injectDefaultController(): void
+    {
+        array_unshift($this->pathParts, self::$defaultPath, $this->pathController, $this->pathAction);
+        $this->defaultControllerInjected = true;
+        if ($this->defaultActionInjected) {
+            $this->defaultActionInjected = false;
+            array_pop($this->pathParts);
+        }
+        $this->path = '/' . implode('/', $this->pathParts);
+        $this->defaultControllerChecked = true;
+    }
+
+    private function injectDefaultAction(): void
+    {
+        $this->defaultControllerInjected = false;
+        $this->pathParts = [$this->pathAction, self::$defaultAction, ...$this->pathParts];
+        $this->path = '/' . implode('/', $this->pathParts);
+        $this->defaultActionChecked = true;
     }
 
     private function resolveRouteCall(): Response
@@ -276,22 +291,22 @@ class Dispatcher
 
     private function getControllerConstructorArguments(): void
     {
-        $this->reflectionController = new \ReflectionClass($this->controllerName);
+        $this->reflectionController = new \ReflectionClass($this->controllerClassName);
         $this->reflectionConstructor = $this->reflectionController->getConstructor();
         $this->reflectionConstructorArguments = $this->reflectionConstructor->getParameters();
     }
 
     private function checkActionPresenceInController(): bool
     {
-        Router::setActualCleanUrl($this->controller, $this->action);
+        Router::setActualCleanUrl($this->pathController, $this->parsedAction);
         $methodExsist = false;
-        if (method_exists($this->controllerName, $this->action)) {
-            $this->reflectionAction = $this->reflectionController->getMethod($this->action);
+        if (method_exists($this->controllerClassName, $this->parsedAction)) {
+            $this->reflectionAction = $this->reflectionController->getMethod($this->parsedAction);
             ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
             $methodExsist = true;
         }
-        if ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains(self::$rootPath, $this->unparsedAction) === false)) {
-            return is_callable([$this->instanceControllerClass(), $this->action]);
+        if ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains(self::$rootPath, $this->pathAction) === false)) {
+            return is_callable([$this->instanceControllerClass(), $this->parsedAction]);
         } else {
             return $methodExsist;
         }
@@ -300,7 +315,7 @@ class Dispatcher
     private function instanceControllerClass(): BaseController
     {
         if ((count($this->reflectionConstructorArguments) == 0) || (is_a($this->reflectionConstructorArguments[0]->getType()->getName(), DataMapper::class, true))) {
-            return new $this->controllerName($this->dataMapper);
+            return new $this->controllerClassName($this->dataMapper);
         } else {
             $this->getAutoDependecyInjectionClass();
             return $this->reflectionController->newInstanceArgs($this->constructorArguments);
@@ -328,14 +343,14 @@ class Dispatcher
         if (count($this->reflectionActionArguments) > 0) {
             return $this->callControllerMethodWithArguments();
         } else {
-            $currentAction = $this->action;
+            $currentAction = $this->parsedAction;
             return $this->controllerInstance->$currentAction();
         }
     }
 
     private function getActionArguments(): void
     {
-        if (method_exists($this->controllerInstance, $this->action)) {
+        if (method_exists($this->controllerInstance, $this->parsedAction)) {
             $this->reflectionActionArguments = $this->reflectionAction->getParameters();
         } else {
             $this->reflectionActionArguments = [];
@@ -346,7 +361,7 @@ class Dispatcher
     {
         $this->setArrayOddToKeyEvenToValue();
         $this->parseArgsAssociativeArray();
-        return call_user_func_array([$this->controllerInstance, $this->action], $this->actionArguments);
+        return call_user_func_array([$this->controllerInstance, $this->parsedAction], $this->actionArguments);
     }
 
     private function setArrayOddToKeyEvenToValue(): void
