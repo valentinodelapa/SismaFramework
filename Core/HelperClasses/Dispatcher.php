@@ -221,7 +221,6 @@ class Dispatcher
         if (self::$reloadAttempts < self::$maxReoladAttempts) {
             return $this->reloadDispatcher();
         } else {
-            die();
             throw new PageNotFoundException($this->originalPath);
         }
     }
@@ -237,10 +236,14 @@ class Dispatcher
     {
         array_unshift($this->pathParts, NotationManager::convertToKebabCase($this->controller), NotationManager::convertToKebabCase($this->action));
         if ($this->defaultControllerChecked && $this->defaultActionChecked) {
-            Router::concatenateMetaUrl('/' . $this->pathParts[0]);
-            $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
-            $this->defaultControllerChecked = $this->defaultActionChecked = false;
-            self::$reloadAttempts++;
+            if ($this->resourceMaker->isAcceptedResourceFile($this->pathParts[0])) {
+                throw new PageNotFoundException($this->originalPath);
+            } else {
+                Router::concatenateMetaUrl('/' . $this->pathParts[0]);
+                $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
+                $this->defaultControllerChecked = $this->defaultActionChecked = false;
+                self::$reloadAttempts++;
+            }
         } elseif ($this->defaultControllerChecked === false) {
             array_unshift($this->pathParts, self::$defaultPath);
             $this->defaultControllerInjected = true;
