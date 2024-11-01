@@ -205,6 +205,18 @@ class DispatcherTest extends TestCase
     /**
      * @runInSeparateProcess
      */
+    public function testNotExistentFileFileInRoot()
+    {
+        $this->requestMock->server['REQUEST_URI'] = 'fake.css';
+        $this->requestMock->server['QUERY_STRING'] = '';
+        $this->expectException(PageNotFoundException::class);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock);
+        $dispatcher->run();
+    }
+
+    /**
+     * @runInSeparateProcess
+     */
     public function testRunFixture()
     {
         $this->fixturesManagerMock->expects($this->exactly(2))

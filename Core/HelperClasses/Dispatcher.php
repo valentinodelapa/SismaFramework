@@ -65,6 +65,7 @@ class Dispatcher
     private string $controller;
     private string $controllerName;
     private array $constructorArguments;
+    private string $unparsedAction;
     private string $action;
     private array $actionArguments = [];
     private \ReflectionClass $reflectionController;
@@ -124,7 +125,7 @@ class Dispatcher
         $cleanPathPartsNumber = count($this->cleanPathParts);
         if ($cleanPathPartsNumber === 0) {
             $this->controller = self::$defaultPath;
-            $this->action = self::$defaultAction;
+            $this->action = $this->unparsedAction = self::$defaultAction;
         } else {
             $this->parsePathWithMultipleCleanParts($cleanPathPartsNumber);
         }
@@ -135,13 +136,15 @@ class Dispatcher
     {
         $this->controller = $this->cleanArrayShift($this->pathParts);
         if ($cleanPathPartsNumber === 1) {
+            $this->unparsedAction = self::$defaultAction;
             if (($this->resourceMaker->isAcceptedResourceFile($this->path) === false) &&
                     ($this->fixturesManager->isFixtures($this->pathParts) === false)) {
                 $this->defaultActionInjected = true;
-                $this->action = self::$defaultAction;
+                $this->action = NotationManager::convertToCamelCase(self::$defaultAction);
             }
         } else {
-            $this->action = NotationManager::convertToCamelCase($this->cleanArrayShift($this->pathParts));
+            $this->unparsedAction = $this->cleanArrayShift($this->pathParts);
+            $this->action = NotationManager::convertToCamelCase($this->unparsedAction);
             $this->actionArguments = $this->pathParts;
         }
     }
@@ -234,18 +237,17 @@ class Dispatcher
 
     private function switchPath(): void
     {
-        array_unshift($this->pathParts, NotationManager::convertToKebabCase($this->controller), NotationManager::convertToKebabCase($this->action));
         if ($this->defaultControllerChecked && $this->defaultActionChecked) {
-            if ($this->resourceMaker->isAcceptedResourceFile($this->pathParts[0])) {
+            if ($this->resourceMaker->isAcceptedResourceFile($this->controller)) {
                 throw new PageNotFoundException($this->originalPath);
             } else {
-                Router::concatenateMetaUrl('/' . $this->pathParts[0]);
-                $this->path = '/' . implode('/', array_slice($this->pathParts, 2));
+                Router::concatenateMetaUrl('/' . $this->controller);
+                $this->path = '/' . implode('/', $this->pathParts);
                 $this->defaultControllerChecked = $this->defaultActionChecked = false;
                 self::$reloadAttempts++;
             }
         } elseif ($this->defaultControllerChecked === false) {
-            array_unshift($this->pathParts, self::$defaultPath);
+            array_unshift($this->pathParts, self::$defaultPath, $this->controller, $this->unparsedAction);
             $this->defaultControllerInjected = true;
             if ($this->defaultActionInjected) {
                 $this->defaultActionInjected = false;
@@ -255,7 +257,7 @@ class Dispatcher
             $this->defaultControllerChecked = true;
         } elseif ($this->defaultActionChecked === false) {
             $this->defaultControllerInjected = false;
-            $this->pathParts = [$this->pathParts[1], self::$defaultAction, ...array_slice($this->pathParts, 2)];
+            $this->pathParts = [$this->unparsedAction, self::$defaultAction, ...$this->pathParts];
             $this->path = '/' . implode('/', $this->pathParts);
             $this->defaultActionChecked = true;
         }
@@ -288,7 +290,7 @@ class Dispatcher
             ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
             $methodExsist = true;
         }
-        if ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains(self::$rootPath, $this->action) === false)) {
+        if ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains(self::$rootPath, $this->unparsedAction) === false)) {
             return is_callable([$this->instanceControllerClass(), $this->action]);
         } else {
             return $methodExsist;
