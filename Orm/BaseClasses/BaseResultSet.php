@@ -130,7 +130,7 @@ abstract class BaseResultSet implements \Iterator
                 $reflectionType = $reflectionProperty->getType();
                 $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
                 if ($entity->isEncryptedProperty($property) && ($standardClass->$initializationVectorColumnName !== null)) {
-                    $value = Encryptor::decryptString($value, $standardClass->$initializationVectorColumnName);
+                    $value = Encryptor::decryptString($value, $standardClass->$initializationVectorColumnName) ?: $value;
                 }
                 $entity->$property = Parser::parseValue($reflectionType, $value, false);
             }

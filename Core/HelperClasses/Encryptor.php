@@ -32,7 +32,7 @@ namespace SismaFramework\Core\HelperClasses;
  */
 class Encryptor
 {
-    
+
     private static string $encryptionAlgorithm = \Config\ENCRYPTION_ALGORITHM;
     private static string $encryptionPassphrase = \Config\ENCRYPTION_PASSPHRASE;
     private static int $initializazionVectorBytes = \Config\INITIALIZATION_VECTOR_BYTES;
@@ -74,7 +74,7 @@ class Encryptor
         return openssl_encrypt($plainText, self::$encryptionAlgorithm, self::$encryptionPassphrase, 0, $initializationVector);
     }
 
-    public static function decryptString(string $cipherText, string $initializationVector): string
+    public static function decryptString(string $cipherText, string $initializationVector): string|false
     {
         return openssl_decrypt($cipherText, self::$encryptionAlgorithm, self::$encryptionPassphrase, 0, $initializationVector);
     }
