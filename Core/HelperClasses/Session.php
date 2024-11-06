@@ -54,7 +54,7 @@ class Session
             'domain' => $request->server['HTTP_HOST'],
             'secure' => (Comunication::getComunicationProtocol() === ComunicationProtocol::https),
             'httponly' => true,
-            'samesite' => 'Strict'
+            'samesite' => 'Lax'
         ]);
         session_start();
         session_regenerate_id();
