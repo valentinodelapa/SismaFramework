@@ -186,6 +186,9 @@ Questo progetto è stato sviluppato prendendo spunto da alcune librerie open sou
 * La libreria [**SimpleORM**](https://github.com/davideairaghi/php/tree/master/library/Airaghi/DB/SimpleORM).
   Discorso a parte va fatto per questa libreria, che è stata utilizzata come punto di partenza per sviluppare l'ORM presente all'interno del progetto.
   Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreria orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
+* **[Template di errore](https://codepen.io/gaiaian/details/QVVxaR)**
+  
+  Nella presente libreria è stato incluso un template di errore predefinito, riconducibile alla libreria di terze parti linkata nell'intestazione del corrente punto. Tale libreria è stata inclusa per intero, con piccole modifiche utili esclusivamente ad embeddare tutto il contenuto nella stessa pagina web. Questo per evitare che, nel caso vi siano errori, gli stessi impedissero il reperimento di eventuali risorse esterne.
 
 Ringrazio tutti gli autori e gli sviluppatori delle fonti citate e faccio riferimento al file [`NOTICE.md`](NOTICE.md) della presente repository per i dettagli riguardanti le informazioni aggiuntive, le licenze e le notifiche di copyright originali.
 

@@ -41,10 +41,14 @@ Copyright (c) 2015-present Davide Airaghi
 
 ---
 
-Il template predefinito di errore 500 utilizzato dal framework è individuabile nella libreria presente al [seguente indirizzo](https://codepen.io/gaiaian/pen/QVVxaR) 
+Il template predefinito di errore 500 utilizzato dal framework è individuabile nella libreria presente al [seguente indirizzo](https://codepen.io/gaiaian/details/QVVxaR), rilasciata sotto licenza MIT. Non è stato possibile individura eil nome di suddetta libreria in quanto, nella pagina indicata, è presente esclusivamente una descrizione, che, per complettezza, riportiamo di seguito: *Page that users will see when a web site throws a 500 error*.
+
+Specifichiamo che, seppure il testo della licenza sia riconducibile alla licenza MIT, essa non è citata nel testo della licenza e, pertanto, neppure nella copia inserita nella presente libreria.
 
 Ringraziamo gli autori della suddetta libreria per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](https://github.com/davideairaghi/php/blob/master/LICENSE) è inclusa nella cartella third-party-licenses/SimpleOrm/ con indicata notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](https://codepen.io/gaiaian/details/QVVxaR) è inclusa nella cartella third-party-licenses/ErrorTemplate/ con indicata notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2024 by Gayané (https://codepen.io/gaiaian/pen/QVVxaR)
+
+
