@@ -38,3 +38,13 @@ Ringraziamo gli autori del progetto **SimpleORM** per aver condiviso il loro lav
 Copia della [licenza della repository originale](https://github.com/davideairaghi/php/blob/master/LICENSE) è inclusa nella cartella third-party-licenses/SimpleOrm/ con indicata notifica di copyright, assente nell'originale e redatta seguendo il formato standard. Riportiamo la suddetta notifica di copyright anche di seguito.
 
 Copyright (c) 2015-present Davide Airaghi
+
+---
+
+Il template predefinito di errore 500 utilizzato dal framework è individuabile nella libreria presente al [seguente indirizzo](https://codepen.io/gaiaian/pen/QVVxaR) 
+
+Ringraziamo gli autori della suddetta libreria per aver condiviso il loro lavoro con la comunità open source.
+
+Copia della [licenza della repository originale](https://github.com/davideairaghi/php/blob/master/LICENSE) è inclusa nella cartella third-party-licenses/SimpleOrm/ con indicata notifica di copyright che riportiamo anche di seguito.
+
+Copyright (c) 2024 by Gayané (https://codepen.io/gaiaian/pen/QVVxaR)
