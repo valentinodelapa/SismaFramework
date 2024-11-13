@@ -125,7 +125,6 @@ class DataMapper
 
     private function parseValues(BaseEntity $entity, array &$columns, array &$values, array &$markers): void
     {
-        $entity->propertyNestedChanges = false;
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
@@ -169,13 +168,12 @@ class DataMapper
 
     private function checkIsReferencedEntity(BaseEntity $entity)
     {
-        if (($entity instanceof ReferencedEntity) && $entity->collectionNestedChanges) {
-            $entity->collectionNestedChanges = false;
+        if (($entity instanceof ReferencedEntity)) {
             $this->saveEntityCollection($entity);
         }
     }
 
-    private function saveEntityCollection(BaseEntity $entity): void
+    private function saveEntityCollection(ReferencedEntity $entity): void
     {
         foreach ($entity->getCollections() as $foreignKey) {
             foreach ($foreignKey as $collection) {
@@ -222,12 +220,9 @@ class DataMapper
 
     private function saveForeignKeys(BaseEntity $entity): void
     {
-        if ($entity->propertyNestedChanges) {
-            $entity->propertyNestedChanges = false;
-            foreach ($entity->foreignKeys as $foreignKey) {
-                if ($entity->$foreignKey instanceof BaseEntity) {
-                    $this->save($entity->$foreignKey);
-                }
+        foreach ($entity->foreignKeys as $foreignKey) {
+            if ($entity->$foreignKey instanceof BaseEntity) {
+                $this->save($entity->$foreignKey);
             }
         }
     }

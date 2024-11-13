@@ -31,7 +31,6 @@ use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
-use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
 /**
  * @author Valentino de Lapa
@@ -40,11 +39,8 @@ abstract class BaseEntity
 {
 
     public bool $modified = false;
-    public bool $propertyNestedChanges = false;
     public array $foreignKeys = [];
     protected DataMapper $dataMapper;
-    protected ?BaseEntity $propertyCallingEntity = null;
-    protected ?ReferencedEntity $collectionCallingEntity = null;
     protected static ?BaseEntity $instance = null;
     protected string $primaryKey = 'id';
     protected string $initializationVectorPropertyName = 'initializationVector';
@@ -99,7 +95,6 @@ abstract class BaseEntity
         $reflectionTypeName = $reflectionProperty->getType()->getName();
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
             $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName], $this->dataMapper);
-            $this->$propertyName->propertyCallingEntity = $this;
             unset($this->foreignKeyIndexes[$propertyName]);
         }
     }
@@ -144,34 +139,14 @@ abstract class BaseEntity
         if (((isset($this->foreignKeyIndexes[$name]) && ($this->foreignKeyIndexes[$name] !== $value)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name->id !== $value))))) {
             $this->modified = true;
-            $this->setNestedChangesOnCallingEntityWhenEntityChanges();
-        }
-    }
-
-    private function setNestedChangesOnCallingEntityWhenEntityChanges(): void
-    {
-        if (isset($this->propertyCallingEntity)) {
-            $this->propertyCallingEntity->propertyNestedChanges = true;
-        }
-        if(isset($this->collectionCallingEntity)){
-            $this->collectionCallingEntity->collectionNestedChanges = true;
         }
     }
 
     private function setEntityProperty(string $name, BaseEntity $value): void
     {
-        $value->propertyCallingEntity = $this;
         $this->trackForeignKeyPropertyWithIndexConvertedChanges($name, $value);
         $this->$name = $value;
-        $this->setNestedChangesOnEntityWhenCalledEntitiesIsModified($value);
         unset($this->foreignKeyIndexes[$name]);
-    }
-
-    protected function setNestedChangesOnEntityWhenCalledEntitiesIsModified(BaseEntity $entity)
-    {
-        if ((isset($entity->id) === false) || $entity->modified) {
-            $this->propertyNestedChanges = true;
-        }
     }
 
     private function trackForeignKeyPropertyWithIndexConvertedChanges(string $name, mixed $value): void
@@ -179,7 +154,6 @@ abstract class BaseEntity
         if (((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name != $value)))))) {
             $this->modified = true;
-            $this->setNestedChangesOnCallingEntityWhenEntityChanges();
         }
     }
 
@@ -187,7 +161,6 @@ abstract class BaseEntity
     {
         if ((isset($this->foreignKeyIndexes[$name]) || isset($this->$name))) {
             $this->modified = true;
-            $this->setNestedChangesOnCallingEntityWhenEntityChanges();
         }
     }
 
@@ -196,7 +169,6 @@ abstract class BaseEntity
         if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
                 $this->checkCustomDateTimeInterfacePropertyChange($reflectionNamedType, $name, $value)) {
             $this->modified = true;
-            $this->setNestedChangesOnCallingEntityWhenEntityChanges();
         }
     }
 
