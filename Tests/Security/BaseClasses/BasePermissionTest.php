@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Tests\Security\BaseClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
@@ -51,27 +52,21 @@ class BasePermissionTest extends TestCase
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testIstanceNotPermitted()
     {
         $this->expectException(AccessDeniedException::class);
         SamplePermission::isAllowed(new ReferencedSample($this->dataMapperMock), AccessControlEntry::allow);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testCheckPermissionFalse()
     {
         $this->expectException(AccessDeniedException::class);
         SamplePermission::isAllowed(new BaseSample($this->dataMapperMock), AccessControlEntry::allow);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testCheckPermissionTrue()
     {
         $this->expectNotToPerformAssertions();

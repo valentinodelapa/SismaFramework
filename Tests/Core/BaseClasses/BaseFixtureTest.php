@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Tests\Core\BaseClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\FixtureException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
@@ -76,9 +77,7 @@ class BaseFixtureTest extends TestCase
         $this->assertInstanceOf(OtherReferencedSample::class, $baseSample->otherReferencedSample);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFakeBaseSampleFixtureWithException()
     {
         $this->expectException(FixtureException::class);

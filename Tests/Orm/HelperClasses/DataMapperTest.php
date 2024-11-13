@@ -785,10 +785,10 @@ class DataMapperTest extends TestCase
                 ->willReturnOnConsecutiveCalls(0, 1);
         $firstBaseResultSetMock->expects($this->any())
                 ->method('next')
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         $firstBaseResultSetMock->expects($this->any())
                 ->method('rewind')
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         $secondBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $secondBaseResultSetMock->expects($this->exactly(1))
                 ->method('current')
@@ -801,10 +801,10 @@ class DataMapperTest extends TestCase
                 ->willReturnOnConsecutiveCalls(0);
         $secondBaseResultSetMock->expects($this->any())
                 ->method('next')
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         $secondBaseResultSetMock->expects($this->any())
                 ->method('rewind')
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('select')

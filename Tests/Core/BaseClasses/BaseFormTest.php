@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Tests\Core\BaseClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\FakeBaseSample;
@@ -425,27 +426,21 @@ class BaseFormTest extends TestCase
         $this->assertEquals('self referenced sample three', $selfReferencedSampleResult->sonCollection[1]->text);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFormWhithNotInitializedEntity()
     {
         $this->expectException(FormException::class);
         $entityNotInitializedForm = new EntityNotInitializedForm(null, $this->dataMapperMock);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFormWithNotValidEntity()
     {
         $this->expectException(InvalidArgumentException::class);
         $baseSampleForm = new BaseSampleForm(new ReferencedSample($this->dataMapperMock), $this->dataMapperMock);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFormUpdateWithNotValidReferencedEntityType()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -456,9 +451,7 @@ class BaseFormTest extends TestCase
         $fakeBaseSampleForm->handleRequest($requestMock);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFormUpdateWithNotValidReferencedEntityTypeInCollection()
     {
         $this->expectException(InvalidArgumentException::class);
