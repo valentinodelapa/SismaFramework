@@ -41,10 +41,11 @@ use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
-use SismaFramework\TestsApplication\Enumerations\SampleType;
 use SismaFramework\TestsApplication\Entities\DependentEntityOne;
 use SismaFramework\TestsApplication\Entities\DependentEntityTwo;
 use SismaFramework\TestsApplication\Entities\EntityWithTwoCollection;
+use SismaFramework\TestsApplication\Entities\SubdependentEntity;
+use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
  * @author Valentino de Lapa
@@ -650,7 +651,6 @@ class DataMapperTest extends TestCase
     public function testNotDuplicateSavingCollection()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $matcher = $this->exactly(3);
         $callsOrder = [];
         $baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
@@ -664,6 +664,7 @@ class DataMapperTest extends TestCase
                     $callsOrder[] = 'execute';
                     return true;
                 });
+        $matcher = $this->exactly(3);
         $baseAdapterMock->expects($matcher)
                 ->method('lastInsertId')
                 ->willReturnCallback(function () use (&$callsOrder, $matcher) {
@@ -691,7 +692,60 @@ class DataMapperTest extends TestCase
         $dataMapper->save($entityWithTwoCollection);
         $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $callsOrder);
     }
-
+    
+    public function testSaveModificationOnSubnidificateEntity()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $callsOrder = [];
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('beginTransaction')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'beginTransaction';
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(5))
+                ->method('execute')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'execute';
+                    return true;
+                });
+        $matcher = $this->exactly(4);
+        $baseAdapterMock->expects($matcher)
+                ->method('lastInsertId')
+                ->willReturnCallback(function () use (&$callsOrder, $matcher) {
+                    $callsOrder[] = 'lastInsertId';
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            return 1;
+                        case 2:
+                            return 2;
+                        case 3:
+                            return 3;
+                        case 4:
+                            return 4;
+                    }
+                });
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('commitTransaction')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'commitTransaction';
+                    return true;
+                });
+        BaseAdapter::setDefault($baseAdapterMock);
+        $entityWithTwoCollection = new EntityWithTwoCollection();
+        $entityWithTwoCollection->addDependentEntityOne(new DependentEntityOne());
+        $dependentEntityTwo = new DependentEntityTwo();
+        $subdependentEntity = new SubdependentEntity();
+        $subdependentEntity->string = 'test';
+        $dependentEntityTwo->addSubdependentEntity($subdependentEntity);
+        $entityWithTwoCollection->addDependentEntityTwo($dependentEntityTwo);
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $dataMapper->save($entityWithTwoCollection);
+        $subdependentEntity->string = 'testTwo';
+        $dataMapper->save($entityWithTwoCollection);
+        $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction', 'beginTransaction', 'execute', 'commitTransaction'], $callsOrder);
+    }
+    
     public function testUpdateAutomaticStartTransaction()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);

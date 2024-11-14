@@ -26,16 +26,20 @@
 
 namespace SismaFramework\TestsApplication\Entities;
 
-use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
+ * Description of SubdependentEntity
+ *
  * @author Valentino de Lapa
  */
-class DependentEntityTwo extends ReferencedEntity
+class SubdependentEntity extends BaseEntity
 {
+
     protected int $id;
-    protected EntityWithTwoCollection $entityWithTwoCollection;
-    
+    protected DependentEntityTwo $dependentEntityTwo;
+    protected string $string;
+
     #[\Override]
     protected function setEncryptedProperties(): void
     {
