@@ -47,7 +47,6 @@ abstract class BaseEntity
     protected bool $isActiveTransaction = false;
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
-    
     private static string $encryptionPassphrase = \Config\ENCRYPTION_PASSPHRASE;
 
     public function __construct(DataMapper $dataMapper = new DataMapper())
@@ -83,8 +82,8 @@ abstract class BaseEntity
         $reflectionProperty = new \ReflectionProperty($this, $propertyName);
         return self::checkFinalClassReflectionProperty($reflectionProperty);
     }
-    
-    public static function checkFinalClassReflectionProperty(\ReflectionProperty $reflectionProperty):bool
+
+    public static function checkFinalClassReflectionProperty(\ReflectionProperty $reflectionProperty): bool
     {
         return $reflectionProperty->getDeclaringClass()->isAbstract() === false;
     }
@@ -218,8 +217,8 @@ abstract class BaseEntity
     {
         return ($propertyName === $this->primaryKey);
     }
-    
-    public function setPrimaryKeyPropertyName(string $propertyName):void
+
+    public function setPrimaryKeyPropertyName(string $propertyName): void
     {
         $this->primaryKey = $propertyName;
     }

@@ -30,7 +30,6 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
-use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\HelperClasses\Query;
@@ -39,10 +38,13 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaTime;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
-use SismaFramework\Sample\Entities\OtherReferencedSample;
-use SismaFramework\Sample\Enumerations\SampleType;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
+use SismaFramework\TestsApplication\Enumerations\SampleType;
+use SismaFramework\TestsApplication\Entities\DependentEntityOne;
+use SismaFramework\TestsApplication\Entities\DependentEntityTwo;
+use SismaFramework\TestsApplication\Entities\EntityWithTwoCollection;
 
 /**
  * @author Valentino de Lapa
@@ -645,6 +647,51 @@ class DataMapperTest extends TestCase
         $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $callsOrder);
     }
 
+    public function testNotDuplicateSavingCollection()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $matcher = $this->exactly(3);
+        $callsOrder = [];
+        $baseAdapterMock->expects($this->once())
+                ->method('beginTransaction')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'beginTransaction';
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('execute')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'execute';
+                    return true;
+                });
+        $baseAdapterMock->expects($matcher)
+                ->method('lastInsertId')
+                ->willReturnCallback(function () use (&$callsOrder, $matcher) {
+                    $callsOrder[] = 'lastInsertId';
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            return 1;
+                        case 2:
+                            return 2;
+                        case 3:
+                            return 3;
+                    }
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('commitTransaction')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'commitTransaction';
+                    return true;
+                });
+        BaseAdapter::setDefault($baseAdapterMock);
+        $entityWithTwoCollection = new EntityWithTwoCollection();
+        $entityWithTwoCollection->addDependentEntityOne(new DependentEntityOne());
+        $entityWithTwoCollection->addDependentEntityTwo(new DependentEntityTwo());
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $dataMapper->save($entityWithTwoCollection);
+        $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $callsOrder);
+    }
+
     public function testUpdateAutomaticStartTransaction()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
@@ -738,10 +785,10 @@ class DataMapperTest extends TestCase
                 ->willReturnOnConsecutiveCalls(0, 1);
         $firstBaseResultSetMock->expects($this->any())
                 ->method('next')
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         $firstBaseResultSetMock->expects($this->any())
                 ->method('rewind')
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         $secondBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $secondBaseResultSetMock->expects($this->exactly(1))
                 ->method('current')
@@ -754,10 +801,10 @@ class DataMapperTest extends TestCase
                 ->willReturnOnConsecutiveCalls(0);
         $secondBaseResultSetMock->expects($this->any())
                 ->method('next')
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         $secondBaseResultSetMock->expects($this->any())
                 ->method('rewind')
-                ->will($this->returnSelf());
+                ->willReturnSelf();
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('select')

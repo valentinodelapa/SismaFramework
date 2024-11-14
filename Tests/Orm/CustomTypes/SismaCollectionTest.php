@@ -31,8 +31,8 @@ use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
 
 /**
  * @author Valentino de Lapa

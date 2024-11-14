@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
@@ -34,8 +35,8 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Enumerations\SampleType;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
  * @author Valentino de Lapa
@@ -112,9 +113,7 @@ class ParserTest extends TestCase
         $this->assertEquals(0.0, Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testParseValueWithEntity()
     {
         $baseSample = new BaseSample($this->dataMapperMock);
@@ -201,9 +200,7 @@ class ParserTest extends TestCase
         $this->assertIsArray(Parser::parseValue($reflectionNamedTypeMock, [], true, $this->dataMapperMock));
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testParseValueWithException()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -217,9 +214,7 @@ class ParserTest extends TestCase
         Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testParseEnumerationWithException()
     {
         $this->expectException(InvalidArgumentException::class);

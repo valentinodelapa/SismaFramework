@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\CustomTypes\FormFilterError;
 use SismaFramework\Core\HelperClasses\Debugger;
@@ -38,8 +39,8 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  * Description of DebuggerTest
  *
  * @author Valentino de Lapa
- * @runTestsInSeparateProcesses
  */
+#[RunTestsInSeparateProcesses]
 class DebuggerTest extends TestCase
 {
 

@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\NotationManager;
-use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\BaseSample;
 
 /**
  * @author Valentino de Lapa

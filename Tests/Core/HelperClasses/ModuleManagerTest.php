@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\Enumerations\Resource;
@@ -50,20 +51,20 @@ class ModuleManagerTest extends TestCase
 
     public function testSetApplicationModule()
     {
-        ModuleManager::setApplicationModule('SampleModule');
-        $this->assertEquals('SampleModule', ModuleManager::getApplicationModule());
+        ModuleManager::setApplicationModule('TestsApplicationModule');
+        $this->assertEquals('TestsApplicationModule', ModuleManager::getApplicationModule());
     }
 
     public function testSetCustomVisualizationModule()
     {
         $this->assertNull(ModuleManager::getCustomVisualizationModule());
-        ModuleManager::setCustomVisualizationModule('SampleModule');
-        $this->assertEquals('SampleModule', ModuleManager::getCustomVisualizationModule());
+        ModuleManager::setCustomVisualizationModule('TestsApplicationModule');
+        $this->assertEquals('TestsApplicationModule', ModuleManager::getCustomVisualizationModule());
     }
 
     public function testUnsetCustomVisualizationModule()
     {
-        $this->assertEquals('SampleModule', ModuleManager::getCustomVisualizationModule());
+        $this->assertEquals('TestsApplicationModule', ModuleManager::getCustomVisualizationModule());
         ModuleManager::unsetCustomVisualizationModule();
         $this->assertNull(ModuleManager::getCustomVisualizationModule());
     }
@@ -71,48 +72,44 @@ class ModuleManagerTest extends TestCase
     public function testGetExistingFilePathWithCustomModule()
     {
         ModuleManager::setCustomVisualizationModule('SismaFramework');
-        $locales = ModuleManager::getExistingFilePath('Sample' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
-        $this->assertStringContainsString('Sample' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index.php', $locales);
+        $locales = ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
+        $this->assertStringContainsString('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index.php', $locales);
     }
 
     public function testGetConsequentFilePathWithCustomModule()
     {
-        $locales = ModuleManager::getConsequentFilePath('Sample' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT', Resource::json);
-        $this->assertStringContainsString('Sample' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT.json', $locales);
+        $locales = ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT', Resource::json);
+        $this->assertStringContainsString('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT.json', $locales);
     }
 
     public function testGetExistingFilePathWithApplicationModule()
     {
         ModuleManager::unsetCustomVisualizationModule();
         ModuleManager::setApplicationModule('SismaFramework');
-        $locales = ModuleManager::getExistingFilePath('Sample' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
-        $this->assertStringContainsString('Sample' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index.php', $locales);
+        $locales = ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
+        $this->assertStringContainsString('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index.php', $locales);
     }
 
     public function testGetConsequentFilePathWithApplicationModule()
     {
-        $locales = ModuleManager::getConsequentFilePath('Sample' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT', Resource::json);
-        $this->assertStringContainsString('Sample' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT.json', $locales);
+        $locales = ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT', Resource::json);
+        $this->assertStringContainsString('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT.json', $locales);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testGetExistingFilePathWithException()
     {
         $this->expectException(ModuleException::class);
-        ModuleManager::getExistingFilePath('Sample' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php);
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testGetConsequentFilePathWithException()
     {
         $this->expectException(ModuleException::class);
         ModuleManager::setApplicationModule('SismaFramework');
-        ModuleManager::getExistingFilePath('Sample' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
-        ModuleManager::getConsequentFilePath('Sample' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'en_EN', Resource::json);
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
+        ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'en_EN', Resource::json);
     }
 
 }
