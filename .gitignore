@@ -6,5 +6,6 @@
 /Tests/report/
 /Tests/.phpunit.cache/
 /Tests/.phpunit.result.cache
+/TestsApplication/Cache/
 /TestsApplication/Logs/
 .scannerwork/
