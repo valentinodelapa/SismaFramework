@@ -692,10 +692,11 @@ class DataMapperTest extends TestCase
         $dataMapper->save($entityWithTwoCollection);
         $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $callsOrder);
     }
-    
+
     public function testSaveModificationOnSubnidificateEntity()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $entities = [];
         $callsOrder = [];
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('beginTransaction')
@@ -708,6 +709,12 @@ class DataMapperTest extends TestCase
                 ->willReturnCallback(function () use (&$callsOrder) {
                     $callsOrder[] = 'execute';
                     return true;
+                });
+        $baseAdapterMock->expects($this->exactly(5))
+                ->method('escapeTable')
+                ->willReturnCallback(function ($entity) use (&$entities) {
+                    $entities[] = $entity;
+                    return '';
                 });
         $matcher = $this->exactly(4);
         $baseAdapterMock->expects($matcher)
@@ -743,9 +750,16 @@ class DataMapperTest extends TestCase
         $dataMapper->save($entityWithTwoCollection);
         $subdependentEntity->string = 'testTwo';
         $dataMapper->save($entityWithTwoCollection);
+        $this->assertEquals([
+            "entity_with_two_collection",
+            "dependent_entity_one",
+            "dependent_entity_two",
+            "subdependent_entity",
+            "subdependent_entity",
+                ], $entities);
         $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction', 'beginTransaction', 'execute', 'commitTransaction'], $callsOrder);
     }
-    
+
     public function testUpdateAutomaticStartTransaction()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
