@@ -693,10 +693,9 @@ class DataMapperTest extends TestCase
         $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $callsOrder);
     }
 
-    public function testSaveModificationOnSubnidificateEntity()
+    public function testSaveModificationOnSubnidificateCollection()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $entities = [];
         $callsOrder = [];
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('beginTransaction')
@@ -710,18 +709,63 @@ class DataMapperTest extends TestCase
                     $callsOrder[] = 'execute';
                     return true;
                 });
-        $baseAdapterMock->expects($this->exactly(5))
+        $matcherOne = $this->exactly(5);
+        $baseAdapterMock->expects($matcherOne)
                 ->method('escapeTable')
-                ->willReturnCallback(function ($entity) use (&$entities) {
-                    $entities[] = $entity;
-                    return '';
+                ->willReturnCallback(function ($entity) use (&$matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals("entity_with_two_collection", $entity);
+                            break;
+                        case 2:
+                            $this->assertEquals("dependent_entity_one", $entity);
+                            break;
+                        case 3:
+                            $this->assertEquals("dependent_entity_two", $entity);
+                            break;
+                        case 4:
+                            $this->assertEquals("subdependent_entity", $entity);
+                            break;
+                        case 5:
+                            $this->assertEquals("subdependent_entity", $entity);
+                            break;
+                    }
+                    return $entity;
                 });
-        $matcher = $this->exactly(4);
-        $baseAdapterMock->expects($matcher)
+        $matcherTwo = $this->exactly(4);
+        $baseAdapterMock->expects($matcherTwo)
+                ->method('parseInsert')
+                ->willReturnCallback(function ($query) use (&$callsOrder, $matcherTwo) {
+                    $callsOrder[] = 'parseInsert';
+                    switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals("entity_with_two_collection", $query);
+                            break;
+                        case 2:
+                            $this->assertEquals("dependent_entity_one", $query);
+                            break;
+                        case 3:
+                            $this->assertEquals("dependent_entity_two", $query);
+                            break;
+                        case 4:
+                            $this->assertEquals("subdependent_entity", $query);
+                            break;
+                    }
+                    return $query;
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('parseUpdate')
+                ->willReturnCallback(function ($query) use (&$callsOrder) {
+                    $callsOrder[] = 'parseUpdate';
+                    $this->assertEquals('subdependent_entity', $query);
+                    return $query;
+                });
+        $matcherThree = $this->exactly(4);
+        $baseAdapterMock->expects($matcherThree)
                 ->method('lastInsertId')
-                ->willReturnCallback(function () use (&$callsOrder, $matcher) {
+                ->willReturnCallback(function () use (&$callsOrder, $matcherThree) {
                     $callsOrder[] = 'lastInsertId';
-                    switch ($matcher->numberOfInvocations()) {
+                    switch ($matcherThree->numberOfInvocations()) {
                         case 1:
                             return 1;
                         case 2:
@@ -751,13 +795,148 @@ class DataMapperTest extends TestCase
         $subdependentEntity->string = 'testTwo';
         $dataMapper->save($entityWithTwoCollection);
         $this->assertEquals([
-            "entity_with_two_collection",
-            "dependent_entity_one",
-            "dependent_entity_two",
-            "subdependent_entity",
-            "subdependent_entity",
-                ], $entities);
-        $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction', 'beginTransaction', 'execute', 'commitTransaction'], $callsOrder);
+            'beginTransaction',
+            'parseInsert',
+            'execute',
+            'lastInsertId',
+            'parseInsert',
+            'execute',
+            'lastInsertId',
+            'parseInsert',
+            'execute',
+            'lastInsertId',
+            'parseInsert',
+            'execute',
+            'lastInsertId',
+            'commitTransaction',
+            'beginTransaction',
+            'parseUpdate',
+            'execute',
+            'commitTransaction'
+                ], $callsOrder);
+    }
+
+    public function testSaveModificationOnSubnidificateEntity()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $callsOrder = [];
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('beginTransaction')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'beginTransaction';
+                    return true;
+                });
+        $baseAdapterMock->expects($this->exactly(5))
+                ->method('execute')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'execute';
+                    return true;
+                });
+        $matcherOne = $this->exactly(5);
+        $baseAdapterMock->expects($matcherOne)
+                ->method('escapeTable')
+                ->willReturnCallback(function ($entity) use (&$matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals("dependent_entity_one", $entity);
+                            break;
+                        case 2:
+                            $this->assertEquals("entity_with_two_collection", $entity);
+                            break;
+                        case 3:
+                            $this->assertEquals("dependent_entity_two", $entity);
+                            break;
+                        case 4:
+                            $this->assertEquals("subdependent_entity", $entity);
+                            break;
+                        case 5:
+                            $this->assertEquals("subdependent_entity", $entity);
+                            break;
+                    }
+                    return $entity;
+                });
+        $matcherTwo = $this->exactly(4);
+        $baseAdapterMock->expects($matcherTwo)
+                ->method('parseInsert')
+                ->willReturnCallback(function ($query) use (&$callsOrder, $matcherTwo) {
+                    $callsOrder[] = 'parseInsert';
+                    switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals("entity_with_two_collection", $query);
+                            break;
+                        case 2:
+                            $this->assertEquals("dependent_entity_two", $query);
+                            break;
+                        case 3:
+                            $this->assertEquals("subdependent_entity", $query);
+                            break;
+                        case 4:
+                            $this->assertEquals("dependent_entity_one", $query);
+                            break;
+                    }
+                    return $query;
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('parseUpdate')
+                ->willReturnCallback(function ($query) use (&$callsOrder) {
+                    $callsOrder[] = 'parseUpdate';
+                    $this->assertEquals('subdependent_entity', $query);
+                    return $query;
+                });
+        $matcherThree = $this->exactly(4);
+        $baseAdapterMock->expects($matcherThree)
+                ->method('lastInsertId')
+                ->willReturnCallback(function () use (&$callsOrder, $matcherThree) {
+                    $callsOrder[] = 'lastInsertId';
+                    switch ($matcherThree->numberOfInvocations()) {
+                        case 1:
+                            return 1;
+                        case 2:
+                            return 2;
+                        case 3:
+                            return 3;
+                        case 4:
+                            return 4;
+                    }
+                });
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('commitTransaction')
+                ->willReturnCallback(function () use (&$callsOrder) {
+                    $callsOrder[] = 'commitTransaction';
+                    return true;
+                });
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dependentEntityOne = new DependentEntityOne();
+        $dependentEntityOne->entityWithTwoCollection = new EntityWithTwoCollection();
+        $dependentEntityTwo = new DependentEntityTwo();
+        $subdependentEntity = new SubdependentEntity();
+        $subdependentEntity->string = 'test';
+        $dependentEntityTwo->addSubdependentEntity($subdependentEntity);
+        $dependentEntityOne->entityWithTwoCollection->addDependentEntityTwo($dependentEntityTwo);
+        $dataMapper = new DataMapper($baseAdapterMock);
+        $dataMapper->save($dependentEntityOne);
+        $subdependentEntity->string = 'testTwo';
+        $dataMapper->save($dependentEntityOne);
+        $this->assertEquals([
+            'beginTransaction',
+            'parseInsert',
+            'execute',
+            'lastInsertId',
+            'parseInsert',
+            'execute',
+            'lastInsertId',
+            'parseInsert',
+            'execute',
+            'lastInsertId',
+            'parseInsert',
+            'execute',
+            'lastInsertId',
+            'commitTransaction',
+            'beginTransaction',
+            'parseUpdate',
+            'execute',
+            'commitTransaction'
+                ], $callsOrder);
     }
 
     public function testUpdateAutomaticStartTransaction()
