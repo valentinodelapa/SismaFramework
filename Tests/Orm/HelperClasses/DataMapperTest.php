@@ -601,29 +601,29 @@ class DataMapperTest extends TestCase
     public function testInsertManualStartTransaction()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $callsOrder = [];
+        $adapterMethodCallOrder = [];
         $baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'beginTransaction';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'beginTransaction';
                     return true;
                 });
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('execute')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'execute';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'execute';
                     return true;
                 });
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('lastInsertId')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'lastInsertId';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'lastInsertId';
                     return 1;
                 });
         $baseAdapterMock->expects($this->once())
                 ->method('commitTransaction')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'commitTransaction';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'commitTransaction';
                     return true;
                 });
         BaseAdapter::setDefault($baseAdapterMock);
@@ -645,30 +645,30 @@ class DataMapperTest extends TestCase
         $dataMapper->startTransaction();
         $dataMapper->save($baseSample);
         $dataMapper->commitTransaction();
-        $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $callsOrder);
+        $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $adapterMethodCallOrder);
     }
 
     public function testNotDuplicateSavingCollection()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $callsOrder = [];
+        $adapterMethodCallOrder = [];
         $baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'beginTransaction';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'beginTransaction';
                     return true;
                 });
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('execute')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'execute';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'execute';
                     return true;
                 });
         $matcher = $this->exactly(3);
         $baseAdapterMock->expects($matcher)
                 ->method('lastInsertId')
-                ->willReturnCallback(function () use (&$callsOrder, $matcher) {
-                    $callsOrder[] = 'lastInsertId';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder, $matcher) {
+                    $adapterMethodCallOrder[] = 'lastInsertId';
                     switch ($matcher->numberOfInvocations()) {
                         case 1:
                             return 1;
@@ -680,8 +680,8 @@ class DataMapperTest extends TestCase
                 });
         $baseAdapterMock->expects($this->once())
                 ->method('commitTransaction')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'commitTransaction';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'commitTransaction';
                     return true;
                 });
         BaseAdapter::setDefault($baseAdapterMock);
@@ -690,23 +690,23 @@ class DataMapperTest extends TestCase
         $entityWithTwoCollection->addDependentEntityTwo(new DependentEntityTwo());
         $dataMapper = new DataMapper($baseAdapterMock);
         $dataMapper->save($entityWithTwoCollection);
-        $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $callsOrder);
+        $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $adapterMethodCallOrder);
     }
 
     public function testSaveModificationOnSubnidificateCollection()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $callsOrder = [];
+        $adapterMethodCallOrder = [];
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('beginTransaction')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'beginTransaction';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'beginTransaction';
                     return true;
                 });
         $baseAdapterMock->expects($this->exactly(5))
                 ->method('execute')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'execute';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'execute';
                     return true;
                 });
         $matcherOne = $this->exactly(5);
@@ -735,8 +735,8 @@ class DataMapperTest extends TestCase
         $matcherTwo = $this->exactly(4);
         $baseAdapterMock->expects($matcherTwo)
                 ->method('parseInsert')
-                ->willReturnCallback(function ($query) use (&$callsOrder, $matcherTwo) {
-                    $callsOrder[] = 'parseInsert';
+                ->willReturnCallback(function ($query) use (&$adapterMethodCallOrder, $matcherTwo) {
+                    $adapterMethodCallOrder[] = 'parseInsert';
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals("entity_with_two_collection", $query);
@@ -755,16 +755,16 @@ class DataMapperTest extends TestCase
                 });
         $baseAdapterMock->expects($this->once())
                 ->method('parseUpdate')
-                ->willReturnCallback(function ($query) use (&$callsOrder) {
-                    $callsOrder[] = 'parseUpdate';
+                ->willReturnCallback(function ($query) use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'parseUpdate';
                     $this->assertEquals('subdependent_entity', $query);
                     return $query;
                 });
         $matcherThree = $this->exactly(4);
         $baseAdapterMock->expects($matcherThree)
                 ->method('lastInsertId')
-                ->willReturnCallback(function () use (&$callsOrder, $matcherThree) {
-                    $callsOrder[] = 'lastInsertId';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder, $matcherThree) {
+                    $adapterMethodCallOrder[] = 'lastInsertId';
                     switch ($matcherThree->numberOfInvocations()) {
                         case 1:
                             return 1;
@@ -778,8 +778,8 @@ class DataMapperTest extends TestCase
                 });
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('commitTransaction')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'commitTransaction';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'commitTransaction';
                     return true;
                 });
         BaseAdapter::setDefault($baseAdapterMock);
@@ -813,23 +813,23 @@ class DataMapperTest extends TestCase
             'parseUpdate',
             'execute',
             'commitTransaction'
-                ], $callsOrder);
+                ], $adapterMethodCallOrder);
     }
 
     public function testSaveModificationOnSubnidificateEntity()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $callsOrder = [];
+        $adapterMethodCallOrder = [];
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('beginTransaction')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'beginTransaction';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'beginTransaction';
                     return true;
                 });
         $baseAdapterMock->expects($this->exactly(5))
                 ->method('execute')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'execute';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'execute';
                     return true;
                 });
         $matcherOne = $this->exactly(5);
@@ -858,8 +858,8 @@ class DataMapperTest extends TestCase
         $matcherTwo = $this->exactly(4);
         $baseAdapterMock->expects($matcherTwo)
                 ->method('parseInsert')
-                ->willReturnCallback(function ($query) use (&$callsOrder, $matcherTwo) {
-                    $callsOrder[] = 'parseInsert';
+                ->willReturnCallback(function ($query) use (&$adapterMethodCallOrder, $matcherTwo) {
+                    $adapterMethodCallOrder[] = 'parseInsert';
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals("entity_with_two_collection", $query);
@@ -878,16 +878,16 @@ class DataMapperTest extends TestCase
                 });
         $baseAdapterMock->expects($this->once())
                 ->method('parseUpdate')
-                ->willReturnCallback(function ($query) use (&$callsOrder) {
-                    $callsOrder[] = 'parseUpdate';
+                ->willReturnCallback(function ($query) use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'parseUpdate';
                     $this->assertEquals('subdependent_entity', $query);
                     return $query;
                 });
         $matcherThree = $this->exactly(4);
         $baseAdapterMock->expects($matcherThree)
                 ->method('lastInsertId')
-                ->willReturnCallback(function () use (&$callsOrder, $matcherThree) {
-                    $callsOrder[] = 'lastInsertId';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder, $matcherThree) {
+                    $adapterMethodCallOrder[] = 'lastInsertId';
                     switch ($matcherThree->numberOfInvocations()) {
                         case 1:
                             return 1;
@@ -901,8 +901,8 @@ class DataMapperTest extends TestCase
                 });
         $baseAdapterMock->expects($this->exactly(2))
                 ->method('commitTransaction')
-                ->willReturnCallback(function () use (&$callsOrder) {
-                    $callsOrder[] = 'commitTransaction';
+                ->willReturnCallback(function () use (&$adapterMethodCallOrder) {
+                    $adapterMethodCallOrder[] = 'commitTransaction';
                     return true;
                 });
         BaseAdapter::setDefault($baseAdapterMock);
@@ -936,7 +936,7 @@ class DataMapperTest extends TestCase
             'parseUpdate',
             'execute',
             'commitTransaction'
-                ], $callsOrder);
+                ], $adapterMethodCallOrder);
     }
 
     public function testUpdateAutomaticStartTransaction()
