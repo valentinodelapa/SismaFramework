@@ -104,7 +104,8 @@ class Dispatcher
 
     public function run($router = new Router()): Response
     {
-        $this->originalPath = $this->path = strtok($this->request->server['REQUEST_URI'], '?');
+        $requestUriParts = explode('?', $this->request->server['REQUEST_URI'], 2);
+        $this->originalPath = $this->path = $requestUriParts[0];
         if (strlen($this->request->server['QUERY_STRING']) > 0) {
             if ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
                 $this->resourceMaker->setStreamContex();

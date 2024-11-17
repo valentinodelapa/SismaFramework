@@ -95,7 +95,8 @@ class Router
 
     public function reloadWithParsedQueryString($request = new Request()): Response
     {
-        $baseUrl = strtok($request->server['REQUEST_URI'], '?');
+        $requestUriParts = explode('?', $request->server['REQUEST_URI'], 2);
+        $baseUrl = $requestUriParts[0];
         $this->parsedUrl = str_ends_with($baseUrl, '/') ? $baseUrl : $baseUrl . '/';
         foreach ($request->query as $key => $value) {
             $this->parsedUrl .= $key . '/' . urlencode($value ?? 'empty') . '/';

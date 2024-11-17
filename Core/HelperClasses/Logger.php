@@ -26,6 +26,8 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Security\ExtendedClasses\LogException;
+
 /**
  *
  * @author Valentino de Lapa
@@ -52,8 +54,8 @@ class Logger
         }
         self::truncateLog();
     }
-    
-    private static function createLogStructure():void
+
+    private static function createLogStructure(): void
     {
         self::createLogDirectory();
         self::createLogFile();
@@ -87,7 +89,15 @@ class Logger
         if (count($logRows) > self::$maxRows) {
             $offset = self::$maxRows - count($logRows) - 1;
             $logRows = array_slice($logRows, $offset);
-            file_put_contents(self::$logPath, $logRows);
+            $file = fopen(self::$logPath, 'w');
+            if ($file) {
+                foreach ($logRows as $line) {
+                    fwrite($file, $line);
+                }
+                fclose($file);
+            } else {
+                throw new LogException();
+            }
         }
     }
 
