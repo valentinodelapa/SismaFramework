@@ -13,7 +13,6 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class SampleController extends BaseController implements DefaultControllerInterface
 {
     
-    #[\Override]
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
         parent::__construct($dataMapper);
