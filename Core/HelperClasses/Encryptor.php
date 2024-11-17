@@ -39,7 +39,7 @@ class Encryptor
 
     public static function getSimpleRandomToken(): string
     {
-        return md5(uniqid(mt_rand(), true));
+        return bin2hex(random_bytes(16));
     }
 
     public static function getSimpleHash(string $text, string $algorithm = \Config\SIMPLE_HASH_ALGORITHM): string
