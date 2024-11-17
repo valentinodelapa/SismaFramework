@@ -33,9 +33,9 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaTime;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
-use SismaFramework\Sample\Enumerations\SampleType;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
  * @author Valentino de Lapa
@@ -312,48 +312,5 @@ class BaseEntityTest extends TestCase
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->timeNullableWithInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $this->assertTrue($baseSampleThree->modified);
-    }
-
-    public function testForeignKeyNestedChanges()
-    {
-        $baseSampleOne = new BaseSample($this->dataMapperMock);
-        $this->assertFalse($baseSampleOne->propertyNestedChanges);
-        $baseSampleOne->referencedEntityWithoutInitialization = new ReferencedSample($this->dataMapperMock);
-        $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
-        $this->assertTrue($baseSampleOne->propertyNestedChanges);
-        $baseSampleOne->propertyNestedChanges = false;
-        $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
-        $this->assertFalse($baseSampleOne->propertyNestedChanges);
-        $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample modified';
-        $this->assertTrue($baseSampleOne->propertyNestedChanges);
-        $baseSampleTwo = new BaseSample($this->dataMapperMock);
-        $referencedSampleOne = new ReferencedSample($this->dataMapperMock);
-        $referencedSampleOne->id = 1;
-        $referencedSampleOne->text = 'referenced sample';
-        $this->assertTrue($referencedSampleOne->modified);
-        $this->dataMapperMock->expects($this->any())
-                ->method('findFirst')
-                ->willReturn($referencedSampleOne);
-        $baseSampleTwo->referencedEntityWithoutInitialization = 1;
-        $this->assertInstanceOf(ReferencedSample::class, $baseSampleTwo->referencedEntityWithoutInitialization);
-        $this->assertTrue($baseSampleTwo->propertyNestedChanges);
-
-        $referencedSampleOne->modified = false;
-        $baseSampleTwo->propertyNestedChanges = false;
-        $baseSampleTwo->referencedEntityWithoutInitialization = 1;
-        $this->assertFalse($baseSampleTwo->propertyNestedChanges);
-        $baseSampleOne->referencedEntityWithoutInitialization->text = 'referenced sample';
-        $this->assertFalse($baseSampleTwo->propertyNestedChanges);
-        $baseSampleTwo->referencedEntityWithoutInitialization->text = 'referenced sample modified';
-        $this->assertTrue($baseSampleTwo->propertyNestedChanges);
-
-        $referencedSampleOne->modified = false;
-        $baseSampleTwo->propertyNestedChanges = false;
-        $baseSampleTwo->referencedEntityWithoutInitialization = 1;
-        $this->assertFalse($baseSampleTwo->propertyNestedChanges);
-        $referencedSampleOne->text = 'referenced sample modified';
-        $this->assertFalse($baseSampleTwo->propertyNestedChanges);
-        $referencedSampleOne->text = 'referenced sample';
-        $this->assertTrue($baseSampleTwo->propertyNestedChanges);
     }
 }

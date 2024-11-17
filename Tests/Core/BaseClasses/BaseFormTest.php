@@ -26,21 +26,22 @@
 
 namespace SismaFramework\Tests\Core\BaseClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\FakeBaseSample;
-use SismaFramework\Sample\Entities\FakeReferencedSample;
-use SismaFramework\Sample\Entities\OtherReferencedSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
-use SismaFramework\Sample\Entities\SelfReferencedSample;
-use SismaFramework\Sample\Forms\BaseSampleForm;
-use SismaFramework\Sample\Forms\BaseSampleFormWithFakeEntityFromForm;
-use SismaFramework\Sample\Forms\EntityNotInitializedForm;
-use SismaFramework\Sample\Forms\FakeBaseSampleForm;
-use SismaFramework\Sample\Forms\FakeReferencedSampleForm;
-use SismaFramework\Sample\Forms\OtherReferencedSampleForm;
-use SismaFramework\Sample\Forms\ReferencedSampleForm;
-use SismaFramework\Sample\Forms\SelfReferencedSampleForm;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\FakeBaseSample;
+use SismaFramework\TestsApplication\Entities\FakeReferencedSample;
+use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
+use SismaFramework\TestsApplication\Forms\BaseSampleForm;
+use SismaFramework\TestsApplication\Forms\BaseSampleFormWithFakeEntityFromForm;
+use SismaFramework\TestsApplication\Forms\EntityNotInitializedForm;
+use SismaFramework\TestsApplication\Forms\FakeBaseSampleForm;
+use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
@@ -425,27 +426,21 @@ class BaseFormTest extends TestCase
         $this->assertEquals('self referenced sample three', $selfReferencedSampleResult->sonCollection[1]->text);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFormWhithNotInitializedEntity()
     {
         $this->expectException(FormException::class);
         $entityNotInitializedForm = new EntityNotInitializedForm(null, $this->dataMapperMock);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFormWithNotValidEntity()
     {
         $this->expectException(InvalidArgumentException::class);
         $baseSampleForm = new BaseSampleForm(new ReferencedSample($this->dataMapperMock), $this->dataMapperMock);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFormUpdateWithNotValidReferencedEntityType()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -456,9 +451,7 @@ class BaseFormTest extends TestCase
         $fakeBaseSampleForm->handleRequest($requestMock);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFormUpdateWithNotValidReferencedEntityTypeInCollection()
     {
         $this->expectException(InvalidArgumentException::class);

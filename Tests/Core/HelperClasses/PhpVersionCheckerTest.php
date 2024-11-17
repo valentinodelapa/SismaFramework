@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
 use SismaFramework\Core\Exceptions\PhpVersionException;
@@ -38,9 +39,7 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
 class PhpVersionCheckerTest extends TestCase
 {
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testMinimumMajorVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);
@@ -48,9 +47,7 @@ class PhpVersionCheckerTest extends TestCase
         PhpVersionChecker::checkPhpVersion();
     }
     
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testMinimumMinorVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);
@@ -59,9 +56,7 @@ class PhpVersionCheckerTest extends TestCase
         PhpVersionChecker::checkPhpVersion();
     }
     
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testMinimumReleaseVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);

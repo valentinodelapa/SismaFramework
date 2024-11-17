@@ -12,7 +12,7 @@
         </nav>
         <article>
             Hello World
-        </article>
+        </article> 
         <footer>
             <?php require_once __DIR__ . '/../commonParts/footer.php'; ?>
         </footer>

@@ -39,7 +39,6 @@ use SismaFramework\Orm\HelperClasses\Cache;
  */
 abstract class ReferencedEntity extends BaseEntity
 {
-    public bool $collectionNestedChanges = false;
     protected array $collectionPropertiesSetted = [];
     protected array $collections = [];
 
@@ -187,8 +186,6 @@ abstract class ReferencedEntity extends BaseEntity
         $entityPropertyName = static::getForeignKeyName($propertyName);
         foreach ($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] as $entity) {
             $entity->$entityPropertyName = $this;
-            $entity->collectionCallingEntity = $this;
-            $this->setCollectionNestedChanges($entity);
         }
         $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = true;
     }
@@ -200,20 +197,11 @@ abstract class ReferencedEntity extends BaseEntity
         }
     }
 
-    protected function setCollectionNestedChanges(BaseEntity $entity)
-    {
-        if ((isset($entity->id) === false) || $entity->modified) {
-            $this->collectionNestedChanges = true;
-        }
-    }
-
     public function addEntityToEntityCollection(string $propertyName, BaseEntity $entity): void
     {
         $entityPropertyName = static::getForeignKeyName($propertyName);
         $this->switchAdditionType($propertyName, $entity);
         $entity->$entityPropertyName = $this;
-        $entity->collectionCallingEntity = $this;
-        $this->setCollectionNestedChanges($entity);
     }
 
     private function switchAdditionType(string $propertyName, BaseEntity $entity): void

@@ -32,9 +32,9 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
-use SismaFramework\Sample\Entities\OtherReferencedSample;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
 
 /**
  * @author Valentino de Lapa
@@ -120,87 +120,5 @@ class ReferencedEntityTest extends TestCase
         $this->assertEquals(0, $otherReferencedSample->countEntityCollection('baseSampleCollection'));
         $this->assertTrue(isset($otherReferencedSample->baseSampleCollection));
         $this->assertEquals(1, $otherReferencedSample->countEntityCollection('baseSampleCollection'));
-    }
-
-    public function testModifyCollectionNestedChanges()
-    {
-        $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
-        $otherReferencedSample->addBaseSample(new BaseSample($this->dataMapperMock));
-        $this->assertTrue($otherReferencedSample->collectionNestedChanges);
-        $otherReferencedSample->collectionNestedChanges = false;
-        $otherReferencedSample->baseSampleCollection[0]->stringWithoutInizialization = 'base sample';
-        $this->assertTrue($otherReferencedSample->collectionNestedChanges);
-        $otherReferencedSample->collectionNestedChanges = false;
-        $this->assertFalse($otherReferencedSample->collectionNestedChanges);
-        $otherReferencedSample->baseSampleCollection[0]->stringWithoutInizialization = 'base sample modified';
-        $this->assertTrue($otherReferencedSample->collectionNestedChanges);
-    }
-
-    public function testSetCollectionNestedChange()
-    {
-        $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
-        $baseSampleOne = new BaseSample($this->dataMapperMock);
-        $this->assertFalse($baseSampleOne->modified);
-        $baseSampleCollectionOne = new SismaCollection(BaseSample::class);
-        $baseSampleCollectionOne->append($baseSampleOne);
-        $otherReferencedSampleOne->setBaseSampleCollection($baseSampleCollectionOne);
-        $this->assertTrue($otherReferencedSampleOne->collectionNestedChanges);
-        
-        $otherReferencedSampleTwo = new OtherReferencedSample($this->dataMapperMock);
-        $baseSampleTwo = new BaseSample($this->dataMapperMock);
-        $this->assertFalse($baseSampleTwo->modified);
-        $baseSampleTwo->id = 1;
-        $this->assertTrue($baseSampleTwo->modified);
-        $baseSampleTwo->modified = false;
-        $baseSampleTwo->stringWithoutInizialization = 'base sample';
-        $this->assertTrue($baseSampleTwo->modified);
-        $baseSampleCollectionTwo = new SismaCollection(BaseSample::class);
-        $baseSampleCollectionTwo->append($baseSampleTwo);
-        $otherReferencedSampleTwo->setBaseSampleCollection($baseSampleCollectionTwo);
-        $this->assertTrue($otherReferencedSampleTwo->collectionNestedChanges);
-        
-        $otherReferencedSampleThree = new OtherReferencedSample($this->dataMapperMock);
-        $otherReferencedSampleThree->id = 1;
-        $baseSampleThree = new BaseSample($this->dataMapperMock);
-        $this->assertFalse($baseSampleThree->modified);
-        $baseSampleThree->id = 1;
-        $baseSampleThree->otherReferencedSample = $otherReferencedSampleThree;
-        $this->assertTrue($baseSampleThree->modified);
-        $baseSampleThree->modified = false;
-        $baseSampleCollectionThree = new SismaCollection(BaseSample::class);
-        $baseSampleCollectionThree->append($baseSampleThree);
-        $otherReferencedSampleThree->setBaseSampleCollection($baseSampleCollectionThree);
-        $this->assertFalse($otherReferencedSampleThree->collectionNestedChanges);
-    }
-
-    public function testAddCollectionNestedChange()
-    {
-        $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
-        $baseSampleOne = new BaseSample($this->dataMapperMock);
-        $this->assertFalse($baseSampleOne->modified);
-        $otherReferencedSampleOne->addBaseSample($baseSampleOne);
-        $this->assertTrue($otherReferencedSampleOne->collectionNestedChanges);
-        
-        $otherReferencedSampleTwo = new OtherReferencedSample($this->dataMapperMock);
-        $baseSampleTwo = new BaseSample($this->dataMapperMock);
-        $this->assertFalse($baseSampleTwo->modified);
-        $baseSampleTwo->id = 1;
-        $this->assertTrue($baseSampleTwo->modified);
-        $baseSampleTwo->modified = false;
-        $baseSampleTwo->stringWithoutInizialization = 'base sample';
-        $this->assertTrue($baseSampleTwo->modified);
-        $otherReferencedSampleTwo->addBaseSample($baseSampleTwo);
-        $this->assertTrue($otherReferencedSampleTwo->collectionNestedChanges);
-        
-        $otherReferencedSampleThree = new OtherReferencedSample($this->dataMapperMock);
-        $otherReferencedSampleThree->id = 1;
-        $baseSampleThree = new BaseSample($this->dataMapperMock);
-        $this->assertFalse($baseSampleThree->modified);
-        $baseSampleThree->id = 1;
-        $baseSampleThree->otherReferencedSample = $otherReferencedSampleThree;
-        $this->assertTrue($baseSampleThree->modified);
-        $baseSampleThree->modified = false;
-        $otherReferencedSampleThree->addBaseSample($baseSampleThree);
-        $this->assertFalse($otherReferencedSampleThree->collectionNestedChanges);
     }
 }

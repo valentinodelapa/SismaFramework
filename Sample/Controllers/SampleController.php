@@ -18,27 +18,24 @@ class SampleController extends BaseController implements DefaultControllerInterf
         parent::__construct($dataMapper);
         $this->vars['metaUrl'] = Router::getMetaUrl();
     }
-
+    
     public function index(): Response
     {
         return Render::generateView('sample/index', $this->vars);
     }
     
+    #[\Override]
     public function error(string $message, ResponseType $responseType): Response
     {
         $this->vars['message'] = urldecode($message);
         return Render::generateView('sample/error', $this->vars, $responseType);
     }
 
+    #[\Override]
     public function notify(string $message): Response
     {
         $this->vars['message'] = urldecode($message);
         return Render::generateView('sample/notify', $this->vars);
-    }
-
-    public function project(): Response
-    {
-        return Render::generateView('sample/project', $this->vars);
     }
 
 }

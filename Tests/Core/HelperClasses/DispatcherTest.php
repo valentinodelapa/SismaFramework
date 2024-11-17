@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
@@ -63,9 +64,7 @@ class DispatcherTest extends TestCase
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testRunWithReloadQueryString()
     {
         $this->requestMock->server['REQUEST_URI'] = 'sample/error?message=error';
@@ -81,9 +80,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run($routerMock);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testStructuralFileFopen()
     {
         $this->requestMock->server['REQUEST_URI'] = '/css/debugBar.css';
@@ -98,9 +95,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testModuleFile()
     {
         $this->requestMock->server['REQUEST_URI'] = '/css/sample.css';
@@ -116,9 +111,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testModuleFileInSubfolder()
     {
         $this->requestMock->server['REQUEST_URI'] = '/vendor/sample-vendor/sample-vendor.css';
@@ -134,12 +127,10 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testDirectAccessToFile()
     {
-        $this->requestMock->server['REQUEST_URI'] = 'SismaFramework/Sample/Assets/css/sample.css';
+        $this->requestMock->server['REQUEST_URI'] = 'SismaFramework/TestsApplication/Assets/css/sample.css';
         $this->requestMock->server['QUERY_STRING'] = '';
         $resourceMakerMock = $this->createMock(ResourceMaker::class);
         $resourceMakerMock->expects($this->exactly(2))
@@ -152,9 +143,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testDirectAccessToFileInRoot()
     {
         $this->requestMock->server['REQUEST_URI'] = 'composer.json';
@@ -170,9 +159,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFileWithStreamContent()
     {
         $this->requestMock->server['REQUEST_URI'] = '/javascript/sample.js?resource=resource';
@@ -190,9 +177,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testNotExistentFileFile()
     {
         $this->requestMock->server['REQUEST_URI'] = 'fake/fake/fake/fake/fake.css';
@@ -202,9 +187,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testNotExistentFileFileInRoot()
     {
         $this->requestMock->server['REQUEST_URI'] = 'fake.css';
@@ -214,9 +197,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testRunFixture()
     {
         $this->fixturesManagerMock->expects($this->exactly(2))
@@ -242,9 +223,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testRootPath()
     {
         \ob_end_clean();
@@ -256,9 +235,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testIndexPath()
     {
         \ob_end_clean();
@@ -270,9 +247,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testIndexPathTwo()
     {
         \ob_end_clean();
@@ -284,9 +259,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testIndexPathThree()
     {
         \ob_end_clean();
@@ -298,9 +271,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testNotifyPath()
     {
         \ob_end_clean();
@@ -312,9 +283,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testOtherIndexPath()
     {
         \ob_end_clean();
@@ -326,9 +295,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testPathWithReload()
     {
         \ob_end_clean();
@@ -340,9 +307,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testPathWithRequestParameter()
     {
         \ob_end_clean();
@@ -355,9 +320,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testPathWithAuthenticationParameter()
     {
         \ob_end_clean();
@@ -371,9 +334,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testPathWithDefaultValueParameter()
     {
         \ob_end_clean();
@@ -385,9 +346,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testPathWithArrayParameter()
     {
         \ob_end_clean();
@@ -401,9 +360,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testPathWithInvalidParameter()
     {
         $this->requestMock->server['REQUEST_URI'] = '/other/fake/test/';
@@ -412,9 +369,7 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testFakePath()
     {
         $this->requestMock->server['REQUEST_URI'] = '/fake/fake/fake/fake/fake/fake/';

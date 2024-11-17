@@ -87,14 +87,20 @@ class DataMapper
     {
         if (in_array($entity, $this->processedEntity) === false) {
             $this->processedEntity[] = $entity;
+            $isFirstExecution = $this->startTransaction();
             if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
-                return $this->insert($entity, $query);
+                $result = $this->insert($entity, $query);
             } elseif ($entity->modified) {
-                return $this->update($entity, $query);
+                $result = $this->update($entity, $query);
             } else {
-                $this->saveForeignKeys($entity);
-                $this->checkIsReferencedEntity($entity);
+                $result = $this->saveForeignKeys($entity) && $this->checkIsReferencedEntity($entity);
+            }
+            if ($result) {
+                $this->commitTransaction($isFirstExecution);
                 return true;
+            } else {
+                $this->adapter->rollbackTransaction();
+                throw new DataMapperException();
             }
         } else {
             return true;
@@ -105,7 +111,6 @@ class DataMapper
     {
         $query->setTable(NotationManager::convertEntityToTableName($entity));
         $query->close();
-        $isFirstExecution = $this->startTransaction();
         $columns = $values = $markers = [];
         $this->parseValues($entity, $columns, $values, $markers);
         $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
@@ -115,7 +120,6 @@ class DataMapper
             $entity->{$entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
-            $this->commitTransaction($isFirstExecution);
             if ($this->ormCacheStatus) {
                 Cache::setEntity($entity);
             }
@@ -125,7 +129,6 @@ class DataMapper
 
     private function parseValues(BaseEntity $entity, array &$columns, array &$values, array &$markers): void
     {
-        $entity->propertyNestedChanges = false;
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
@@ -167,23 +170,27 @@ class DataMapper
         return false;
     }
 
-    private function checkIsReferencedEntity(BaseEntity $entity)
+    private function checkIsReferencedEntity(BaseEntity $entity): bool
     {
-        if (($entity instanceof ReferencedEntity) && $entity->collectionNestedChanges) {
-            $entity->collectionNestedChanges = false;
-            $this->saveEntityCollection($entity);
+        if (($entity instanceof ReferencedEntity)) {
+            return $this->saveEntityCollection($entity);
+        } else {
+            return true;
         }
     }
 
-    private function saveEntityCollection(BaseEntity $entity): void
+    private function saveEntityCollection(ReferencedEntity $entity): bool
     {
         foreach ($entity->getCollections() as $foreignKey) {
             foreach ($foreignKey as $collection) {
                 foreach ($collection as $entityFromCollection) {
-                    $this->save($entityFromCollection);
+                    if ($this->save($entityFromCollection) === false) {
+                        return false;
+                    }
                 }
             }
         }
+        return true;
     }
 
     public function commitTransaction(bool $checkAnnidation = true): void
@@ -202,7 +209,6 @@ class DataMapper
         $query->setWhere();
         $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
-        $isFirstExecution = $this->startTransaction();
         $columns = $values = $markers = [];
         $this->parseValues($entity, $columns, $values, $markers);
         $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
@@ -212,7 +218,6 @@ class DataMapper
         if ($result) {
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
-            $this->commitTransaction($isFirstExecution);
             if ($this->ormCacheStatus) {
                 Cache::setEntity($entity);
             }
@@ -220,16 +225,16 @@ class DataMapper
         return $result;
     }
 
-    private function saveForeignKeys(BaseEntity $entity): void
+    private function saveForeignKeys(BaseEntity $entity): bool
     {
-        if ($entity->propertyNestedChanges) {
-            $entity->propertyNestedChanges = false;
-            foreach ($entity->foreignKeys as $foreignKey) {
-                if ($entity->$foreignKey instanceof BaseEntity) {
-                    $this->save($entity->$foreignKey);
+        foreach ($entity->foreignKeys as $foreignKey) {
+            if ($entity->$foreignKey instanceof BaseEntity) {
+                if ($this->save($entity->$foreignKey) === false) {
+                    return false;
                 }
             }
         }
+        return true;
     }
 
     public function delete(BaseEntity $entity, Query $query = new Query()): bool

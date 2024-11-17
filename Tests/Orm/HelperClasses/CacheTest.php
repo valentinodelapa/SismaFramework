@@ -29,10 +29,10 @@ namespace SismaFramework\Tests\Orm\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\Exceptions\CacheException;
 use SismaFramework\Orm\HelperClasses\Cache;
-use SismaFramework\Sample\Entities\BaseSample;
-use SismaFramework\Sample\Entities\ExtendedReferencedSample;
-use SismaFramework\Sample\Entities\OtherBaseSample;
-use SismaFramework\Sample\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\ExtendedReferencedSample;
+use SismaFramework\TestsApplication\Entities\OtherBaseSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
 
 /**
  * @author Valentino de Lapa
