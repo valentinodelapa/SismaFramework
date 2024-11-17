@@ -1276,6 +1276,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Resource.html#enumcase_ttf"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Resource\u003A\u003Atxt",
+            "name": "txt",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Resource.html#enumcase_txt"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Resource\u003A\u003Awoff",
             "name": "woff",
             "summary": "",
@@ -1891,10 +1896,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_setCustomRootPath"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AsetSitemapMaker\u0028\u0029",
-            "name": "setSitemapMaker",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AaddCrawlComponentMaker\u0028\u0029",
+            "name": "addCrawlComponentMaker",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_setSitemapMaker"
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_addCrawlComponentMaker"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003Arun\u0028\u0029",
             "name": "run",
@@ -1906,15 +1911,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_parsePath"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AparsePathParts\u0028\u0029",
-            "name": "parsePathParts",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AparsePathWithMultipleCleanParts\u0028\u0029",
+            "name": "parsePathWithMultipleCleanParts",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_parsePathParts"
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_parsePathWithMultipleCleanParts"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AselectModule\u0028\u0029",
             "name": "selectModule",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_selectModule"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AcleanArrayShift\u0028\u0029",
+            "name": "cleanArrayShift",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_cleanArrayShift"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AcheckControllerPresence\u0028\u0029",
             "name": "checkControllerPresence",
@@ -1930,6 +1940,11 @@ Search.appendIndex(
             "name": "handle",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_handle"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AisCrawlComponent\u0028\u0029",
+            "name": "isCrawlComponent",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_isCrawlComponent"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AhandleFile\u0028\u0029",
             "name": "handleFile",
@@ -1950,6 +1965,21 @@ Search.appendIndex(
             "name": "switchPath",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_switchPath"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AslicePathElement\u0028\u0029",
+            "name": "slicePathElement",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_slicePathElement"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AinjectDefaultController\u0028\u0029",
+            "name": "injectDefaultController",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_injectDefaultController"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AinjectDefaultAction\u0028\u0029",
+            "name": "injectDefaultAction",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_injectDefaultAction"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003AresolveRouteCall\u0028\u0029",
             "name": "resolveRouteCall",
@@ -2021,10 +2051,15 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_dataMapper"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024sitemapBuider",
-            "name": "sitemapBuider",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024crawlComponentMakerList",
+            "name": "crawlComponentMakerList",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_sitemapBuider"
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_crawlComponentMakerList"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024currentCrawlComponentMaker",
+            "name": "currentCrawlComponentMaker",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_currentCrawlComponentMaker"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024reloadAttempts",
             "name": "reloadAttempts",
@@ -2051,6 +2086,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_pathParts"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024cleanPathParts",
+            "name": "cleanPathParts",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_cleanPathParts"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024defaultControllerInjected",
             "name": "defaultControllerInjected",
             "summary": "",
@@ -2076,20 +2116,30 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultActionChecked"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024controllerName",
-            "name": "controllerName",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024pathController",
+            "name": "pathController",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_controllerName"
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_pathController"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024controllerClassName",
+            "name": "controllerClassName",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_controllerClassName"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024constructorArguments",
             "name": "constructorArguments",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_constructorArguments"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024action",
-            "name": "action",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024pathAction",
+            "name": "pathAction",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_action"
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_pathAction"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024parsedAction",
+            "name": "parsedAction",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_parsedAction"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher\u003A\u003A\u0024actionArguments",
             "name": "actionArguments",
@@ -2221,20 +2271,15 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020ErrorHandler",
             "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AhandleThrowableError\u0028\u0029",
-            "name": "handleThrowableError",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AsetLogVerboseActive\u0028\u0029",
+            "name": "setLogVerboseActive",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_handleThrowableError"
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setLogVerboseActive"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AcallThrowableErrorAction\u0028\u0029",
-            "name": "callThrowableErrorAction",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AsetDevelopementEnvironment\u0028\u0029",
+            "name": "setDevelopementEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callThrowableErrorAction"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AcallInternalServerErrorAction\u0028\u0029",
-            "name": "callInternalServerErrorAction",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callInternalServerErrorAction"
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setDevelopementEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AhandleNonThrowableError\u0028\u0029",
             "name": "handleNonThrowableError",
@@ -2245,6 +2290,31 @@ Search.appendIndex(
             "name": "callNonThrowableErrorAction",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callNonThrowableErrorAction"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AcallInternalServerErrorAction\u0028\u0029",
+            "name": "callInternalServerErrorAction",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callInternalServerErrorAction"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AhandleBaseException\u0028\u0029",
+            "name": "handleBaseException",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_handleBaseException"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AcallThrowableErrorAction\u0028\u0029",
+            "name": "callThrowableErrorAction",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callThrowableErrorAction"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AcallDefaultControllerError\u0028\u0029",
+            "name": "callDefaultControllerError",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callDefaultControllerError"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AhandleThrowableError\u0028\u0029",
+            "name": "handleThrowableError",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_handleThrowableError"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003A\u0024logVerboseActive",
             "name": "logVerboseActive",
@@ -3051,16 +3121,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-ResourceMaker.html#method_downloadResource"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ResourceMaker\u003A\u003AisRobotsFile\u0028\u0029",
-            "name": "isRobotsFile",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ResourceMaker.html#method_isRobotsFile"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ResourceMaker\u003A\u003AmakeRobotsFile\u0028\u0029",
-            "name": "makeRobotsFile",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ResourceMaker.html#method_makeRobotsFile"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ResourceMaker\u003A\u003A\u0024request",
             "name": "request",
             "summary": "",
@@ -3296,11 +3356,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateTemplate"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgetTemplateContent\u0028\u0029",
-            "name": "getTemplateContent",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_getTemplateContent"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgetTemplatePath\u0028\u0029",
             "name": "getTemplatePath",
             "summary": "",
@@ -3471,20 +3526,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/EntityInterface.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Services\\SitemapMakerInterface",
-            "name": "SitemapMakerInterface",
+            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Services\\CrawlComponentMakerInterface",
+            "name": "CrawlComponentMakerInterface",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Interfaces-Services-SitemapMakerInterface.html"
+            "url": "classes/SismaFramework-Core-Interfaces-Services-CrawlComponentMakerInterface.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Services\\SitemapMakerInterface\u003A\u003AisSitemap\u0028\u0029",
-            "name": "isSitemap",
+            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Services\\CrawlComponentMakerInterface\u003A\u003AisCrawlComponent\u0028\u0029",
+            "name": "isCrawlComponent",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Interfaces-Services-SitemapMakerInterface.html#method_isSitemap"
+            "url": "classes/SismaFramework-Core-Interfaces-Services-CrawlComponentMakerInterface.html#method_isCrawlComponent"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Services\\SitemapMakerInterface\u003A\u003Agenerate\u0028\u0029",
+            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Services\\CrawlComponentMakerInterface\u003A\u003Agenerate\u0028\u0029",
             "name": "generate",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Interfaces-Services-SitemapMakerInterface.html#method_generate"
+            "url": "classes/SismaFramework-Core-Interfaces-Services-CrawlComponentMakerInterface.html#method_generate"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Traits\\MultipleSelfReferencedEnumeration",
             "name": "MultipleSelfReferencedEnumeration",
@@ -3941,20 +3996,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithIndexNotConvertedChanges"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AsetNestedChangesOnCallingEntityWhenEntityChanges\u0028\u0029",
-            "name": "setNestedChangesOnCallingEntityWhenEntityChanges",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setNestedChangesOnCallingEntityWhenEntityChanges"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AsetEntityProperty\u0028\u0029",
             "name": "setEntityProperty",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setEntityProperty"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AsetNestedChangesOnEntityWhenCalledEntitiesIsModified\u0028\u0029",
-            "name": "setNestedChangesOnEntityWhenCalledEntitiesIsModified",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setNestedChangesOnEntityWhenCalledEntitiesIsModified"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AtrackForeignKeyPropertyWithIndexConvertedChanges\u0028\u0029",
             "name": "trackForeignKeyPropertyWithIndexConvertedChanges",
@@ -4036,11 +4081,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_modified"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024propertyNestedChanges",
-            "name": "propertyNestedChanges",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_propertyNestedChanges"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024foreignKeys",
             "name": "foreignKeys",
             "summary": "",
@@ -4050,16 +4090,6 @@ Search.appendIndex(
             "name": "dataMapper",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024propertyCallingEntity",
-            "name": "propertyCallingEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_propertyCallingEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024collectionCallingEntity",
-            "name": "collectionCallingEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_collectionCallingEntity"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024instance",
             "name": "instance",
@@ -4296,10 +4326,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-CustomTypes-SismaCollection.html#method_mergeWith"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaCollection\u003A\u003AfindFromProperty\u0028\u0029",
-            "name": "findFromProperty",
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaCollection\u003A\u003AfindEntityFromProperty\u0028\u0029",
+            "name": "findEntityFromProperty",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-CustomTypes-SismaCollection.html#method_findFromProperty"
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaCollection.html#method_findEntityFromProperty"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaCollection\u003A\u003Ahas\u0028\u0029",
             "name": "has",
@@ -4370,6 +4400,21 @@ Search.appendIndex(
             "name": "equals",
             "summary": "",
             "url": "classes/SismaFramework-Orm-CustomTypes-SismaTime.html#method_equals"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AdapterType",
+            "name": "AdapterType",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-AdapterType.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AdapterType\u003A\u003AgetAdapterClass\u0028\u0029",
+            "name": "getAdapterClass",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-AdapterType.html#method_getAdapterClass"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AdapterType\u003A\u003Amysql",
+            "name": "mysql",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-AdapterType.html#enumcase_mysql"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AggregationFunction",
             "name": "AggregationFunction",
@@ -4676,6 +4721,21 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-Enumerations-LogicalOperator.html#enumcase_not"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Placeholder",
+            "name": "Placeholder",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-Placeholder.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Placeholder\u003A\u003AgetAdapterVersion\u0028\u0029",
+            "name": "getAdapterVersion",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-Placeholder.html#method_getAdapterVersion"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Placeholder\u003A\u003Aplaceholder",
+            "name": "placeholder",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-Placeholder.html#enumcase_placeholder"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Statement",
             "name": "Statement",
             "summary": "",
@@ -4881,11 +4941,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_inizializeEntityCollection"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\ReferencedEntity\u003A\u003AsetCollectionNestedChanges\u0028\u0029",
-            "name": "setCollectionNestedChanges",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_setCollectionNestedChanges"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\ReferencedEntity\u003A\u003AaddEntityToEntityCollection\u0028\u0029",
             "name": "addEntityToEntityCollection",
             "summary": "",
@@ -4915,11 +4970,6 @@ Search.appendIndex(
             "name": "FOREIGN_KEY_SUFFIX",
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#constant_FOREIGN_KEY_SUFFIX"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\ReferencedEntity\u003A\u003A\u0024collectionNestedChanges",
-            "name": "collectionNestedChanges",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collectionNestedChanges"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\ReferencedEntity\u003A\u003A\u0024collectionPropertiesSetted",
             "name": "collectionPropertiesSetted",
@@ -5186,10 +5236,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_parseForeignKeyIndexes"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AcheckStartTransaction\u0028\u0029",
-            "name": "checkStartTransaction",
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AstartTransaction\u0028\u0029",
+            "name": "startTransaction",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_checkStartTransaction"
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_startTransaction"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AcheckIsReferencedEntity\u0028\u0029",
             "name": "checkIsReferencedEntity",
@@ -5201,25 +5251,15 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_saveEntityCollection"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AcheckEndTransaction\u0028\u0029",
-            "name": "checkEndTransaction",
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AcommitTransaction\u0028\u0029",
+            "name": "commitTransaction",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_checkEndTransaction"
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_commitTransaction"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003Aupdate\u0028\u0029",
             "name": "update",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_update"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AstartTransaction\u0028\u0029",
-            "name": "startTransaction",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_startTransaction"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AcommitTransaction\u0028\u0029",
-            "name": "commitTransaction",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_commitTransaction"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AsaveForeignKeys\u0028\u0029",
             "name": "saveForeignKeys",
@@ -5276,10 +5316,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_isActiveTransaction"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024manualTransactionStarted",
-            "name": "manualTransactionStarted",
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024processedEntity",
+            "name": "processedEntity",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_manualTransactionStarted"
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_processedEntity"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query",
             "name": "Query",
@@ -5561,6 +5601,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-ResultSets-ResultSetMysql.html#property_result"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\Traits\\OrmKeyword",
+            "name": "OrmKeyword",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Traits-OrmKeyword.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Traits\\OrmKeyword\u003A\u003AgetAdapterVersion\u0028\u0029",
+            "name": "getAdapterVersion",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Traits-OrmKeyword.html#method_getAdapterVersion"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\Voters\\ReferencedEntityDeletionVoter",
             "name": "ReferencedEntityDeletionVoter",
             "summary": "",
@@ -5580,46 +5630,6 @@ Search.appendIndex(
             "name": "isInstancePermitted",
             "summary": "",
             "url": "classes/SismaFramework-Orm-Voters-ReferencedEntityDeletionVoter.html#method_isInstancePermitted"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\OtherController",
-            "name": "OtherController",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-OtherController.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\OtherController\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-OtherController.html#method___construct"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\OtherController\u003A\u003Aindex\u0028\u0029",
-            "name": "index",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-OtherController.html#method_index"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\OtherController\u003A\u003AactionWithRequest\u0028\u0029",
-            "name": "actionWithRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-OtherController.html#method_actionWithRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\OtherController\u003A\u003AactionWithAuthentication\u0028\u0029",
-            "name": "actionWithAuthentication",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-OtherController.html#method_actionWithAuthentication"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\OtherController\u003A\u003AactionWithDefaultValue\u0028\u0029",
-            "name": "actionWithDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-OtherController.html#method_actionWithDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\OtherController\u003A\u003AactionWithArray\u0028\u0029",
-            "name": "actionWithArray",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-OtherController.html#method_actionWithArray"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\OtherController\u003A\u003A\u0024request",
-            "name": "request",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-OtherController.html#property_request"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController",
             "name": "SampleController",
@@ -5645,861 +5655,6 @@ Search.appendIndex(
             "name": "notify",
             "summary": "",
             "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_notify"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003Aproject\u0028\u0029",
-            "name": "project",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_project"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample",
-            "name": "BaseSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
-            "name": "setPropertyDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#method_setPropertyDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
-            "name": "setEncryptedProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#method_setEncryptedProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024id",
-            "name": "id",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_id"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024referencedEntityWithoutInitialization",
-            "name": "referencedEntityWithoutInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_referencedEntityWithoutInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024referencedEntityWithInitialization",
-            "name": "referencedEntityWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_referencedEntityWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024nullableReferencedEntityWithInitialization",
-            "name": "nullableReferencedEntityWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_nullableReferencedEntityWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024otherReferencedSample",
-            "name": "otherReferencedSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_otherReferencedSample"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024datetimeWithoutInitialization",
-            "name": "datetimeWithoutInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_datetimeWithoutInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024dateWithoutInitialization",
-            "name": "dateWithoutInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_dateWithoutInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024timeWithoutInitialization",
-            "name": "timeWithoutInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_timeWithoutInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024datetimeWithInitialization",
-            "name": "datetimeWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_datetimeWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024dateWithInitialization",
-            "name": "dateWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_dateWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024timeWithInitialization",
-            "name": "timeWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_timeWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024datetimeNullableWithInitialization",
-            "name": "datetimeNullableWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_datetimeNullableWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024dateNullableWithInitialization",
-            "name": "dateNullableWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_dateNullableWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024timeNullableWithInitialization",
-            "name": "timeNullableWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_timeNullableWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024enumWithoutInitialization",
-            "name": "enumWithoutInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_enumWithoutInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024enumWithInitialization",
-            "name": "enumWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_enumWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024enumNullableWithInitialization",
-            "name": "enumNullableWithInitialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_enumNullableWithInitialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024stringWithoutInizialization",
-            "name": "stringWithoutInizialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_stringWithoutInizialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024stringWithInizialization",
-            "name": "stringWithInizialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_stringWithInizialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024nullableStringWithInizialization",
-            "name": "nullableStringWithInizialization",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_nullableStringWithInizialization"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024nullableSecureString",
-            "name": "nullableSecureString",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_nullableSecureString"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\BaseSample\u003A\u003A\u0024boolean",
-            "name": "boolean",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-BaseSample.html#property_boolean"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\ExtendedReferencedSample",
-            "name": "ExtendedReferencedSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-ExtendedReferencedSample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\ExtendedReferencedSample\u003A\u003A\u0024otherProperty",
-            "name": "otherProperty",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-ExtendedReferencedSample.html#property_otherProperty"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeBaseSample",
-            "name": "FakeBaseSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeBaseSample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeBaseSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
-            "name": "setEncryptedProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeBaseSample.html#method_setEncryptedProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeBaseSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
-            "name": "setPropertyDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeBaseSample.html#method_setPropertyDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeBaseSample\u003A\u003A\u0024id",
-            "name": "id",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeBaseSample.html#property_id"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeBaseSample\u003A\u003A\u0024fakeReferencedSample",
-            "name": "fakeReferencedSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeBaseSample.html#property_fakeReferencedSample"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeReferencedSample",
-            "name": "FakeReferencedSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeReferencedSample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeReferencedSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
-            "name": "setEncryptedProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeReferencedSample.html#method_setEncryptedProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeReferencedSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
-            "name": "setPropertyDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeReferencedSample.html#method_setPropertyDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\FakeReferencedSample\u003A\u003A\u0024id",
-            "name": "id",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-FakeReferencedSample.html#property_id"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherBaseSample",
-            "name": "OtherBaseSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherBaseSample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherBaseSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
-            "name": "setEncryptedProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherBaseSample.html#method_setEncryptedProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherBaseSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
-            "name": "setPropertyDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherBaseSample.html#method_setPropertyDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherBaseSample\u003A\u003A\u0024id",
-            "name": "id",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherBaseSample.html#property_id"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherBaseSample\u003A\u003A\u0024extendedReferencedSample",
-            "name": "extendedReferencedSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherBaseSample.html#property_extendedReferencedSample"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherReferencedSample",
-            "name": "OtherReferencedSample",
-            "summary": "Description\u0020of\u0020ReferencedSampleTwo",
-            "url": "classes/SismaFramework-Sample-Entities-OtherReferencedSample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherReferencedSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
-            "name": "setEncryptedProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherReferencedSample.html#method_setEncryptedProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherReferencedSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
-            "name": "setPropertyDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherReferencedSample.html#method_setPropertyDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherReferencedSample\u003A\u003A\u0024id",
-            "name": "id",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherReferencedSample.html#property_id"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\OtherReferencedSample\u003A\u003A\u0024text",
-            "name": "text",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-OtherReferencedSample.html#property_text"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\ReferencedSample",
-            "name": "ReferencedSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-ReferencedSample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\ReferencedSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
-            "name": "setPropertyDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-ReferencedSample.html#method_setPropertyDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\ReferencedSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
-            "name": "setEncryptedProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-ReferencedSample.html#method_setEncryptedProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\ReferencedSample\u003A\u003A\u0024id",
-            "name": "id",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-ReferencedSample.html#property_id"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\ReferencedSample\u003A\u003A\u0024text",
-            "name": "text",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-ReferencedSample.html#property_text"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\ReferencedSample\u003A\u003A\u0024nullableInteger",
-            "name": "nullableInteger",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-ReferencedSample.html#property_nullableInteger"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\SelfReferencedSample",
-            "name": "SelfReferencedSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-SelfReferencedSample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\SelfReferencedSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
-            "name": "setPropertyDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-SelfReferencedSample.html#method_setPropertyDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\SelfReferencedSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
-            "name": "setEncryptedProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-SelfReferencedSample.html#method_setEncryptedProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\SelfReferencedSample\u003A\u003A\u0024id",
-            "name": "id",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-SelfReferencedSample.html#property_id"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\SelfReferencedSample\u003A\u003A\u0024parentSelfReferencedSample",
-            "name": "parentSelfReferencedSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-SelfReferencedSample.html#property_parentSelfReferencedSample"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\SelfReferencedSample\u003A\u003A\u0024baseSample",
-            "name": "baseSample",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-SelfReferencedSample.html#property_baseSample"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\SelfReferencedSample\u003A\u003A\u0024text",
-            "name": "text",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-SelfReferencedSample.html#property_text"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\WrongEntity",
-            "name": "WrongEntity",
-            "summary": "Description\u0020of\u0020WrongEntity",
-            "url": "classes/SismaFramework-Sample-Entities-WrongEntity.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\WrongEntity\u003A\u003AsetEncryptedProperties\u0028\u0029",
-            "name": "setEncryptedProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-WrongEntity.html#method_setEncryptedProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities\\WrongEntity\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
-            "name": "setPropertyDefaultValue",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Entities-WrongEntity.html#method_setPropertyDefaultValue"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\SampleType",
-            "name": "SampleType",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Enumerations-SampleType.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\SampleType\u003A\u003Aone",
-            "name": "one",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Enumerations-SampleType.html#enumcase_one"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\SampleType\u003A\u003Atwo",
-            "name": "two",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Enumerations-SampleType.html#enumcase_two"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\FakeFixtures\\FakeBaseSampleFixture",
-            "name": "FakeBaseSampleFixture",
-            "summary": "Description\u0020of\u0020FakeBaseSampleFixture",
-            "url": "classes/SismaFramework-Sample-FakeFixtures-FakeBaseSampleFixture.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\FakeFixtures\\FakeBaseSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
-            "name": "setDependencies",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-FakeFixtures-FakeBaseSampleFixture.html#method_setDependencies"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\FakeFixtures\\FakeBaseSampleFixture\u003A\u003AsetEntity\u0028\u0029",
-            "name": "setEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-FakeFixtures-FakeBaseSampleFixture.html#method_setEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\FakeFixtures\\FakeReferencedSampleFixture",
-            "name": "FakeReferencedSampleFixture",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-FakeFixtures-FakeReferencedSampleFixture.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\FakeFixtures\\FakeReferencedSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
-            "name": "setDependencies",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-FakeFixtures-FakeReferencedSampleFixture.html#method_setDependencies"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\FakeFixtures\\FakeReferencedSampleFixture\u003A\u003AsetEntity\u0028\u0029",
-            "name": "setEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-FakeFixtures-FakeReferencedSampleFixture.html#method_setEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\BaseSampleFixture",
-            "name": "BaseSampleFixture",
-            "summary": "Description\u0020of\u0020SampleFixture",
-            "url": "classes/SismaFramework-Sample-Fixtures-BaseSampleFixture.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\BaseSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
-            "name": "setDependencies",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Fixtures-BaseSampleFixture.html#method_setDependencies"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\BaseSampleFixture\u003A\u003AsetEntity\u0028\u0029",
-            "name": "setEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Fixtures-BaseSampleFixture.html#method_setEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\OtherReferencedSampleFixture",
-            "name": "OtherReferencedSampleFixture",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Fixtures-OtherReferencedSampleFixture.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\OtherReferencedSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
-            "name": "setDependencies",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Fixtures-OtherReferencedSampleFixture.html#method_setDependencies"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\OtherReferencedSampleFixture\u003A\u003AsetEntity\u0028\u0029",
-            "name": "setEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Fixtures-OtherReferencedSampleFixture.html#method_setEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\ReferencedSampleFixture",
-            "name": "ReferencedSampleFixture",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Fixtures-ReferencedSampleFixture.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\ReferencedSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
-            "name": "setDependencies",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Fixtures-ReferencedSampleFixture.html#method_setDependencies"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures\\ReferencedSampleFixture\u003A\u003AsetEntity\u0028\u0029",
-            "name": "setEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Fixtures-ReferencedSampleFixture.html#method_setEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleForm",
-            "name": "BaseSampleForm",
-            "summary": "Description\u0020of\u0020Submittable",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormFromOtherForm",
-            "name": "BaseSampleFormFromOtherForm",
-            "summary": "Description\u0020of\u0020Submittable",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormFromOtherForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormFromOtherForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormFromOtherForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormFromOtherForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormFromOtherForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormFromOtherForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormWithFakeEntityFromForm",
-            "name": "BaseSampleFormWithFakeEntityFromForm",
-            "summary": "Description\u0020of\u0020Submittable",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormWithFakeEntityFromForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\EntityNotInitializedForm",
-            "name": "EntityNotInitializedForm",
-            "summary": "Description\u0020of\u0020FakeSampleForm",
-            "url": "classes/SismaFramework-Sample-Forms-EntityNotInitializedForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\EntityNotInitializedForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-EntityNotInitializedForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\EntityNotInitializedForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-EntityNotInitializedForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\EntityNotInitializedForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-EntityNotInitializedForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\EntityNotInitializedForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-EntityNotInitializedForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\EntityNotInitializedForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-EntityNotInitializedForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleForm",
-            "name": "FakeBaseSampleForm",
-            "summary": "Description\u0020of\u0020FakeBaseSampleForm",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleFormFromOtherForm",
-            "name": "FakeBaseSampleFormFromOtherForm",
-            "summary": "Description\u0020of\u0020FakeBaseSampleForm",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleFormFromOtherForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleFormFromOtherForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleFormFromOtherForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleFormFromOtherForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleFormFromOtherForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeBaseSampleFormFromOtherForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleForm",
-            "name": "FakeReferencedSampleForm",
-            "summary": "Description\u0020of\u0020FakeReferencedSampleForm",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleFormFromOtherForm",
-            "name": "FakeReferencedSampleFormFromOtherForm",
-            "summary": "Description\u0020of\u0020FakeReferencedSampleForm",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleFormFromOtherForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleFormFromOtherForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleFormFromOtherForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleFormFromOtherForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleFormFromOtherForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-FakeReferencedSampleFormFromOtherForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\OtherReferencedSampleForm",
-            "name": "OtherReferencedSampleForm",
-            "summary": "Description\u0020of\u0020Submittable",
-            "url": "classes/SismaFramework-Sample-Forms-OtherReferencedSampleForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\OtherReferencedSampleForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-OtherReferencedSampleForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\OtherReferencedSampleForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-OtherReferencedSampleForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\OtherReferencedSampleForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-OtherReferencedSampleForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\OtherReferencedSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-OtherReferencedSampleForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\OtherReferencedSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-OtherReferencedSampleForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleForm",
-            "name": "ReferencedSampleForm",
-            "summary": "Description\u0020of\u0020Submittable",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleFormFromOtherForm",
-            "name": "ReferencedSampleFormFromOtherForm",
-            "summary": "Description\u0020of\u0020Submittable",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleFormFromOtherForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleFormFromOtherForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleFormFromOtherForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleFormFromOtherForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleFormFromOtherForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-ReferencedSampleFormFromOtherForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\SelfReferencedSampleForm",
-            "name": "SelfReferencedSampleForm",
-            "summary": "Description\u0020of\u0020Submittable",
-            "url": "classes/SismaFramework-Sample-Forms-SelfReferencedSampleForm.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\SelfReferencedSampleForm\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-SelfReferencedSampleForm.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\SelfReferencedSampleForm\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-SelfReferencedSampleForm.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\SelfReferencedSampleForm\u003A\u003AinjectRequest\u0028\u0029",
-            "name": "injectRequest",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-SelfReferencedSampleForm.html#method_injectRequest"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\SelfReferencedSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
-            "name": "setEntityFromForm",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-SelfReferencedSampleForm.html#method_setEntityFromForm"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms\\SelfReferencedSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
-            "name": "setFilterFieldsMode",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Forms-SelfReferencedSampleForm.html#method_setFilterFieldsMode"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\BaseSampleModel",
-            "name": "BaseSampleModel",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-BaseSampleModel.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\BaseSampleModel\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-BaseSampleModel.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\BaseSampleModel\u003A\u003AappendSearchCondition\u0028\u0029",
-            "name": "appendSearchCondition",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-BaseSampleModel.html#method_appendSearchCondition"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\OtherRefetencedSampleModel",
-            "name": "OtherRefetencedSampleModel",
-            "summary": "Description\u0020of\u0020OtherRefetencedSampleModel",
-            "url": "classes/SismaFramework-Sample-Models-OtherRefetencedSampleModel.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\OtherRefetencedSampleModel\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-OtherRefetencedSampleModel.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\OtherRefetencedSampleModel\u003A\u003AappendSearchCondition\u0028\u0029",
-            "name": "appendSearchCondition",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-OtherRefetencedSampleModel.html#method_appendSearchCondition"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\ReferencedSampleModel",
-            "name": "ReferencedSampleModel",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-ReferencedSampleModel.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\ReferencedSampleModel\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-ReferencedSampleModel.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\ReferencedSampleModel\u003A\u003AappendSearchCondition\u0028\u0029",
-            "name": "appendSearchCondition",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-ReferencedSampleModel.html#method_appendSearchCondition"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\SelfReferencedSampleModel",
-            "name": "SelfReferencedSampleModel",
-            "summary": "Description\u0020of\u0020SelfReferencedSampleModel",
-            "url": "classes/SismaFramework-Sample-Models-SelfReferencedSampleModel.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\SelfReferencedSampleModel\u003A\u003AgetEntityName\u0028\u0029",
-            "name": "getEntityName",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-SelfReferencedSampleModel.html#method_getEntityName"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models\\SelfReferencedSampleModel\u003A\u003AappendSearchCondition\u0028\u0029",
-            "name": "appendSearchCondition",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Models-SelfReferencedSampleModel.html#method_appendSearchCondition"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Permissions\\SamplePermission",
-            "name": "SamplePermission",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Permissions-SamplePermission.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Permissions\\SamplePermission\u003A\u003AcallParentPermissions\u0028\u0029",
-            "name": "callParentPermissions",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Permissions-SamplePermission.html#method_callParentPermissions"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Permissions\\SamplePermission\u003A\u003AgetVoter\u0028\u0029",
-            "name": "getVoter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Permissions-SamplePermission.html#method_getVoter"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Voters\\SampleVoter",
-            "name": "SampleVoter",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Voters-SampleVoter.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Voters\\SampleVoter\u003A\u003AcheckVote\u0028\u0029",
-            "name": "checkVote",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Voters-SampleVoter.html#method_checkVote"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Voters\\SampleVoter\u003A\u003AisInstancePermitted\u0028\u0029",
-            "name": "isInstancePermitted",
-            "summary": "",
-            "url": "classes/SismaFramework-Sample-Voters-SampleVoter.html#method_isInstancePermitted"
         },                {
             "fqsen": "\\SismaFramework\\Security\\BaseClasses\\BaseException",
             "name": "BaseException",
@@ -7181,6 +6336,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testDirectAccessToFile"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestDirectAccessToFileInRoot\u0028\u0029",
+            "name": "testDirectAccessToFileInRoot",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testDirectAccessToFileInRoot"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestFileWithStreamContent\u0028\u0029",
             "name": "testFileWithStreamContent",
             "summary": "",
@@ -7191,20 +6351,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testNotExistentFileFile"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestNotExistentFileFileInRoot\u0028\u0029",
+            "name": "testNotExistentFileFileInRoot",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testNotExistentFileFileInRoot"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestRunFixture\u0028\u0029",
             "name": "testRunFixture",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testRunFixture"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestRobotsFile\u0028\u0029",
-            "name": "testRobotsFile",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestCrawlComponentMaker\u0028\u0029",
+            "name": "testCrawlComponentMaker",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testRobotsFile"
-        },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestSitemapMaker\u0028\u0029",
-            "name": "testSitemapMaker",
-            "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testSitemapMaker"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testCrawlComponentMaker"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestRootPath\u0028\u0029",
             "name": "testRootPath",
@@ -7831,11 +6991,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testFileWithStreamContent"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestRobotFile\u0028\u0029",
-            "name": "testRobotFile",
-            "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testRobotFile"
-        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RouterTest",
             "name": "RouterTest",
             "summary": "",
@@ -8101,15 +7256,70 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#method_testEntityWithSismaTimeProperty"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003AtestForeignKeyNestedChanges\u0028\u0029",
-            "name": "testForeignKeyNestedChanges",
-            "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#method_testForeignKeyNestedChanges"
-        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003A\u0024dataMapperMock",
             "name": "dataMapperMock",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#property_dataMapperMock"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest",
+            "name": "SismaCollectionTest",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestRestrictiveType\u0028\u0029",
+            "name": "testRestrictiveType",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testRestrictiveType"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestAppend\u0028\u0029",
+            "name": "testAppend",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testAppend"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestExchangeArray\u0028\u0029",
+            "name": "testExchangeArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testExchangeArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestMergeWith\u0028\u0029",
+            "name": "testMergeWith",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testMergeWith"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestFindEntityFromProperty\u0028\u0029",
+            "name": "testFindEntityFromProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testFindEntityFromProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestHas\u0028\u0029",
+            "name": "testHas",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testHas"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestSlice\u0028\u0029",
+            "name": "testSlice",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testSlice"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestIsFirst\u0028\u0029",
+            "name": "testIsFirst",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testIsFirst"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestIsLast\u0028\u0029",
+            "name": "testIsLast",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_testIsLast"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003A\u0024dataMapperMock",
+            "name": "dataMapperMock",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#property_dataMapperMock"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaDateTest",
             "name": "SismaDateTest",
@@ -8175,21 +7385,6 @@ Search.appendIndex(
             "name": "testCheckIssetAndCountCollectionProperty",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html#method_testCheckIssetAndCountCollectionProperty"
-        },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003AtestModifyCollectionNestedChanges\u0028\u0029",
-            "name": "testModifyCollectionNestedChanges",
-            "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html#method_testModifyCollectionNestedChanges"
-        },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003AtestSetCollectionNestedChange\u0028\u0029",
-            "name": "testSetCollectionNestedChange",
-            "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html#method_testSetCollectionNestedChange"
-        },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003AtestAddCollectionNestedChange\u0028\u0029",
-            "name": "testAddCollectionNestedChange",
-            "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html#method_testAddCollectionNestedChange"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003A\u0024dataMapperMock",
             "name": "dataMapperMock",
@@ -8300,6 +7495,21 @@ Search.appendIndex(
             "name": "testInsertManualStartTransaction",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-DataMapperTest.html#method_testInsertManualStartTransaction"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\DataMapperTest\u003A\u003AtestNotDuplicateSavingCollection\u0028\u0029",
+            "name": "testNotDuplicateSavingCollection",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-DataMapperTest.html#method_testNotDuplicateSavingCollection"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\DataMapperTest\u003A\u003AtestSaveModificationOnSubnidificateCollection\u0028\u0029",
+            "name": "testSaveModificationOnSubnidificateCollection",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-DataMapperTest.html#method_testSaveModificationOnSubnidificateCollection"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\DataMapperTest\u003A\u003AtestSaveModificationOnSubnidificateEntity\u0028\u0029",
+            "name": "testSaveModificationOnSubnidificateEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-DataMapperTest.html#method_testSaveModificationOnSubnidificateEntity"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\DataMapperTest\u003A\u003AtestUpdateAutomaticStartTransaction\u0028\u0029",
             "name": "testUpdateAutomaticStartTransaction",
@@ -8546,70 +7756,1040 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Security-BaseClasses-BaseVoterTest.html#property_dataMapperMock"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AdapterType",
-            "name": "AdapterType",
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\OtherController",
+            "name": "OtherController",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Enumerations-AdapterType.html"
+            "url": "classes/SismaFramework-TestsApplication-Controllers-OtherController.html"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AdapterType\u003A\u003AgetAdapterClass\u0028\u0029",
-            "name": "getAdapterClass",
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\OtherController\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Enumerations-AdapterType.html#method_getAdapterClass"
+            "url": "classes/SismaFramework-TestsApplication-Controllers-OtherController.html#method___construct"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AdapterType\u003A\u003Amysql",
-            "name": "mysql",
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\OtherController\u003A\u003Aindex\u0028\u0029",
+            "name": "index",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Enumerations-AdapterType.html#enumcase_mysql"
+            "url": "classes/SismaFramework-TestsApplication-Controllers-OtherController.html#method_index"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Placeholder",
-            "name": "Placeholder",
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\OtherController\u003A\u003AactionWithRequest\u0028\u0029",
+            "name": "actionWithRequest",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Enumerations-Placeholder.html"
+            "url": "classes/SismaFramework-TestsApplication-Controllers-OtherController.html#method_actionWithRequest"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Placeholder\u003A\u003AgetAdapterVersion\u0028\u0029",
-            "name": "getAdapterVersion",
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\OtherController\u003A\u003AactionWithAuthentication\u0028\u0029",
+            "name": "actionWithAuthentication",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Enumerations-Placeholder.html#method_getAdapterVersion"
+            "url": "classes/SismaFramework-TestsApplication-Controllers-OtherController.html#method_actionWithAuthentication"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Placeholder\u003A\u003Aplaceholder",
-            "name": "placeholder",
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\OtherController\u003A\u003AactionWithDefaultValue\u0028\u0029",
+            "name": "actionWithDefaultValue",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Enumerations-Placeholder.html#enumcase_placeholder"
+            "url": "classes/SismaFramework-TestsApplication-Controllers-OtherController.html#method_actionWithDefaultValue"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Traits\\OrmKeyword",
-            "name": "OrmKeyword",
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\OtherController\u003A\u003AactionWithArray\u0028\u0029",
+            "name": "actionWithArray",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Traits-OrmKeyword.html"
+            "url": "classes/SismaFramework-TestsApplication-Controllers-OtherController.html#method_actionWithArray"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Traits\\OrmKeyword\u003A\u003AgetAdapterVersion\u0028\u0029",
-            "name": "getAdapterVersion",
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\OtherController\u003A\u003A\u0024request",
+            "name": "request",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Traits-OrmKeyword.html#method_getAdapterVersion"
+            "url": "classes/SismaFramework-TestsApplication-Controllers-OtherController.html#property_request"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\SampleController",
+            "name": "SampleController",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Controllers-SampleController.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\SampleController\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Controllers-SampleController.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\SampleController\u003A\u003Aindex\u0028\u0029",
+            "name": "index",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Controllers-SampleController.html#method_index"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\SampleController\u003A\u003Aerror\u0028\u0029",
+            "name": "error",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Controllers-SampleController.html#method_error"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\SampleController\u003A\u003Anotify\u0028\u0029",
+            "name": "notify",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Controllers-SampleController.html#method_notify"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers\\SampleController\u003A\u003Aproject\u0028\u0029",
+            "name": "project",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Controllers-SampleController.html#method_project"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample",
+            "name": "BaseSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024referencedEntityWithoutInitialization",
+            "name": "referencedEntityWithoutInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_referencedEntityWithoutInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024referencedEntityWithInitialization",
+            "name": "referencedEntityWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_referencedEntityWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024nullableReferencedEntityWithInitialization",
+            "name": "nullableReferencedEntityWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_nullableReferencedEntityWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024otherReferencedSample",
+            "name": "otherReferencedSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_otherReferencedSample"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024datetimeWithoutInitialization",
+            "name": "datetimeWithoutInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_datetimeWithoutInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024dateWithoutInitialization",
+            "name": "dateWithoutInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_dateWithoutInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024timeWithoutInitialization",
+            "name": "timeWithoutInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_timeWithoutInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024datetimeWithInitialization",
+            "name": "datetimeWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_datetimeWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024dateWithInitialization",
+            "name": "dateWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_dateWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024timeWithInitialization",
+            "name": "timeWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_timeWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024datetimeNullableWithInitialization",
+            "name": "datetimeNullableWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_datetimeNullableWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024dateNullableWithInitialization",
+            "name": "dateNullableWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_dateNullableWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024timeNullableWithInitialization",
+            "name": "timeNullableWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_timeNullableWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024enumWithoutInitialization",
+            "name": "enumWithoutInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_enumWithoutInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024enumWithInitialization",
+            "name": "enumWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_enumWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024enumNullableWithInitialization",
+            "name": "enumNullableWithInitialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_enumNullableWithInitialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024stringWithoutInizialization",
+            "name": "stringWithoutInizialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_stringWithoutInizialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024stringWithInizialization",
+            "name": "stringWithInizialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_stringWithInizialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024nullableStringWithInizialization",
+            "name": "nullableStringWithInizialization",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_nullableStringWithInizialization"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024nullableSecureString",
+            "name": "nullableSecureString",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_nullableSecureString"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\BaseSample\u003A\u003A\u0024boolean",
+            "name": "boolean",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-BaseSample.html#property_boolean"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityOne",
+            "name": "DependentEntityOne",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityOne.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityOne\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityOne.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityOne\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityOne.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityOne\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityOne.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityOne\u003A\u003A\u0024entityWithTwoCollection",
+            "name": "entityWithTwoCollection",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityOne.html#property_entityWithTwoCollection"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityTwo",
+            "name": "DependentEntityTwo",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityTwo.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityTwo\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityTwo.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityTwo\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityTwo.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityTwo\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityTwo.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityTwo\u003A\u003A\u0024entityWithTwoCollection",
+            "name": "entityWithTwoCollection",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityTwo.html#property_entityWithTwoCollection"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithTwoCollection",
+            "name": "EntityWithTwoCollection",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithTwoCollection.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithTwoCollection\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithTwoCollection.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithTwoCollection\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithTwoCollection.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithTwoCollection\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithTwoCollection.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\ExtendedReferencedSample",
+            "name": "ExtendedReferencedSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-ExtendedReferencedSample.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\ExtendedReferencedSample\u003A\u003A\u0024otherProperty",
+            "name": "otherProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-ExtendedReferencedSample.html#property_otherProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeBaseSample",
+            "name": "FakeBaseSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeBaseSample.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeBaseSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeBaseSample.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeBaseSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeBaseSample.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeBaseSample\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeBaseSample.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeBaseSample\u003A\u003A\u0024fakeReferencedSample",
+            "name": "fakeReferencedSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeBaseSample.html#property_fakeReferencedSample"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeReferencedSample",
+            "name": "FakeReferencedSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeReferencedSample.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeReferencedSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeReferencedSample.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeReferencedSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeReferencedSample.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\FakeReferencedSample\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-FakeReferencedSample.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherBaseSample",
+            "name": "OtherBaseSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherBaseSample.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherBaseSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherBaseSample.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherBaseSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherBaseSample.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherBaseSample\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherBaseSample.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherBaseSample\u003A\u003A\u0024extendedReferencedSample",
+            "name": "extendedReferencedSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherBaseSample.html#property_extendedReferencedSample"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherReferencedSample",
+            "name": "OtherReferencedSample",
+            "summary": "Description\u0020of\u0020ReferencedSampleTwo",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherReferencedSample.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherReferencedSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherReferencedSample.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherReferencedSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherReferencedSample.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherReferencedSample\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherReferencedSample.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherReferencedSample\u003A\u003A\u0024text",
+            "name": "text",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-OtherReferencedSample.html#property_text"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\ReferencedSample",
+            "name": "ReferencedSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\ReferencedSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\ReferencedSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\ReferencedSample\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\ReferencedSample\u003A\u003A\u0024text",
+            "name": "text",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_text"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\ReferencedSample\u003A\u003A\u0024nullableInteger",
+            "name": "nullableInteger",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_nullableInteger"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SelfReferencedSample",
+            "name": "SelfReferencedSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SelfReferencedSample\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SelfReferencedSample\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SelfReferencedSample\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SelfReferencedSample\u003A\u003A\u0024parentSelfReferencedSample",
+            "name": "parentSelfReferencedSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#property_parentSelfReferencedSample"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SelfReferencedSample\u003A\u003A\u0024baseSample",
+            "name": "baseSample",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#property_baseSample"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SelfReferencedSample\u003A\u003A\u0024text",
+            "name": "text",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#property_text"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SubdependentEntity",
+            "name": "SubdependentEntity",
+            "summary": "Description\u0020of\u0020SubdependentEntity",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SubdependentEntity.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SubdependentEntity\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SubdependentEntity.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SubdependentEntity\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SubdependentEntity.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SubdependentEntity\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SubdependentEntity.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SubdependentEntity\u003A\u003A\u0024dependentEntityTwo",
+            "name": "dependentEntityTwo",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SubdependentEntity.html#property_dependentEntityTwo"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SubdependentEntity\u003A\u003A\u0024string",
+            "name": "string",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SubdependentEntity.html#property_string"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\WrongEntity",
+            "name": "WrongEntity",
+            "summary": "Description\u0020of\u0020WrongEntity",
+            "url": "classes/SismaFramework-TestsApplication-Entities-WrongEntity.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\WrongEntity\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-WrongEntity.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\WrongEntity\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-WrongEntity.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Enumerations\\SampleType",
+            "name": "SampleType",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Enumerations-SampleType.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Enumerations\\SampleType\u003A\u003Aone",
+            "name": "one",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Enumerations-SampleType.html#enumcase_one"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Enumerations\\SampleType\u003A\u003Atwo",
+            "name": "two",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Enumerations-SampleType.html#enumcase_two"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\FakeFixtures\\FakeBaseSampleFixture",
+            "name": "FakeBaseSampleFixture",
+            "summary": "Description\u0020of\u0020FakeBaseSampleFixture",
+            "url": "classes/SismaFramework-TestsApplication-FakeFixtures-FakeBaseSampleFixture.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\FakeFixtures\\FakeBaseSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
+            "name": "setDependencies",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-FakeFixtures-FakeBaseSampleFixture.html#method_setDependencies"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\FakeFixtures\\FakeBaseSampleFixture\u003A\u003AsetEntity\u0028\u0029",
+            "name": "setEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-FakeFixtures-FakeBaseSampleFixture.html#method_setEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\FakeFixtures\\FakeReferencedSampleFixture",
+            "name": "FakeReferencedSampleFixture",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-FakeFixtures-FakeReferencedSampleFixture.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\FakeFixtures\\FakeReferencedSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
+            "name": "setDependencies",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-FakeFixtures-FakeReferencedSampleFixture.html#method_setDependencies"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\FakeFixtures\\FakeReferencedSampleFixture\u003A\u003AsetEntity\u0028\u0029",
+            "name": "setEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-FakeFixtures-FakeReferencedSampleFixture.html#method_setEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\BaseSampleFixture",
+            "name": "BaseSampleFixture",
+            "summary": "Description\u0020of\u0020SampleFixture",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-BaseSampleFixture.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\BaseSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
+            "name": "setDependencies",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-BaseSampleFixture.html#method_setDependencies"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\BaseSampleFixture\u003A\u003AsetEntity\u0028\u0029",
+            "name": "setEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-BaseSampleFixture.html#method_setEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\OtherReferencedSampleFixture",
+            "name": "OtherReferencedSampleFixture",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-OtherReferencedSampleFixture.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\OtherReferencedSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
+            "name": "setDependencies",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-OtherReferencedSampleFixture.html#method_setDependencies"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\OtherReferencedSampleFixture\u003A\u003AsetEntity\u0028\u0029",
+            "name": "setEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-OtherReferencedSampleFixture.html#method_setEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\ReferencedSampleFixture",
+            "name": "ReferencedSampleFixture",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-ReferencedSampleFixture.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\ReferencedSampleFixture\u003A\u003AsetDependencies\u0028\u0029",
+            "name": "setDependencies",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-ReferencedSampleFixture.html#method_setDependencies"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures\\ReferencedSampleFixture\u003A\u003AsetEntity\u0028\u0029",
+            "name": "setEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Fixtures-ReferencedSampleFixture.html#method_setEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleForm",
+            "name": "BaseSampleForm",
+            "summary": "Description\u0020of\u0020Submittable",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormFromOtherForm",
+            "name": "BaseSampleFormFromOtherForm",
+            "summary": "Description\u0020of\u0020Submittable",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormFromOtherForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormFromOtherForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormFromOtherForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormFromOtherForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormFromOtherForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormFromOtherForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormFromOtherForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormWithFakeEntityFromForm",
+            "name": "BaseSampleFormWithFakeEntityFromForm",
+            "summary": "Description\u0020of\u0020Submittable",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormWithFakeEntityFromForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\BaseSampleFormWithFakeEntityFromForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-BaseSampleFormWithFakeEntityFromForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\EntityNotInitializedForm",
+            "name": "EntityNotInitializedForm",
+            "summary": "Description\u0020of\u0020FakeSampleForm",
+            "url": "classes/SismaFramework-TestsApplication-Forms-EntityNotInitializedForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\EntityNotInitializedForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-EntityNotInitializedForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\EntityNotInitializedForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-EntityNotInitializedForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\EntityNotInitializedForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-EntityNotInitializedForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\EntityNotInitializedForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-EntityNotInitializedForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\EntityNotInitializedForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-EntityNotInitializedForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleForm",
+            "name": "FakeBaseSampleForm",
+            "summary": "Description\u0020of\u0020FakeBaseSampleForm",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleFormFromOtherForm",
+            "name": "FakeBaseSampleFormFromOtherForm",
+            "summary": "Description\u0020of\u0020FakeBaseSampleForm",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleFormFromOtherForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleFormFromOtherForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleFormFromOtherForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleFormFromOtherForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleFormFromOtherForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeBaseSampleFormFromOtherForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeBaseSampleFormFromOtherForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleForm",
+            "name": "FakeReferencedSampleForm",
+            "summary": "Description\u0020of\u0020FakeReferencedSampleForm",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleFormFromOtherForm",
+            "name": "FakeReferencedSampleFormFromOtherForm",
+            "summary": "Description\u0020of\u0020FakeReferencedSampleForm",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleFormFromOtherForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleFormFromOtherForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleFormFromOtherForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleFormFromOtherForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleFormFromOtherForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\FakeReferencedSampleFormFromOtherForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-FakeReferencedSampleFormFromOtherForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\OtherReferencedSampleForm",
+            "name": "OtherReferencedSampleForm",
+            "summary": "Description\u0020of\u0020Submittable",
+            "url": "classes/SismaFramework-TestsApplication-Forms-OtherReferencedSampleForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\OtherReferencedSampleForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-OtherReferencedSampleForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\OtherReferencedSampleForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-OtherReferencedSampleForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\OtherReferencedSampleForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-OtherReferencedSampleForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\OtherReferencedSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-OtherReferencedSampleForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\OtherReferencedSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-OtherReferencedSampleForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleForm",
+            "name": "ReferencedSampleForm",
+            "summary": "Description\u0020of\u0020Submittable",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleFormFromOtherForm",
+            "name": "ReferencedSampleFormFromOtherForm",
+            "summary": "Description\u0020of\u0020Submittable",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleFormFromOtherForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleFormFromOtherForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleFormFromOtherForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleFormFromOtherForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleFormFromOtherForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\ReferencedSampleFormFromOtherForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-ReferencedSampleFormFromOtherForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SelfReferencedSampleForm",
+            "name": "SelfReferencedSampleForm",
+            "summary": "Description\u0020of\u0020Submittable",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SelfReferencedSampleForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SelfReferencedSampleForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SelfReferencedSampleForm.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SelfReferencedSampleForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SelfReferencedSampleForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SelfReferencedSampleForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SelfReferencedSampleForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SelfReferencedSampleForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SelfReferencedSampleForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SelfReferencedSampleForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SelfReferencedSampleForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\BaseSampleModel",
+            "name": "BaseSampleModel",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-BaseSampleModel.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\BaseSampleModel\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-BaseSampleModel.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\BaseSampleModel\u003A\u003AappendSearchCondition\u0028\u0029",
+            "name": "appendSearchCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-BaseSampleModel.html#method_appendSearchCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\OtherRefetencedSampleModel",
+            "name": "OtherRefetencedSampleModel",
+            "summary": "Description\u0020of\u0020OtherRefetencedSampleModel",
+            "url": "classes/SismaFramework-TestsApplication-Models-OtherRefetencedSampleModel.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\OtherRefetencedSampleModel\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-OtherRefetencedSampleModel.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\OtherRefetencedSampleModel\u003A\u003AappendSearchCondition\u0028\u0029",
+            "name": "appendSearchCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-OtherRefetencedSampleModel.html#method_appendSearchCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\ReferencedSampleModel",
+            "name": "ReferencedSampleModel",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-ReferencedSampleModel.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\ReferencedSampleModel\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-ReferencedSampleModel.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\ReferencedSampleModel\u003A\u003AappendSearchCondition\u0028\u0029",
+            "name": "appendSearchCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-ReferencedSampleModel.html#method_appendSearchCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\SelfReferencedSampleModel",
+            "name": "SelfReferencedSampleModel",
+            "summary": "Description\u0020of\u0020SelfReferencedSampleModel",
+            "url": "classes/SismaFramework-TestsApplication-Models-SelfReferencedSampleModel.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\SelfReferencedSampleModel\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-SelfReferencedSampleModel.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\SelfReferencedSampleModel\u003A\u003AappendSearchCondition\u0028\u0029",
+            "name": "appendSearchCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-SelfReferencedSampleModel.html#method_appendSearchCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Permissions\\SamplePermission",
+            "name": "SamplePermission",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Permissions-SamplePermission.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Permissions\\SamplePermission\u003A\u003AcallParentPermissions\u0028\u0029",
+            "name": "callParentPermissions",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Permissions-SamplePermission.html#method_callParentPermissions"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Permissions\\SamplePermission\u003A\u003AgetVoter\u0028\u0029",
+            "name": "getVoter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Permissions-SamplePermission.html#method_getVoter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Voters\\SampleVoter",
+            "name": "SampleVoter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Voters-SampleVoter.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Voters\\SampleVoter\u003A\u003AcheckVote\u0028\u0029",
+            "name": "checkVote",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Voters-SampleVoter.html#method_checkVote"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Voters\\SampleVoter\u003A\u003AisInstancePermitted\u0028\u0029",
+            "name": "isInstancePermitted",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Voters-SampleVoter.html#method_isInstancePermitted"
         },                {
             "fqsen": "\\",
             "name": "\\",
             "summary": "",
             "url": "namespaces/default.html"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Traits",
-            "name": "Traits",
+            "fqsen": "\\SismaFramework\\Autoload",
+            "name": "Autoload",
             "summary": "",
-            "url": "namespaces/sismaframework-orm-traits.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm",
-            "name": "Orm",
-            "summary": "",
-            "url": "namespaces/sismaframework-orm.html"
+            "url": "namespaces/sismaframework-autoload.html"
         },                {
             "fqsen": "\\SismaFramework",
             "name": "SismaFramework",
             "summary": "",
             "url": "namespaces/sismaframework.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Autoload",
-            "name": "Autoload",
-            "summary": "",
-            "url": "namespaces/sismaframework-autoload.html"
         },                {
             "fqsen": "\\Config",
             "name": "Config",
@@ -8681,6 +8861,11 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-orm-adapters.html"
         },                {
+            "fqsen": "\\SismaFramework\\Orm",
+            "name": "Orm",
+            "summary": "",
+            "url": "namespaces/sismaframework-orm.html"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses",
             "name": "BaseClasses",
             "summary": "",
@@ -8726,6 +8911,11 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-orm-resultsets.html"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\Traits",
+            "name": "Traits",
+            "summary": "",
+            "url": "namespaces/sismaframework-orm-traits.html"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\Voters",
             "name": "Voters",
             "summary": "",
@@ -8745,46 +8935,6 @@ Search.appendIndex(
             "name": "Sample",
             "summary": "",
             "url": "namespaces/sismaframework-sample.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Entities",
-            "name": "Entities",
-            "summary": "",
-            "url": "namespaces/sismaframework-sample-entities.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Enumerations",
-            "name": "Enumerations",
-            "summary": "",
-            "url": "namespaces/sismaframework-sample-enumerations.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\FakeFixtures",
-            "name": "FakeFixtures",
-            "summary": "",
-            "url": "namespaces/sismaframework-sample-fakefixtures.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Fixtures",
-            "name": "Fixtures",
-            "summary": "",
-            "url": "namespaces/sismaframework-sample-fixtures.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Forms",
-            "name": "Forms",
-            "summary": "",
-            "url": "namespaces/sismaframework-sample-forms.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Models",
-            "name": "Models",
-            "summary": "",
-            "url": "namespaces/sismaframework-sample-models.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Permissions",
-            "name": "Permissions",
-            "summary": "",
-            "url": "namespaces/sismaframework-sample-permissions.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Sample\\Voters",
-            "name": "Voters",
-            "summary": "",
-            "url": "namespaces/sismaframework-sample-voters.html"
         },                {
             "fqsen": "\\SismaFramework\\Security\\BaseClasses",
             "name": "BaseClasses",
@@ -8910,5 +9060,55 @@ Search.appendIndex(
             "name": "Security",
             "summary": "",
             "url": "namespaces/sismaframework-tests-security.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Controllers",
+            "name": "Controllers",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-controllers.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication",
+            "name": "TestsApplication",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities",
+            "name": "Entities",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-entities.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Enumerations",
+            "name": "Enumerations",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-enumerations.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\FakeFixtures",
+            "name": "FakeFixtures",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-fakefixtures.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Fixtures",
+            "name": "Fixtures",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-fixtures.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms",
+            "name": "Forms",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-forms.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models",
+            "name": "Models",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-models.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Permissions",
+            "name": "Permissions",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-permissions.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Voters",
+            "name": "Voters",
+            "summary": "",
+            "url": "namespaces/sismaframework-testsapplication-voters.html"
         }            ]
 );
