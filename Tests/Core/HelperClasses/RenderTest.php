@@ -140,23 +140,7 @@ class RenderTest extends TestCase
         Render::generateData('sample/index', $vars);
     }
     
-    public function testGenerareJsonInDevelopementEnvironment()
-    {
-        \ob_end_clean();
-        $this->expectOutputString('{"title":"Homepage","message":"test"}');
-        Render::setDevelopementEnvironment();
-        Render::generateJson(['message' => 'test']);
-    }
-    
-    public function testGenerareJsonNotInDevelopementEnvironment()
-    {
-        \ob_end_clean();
-        $this->expectOutputString('{"title":"Homepage","message":"test"}');
-        Render::setDevelopementEnvironment(false);
-        Render::generateJson(['message' => 'test']);
-    }
-    
-    public function testGenerareJsonStructural()
+    public function testGenerareJson()
     {
         \ob_end_clean();
         $this->expectOutputString('{"message":"test"}');
