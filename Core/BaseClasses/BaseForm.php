@@ -27,10 +27,11 @@
 namespace SismaFramework\Core\BaseClasses;
 
 use SismaFramework\Core\AbstractClasses\Submittable;
+use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Filter;
-use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -59,6 +60,7 @@ abstract class BaseForm extends Submittable
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
     private static bool $primaryKeyPassAccepted = \Config\PRIMARY_KEY_PASS_ACCEPTED;
+    private ResponseType $responseType = ResponseType::httpOk;
 
     public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper())
     {
@@ -200,6 +202,9 @@ abstract class BaseForm extends Submittable
         $this->parseStandardProperties();
         $this->customFilter();
         Debugger::setFormFilter($this->formFilterError);
+        if ($this->filterResult === false) {
+            $this->responseType = ResponseType::httpBadRequest;
+        }
         return $this->filterResult;
     }
 
@@ -382,5 +387,10 @@ abstract class BaseForm extends Submittable
             $this->entityData->id = $this->entity->id;
         }
         return $this->entityData ?? new StandardEntity();
+    }
+
+    public function getResponseType(): ResponseType
+    {
+        return $this->responseType;
     }
 }
