@@ -42,6 +42,7 @@ use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
@@ -83,6 +84,7 @@ class BaseFormTest extends TestCase
         $baseSampleForm->handleRequest($requestMock);
         $this->assertFalse($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpBadRequest, $baseSampleForm->getResponseType());
     }
 
     public function testFormForBaseEntitySubmittedNotValid()
@@ -97,6 +99,7 @@ class BaseFormTest extends TestCase
         $baseSampleForm->handleRequest($requestMock);
         $this->assertTrue($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpBadRequest, $baseSampleForm->getResponseType());
         $filterErrors = $baseSampleForm->getFilterErrors();
         $this->assertTrue($filterErrors->nullableSecureStringError);
         $this->assertTrue($filterErrors->referencedEntityWithoutInitialization->textError);
@@ -116,7 +119,8 @@ class BaseFormTest extends TestCase
         $baseSampleForm->handleRequest($requestMock);
         $this->assertTrue($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());
-        $filterErrors = $baseSampleForm->getFilterErrors();;
+        $this->assertEquals(ResponseType::httpBadRequest, $baseSampleForm->getResponseType());
+        $filterErrors = $baseSampleForm->getFilterErrors();
         $this->assertTrue($filterErrors->stringWithoutInizializationError);
         $baseSampleResult = $baseSampleForm->getEntityDataToStandardEntity();
         $this->assertInstanceOf(StandardEntity::class, $baseSampleResult);
@@ -139,6 +143,7 @@ class BaseFormTest extends TestCase
         $baseSampleForm->handleRequest($requestMock);
         $this->assertTrue($baseSampleForm->isSubmitted());
         $this->assertTrue($baseSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $baseSampleForm->getResponseType());
         $baseSampleResult = $baseSampleForm->resolveEntity();
         $this->assertInstanceOf(BaseSample::class, $baseSampleResult);
         $this->assertEquals('base sample', $baseSampleResult->stringWithoutInizialization);
@@ -165,6 +170,7 @@ class BaseFormTest extends TestCase
         $baseSampleForm->handleRequest($requestMock);
         $this->assertTrue($baseSampleForm->isSubmitted());
         $this->assertTrue($baseSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $baseSampleForm->getResponseType());
         $baseSampleResult = $baseSampleForm->resolveEntity();
         $this->assertInstanceOf(BaseSample::class, $baseSampleResult);
         $this->assertEquals(1, $baseSampleResult->id);
@@ -182,6 +188,7 @@ class BaseFormTest extends TestCase
         $referencedSampleForm->handleRequest($requestMock);
         $this->assertFalse($referencedSampleForm->isSubmitted());
         $this->assertFalse($referencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpBadRequest, $referencedSampleForm->getResponseType());
     }
 
     public function testFormForReferencedEntityWithCollectionNotValid()
@@ -200,6 +207,7 @@ class BaseFormTest extends TestCase
         $referencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($referencedSampleForm->isSubmitted());
         $this->assertFalse($referencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpBadRequest, $referencedSampleForm->getResponseType());
         $filterErrors = $referencedSampleForm->getFilterErrors();
         $this->assertCount(2, $filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization);
         $this->assertFalse($filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInizializationError);
@@ -224,6 +232,7 @@ class BaseFormTest extends TestCase
         $referencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($referencedSampleForm->isSubmitted());
         $this->assertTrue($referencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $referencedSampleForm->getResponseType());
         $referencedSampleResult = $referencedSampleForm->resolveEntity();
         $this->assertInstanceOf(ReferencedSample::class, $referencedSampleResult);
         $this->assertCount(2, $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization);
@@ -256,6 +265,7 @@ class BaseFormTest extends TestCase
         $referencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($referencedSampleForm->isSubmitted());
         $this->assertTrue($referencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $referencedSampleForm->getResponseType());
         $referencedSampleResult = $referencedSampleForm->resolveEntity();
         $this->assertInstanceOf(ReferencedSample::class, $referencedSampleResult);
         $this->assertEquals(1, $referencedSampleResult->id);
@@ -279,6 +289,7 @@ class BaseFormTest extends TestCase
         $otherReferencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($otherReferencedSampleForm->isSubmitted());
         $this->assertFalse($otherReferencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpBadRequest, $otherReferencedSampleForm->getResponseType());
         $filterErrors = $otherReferencedSampleForm->getFilterErrors();
         $this->assertCount(2, $filterErrors->baseSampleCollection);
         $this->assertTrue($filterErrors->baseSampleCollection[0]->stringWithoutInizializationError);
@@ -301,6 +312,7 @@ class BaseFormTest extends TestCase
         $otherReferencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($otherReferencedSampleForm->isSubmitted());
         $this->assertTrue($otherReferencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $otherReferencedSampleForm->getResponseType());
         $otherReferencedSampleResult = $otherReferencedSampleForm->resolveEntity();
         $this->assertInstanceOf(OtherReferencedSample::class, $otherReferencedSampleResult);
         $this->assertEquals('referenced sample', $otherReferencedSampleResult->text);
@@ -333,6 +345,7 @@ class BaseFormTest extends TestCase
         $otherReferencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($otherReferencedSampleForm->isSubmitted());
         $this->assertTrue($otherReferencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $otherReferencedSampleForm->getResponseType());
         $otherReferencedSampleResult = $otherReferencedSampleForm->resolveEntity();
         $this->assertInstanceOf(OtherReferencedSample::class, $otherReferencedSampleResult);
         $this->assertEquals(1, $otherReferencedSampleResult->id);
@@ -357,6 +370,7 @@ class BaseFormTest extends TestCase
         $selfReferencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($selfReferencedSampleForm->isSubmitted());
         $this->assertFalse($selfReferencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpBadRequest, $selfReferencedSampleForm->getResponseType());
         $filterErrors = $selfReferencedSampleForm->getFilterErrors();
         $this->assertCount(2, $filterErrors->sonCollection);
         $this->assertTrue($filterErrors->sonCollection[0]->textError);
@@ -379,6 +393,7 @@ class BaseFormTest extends TestCase
         $selfReferencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($selfReferencedSampleForm->isSubmitted());
         $this->assertTrue($selfReferencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $selfReferencedSampleForm->getResponseType());
         $selfReferencedSampleResult = $selfReferencedSampleForm->resolveEntity();
         $this->assertInstanceOf(SelfReferencedSample::class, $selfReferencedSampleResult);
         $this->assertEquals('self referenced sample one', $selfReferencedSampleResult->text);
@@ -415,6 +430,7 @@ class BaseFormTest extends TestCase
         $selfReferencedSampleForm->handleRequest($requestMock);
         $this->assertTrue($selfReferencedSampleForm->isSubmitted());
         $this->assertTrue($selfReferencedSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $selfReferencedSampleForm->getResponseType());
         $selfReferencedSampleResult = $selfReferencedSampleForm->resolveEntity();
         $this->assertInstanceOf(SelfReferencedSample::class, $selfReferencedSampleResult);
         $this->assertEquals(1, $selfReferencedSampleResult->id);
