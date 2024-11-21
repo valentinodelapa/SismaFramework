@@ -88,7 +88,7 @@ class Render
             return false;
         }
     }
-	
+
     private static function getViewPath(string $view): string
     {
         if (self::$isStructural) {
@@ -97,6 +97,7 @@ class Render
             return ModuleManager::getExistingFilePath(self::$viewsPath . $view, Resource::php);
         }
     }
+
     private static function generateDebugBar(Debugger $debugger): string
     {
         if (self::$developementEnvironment) {
@@ -116,17 +117,11 @@ class Render
     }
 
     public static function generateJson(array $vars,
-            ResponseType $responseType = ResponseType::httpOk,
-            Localizator $localizator = new Localizator()): Response
+            ResponseType $responseType = ResponseType::httpOk): Response
     {
         $response = self::getResponse($responseType);
         BufferManager::start();
-        if (self::$isStructural) {
-            $jsonData = $vars;
-        } else {
-            $locale = $localizator->getPageLocaleArray(self::$view);
-            $jsonData = array_merge($locale, $vars);
-        }
+        $jsonData = $vars;
         $encodedJsonData = json_encode($jsonData);
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
