@@ -7,14 +7,14 @@ namespace SismaFramework\Sample\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
 use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Sample\Entities\SampleBaseEntity;
 
-class BaseSampleModel extends BaseModel
+class SampleBaseEntityModel extends BaseModel
 {
 
     protected function getEntityName(): string
     {
-        return BaseSample::class;
+        return SampleBaseEntity::class;
     }
 
     ...
@@ -29,9 +29,9 @@ namespace SismaFramework\Sample\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
 use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\BaseSample;
+use SismaFramework\Sample\Entities\SampleBaseEntity;
 
-class BaseSampleModel extends BaseModel
+class SampleBaseEntityModel extends BaseModel
 {
 
     ...
@@ -52,15 +52,15 @@ Implementa i seguenti metodi standard
 * `getEntityById()`: questo metodo serve ad ottenere un’entità a partire dal suo id e restituisce un’entità della tipologia implementata nel model.
   
   ```php
-  $baseSampleModel = new BaseSampleModel();
-  $baseSample = $baseSampleModel->getEntityById(1);
+  $sampleBaseEntityModel= new  SampleBaseEntityModel();
+  $sampleBaseEntity = $sampleBaseEntityModel->getEntityById(1);
   ```
 
 * `getEntityCollection()`: questo metodo serve ad ottenere tutte le entità di un determinato tipo memorizzate sul database sotto forma di una collezione.
   
   ```php
-  $baseSampleModel = new BaseSampleModel();
-  $baseSampleCollection = $baseSampleModel->getEntityCollection();
+  $sampleBaseEntityModel= new  SampleBaseEntityModel();
+  $sampleBaseEntityeCollection = $sampleBaseEntityModel->getEntityCollection();
   ```
   
   è possibile specificare alcuni parametri per filtrare e/o ordinare e/o limitare il risultato ottenuto e, nello speficico e nel seguente ordine:
@@ -83,23 +83,23 @@ Implementa i seguenti metodi standard
 * `getOtherEntityById()`: questo metodo, simile al precedente, data un’entità specifica, restituisce tutte le entità memorizzate sul database sotto forma di collezione, escludendo però quella passata come parametro.
   
   ```php
-  $baseSampleModel = new BaseSampleModel();
-  $baseSample = $baseSampleModel->getEntityById(1);
-  $baseSampleCollection = $baseSampleModel->getOtherEntityCollection($baseSample);
+  $sampleBaseEntityModel= new  SampleBaseEntityModel();
+  $sampleBaseEntity = $sampleBaseEntityModel->getEntityById(1);
+  $sampleBaseEntityCollection = $sampleBaseEntityModel->getOtherEntityCollection($sampleBaseEntity);
   ```
 
 * `countEntityCollection()`: questo metodo, data un’eventuale chiave di ricerca testuale, restituisce il numero di entità che soddisfano il requisito richiesto. In assenza di chiave di ricerca testuale il metodo restituisce il numero di tutti i record presenti nella tabella.
   
   ```php
-  $baseSampleModel = new BaseSampleModel();
-  $baseSampleCollectionNumber = $baseSampleModel->countEntityCollection();
+  $sampleBaseEntityModel= new  SampleBaseEntityModel();
+  $sampleBaseEntityCollectionNumber = $sampleBaseEntityModel->countEntityCollection();
   ```
 
 * `deleteEntityById()`: questo metodo elimina un’entità partendo dall’id di quest’ultima, restituendo un valore booleano che indica la riuscita dell'operazione.
   
   ```php
-  $baseSampleModel = new BaseSampleModel();
-  $baseSampleModel->deleteEntityById(1);
+  $sampleBaseEntityModel= new  SampleBaseEntityModel();
+  $sampleBaseEntityModel->deleteEntityById(1);
   ```
 
 ## Modelli per entità dipendenti
@@ -109,8 +109,8 @@ Nei casi in cui le entità abbiano chiavi esterne e si voglia sfruttarle per eff
 * `getEntityCollectionByEntity()`: questo metodo, dato un array associativo di entità ed una serie di altri parametri aggiuntivi, restituisce una collezione di entità che soddisfano i requisiti indicati.
   
   ```php
-  $dependentSampleModel = new DependentSampleModel;
-  $dependentSampleCollection = $dependentSampleModel->getEntityCollectionByEntity();
+  $sampleDependentEntityModel= new SampleDependentEntityModel;
+  $sampleDependentEntityCollection = $sampleDependentEntityModel->getEntityCollectionByEntity();
   ```
   
   La sintassi per il popolamento dell’array associativo delle entità è `[nomeProprietà => entità]` mentre i parametri aggiuntivi sono i medesimi già descritti nell’ambito del metodo `getEntityCollection()` nel paragrafo relativo ai modelli per entità semplici.
@@ -125,15 +125,15 @@ Nei casi in cui le entità abbiano chiavi esterne e si voglia sfruttarle per eff
 * `countEntityCollectionByEntity()`: questo metodo, dato un array associativo di entità (che utilizza la sintassi illustrata in precedenza) ed un’eventuale chiave di ricerca testuale (che sfrutta sempre in meccanismo di ricerca testuale illustrato in precedenza), restituisce un valore intero che indica il numero di entità che soddisfano i requisiti indicati.
   
   ```php
-  $dependentSampleModel = new DependentSampleModel();
-  $dependentSampleCollectionNumber = $dependentSampleModel->countEntityCollectionByEntity();
+  $sampleDependentEntityModel= new SampleDependentEntityModel;
+  $sampleDependentEntityCollectionNumber = $sampleDependentEntityModel->countEntityCollectionByEntity();
   ```
 
 * `deleteEntityCollectionByEntity()`: questo metodo, dato un array associativo di entità (che utilizza la sintassi illustrata in precedenza) ed un’eventuale chiave di ricerca testuale (che sfrutta sempre in meccanismo di ricerca testuale illustrato in precedenza), provvede ad eliminare le entità che soddisfano i requisiti indicati. Restituisce un valore booleano che indica il successo od il fallimento dell’operazione.
   
   ```php
-  $dependentSampleModel = new DependentSampleModel();
-  $success = $dependentSampleModel->deleteEntityCollectionByEntity();
+  $sampleDependentEntityModel= new SampleDependentEntityModel;
+  $success = $sampleDependentEntityModel->deleteEntityCollectionByEntity();
   ```
 
 Esiste una funzionalità che, per mezzo di una specifica sintassi, permette di automatizzare i processi illustrati in precedenza. Essa prevede l'utilizzo in sequenza di una serie di parole chiave di seguito illustrate:
@@ -145,10 +145,10 @@ Esiste una funzionalità che, per mezzo di una specifica sintassi, permette di a
 * l'entità che dovrà essere passato come parametro in formato *camelCase* (`nomeEntità`); è possibile gestirne anche più di una ed in tal caso verrà utilizzato il separatore `And`.
 
 ```php
-$dependentSampleModel = new DependentSampleModel;
-$dependentSampleCollection = $dependentSampleModel->getByBaseSample($baseSample);
-$dependentSampleCollectionNumber = $dependentSampleModel->countByBaseSample($baseSample);
-$success = $dependentSampleModel->deleteByBaseSample($baseSample);
+$sampleDependentEntityModel= new SampleDependentEntityModel;
+$sampleDependentEntityCollection = $sampleDependentEntityModel->getByBaseSample($sampleBaseEntity);
+$sampleDependentEntityCollectionNumber = $sampleDependentEntityModel->countByBaseSample($sampleBaseEntity);
+$success = $sampleDependentEntityModel->deleteByBaseSample($sampleBaseEntity);
 ```
 
 ## Modelli per entità auto-referenziate

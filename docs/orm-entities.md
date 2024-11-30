@@ -49,74 +49,82 @@ Questo comportamento è la motivazione per cui le proprietà dell’entità (che
 In meccanismo illustrato serve ad alleggerire il sistema limitando le richieste al database allo stretto necessario ed evitare loop in caso di entità auto-referenziate annidate (un esempio di tale scenario potrebbe essere l’implementazione di una blockchain).
 
 Vedremo comunque le entità auto-referenziate nell’apposito paragrafo.
-Di seguito un esempio di un’entità base completa.
+Di seguito un esempio di un’entità base. 
 
 ```php
 namespace SismaFramework\Sample\Entities;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\ProprietaryTypes\SismaDateTime;
-use SismaFramework\Sample\Enumerations\SampleType;
 
-class BaseSample extends BaseEntity
+class SampleBaseEntity extends BaseEntity
 {
-
     protected int $id;
-    protected ReferencedSample $referencedEntityWithoutInitialization;
-    protected ReferencedSample $referencedEntityWithInitialization;
-    protected ?ReferencedSample $nullableReferencedEntityWithInitialization = null;
-    protected OtherReferencedSample $otherReferencedSample;
-    protected SismaDateTime $datetimeWithoutInitialization;
-    protected SismaDateTime $datetimeWithInitialization;
-    protected ?SismaDateTime $datetimeNullableWithInitialization = null;
-    protected SampleType $enumWithoutInitialization;
-    protected SampleType $enumWithInitialization = SampleType::one;
-    protected ?SampleType $enumNullableWithInitialization = null;
-    protected string $stringWithoutInizialization;
-    protected string $stringWithInizialization = 'base sample';
-    protected ?string $nullableStringWithInizialization = null;
-    protected ?string $nullableSecureString = null;
-    protected bool $boolean;
+    protected SampleReferencedEntity $referencedEntity;
 
-    protected function setPropertyDefaultValue(): void
-    {
-        $this->referencedEntityWithInitialization = new ReferencedSample();
-        $this->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
-    }
-
+    #[\Override]
     protected function setEncryptedProperties(): void
     {
 
     }
 
+    #[\Override]
+    protected function setPropertyDefaultValue(): void
+    {
+
+    }
 }
 ```
 
 ## Entità referenziate
 
-Per entità referenziata si intende una particolare entità utilizzata come tipo per una proprietà presente in un’altra entità. 
+Per entità referenziata si intende una particolare entità utilizzata come tipo per una proprietà presente in un’altra entità.
 
 ```php
 namespace SismaFramework\Sample\Entities;
 
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
-class ReferencedSample extends ReferencedEntity
+class SampleReferencedEntity extends ReferencedEntity
 {
     protected int $id;
-    protected string $text;
-    protected ?int $nullableInteger = null;
 
-    protected function setPropertyDefaultValue(): void
-    {
-
-    }
-
+    #[\Override]
     protected function setEncryptedProperties(): void
     {
 
     }
 
+    #[\Override]
+    protected function setPropertyDefaultValue(): void
+    {
+
+    }
+}
+```
+
+L'entità dipendente da quella referenziata (ovvero quella che abbia un campo il cui tipo sia l'entità referenziata stessa) può essere di qualsiasi tipologia: nell'esempio corrente abbiamo optato per una BaseEntity, che riportiamo di seguito per completezza.
+
+```php
+namespace SismaFramework\Sample\Entities;
+
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+
+class SampleDependentEntity extends BaseEntity
+{
+    protected int $id;
+    protected SampleReferencedEntity $sampleReferencedEntity;
+
+    #[\Override]
+    protected function setEncryptedProperties(): void
+    {
+
+    }
+
+    #[\Override]
+    protected function setPropertyDefaultValue(): void
+    {
+
+    }
 }
 ```
 
@@ -124,20 +132,46 @@ class ReferencedSample extends ReferencedEntity
 
 Nell’utilizzo di tale funzionalità si possono presentare due diverse casistiche:
 
-* Nel caso in cui vi sia un’unica proprietà nell’entità originaria che referenzia la l’entità in oggetto (si veda la proprietà `$otherReferencedSample` nell’esempio di `BaseEntity `riportato sopra di tipo `OtherReferencedSample`) è sufficiente richiamare il nome dell’entità contenente la chiave esterna seguito dalla parola chiave `Collection`.
+* Nel caso in cui vi sia un’unica proprietà nell’entità dipendente che referenzia la l’entità in oggetto (come nel caso della classe vista in precedenza `SampleDependentEntity` la cui proprietà `$sampleReferencedEntity` è di tipo `SampleReferencedEntity`) è sufficiente richiamare il nome dell’entità che rappresenta la chiave esterna seguito dalla parola chiave `Collection`.
   
   ```php
-  $otherReferencedSample = new OtherReferencedSample();
-  $otherReferencedSample->baseSampleCollection;
+  $sampleReferencedEntity = new SampleReferencedEntity();
+  $sampleReferencedEntity->sampleDependentEntityCollection;
   ```
 
-* Nel caso in cui vi siano più proprietà nell’entità originaria che referenziano l’entità originale (sempre relativamente all’esempio riportato sopra, si faccia riferimento alle proprietà `$referencedEntityWithoutInitialization`, `$referencedEntityWithInitialization` e `$nullableReferencedEntityWithInitialization`, tutte di tipo `ReferencedSample`) è necessario aggiungere alla sintassi indicata per la prima casistica il nome della proprietà della classe originaria alla quale il collegamento fa riferimento.
+* Nel caso in cui vi siano più proprietà nell’entità originaria che referenziano l’entità originale (esempio riportato nel blocco di codice successivo, insieme all'esempio di utilizzo) è necessario aggiungere alla sintassi indicata per la prima casistica il nome della proprietà della classe originaria alla quale il collegamento fa riferimento.
   
   ```php
-  $referencedSample = new ReferencedSample();
-  $referencedSample->baseSampleCollectionReferencedEntityWithoutInitialization;
-  $referencedSample->baseSampleCollectionReferencedEntityWithInitialization;
-  $referencedSample->baseSampleCollectionNullableReferencedEntityWithoutInitialization;
+  namespace SismaFramework\Sample\Entities;
+  
+  use SismaFramework\Orm\BaseClasses\BaseEntity
+  
+  class SampleMultipleDependentEntity extends BaseEntity
+  {
+      protected int $id;
+      protected SampleReferencedEntity $sampleReferencedEntityOne;
+      protected SampleReferencedEntity $sampleReferencedEntityTwo;
+  
+      #[\Override]
+      protected function setEncryptedProperties(): void
+      {
+  
+      }
+  
+      #[\Override]
+      protected function setPropertyDefaultValue(): void
+      {
+  
+      }
+  }
+  ```
+  
+  Di seguito l'esempio citato: si può notare come, per richiamare dalla classe referenziante la collezione di entità referenziate, è necessario indicare il nome dell'entità dipendente (`sampleReferencedEntity`) seguito dalla parola chiave `Collection` e dal nome della proprietà della classe originaria alla quale il collegamento fa riferimento (`sampleReferencedEntityOne` o `sampleReferencedEntityTwo`).
+  
+  ```php
+  $sampleMultipleDependentEntity = new SampleMultipleDependentEntity();
+  $sampleMultipleDependentEntity->sampleReferencedEntityCollectionSampleReferencedEntityOne;
+  $sampleMultipleDependentEntity->sampleReferencedEntityCollectionSampleReferencedEntityTwo;
   ```
 
 Le collezioni sono gestite tramite un’estensione proprietaria della classe nativa ArrayObject denominata `SismaCollection`.
@@ -148,22 +182,22 @@ I tre metodi vengono attivati anteponendo al nome della collezione (che segue la
 * `set`: accetta esclusivamente oggetti di tipo `SismaCollection `ed attribuisce il valore passato come parametro alla collezione alla quale il nome del metodo fa riferimento. Nel caso la collezione contenga già elementi, essi vengono sostituiti con quelli passati come parametro al metodo. 
   
   ```php
-  $otherReferencedSample = new OtherReferencedSample();
-  $otherReferencedSample->setBaseSampleCollection($baseSampleCollection);
+  $sampleReferencedEntity = new SampleReferencedEntity();
+  $sampleReferencedEntity ->setSampleDependentEntityCollection($sampleDependentEntityCollection);
   ```
 
 * `add`: accetta esclusivamente oggetti il cui tipo deve corrispondere all’entità che possiede la chiave esterna (la proprietà di referenza) alla quale si sta facendo riferimento. Aggiunge alla collezione esistente l’oggetto passato come parametro. 
   
   ```php
-  $otherReferencedSample = new OtherReferencedSample();
-  $otherReferencedSample->addBaseSampleCollection($baseSample);
+  $sampleReferencedEntity= new SampleReferencedEntity();
+  $sampleReferencedEntity ->addSampleDependentEntityCollection($sampleDependentEntity);
   ```
 
 * count: non accetta parametri e conteggia il numero di entità che referenziano l’entità che sta chiamando il metodo tramite il collegamento al quale il nome del metodo si riferisce. 
   
   ```php
-  $otherReferencedSample = new OtherReferencedSample();
-  $otherReferencedSample->countBaseSampleCollection();
+  $sampleReferencedEntity= new SampleReferencedEntity();
+  $sampleReferencedEntity ->counSampleDependentEntityCollection();
   ```
 
 L’auto-determinazione delle relazioni inverse delle entità viene gestita in automatico e sarà illustrata nell’apposito paragrafo.
@@ -177,31 +211,31 @@ namespace SismaFramework\Sample\Entities;
 
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 
-class SelfReferencedSample extends SelfReferencedEntity
+class SampleSelfReferencedEntity extends SelfReferencedEntity
 {
 
     protected int $id;
-    protected ?SelfReferencedSample $parentSelfReferencedSample = null;
-    protected string $text;
+    protected ?SampleSelfReferencedEntity $parentSampleSelfReferencedEntity = null;
 
-    protected function setPropertyDefaultValue(): void
-    {
-
-    }
-
+    #[\Override]
     protected function setEncryptedProperties(): void
     {
 
     }
 
+    #[\Override]
+    protected function setPropertyDefaultValue(): void
+    {
+
+    }
 }
 ```
 
 Tramite la parola chiave parent anteposta al nome del tipo dell’entità è possibile, per quella determinata proprietà, usufruire di un meccanismo tramite il quale le relative collezioni referenziate possono essere ottenute mediante la semplice sintassi sonCollection.
 
 ```php
-$selfReferencedSample = new SelfReferencedSample();
-$selfReferencedSample->sonCollection;
+$sampleSelfReferencedEntity = new SampleSelfReferencedEntity();
+$sampleSelfReferencedEntity->sonCollection;
 ```
 
 Per ovvie problematiche di eventuali violazioni di integrità referenziale le proprietà auto-referenziate devono necessariamente essere dichiarate nullabili ed inizializzate e null in fase di dichiarazione.
@@ -209,10 +243,10 @@ Per ovvie problematiche di eventuali violazioni di integrità referenziale le pr
 Allo stesso modo è possibile sfruttare i metodi automatici sopra esposti tramite le apposite parole chiave. 
 
 ```php
-$selfReferencedSample = new SelfReferencedSample();
-$selfReferencedSample->setSonCollection(SelfReferencedSampleSampleCollection);
-$selfReferencedSample->addSonCollection(SelfReferencedSampleSample);
-$selfReferencedSample->countSonCollection();
+$sampleSelfReferencedEntity = new SampleSelfReferencedEntity();
+$sampleSelfReferencedEntity->setSonCollection($sampleSelfReferencedEntityCollection);
+$sampleSelfReferencedEntity->addSonCollection($sampleSelfReferencedEntity);
+$sampleSelfReferencedEntity->countSonCollection();
 ```
 
 Qualora la classe abbia più di una proprietà auto-referenziata, tale meccanismo può essere sfruttato esclusivamente da una di esse. Per le altre bisogna sfruttare i meccanismi esposti per le entità referenziate.

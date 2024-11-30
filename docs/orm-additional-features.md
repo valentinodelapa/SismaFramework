@@ -23,6 +23,6 @@ const REFERENCE_CACHE_PATH = '';
 
 * * *
 
-[Indice](index.md) | Precedente: [Modelli](orm-models.md) | Successivo: [Sicurezza](securiy.md)
+[Indice](index.md) | Precedente: [Modelli](orm-models.md) | Successivo: [Sicurezza](security-component.md)
 
 
