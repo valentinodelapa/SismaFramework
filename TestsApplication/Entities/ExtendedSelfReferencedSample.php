@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2022 Valentino de Lapa.
+ * Copyright 2024 Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,27 +26,12 @@
 
 namespace SismaFramework\TestsApplication\Entities;
 
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
-
 /**
+ * Description of ExtendedSelfReferencedSample
+ *
  * @author Valentino de Lapa
  */
-class SelfReferencedSample extends SelfReferencedEntity
+class ExtendedSelfReferencedSample extends SelfReferencedSample
 {
-
-    protected int $id;
-    protected ?self $parentSelfReferencedSample = null;
-    protected ?BaseSample $baseSample = null;
-    protected string $text;
-
-    protected function setPropertyDefaultValue(): void
-    {
-        
-    }
-
-    protected function setEncryptedProperties(): void
-    {
-        
-    }
-
+    //put your code here
 }

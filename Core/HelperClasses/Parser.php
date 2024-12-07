@@ -39,8 +39,19 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
  */
 class Parser
 {
+
     private static string $entityNamespace = \Config\ENTITY_NAMESPACE;
     private static string $modelNamespace = \Config\MODEL_NAMESPACE;
+
+    public static function parseProperty(\ReflectionProperty $reflectionProperty, null|string|array $value, $parseEntity = true, DataMapper $dataMapper = new DataMapper()): mixed
+    {
+        $reflectionNamedType = $reflectionProperty->getType();
+        if (($reflectionNamedType->getName() === 'self') && ($parseEntity)) {
+            return self::parseEntity($reflectionProperty->class, intval($value), $dataMapper);
+        } else {
+            return self::parseValue($reflectionNamedType, $value, $parseEntity, $dataMapper);
+        }
+    }
 
     public static function parseValue(\ReflectionNamedType $reflectionNamedType, null|string|array $value, $parseEntity = true, DataMapper $dataMapper = new DataMapper()): mixed
     {

@@ -31,11 +31,14 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\ExtendedSelfReferencedSample;
+use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
@@ -242,6 +245,34 @@ class ParserTest extends TestCase
         $this->assertEquals($sismaDate->format('Y-m-d'), $array['sismaDate']);
         $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $array['sismaDateTime']);
         $this->assertEquals($sismaTime->formatToStandardTimeFormat(), $array['sismaTime']);
+    }
+    
+    public function testParseSelfReferencedEntitySelfPropery()
+    {
+        $selfReferencedSampleOne = new SelfReferencedSample();
+        $selfReferencedSampleOne->id = 1;
+        $selfReferencedSampleTwo = new SelfReferencedSample();
+        $selfReferencedSampleTwo->id = 2;
+        Cache::setEntity($selfReferencedSampleOne);
+        Cache::setEntity($selfReferencedSampleTwo);
+        $reflectionSelfReferencedSampleOne = new \ReflectionClass($selfReferencedSampleOne);
+        $reflectionParentSelfReferencedSample = $reflectionSelfReferencedSampleOne->getProperty('parentSelfReferencedSample');
+        $this->assertEquals($selfReferencedSampleTwo, Parser::parseProperty($reflectionParentSelfReferencedSample, 2, true, $this->dataMapperMock));
+    }
+    
+    public function testParseExtendedSelfReferencedEntitySelfPropery(){
+        $extendedSelfReferencedSampleOne = new ExtendedSelfReferencedSample();
+        $extendedSelfReferencedSampleOne->id = 1;
+        $selfReferencedSampleTwo = new SelfReferencedSample();
+        $selfReferencedSampleTwo->id = 2;
+        $extendedSelfReferencedSampleTwo = new ExtendedSelfReferencedSample();
+        $extendedSelfReferencedSampleTwo->id = 2;
+        Cache::setEntity($extendedSelfReferencedSampleOne);
+        Cache::setEntity($selfReferencedSampleTwo);
+        Cache::setEntity($extendedSelfReferencedSampleTwo);
+        $reflectionExtendedSelfReferencedSampleOne = new \ReflectionClass($extendedSelfReferencedSampleOne);
+        $reflectionExtendedParentSelfReferencedSample = $reflectionExtendedSelfReferencedSampleOne->getProperty('parentSelfReferencedSample');
+        $this->assertEquals($selfReferencedSampleTwo, Parser::parseProperty($reflectionExtendedParentSelfReferencedSample, 2, true, $this->dataMapperMock));
     }
 
 }

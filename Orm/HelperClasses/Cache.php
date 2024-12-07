@@ -86,32 +86,6 @@ class Cache
         }
     }
 
-    private static function getForeignKeyDataWithParents(string $referencedEntityName, ?string $propertyName = null): array
-    {
-        $parentReferencedEntityName = get_parent_class($referencedEntityName);
-        $parentReflectionClass = new \ReflectionClass($parentReferencedEntityName);
-        if ($parentReflectionClass->isAbstract()) {
-            return self::getForeignKeyDataWithAbstractParent($referencedEntityName, $propertyName);
-        } elseif ($propertyName === null) {
-            return array_merge(static::$foreighKeyDataCache[$referencedEntityName], self::getForeignKeyDataWithParents($parentReferencedEntityName));
-        } elseif (array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])) {
-            return static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
-        } else {
-            return self::getForeignKeyDataWithParents($parentReferencedEntityName, $propertyName);
-        }
-    }
-    
-    private static function getForeignKeyDataWithAbstractParent(string $referencedEntityName, ?string $propertyName = null): array
-    {
-        if($propertyName === null){
-            return static::$foreighKeyDataCache[$referencedEntityName];
-        }elseif(array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])){
-            return static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
-        }else{
-            throw new CacheException($referencedEntityName . (($propertyName !== null) ? ' - ' . $propertyName : ''));
-        }
-    }
-
     private static function checkEntityPresence(string $referencedEntityName, ?string $propertyName): bool
     {
         if (array_key_exists($referencedEntityName, static::$foreighKeyDataCache)) {
@@ -165,10 +139,45 @@ class Cache
             $entityName = $module . '\\' . self::$entityNamespace . $entitySimpleName;
             $reflectionEntity = new \ReflectionClass($entityName);
             foreach ($reflectionEntity->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-                if (BaseEntity::checkFinalClassReflectionProperty($property) && (is_subclass_of($property->getType()->getName(), BaseEntity::class, true))) {
-                    static::$foreighKeyDataCache[$property->getType()->getName()][lcfirst($entitySimpleName)][$property->getName()] = $entityName;
+                if (BaseEntity::checkFinalClassReflectionProperty($property)) {
+                    self::parseProperty($property, $entitySimpleName, $entityName);
                 }
             }
+        }
+    }
+
+    private static function parseProperty(\ReflectionProperty $reflectionProperty, $currentEntitySimpleName, string $currentEntityFullName): void
+    {
+        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class, true)) {
+            static::$foreighKeyDataCache[$reflectionProperty->getType()->getName()][lcfirst($currentEntitySimpleName)][$reflectionProperty->getName()] = $currentEntityFullName;
+        } elseif ($reflectionProperty->getType()->getName() === 'self') {
+            static::$foreighKeyDataCache[$currentEntityFullName][lcfirst($currentEntitySimpleName)][$reflectionProperty->getName()] = $currentEntityFullName;
+        }
+    }
+
+    private static function getForeignKeyDataWithParents(string $referencedEntityName, ?string $propertyName = null): array
+    {
+        $parentReferencedEntityName = get_parent_class($referencedEntityName);
+        $parentReflectionClass = new \ReflectionClass($parentReferencedEntityName);
+        if ($parentReflectionClass->isAbstract()) {
+            return self::getForeignKeyDataWithAbstractParent($referencedEntityName, $propertyName);
+        } elseif ($propertyName === null) {
+            return array_merge(static::$foreighKeyDataCache[$referencedEntityName], self::getForeignKeyDataWithParents($parentReferencedEntityName));
+        } elseif (array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])) {
+            return static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+        } else {
+            return self::getForeignKeyDataWithParents($parentReferencedEntityName, $propertyName);
+        }
+    }
+
+    private static function getForeignKeyDataWithAbstractParent(string $referencedEntityName, ?string $propertyName = null): array
+    {
+        if ($propertyName === null) {
+            return static::$foreighKeyDataCache[$referencedEntityName];
+        } elseif (array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])) {
+            return static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
+        } else {
+            throw new CacheException($referencedEntityName . (($propertyName !== null) ? ' - ' . $propertyName : ''));
         }
     }
 
