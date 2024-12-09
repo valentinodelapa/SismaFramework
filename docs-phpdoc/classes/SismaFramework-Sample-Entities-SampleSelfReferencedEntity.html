@@ -128,16 +128,16 @@
                                 <section>
                                         <ul class="phpdocumentor-breadcrumbs">
             <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework.html">SismaFramework</a></li>
-            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-testsapplication.html">TestsApplication</a></li>
-            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-testsapplication-entities.html">Entities</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-sample.html">Sample</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-sample-entities.html">Entities</a></li>
     </ul>
 
     <article class="phpdocumentor-element -class">
         <h2 class="phpdocumentor-content__title">
-    ReferencedSample
+    SampleSelfReferencedEntity
 
         <span class="phpdocumentor-element__extends">
-        extends <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html"><abbr title="\SismaFramework\Orm\ExtendedClasses\ReferencedEntity">ReferencedEntity</abbr></a>
+        extends <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html"><abbr title="\SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity">SelfReferencedEntity</abbr></a>
     </span>
     
             <div class="phpdocumentor-element__package">
@@ -156,7 +156,7 @@
 </div>
 
         <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Entities/ReferencedSample.php"><a href="files/testsapplication-entities-referencedsample.html"><abbr title="TestsApplication/Entities/ReferencedSample.php">ReferencedSample.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleSelfReferencedEntity.php"><a href="files/sample-entities-sampleselfreferencedentity.html"><abbr title="Sample/Entities/SampleSelfReferencedEntity.php">SampleSelfReferencedEntity.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">34</span>
 
@@ -167,7 +167,7 @@
 
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -186,7 +186,7 @@
 
 <h3 id="toc">
     Table of Contents
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h3>
 
@@ -198,7 +198,7 @@
 
 <h4 id="toc-constants">
     Constants
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
@@ -220,12 +220,24 @@
         &nbsp;= &#039;foreignKeyType&#039;                            </span>
 </dt>
 
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#constant_PARENT_PREFIX_PROPERTY_NAME">PARENT_PREFIX_PROPERTY_NAME</a>
+    <span>
+        &nbsp;= &#039;parent&#039;                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#constant_SON_COLLECTION_PROPERTY_NAME">SON_COLLECTION_PROPERTY_NAME</a>
+    <span>
+        &nbsp;= &#039;sonCollection&#039;                            </span>
+</dt>
+
     </dl>
 
 
 <h4 id="toc-properties">
     Properties
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
@@ -260,7 +272,7 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_id">$id</a>
+    <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#property_id">$id</a>
     <span>
                         &nbsp;: int            </span>
 </dt>
@@ -284,19 +296,13 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_nullableInteger">$nullableInteger</a>
+    <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#property_parentSampleSelfReferencedEntity">$parentSampleSelfReferencedEntity</a>
     <span>
-                        &nbsp;: int|null            </span>
+                        &nbsp;: <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"><abbr title="\SismaFramework\Sample\Entities\SampleSelfReferencedEntity">SampleSelfReferencedEntity</abbr></a>|null            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKey">$primaryKey</a>
-    <span>
-                        &nbsp;: string            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_text">$text</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
@@ -323,7 +329,7 @@
 
 <h4 id="toc-methods">
     Methods
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
@@ -490,13 +496,13 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#method_setEncryptedProperties">setEncryptedProperties()</a>
+    <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#method_setEncryptedProperties">setEncryptedProperties()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
-    <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#method_setPropertyDefaultValue">setPropertyDefaultValue()</a>
+    <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#method_setPropertyDefaultValue">setPropertyDefaultValue()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
@@ -570,7 +576,7 @@
     <section class="phpdocumentor-constants">
         <h3 class="phpdocumentor-elements__header" id="constants">
             Constants
-            <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article class="phpdocumentor-element -constant -public ">
@@ -657,13 +663,69 @@
     
 
 </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_PARENT_PREFIX_PROPERTY_NAME">
+        PARENT_PREFIX_PROPERTY_NAME
+        <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#constant_PARENT_PREFIX_PROPERTY_NAME" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedEntity.php"><a href="files/orm-extendedclasses-selfreferencedentity.html"><abbr title="Orm/ExtendedClasses/SelfReferencedEntity.php">SelfReferencedEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">40</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PARENT_PREFIX_PROPERTY_NAME</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;parent&#039;</span>
+</code>
+
+
+    
+    
+    
+
+</article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_SON_COLLECTION_PROPERTY_NAME">
+        SON_COLLECTION_PROPERTY_NAME
+        <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#constant_SON_COLLECTION_PROPERTY_NAME" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedEntity.php"><a href="files/orm-extendedclasses-selfreferencedentity.html"><abbr title="Orm/ExtendedClasses/SelfReferencedEntity.php">SelfReferencedEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">41</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">SON_COLLECTION_PROPERTY_NAME</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;sonCollection&#039;</span>
+</code>
+
+
+    
+    
+    
+
+</article>
             </section>
 
         
     <section class="phpdocumentor-properties">
         <h3 class="phpdocumentor-elements__header" id="properties">
             Properties
-            <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article
@@ -840,15 +902,15 @@
 >
     <h4 class="phpdocumentor-element__name" id="property_id">
         $id
-        <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_id" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#property_id" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                 </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Entities/ReferencedSample.php"><a href="files/testsapplication-entities-referencedsample.html"><abbr title="TestsApplication/Entities/ReferencedSample.php">ReferencedSample.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleSelfReferencedEntity.php"><a href="files/sample-entities-sampleselfreferencedentity.html"><abbr title="Sample/Entities/SampleSelfReferencedEntity.php">SampleSelfReferencedEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">36</span>
+    <span class="phpdocumentor-element-found-in__line">37</span>
 
     </aside>
 
@@ -970,15 +1032,15 @@
             -protected
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="property_nullableInteger">
-        $nullableInteger
-        <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_nullableInteger" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="property_parentSampleSelfReferencedEntity">
+        $parentSampleSelfReferencedEntity
+        <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#property_parentSampleSelfReferencedEntity" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                 </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Entities/ReferencedSample.php"><a href="files/testsapplication-entities-referencedsample.html"><abbr title="TestsApplication/Entities/ReferencedSample.php">ReferencedSample.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleSelfReferencedEntity.php"><a href="files/sample-entities-sampleselfreferencedentity.html"><abbr title="Sample/Entities/SampleSelfReferencedEntity.php">SampleSelfReferencedEntity.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">38</span>
 
@@ -987,8 +1049,8 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-        <span class="phpdocumentor-signature__type">int|null</span>
-    <span class="phpdocumentor-signature__name">$nullableInteger</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"><abbr title="\SismaFramework\Sample\Entities\SampleSelfReferencedEntity">SampleSelfReferencedEntity</abbr></a>|null</span>
+    <span class="phpdocumentor-signature__name">$parentSampleSelfReferencedEntity</span>
      = <span class="phpdocumentor-signature__default-value">null</span></code>
 
     
@@ -1023,39 +1085,6 @@
         <span class="phpdocumentor-signature__type">string</span>
     <span class="phpdocumentor-signature__name">$primaryKey</span>
      = <span class="phpdocumentor-signature__default-value">&#039;id&#039;</span></code>
-
-    
-    
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -protected
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="property_text">
-        $text
-        <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_text" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Entities/ReferencedSample.php"><a href="files/testsapplication-entities-referencedsample.html"><abbr title="TestsApplication/Entities/ReferencedSample.php">ReferencedSample.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">37</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">protected</span>
-        <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$text</span>
-    </code>
 
     
     
@@ -1166,7 +1195,7 @@
             <section class="phpdocumentor-methods">
         <h3 class="phpdocumentor-elements__header" id="methods">
             Methods
-            <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article
@@ -2315,13 +2344,13 @@
 >
     <h4 class="phpdocumentor-element__name" id="method_setEncryptedProperties">
         setEncryptedProperties()
-        <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#method_setEncryptedProperties" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#method_setEncryptedProperties" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Entities/ReferencedSample.php"><a href="files/testsapplication-entities-referencedsample.html"><abbr title="TestsApplication/Entities/ReferencedSample.php">ReferencedSample.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleSelfReferencedEntity.php"><a href="files/sample-entities-sampleselfreferencedentity.html"><abbr title="Sample/Entities/SampleSelfReferencedEntity.php">SampleSelfReferencedEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">45</span>
+    <span class="phpdocumentor-element-found-in__line">40</span>
 
     </aside>
 
@@ -2346,13 +2375,13 @@
 >
     <h4 class="phpdocumentor-element__name" id="method_setPropertyDefaultValue">
         setPropertyDefaultValue()
-        <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#method_setPropertyDefaultValue" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#method_setPropertyDefaultValue" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Entities/ReferencedSample.php"><a href="files/testsapplication-entities-referencedsample.html"><abbr title="TestsApplication/Entities/ReferencedSample.php">ReferencedSample.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleSelfReferencedEntity.php"><a href="files/sample-entities-sampleselfreferencedentity.html"><abbr title="Sample/Entities/SampleSelfReferencedEntity.php">SampleSelfReferencedEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">40</span>
+    <span class="phpdocumentor-element-found-in__line">46</span>
 
     </aside>
 
@@ -2870,7 +2899,7 @@
     <div class="phpdocumentor-modal-bg" data-exit-button></div>
     <div class="phpdocumentor-modal-container">
         <div class="phpdocumentor-modal-content">
-            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/TestsApplication/Entities/ReferencedSample.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
+            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/Sample/Entities/SampleSelfReferencedEntity.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
         </div>
         <button data-exit-button class="phpdocumentor-modal__close">&times;</button>
     </div>
@@ -2969,9 +2998,9 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                        <li><a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#toc-constants">Constants</a></li>
-                                                            <li><a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#toc-properties">Properties</a></li>
-                                                            <li><a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#toc-methods">Methods</a></li>
+                                        <li><a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#toc-constants">Constants</a></li>
+                                                            <li><a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#toc-properties">Properties</a></li>
+                                                            <li><a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
                             <li class="phpdocumentor-on-this-page-section__title">Constants</li>
@@ -2980,27 +3009,28 @@
                                                     <li><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#constant_FOREIGN_KEY_NAME">FOREIGN_KEY_NAME</a></li>
                                                     <li><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#constant_FOREIGN_KEY_SUFFIX">FOREIGN_KEY_SUFFIX</a></li>
                                                     <li><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#constant_FOREIGN_KEY_TYPE">FOREIGN_KEY_TYPE</a></li>
+                                                    <li><a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#constant_PARENT_PREFIX_PROPERTY_NAME">PARENT_PREFIX_PROPERTY_NAME</a></li>
+                                                    <li><a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#constant_SON_COLLECTION_PROPERTY_NAME">SON_COLLECTION_PROPERTY_NAME</a></li>
                                             </ul>
                 </li>
             
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeys">$foreignKeys<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_modified">$modified<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collectionPropertiesSetted">$collectionPropertiesSetted<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collections">$collections<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper">$dataMapper<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_id">$id<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_initializationVectorPropertyName">$initializationVectorPropertyName<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_instance">$instance<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_isActiveTransaction">$isActiveTransaction<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_nullableInteger">$nullableInteger<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKey">$primaryKey<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#property_text">$text<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns">$encryptedColumns<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptionPassphrase">$encryptionPassphrase<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
-                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyIndexes">$foreignKeyIndexes<a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeys">$foreignKeys<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_modified">$modified<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collectionPropertiesSetted">$collectionPropertiesSetted<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collections">$collections<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper">$dataMapper<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#property_id">$id<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_initializationVectorPropertyName">$initializationVectorPropertyName<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_instance">$instance<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_isActiveTransaction">$isActiveTransaction<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#property_parentSampleSelfReferencedEntity">$parentSampleSelfReferencedEntity<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKey">$primaryKey<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns">$encryptedColumns<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptionPassphrase">$encryptionPassphrase<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
+                                                    <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyIndexes">$foreignKeyIndexes<a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html"></li>
                                             </ul>
                 </li>
             
@@ -3034,8 +3064,8 @@
                                             <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkFinalClassProperty">checkFinalClassProperty()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_forceCollectionPropertySet">forceCollectionPropertySet()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_forceForeignKeyPropertySet">forceForeignKeyPropertySet()</a></li>
-                                            <li><a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#method_setEncryptedProperties">setEncryptedProperties()</a></li>
-                                            <li><a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#method_setPropertyDefaultValue">setPropertyDefaultValue()</a></li>
+                                            <li><a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#method_setEncryptedProperties">setEncryptedProperties()</a></li>
+                                            <li><a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#method_setPropertyDefaultValue">setPropertyDefaultValue()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_switchSettingType">switchSettingType()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkBuiltinOrEnumPropertyChange">checkBuiltinOrEnumPropertyChange()</a></li>
                                             <li><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkCustomDateTimeInterfacePropertyChange">checkCustomDateTimeInterfacePropertyChange()</a></li>
@@ -3065,7 +3095,7 @@
     </section>
 </section>
         </div>
-        <a href="classes/SismaFramework-TestsApplication-Entities-ReferencedSample.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+        <a href="classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
 
     </main>
 
