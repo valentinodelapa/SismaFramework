@@ -39,6 +39,7 @@ use SismaFramework\Orm\HelperClasses\Cache;
  */
 abstract class ReferencedEntity extends BaseEntity
 {
+
     protected array $collectionPropertiesSetted = [];
     protected array $collections = [];
 
@@ -148,10 +149,10 @@ abstract class ReferencedEntity extends BaseEntity
             throw new InvalidPropertyException($name);
         }
     }
-    
+
     protected function checkCollectionTypeConsistency(string $collectionName, SismaCollection $value)
     {
-        if(is_a($value->getRestrictiveType(), $this->getCollectionDataInformation($collectionName), true) === false){
+        if (is_a($value->getRestrictiveType(), $this->getCollectionDataInformation($collectionName), true) === false) {
             throw new InvalidArgumentException($collectionName);
         }
     }
@@ -163,15 +164,19 @@ abstract class ReferencedEntity extends BaseEntity
         $propertyName = lcfirst(implode($methodNameParts));
         switch ($methodType) {
             case 'set':
-                if (isset($arguments[0])) {
+                if (isset($arguments[0]) && ($arguments[0] instanceof SismaCollection)) {
                     $this->setEntityCollection($propertyName, $arguments[0]);
                     break;
                 } else {
                     throw new InvalidArgumentException($methodName);
                 }
             case 'add':
-                $this->addEntityToEntityCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
-                break;
+                if (isset($arguments[0]) && ($arguments[0] instanceof BaseEntity)) {
+                    $this->addEntityToEntityCollection($propertyName . static::FOREIGN_KEY_SUFFIX, $arguments[0]);
+                    break;
+                } else {
+                    throw new InvalidArgumentException($methodName);
+                }
             case 'count':
                 return $this->countEntityCollection($propertyName);
             default:
