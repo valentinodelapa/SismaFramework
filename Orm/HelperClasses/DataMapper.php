@@ -85,7 +85,9 @@ class DataMapper
 
     public function save(BaseEntity $entity, Query $query = new Query()): bool
     {
-        if (in_array($entity, $this->processedEntity) === false) {
+        if (in_array($entity, $this->processedEntity)) {
+            return true;
+        } else {
             $this->processedEntity[] = $entity;
             $isFirstExecution = $this->startTransaction();
             if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
@@ -102,8 +104,6 @@ class DataMapper
                 $this->adapter->rollbackTransaction();
                 throw new DataMapperException();
             }
-        } else {
-            return true;
         }
     }
 
@@ -131,7 +131,7 @@ class DataMapper
     {
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
+            if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && $reflectionProperty->isInitialized($entity) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
                 $markers[] = $this->adapter->getPlaceholder();
                 $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
                 $currentValue = $reflectionProperty->getValue($entity);
