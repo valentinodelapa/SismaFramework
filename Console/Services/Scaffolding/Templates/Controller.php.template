@@ -1,0 +1,26 @@
+<?php
+namespace {{namespace}};
+
+use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+
+/**
+ * {{className}} Controller
+ */
+class {{className}}Controller extends BaseController {
+    
+    public function __construct(DataMapper $dataMapper = new DataMapper()) {
+        parent::__construct($dataMapper);
+    }
+    
+    /**
+     * Index action
+     */
+    public function indexAction(): Response {
+        // Your code here
+        return new Response();
+    }
+    
+}

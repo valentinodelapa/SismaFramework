@@ -1,0 +1,67 @@
+<?php
+
+// Ensure this script is being run from the command line
+if (php_sapi_name() !== 'cli') {
+    die('This script can only be run from the command line');
+}
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use SismaFramework\Console\Commands\ScaffoldCommand;
+
+// Parse command line arguments
+$arguments = $argv;
+array_shift($arguments); // Remove script name
+
+if (empty($arguments)) {
+    echo "Usage: php sisma <command> [arguments] [options]" . PHP_EOL;
+    echo "Available commands:" . PHP_EOL;
+    echo "  scaffold <entity> <module> - Generate scaffolding for an entity" . PHP_EOL;
+    echo "Type 'php sisma <command>' for more information about a command" . PHP_EOL;
+    exit(1);
+}
+
+$command = array_shift($arguments);
+
+switch ($command) {
+    case 'scaffold':
+        $scaffoldCommand = new ScaffoldCommand();
+        
+        // Show help if no arguments
+        if (empty($arguments)) {
+            $scaffoldCommand->run();
+            exit(1);
+        }
+        
+        // Parse arguments and options
+        $cmdArgs = [];
+        $cmdOptions = [];
+        
+        foreach ($arguments as $arg) {
+            if (strpos($arg, '--') === 0) {
+                // Handle options
+                $option = substr($arg, 2);
+                if (strpos($option, '=') !== false) {
+                    list($key, $value) = explode('=', $option, 2);
+                    $cmdOptions[$key] = $value;
+                } else {
+                    $cmdOptions[$option] = true;
+                }
+            } else {
+                // Handle arguments
+                if (!isset($cmdArgs['entity'])) {
+                    $cmdArgs['entity'] = $arg;
+                } elseif (!isset($cmdArgs['module'])) {
+                    $cmdArgs['module'] = $arg;
+                }
+            }
+        }
+        
+        $scaffoldCommand->setArguments($cmdArgs);
+        $scaffoldCommand->setOptions($cmdOptions);
+        exit($scaffoldCommand->run());
+        
+    default:
+        echo "Unknown command: $command" . PHP_EOL;
+        exit(1);
+}
