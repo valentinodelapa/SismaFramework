@@ -26,16 +26,21 @@
 
 namespace SismaFramework\Orm\CustomTypes;
 
-use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\Interfaces\CustomDateTimeComparableInterface;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaDate extends \DateTimeImmutable implements CustomDateTimeInterface
+class SismaDate extends \DateTimeImmutable implements CustomDateTimeComparableInterface
 {
 
-    public function equals(CustomDateTimeInterface $other): bool
+    #[\Override]
+    public function equals(CustomDateTimeComparableInterface $other): bool
     {
-        return $this->getTimestamp() === $other->getTimestamp();
+        if ($other instanceof self) {
+            return $this->getTimestamp() === $other->getTimestamp();
+        } else {
+            
+        }
     }
 }

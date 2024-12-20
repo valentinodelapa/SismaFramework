@@ -34,7 +34,7 @@ use SismaFramework\Orm\CustomTypes\SismaDate;
  */
 class SismaDateTest extends TestCase
 {
-    public function testSismaTime()
+    public function testSismaDate()
     {
         $originalDate = "2020-01-15";
         $sismaDate = new SismaDate($originalDate);
@@ -42,5 +42,14 @@ class SismaDateTest extends TestCase
         $date = $sismaDate->format('Y-m-d');
         $this->assertIsString($date);
         $this->assertEquals($originalDate, $date);
+    }
+    
+    public function testEquals()
+    {
+        $sismaDateOne = new SismaDate('2020-01-01');
+        $sismaDateTwo = new SismaDate('2020-01-01');
+        $sismaDateThree = new SismaDate('2020-01-02');
+        $this->assertTrue($sismaDateOne->equals($sismaDateTwo));
+        $this->assertfalse($sismaDateOne->equals($sismaDateThree));
     }
 }

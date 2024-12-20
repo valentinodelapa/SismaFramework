@@ -26,17 +26,52 @@
 
 namespace SismaFramework\Orm\CustomTypes;
 
-use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\Interfaces\CustomDateTimeComparableInterface;
+use SismaFramework\Orm\Interfaces\CustomDateTimeTriggerableInterface;
 
 /**
  *
  * @author Valentino de Lapa
  */
-class SismaDateTime extends \DateTime implements CustomDateTimeInterface
+class SismaDateTime extends \DateTime implements CustomDateTimeComparableInterface, CustomDateTimeTriggerableInterface
 {
 
-    public function equals(CustomDateTimeInterface $other): bool
+    private ?BaseEntity $parentEntity = null;
+
+    public function __construct(?BaseEntity $parentEntity = null, string $datetime = "now", ?\DateTimeZone $timezone = null)
+    {
+        $this->parentEntity = $parentEntity;
+        parent::__construct($datetime, $timezone);
+    }
+
+    #[\Override]
+    public function equals(CustomDateTimeComparableInterface $other): bool
     {
         return $this->getTimestamp() === $other->getTimestamp();
+    }
+
+    #[\Override]
+    public function injectParentEntity(BaseEntity $parentEntity): void
+    {
+        $this->parentEntity = $parentEntity;
+    }
+
+    #[\Override]
+    public function add(\DateInterval $interval): \DateTime
+    {
+        if ($this->parentEntity instanceof BaseEntity) {
+            $this->parentEntity->modified = true;
+        }
+        return parent::add($interval);
+    }
+
+    #[\Override]
+    public function sub(\DateInterval $interval): \DateTime
+    {
+        if ($this->parentEntity instanceof BaseEntity) {
+            $this->parentEntity->modified = true;
+        }
+        return parent::sub($interval);
     }
 }

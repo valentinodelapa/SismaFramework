@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2023 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright 2024 valen.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,33 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Tests\Orm\CustomTypes;
+namespace SismaFramework\Orm\Interfaces;
 
-use PHPUnit\Framework\TestCase;
-use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
- * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ *
+ * @author valen
  */
-class SismaTimeTest extends TestCase
+interface CustomDateTimeTriggerableInterface
 {
 
-    public function testSismaTime()
-    {
-        $originalTime = "02:51:16";
-        $sismaTime = SismaTime::createFromStandardTimeFormat($originalTime);
-        $this->assertInstanceOf(SismaTime::class, $sismaTime);
-        $time = $sismaTime->formatToStandardTimeFormat();
-        $this->assertIsString($time);
-        $this->assertEquals($originalTime, $time);
-    }
-    
-    public function testEquals()
-    {
-        $sismaTimeOne = SismaTime::createFromStandardTimeFormat("02:00:00");
-        $sismaTimeTwo = SismaTime::createFromStandardTimeFormat("02:00:00");
-        $sismaTimeThree = SismaTime::createFromStandardTimeFormat("03:00:00");
-        $this->assertTrue($sismaTimeOne->equals($sismaTimeTwo));
-        $this->assertfalse($sismaTimeOne->equals($sismaTimeThree));
-    }
+    public function injectParentEntity(BaseEntity $parentEntity): void;
 }

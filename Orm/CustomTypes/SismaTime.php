@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Orm\CustomTypes;
 
-use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\Interfaces\CustomDateTimeComparableInterface;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaTime extends \DateInterval implements CustomDateTimeInterface
+class SismaTime extends \DateInterval implements CustomDateTimeComparableInterface
 {
 
     public static function createFromStandardTimeFormat(string $time): self
@@ -45,7 +45,8 @@ class SismaTime extends \DateInterval implements CustomDateTimeInterface
         return $this->format('%H:%I:%S');
     }
 
-    public function equals(CustomDateTimeInterface $other):bool
+    #[\Override]
+    public function equals(CustomDateTimeComparableInterface $other):bool
     {
         return $this->y === $other->y &&
                 $this->m === $other->m &&

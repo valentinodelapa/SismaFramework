@@ -29,7 +29,7 @@ namespace SismaFramework\Orm\Interfaces;
 /**
  * @author Valentino de Lapa
  */
-interface CustomDateTimeInterface
+interface CustomDateTimeComparableInterface
 {
 
     public function equals(self $other): bool;

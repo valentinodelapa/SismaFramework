@@ -60,7 +60,7 @@ class Parser
         } elseif (is_a($reflectionNamedType->getName(), SismaDate::class, true)) {
             return new SismaDate($value);
         } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
-            return new SismaDateTime($value);
+            return new SismaDateTime(null, $value);
         } elseif (is_a($reflectionNamedType->getName(), SismaTime::class, true)) {
             return SismaTime::createFromStandardTimeFormat($value);
         } elseif (($reflectionNamedType->getName() === 'array') && is_array($value)) {

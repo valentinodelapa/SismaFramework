@@ -30,7 +30,8 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\Interfaces\CustomDateTimeComparableInterface;
+use SismaFramework\Orm\Interfaces\CustomDateTimeTriggerableInterface;
 
 /**
  * @author Valentino de Lapa
@@ -129,6 +130,9 @@ abstract class BaseEntity
             }
         } else {
             $this->trackOtherPropertyChanges($reflectionProperty->getType(), $name, $value);
+            if($value instanceof CustomDateTimeTriggerableInterface){
+                $value->injectParentEntity($this);
+            }
             $this->$name = $value;
         }
     }
@@ -180,7 +184,7 @@ abstract class BaseEntity
 
     private function checkCustomDateTimeInterfacePropertyChange(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): bool
     {
-        return (is_a($reflectionNamedType->getName(), CustomDateTimeInterface::class, true) &&
+        return (is_a($reflectionNamedType->getName(), CustomDateTimeComparableInterface::class, true) &&
                 ((isset($this->$name) && ((is_a($value, $reflectionNamedType->getName()) && ($this->$name->equals($value) === false)) || ($value === null))) ||
                 ((isset($this->$name) === false) && ($value !== null))));
     }
