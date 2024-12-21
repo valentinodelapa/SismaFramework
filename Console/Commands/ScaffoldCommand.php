@@ -17,7 +17,7 @@ class ScaffoldCommand extends BaseCommand {
     }
     
     protected function configure(): void {
-        $this->output("Usage: php sisma scaffold <entity> <module> [options]");
+        $this->output("Usage: php SismaFramework/Console/sisma scaffold <entity> <module> [options]");
         $this->output("");
         $this->output("Arguments:");
         $this->output("  entity    The entity name (e.g. User, Product)");
@@ -29,7 +29,7 @@ class ScaffoldCommand extends BaseCommand {
         $this->output("  --template=PATH  Use custom templates from the specified path");
         $this->output("");
         $this->output("Example:");
-        $this->output("  php sisma scaffold User MyModule --force --type=BaseModel");
+        $this->output("  php SismaFramework/Console/sisma scaffold User Blog");
     }
     
     protected function execute(): int {

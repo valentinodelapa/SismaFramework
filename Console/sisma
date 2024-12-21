@@ -5,19 +5,57 @@ if (php_sapi_name() !== 'cli') {
     die('This script can only be run from the command line');
 }
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// Get the framework root (where this script is located)
+define('FRAMEWORK_ROOT', dirname(__DIR__));
+
+// Get the project root (parent of framework root)
+define('PROJECT_ROOT', dirname(FRAMEWORK_ROOT));
+
+// Validate that we are in a valid project structure
+if (!is_dir(PROJECT_ROOT . '/SismaFramework')) {
+    die("Error: Invalid project structure. SismaFramework should be a subdirectory of your project root." . PHP_EOL .
+        "Current framework path: " . FRAMEWORK_ROOT . PHP_EOL .
+        "Expected project structure:" . PHP_EOL .
+        "  YourProject/" . PHP_EOL .
+        "  ├── SismaFramework/  (git submodule)" . PHP_EOL .
+        "  └── YourModules/" . PHP_EOL);
+}
+
+// Define CLI mode to avoid web-specific error handling
+define('CLI_MODE', true);
+
+// Load configuration and autoloader
+require_once FRAMEWORK_ROOT . '/Config/config.php';
+require_once FRAMEWORK_ROOT . '/Autoload/autoload.php';
+
+// Set error reporting for CLI
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+date_default_timezone_set('Europe/Rome');
 
 use SismaFramework\Console\Commands\ScaffoldCommand;
+
+// Simple CLI error handler
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    echo "Error ($errno): $errstr in $errfile on line $errline" . PHP_EOL;
+    exit(1);
+});
+
+set_exception_handler(function($e) {
+    echo "Error: " . $e->getMessage() . PHP_EOL;
+    exit(1);
+});
 
 // Parse command line arguments
 $arguments = $argv;
 array_shift($arguments); // Remove script name
 
 if (empty($arguments)) {
-    echo "Usage: php sisma <command> [arguments] [options]" . PHP_EOL;
+    echo "Usage: php SismaFramework/Console/sisma <command> [arguments] [options]" . PHP_EOL;
     echo "Available commands:" . PHP_EOL;
     echo "  scaffold <entity> <module> - Generate scaffolding for an entity" . PHP_EOL;
-    echo "Type 'php sisma <command>' for more information about a command" . PHP_EOL;
+    echo "Type 'php SismaFramework/Console/sisma <command>' for more information about a command" . PHP_EOL;
     exit(1);
 }
 
@@ -57,9 +95,14 @@ switch ($command) {
             }
         }
         
-        $scaffoldCommand->setArguments($cmdArgs);
-        $scaffoldCommand->setOptions($cmdOptions);
-        exit($scaffoldCommand->run());
+        try {
+            $scaffoldCommand->setArguments($cmdArgs);
+            $scaffoldCommand->setOptions($cmdOptions);
+            exit($scaffoldCommand->run());
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage() . PHP_EOL;
+            exit(1);
+        }
         
     default:
         echo "Unknown command: $command" . PHP_EOL;

@@ -109,6 +109,52 @@ class ScaffoldingManager {
      * @return bool True if generation was successful
      */
     public function generateScaffolding(string $entityName, string $module): bool {
+        // Check if module exists in project root
+        $modulePath = PROJECT_ROOT . '/' . $module;
+        if (!is_dir($modulePath)) {
+            throw new \RuntimeException(
+                "Module directory not found: {$module}\n" .
+                "Expected project structure:\n" .
+                "  YourProject/\n" .
+                "  ├── SismaFramework/  (git submodule)\n" .
+                "  ├── {$module}/       (your module)\n" .
+                "  │   └── Application/\n" .
+                "  │       ├── Controllers/\n" .
+                "  │       ├── Models/\n" .
+                "  │       ├── Forms/\n" .
+                "  │       └── Entities/\n" .
+                "  └── OtherModules/\n\n" .
+                "Make sure your module is in the project root directory."
+            );
+        }
+
+        // Check if Application directory exists
+        $applicationPath = $modulePath . '/Application';
+        if (!is_dir($applicationPath)) {
+            throw new \RuntimeException(
+                "Application directory not found in module: {$module}\n" .
+                "Each module in the project root must have this structure:\n" .
+                "  {$module}/\n" .
+                "  └── Application/\n" .
+                "      ├── Controllers/\n" .
+                "      ├── Models/\n" .
+                "      ├── Forms/\n" .
+                "      └── Entities/\n\n" .
+                "Create this structure or use --force to create it automatically."
+            );
+        }
+
+        // Ensure required directories exist
+        $requiredDirs = ['Controllers', 'Models', 'Forms', 'Entities'];
+        foreach ($requiredDirs as $dir) {
+            $dirPath = $applicationPath . '/' . $dir;
+            if (!is_dir($dirPath)) {
+                if (!mkdir($dirPath, 0777, true)) {
+                    throw new \RuntimeException("Failed to create directory: {$dirPath}");
+                }
+            }
+        }
+
         // Build namespaces
         $moduleNamespace = str_replace('/', '\\', $module);
         $entityNamespace = $moduleNamespace . '\\Application\\Entities';
@@ -117,9 +163,16 @@ class ScaffoldingManager {
         $formNamespace = $moduleNamespace . '\\Application\\Forms';
         
         // Check if entity exists
-        $entityClass = $entityNamespace . '\\' . $entityName . 'Entity';
+        $entityClass = $entityNamespace . '\\' . $entityName;
         if (!class_exists($entityClass)) {
-            throw new \RuntimeException("Entity class not found: {$entityClass}");
+            throw new \RuntimeException(
+                "Entity class not found: {$entityClass}\n" .
+                "Make sure the entity exists in:\n" .
+                "  {$module}/Application/Entities/{$entityName}.php\n\n" .
+                "The entity class should be defined as:\n" .
+                "  namespace {$entityNamespace};\n" .
+                "  class {$entityName} extends \\SismaFramework\\Orm\\BaseClasses\\BaseEntity { ... }"
+            );
         }
 
         // Set common placeholders
@@ -129,15 +182,15 @@ class ScaffoldingManager {
         $modelType = $this->customType ?? $this->determineModelType($entityClass);
         $this->setPlaceholder('modelType', $modelType);
         $this->setPlaceholder('namespace', $modelNamespace);
-        $success = $this->generate('Model', $this->getOutputPath($module . '/Application/Models', $entityName . 'Model'));
+        $success = $this->generate('Model', $modulePath . '/Application/Models/' . $entityName . 'Model.php');
 
         // Generate Controller
         $this->setPlaceholder('namespace', $controllerNamespace);
-        $success &= $this->generate('Controller', $this->getOutputPath($module . '/Application/Controllers', $entityName . 'Controller'));
+        $success &= $this->generate('Controller', $modulePath . '/Application/Controllers/' . $entityName . 'Controller.php');
 
         // Generate Form
         $this->setPlaceholder('namespace', $formNamespace);
-        $success &= $this->generate('Form', $this->getOutputPath($module . '/Application/Forms', $entityName . 'Form'));
+        $success &= $this->generate('Form', $modulePath . '/Application/Forms/' . $entityName . 'Form.php');
 
         return $success;
     }
@@ -155,13 +208,6 @@ class ScaffoldingManager {
         } else {
             return 'BaseModel';
         }
-    }
-
-    /**
-     * Get the output path for a generated file
-     */
-    private function getOutputPath(string $path, string $className): string {
-        return $path . '/' . $className . '.php';
     }
     
     /**
