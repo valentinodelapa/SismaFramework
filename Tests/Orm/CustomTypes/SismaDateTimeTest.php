@@ -27,30 +27,29 @@
 namespace SismaFramework\Tests\Orm\CustomTypes;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaTimeTest extends TestCase
+class SismaDateTimeTest extends TestCase
 {
-
-    public function testSismaTime()
+    public function testSismaDateTime()
     {
-        $originalTime = "02:51:16";
-        $sismaTime = SismaTime::createFromStandardTimeFormat($originalTime);
-        $this->assertInstanceOf(SismaTime::class, $sismaTime);
-        $time = $sismaTime->formatToStandardTimeFormat();
-        $this->assertIsString($time);
-        $this->assertEquals($originalTime, $time);
+        $originalDate = "2020-01-15 12:00:00";
+        $sismaDate = new SismaDateTime($originalDate);
+        $this->assertInstanceOf(SismaDateTime::class, $sismaDate);
+        $date = $sismaDate->format('Y-m-d H:i:s');
+        $this->assertIsString($date);
+        $this->assertEquals($originalDate, $date);
     }
     
     public function testEquals()
     {
-        $sismaTimeOne = SismaTime::createFromStandardTimeFormat("02:00:00");
-        $sismaTimeTwo = SismaTime::createFromStandardTimeFormat("02:00:00");
-        $sismaTimeThree = SismaTime::createFromStandardTimeFormat("03:00:00");
-        $this->assertTrue($sismaTimeOne->equals($sismaTimeTwo));
-        $this->assertfalse($sismaTimeOne->equals($sismaTimeThree));
+        $sismaDateOne = new SismaDateTime('2020-01-01 12:00:00');
+        $sismaDateTwo = new SismaDateTime('2020-01-01 12:00:00');
+        $sismaDateThree = new SismaDateTime('2020-01-02 12:00:00');
+        $this->assertTrue($sismaDateOne->equals($sismaDateTwo));
+        $this->assertfalse($sismaDateOne->equals($sismaDateThree));
     }
 }
