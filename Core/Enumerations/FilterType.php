@@ -26,6 +26,8 @@
 
 namespace SismaFramework\Core\Enumerations;
 
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+
 /**
  *
  * @author Valentino de Lapa
@@ -51,5 +53,21 @@ enum FilterType: string
     case isUploadedFile = 'isUploadedFile';
     case isEnumeration = 'isEnumeration';
     case isEntity = 'isEntity';
+
+    public static function fromPhpType(string $type): self 
+    {
+        if (class_exists($type) && is_subclass_of($type, BaseEntity::class)) {
+            return self::isEntity;
+        }
+
+        return match($type) {
+            'int' => self::isInteger,
+            'float' => self::isFloat,
+            'string' => self::isString,
+            'bool' => self::isBoolean,
+            'DateTime' => self::isDatetime,
+            default => self::isString
+        };
+    }
 
 }

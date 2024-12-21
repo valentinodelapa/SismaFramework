@@ -13,11 +13,9 @@ use {{namespace}}\Models\{{className}}Model;
 /**
  * {{className}} Controller
  */
-class {{className}}Controller extends BaseController {
+class {{className}}Controller extends BaseController
+{
     
-    /**
-     * List all records
-     */
     public function index(): Response
     {
         $model = new {{className}}Model();
@@ -26,9 +24,6 @@ class {{className}}Controller extends BaseController {
         return Render::generateView('{{classNameLower}}/index', $this->vars);
     }
     
-    /**
-     * Create a new record
-     */
     public function create(Request $request): Response
     {
         ${{classNameLower}}Form = new {{className}}Form();
@@ -42,9 +37,6 @@ class {{className}}Controller extends BaseController {
         return Render::generateView('{{classNameLower}}/create', $this->vars, ${{classNameLower}}Form->getResponseType());
     }
     
-    /**
-     * Update an existing record
-     */
     public function update(Request $request, {{className}} ${{classNameLower}}): Response
     {
         ${{classNameLower}}Form = new {{className}}Form(${{classNameLower}});
@@ -58,9 +50,6 @@ class {{className}}Controller extends BaseController {
         return Render::generateView('{{classNameLower}}/update', $this->vars, ${{classNameLower}}Form->getResponseType());
     }
     
-    /**
-     * Delete a record
-     */
     public function delete({{className}} ${{classNameLower}}): Response
     {
         $this->dataMapper->delete(${{classNameLower}});

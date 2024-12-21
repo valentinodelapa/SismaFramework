@@ -2,6 +2,7 @@
 namespace {{namespace}};
 
 use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Core\Enumerations\FilterType;
 use {{namespace}}\{{className}};
 
 /**
@@ -47,5 +48,10 @@ class {{className}}Form extends BaseForm {
     protected function customFilter(): void
     {
         // Your code here
+    }
+    
+    protected function configure(): void
+    {
+{{filters}}
     }
 }

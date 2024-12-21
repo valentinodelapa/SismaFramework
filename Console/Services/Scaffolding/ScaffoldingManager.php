@@ -8,6 +8,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
+use SismaFramework\Core\Enumerations\FilterType;
 
 /**
  * ScaffoldingManager class handles the generation of code templates and structures
@@ -195,8 +196,14 @@ class ScaffoldingManager {
         $this->setPlaceholder('namespace', $controllerNamespace);
         $success &= $this->generate('Controller', $modulePath . '/Application/Controllers/' . $entityName . 'Controller.php');
 
-        // Generate Form
+        // Prima di generare il form, analizziamo le proprietà dell'entità
+        $entityReflection = new \ReflectionClass($entityClass);
+        $properties = $this->analyzeEntityProperties($entityReflection);
+        $filtersCode = $this->generateFiltersCode($properties);
+        
+        // Aggiungiamo il codice dei filtri ai placeholder
         $this->setPlaceholder('namespace', $formNamespace);
+        $this->setPlaceholder('filters', $filtersCode);
         $success &= $this->generate('Form', $modulePath . '/Application/Forms/' . $entityName . 'Form.php');
 
         return $success;
@@ -227,5 +234,76 @@ class ScaffoldingManager {
         }
         
         return $this->templatesPath . $templateName . '.php.template';
+    }
+
+    /**
+     * Analizza le proprietà dell'entità e restituisce un array con le informazioni
+     */
+    private function analyzeEntityProperties(\ReflectionClass $entityReflection): array {
+        $properties = [];
+        
+        // Prendiamo solo le proprietà protected
+        foreach ($entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+            // Verifichiamo se è una proprietà della classe finale usando il metodo statico della BaseEntity
+            if (!BaseEntity::checkFinalClassReflectionProperty($property)) {
+                continue;
+            }
+            
+            // Otteniamo il tipo della proprietà
+            $type = $property->getType();
+            if ($type === null) {
+                continue;
+            }
+            
+            $properties[] = [
+                'name' => $property->getName(),
+                'type' => $type->getName(),
+                'nullable' => $type->allowsNull(),
+            ];
+        }
+        
+        return $properties;
+    }
+
+    /**
+     * Genera il codice dei filtri basato sulle proprietà
+     */
+    private function generateFiltersCode(array $properties): string {
+        if (empty($properties)) {
+            return '';
+        }
+
+        $property = array_shift($properties);
+        $filterType = FilterType::fromPhpType($property['type'])->name;
+        
+        $code = [sprintf(
+            '        $this->addFilterFieldMode("%s", FilterType::%s%s)',
+            $property['name'],
+            $filterType,
+            $property['nullable'] ? ', [], true' : ''
+        )];
+        
+        $lastProperty = end($properties);
+        foreach ($properties as $property) {
+            $filterType = FilterType::fromPhpType($property['type'])->name;
+            
+            if ($property['nullable']) {
+                $code[] = sprintf(
+                    '            ->addFilterFieldMode("%s", FilterType::%s, [], true)%s',
+                    $property['name'],
+                    $filterType,
+                    $property === $lastProperty ? ';' : ''
+                );
+            } else {
+                $code[] = sprintf(
+                    '            ->addFilterFieldMode("%s", FilterType::%s)%s',
+                    $property['name'],
+                    $filterType,
+                    $property === $lastProperty ? ';' : ''
+                );
+            }
+        }
+        
+        return implode("\n", $code);
     }
 }
