@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Security\ExtendedClasses\LogException;
+use SismaFramework\Core\Exceptions\LoggerException;
 
 /**
  *
@@ -96,7 +96,7 @@ class Logger
                 }
                 fclose($file);
             } else {
-                throw new LogException();
+                throw new LoggerException();
             }
         }
     }
