@@ -1,7 +1,11 @@
 <?php
 namespace SismaFramework\Console\Services\Scaffolding;
 
+use SismaFramework\Core\HelperClasses\NotationManager;
+use SismaFramework\Core\Exceptions\FileNotFoundException;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 
@@ -177,6 +181,9 @@ class ScaffoldingManager {
 
         // Set common placeholders
         $this->setPlaceholder('className', $entityName);
+        $this->setPlaceholder('classNameLower', lcfirst($entityName));
+        $controllerName = str_replace('Controller', '', $entityName . 'Controller');
+        $this->setPlaceholder('controllerRoute', NotationManager::convertToKebabCase($controllerName));
 
         // Generate Model
         $modelType = $this->customType ?? $this->determineModelType($entityClass);

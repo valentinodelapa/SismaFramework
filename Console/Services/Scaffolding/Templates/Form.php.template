@@ -2,51 +2,50 @@
 namespace {{namespace}};
 
 use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Orm\HelperClasses\DataMapper;
-use {{namespace}}\{{className}}Entity;
+use {{namespace}}\{{className}};
 
 /**
  * {{className}} Form
  */
 class {{className}}Form extends BaseForm {
     
-    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper()) {
-        parent::__construct($baseEntity, $dataMapper);
-    }
-    
     /**
      * Get the entity name for this form
      */
-    protected static function getEntityName(): string {
-        return {{className}}Entity::class;
+    protected static function getEntityName(): string
+    {
+        return {{className}}::class;
     }
     
     /**
      * Inject request data into the form
      */
-    protected function injectRequest(): void {
+    protected function injectRequest(): void
+    {
         // Your code here
     }
     
     /**
      * Set filter field modes for form validation
      */
-    protected function setFilterFieldsMode(): void {
+    protected function setFilterFieldsMode(): void
+    {
         // Your code here
     }
     
     /**
      * Set entity from form data
      */
-    protected function setEntityFromForm(): void {
+    protected function setEntityFromForm(): void
+    {
         // Your code here
     }
     
     /**
      * Custom filter for form validation
      */
-    protected function customFilter(): void {
+    protected function customFilter(): void
+    {
         // Your code here
     }
 }

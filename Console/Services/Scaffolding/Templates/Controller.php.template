@@ -4,23 +4,66 @@ namespace {{namespace}};
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
-use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Core\HelperClasses\Render;
+use SismaFramework\Core\HelperClasses\Router;
+use {{namespace}}\Forms\{{className}}Form;
+use {{namespace}}\{{className}};
+use {{namespace}}\Models\{{className}}Model;
 
 /**
  * {{className}} Controller
  */
 class {{className}}Controller extends BaseController {
     
-    public function __construct(DataMapper $dataMapper = new DataMapper()) {
-        parent::__construct($dataMapper);
+    /**
+     * List all records
+     */
+    public function index(): Response
+    {
+        $model = new {{className}}Model();
+        ${{classNameLower}}Collection = $model->getEntityCollection();
+        $this->vars['{{classNameLower}}Collection'] = ${{classNameLower}}Collection;
+        return Render::generateView('{{classNameLower}}/index', $this->vars);
     }
     
     /**
-     * Index action
+     * Create a new record
      */
-    public function indexAction(): Response {
-        // Your code here
-        return new Response();
+    public function create(Request $request): Response
+    {
+        ${{classNameLower}}Form = new {{className}}Form();
+        ${{classNameLower}}Form->handleRequest($request);
+        if (${{classNameLower}}Form->isSubmitted() && ${{classNameLower}}Form->isValid()) {
+            $this->dataMapper->save(${{classNameLower}}Form->getEntity());
+            return Router::redirect('{{controllerRoute}}/index');
+        }
+        $this->vars['{{classNameLower}}'] = ${{classNameLower}}Form->getEntityDataToStandardEntity();
+        $this->vars['filterErrors'] = ${{classNameLower}}Form->getFilterErrors();
+        return Render::generateView('{{classNameLower}}/create', $this->vars, ${{classNameLower}}Form->getResponseType());
     }
     
+    /**
+     * Update an existing record
+     */
+    public function update(Request $request, {{className}} ${{classNameLower}}): Response
+    {
+        ${{classNameLower}}Form = new {{className}}Form(${{classNameLower}});
+        ${{classNameLower}}Form->handleRequest($request);
+        if (${{classNameLower}}Form->isSubmitted() && ${{classNameLower}}Form->isValid()) {
+            $this->dataMapper->save(${{classNameLower}}Form->getEntity());
+            return Router::redirect('{{controllerRoute}}/index');
+        }
+        $this->vars['{{classNameLower}}'] = ${{classNameLower}}Form->isSubmitted() ? ${{classNameLower}}Form->getEntityDataToStandardEntity() : ${{classNameLower}};
+        $this->vars['filterErrors'] = ${{classNameLower}}Form->getFilterErrors();
+        return Render::generateView('{{classNameLower}}/update', $this->vars, ${{classNameLower}}Form->getResponseType());
+    }
+    
+    /**
+     * Delete a record
+     */
+    public function delete({{className}} ${{classNameLower}}): Response
+    {
+        $this->dataMapper->delete(${{classNameLower}});
+        return Router::redirect('{{controllerRoute}}/index');
+    }
 }

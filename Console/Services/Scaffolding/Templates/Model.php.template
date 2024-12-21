@@ -3,29 +3,26 @@ namespace {{namespace}};
 
 use SismaFramework\Orm\ExtendedClasses\{{modelType}};
 use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Orm\HelperClasses\DataMapper;
-use {{namespace}}\{{className}}Entity;
+use {{namespace}}\{{className}};
 
 /**
  * {{className}} Model
  */
 class {{className}}Model extends {{modelType}} {
     
-    public function __construct(DataMapper $dataMapper = new DataMapper()) {
-        parent::__construct($dataMapper);
-    }
-    
     /**
      * Get the entity name for this model
      */
-    protected function getEntityName(): string {
-        return {{className}}Entity::class;
+    protected function getEntityName(): string
+    {
+        return {{className}}::class;
     }
     
     /**
      * Append search condition for filtering entities
      */
-    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void {
+    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    {
         // Implement your search logic here
     }
     
