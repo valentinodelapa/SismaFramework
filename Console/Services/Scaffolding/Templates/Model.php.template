@@ -1,4 +1,5 @@
 <?php
+
 namespace {{namespace}};
 
 use SismaFramework\Orm\ExtendedClasses\{{modelType}};
@@ -8,22 +9,17 @@ use {{namespace}}\{{className}};
 /**
  * {{className}} Model
  */
-class {{className}}Model extends {{modelType}} {
+class {{className}}Model extends {{modelType}}
+{
     
-    /**
-     * Get the entity name for this model
-     */
     protected function getEntityName(): string
     {
         return {{className}}::class;
     }
     
-    /**
-     * Append search condition for filtering entities
-     */
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
-        // Implement your search logic here
+        
     }
     
 }

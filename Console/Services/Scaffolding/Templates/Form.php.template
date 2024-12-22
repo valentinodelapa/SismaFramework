@@ -1,57 +1,36 @@
 <?php
+
 namespace {{namespace}};
 
 use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Core\Enumerations\FilterType;
 use {{namespace}}\{{className}};
 
-/**
- * {{className}} Form
- */
-class {{className}}Form extends BaseForm {
+class {{className}}Form extends BaseForm
+{
     
-    /**
-     * Get the entity name for this form
-     */
     protected static function getEntityName(): string
     {
         return {{className}}::class;
     }
     
-    /**
-     * Inject request data into the form
-     */
     protected function injectRequest(): void
     {
-        // Your code here
+        
     }
     
-    /**
-     * Set filter field modes for form validation
-     */
     protected function setFilterFieldsMode(): void
     {
-        // Your code here
+{{filters}}
     }
     
-    /**
-     * Set entity from form data
-     */
     protected function setEntityFromForm(): void
     {
-        // Your code here
+        
     }
     
-    /**
-     * Custom filter for form validation
-     */
     protected function customFilter(): void
     {
-        // Your code here
-    }
-    
-    protected function configure(): void
-    {
-{{filters}}
+        
     }
 }
