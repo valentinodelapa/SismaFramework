@@ -94,7 +94,7 @@ class SismaCollection extends \ArrayObject
 
     public function has(BaseEntity $entity): bool
     {
-        return in_array($entity, $this->getArrayCopy());
+        return in_array($entity, $this->getArrayCopy(), true);
     }
 
     public function slice(int $offset, ?int $length = null): self
@@ -108,14 +108,14 @@ class SismaCollection extends \ArrayObject
     public function isFirst(BaseEntity $entity): bool
     {
         $arrayCopy = $this->getArrayCopy();
-        $key = array_search($entity, $arrayCopy);
+        $key = array_search($entity, $arrayCopy, true);
         return $key === array_key_first($arrayCopy);
     }
 
     public function isLast(BaseEntity $entity): bool
     {
         $arrayCopy = $this->getArrayCopy();
-        $key = array_search($entity, $arrayCopy);
+        $key = array_search($entity, $arrayCopy, true);
         return $key === array_key_last($arrayCopy);
     }
 }
