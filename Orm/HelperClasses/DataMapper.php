@@ -85,7 +85,7 @@ class DataMapper
 
     public function save(BaseEntity $entity, Query $query = new Query()): bool
     {
-        if (in_array($entity, $this->processedEntity)) {
+        if (in_array($entity, $this->processedEntity, true)) {
             return true;
         } else {
             $this->processedEntity[] = $entity;
