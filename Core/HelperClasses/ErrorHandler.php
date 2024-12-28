@@ -129,4 +129,12 @@ class ErrorHandler
             return self::callInternalServerErrorAction($structuralController);
         }
     }
+
+    public static function handleCommandLineInterfaceNonThrowableError(): void
+    {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            echo "Error ($errno): $errstr in $errfile on line $errline" . PHP_EOL;
+            exit(1);
+        });
+    }
 }

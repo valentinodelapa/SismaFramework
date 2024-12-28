@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2024 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,51 +24,36 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Console\BaseClasses;
+namespace SismaFramework\Console\HelperClasses;
+
+use SismaFramework\Console\Exceptions\ProjectDirectoryException;
 
 /**
+ * Description of CLIChecker
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-abstract class BaseCommand
+class CommandLineInterfaceSettingsChecker
 {
 
-    protected array $arguments = [];
-    protected array $options = [];
-    
-    abstract public function checkCompatibility(string $command): bool;
-
-    abstract protected function configure(): void;
-
-    abstract protected function execute(): bool;
-
-    public function setArguments(array $arguments): void
+    public static function checkIsCommandLineInterfaceMode(string $interfaceName): void
     {
-        $this->arguments = $arguments;
+        if ($interfaceName !== 'cli') {
+            throw new \RuntimeException('This script can only be run from the command line');
+        }
     }
 
-    public function setOptions(array $options): void
+    public static function checkIsProjectDirectory(string $directory): void
     {
-        $this->options = $options;
-    }
-
-    public function run(): bool
-    {
-        $this->configure();
-        return $this->execute();
-    }
-
-    protected function getArgument(string $name): ?string
-    {
-        return $this->arguments[$name] ?? null;
-    }
-
-    protected function getOption(string $name): ?string
-    {
-        return $this->options[$name] ?? null;
-    }
-
-    protected function output(string $message): void
-    {
-        echo $message . PHP_EOL;
+        if (is_dir($directory) === false) {
+            throw new \RuntimeException(<<<ERROR
+Error: Invalid project structure. SismaFramework should be a subdirectory of your project root.
+Current framework path: $directory
+Expected project structure:
+  YourProject/
+  ├── SismaFramework/  (git submodule)
+  └── YourModules/
+ERROR);
+        }
     }
 }

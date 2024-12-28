@@ -1,110 +1,28 @@
 <?php
 
-// Ensure this script is being run from the command line
-if (php_sapi_name() !== 'cli') {
-    die('This script can only be run from the command line');
-}
+namespace SismaFramework\Console;
 
-// Get the framework root (where this script is located)
-define('FRAMEWORK_ROOT', dirname(__DIR__));
+use SismaFramework\Console\Commands\ScaffoldCommand;
+use SismaFramework\Console\HelperClasses\CommandDispatcher;
+use SismaFramework\Console\HelperClasses\CommandLineInterfaceSettingsChecker;
+use SismaFramework\Core\HelperClasses\ErrorHandler;
 
-// Get the project root (parent of framework root)
-define('PROJECT_ROOT', dirname(FRAMEWORK_ROOT));
+require_once dirname(__DIR__, 1) . '/Config/config.php';
+require_once dirname(__DIR__, 1) . '/Autoload/autoload.php';
 
-// Validate that we are in a valid project structure
-if (!is_dir(PROJECT_ROOT . '/SismaFramework')) {
-    die("Error: Invalid project structure. SismaFramework should be a subdirectory of your project root." . PHP_EOL .
-        "Current framework path: " . FRAMEWORK_ROOT . PHP_EOL .
-        "Expected project structure:" . PHP_EOL .
-        "  YourProject/" . PHP_EOL .
-        "  ├── SismaFramework/  (git submodule)" . PHP_EOL .
-        "  └── YourModules/" . PHP_EOL);
-}
-
-// Define CLI mode to avoid web-specific error handling
-define('CLI_MODE', true);
-
-// Load configuration and autoloader
-require_once FRAMEWORK_ROOT . '/Config/config.php';
-require_once FRAMEWORK_ROOT . '/Autoload/autoload.php';
-
-// Set error reporting for CLI
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 date_default_timezone_set('Europe/Rome');
 
-use SismaFramework\Console\Commands\ScaffoldCommand;
-
-// Simple CLI error handler
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    echo "Error ($errno): $errstr in $errfile on line $errline" . PHP_EOL;
-    exit(1);
-});
-
-set_exception_handler(function($e) {
+try {
+    ErrorHandler::handleCommandLineInterfaceNonThrowableError();
+    CommandLineInterfaceSettingsChecker::checkIsCommandLineInterfaceMode(php_sapi_name());
+    CommandLineInterfaceSettingsChecker::checkIsProjectDirectory(\Config\SYSTEM_PATH);
+    $commandDispatcher = new CommandDispatcher(array_slice($argv, 1));
+    $commandDispatcher->addCommandStrategy(new ScaffoldCommand());
+    $commandDispatcher->run();
+} catch (\Throwable $e) {
     echo "Error: " . $e->getMessage() . PHP_EOL;
     exit(1);
-});
-
-// Parse command line arguments
-$arguments = $argv;
-array_shift($arguments); // Remove script name
-
-if (empty($arguments)) {
-    echo "Usage: php SismaFramework/Console/sisma <command> [arguments] [options]" . PHP_EOL;
-    echo "Available commands:" . PHP_EOL;
-    echo "  scaffold <entity> <module> - Generate scaffolding for an entity" . PHP_EOL;
-    echo "Type 'php SismaFramework/Console/sisma <command>' for more information about a command" . PHP_EOL;
-    exit(1);
-}
-
-$command = array_shift($arguments);
-
-switch ($command) {
-    case 'scaffold':
-        $scaffoldCommand = new ScaffoldCommand();
-        
-        // Show help if no arguments
-        if (empty($arguments)) {
-            $scaffoldCommand->run();
-            exit(1);
-        }
-        
-        // Parse arguments and options
-        $cmdArgs = [];
-        $cmdOptions = [];
-        
-        foreach ($arguments as $arg) {
-            if (strpos($arg, '--') === 0) {
-                // Handle options
-                $option = substr($arg, 2);
-                if (strpos($option, '=') !== false) {
-                    list($key, $value) = explode('=', $option, 2);
-                    $cmdOptions[$key] = $value;
-                } else {
-                    $cmdOptions[$option] = true;
-                }
-            } else {
-                // Handle arguments
-                if (!isset($cmdArgs['entity'])) {
-                    $cmdArgs['entity'] = $arg;
-                } elseif (!isset($cmdArgs['module'])) {
-                    $cmdArgs['module'] = $arg;
-                }
-            }
-        }
-        
-        try {
-            $scaffoldCommand->setArguments($cmdArgs);
-            $scaffoldCommand->setOptions($cmdOptions);
-            exit($scaffoldCommand->run());
-        } catch (\Exception $e) {
-            echo "Error: " . $e->getMessage() . PHP_EOL;
-            exit(1);
-        }
-        
-    default:
-        echo "Unknown command: $command" . PHP_EOL;
-        exit(1);
 }
