@@ -96,7 +96,7 @@ class Localizator
         $reflectionEnumeration = new \ReflectionClass($enumeration);
         $enumerationName = $reflectionEnumeration->getShortName();
         $locale = $this->getLocale();
-        $field = $locale['enumerations'][$enumerationName];
+        $field = $locale['enumerations'][lcfirst($enumerationName)];
         return $field[$enumeration->name];
     }
 

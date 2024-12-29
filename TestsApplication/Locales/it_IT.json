@@ -3,7 +3,7 @@
 
     },
     "enumerations": {
-        "SampleType": {
+        "sampleType": {
             "one": "uno",
             "two": "due"
         }
