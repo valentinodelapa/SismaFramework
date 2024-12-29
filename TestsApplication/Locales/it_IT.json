@@ -3,7 +3,10 @@
 
     },
     "enumerations": {
-
+        "SampleType": {
+            "one": "uno",
+            "two": "due"
+        }
     },
     "pages": {
         "common": {

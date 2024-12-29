@@ -91,13 +91,13 @@ class Localizator
         return $actualLocale;
     }
 
-    public function getEnumerationLocaleArray(\UnitEnum $enumeration, ?Language $customLanguage = null): array
+    public function getEnumerationLocaleArray(\UnitEnum $enumeration): string
     {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
         $enumerationName = $reflectionEnumeration->getShortName();
         $locale = $this->getLocale();
         $field = $locale['enumerations'][$enumerationName];
-        return $field[$enumeration];
+        return $field[$enumeration->name];
     }
 
     public static function setLanguage(Language $language): void

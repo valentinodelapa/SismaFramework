@@ -33,7 +33,8 @@ namespace SismaFramework\TestsApplication\Enumerations;
 enum SampleType: string
 {
 
+    use \SismaFramework\Core\Traits\SelectableEnumeration;
+
     case one = 'O';
     case two = 'T';
-
 }
