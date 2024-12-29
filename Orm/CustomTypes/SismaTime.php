@@ -37,7 +37,7 @@ class SismaTime extends \DateTimeImmutable implements CustomDateTimeInterface
 
     public static function createFromStandardTimeFormat(string $time): self
     {
-        return new static(self::REFERENCE_DATE . ' ' . $time);
+        return new self(self::REFERENCE_DATE . ' ' . $time);
     }
 
     public function formatToStandardTimeFormat(): string
