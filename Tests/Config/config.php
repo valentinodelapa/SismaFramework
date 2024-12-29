@@ -37,7 +37,6 @@ const CORE = 'Core';
 const DEFAULT_PATH = 'sample';
 const DEFAULT_ACTION = 'index';
 const DEFAULT_CONTROLLER = 'SampleController';
-const DEFAULT_LOCALE_TYPE = 'json';
 const ENTITIES = 'Entities';
 const FIXTURES = 'Fixtures';
 const LOGS = 'Logs';

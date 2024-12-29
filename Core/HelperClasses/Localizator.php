@@ -39,12 +39,10 @@ class Localizator
     private static Language $injectedLanguage;
     private Resource $localeType;
     private ?Language $customLanguage;
-    private static string $defaultLocaleType = \Config\DEFAULT_LOCALE_TYPE;
     private static string $localesPath = \Config\LOCALES_PATH;
 
-    public function __construct(?Resource $localeType = null, ?Language $customLanguage = null)
+    public function __construct(?Language $customLanguage = null)
     {
-        $this->localeType = $localeType ?? Resource::tryFrom(self::$defaultLocaleType);
         $this->customLanguage = $customLanguage;
     }
 
@@ -67,15 +65,7 @@ class Localizator
     {
         $language = $this->customLanguage ?? self::$injectedLanguage ?? self::getDefaultLanguage();
         $localePath = $this->getLocalePath($language);
-        switch ($this->localeType) {
-            case Resource::json:
-                $locale = json_decode(file_get_contents($localePath), true);
-                break;
-            case Resource::php:
-            default:
-                include($localePath);
-                break;
-        }
+        $locale = json_decode(file_get_contents($localePath), true);
         return $locale;
     }
 
@@ -91,11 +81,7 @@ class Localizator
 
     private function getLocalePath(Language $language): string
     {
-        if ($this->localeType !== null) {
-            return ModuleManager::getConsequentFilePath(self::$localesPath . $language->value, $this->localeType);
-        } else {
-            throw new LocalizatorException('File non trovato');
-        }
+        return ModuleManager::getConsequentFilePath(self::$localesPath . $language->value, Resource::json);
     }
 
     public function getTemplateLocaleArray(string $template, ?Language $customLanguage = null): array
