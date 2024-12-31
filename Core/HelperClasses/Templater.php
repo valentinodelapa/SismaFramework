@@ -59,9 +59,9 @@ class Templater
     private static function getTemplatePath(string $template)
     {
         if (self::$isStructural) {
-            return self::$structuralTemplatesPath . $template . '.' . Resource::html->value;
+            return self::$structuralTemplatesPath . $template . '.' . Resource::tpl->value;
         } else {
-            return ModuleManager::getExistingFilePath(self::$templatesPath . $template, Resource::html);
+            return ModuleManager::getExistingFilePath(self::$templatesPath . $template, Resource::tpl);
         }
     }
 }
