@@ -56,6 +56,7 @@ enum Resource: string
     case pptx = 'pptx';
     case rar = 'rar';
     case svg = 'svg';
+    case tpl = 'tpl';
     case ttf = 'ttf';
     case txt = 'txt';
     case woff = 'woff';
@@ -87,8 +88,8 @@ enum Resource: string
             self::pptx => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             self::rar => 'application/x-rar-compressed',
             self::svg => 'image/svg+xml',
+            self::tpl, self::txt => 'text/plain',
             self::ttf => 'font/ttf',
-            self::txt => 'text/plain',
             self::woff => 'font/woff',
             self::woff2 => 'font/woff2',
             self::xls => 'application/vnd.ms-excel',
@@ -100,7 +101,7 @@ enum Resource: string
 
     public static function getByMime(string $mime): self
     {
-        return  match ($mime) {
+        return match ($mime) {
             'text/css' => self::css,
             'application/msword' => self::doc,
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => self::docx,
@@ -139,7 +140,7 @@ enum Resource: string
             self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
             self::rar, self::svg, self::ttf, self::txt, self::woff, self::woff2, self::xls,
             self::xlsx, self::xml => true,
-            self::php, self::zip => false,
+            self::php, self::tpl, self::zip => false,
         };
     }
 
@@ -151,7 +152,7 @@ enum Resource: string
             self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
             self::rar, self::svg, self::ttf, self::txt, self::woff, self::woff2, self::xls,
             self::xlsx, self::xml, self::zip => true,
-            self::php => false,
+            self::php, self::tpl => false,
         };
     }
 }

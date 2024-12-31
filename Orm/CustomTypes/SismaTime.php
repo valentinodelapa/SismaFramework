@@ -31,30 +31,22 @@ use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class SismaTime extends \DateInterval implements CustomDateTimeInterface
+class SismaTime extends \DateTimeImmutable implements CustomDateTimeInterface
 {
+    private const REFERENCE_DATE = '1970-01-01';
 
     public static function createFromStandardTimeFormat(string $time): self
     {
-        $timeParts = explode(':', $time);
-        return new SismaTime('PT' . intval($timeParts[0]) . 'H' . intval($timeParts[1]) . 'M' . intval($timeParts[2]) . 'S');
+        return new self(self::REFERENCE_DATE . ' ' . $time);
     }
 
     public function formatToStandardTimeFormat(): string
     {
-        return $this->format('%H:%I:%S');
+        return $this->format('H:i:s');
     }
 
-    public function equals(CustomDateTimeInterface $other):bool
+    public function equals(CustomDateTimeInterface $other): bool
     {
-        return $this->y === $other->y &&
-                $this->m === $other->m &&
-                $this->d === $other->d &&
-                $this->h === $other->h &&
-                $this->i === $other->i &&
-                $this->s === $other->s &&
-                $this->f === $other->f &&
-                $this->invert === $other->invert &&
-                $this->days === $other->days;
+        return $this->format('H:i:s') === $other->format('H:i:s');
     }
 }

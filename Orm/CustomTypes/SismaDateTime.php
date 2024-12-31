@@ -32,7 +32,7 @@ use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
  *
  * @author Valentino de Lapa
  */
-class SismaDateTime extends \DateTime implements CustomDateTimeInterface
+class SismaDateTime extends \DateTimeImmutable implements CustomDateTimeInterface
 {
 
     public function equals(CustomDateTimeInterface $other): bool

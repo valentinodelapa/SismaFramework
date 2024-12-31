@@ -1711,6 +1711,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Exceptions-LocalizatorException.html"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Exceptions\\LoggerException",
+            "name": "LoggerException",
+            "summary": "Description\u0020of\u0020NoLogException",
+            "url": "classes/SismaFramework-Core-Exceptions-LoggerException.html"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Exceptions\\MethodNotFoundException",
             "name": "MethodNotFoundException",
             "summary": "",
@@ -4410,6 +4415,11 @@ Search.appendIndex(
             "name": "equals",
             "summary": "",
             "url": "classes/SismaFramework-Orm-CustomTypes-SismaTime.html#method_equals"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaTime\u003A\u003AREFERENCE_DATE",
+            "name": "REFERENCE_DATE",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaTime.html#constant_REFERENCE_DATE"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AdapterType",
             "name": "AdapterType",
@@ -7491,10 +7501,30 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaDateTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaDateTest\u003A\u003AtestSismaTime\u0028\u0029",
-            "name": "testSismaTime",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaDateTest\u003A\u003AtestSismaDate\u0028\u0029",
+            "name": "testSismaDate",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaDateTest.html#method_testSismaTime"
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaDateTest.html#method_testSismaDate"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaDateTest\u003A\u003AtestEquals\u0028\u0029",
+            "name": "testEquals",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaDateTest.html#method_testEquals"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaDateTimeTest",
+            "name": "SismaDateTimeTest",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaDateTimeTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaDateTimeTest\u003A\u003AtestSismaDateTime\u0028\u0029",
+            "name": "testSismaDateTime",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaDateTimeTest.html#method_testSismaDateTime"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaDateTimeTest\u003A\u003AtestEquals\u0028\u0029",
+            "name": "testEquals",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaDateTimeTest.html#method_testEquals"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaTimeTest",
             "name": "SismaTimeTest",
@@ -7505,6 +7535,11 @@ Search.appendIndex(
             "name": "testSismaTime",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaTimeTest.html#method_testSismaTime"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaTimeTest\u003A\u003AtestEquals\u0028\u0029",
+            "name": "testEquals",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaTimeTest.html#method_testEquals"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest",
             "name": "ReferencedEntityTest",
