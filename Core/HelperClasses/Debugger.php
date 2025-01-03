@@ -61,14 +61,13 @@ class Debugger
 
     public function generateDebugBar()
     {
-        Templater::setStructural();
         $debugBarQuery = $debugBarLog = $debugBarForm = $debugBarVars = '';
         foreach (self::$queryExecuted as $query) {
-            $debugBarQuery .= Templater::generateTemplate('debugBarBody', ['information' => $query]);
+            $debugBarQuery .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $query]);
         }
         foreach (Logger::getLogRowByRow() as $logRow) {
             self::$logRowNumber++;
-            $debugBarLog .= Templater::generateTemplate('debugBarBody', ['information' => $logRow]);
+            $debugBarLog .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $logRow]);
         }
         $debugBarForm = self::generateDebugBarForm(self::$formFilter);
         self::$varsNumber = count(self::$vars);
@@ -79,7 +78,7 @@ class Debugger
             'debugBarForm' => $debugBarForm,
             'debugBarVars' => $debugBarVars,
         ]);
-        return Templater::generateTemplate('debugBar', $vars);
+        return Templater::generateStructuralTemplate('debugBar', $vars);
     }
 
     private static function generateDebugBarForm(array $informations, string $tabulation = '')
@@ -87,11 +86,11 @@ class Debugger
         $debugBarForm = '';
         foreach ($informations as $field => $information) {
             if (is_array($information)) {
-                $debugBarForm .= Templater::generateTemplate('debugBarBody', ['information' => $tabulation . $field . ':']);
+                $debugBarForm .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $tabulation . $field . ':']);
                 $debugBarForm .= self::generateDebugBarForm($information, $tabulation . '&emsp;');
             } else {
                 self::$formFilterNumber++;
-                $debugBarForm .= Templater::generateTemplate('debugBarBody', ['information' => $tabulation . $field . ': ' . (($information) ? 'true' : 'false')]);
+                $debugBarForm .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $tabulation . $field . ': ' . (($information) ? 'true' : 'false')]);
             }
         }
         return $debugBarForm;
@@ -106,7 +105,7 @@ class Debugger
         Parser::unparseValues($vars);
         $debugBarVars = '';
         foreach ($vars as $field => $information) {
-            $debugBarVars .= Templater::generateTemplate('debugBarBody', ['information' => $field . ': ' . print_r($information, true)]);
+            $debugBarVars .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $field . ': ' . print_r($information, true)]);
         }
         return $debugBarVars;
     }
