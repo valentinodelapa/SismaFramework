@@ -35,33 +35,29 @@ use SismaFramework\Core\Enumerations\Resource;
 class Templater
 {
 
-    private static bool $isStructural = false;
     private static string $structuralTemplatesPath = \Config\STRUCTURAL_TEMPLATES_PATH;
     private static string $templatesPath = \Config\TEMPLATES_PATH;
 
-    public static function setStructural(bool $isStructural = true)
-    {
-        self::$isStructural = $isStructural;
-    }
-
     public static function generateTemplate(string $template, array $vars, Localizator $localizator = new Localizator()): string
     {
-        $templatePath = self::getTemplatePath($template);
+        $templatePath = ModuleManager::getExistingFilePath(self::$templatesPath . $template, Resource::tpl);
         $varsAndLocales = array_merge($vars, $localizator->getTemplateLocaleArray($template));
+        return self::parseTemnplate($templatePath, $varsAndLocales);
+    }
+
+    public static function parseTemnplate(string $templatePath, array $vars): string
+    {
         $templateContent = file_get_contents($templatePath);
-        $parsedTemplateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($varsAndLocales) {
+        $parsedTemplateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($vars) {
             $var = str_replace(['{{', '}}'], '', $varName[0]);
-            return $varsAndLocales[$var];
+            return $vars[$var];
         }, $templateContent);
         return $parsedTemplateContent;
     }
 
-    private static function getTemplatePath(string $template)
+    public static function generateStructuralTemplate(string $template, array $vars): string
     {
-        if (self::$isStructural) {
-            return self::$structuralTemplatesPath . $template . '.' . Resource::tpl->value;
-        } else {
-            return ModuleManager::getExistingFilePath(self::$templatesPath . $template, Resource::tpl);
-        }
+        $templatePath = self::$structuralTemplatesPath . $template . '.' . Resource::tpl->value;
+        return self::parseTemnplate($templatePath, $vars);
     }
 }

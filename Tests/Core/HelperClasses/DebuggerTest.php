@@ -78,8 +78,6 @@ class DebuggerTest extends TestCase
     
     public function testGenerateDebugBarForm()
     {
-        ModuleManager::setRootPath(dirname(__DIR__, 3).'/');
-        Templater::setStructural();
         $generateDebugBarFormMethod = $this->debuggerReflection->getMethod('generateDebugBarForm');
         $result = $generateDebugBarFormMethod->invoke(new Debugger, ['sampleSimpleField' => false, 'sampleComplexField' => ['sampleSubField' => true]]);
         $this->assertIsString($result);
@@ -90,10 +88,8 @@ class DebuggerTest extends TestCase
     
     public function testGenerateDebugBarVars()
     {
-        ModuleManager::setRootPath(dirname(__DIR__, 3).'/');
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
-        Templater::setStructural();
         $varsProperty = $this->debuggerReflection->getProperty('vars');
         $varsProperty->setAccessible(true);
         $varsProperty->setValue(new Debugger, ['sampleVars' => 'sample value']);
