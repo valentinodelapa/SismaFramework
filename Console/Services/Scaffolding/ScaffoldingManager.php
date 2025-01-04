@@ -31,6 +31,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Core\HelperClasses\Templater;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -77,26 +78,17 @@ class ScaffoldingManager
     public function generate(string $templateName, string $outputPath): bool
     {
         $templateFile = $this->getTemplatePath($templateName);
-
         if (!file_exists($templateFile)) {
             throw new \RuntimeException("Template file not found: {$templateFile}");
         }
-
         if (file_exists($outputPath) && !$this->force) {
             throw new \RuntimeException("File already exists: {$outputPath}. Use --force to overwrite.");
         }
-
-        $content = file_get_contents($templateFile);
-
-        foreach ($this->placeholders as $key => $value) {
-            $content = str_replace('{{' . $key . '}}', $value, $content);
-        }
-
+        $content = Templater::parseTemplate($templateFile, $this->placeholders);
         $outputDir = dirname($outputPath);
         if (!is_dir($outputDir)) {
             mkdir($outputDir, 0777, true);
         }
-
         return file_put_contents($outputPath, $content) !== false;
     }
 
