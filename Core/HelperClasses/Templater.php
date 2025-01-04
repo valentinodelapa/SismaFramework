@@ -42,10 +42,10 @@ class Templater
     {
         $templatePath = ModuleManager::getExistingFilePath(self::$templatesPath . $template, Resource::tpl);
         $varsAndLocales = array_merge($vars, $localizator->getTemplateLocaleArray($template));
-        return self::parseTemnplate($templatePath, $varsAndLocales);
+        return self::parseTemplate($templatePath, $varsAndLocales);
     }
 
-    public static function parseTemnplate(string $templatePath, array $vars): string
+    public static function parseTemplate(string $templatePath, array $vars): string
     {
         $templateContent = file_get_contents($templatePath);
         $parsedTemplateContent = preg_replace_callback('/\{\{(.*?)\}\}/is', function ($varName) use ($vars) {
@@ -58,6 +58,6 @@ class Templater
     public static function generateStructuralTemplate(string $template, array $vars): string
     {
         $templatePath = self::$structuralTemplatesPath . $template . '.' . Resource::tpl->value;
-        return self::parseTemnplate($templatePath, $vars);
+        return self::parseTemplate($templatePath, $vars);
     }
 }
