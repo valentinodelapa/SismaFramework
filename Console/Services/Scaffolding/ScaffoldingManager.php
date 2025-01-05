@@ -215,10 +215,9 @@ ERROR);
     {
         if ($this->customTemplatePath) {
             $path = rtrim($this->customTemplatePath, '/') . '/';
-            return $path . $templateName . '.template';
+            return $path . $templateName . '.tpl';
         }
-
-        return $this->templatesPath . $templateName . '.template';
+        return $this->templatesPath . $templateName . '.tpl';
     }
 
     private function analyzeEntityProperties(\ReflectionClass $entityReflection): array
