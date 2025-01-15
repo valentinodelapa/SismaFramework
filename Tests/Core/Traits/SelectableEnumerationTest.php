@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2024 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,31 +24,31 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Traits;
+namespace SismaFramework\Tests\Core\Traits;
 
+use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Enumerations\Language;
-use SismaFramework\Core\HelperClasses\Localizator;
+use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
- *
- * @author Valentino de Lapa
+ * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-trait SelectableEnumeration
+class SelectableEnumerationTest extends TestCase
 {
 
-    public function getFriendlyLabel(Language $language): string
+    public function testGetFriendlyLabel()
     {
-        $localizator = new Localizator($language);
-        return $localizator->getEnumerationLocaleArray($this);
+        $this->assertEquals('uno', SampleType::one->getFriendlyLabel(Language::italian));
+        $this->assertEquals('due', SampleType::two->getFriendlyLabel(Language::italian));
     }
-
-    public static function getChoiceFromEnumerations(Language $language): array
+    
+    public function testGetChoiceFromEnumerations()
     {
-        $choice = [];
-        foreach (self::cases() as $value) {
-            $choiceKey = $value->getFriendlyLabel($language);
-            $choice[$choiceKey] = $value->value;
-        }
-        return $choice;
+        $choices = SampleType::getChoiceFromEnumerations(Language::italian);
+        $this->assertIsArray($choices);
+        $this->assertEquals([
+            "uno" => "O",
+            "due" => "T"
+        ], $choices);
     }
 }
