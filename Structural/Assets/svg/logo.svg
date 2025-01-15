@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="120.75616mm"
+   height="120.75616mm"
+   viewBox="0 0 120.75616 120.75616"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="logo.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.73890575"
+     inkscape:cx="-588.03169"
+     inkscape:cy="228.03991"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2" />
+  <defs
+     id="defs1">
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask15">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583"
+         id="rect15"
+         width="100"
+         height="100"
+         x="35.387501"
+         y="-50"
+         rx="25"
+         ry="25"
+         transform="rotate(45)"
+         inkscape:label="rect1" />
+    </mask>
+    <filter
+       style="color-interpolation-filters:sRGB;"
+       inkscape:label="Drop Shadow"
+       id="filter42"
+       x="-0.06"
+       y="-0.008"
+       width="1.17"
+       height="1.1826667">
+      <feFlood
+         result="flood"
+         in="SourceGraphic"
+         flood-opacity="0.498039"
+         flood-color="rgb(0,79,118)"
+         id="feFlood41" />
+      <feGaussianBlur
+         result="blur"
+         in="SourceGraphic"
+         stdDeviation="0.500000"
+         id="feGaussianBlur41" />
+      <feOffset
+         result="offset"
+         in="blur"
+         dx="1.000000"
+         dy="25.000000"
+         id="feOffset41" />
+      <feComposite
+         result="comp1"
+         operator="in"
+         in="flood"
+         in2="offset"
+         id="feComposite41" />
+      <feComposite
+         result="comp2"
+         operator="over"
+         in="SourceGraphic"
+         in2="comp1"
+         id="feComposite42" />
+    </filter>
+  </defs>
+  <g
+     id="g5"
+     mask="url(#mask15)">
+    <g
+       inkscape:label="Livello 3"
+       inkscape:groupmode="layer"
+       id="g4"
+       transform="translate(-32.412208,-63.808624)"
+       style="display:inline">
+      <rect
+         style="display:inline;fill:#54bfe9;fill-opacity:1;stroke-width:0.264583"
+         id="rect4"
+         width="100"
+         height="100"
+         x="103.4259"
+         y="-27.799381"
+         rx="25"
+         ry="25"
+         transform="rotate(45)" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer3"
+       inkscape:label="Livello 5">
+      <circle
+         style="fill:#017cb8;fill-opacity:1;stroke-width:0.264583"
+         id="path16"
+         cx="20.113077"
+         cy="102.72737"
+         r="65" />
+      <circle
+         style="fill:#54bfe9;fill-opacity:1;stroke-width:0.264583"
+         id="path16-6"
+         cx="20.113077"
+         cy="102.72737"
+         r="50" />
+    </g>
+    <g
+       inkscape:label="Livello 2"
+       inkscape:groupmode="layer"
+       id="g3"
+       transform="translate(-32.412207,-63.808623)"
+       style="display:inline">
+      <rect
+         style="fill:#017cb8;fill-opacity:1;stroke-width:0.264583"
+         id="rect3"
+         width="59.895657"
+         height="107.34053"
+         x="143.53024"
+         y="-35.139908"
+         rx="22.965372"
+         ry="25"
+         transform="rotate(45)" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer2"
+       inkscape:label="Livello 4">
+      <circle
+         style="display:inline;fill:#54bfe9;fill-opacity:1;stroke-width:0.31059"
+         id="path15"
+         cx="31.902811"
+         cy="86.340149"
+         r="30" />
+    </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer4"
+       inkscape:label="Livello 6">
+      <rect
+         style="fill:#017cb8;fill-opacity:1;stroke-width:0.165728;filter:url(#filter42)"
+         id="rect17"
+         width="20"
+         height="150"
+         x="74.363625"
+         y="-51.149162"
+         rx="20"
+         ry="0"
+         transform="rotate(45)" />
+    </g>
+  </g>
+  <g
+     inkscape:label="Livello 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-32.412207,-63.808623)"
+     style="display:inline" />
+</svg>
