@@ -2,7 +2,7 @@
 
 namespace {{namespace}};
 
-use SismaFramework\Orm\ExtendedClasses\{{modelType}};
+use {{modelTypeNamespace}}\{{modelType}};
 use SismaFramework\Orm\HelperClasses\Query;
 use {{namespace}}\{{className}};
 

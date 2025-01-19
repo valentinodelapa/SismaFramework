@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Console\Services\Scaffolding;
 
-use SismaFramework\Core\HelperClasses\NotationManager;
-use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
+use SismaFramework\Console\Enumerations\ModelType;
 use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Templater;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -176,8 +176,9 @@ ERROR);
         $this->setPlaceholder('controllerRoute', NotationManager::convertToKebabCase($controllerName));
 
         // Generate Model
-        $modelType = $this->customType ?? $this->determineModelType($entityClass);
-        $this->setPlaceholder('modelType', $modelType);
+        $modelType = $this->customType ? ModelType::from($this->customType) : $this->determineModelType($entityClass);
+        $this->setPlaceholder('modelType', $modelType->value);
+        $this->setPlaceholder('modelTypeNamespace', $modelType->getNamespace());
         $this->setPlaceholder('namespace', $modelNamespace);
         $success = $this->generate('Model', $modulePath . '/Application/Models/' . $entityName . 'Model.php');
 
@@ -198,17 +199,28 @@ ERROR);
         return $success;
     }
 
-    private function determineModelType(string $entityClass): string
+    private function determineModelType(string $entityClass): ModelType
     {
         $reflection = new \ReflectionClass($entityClass);
 
         if ($reflection->isSubclassOf(SelfReferencedEntity::class)) {
-            return 'SelfReferencedModel';
-        } elseif ($reflection->isSubclassOf(ReferencedEntity::class)) {
-            return 'DependentModel';
+            return ModelType::selfReferencedModel;
+        } elseif ($this->checkDependencies($reflection)) {
+            return ModelType::dependentModel;
         } else {
-            return 'BaseModel';
+            return ModelType::baseModel;
         }
+    }
+
+    public function checkDependencies(\ReflectionClass $entityReflection): bool
+    {
+        foreach ($entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+            if (BaseEntity::checkFinalClassReflectionProperty($property) &&
+                    is_subclass_of($property->getType()->getName(), BaseEntity::class)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function getTemplatePath(string $templateName): string
