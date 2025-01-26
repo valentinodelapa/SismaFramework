@@ -138,7 +138,7 @@ ERROR);
         }
 
         // Ensure required directories exist
-        $requiredDirs = ['Controllers', 'Models', 'Forms', 'Entities'];
+        $requiredDirs = ['Controllers', 'Models', 'Forms', 'Entities', 'Views'];
         foreach ($requiredDirs as $dir) {
             $dirPath = $applicationPath . '/' . $dir;
             if (!is_dir($dirPath)) {
@@ -195,6 +195,18 @@ ERROR);
         $this->setPlaceholder('namespace', $formNamespace);
         $this->setPlaceholder('filters', $filtersCode);
         $success &= $this->generate('Form', $modulePath . '/Application/Forms/' . $entityName . 'Form.php');
+
+        // Generate Views
+        $viewsPath = $applicationPath . '/Views/' . $entityName;
+        if (!is_dir($viewsPath)) {
+            if (!mkdir($viewsPath, 0777, true)) {
+                throw new \RuntimeException("Failed to create directory: {$viewsPath}");
+            }
+        }
+
+        $success &= $this->generate('Views/index', $viewsPath . '/index.php');
+        $success &= $this->generate('Views/create', $viewsPath . '/create.php');
+        $success &= $this->generate('Views/update', $viewsPath . '/update.php');
 
         return $success;
     }
