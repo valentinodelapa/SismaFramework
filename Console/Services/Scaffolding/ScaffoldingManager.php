@@ -44,11 +44,17 @@ class ScaffoldingManager
     private bool $force = false;
     private ?string $customType = null;
     private ?string $customTemplatePath = null;
+    private string $rootPath = \Config\ROOT_PATH;
 
     public function __construct()
     {
         $this->templatesPath = __DIR__ . '/Templates/';
         $this->placeholders = [];
+    }
+    
+    public function setRootPath(string $rootPath):void
+    {
+        $this->rootPath = $rootPath;
     }
 
     public function setForce(bool $force): self
@@ -101,7 +107,7 @@ class ScaffoldingManager
     public function generateScaffolding(string $entityName, string $module): bool
     {
         // Check if module exists in project root
-        $modulePath = \Config\ROOT_PATH . $module;
+        $modulePath = $this->rootPath . $module;
         if (!is_dir($modulePath)) {
             throw new \RuntimeException(<<<ERROR
 Module directory not found: {$module} .

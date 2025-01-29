@@ -16,12 +16,12 @@ class ScaffoldingManagerTest extends TestCase
     protected function setUp(): void
     {
         $this->scaffoldingManager = new ScaffoldingManager();
-        $this->tempDir = sys_get_temp_dir() . '/scaffolding_test_' . uniqid();
+        $this->tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'scaffolding_test_' . uniqid() . DIRECTORY_SEPARATOR;
         mkdir($this->tempDir, 0777, true);
-
-        define('\\Config\\ROOT_PATH', $this->tempDir . '/');
+        $this->scaffoldingManager->setRootPath($this->tempDir);
 
         // Creiamo la struttura delle directory necessaria
+        //mkdir($this->tempDir . '/SismaFramework', 0777, true);
         mkdir($this->tempDir . '/TestModule/Application/Entities', 0777, true);
         mkdir($this->tempDir . '/TestModule/Application/Models', 0777, true);
         mkdir($this->tempDir . '/TestModule/Application/Controllers', 0777, true);
