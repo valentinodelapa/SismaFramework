@@ -46,9 +46,9 @@ class DebuggerTest extends TestCase
 
     private \ReflectionClass $debuggerReflection;
 
-    public function __construct($name = null, $data = [], $dataName = '')
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
         $this->debuggerReflection = new \ReflectionClass(Debugger::class);
     }
 
