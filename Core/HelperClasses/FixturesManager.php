@@ -40,7 +40,7 @@ class FixturesManager
     private array $entitiesArray = [];
     private DataMapper $dataMapper;
     
-    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
+    private static bool $developmentEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
     private static string $fixtures = \Config\FIXTURES;
     private static string $fixtureNamespace = \Config\FIXTURE_NAMESPACE;
     private static string $fixturePath = \Config\FIXTURE_PATH;
@@ -54,7 +54,7 @@ class FixturesManager
     public function isFixtures(array $pathParts): bool
     {
         if (count($pathParts) === 1) {
-            return ($pathParts[0] === strtolower(self::$fixtures)) && self::$developementEnvironment;
+            return ($pathParts[0] === strtolower(self::$fixtures)) && self::$developmentEnvironment;
         } else {
             return false;
         }

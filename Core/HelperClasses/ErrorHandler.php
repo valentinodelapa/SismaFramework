@@ -46,16 +46,16 @@ class ErrorHandler
 {
 
     private static bool $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
-    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
+    private static bool $developmentEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
 
     public static function setLogVerboseActive(bool $logVerboseActive): void
     {
         self::$logVerboseActive = $logVerboseActive;
     }
 
-    public static function setDevelopementEnvironment(bool $developementEnvironment): void
+    public static function setDevelopmentEnvironment(bool $developmentEnvironment): void
     {
-        self::$developementEnvironment = $developementEnvironment;
+        self::$developmentEnvironment = $developmentEnvironment;
     }
 
     public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController()): void
@@ -69,7 +69,7 @@ class ErrorHandler
                 if (self::$logVerboseActive) {
                     Logger::saveTrace($backtrace);
                 }
-                if (self::$developementEnvironment) {
+                if (self::$developmentEnvironment) {
                     self::callNonThrowableErrorAction($controller, $error, $backtrace);
                 } else {
                     self::callInternalServerErrorAction($controller);
@@ -94,7 +94,7 @@ class ErrorHandler
             DefaultControllerInterface $defaultController = new SampleController(),
             StructuralControllerInterface $structuralController = new FrameworkController()): Response
     {
-        if (self::$developementEnvironment) {
+        if (self::$developmentEnvironment) {
             return self::callThrowableErrorAction($structuralController, $exception);
         } else {
             return self::callDefaultControllerError($defaultController, $exception);
@@ -123,7 +123,7 @@ class ErrorHandler
         if (self::$logVerboseActive) {
             Logger::saveTrace($throwable->getTrace());
         }
-        if (self::$developementEnvironment) {
+        if (self::$developmentEnvironment) {
             return self::callThrowableErrorAction($structuralController, $throwable);
         } else {
             return self::callInternalServerErrorAction($structuralController);
