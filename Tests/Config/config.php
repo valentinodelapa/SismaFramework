@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace Config;
+namespace BaseConfig;
 
 /* Name Constant */
 

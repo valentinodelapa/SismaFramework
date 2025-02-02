@@ -36,7 +36,7 @@ use SismaFramework\Core\HttpClasses\Response;
 class Router
 {
 
-    private static $metaUrl = \Config\DEFAULT_META_URL;
+    private static $metaUrl = '';
     private static $controllerUrl = null;
     private static $actionUrl = null;
     private static $actualCleanUrl = null;

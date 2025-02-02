@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
@@ -41,24 +42,11 @@ class ResourceMaker
 
     private Request $request;
     private $streamContex = null;
-    private int $fileGetContentMaxBytesLimit = \Config\FILE_GET_CONTENT_MAX_BYTES_LIMIT;
-    private int $readfileMaxBytesLimit = \Config\READFILE_MAX_BYTES_LIMIT;
-    private static string $robotsFile = \Config\ROBOTS_FILE;
-    private static string $rootPath = \Config\ROOT_PATH;
 
-    public function __construct(Request $request = new Request())
+    public function __construct(Request $request = new Request(), ?BaseConfig $customConfig = null)
     {
+        $config = $customConfig ?? BaseConfig::getDefault();
         $this->request = $request;
-    }
-
-    public function setFileGetContentMaxBytesLimit(int $fileGetContentMaxBytesLimit): void
-    {
-        $this->fileGetContentMaxBytesLimit = $fileGetContentMaxBytesLimit;
-    }
-
-    public function setReadfileMaxBytesLimit(int $readfileMaxBytesLimit): void
-    {
-        $this->readfileMaxBytesLimit = $readfileMaxBytesLimit;
     }
 
     public function setStreamContex(): void
@@ -107,9 +95,9 @@ class ResourceMaker
 
     private function getResourceData(string $filename): void
     {
-        if (filesize($filename) < $this->fileGetContentMaxBytesLimit) {
+        if (filesize($filename) < $this->config->fileGetContentMaxBytesLimit) {
             echo file_get_contents($filename, false, $this->streamContex);
-        } elseif (filesize($filename) < $this->readfileMaxBytesLimit) {
+        } elseif (filesize($filename) < $this->config->readfileMaxBytesLimit) {
             readfile($filename, false, $this->streamContex);
         } else {
             $stream = fopen($filename, 'rb', false, $this->streamContex);

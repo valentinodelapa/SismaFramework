@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -36,25 +37,21 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class FixturesManager
 {
 
+    private static BaseConfig $config;
     private array $fixturesArray;
     private array $entitiesArray = [];
     private DataMapper $dataMapper;
-    
-    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
-    private static string $fixtures = \Config\FIXTURES;
-    private static string $fixtureNamespace = \Config\FIXTURE_NAMESPACE;
-    private static string $fixturePath = \Config\FIXTURE_PATH;
-    private static string $rootPath = \Config\ROOT_PATH;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper())
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?BaseConfig $customConfig = null)
     {
         $this->dataMapper = $dataMapper;
+        $this->config = $customConfig ?? BaseConfig::getDefault();
     }
 
     public function isFixtures(array $pathParts): bool
     {
         if (count($pathParts) === 1) {
-            return ($pathParts[0] === strtolower(self::$fixtures)) && self::$developementEnvironment;
+            return ($pathParts[0] === strtolower($this->config->fixtures)) && $this->config->developmentEnvironment;
         } else {
             return false;
         }
@@ -81,11 +78,11 @@ class FixturesManager
     private function getFixturesArray(): void
     {
         foreach (ModuleManager::getModuleList() as $module) {
-            $fixturesFiles = scandir(self::$rootPath . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . self::$fixturePath);
+            $fixturesFiles = scandir($this->config->rootPath . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . $this->config->fixturePath);
             foreach ($fixturesFiles as $file) {
                 if (($file != '.') && ($file != '..')) {
                     $fixtureName = str_replace('.php', '', $file);
-                    $this->fixturesArray[$module . '\\' . self::$fixtureNamespace . $fixtureName] = false;
+                    $this->fixturesArray[$module . '\\' . $this->config->fixtureNamespace . $fixtureName] = false;
                 }
             }
         }

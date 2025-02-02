@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Orm\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
@@ -49,14 +50,17 @@ use SismaFramework\Security\Enumerations\AccessControlEntry;
 class DataMapper
 {
 
-    private bool $ormCacheStatus = \Config\ORM_CACHE;
+    private bool $ormCacheStatus;
     private BaseAdapter $adapter;
+    private BaseConfig $config;
     private static bool $isActiveTransaction = false;
     private array $processedEntity = [];
 
-    public function __construct(?BaseAdapter $adapter = null)
+    public function __construct(?BaseAdapter $adapter = null, ?BaseConfig $config = null)
     {
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
+        $this->config = $config ?? BaseConfig::getDefault();
+        $this->ormCacheStatus = $this->config->ormCache;
     }
 
     public function setOrmCacheStatus(bool $ormCacheStatus = true): void

@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 
 /**
@@ -37,19 +38,17 @@ class PhpVersionChecker
     private static int $currentMajorVersion = PHP_MAJOR_VERSION;
     private static int $currentMinorVersion = PHP_MINOR_VERSION;
     private static int $currentReleaseVersion = PHP_RELEASE_VERSION;
-    private static int $minimumMajorPhpVersion = \Config\MINIMUM_MAJOR_PHP_VERSION;
-    private static int $minimumMinorPhpVersion = \Config\MINIMUM_MINOR_PHP_VERSION;
-    private static int $minimumReleasePhpVersion = \Config\MINIMUM_RELEASE_PHP_VERSION;
 
-    public static function checkPhpVersion(): void
+    public static function checkPhpVersion(?BaseConfig $customConfig = null): void
     {
-        if (self::$currentMajorVersion < self::$minimumMajorPhpVersion) {
-            throw new PhpVersionException();
-        } elseif (self::$currentMajorVersion === self::$minimumMajorPhpVersion) {
-            if (self::$currentMinorVersion < self::$minimumMinorPhpVersion) {
-                throw new PhpVersionException();
-            } elseif (self::$currentMinorVersion === self::$minimumMinorPhpVersion) {
-                if (self::$currentReleaseVersion < self::$minimumReleasePhpVersion) {
+        $config = $customConfig ?? BaseConfig::getDefault();
+        if (self::$currentMajorVersion < $config->minimumMajorPhpVersion) {
+            throw new PhpVersionException($config);
+        } elseif (self::$currentMajorVersion === $config->minimumMajorPhpVersion) {
+            if (self::$currentMinorVersion < $config->minimumMinorPhpVersion) {
+                throw new PhpVersionException($config);
+            } elseif (self::$currentMinorVersion === $config->minimumMinorPhpVersion) {
+                if (self::$currentReleaseVersion < $config->minimumReleasePhpVersion) {
                     throw new PhpVersionException();
                 }
             }
@@ -69,20 +68,5 @@ class PhpVersionChecker
     public static function forceCurrentReleaseVersionValue(int $customCurrentReleaseVersion):void
     {
         self::$currentReleaseVersion = $customCurrentReleaseVersion;
-    }
-    
-    public static function forceMinimumMajorVersionValue(int $customMinimumMajorVersion):void
-    {
-        self::$minimumMajorPhpVersion = $customMinimumMajorVersion;
-    }
-    
-    public static function forceMinimumMinorVersionValue(int $customMinimumMinorVersion):void
-    {
-        self::$minimumMinorPhpVersion = $customMinimumMinorVersion;
-    }
-    
-    public static function forceMinimumReleaseVersionValue(int $customMinimumReleaseVersion):void
-    {
-        self::$minimumReleasePhpVersion = $customMinimumReleaseVersion;
     }
 }

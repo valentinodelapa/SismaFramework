@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Structural\Controllers;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
@@ -59,7 +60,7 @@ class FrameworkController implements StructuralControllerInterface
     #[\Override]
     public function throwableError(\Throwable $throwable): Response
     {
-        $this->vars['project'] = \Config\PROJECT;
+        $this->vars['project'] = BaseConfig::getDefault()->project;
         $this->vars['error'] = [
             'message' => $throwable->getMessage(),
             'type' => $throwable->getCode(),
@@ -74,7 +75,7 @@ class FrameworkController implements StructuralControllerInterface
     #[\Override]
     public function nonThrowableError(array $error, array $backtrace): Response
     {
-        $this->vars['project'] = \Config\PROJECT;
+        $this->vars['project'] = BaseConfig::getDefault()->project;
         $this->vars['error'] = $error;
         $this->vars['backtrace'] = $backtrace;
         Render::setStructural();

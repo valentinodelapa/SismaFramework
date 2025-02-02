@@ -26,6 +26,8 @@
 
 namespace SismaFramework\Autoload;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
+
 /**
  *
  * @author Valentino de Lapa
@@ -33,20 +35,19 @@ namespace SismaFramework\Autoload;
 class Autoloader
 {
 
+    private BaseConfig $config;
     private string $className;
     private string $classPath;
-    private static array $autoloadClassMapper = \Config\AUTOLOAD_CLASS_MAPPER;
-    private static array $autoloadNamespaceMapper = \Config\AUTOLOAD_NAMESPACE_MAPPER;
-    private static string $rootPath = \Config\ROOT_PATH;
 
-    public function __construct(string $className)
+    public function __construct(string $className, ?BaseConfig $config = null)
     {
         $this->className = $className;
+        $this->config = $config ?? BaseConfig::getDefault();
     }
 
     public function findClass(): bool
     {
-        $actualClassPath = self::$rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $this->className) . '.php';
+        $actualClassPath = $this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $this->className) . '.php';
         if ($this->classExsist($actualClassPath)) {
             return true;
         } elseif ($this->mapNamespace()) {
@@ -68,10 +69,10 @@ class Autoloader
 
     private function mapNamespace(): bool
     {
-        foreach (self::$autoloadNamespaceMapper as $key => $value) {
+        foreach ($this->config->autoloadNamespaceMapper as $key => $value) {
             if (str_contains($this->className, $key)) {
                 $actualClassName = str_replace($key, '', $this->className);
-                $actualClassPath = self::$rootPath . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php';
+                $actualClassPath = $this->config->rootPath . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php';
                 if ($this->classExsist($actualClassPath)) {
                     return true;
                 }
@@ -82,8 +83,8 @@ class Autoloader
 
     private function mapClass(): bool
     {
-        if (array_key_exists($this->className, self::$autoloadClassMapper)) {
-            $actualClassPath = self::$rootPath . self::$autoloadClassMapper[$this->className] . '.php';
+        if (array_key_exists($this->className, $this->config->autoloadClassMapper)) {
+            $actualClassPath = $this->config->rootPath . $this->config->autoloadClassMapper[$this->className] . '.php';
             if ($this->classExsist($actualClassPath)) {
                 return true;
             }

@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\ModuleException;
 
@@ -39,12 +40,11 @@ class ModuleManager
     private static string $applicationModule = '';
     private static ?string $customVisualizationModule = null;
     private static bool $customVisualizationFileExists = false;
-    private static array $moduleFolder = \Config\MODULE_FOLDERS;
-    private static string $rootPath = \Config\ROOT_PATH;
 
-    public static function getModuleList(): array
+    public static function getModuleList(?BaseConfig $customConfig = null): array
     {
-        return self::$moduleFolder;
+        $config = $customConfig ?? BaseConfig::getDefault();
+        return $config->moduleFolders;
     }
 
     public static function initializeApplicationModule()
@@ -84,30 +84,27 @@ class ModuleManager
         return self::$customVisualizationModule;
     }
 
-    public static function setRootPath(string $rootPath): void
+    public static function getExistingFilePath(string $path, Resource $resource, ?BaseConfig $customConfig = null): string
     {
-        self::$rootPath = $rootPath;
-    }
-
-    public static function getExistingFilePath(string $path, Resource $resource): string
-    {
-        if ((empty(self::$customVisualizationModule) === false) && file_exists(self::$rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+        $config = $customConfig ?? BaseConfig::getDefault();
+        if ((empty(self::$customVisualizationModule) === false) && file_exists($config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             self::$customVisualizationFileExists = true;
-            return self::$rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
-        } elseif (file_exists(self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+            return $config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
+        } elseif (file_exists($config->rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             self::$customVisualizationFileExists = false;
-            return self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
+            return $config->rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } else {
             throw new ModuleException('File not found: {' . self::$customVisualizationModule . '}{' . self::$applicationModule . '}' . $path . '.' . $resource->value);
         }
     }
 
-    public static function getConsequentFilePath(string $path, Resource $resource): string
+    public static function getConsequentFilePath(string $path, Resource $resource, ?BaseConfig $customConfig = null): string
     {
-        if (self::$customVisualizationFileExists && file_exists(self::$rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
-            return self::$rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
-        } elseif ((self::$customVisualizationFileExists === false) && file_exists(self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
-            return self::$rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
+        $config = $customConfig ?? BaseConfig::getDefault();
+        if (self::$customVisualizationFileExists && file_exists($config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+            return $config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
+        } elseif ((self::$customVisualizationFileExists === false) && file_exists($config->rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
+            return $config->rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } else {
             throw new ModuleException('File not found: {' . self::$customVisualizationModule . '}{' . self::$applicationModule . '}' . $path . '.' . $resource->value);
         }

@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Orm\HelperClasses;
 
+use SismaFramework\Config\Config;
 use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
@@ -41,12 +42,7 @@ class Cache
 {
 
     private static array $entityCache = [];
-    private static string $entityNamespace = \Config\ENTITY_NAMESPACE;
-    private static string $entityPath = \Config\ENTITY_PATH;
     private static array $foreighKeyDataCache = [];
-    private static string $referencedCacheDirectory = \Config\REFERENCE_CACHE_DIRECTORY;
-    private static string $referencedCachePath = \Config\REFERENCE_CACHE_PATH;
-    private static string $rootPath = \Config\ROOT_PATH;
 
     public static function setEntity(BaseEntity $entity): void
     {
@@ -67,17 +63,18 @@ class Cache
         return static::$entityCache[$entityName][$entityId];
     }
 
-    public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null): array
+    public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null, ?BaseConfig $customConfig = null): array
     {
+        $config = $customConfig ?? Config::getDefault();
         if (is_subclass_of($referencedEntityName, ReferencedEntity::class)) {
             if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
-                if (is_dir(self::$referencedCacheDirectory) === false) {
-                    mkdir(self::$referencedCacheDirectory);
+                if (is_dir($config->referenceCacheDirectory) === false) {
+                    mkdir($config->referenceCacheDirectory);
                 }
-                if (file_exists(self::$referencedCachePath)) {
-                    static::getForeignKeyDataFromCacheFile($referencedEntityName, $propertyName);
+                if (file_exists($config->referenceCachePath)) {
+                    static::getForeignKeyDataFromCacheFile($referencedEntityName, $propertyName, $config);
                 } else {
-                    static::setForeignKeyDataFromEntities();
+                    static::setForeignKeyDataFromEntities($config);
                 }
             }
             return self::getForeignKeyDataWithParents($referencedEntityName, $propertyName);
@@ -138,31 +135,31 @@ class Cache
         }
     }
 
-    private static function getForeignKeyDataFromCacheFile(string $referencedEntityName, ?string $propertyName = null): void
+    private static function getForeignKeyDataFromCacheFile(string $referencedEntityName, ?string $propertyName, BaseConfig $config): void
     {
-        static::$foreighKeyDataCache = json_decode(file_get_contents(self::$referencedCachePath), true) ?? [];
+        static::$foreighKeyDataCache = json_decode(file_get_contents($config->referenceCachePath), true) ?? [];
         if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
-            static::setForeignKeyDataFromEntities();
+            static::setForeignKeyDataFromEntities($config);
         }
     }
 
-    private static function setForeignKeyDataFromEntities(): void
+    private static function setForeignKeyDataFromEntities(BaseConfig $config): void
     {
         foreach (ModuleManager::getModuleList() as $module) {
-            $entitiesDirectory = self::$rootPath . $module . DIRECTORY_SEPARATOR . self::$entityPath;
+            $entitiesDirectory = $config->rootPath . $module . DIRECTORY_SEPARATOR . $config->entityPath;
             if (is_dir($entitiesDirectory)) {
-                static::scanModuleEntities($module, $entitiesDirectory);
+                static::scanModuleEntities($module, $entitiesDirectory, $config);
             }
         }
-        file_put_contents(self::$referencedCachePath, json_encode(static::$foreighKeyDataCache));
-        Locker::lockFolder(self::$referencedCacheDirectory);
+        file_put_contents($config->referenceCachePath, json_encode(static::$foreighKeyDataCache));
+        Locker::lockFolder($config->referenceCacheDirectory);
     }
 
-    private static function scanModuleEntities($module, $directory): void
+    private static function scanModuleEntities($module, $directory, BaseConfig $config): void
     {
         foreach (array_diff(scandir($directory), ['.', '..']) as $entityFileName) {
             $entitySimpleName = str_replace('.php', '', $entityFileName);
-            $entityName = $module . '\\' . self::$entityNamespace . $entitySimpleName;
+            $entityName = $module . '\\' . $config->entityNamespace . $entitySimpleName;
             $reflectionEntity = new \ReflectionClass($entityName);
             foreach ($reflectionEntity->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
                 if (BaseEntity::checkFinalClassReflectionProperty($property) && (is_subclass_of($property->getType()->getName(), BaseEntity::class, true))) {

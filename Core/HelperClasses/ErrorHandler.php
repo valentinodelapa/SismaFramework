@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Router;
@@ -45,31 +46,19 @@ use Throwable;
 class ErrorHandler
 {
 
-    private static bool $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
-    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
-
-    public static function setLogVerboseActive(bool $logVerboseActive): void
+    public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController(), ?BaseConfig $customConfig = null): void
     {
-        self::$logVerboseActive = $logVerboseActive;
-    }
-
-    public static function setDevelopementEnvironment(bool $developementEnvironment): void
-    {
-        self::$developementEnvironment = $developementEnvironment;
-    }
-
-    public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController()): void
-    {
-        register_shutdown_function(function () use ($controller) {
+        $config = $customConfig ?? BaseConfig::getDefault();
+        register_shutdown_function(function () use ($controller, $config) {
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error)) {
                 BufferManager::clear();
                 Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
-                if (self::$logVerboseActive) {
+                if ($config->logVerboseActive) {
                     Logger::saveTrace($backtrace);
                 }
-                if (self::$developementEnvironment) {
+                if ($config->developmentEnvironment) {
                     self::callNonThrowableErrorAction($controller, $error, $backtrace);
                 } else {
                     self::callInternalServerErrorAction($controller);
@@ -92,9 +81,11 @@ class ErrorHandler
 
     public static function handleBaseException(BaseException $exception,
             DefaultControllerInterface $defaultController = new SampleController(),
-            StructuralControllerInterface $structuralController = new FrameworkController()): Response
+            StructuralControllerInterface $structuralController = new FrameworkController(),
+            ?BaseConfig $customConfig = null): Response
     {
-        if (self::$developementEnvironment) {
+        $config = $customConfig ?? BaseConfig::getDefault();
+        if ($config->developmentEnvironment) {
             return self::callThrowableErrorAction($structuralController, $exception);
         } else {
             return self::callDefaultControllerError($defaultController, $exception);
@@ -116,14 +107,16 @@ class ErrorHandler
     }
 
     public static function handleThrowableError(Throwable $throwable,
-            StructuralControllerInterface $structuralController = new FrameworkController()): Response
+            StructuralControllerInterface $structuralController = new FrameworkController(),
+            ?BaseConfig $customConfig = null): Response
     {
+        $config = $customConfig ?? BaseConfig::getDefault();
         BufferManager::clear();
         Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
-        if (self::$logVerboseActive) {
+        if ($config->logVerboseActive) {
             Logger::saveTrace($throwable->getTrace());
         }
-        if (self::$developementEnvironment) {
+        if ($config->developmentEnvironment) {
             return self::callThrowableErrorAction($structuralController, $throwable);
         } else {
             return self::callInternalServerErrorAction($structuralController);

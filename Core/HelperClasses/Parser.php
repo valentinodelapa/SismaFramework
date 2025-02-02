@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;
@@ -39,10 +40,12 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
  */
 class Parser
 {
-    private static string $entityNamespace = \Config\ENTITY_NAMESPACE;
-    private static string $modelNamespace = \Config\MODEL_NAMESPACE;
 
-    public static function parseValue(\ReflectionNamedType $reflectionNamedType, null|string|array $value, $parseEntity = true, DataMapper $dataMapper = new DataMapper()): mixed
+    public static function parseValue(\ReflectionNamedType $reflectionNamedType,
+            null|string|array $value,
+            $parseEntity = true,
+            DataMapper $dataMapper = new DataMapper(),
+            ?BaseConfig $customConfig = null): mixed
     {
         if (($value === null) || ($reflectionNamedType->allowsNull() && ($value === ''))) {
             return null;
@@ -51,7 +54,8 @@ class Parser
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             if ($parseEntity) {
-                return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper);
+                $config = $customConfig ?? BaseConfig::getDefault();
+                return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper, $config);
             } else {
                 return intval($value);
             }
@@ -70,9 +74,10 @@ class Parser
         }
     }
 
-    public static function parseEntity(string $entityName, int $value, DataMapper $dataMapper = new DataMapper()): BaseEntity
+    public static function parseEntity(string $entityName, int $value, DataMapper $dataMapper = new DataMapper(), ?BaseConfig $customConfig = null): BaseEntity
     {
-        $modelName = str_replace(self::$entityNamespace, self::$modelNamespace, $entityName) . 'Model';
+        $config = $customConfig ?? BaseConfig::getDefault();
+        $modelName = str_replace($config->entityNamespace, $config->modelNamespace, $entityName) . 'Model';
         $modelInstance = new $modelName($dataMapper);
         $entity = $modelInstance->getEntityById($value);
         if ($entity instanceof BaseEntity) {

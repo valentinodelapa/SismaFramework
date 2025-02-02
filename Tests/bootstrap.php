@@ -29,6 +29,8 @@
  */
 // TODO: check include path
 //ini_set('include_path', ini_get('include_path'));
+use SismaFramework\Config\Config;
 
-require_once __DIR__ . '/Config/config.php';
-require_once __DIR__ . '/../Autoload/autoload.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'Config.php';
+$config = new Config();
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';

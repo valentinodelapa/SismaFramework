@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\LocalizatorException;
@@ -37,13 +38,13 @@ class Localizator
 {
 
     private static Language $injectedLanguage;
-    private Resource $localeType;
     private ?Language $customLanguage;
-    private static string $localesPath = \Config\LOCALES_PATH;
+    private BaseConfig $config;
 
-    public function __construct(?Language $customLanguage = null)
+    public function __construct(?Language $customLanguage = null, ?BaseConfig $customConfig = null)
     {
         $this->customLanguage = $customLanguage;
+        $this->config = $customConfig ?? BaseConfig::getDefault();
     }
 
     public function getPageLocaleArray(string $view): array
@@ -63,15 +64,15 @@ class Localizator
 
     private function getLocale(): array
     {
-        $language = $this->customLanguage ?? self::$injectedLanguage ?? self::getDefaultLanguage();
+        $language = $this->customLanguage ?? self::$injectedLanguage ?? $this->getDefaultLanguage();
         $localePath = $this->getLocalePath($language);
         $locale = json_decode(file_get_contents($localePath), true);
         return $locale;
     }
 
-    private static function getDefaultLanguage(): Language
+    private function getDefaultLanguage(): Language
     {
-        $defaultLanguage = Language::tryFrom(\Config\LANGUAGE);
+        $defaultLanguage = Language::tryFrom($this->config->language);
         if ($defaultLanguage instanceof Language) {
             return $defaultLanguage;
         } else {
@@ -81,21 +82,23 @@ class Localizator
 
     private function getLocalePath(Language $language): string
     {
-        return ModuleManager::getConsequentFilePath(self::$localesPath . $language->value, Resource::json);
+        return ModuleManager::getConsequentFilePath($this->config->localesPath . $language->value, Resource::json);
     }
 
-    public function getTemplateLocaleArray(string $template, ?Language $customLanguage = null): array
+    public function getTemplateLocaleArray(string $template, ?BaseConfig $customConfig = null): array
     {
-        $locale = $this->getLocale();
+        $config = $customConfig ?? BaseConfig::getDefault();
+        $locale = $this->getLocale($config);
         $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
         return $actualLocale;
     }
 
-    public function getEnumerationLocaleArray(\UnitEnum $enumeration): string
+    public function getEnumerationLocaleArray(\UnitEnum $enumeration, ?BaseConfig $customConfig = null): string
     {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
+        $config = $customConfig ?? BaseConfig::getDefault();
         $enumerationName = $reflectionEnumeration->getShortName();
-        $locale = $this->getLocale();
+        $locale = $this->getLocale($config);
         $field = $locale['enumerations'][lcfirst($enumerationName)];
         return $field[$enumeration->name];
     }

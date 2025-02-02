@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
@@ -41,17 +42,18 @@ abstract class BaseEntity
     public bool $modified = false;
     public array $foreignKeys = [];
     protected DataMapper $dataMapper;
+    protected BaseConfig $baseConfig;
     protected static ?BaseEntity $instance = null;
     protected string $primaryKey = 'id';
     protected string $initializationVectorPropertyName = 'initializationVector';
     protected bool $isActiveTransaction = false;
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
-    private static string $encryptionPassphrase = \Config\ENCRYPTION_PASSPHRASE;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper())
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?BaseConfig $config = null)
     {
         $this->dataMapper = $dataMapper;
+        $this->config = $config ?? BaseConfig::getDefault();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
         $reflectionClass = new \ReflectionClass($this);
@@ -203,7 +205,7 @@ abstract class BaseEntity
 
     public function isEncryptedProperty(string $columnName): bool
     {
-        return ((empty(self::$encryptionPassphrase) === false) && in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->initializationVectorPropertyName)));
+        return ((empty($this->config->encryptionPassphrase) === false) && in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->initializationVectorPropertyName)));
     }
 
     public function getInitializationVectorPropertyName(): string

@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Exceptions\LoggerException;
 
 /**
@@ -35,46 +36,38 @@ use SismaFramework\Core\Exceptions\LoggerException;
 class Logger
 {
 
-    private static string $logDirectoryPath = \Config\LOG_DIRECTORY_PATH;
-    private static string $logPath = \Config\LOG_PATH;
-    private static int $maxRows = \Config\DEVELOPMENT_ENVIRONMENT ? \Config\LOG_DEVELOPEMENT_MAX_ROW : \Config\LOG_PRODUCTION_MAX_ROW;
-
-    public static function setMaxRows(int $maxRows): void
+    public static function saveLog(string $message, int|string $code, string $file, string $line, ?BaseConfig $customConfig = null): void
     {
-        self::$maxRows = $maxRows;
-    }
-
-    public static function saveLog(string $message, int|string $code, string $file, string $line): void
-    {
-        self::createLogStructure();
-        $handle = fopen(self::$logPath, 'a');
+        $config = $customConfig ?? BaseConfig::getDefault();
+        self::createLogStructure($config);
+        $handle = fopen($config->logPath, 'a');
         if ($handle !== false) {
             fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "(" . $line . ")" . "\n");
             fclose($handle);
         }
-        self::truncateLog();
+        self::truncateLog($config);
     }
 
-    private static function createLogStructure(): void
+    private static function createLogStructure(BaseConfig $config): void
     {
-        self::createLogDirectory();
-        self::createLogFile();
+        self::createLogDirectory($config);
+        self::createLogFile($config);
     }
 
-    private static function createLogDirectory(): void
+    private static function createLogDirectory(BaseConfig $config): void
     {
-        if (is_dir(self::$logDirectoryPath) === false) {
-            mkdir(self::$logDirectoryPath);
-            $handle = fopen(self::$logPath, 'a');
+        if (is_dir($config->logDirectoryPath) === false) {
+            mkdir($config->logDirectoryPath);
+            $handle = fopen($config->logPath, 'a');
             fclose($handle);
         }
-        Locker::lockFolder(self::$logDirectoryPath);
+        Locker::lockFolder($config->logDirectoryPath);
     }
 
-    private static function createLogFile(): void
+    private static function createLogFile(BaseConfig $config): void
     {
-        if (file_exists(self::$logPath) === false) {
-            $file = fopen(self::$logPath, 'w');
+        if (file_exists($config->logPath) === false) {
+            $file = fopen($config->logPath, 'w');
             if ($file) {
                 fclose($file);
             } else {
@@ -83,13 +76,14 @@ class Logger
         }
     }
 
-    private static function truncateLog(): void
+    private static function truncateLog(BaseConfig $config): void
     {
-        $logRows = file(self::$logPath);
-        if (count($logRows) > self::$maxRows) {
-            $offset = self::$maxRows - count($logRows) - 1;
+        $maxRows = $config->developmentEnvironment ? $config->logDevelopmentMaxRow : $config->logProductionMaxRow;
+        $logRows = file($config->logPath);
+        if (count($logRows) > $maxRows) {
+            $offset = $maxRows - count($logRows) - 1;
             $logRows = array_slice($logRows, $offset);
-            $file = fopen(self::$logPath, 'w');
+            $file = fopen($config->logPath, 'w');
             if ($file) {
                 foreach ($logRows as $line) {
                     fwrite($file, $line);
@@ -101,9 +95,10 @@ class Logger
         }
     }
 
-    public static function saveTrace(array $trace): void
+    public static function saveTrace(array $trace, ?BaseConfig $customConfig = null): void
     {
-        $handle = fopen(self::$logPath, 'a');
+        $config = $customConfig ?? BaseConfig::getDefault();
+        $handle = fopen($config->logPath, 'a');
         if ($handle !== false) {
             foreach ($trace as $call) {
                 $row = "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "\n";
@@ -114,27 +109,31 @@ class Logger
         }
     }
 
-    public static function clearLog(): void
+    public static function clearLog(?BaseConfig $customConfig = null): void
     {
-        self::createLogStructure();
-        file_put_contents(self::$logPath, '');
+        $config = $customConfig ?? BaseConfig::getDefault();
+        self::createLogStructure($config);
+        file_put_contents($config->logPath, '');
     }
 
     public static function getLog(): string|false
     {
-        self::createLogStructure();
-        return file_get_contents(self::$logPath);
+        $config = $customConfig ?? BaseConfig::getDefault();
+        self::createLogStructure($config);
+        return file_get_contents($config->logPath);
     }
 
     public static function getLogRowByRow(): array|false
     {
-        self::createLogStructure();
-        return file(self::$logPath);
+        $config = $customConfig ?? BaseConfig::getDefault();
+        self::createLogStructure($config);
+        return file($config->logPath);
     }
 
-    public static function getLogRowNumber(): int
+    public static function getLogRowNumber(?BaseConfig $customConfig = null): int
     {
-        self::createLogStructure();
-        return count(file(self::$logPath));
+        $config = $customConfig ?? BaseConfig::getDefault();
+        self::createLogStructure($config);
+        return count(file($config->logPath));
     }
 }
