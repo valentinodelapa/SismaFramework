@@ -2291,10 +2291,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setLogVerboseActive"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AsetDevelopementEnvironment\u0028\u0029",
-            "name": "setDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AsetDevelopmentEnvironment\u0028\u0029",
+            "name": "setDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setDevelopementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AhandleNonThrowableError\u0028\u0029",
             "name": "handleNonThrowableError",
@@ -2336,10 +2336,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_logVerboseActive"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003A\u0024developementEnvironment",
-            "name": "developementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003A\u0024developmentEnvironment",
+            "name": "developmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_developementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_developmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter",
             "name": "Filter",
@@ -2566,10 +2566,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_dataMapper"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024developementEnvironment",
-            "name": "developementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024developmentEnvironment",
+            "name": "developmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_developementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_developmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024fixtures",
             "name": "fixtures",
@@ -3046,20 +3046,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_generateJson"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AsetDevelopementEnvironment\u0028\u0029",
-            "name": "setDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AsetDevelopmentEnvironment\u0028\u0029",
+            "name": "setDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_setDevelopementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_setDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AsetStructural\u0028\u0029",
             "name": "setStructural",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_setStructural"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024developementEnvironment",
-            "name": "developementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024developmentEnvironment",
+            "name": "developmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_developementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_developmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024isStructural",
             "name": "isStructural",
@@ -3406,10 +3406,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HttpClasses-Comunication.html#property_httpsIsForced"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HttpClasses\\Comunication\u003A\u003A\u0024developementEnvironment",
-            "name": "developementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HttpClasses\\Comunication\u003A\u003A\u0024developmentEnvironment",
+            "name": "developmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HttpClasses-Comunication.html#property_developementEnvironment"
+            "url": "classes/SismaFramework-Core-HttpClasses-Comunication.html#property_developmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HttpClasses\\Request",
             "name": "Request",
@@ -7091,30 +7091,30 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method___construct"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewInDevelopementEnvironment\u0028\u0029",
-            "name": "testGenerateViewInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewInDevelopmentEnvironment\u0028\u0029",
+            "name": "testGenerateViewInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewNotInDevelopementEnvironment\u0028\u0029",
-            "name": "testGenerateViewNotInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewNotInDevelopmentEnvironment\u0028\u0029",
+            "name": "testGenerateViewNotInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewNotInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewNotInDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewStructural\u0028\u0029",
             "name": "testGenerateViewStructural",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewStructural"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateDataInDevelopementEnvironment\u0028\u0029",
-            "name": "testGenerateDataInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateDataInDevelopmentEnvironment\u0028\u0029",
+            "name": "testGenerateDataInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateDataInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateDataInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateDataNotInDevelopementEnvironment\u0028\u0029",
-            "name": "testGenerateDataNotInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateDataNotInDevelopmentEnvironment\u0028\u0029",
+            "name": "testGenerateDataNotInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateDataNotInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateDataNotInDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerareJson\u0028\u0029",
             "name": "testGenerareJson",
@@ -7746,25 +7746,25 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020ErrorHandlerTest",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleBaseExceptionInDevelopementEnvironment\u0028\u0029",
-            "name": "testHandleBaseExceptionInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleBaseExceptionInDevelopmentEnvironment\u0028\u0029",
+            "name": "testHandleBaseExceptionInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleBaseExceptionInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleBaseExceptionInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleBaseExceptionNotInDevelopementEnvironment\u0028\u0029",
-            "name": "testHandleBaseExceptionNotInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleBaseExceptionNotInDevelopmentEnvironment\u0028\u0029",
+            "name": "testHandleBaseExceptionNotInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleBaseExceptionNotInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleBaseExceptionNotInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleThrowableErrorInDevelopementEnvironment\u0028\u0029",
-            "name": "testHandleThrowableErrorInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleThrowableErrorInDevelopmentEnvironment\u0028\u0029",
+            "name": "testHandleThrowableErrorInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleThrowableErrorInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleThrowableErrorInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleThrowableErrorNotInDevelopementEnvironment\u0028\u0029",
-            "name": "testHandleThrowableErrorNotInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleThrowableErrorNotInDevelopmentEnvironment\u0028\u0029",
+            "name": "testHandleThrowableErrorNotInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleThrowableErrorNotInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleThrowableErrorNotInDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest",
             "name": "QueryTest",

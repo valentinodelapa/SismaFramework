@@ -135,11 +135,6 @@ class Render
         return $response;
     }
 
-    public static function setdevelopmentEnvironment(bool $developmentEnvironment = true): void
-    {
-        self::$developmentEnvironment = $developmentEnvironment;
-    }
-
     public static function setStructural(bool $isStructural = true): void
     {
         self::$isStructural = $isStructural;
