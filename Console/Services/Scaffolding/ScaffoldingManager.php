@@ -75,35 +75,6 @@ class ScaffoldingManager
         return $this;
     }
 
-    public function setPlaceholder(string $key, string $value): self
-    {
-        $this->placeholders[$key] = $value;
-        return $this;
-    }
-
-    public function generate(string $templateName, string $outputPath): bool
-    {
-        $templateFile = $this->getTemplatePath($templateName);
-        if (!file_exists($templateFile)) {
-            throw new \RuntimeException("Template file not found: {$templateFile}");
-        }
-        if (file_exists($outputPath) && !$this->force) {
-            throw new \RuntimeException("File already exists: {$outputPath}. Use --force to overwrite.");
-        }
-        $content = Templater::parseTemplate($templateFile, $this->placeholders);
-        $outputDir = dirname($outputPath);
-        if (!is_dir($outputDir)) {
-            mkdir($outputDir, 0777, true);
-        }
-        return file_put_contents($outputPath, $content) !== false;
-    }
-
-    public function clearPlaceholders(): self
-    {
-        $this->placeholders = [];
-        return $this;
-    }
-
     public function generateScaffolding(string $entityName, string $module): bool
     {
         // Check if module exists in project root
@@ -215,6 +186,29 @@ ERROR);
         $success &= $this->generate('Views/update', $viewsPath . '/update.php');
 
         return $success;
+    }
+
+    private function setPlaceholder(string $key, string $value): self
+    {
+        $this->placeholders[$key] = $value;
+        return $this;
+    }
+
+    private function generate(string $templateName, string $outputPath): bool
+    {
+        $templateFile = $this->getTemplatePath($templateName);
+        if (!file_exists($templateFile)) {
+            throw new \RuntimeException("Template file not found: {$templateFile}");
+        }
+        if (file_exists($outputPath) && !$this->force) {
+            throw new \RuntimeException("File already exists: {$outputPath}. Use --force to overwrite.");
+        }
+        $content = Templater::parseTemplate($templateFile, $this->placeholders);
+        $outputDir = dirname($outputPath);
+        if (!is_dir($outputDir)) {
+            mkdir($outputDir, 0777, true);
+        }
+        return file_put_contents($outputPath, $content) !== false;
     }
 
     private function determineModelType(string $entityClass): ModelType

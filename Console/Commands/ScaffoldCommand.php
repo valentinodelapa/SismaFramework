@@ -49,6 +49,7 @@ class ScaffoldCommand extends BaseCommand
         return $command === 'scaffold';
     }
 
+    #[\Override]
     protected function configure(): void
     {
         $this->output(<<<OUTPUT
@@ -68,6 +69,7 @@ Example:
 OUTPUT);
     }
 
+    #[\Override]
     protected function execute(): bool
     {
         $entityName = $this->getArgument('entity');
