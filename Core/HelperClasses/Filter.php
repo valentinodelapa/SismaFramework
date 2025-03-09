@@ -306,4 +306,9 @@ class Filter
         $result = is_subclass_of($value, \UnitEnum::class) ? $result : false;
         return $result;
     }
+
+    public static function customFilter(mixed $value, string $regularExpression): bool
+    {
+        return preg_match($regularExpression, $value);
+    }
 }

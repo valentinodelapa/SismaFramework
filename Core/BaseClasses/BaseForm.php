@@ -325,8 +325,7 @@ abstract class BaseForm extends Submittable
 
     private function filterHasFailed(string $propertyName): bool
     {
-        $filterFunction = $this->filterFiledsMode[$propertyName]['filterType']->value;
-        return !Filter::$filterFunction($this->entityData->$propertyName);
+        return !$this->filterFiledsMode[$propertyName]['filterType']->applyFilter($this->entityData->$propertyName, $this->filterFiledsMode[$propertyName]['parameters']);
     }
 
     private function isNullButNotNullable(string $propertyName): bool

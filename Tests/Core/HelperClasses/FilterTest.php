@@ -357,5 +357,15 @@ class FilterTest extends TestCase
         $this->assertFalse(Filter::isEnumeration(null));
         $this->assertFalse(Filter::isEnumeration(''));
     }
+    
+    public function testCustomFilter()
+    {
+        $this->assertTrue(Filter::customFilter('Prova1_.', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertTrue(Filter::customFilter('provauno.', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse(Filter::customFilter('Prov@1_.', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse(Filter::customFilter('prova uno', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse(Filter::customFilter('?rova', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse(Filter::customFilter('provà', '/^[a-zA-Z0-9_.]+$/'));
+    }
 
 }
