@@ -67,8 +67,8 @@ enum FilterType
     case isEnumeration;
     case customFilter;
 
-    public function applyFilter(mixed $value, array $parameters): bool
+    public function applyFilter(mixed $value, array $parameters, Filter $filter = new Filter()): bool
     {
-        return Filter::{$this->name}($value, ...$parameters);
+        return $filter->{$this->name}($value, ...$parameters);
     }
 }

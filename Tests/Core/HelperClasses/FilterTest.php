@@ -41,292 +41,300 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
  */
 class FilterTest extends TestCase
 {
+    
+    private Filter $filter;
+    
+    #[\Override]
+    public function setUp(): void
+    {
+        $this->filter = new Filter();
+    }
 
     public function testNoFilter()
     {
-        $this->assertTrue(Filter::noFilter('sample value'));
+        $this->assertTrue($this->filter->noFilter('sample value'));
     }
 
     public function testIsNotNull()
     {
-        $this->assertTrue(Filter::isNotNull('not null value'));
-        $this->assertFalse(Filter::isNotNull(null));
+        $this->assertTrue($this->filter->isNotNull('not null value'));
+        $this->assertFalse($this->filter->isNotNull(null));
     }
 
     public function testIsNotFalse()
     {
-        $this->assertTrue(Filter::isNotFalse('not false value'));
-        $this->assertFalse(Filter::isNotFalse(false));
+        $this->assertTrue($this->filter->isNotFalse('not false value'));
+        $this->assertFalse($this->filter->isNotFalse(false));
     }
 
     public function testIsNotEmpty()
     {
-        $this->assertTrue(Filter::isNotEmpty(0));
-        $this->assertTrue(Filter::isNotEmpty('not empty value'));
-        $this->assertFalse(Filter::isNotEmpty(''));
+        $this->assertTrue($this->filter->isNotEmpty(0));
+        $this->assertTrue($this->filter->isNotEmpty('not empty value'));
+        $this->assertFalse($this->filter->isNotEmpty(''));
     }
 
     public function testIsString()
     {
-        $this->assertTrue(Filter::isString('string value'));
-        $this->assertFalse(Filter::isString(1));
-        $this->assertFalse(Filter::isString(1.1));
-        $this->assertFalse(Filter::isString(null));
-        $this->assertFalse(Filter::isString(true));
-        $this->assertFalse(Filter::isString(false));
-        $this->assertFalse(Filter::isString(''));
-        $this->assertFalse(Filter::isString(['array']));
+        $this->assertTrue($this->filter->isString('string value'));
+        $this->assertFalse($this->filter->isString(1));
+        $this->assertFalse($this->filter->isString(1.1));
+        $this->assertFalse($this->filter->isString(null));
+        $this->assertFalse($this->filter->isString(true));
+        $this->assertFalse($this->filter->isString(false));
+        $this->assertFalse($this->filter->isString(''));
+        $this->assertFalse($this->filter->isString(['array']));
     }
 
     public function testIsMinLimitString()
     {
-        $this->assertTrue(Filter::isMinLimitString('string min limit value', 10));
-        $this->assertFalse(Filter::isMinLimitString('fake', 10));
+        $this->assertTrue($this->filter->isMinLimitString('string min limit value', 10));
+        $this->assertFalse($this->filter->isMinLimitString('fake', 10));
     }
 
     public function testIsMaxLimitString()
     {
-        $this->assertTrue(Filter::isMaxLimitString('string max limit value', 30));
-        $this->assertFalse(Filter::isMaxLimitString('fake', 3));
+        $this->assertTrue($this->filter->isMaxLimitString('string max limit value', 30));
+        $this->assertFalse($this->filter->isMaxLimitString('fake', 3));
     }
 
     public function testLimitString()
     {
-        $this->assertTrue(Filter::isLimitString('string limit value', 10, 30));
-        $this->assertFalse(Filter::isLimitString('fake', 1, 3));
-        $this->assertFalse(Filter::isLimitString('fake', 10, 30));
-        $this->assertFalse(Filter::isLimitString('fake', 10, 3));
+        $this->assertTrue($this->filter->isLimitString('string limit value', 10, 30));
+        $this->assertFalse($this->filter->isLimitString('fake', 1, 3));
+        $this->assertFalse($this->filter->isLimitString('fake', 10, 30));
+        $this->assertFalse($this->filter->isLimitString('fake', 10, 3));
     }
 
     public function testIsAlphabeticString()
     {
-        $this->assertTrue(Filter::isAlphabeticString('alphabeticStringValue'));
-        $this->assertFalse(Filter::isAlphabeticString('alphabetic string value with spaces'));
-        $this->assertFalse(Filter::isAlphabeticString('123alphanumeric'));
-        $this->assertFalse(Filter::isAlphabeticString('123 alphanumeric'));
-        $this->assertFalse(Filter::isAlphabeticString('123'));
+        $this->assertTrue($this->filter->isAlphabeticString('alphabeticStringValue'));
+        $this->assertFalse($this->filter->isAlphabeticString('alphabetic string value with spaces'));
+        $this->assertFalse($this->filter->isAlphabeticString('123alphanumeric'));
+        $this->assertFalse($this->filter->isAlphabeticString('123 alphanumeric'));
+        $this->assertFalse($this->filter->isAlphabeticString('123'));
     }
 
     public function testIsMinLimitAlphabeticString()
     {
-        $this->assertTrue(Filter::isMinLimitAlphabeticString('stringMinLimitValue', 10));
-        $this->assertFalse(Filter::isMinLimitAlphabeticString('string min limit value', 10));
-        $this->assertFalse(Filter::isMinLimitAlphabeticString('stringMaxLimitValue123', 10));
-        $this->assertFalse(Filter::isMinLimitAlphabeticString('fake', 10));
+        $this->assertTrue($this->filter->isMinLimitAlphabeticString('stringMinLimitValue', 10));
+        $this->assertFalse($this->filter->isMinLimitAlphabeticString('string min limit value', 10));
+        $this->assertFalse($this->filter->isMinLimitAlphabeticString('stringMaxLimitValue123', 10));
+        $this->assertFalse($this->filter->isMinLimitAlphabeticString('fake', 10));
     }
 
     public function testIsMaxLimitAlphabeticString()
     {
-        $this->assertTrue(Filter::isMaxLimitAlphabeticString('stringMaxLimitValue', 30));
-        $this->assertFalse(Filter::isMaxLimitAlphabeticString('string max limit value', 30));
-        $this->assertFalse(Filter::isMaxLimitAlphabeticString('stringMaxLimitValue123', 30));
-        $this->assertFalse(Filter::isMaxLimitAlphabeticString('fake', 3));
+        $this->assertTrue($this->filter->isMaxLimitAlphabeticString('stringMaxLimitValue', 30));
+        $this->assertFalse($this->filter->isMaxLimitAlphabeticString('string max limit value', 30));
+        $this->assertFalse($this->filter->isMaxLimitAlphabeticString('stringMaxLimitValue123', 30));
+        $this->assertFalse($this->filter->isMaxLimitAlphabeticString('fake', 3));
     }
 
     public function testLimitAlphabeticString()
     {
-        $this->assertTrue(Filter::isLimitAlphabeticString('stringLimitValue', 10, 30));
-        $this->assertFalse(Filter::isLimitAlphabeticString('string limit value', 10, 30));
-        $this->assertFalse(Filter::isLimitAlphabeticString('stringMaxLimitValue123', 10, 30));
-        $this->assertFalse(Filter::isLimitAlphabeticString('fake', 1, 3));
-        $this->assertFalse(Filter::isLimitAlphabeticString('fake', 10, 30));
-        $this->assertFalse(Filter::isLimitAlphabeticString('fake', 10, 3));
+        $this->assertTrue($this->filter->isLimitAlphabeticString('stringLimitValue', 10, 30));
+        $this->assertFalse($this->filter->isLimitAlphabeticString('string limit value', 10, 30));
+        $this->assertFalse($this->filter->isLimitAlphabeticString('stringMaxLimitValue123', 10, 30));
+        $this->assertFalse($this->filter->isLimitAlphabeticString('fake', 1, 3));
+        $this->assertFalse($this->filter->isLimitAlphabeticString('fake', 10, 30));
+        $this->assertFalse($this->filter->isLimitAlphabeticString('fake', 10, 3));
     }
 
     public function testIsAlphanumericString()
     {
-        $this->assertTrue(Filter::isAlphanumericString('123alphanumericStringValue'));
-        $this->assertTrue(Filter::isAlphanumericString('alphabeticStringValue'));
-        $this->assertTrue(Filter::isAlphanumericString('123'));
-        $this->assertFalse(Filter::isAlphanumericString('123 alphanumeric string value'));
-        $this->assertFalse(Filter::isAlphanumericString('alphabetic string value with spaces'));
+        $this->assertTrue($this->filter->isAlphanumericString('123alphanumericStringValue'));
+        $this->assertTrue($this->filter->isAlphanumericString('alphabeticStringValue'));
+        $this->assertTrue($this->filter->isAlphanumericString('123'));
+        $this->assertFalse($this->filter->isAlphanumericString('123 alphanumeric string value'));
+        $this->assertFalse($this->filter->isAlphanumericString('alphabetic string value with spaces'));
     }
 
     public function testIsMinLimitAlphanumericString()
     {
-        $this->assertTrue(Filter::isMinLimitAlphanumericString('123stringMinLimitValue', 10));
-        $this->assertTrue(Filter::isMinLimitAlphanumericString('stringMaxLimitValue', 10));
-        $this->assertFalse(Filter::isMinLimitAlphanumericString('123 string min limit value', 10));
-        $this->assertFalse(Filter::isMinLimitAlphanumericString('fake', 10));
+        $this->assertTrue($this->filter->isMinLimitAlphanumericString('123stringMinLimitValue', 10));
+        $this->assertTrue($this->filter->isMinLimitAlphanumericString('stringMaxLimitValue', 10));
+        $this->assertFalse($this->filter->isMinLimitAlphanumericString('123 string min limit value', 10));
+        $this->assertFalse($this->filter->isMinLimitAlphanumericString('fake', 10));
     }
 
     public function testIsMaxLimitAlphanumericString()
     {
-        $this->assertTrue(Filter::isMaxLimitAlphanumericString('123stringMaxLimitValue', 30));
-        $this->assertTrue(Filter::isMaxLimitAlphanumericString('stringMaxLimitValue', 30));
-        $this->assertFalse(Filter::isMaxLimitAlphanumericString('123 string max limit value', 30));
-        $this->assertFalse(Filter::isMaxLimitAlphanumericString('fake', 3));
+        $this->assertTrue($this->filter->isMaxLimitAlphanumericString('123stringMaxLimitValue', 30));
+        $this->assertTrue($this->filter->isMaxLimitAlphanumericString('stringMaxLimitValue', 30));
+        $this->assertFalse($this->filter->isMaxLimitAlphanumericString('123 string max limit value', 30));
+        $this->assertFalse($this->filter->isMaxLimitAlphanumericString('fake', 3));
     }
 
     public function testLimitAlphanumericString()
     {
-        $this->assertTrue(Filter::isLimitAlphanumericString('123stringLimitValue', 10, 30));
-        $this->assertTrue(Filter::isLimitAlphanumericString('stringMaxLimitValue', 10, 30));
-        $this->assertFalse(Filter::isLimitAlphanumericString('123 string limit value', 10, 30));
-        $this->assertFalse(Filter::isLimitAlphanumericString('fake', 1, 3));
-        $this->assertFalse(Filter::isLimitAlphanumericString('fake', 10, 30));
-        $this->assertFalse(Filter::isLimitAlphanumericString('fake', 10, 3));
+        $this->assertTrue($this->filter->isLimitAlphanumericString('123stringLimitValue', 10, 30));
+        $this->assertTrue($this->filter->isLimitAlphanumericString('stringMaxLimitValue', 10, 30));
+        $this->assertFalse($this->filter->isLimitAlphanumericString('123 string limit value', 10, 30));
+        $this->assertFalse($this->filter->isLimitAlphanumericString('fake', 1, 3));
+        $this->assertFalse($this->filter->isLimitAlphanumericString('fake', 10, 30));
+        $this->assertFalse($this->filter->isLimitAlphanumericString('fake', 10, 3));
     }
 
     public function testIsStrictAlphanumericString()
     {
-        $this->assertTrue(Filter::isStrictAlphanumericString('123alphanumericStringValue'));
-        $this->assertFalse(Filter::isStrictAlphanumericString('123 alphanumeric string value'));
-        $this->assertFalse(Filter::isStrictAlphanumericString('alphabeticStringValue'));
-        $this->assertFalse(Filter::isStrictAlphanumericString('alphabetic string value with spaces'));
-        $this->assertFalse(Filter::isStrictAlphanumericString('123'));
+        $this->assertTrue($this->filter->isStrictAlphanumericString('123alphanumericStringValue'));
+        $this->assertFalse($this->filter->isStrictAlphanumericString('123 alphanumeric string value'));
+        $this->assertFalse($this->filter->isStrictAlphanumericString('alphabeticStringValue'));
+        $this->assertFalse($this->filter->isStrictAlphanumericString('alphabetic string value with spaces'));
+        $this->assertFalse($this->filter->isStrictAlphanumericString('123'));
     }
 
     public function testIsMinLimitStrictAlphanumericString()
     {
-        $this->assertTrue(Filter::isMinLimitStrictAlphanumericString('123stringMinLimitValue', 10));
-        $this->assertFalse(Filter::isMinLimitStrictAlphanumericString('123 string min limit value', 10));
-        $this->assertFalse(Filter::isMinLimitStrictAlphanumericString('stringMaxLimitValue', 10));
-        $this->assertFalse(Filter::isMinLimitStrictAlphanumericString('fake', 10));
+        $this->assertTrue($this->filter->isMinLimitStrictAlphanumericString('123stringMinLimitValue', 10));
+        $this->assertFalse($this->filter->isMinLimitStrictAlphanumericString('123 string min limit value', 10));
+        $this->assertFalse($this->filter->isMinLimitStrictAlphanumericString('stringMaxLimitValue', 10));
+        $this->assertFalse($this->filter->isMinLimitStrictAlphanumericString('fake', 10));
     }
 
     public function testIsMaxLimitStrictAlphanumericString()
     {
-        $this->assertTrue(Filter::isMaxLimitStrictAlphanumericString('123stringMaxLimitValue', 30));
-        $this->assertFalse(Filter::isMaxLimitStrictAlphanumericString('123 string max limit value', 30));
-        $this->assertFalse(Filter::isMaxLimitStrictAlphanumericString('stringMaxLimitValue', 30));
-        $this->assertFalse(Filter::isMaxLimitStrictAlphanumericString('fake', 3));
+        $this->assertTrue($this->filter->isMaxLimitStrictAlphanumericString('123stringMaxLimitValue', 30));
+        $this->assertFalse($this->filter->isMaxLimitStrictAlphanumericString('123 string max limit value', 30));
+        $this->assertFalse($this->filter->isMaxLimitStrictAlphanumericString('stringMaxLimitValue', 30));
+        $this->assertFalse($this->filter->isMaxLimitStrictAlphanumericString('fake', 3));
     }
 
     public function testLimitStrictAlphanumericString()
     {
-        $this->assertTrue(Filter::isLimitStrictAlphanumericString('123stringLimitValue', 10, 30));
-        $this->assertFalse(Filter::isLimitStrictAlphanumericString('123 string limit value', 10, 30));
-        $this->assertFalse(Filter::isLimitStrictAlphanumericString('stringMaxLimitValue', 10, 30));
-        $this->assertFalse(Filter::isLimitStrictAlphanumericString('fake', 1, 3));
-        $this->assertFalse(Filter::isLimitStrictAlphanumericString('fake', 10, 30));
-        $this->assertFalse(Filter::isLimitStrictAlphanumericString('fake', 10, 3));
+        $this->assertTrue($this->filter->isLimitStrictAlphanumericString('123stringLimitValue', 10, 30));
+        $this->assertFalse($this->filter->isLimitStrictAlphanumericString('123 string limit value', 10, 30));
+        $this->assertFalse($this->filter->isLimitStrictAlphanumericString('stringMaxLimitValue', 10, 30));
+        $this->assertFalse($this->filter->isLimitStrictAlphanumericString('fake', 1, 3));
+        $this->assertFalse($this->filter->isLimitStrictAlphanumericString('fake', 10, 30));
+        $this->assertFalse($this->filter->isLimitStrictAlphanumericString('fake', 10, 3));
     }
 
     public function testIsSecurePassword()
     {
-        $this->assertTrue(Filter::isSecurePassword('SamplePassword1@'));
-        $this->assertFalse(Filter::isSecurePassword('SamplePassword1@ '));
-        $this->assertFalse(Filter::isSecurePassword('SamplePassword1'));
-        $this->assertFalse(Filter::isSecurePassword('SamplePassword@'));
-        $this->assertFalse(Filter::isSecurePassword('samplepassword1@'));
-        $this->assertFalse(Filter::isSecurePassword('SAMPLEPASSWORD1@'));
-        $this->assertFalse(Filter::isSecurePassword('1234567890@'));
-        $this->assertFalse(Filter::isSecurePassword('Sp@1'));
+        $this->assertTrue($this->filter->isSecurePassword('SamplePassword1@'));
+        $this->assertFalse($this->filter->isSecurePassword('SamplePassword1@ '));
+        $this->assertFalse($this->filter->isSecurePassword('SamplePassword1'));
+        $this->assertFalse($this->filter->isSecurePassword('SamplePassword@'));
+        $this->assertFalse($this->filter->isSecurePassword('samplepassword1@'));
+        $this->assertFalse($this->filter->isSecurePassword('SAMPLEPASSWORD1@'));
+        $this->assertFalse($this->filter->isSecurePassword('1234567890@'));
+        $this->assertFalse($this->filter->isSecurePassword('Sp@1'));
     }
 
     public function testIsEmal()
     {
-        $this->assertTrue(Filter::isEmail('sample@password.net'));
-        $this->assertTrue(Filter::isEmail('sample123@password.net'));
-        $this->assertFalse(Filter::isEmail('Sample@Password.net'));
-        $this->assertFalse(Filter::isEmail('sample@password'));
-        $this->assertFalse(Filter::isEmail('samplepassword.net'));
+        $this->assertTrue($this->filter->isEmail('sample@password.net'));
+        $this->assertTrue($this->filter->isEmail('sample123@password.net'));
+        $this->assertFalse($this->filter->isEmail('Sample@Password.net'));
+        $this->assertFalse($this->filter->isEmail('sample@password'));
+        $this->assertFalse($this->filter->isEmail('samplepassword.net'));
     }
 
     public function testIsNumeric()
     {
-        $this->assertTrue(Filter::isNumeric(1));
-        $this->assertTrue(Filter::isNumeric(1.1));
-        $this->assertFalse(Filter::isNumeric('string'));
-        $this->assertFalse(Filter::isNumeric(true));
-        $this->assertFalse(Filter::isNumeric(false));
-        $this->assertFalse(Filter::isNumeric(null));
-        $this->assertFalse(Filter::isNumeric(''));
-        $this->assertFalse(Filter::isNumeric(['array']));
+        $this->assertTrue($this->filter->isNumeric(1));
+        $this->assertTrue($this->filter->isNumeric(1.1));
+        $this->assertFalse($this->filter->isNumeric('string'));
+        $this->assertFalse($this->filter->isNumeric(true));
+        $this->assertFalse($this->filter->isNumeric(false));
+        $this->assertFalse($this->filter->isNumeric(null));
+        $this->assertFalse($this->filter->isNumeric(''));
+        $this->assertFalse($this->filter->isNumeric(['array']));
     }
 
     public function testIsInteger()
     {
-        $this->assertTrue(Filter::isInteger(1));
-        $this->assertFalse(Filter::isInteger(1.1));
-        $this->assertFalse(Filter::isInteger('string'));
-        $this->assertFalse(Filter::isInteger(true));
-        $this->assertFalse(Filter::isInteger(false));
-        $this->assertFalse(Filter::isInteger(null));
-        $this->assertFalse(Filter::isInteger(''));
-        $this->assertFalse(Filter::isInteger(['array']));
+        $this->assertTrue($this->filter->isInteger(1));
+        $this->assertFalse($this->filter->isInteger(1.1));
+        $this->assertFalse($this->filter->isInteger('string'));
+        $this->assertFalse($this->filter->isInteger(true));
+        $this->assertFalse($this->filter->isInteger(false));
+        $this->assertFalse($this->filter->isInteger(null));
+        $this->assertFalse($this->filter->isInteger(''));
+        $this->assertFalse($this->filter->isInteger(['array']));
     }
 
     public function testIsFloat()
     {
-        $this->assertTrue(Filter::isFloat(1.1));
-        $this->assertFalse(Filter::isFloat(1));
-        $this->assertFalse(Filter::isFloat('string'));
-        $this->assertFalse(Filter::isFloat(true));
-        $this->assertFalse(Filter::isFloat(false));
-        $this->assertFalse(Filter::isFloat(null));
-        $this->assertFalse(Filter::isFloat(''));
-        $this->assertFalse(Filter::isFloat(['array']));
+        $this->assertTrue($this->filter->isFloat(1.1));
+        $this->assertFalse($this->filter->isFloat(1));
+        $this->assertFalse($this->filter->isFloat('string'));
+        $this->assertFalse($this->filter->isFloat(true));
+        $this->assertFalse($this->filter->isFloat(false));
+        $this->assertFalse($this->filter->isFloat(null));
+        $this->assertFalse($this->filter->isFloat(''));
+        $this->assertFalse($this->filter->isFloat(['array']));
     }
 
     public function testIsBoolean()
     {
-        $this->assertTrue(Filter::isBoolean(true));
-        $this->assertTrue(Filter::isBoolean(false));
-        $this->assertFalse(Filter::isBoolean(1.1));
-        $this->assertFalse(Filter::isBoolean(1));
-        $this->assertFalse(Filter::isBoolean('string'));
-        $this->assertFalse(Filter::isBoolean(null));
-        $this->assertFalse(Filter::isBoolean(''));
-        $this->assertFalse(Filter::isBoolean(['array']));
+        $this->assertTrue($this->filter->isBoolean(true));
+        $this->assertTrue($this->filter->isBoolean(false));
+        $this->assertFalse($this->filter->isBoolean(1.1));
+        $this->assertFalse($this->filter->isBoolean(1));
+        $this->assertFalse($this->filter->isBoolean('string'));
+        $this->assertFalse($this->filter->isBoolean(null));
+        $this->assertFalse($this->filter->isBoolean(''));
+        $this->assertFalse($this->filter->isBoolean(['array']));
     }
 
     public function testIsArray()
     {
-        $this->assertTrue(Filter::isArray(['array']));
-        $this->assertFalse(Filter::isArray(1.1));
-        $this->assertFalse(Filter::isArray(1));
-        $this->assertFalse(Filter::isArray('string'));
-        $this->assertFalse(Filter::isArray(true));
-        $this->assertFalse(Filter::isArray(false));
-        $this->assertFalse(Filter::isArray(null));
-        $this->assertFalse(Filter::isArray(''));
+        $this->assertTrue($this->filter->isArray(['array']));
+        $this->assertFalse($this->filter->isArray(1.1));
+        $this->assertFalse($this->filter->isArray(1));
+        $this->assertFalse($this->filter->isArray('string'));
+        $this->assertFalse($this->filter->isArray(true));
+        $this->assertFalse($this->filter->isArray(false));
+        $this->assertFalse($this->filter->isArray(null));
+        $this->assertFalse($this->filter->isArray(''));
     }
 
     public function testIsDate()
     {
-        $this->assertTrue(Filter::isDate(new SismaDate()));
-        $this->assertFalse(Filter::isDate(new SismaDateTime()));
-        $this->assertFalse(Filter::isDate(SismaTime::createFromStandardTimeFormat('20:15:50')));
-        $this->assertFalse(Filter::isDate(['array']));
-        $this->assertFalse(Filter::isDate(1.1));
-        $this->assertFalse(Filter::isDate(1));
-        $this->assertFalse(Filter::isDate('string'));
-        $this->assertFalse(Filter::isDate(true));
-        $this->assertFalse(Filter::isDate(false));
-        $this->assertFalse(Filter::isDate(null));
-        $this->assertFalse(Filter::isDate(''));
+        $this->assertTrue($this->filter->isDate(new SismaDate()));
+        $this->assertFalse($this->filter->isDate(new SismaDateTime()));
+        $this->assertFalse($this->filter->isDate(SismaTime::createFromStandardTimeFormat('20:15:50')));
+        $this->assertFalse($this->filter->isDate(['array']));
+        $this->assertFalse($this->filter->isDate(1.1));
+        $this->assertFalse($this->filter->isDate(1));
+        $this->assertFalse($this->filter->isDate('string'));
+        $this->assertFalse($this->filter->isDate(true));
+        $this->assertFalse($this->filter->isDate(false));
+        $this->assertFalse($this->filter->isDate(null));
+        $this->assertFalse($this->filter->isDate(''));
     }
 
     public function testIsDatetime()
     {
-        $this->assertTrue(Filter::isDatetime(new SismaDateTime()));
-        $this->assertFalse(Filter::isDatetime(new SismaDate()));
-        $this->assertFalse(Filter::isDatetime(SismaTime::createFromStandardTimeFormat('20:15:50')));
-        $this->assertFalse(Filter::isDatetime(['array']));
-        $this->assertFalse(Filter::isDatetime(1.1));
-        $this->assertFalse(Filter::isDatetime(1));
-        $this->assertFalse(Filter::isDatetime('string'));
-        $this->assertFalse(Filter::isDatetime(true));
-        $this->assertFalse(Filter::isDatetime(false));
-        $this->assertFalse(Filter::isDatetime(null));
-        $this->assertFalse(Filter::isDatetime(''));
+        $this->assertTrue($this->filter->isDatetime(new SismaDateTime()));
+        $this->assertFalse($this->filter->isDatetime(new SismaDate()));
+        $this->assertFalse($this->filter->isDatetime(SismaTime::createFromStandardTimeFormat('20:15:50')));
+        $this->assertFalse($this->filter->isDatetime(['array']));
+        $this->assertFalse($this->filter->isDatetime(1.1));
+        $this->assertFalse($this->filter->isDatetime(1));
+        $this->assertFalse($this->filter->isDatetime('string'));
+        $this->assertFalse($this->filter->isDatetime(true));
+        $this->assertFalse($this->filter->isDatetime(false));
+        $this->assertFalse($this->filter->isDatetime(null));
+        $this->assertFalse($this->filter->isDatetime(''));
     }
 
     public function testIsTime()
     {
-        $this->assertTrue(Filter::isTime(SismaTime::createFromStandardTimeFormat('20:15:50')));
-        $this->assertFalse(Filter::isTime(new SismaDate()));
-        $this->assertFalse(Filter::isTime(new SismaDateTime()));
-        $this->assertFalse(Filter::isTime(['array']));
-        $this->assertFalse(Filter::isTime(1.1));
-        $this->assertFalse(Filter::isTime(1));
-        $this->assertFalse(Filter::isTime('string'));
-        $this->assertFalse(Filter::isTime(true));
-        $this->assertFalse(Filter::isTime(false));
-        $this->assertFalse(Filter::isTime(null));
-        $this->assertFalse(Filter::isTime(''));
+        $this->assertTrue($this->filter->isTime(SismaTime::createFromStandardTimeFormat('20:15:50')));
+        $this->assertFalse($this->filter->isTime(new SismaDate()));
+        $this->assertFalse($this->filter->isTime(new SismaDateTime()));
+        $this->assertFalse($this->filter->isTime(['array']));
+        $this->assertFalse($this->filter->isTime(1.1));
+        $this->assertFalse($this->filter->isTime(1));
+        $this->assertFalse($this->filter->isTime('string'));
+        $this->assertFalse($this->filter->isTime(true));
+        $this->assertFalse($this->filter->isTime(false));
+        $this->assertFalse($this->filter->isTime(null));
+        $this->assertFalse($this->filter->isTime(''));
     }
 
     public function testIsEntity()
@@ -334,38 +342,38 @@ class FilterTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $dataMapperMock = $this->createMock(DataMapper::class);
-        $this->assertTrue(Filter::isEntity(new BaseSample($dataMapperMock)));
-        $this->assertFalse(Filter::isEntity(['array']));
-        $this->assertFalse(Filter::isEntity(1.1));
-        $this->assertFalse(Filter::isEntity(1));
-        $this->assertFalse(Filter::isEntity('string'));
-        $this->assertFalse(Filter::isEntity(true));
-        $this->assertFalse(Filter::isEntity(false));
-        $this->assertFalse(Filter::isEntity(null));
-        $this->assertFalse(Filter::isEntity(''));
+        $this->assertTrue($this->filter->isEntity(new BaseSample($dataMapperMock)));
+        $this->assertFalse($this->filter->isEntity(['array']));
+        $this->assertFalse($this->filter->isEntity(1.1));
+        $this->assertFalse($this->filter->isEntity(1));
+        $this->assertFalse($this->filter->isEntity('string'));
+        $this->assertFalse($this->filter->isEntity(true));
+        $this->assertFalse($this->filter->isEntity(false));
+        $this->assertFalse($this->filter->isEntity(null));
+        $this->assertFalse($this->filter->isEntity(''));
     }
 
     public function testIsEnumeration()
     {
-        $this->assertTrue(Filter::isEnumeration(SampleType::one));
-        $this->assertFalse(Filter::isEnumeration(['array']));
-        $this->assertFalse(Filter::isEnumeration(1.1));
-        $this->assertFalse(Filter::isEnumeration(1));
-        $this->assertFalse(Filter::isEnumeration('string'));
-        $this->assertFalse(Filter::isEnumeration(true));
-        $this->assertFalse(Filter::isEnumeration(false));
-        $this->assertFalse(Filter::isEnumeration(null));
-        $this->assertFalse(Filter::isEnumeration(''));
+        $this->assertTrue($this->filter->isEnumeration(SampleType::one));
+        $this->assertFalse($this->filter->isEnumeration(['array']));
+        $this->assertFalse($this->filter->isEnumeration(1.1));
+        $this->assertFalse($this->filter->isEnumeration(1));
+        $this->assertFalse($this->filter->isEnumeration('string'));
+        $this->assertFalse($this->filter->isEnumeration(true));
+        $this->assertFalse($this->filter->isEnumeration(false));
+        $this->assertFalse($this->filter->isEnumeration(null));
+        $this->assertFalse($this->filter->isEnumeration(''));
     }
     
     public function testCustomFilter()
     {
-        $this->assertTrue(Filter::customFilter('Prova1_.', '/^[a-zA-Z0-9_.]+$/'));
-        $this->assertTrue(Filter::customFilter('provauno.', '/^[a-zA-Z0-9_.]+$/'));
-        $this->assertFalse(Filter::customFilter('Prov@1_.', '/^[a-zA-Z0-9_.]+$/'));
-        $this->assertFalse(Filter::customFilter('prova uno', '/^[a-zA-Z0-9_.]+$/'));
-        $this->assertFalse(Filter::customFilter('?rova', '/^[a-zA-Z0-9_.]+$/'));
-        $this->assertFalse(Filter::customFilter('provà', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertTrue($this->filter->customFilter('Prova1_.', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertTrue($this->filter->customFilter('provauno.', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse($this->filter->customFilter('Prov@1_.', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse($this->filter->customFilter('prova uno', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse($this->filter->customFilter('?rova', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse($this->filter->customFilter('provà', '/^[a-zA-Z0-9_.]+$/'));
     }
 
 }

@@ -38,22 +38,22 @@ use SismaFramework\Orm\CustomTypes\SismaTime;
 class Filter
 {
 
-    public static function noFilter($value): bool
+    public function noFilter($value): bool
     {
         return true;
     }
 
-    public static function isNotNull($value): bool
+    public function isNotNull($value): bool
     {
         return is_null($value) ? false : true;
     }
 
-    public static function isNotFalse($value): bool
+    public function isNotFalse($value): bool
     {
         return ($value === false) ? false : true;
     }
 
-    public static function isNotEmpty($value): bool
+    public function isNotEmpty($value): bool
     {
         if ($value === 0) {
             return true;
@@ -62,7 +62,7 @@ class Filter
         }
     }
 
-    public static function isString($value): bool
+    public function isString($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -70,7 +70,7 @@ class Filter
         return $result;
     }
 
-    public static function isMinLimitString($value, int $minLimit): bool
+    public function isMinLimitString($value, int $minLimit): bool
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
@@ -78,7 +78,7 @@ class Filter
         return $result;
     }
 
-    public static function isMaxLimitString($value, int $maxLimit): bool
+    public function isMaxLimitString($value, int $maxLimit): bool
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
@@ -86,7 +86,7 @@ class Filter
         return $result;
     }
 
-    public static function isLimitString($value, int $minLimit, int $maxLimit): bool
+    public function isLimitString($value, int $minLimit, int $maxLimit): bool
     {
         $result = true;
         $result = (self::isMinLimitString($value, $minLimit)) ? $result : false;
@@ -94,7 +94,7 @@ class Filter
         return $result;
     }
 
-    public static function isAlphabeticString($value): bool
+    public function isAlphabeticString($value): bool
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
@@ -102,7 +102,7 @@ class Filter
         return $result;
     }
 
-    public static function isMinLimitAlphabeticString($value, int $minLimit): bool
+    public function isMinLimitAlphabeticString($value, int $minLimit): bool
     {
         $result = true;
         $result = (self::isAlphabeticString($value)) ? $result : false;
@@ -110,7 +110,7 @@ class Filter
         return $result;
     }
 
-    public static function isMaxLimitAlphabeticString($value, int $maxLimit): bool
+    public function isMaxLimitAlphabeticString($value, int $maxLimit): bool
     {
         $result = true;
         $result = (self::isAlphabeticString($value)) ? $result : false;
@@ -118,7 +118,7 @@ class Filter
         return $result;
     }
 
-    public static function isLimitAlphabeticString($value, int $minLimit, int $maxLimit): bool
+    public function isLimitAlphabeticString($value, int $minLimit, int $maxLimit): bool
     {
         $result = true;
         $result = (self::isMinLimitAlphabeticString($value, $minLimit)) ? $result : false;
@@ -126,7 +126,7 @@ class Filter
         return $result;
     }
 
-    public static function isAlphanumericString($value): bool
+    public function isAlphanumericString($value): bool
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
@@ -134,7 +134,7 @@ class Filter
         return $result;
     }
 
-    public static function isMinLimitAlphanumericString($value, int $minLimit): bool
+    public function isMinLimitAlphanumericString($value, int $minLimit): bool
     {
         $result = true;
         $result = (self::isAlphanumericString($value)) ? $result : false;
@@ -142,7 +142,7 @@ class Filter
         return $result;
     }
 
-    public static function isMaxLimitAlphanumericString($value, int $maxLimit): bool
+    public function isMaxLimitAlphanumericString($value, int $maxLimit): bool
     {
         $result = true;
         $result = (self::isAlphanumericString($value)) ? $result : false;
@@ -150,7 +150,7 @@ class Filter
         return $result;
     }
 
-    public static function isLimitAlphanumericString($value, int $minLimit, int $maxLimit): bool
+    public function isLimitAlphanumericString($value, int $minLimit, int $maxLimit): bool
     {
         $result = true;
         $result = (self::isMinLimitAlphanumericString($value, $minLimit)) ? $result : false;
@@ -158,7 +158,7 @@ class Filter
         return $result;
     }
 
-    public static function isStrictAlphanumericString($value): bool
+    public function isStrictAlphanumericString($value): bool
     {
         $result = true;
         $result = (self::isAlphanumericString($value)) ? $result : false;
@@ -167,7 +167,7 @@ class Filter
         return $result;
     }
 
-    public static function isMinLimitStrictAlphanumericString($value, int $minLimit): bool
+    public function isMinLimitStrictAlphanumericString($value, int $minLimit): bool
     {
         $result = true;
         $result = (self::isStrictAlphanumericString($value)) ? $result : false;
@@ -175,7 +175,7 @@ class Filter
         return $result;
     }
 
-    public static function isMaxLimitStrictAlphanumericString($value, int $maxLimit): bool
+    public function isMaxLimitStrictAlphanumericString($value, int $maxLimit): bool
     {
         $result = true;
         $result = (self::isStrictAlphanumericString($value)) ? $result : false;
@@ -183,7 +183,7 @@ class Filter
         return $result;
     }
 
-    public static function isLimitStrictAlphanumericString($value, int $minLimit, int $maxLimit): bool
+    public function isLimitStrictAlphanumericString($value, int $minLimit, int $maxLimit): bool
     {
         $result = true;
         $result = (self::isMinLimitStrictAlphanumericString($value, $minLimit)) ? $result : false;
@@ -191,7 +191,7 @@ class Filter
         return $result;
     }
 
-    public static function isSecurePassword($value): bool
+    public function isSecurePassword($value): bool
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
@@ -201,7 +201,7 @@ class Filter
         return $result;
     }
 
-    public static function isEmail($value): bool
+    public function isEmail($value): bool
     {
         $result = true;
         $result = (self::isString($value)) ? $result : false;
@@ -211,7 +211,7 @@ class Filter
         return $result;
     }
 
-    public static function isNumeric($value): bool
+    public function isNumeric($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -219,7 +219,7 @@ class Filter
         return $result;
     }
 
-    public static function isInteger($value): bool
+    public function isInteger($value): bool
     {
         $result = true;
         $result = (self::isNumeric($value)) ? $result : false;
@@ -227,7 +227,7 @@ class Filter
         return $result;
     }
 
-    public static function isFloat($value): bool
+    public function isFloat($value): bool
     {
         $result = true;
         $result = (self::isNumeric($value)) ? $result : false;
@@ -235,12 +235,12 @@ class Filter
         return $result;
     }
 
-    public static function isBoolean($value): bool
+    public function isBoolean($value): bool
     {
         return is_bool($value);
     }
 
-    public static function isArray($value): bool
+    public function isArray($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -248,7 +248,7 @@ class Filter
         return $result;
     }
 
-    public static function isDate($value): bool
+    public function isDate($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -258,7 +258,7 @@ class Filter
         return $result;
     }
 
-    public static function isDatetime($value): bool
+    public function isDatetime($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -268,7 +268,7 @@ class Filter
         return $result;
     }
 
-    public static function isTime($value): bool
+    public function isTime($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -278,7 +278,7 @@ class Filter
         return $result;
     }
 
-    public static function isUploadedFile($value): bool
+    public function isUploadedFile($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -291,7 +291,7 @@ class Filter
         return $result;
     }
 
-    public static function isEntity($value): bool
+    public function isEntity($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -299,7 +299,7 @@ class Filter
         return $result;
     }
 
-    public static function isEnumeration($value): bool
+    public function isEnumeration($value): bool
     {
         $result = true;
         $result = (self::isNotEmpty($value)) ? $result : false;
@@ -307,8 +307,14 @@ class Filter
         return $result;
     }
 
-    public static function customFilter(mixed $value, string $regularExpression): bool
+    public function customFilter(mixed $value, string $regularExpression): bool
     {
         return preg_match($regularExpression, $value);
+    }
+
+    public static function __callStatic(string $name, array $arguments): mixed
+    {
+        $instance = new Filter();
+        $instance->$name(...$arguments);
     }
 }
