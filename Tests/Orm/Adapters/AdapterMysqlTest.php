@@ -46,9 +46,9 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 class AdapterMysqlTest extends TestCase
 {
 
-    public function __construct(string $name)
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name);
         $connectionMock = $this->createMock(\PDO::class);
         AdapterMysql::setConnection($connectionMock);
     }

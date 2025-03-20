@@ -40,9 +40,9 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class RenderTest extends TestCase
 {
-    public function __construct(string $name)
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         ModuleManager::setApplicationModule('SismaFramework');

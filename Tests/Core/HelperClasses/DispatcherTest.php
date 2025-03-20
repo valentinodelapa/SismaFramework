@@ -52,9 +52,9 @@ class DispatcherTest extends TestCase
     private FixturesManager $fixturesManagerMock;
     private DataMapper $dataMapperMock;
 
-    public function __construct($name = null)
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name);
         $this->requestMock = $this->createMock(Request::class);
         $this->requestMock->server['REQUEST_URI'] = '/';
         $this->requestMock->server['QUERY_STRING'] = '';
