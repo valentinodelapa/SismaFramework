@@ -106,11 +106,6 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/config.html#constant_DEFAULT_CONTROLLER"
         },                {
-            "fqsen": "\\Config\\DEFAULT_LOCALE_TYPE",
-            "name": "DEFAULT_LOCALE_TYPE",
-            "summary": "",
-            "url": "namespaces/config.html#constant_DEFAULT_LOCALE_TYPE"
-        },                {
             "fqsen": "\\Config\\ENTITIES",
             "name": "ENTITIES",
             "summary": "",
@@ -961,6 +956,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AapplyFilter\u0028\u0029",
+            "name": "applyFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#method_applyFilter"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AnoFilter",
             "name": "noFilter",
             "summary": "",
@@ -971,20 +971,80 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isString"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMinLimitString",
+            "name": "isMinLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMinLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMaxLimitString",
+            "name": "isMaxLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMaxLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisLimitString",
+            "name": "isLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isLimitString"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisAlphabeticString",
             "name": "isAlphabeticString",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMinLimitAlphabeticString",
+            "name": "isMinLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMinLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMaxLimitAlphabeticString",
+            "name": "isMaxLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMaxLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisLimitAlphabeticString",
+            "name": "isLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisAlphanumericString",
+            "name": "isAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMinLimitAlphanumericString",
+            "name": "isMinLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMinLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMaxLimitAlphanumericString",
+            "name": "isMaxLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMaxLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisLimitAlphanumericString",
+            "name": "isLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isLimitAlphanumericString"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisStrictAlphanumericString",
             "name": "isStrictAlphanumericString",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isStrictAlphanumericString"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisAlphanumericString",
-            "name": "isAlphanumericString",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMinLimitStrictAlphanumericString",
+            "name": "isMinLimitStrictAlphanumericString",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isAlphanumericString"
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMinLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMaxLimitStrictAlphanumericString",
+            "name": "isMaxLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMaxLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisLimitStrictAlphanumericString",
+            "name": "isLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isLimitStrictAlphanumericString"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisSecurePassword",
             "name": "isSecurePassword",
@@ -1041,15 +1101,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isUploadedFile"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisEntity",
+            "name": "isEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isEntity"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisEnumeration",
             "name": "isEnumeration",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isEnumeration"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisEntity",
-            "name": "isEntity",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AcustomFilter",
+            "name": "customFilter",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isEntity"
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_customFilter"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language",
             "name": "Language",
@@ -1066,25 +1131,210 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#method_getISO6391Label"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aitalian",
-            "name": "italian",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aarabic",
+            "name": "arabic",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_italian"
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_arabic"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AamericanEnglish",
-            "name": "americanEnglish",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Abengali",
+            "name": "bengali",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_americanEnglish"
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_bengali"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Abulgarian",
+            "name": "bulgarian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_bulgarian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Achinese",
+            "name": "chinese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_chinese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Acroatian",
+            "name": "croatian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_croatian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aczech",
+            "name": "czech",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_czech"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Adanish",
+            "name": "danish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_danish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Agerman",
+            "name": "german",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_german"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Agreek",
+            "name": "greek",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_greek"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AusEnglish",
+            "name": "usEnglish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_usEnglish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aenglish",
+            "name": "english",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_english"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aspanish",
             "name": "spanish",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_spanish"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Agerman",
-            "name": "german",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aestonian",
+            "name": "estonian",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_german"
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_estonian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Apersian",
+            "name": "persian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_persian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Afinnish",
+            "name": "finnish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_finnish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Afrench",
+            "name": "french",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_french"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ahebrew",
+            "name": "hebrew",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_hebrew"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ahindi",
+            "name": "hindi",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_hindi"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ahungarian",
+            "name": "hungarian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_hungarian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aindonesian",
+            "name": "indonesian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_indonesian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aitalian",
+            "name": "italian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_italian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ajapanese",
+            "name": "japanese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_japanese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Akazakh",
+            "name": "kazakh",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_kazakh"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Akorean",
+            "name": "korean",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_korean"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Alatvian",
+            "name": "latvian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_latvian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Alithuanian",
+            "name": "lithuanian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_lithuanian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Adutch",
+            "name": "dutch",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_dutch"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Anorwegian",
+            "name": "norwegian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_norwegian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Apolish",
+            "name": "polish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_polish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aportuguese",
+            "name": "portuguese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_portuguese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AbrazilianPortuguese",
+            "name": "brazilianPortuguese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_brazilianPortuguese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aromanian",
+            "name": "romanian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_romanian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Arussian",
+            "name": "russian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_russian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aserbian",
+            "name": "serbian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_serbian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aslovak",
+            "name": "slovak",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_slovak"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aslovenian",
+            "name": "slovenian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_slovenian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aswedish",
+            "name": "swedish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_swedish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Athai",
+            "name": "thai",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_thai"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aturkish",
+            "name": "turkish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_turkish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aukrainian",
+            "name": "ukrainian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_ukrainian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Avietnamese",
+            "name": "vietnamese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_vietnamese"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\RequestType",
             "name": "RequestType",
@@ -1280,6 +1530,11 @@ Search.appendIndex(
             "name": "svg",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Resource.html#enumcase_svg"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Resource\u003A\u003Atpl",
+            "name": "tpl",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Resource.html#enumcase_tpl"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Resource\u003A\u003Attf",
             "name": "ttf",
@@ -2511,6 +2766,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEnumeration"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003A__callStatic\u0028\u0029",
+            "name": "__callStatic",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method___callStatic"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager",
             "name": "FixturesManager",
             "summary": "",
@@ -2655,11 +2920,6 @@ Search.appendIndex(
             "name": "customLanguage",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#property_customLanguage"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003A\u0024defaultLocaleType",
-            "name": "defaultLocaleType",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#property_defaultLocaleType"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003A\u0024localesPath",
             "name": "localesPath",
@@ -3361,25 +3621,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Templater.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AsetStructural\u0028\u0029",
-            "name": "setStructural",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_setStructural"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgenerateTemplate\u0028\u0029",
             "name": "generateTemplate",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateTemplate"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgetTemplatePath\u0028\u0029",
-            "name": "getTemplatePath",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AparseTemplate\u0028\u0029",
+            "name": "parseTemplate",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_getTemplatePath"
+            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_parseTemplate"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003A\u0024isStructural",
-            "name": "isStructural",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgenerateStructuralTemplate\u0028\u0029",
+            "name": "generateStructuralTemplate",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#property_isStructural"
+            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateStructuralTemplate"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003A\u0024structuralTemplatesPath",
             "name": "structuralTemplatesPath",
@@ -6426,6 +6681,176 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-CustomTypes-FormFilterErrorTest.html#method_testGetErrorsToArray"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest",
+            "name": "FilterTypeTest",
+            "summary": "Description\u0020of\u0020FilterTypeTest",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_setUp"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestNoFilter\u0028\u0029",
+            "name": "testNoFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testNoFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsString\u0028\u0029",
+            "name": "testIsString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMinLimitString\u0028\u0029",
+            "name": "testIsMinLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMinLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMaxLimitString\u0028\u0029",
+            "name": "testIsMaxLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMaxLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsLimitString\u0028\u0029",
+            "name": "testIsLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsAlphabeticString\u0028\u0029",
+            "name": "testIsAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMinLimitAlphabeticString\u0028\u0029",
+            "name": "testIsMinLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMinLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMaxLimitAlphabeticString\u0028\u0029",
+            "name": "testIsMaxLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMaxLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsLimitAlphabeticString\u0028\u0029",
+            "name": "testIsLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsAlphanumericString\u0028\u0029",
+            "name": "testIsAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMinLimitAlphanumericString\u0028\u0029",
+            "name": "testIsMinLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMinLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMaxLimitAlphanumericString\u0028\u0029",
+            "name": "testIsMaxLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMaxLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsLimitAlphanumericString\u0028\u0029",
+            "name": "testIsLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsStrictAlphanumericString\u0028\u0029",
+            "name": "testIsStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMinLimitStrictAlphanumericString\u0028\u0029",
+            "name": "testIsMinLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMinLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMaxLimitStrictAlphanumericString\u0028\u0029",
+            "name": "testIsMaxLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMaxLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsLimitStrictAlphanumericString\u0028\u0029",
+            "name": "testIsLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsSecurePassword\u0028\u0029",
+            "name": "testIsSecurePassword",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsSecurePassword"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsEmail\u0028\u0029",
+            "name": "testIsEmail",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsEmail"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsNumeric\u0028\u0029",
+            "name": "testIsNumeric",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsNumeric"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsInteger\u0028\u0029",
+            "name": "testIsInteger",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsInteger"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsFloat\u0028\u0029",
+            "name": "testIsFloat",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsFloat"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsBoolean\u0028\u0029",
+            "name": "testIsBoolean",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsBoolean"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsArray\u0028\u0029",
+            "name": "testIsArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsDate\u0028\u0029",
+            "name": "testIsDate",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsDate"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsDatetime\u0028\u0029",
+            "name": "testIsDatetime",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsDatetime"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsTime\u0028\u0029",
+            "name": "testIsTime",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsTime"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsUploadedFile\u0028\u0029",
+            "name": "testIsUploadedFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsUploadedFile"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsEntity\u0028\u0029",
+            "name": "testIsEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsEnumeration\u0028\u0029",
+            "name": "testIsEnumeration",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsEnumeration"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestCustomFilter\u0028\u0029",
+            "name": "testCustomFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testCustomFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003A\u0024filterMock",
+            "name": "filterMock",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#property_filterMock"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DebuggerTest",
             "name": "DebuggerTest",
             "summary": "Description\u0020of\u0020DebuggerTest",
@@ -6661,6 +7086,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FilterTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html#method_setUp"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FilterTest\u003A\u003AtestNoFilter\u0028\u0029",
             "name": "testNoFilter",
             "summary": "",
@@ -6820,6 +7250,16 @@ Search.appendIndex(
             "name": "testIsEnumeration",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html#method_testIsEnumeration"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FilterTest\u003A\u003AtestCustomFilter\u0028\u0029",
+            "name": "testCustomFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html#method_testCustomFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FilterTest\u003A\u003A\u0024filter",
+            "name": "filter",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html#property_filter"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FixturesManagerTest",
             "name": "FixturesManagerTest",
@@ -7220,6 +7660,21 @@ Search.appendIndex(
             "name": "testSessionAppendNestedItem",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-SessionTest.html#method_testSessionAppendNestedItem"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Traits\\SelectableEnumerationTest",
+            "name": "SelectableEnumerationTest",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Traits-SelectableEnumerationTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Traits\\SelectableEnumerationTest\u003A\u003AtestGetFriendlyLabel\u0028\u0029",
+            "name": "testGetFriendlyLabel",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Traits-SelectableEnumerationTest.html#method_testGetFriendlyLabel"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Traits\\SelectableEnumerationTest\u003A\u003AtestGetChoiceFromEnumerations\u0028\u0029",
+            "name": "testGetChoiceFromEnumerations",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Traits-SelectableEnumerationTest.html#method_testGetChoiceFromEnumerations"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest",
             "name": "AdapterMysqlTest",
@@ -9221,10 +9676,20 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-tests-core-customtypes.html"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations",
+            "name": "Enumerations",
+            "summary": "",
+            "url": "namespaces/sismaframework-tests-core-enumerations.html"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses",
             "name": "HelperClasses",
             "summary": "",
             "url": "namespaces/sismaframework-tests-core-helperclasses.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Traits",
+            "name": "Traits",
+            "summary": "",
+            "url": "namespaces/sismaframework-tests-core-traits.html"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters",
             "name": "Adapters",

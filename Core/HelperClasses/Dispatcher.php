@@ -52,7 +52,7 @@ class Dispatcher
     private DataMapper $dataMapper;
     private array $crawlComponentMakerList = [];
     private CrawlComponentMakerInterface $currentCrawlComponentMaker;
-    private static int $reloadAttempts = 0;
+    private int $reloadAttempts = 0;
     private Request $request;
     private string $originalPath;
     private string $path;
@@ -214,7 +214,7 @@ class Dispatcher
 
     private function switchNotFoundActions(): Response
     {
-        if (self::$reloadAttempts < $this->config->maxReloadAttempts) {
+        if ($this->reloadAttempts < self::$maxReoladAttempts) {
             return $this->reloadDispatcher();
         } else {
             throw new PageNotFoundException($this->originalPath);
@@ -247,7 +247,7 @@ class Dispatcher
             Router::concatenateMetaUrl('/' . $this->pathController);
             $this->path = '/' . implode('/', $this->pathParts);
             $this->defaultControllerChecked = $this->defaultActionChecked = false;
-            self::$reloadAttempts++;
+            $this->reloadAttempts++;
         }
     }
 

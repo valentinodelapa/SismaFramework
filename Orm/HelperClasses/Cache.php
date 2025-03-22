@@ -62,6 +62,11 @@ class Cache
     {
         return static::$entityCache[$entityName][$entityId];
     }
+	
+    public static function clearEntityCache(): void
+    {
+        static::$entityCache = [];
+    }
 
     public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null, ?BaseConfig $customConfig = null): array
     {
@@ -97,14 +102,14 @@ class Cache
             return self::getForeignKeyDataWithParents($parentReferencedEntityName, $propertyName);
         }
     }
-    
+
     private static function getForeignKeyDataWithAbstractParent(string $referencedEntityName, ?string $propertyName = null): array
     {
-        if($propertyName === null){
+        if ($propertyName === null) {
             return static::$foreighKeyDataCache[$referencedEntityName];
-        }elseif(array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])){
+        } elseif (array_key_exists($propertyName, static::$foreighKeyDataCache[$referencedEntityName])) {
             return static::$foreighKeyDataCache[$referencedEntityName][$propertyName];
-        }else{
+        } else {
             throw new CacheException($referencedEntityName . (($propertyName !== null) ? ' - ' . $propertyName : ''));
         }
     }
