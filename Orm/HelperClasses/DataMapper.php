@@ -255,6 +255,7 @@ class DataMapper
         Parser::unparseValues($bindValues);
         $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
+            Cache::clearEntityCache();
             $entity->unsetPrimaryKey();
         }
         return $result;
@@ -266,6 +267,9 @@ class DataMapper
         $cmd = $query->getCommandToExecute(Statement::delete);
         Parser::unparseValues($bindValues);
         $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        if ($result) {
+            Cache::clearEntityCache();
+        }
         return $result;
     }
 
