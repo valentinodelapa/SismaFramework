@@ -111,7 +111,6 @@ class CacheTest extends TestCase
         $cacheInformationsOne = Cache::getForeignKeyData(ReferencedSample::class);
         $this->assertIsArray($cacheInformationsOne);
         $this->assertArrayHasKey('baseSample', $cacheInformationsOne);
-        unlink($this->configTest->referenceCachePath);
         $this->assertFalse(file_exists($this->configTest->referenceCachePath));
         Cache::clearForeighKeyDataCache();
         $cacheInformationsTwo = Cache::getForeignKeyData(ReferencedSample::class);
