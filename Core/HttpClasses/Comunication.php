@@ -37,7 +37,7 @@ class Comunication
 
     public static function getComunicationProtocol(?BaseConfig $customConfig = null): ComunicationProtocol
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $request = new Request();
         if ($config->httpsIsForced) {
             return ComunicationProtocol::https;

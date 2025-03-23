@@ -27,6 +27,8 @@
 namespace SismaFramework\Tests\Orm\ResultSets;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
@@ -36,6 +38,12 @@ use SismaFramework\TestsApplication\Entities\BaseSample;
  */
 class ResultSetMysqlTest extends TestCase
 {
+    public function setUp(): void
+    {
+        BaseConfig::setInstance(new ResultSetMysqlConfigTest());
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+    }
 
     public function testNumRows()
     {
@@ -224,5 +232,28 @@ class ResultSetMysqlTest extends TestCase
             $this->assertInstanceOf(BaseSample::class, $baseSample);
             $current++;
         }
+    }
+}
+
+class ResultSetMysqlConfigTest extends BaseConfig
+{
+    
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = true;
+        $this->ormCache = true;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
     }
 }

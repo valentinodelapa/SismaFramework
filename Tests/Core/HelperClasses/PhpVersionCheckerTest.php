@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 
@@ -39,23 +40,32 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
 class PhpVersionCheckerTest extends TestCase
 {
 
+    private PhpVersionCheckerConfigTest $phpVersionCheckerConfigTest;
+
+    #[\Override]
+    public function setUp():void
+    {
+        $this->phpVersionCheckerConfigTest = new PhpVersionCheckerConfigTest();
+        BaseConfig::setInstance($this->phpVersionCheckerConfigTest);
+    }
+
     #[RunInSeparateProcess]
     public function testMinimumMajorVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);
         PhpVersionChecker::forceCurrentMajorVersionValue(7);
-        PhpVersionChecker::checkPhpVersion();
+        PhpVersionChecker::checkPhpVersion($this->phpVersionCheckerConfigTest);
     }
-    
+
     #[RunInSeparateProcess]
     public function testMinimumMinorVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);
         PhpVersionChecker::forceCurrentMajorVersionValue(8);
         PhpVersionChecker::forceCurrentMinorVersionValue(0);
-        PhpVersionChecker::checkPhpVersion();
+        PhpVersionChecker::checkPhpVersion($this->phpVersionCheckerConfigTest);
     }
-    
+
     #[RunInSeparateProcess]
     public function testMinimumReleaseVersionNotPassed()
     {
@@ -63,7 +73,30 @@ class PhpVersionCheckerTest extends TestCase
         PhpVersionChecker::forceCurrentMajorVersionValue(8);
         PhpVersionChecker::forceCurrentMinorVersionValue(1);
         PhpVersionChecker::forceCurrentReleaseVersionValue(0);
-        PhpVersionChecker::forceMinimumReleaseVersionValue(1);
-        PhpVersionChecker::checkPhpVersion();
+        PhpVersionChecker::checkPhpVersion($this->phpVersionCheckerConfigTest);
+    }
+}
+
+class PhpVersionCheckerConfigTest extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->minimumMajorPhpVersion = 8;
+        $this->minimumMinorPhpVersion = 1;
+        $this->minimumReleasePhpVersion = 1;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
     }
 }

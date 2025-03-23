@@ -69,9 +69,9 @@ abstract class BaseAdapter
         self::$connection = $connection;
     }
 
-    public static function &getDefault(?BaseConfig $config = null): ?BaseAdapter
+    public static function &getDefault(?BaseConfig $customConfig = null): ?BaseAdapter
     {
-        $config = $config ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         if (static::$adapter === null) {
             $defaultAdapterType = $config->defaultAdapterType;
             $defaultAdapter = static::create($defaultAdapterType->getAdapterClass(), [

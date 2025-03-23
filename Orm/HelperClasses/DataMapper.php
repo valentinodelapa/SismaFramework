@@ -59,7 +59,7 @@ class DataMapper
     public function __construct(?BaseAdapter $adapter = null, ?BaseConfig $config = null)
     {
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
-        $this->config = $config ?? BaseConfig::getDefault();
+        $this->config = $config ?? BaseConfig::getInstance();
         $this->ormCacheStatus = $this->config->ormCache;
     }
 

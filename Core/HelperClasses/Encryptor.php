@@ -42,19 +42,19 @@ class Encryptor
 
     public static function getSimpleHash(string $text, ?BaseConfig $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         return hash($config->simpleHashAlgorithm, $text);
     }
 
     public static function verifySimpleHash(string $text, string $hash, ?BaseConfig $customConfig = null): bool
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         return hash($config->simpleHashAlgorithm, $text) === $hash;
     }
 
     public static function getBlowfishHash(string $text, ?BaseConfig $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         return password_hash($text, PASSWORD_BCRYPT, [
             'cost' => $config->blowfishHashWorkload
         ]);
@@ -67,19 +67,19 @@ class Encryptor
 
     public static function createInizializationVector(?BaseConfig $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         return openssl_random_pseudo_bytes($config->initializationVectorBytes);
     }
 
     public static function encryptString(string $plainText, string $initializationVector, ?BaseConfig $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         return openssl_encrypt($plainText, $config->encryptionAlgorithm, $config->encryptionPassphrase, 0, $initializationVector);
     }
 
     public static function decryptString(string $cipherText, string $initializationVector, ?BaseConfig $customConfig = null): string|false
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         return openssl_decrypt($cipherText, $config->encryptionAlgorithm, $config->encryptionPassphrase, 0, $initializationVector);
     }
 }

@@ -27,7 +27,10 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\NotationManager;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 
 /**
@@ -65,7 +68,14 @@ class NotationManagerTest extends TestCase
     
     public function testConvertEntityToTableName()
     {
-        $baseSample = new BaseSample();
+        $configTest = new NotationManagerConfigTest();
+        BaseConfig::setInstance($configTest);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->setConstructorArgs([$baseAdapterMock, $configTest])
+                ->getMock();
+        $baseSample = new BaseSample($dataMapperMock, $configTest);
         $result =NotationManager::convertEntityToTableName($baseSample);
         $this->assertEquals('base_sample', $result);
     }
@@ -80,5 +90,27 @@ class NotationManagerTest extends TestCase
     {
         $result = NotationManager::convertColumnNameToPropertyName('referenced_entity_without_initialization_id');
         $this->assertEquals('referencedEntityWithoutInitialization', $result);
+    }
+}
+
+class NotationManagerConfigTest extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+                return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->ormCache = true;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
     }
 }

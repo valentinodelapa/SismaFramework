@@ -54,7 +54,7 @@ class Parser
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             if ($parseEntity) {
-                $config = $customConfig ?? BaseConfig::getDefault();
+                $config = $customConfig ?? BaseConfig::getInstance();
                 return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper, $config);
             } else {
                 return intval($value);
@@ -76,7 +76,7 @@ class Parser
 
     public static function parseEntity(string $entityName, int $value, DataMapper $dataMapper = new DataMapper(), ?BaseConfig $customConfig = null): BaseEntity
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $modelName = str_replace($config->entityNamespace, $config->modelNamespace, $entityName) . 'Model';
         $modelInstance = new $modelName($dataMapper);
         $entity = $modelInstance->getEntityById($value);

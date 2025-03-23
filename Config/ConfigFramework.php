@@ -29,16 +29,36 @@ namespace SismaFramework\Config;
 use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Orm\Enumerations\AdapterType;
 
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR. 'BaseClasses' . DIRECTORY_SEPARATOR . 'BaseConfig.php';
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Orm' . DIRECTORY_SEPARATOR . 'Enumerations' . DIRECTORY_SEPARATOR . 'AdapterType.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'BaseClasses' . DIRECTORY_SEPARATOR . 'BaseConfig.php';
 
 /**
  * Description of Config
  *
  * @author Valentino de Lapa
  */
-class Config extends BaseConfig
+class ConfigFramework extends BaseConfig
 {
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        switch ($name) {
+            case 'rootPath':
+            case 'autoloadNamespaceMapper':
+            case 'autoloadClassMapper':
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        $this->rootPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR;
+        $this->autoloadNamespaceMapper = [];
+        $this->autoloadClassMapper = [];
+    }
 
     #[\Override]
     public function setFrameworkConfigurations(): void
@@ -69,7 +89,7 @@ class Config extends BaseConfig
         $this->directoryUp = '..';
 
         // Configurazioni di sistema
-        $this->language = 'it_IT';
+        $this->language = Language::italian;
         $this->minimumMajorPhpVersion = 8;
         $this->minimumMinorPhpVersion = 1;
         $this->minimumReleasePhpVersion = 0;
@@ -77,8 +97,7 @@ class Config extends BaseConfig
         $this->configurationPassword = '';
 
         // Percorsi di sistema
-        $this->rootPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR;
-        $this->applicationPath = 'Sample' . DIRECTORY_SEPARATOR;
+        $this->applicationPath = $this->application . DIRECTORY_SEPARATOR;
         $this->applicationNamespace = 'Sample\\';
         $this->applicationAssetsPath = $this->applicationPath . 'Assets' . DIRECTORY_SEPARATOR;
         $this->systemPath = $this->rootPath . 'SismaFramework' . DIRECTORY_SEPARATOR;
@@ -92,8 +111,6 @@ class Config extends BaseConfig
         $this->developmentEnvironment = true;
         $this->httpsIsForced = false;
         $this->moduleFolders = ['SismaFramework'];
-        $this->autoloadNamespaceMapper = [];
-        $this->autoloadClassMapper = [];
 
         // Configurazioni Fixtures
         $this->fixturePath = $this->applicationPath . 'Fixtures' . DIRECTORY_SEPARATOR;
@@ -129,7 +146,6 @@ class Config extends BaseConfig
         $this->defaultControllerNamespace = $this->controllerNamespace . $this->defaultController;
         $this->fileGetContentMaxBytesLimit = 2097152;
         $this->readFileMaxBytesLimit = 104857600;
-        $this->robotsFile = 'robots.txt';
 
         // Configurazioni Render
         $this->localesPath = $this->applicationPath . 'Locales' . DIRECTORY_SEPARATOR;

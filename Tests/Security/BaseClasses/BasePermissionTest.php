@@ -28,10 +28,11 @@ namespace SismaFramework\Tests\Security\BaseClasses;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Security\Enumerations\AccessControlEntry;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Permissions\SamplePermission;
@@ -43,10 +44,11 @@ class BasePermissionTest extends TestCase
 {
 
     private DataMapper $dataMapperMock;
-    
+
     #[\Override]
     public function setUp(): void
     {
+        BaseConfig::setInstance(new BasePermissionConfigTest());
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
@@ -71,5 +73,32 @@ class BasePermissionTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
         SamplePermission::isAllowed(new BaseSample($this->dataMapperMock), AccessControlEntry::deny);
+    }
+}
+
+class BasePermissionConfigTest extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = true;
+        $this->logDevelopmentMaxRow = 100;
+        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->logPath = $this->logDirectoryPath . 'log.txt';
+        $this->logProductionMaxRow = 2;
+        $this->logVerboseActive = true;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
     }
 }

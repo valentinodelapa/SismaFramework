@@ -42,7 +42,7 @@ class Autoloader
     public function __construct(string $className, ?BaseConfig $config = null)
     {
         $this->className = $className;
-        $this->config = $config ?? BaseConfig::getDefault();
+        $this->config = $config ?? BaseConfig::getInstance();
     }
 
     public function findClass(): bool

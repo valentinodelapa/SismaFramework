@@ -36,7 +36,7 @@ use SismaFramework\Core\HelperClasses\BufferManager;
  */
 class NoLogException extends BaseException
 {
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         BufferManager::clear();

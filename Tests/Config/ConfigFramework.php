@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2025 Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,46 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Security\ExtendedClasses;
+namespace SismaFramework\Tests\Config;
 
 use SismaFramework\Core\BaseClasses\BaseConfig;
-use SismaFramework\Core\HelperClasses\BufferManager;
-use SismaFramework\Core\HelperClasses\Logger;
-use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Orm\Enumerations\AdapterType;
+
+require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'BaseClasses' . DIRECTORY_SEPARATOR . 'BaseConfig.php';
 
 /**
+ * Description of Config
+ *
  * @author Valentino de Lapa
  */
-abstract class LogException extends BaseException
+class ConfigFramework extends BaseConfig
 {
-    protected BaseConfig $config;
 
-    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null, ?BaseConfig $config = null)
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
     {
-        parent::__construct($message, $code, $previous);
-        $this->config = $config ?? BaseConfig::getInstance();
-        BufferManager::clear();
-        Logger::saveLog($message, $code, $this->getFile(), $this->getLine());
-        if ($this->config->logVerboseActive) {
-            Logger::saveTrace($this->getTrace());
+        switch ($name) {
+            case 'rootPath':
+            case 'autoloadNamespaceMapper':
+            case 'autoloadClassMapper':
+                return true;
+            default:
+                return false;
         }
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        $this->rootPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR;
+        $this->autoloadNamespaceMapper = [];
+        $this->autoloadClassMapper = [];
+    }
+
+    #[\Override]
+    public function setFrameworkConfigurations(): void
+    {
+        
     }
 }

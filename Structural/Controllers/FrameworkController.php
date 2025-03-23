@@ -60,7 +60,7 @@ class FrameworkController implements StructuralControllerInterface
     #[\Override]
     public function throwableError(\Throwable $throwable): Response
     {
-        $this->vars['project'] = BaseConfig::getDefault()->project;
+        $this->vars['project'] = BaseConfig::getInstance()->project;
         $this->vars['error'] = [
             'message' => $throwable->getMessage(),
             'type' => $throwable->getCode(),
@@ -75,7 +75,7 @@ class FrameworkController implements StructuralControllerInterface
     #[\Override]
     public function nonThrowableError(array $error, array $backtrace): Response
     {
-        $this->vars['project'] = BaseConfig::getDefault()->project;
+        $this->vars['project'] = BaseConfig::getInstance()->project;
         $this->vars['error'] = $error;
         $this->vars['backtrace'] = $backtrace;
         Render::setStructural();

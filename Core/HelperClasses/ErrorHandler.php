@@ -48,7 +48,7 @@ class ErrorHandler
 
     public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController(), ?BaseConfig $customConfig = null): void
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         register_shutdown_function(function () use ($controller, $config) {
             $error = error_get_last();
             $backtrace = debug_backtrace();
@@ -84,7 +84,7 @@ class ErrorHandler
             StructuralControllerInterface $structuralController = new FrameworkController(),
             ?BaseConfig $customConfig = null): Response
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         if ($config->developmentEnvironment) {
             return self::callThrowableErrorAction($structuralController, $exception);
         } else {
@@ -110,7 +110,7 @@ class ErrorHandler
             StructuralControllerInterface $structuralController = new FrameworkController(),
             ?BaseConfig $customConfig = null): Response
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         BufferManager::clear();
         Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
         if ($config->logVerboseActive) {

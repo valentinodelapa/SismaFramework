@@ -93,6 +93,11 @@ class Router
         return substr($relativeUrl, 1);
     }
 
+    public static function resetMetaUrl(): void
+    {
+        self::$metaUrl = '';
+    }
+
     public function reloadWithParsedQueryString($request = new Request()): Response
     {
         $requestUriParts = explode('?', $request->server['REQUEST_URI'], 2);

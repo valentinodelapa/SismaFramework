@@ -32,7 +32,6 @@ use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -67,7 +66,7 @@ abstract class BaseForm extends Submittable
     {
         parent::__construct();
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? BaseConfig::getDefault();
+        $this->config = $config ?? BaseConfig::getInstance();
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
     }

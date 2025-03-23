@@ -36,7 +36,7 @@ class PhpVersionException extends \Exception
 
     public function __construct(?BaseConfig $customConfig = null)
     {
-        $config = $config ?? BaseConfig::getDefault();
+        $config = $config ?? BaseConfig::getInstance();
         $phpMinimumVersionRequired = $config->minimumMajorPhpVersion . '.' . $config->minimumMinorPhpVersion . '.' . $config->minimumReleasePhpVersion;
         $phpActualVersion = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION;
         $message = "The minimum required version of PHP is " . $phpMinimumVersionRequired . ". Your version of PHP is " . $phpActualVersion . ".<br />Please update your PHP version to " . $phpMinimumVersionRequired . " or higher in order to use this application.";

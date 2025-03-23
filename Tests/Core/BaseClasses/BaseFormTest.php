@@ -28,6 +28,15 @@ namespace SismaFramework\Tests\Core\BaseClasses;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\Enumerations\ResponseType;
+use SismaFramework\Core\Exceptions\FormException;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\FakeBaseSample;
 use SismaFramework\TestsApplication\Entities\FakeReferencedSample;
@@ -42,14 +51,6 @@ use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\Exceptions\FormException;
-use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Orm\ExtendedClasses\StandardEntity;
-use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Orm\CustomTypes\SismaCollection;
 
 /**
  * Description of BaseFormTest
@@ -59,26 +60,29 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
 class BaseFormTest extends TestCase
 {
 
+    private BaseFormTestConfig $configTest;
     private DataMapper $dataMapperMock;
 
     #[\Override]
     public function setUp(): void
     {
+        $this->configTest = new BaseFormTestConfig();
+        BaseConfig::setInstance($this->configTest);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
-    
+
     public function testAddEntityFromFormWithException()
     {
         $this->expectException(FormException::class);
-        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm();
+        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->configTest);
         $baseSampleFormWithFakeEntityFromForm->handleRequest(new Request());
     }
 
     public function testFormForBaseEntityNotSubmitted()
     {
-        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
+        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->configTest);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $baseSampleForm->handleRequest($requestMock);
@@ -477,5 +481,45 @@ class BaseFormTest extends TestCase
         $fakeReferencedSampleForm = new FakeReferencedSampleForm($fakeReferencedSample, $this->dataMapperMock);
         $requestMock = $this->createMock(Request::class);
         $fakeReferencedSampleForm->handleRequest($requestMock);
+    }
+}
+
+class BaseFormTestConfig extends BaseConfig
+{
+
+    protected function isInitialConfiguration(string $name): bool
+    {
+        switch ($name) {
+            case 'rootPath':
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = false;
+        $this->entityNamespace = 'TestsApplication\\Entities\\';
+        $this->entityPath = 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR;
+        $this->logDevelopmentMaxRow = 100;
+        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->logPath = $this->logDirectoryPath . 'log.txt';
+        $this->logProductionMaxRow = 100;
+        $this->logVerboseActive = true;
+        $this->moduleFolders = [
+            'SismaFramework',
+        ];
+        $this->ormCache = true;
+        $this->primaryKeyPassAccepted = false;
+        $this->referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
+        $this->referenceCachePath = $this->referenceCacheDirectory . 'referenceCache.json';
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        $this->rootPath = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR;
     }
 }

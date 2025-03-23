@@ -86,7 +86,7 @@ class Dispatcher
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? BaseConfig::getDefault();
+        $this->config = $config ?? BaseConfig::getInstance();
     }
 
     public function addCrawlComponentMaker(CrawlComponentMakerInterface $crawlComponentMaker): void
@@ -142,6 +142,15 @@ class Dispatcher
         }
     }
 
+    private function cleanArrayShift(array &$array): ?string
+    {
+        $element = '';
+        while ($element === '') {
+            $element = array_shift($array);
+        }
+        return $element;
+    }
+
     private function selectModule(): void
     {
         ModuleManager::initializeApplicationModule();
@@ -152,15 +161,6 @@ class Dispatcher
                 break;
             }
         }
-    }
-
-    private function cleanArrayShift(array &$array): ?string
-    {
-        $element = '';
-        while ($element === '') {
-            $element = array_shift($array);
-        }
-        return $element;
     }
 
     private function checkControllerPresence(): bool
@@ -214,7 +214,7 @@ class Dispatcher
 
     private function switchNotFoundActions(): Response
     {
-        if ($this->reloadAttempts < self::$maxReoladAttempts) {
+        if ($this->reloadAttempts < $this->config->maxReloadAttempts) {
             return $this->reloadDispatcher();
         } else {
             throw new PageNotFoundException($this->originalPath);

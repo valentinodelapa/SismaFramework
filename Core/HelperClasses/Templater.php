@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Enumerations\Resource;
 
 /**
@@ -37,7 +38,7 @@ class Templater
 
     public static function generateTemplate(string $template, array $vars, Localizator $localizator = new Localizator(), ?BaseConfig $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $templatePath = ModuleManager::getExistingFilePath($config->templatesPath . $template, Resource::tpl);
         $varsAndLocales = array_merge($vars, $localizator->getTemplateLocaleArray($template));
         return self::parseTemplate($templatePath, $varsAndLocales);
@@ -55,7 +56,7 @@ class Templater
 
     public static function generateStructuralTemplate(string $template, array $vars, ?BaseConfig $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $templatePath = $config->structuralTemplatesPath . $template . '.' . Resource::tpl->value;
         return self::parseTemplate($templatePath, $vars);
     }

@@ -41,11 +41,12 @@ class ResourceMaker
 {
 
     private Request $request;
+    private BaseConfig $config;
     private $streamContex = null;
 
     public function __construct(Request $request = new Request(), ?BaseConfig $customConfig = null)
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $this->config = $customConfig ?? BaseConfig::getInstance();
         $this->request = $request;
     }
 

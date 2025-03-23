@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\Traits;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
@@ -36,12 +37,18 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 class SelectableEnumerationTest extends TestCase
 {
 
+    #[\Override]
+    public function setUp(): void
+    {
+        BaseConfig::setInstance(new SelectableEnumerationConfigTest());
+    }
+
     public function testGetFriendlyLabel()
     {
         $this->assertEquals('uno', SampleType::one->getFriendlyLabel(Language::italian));
         $this->assertEquals('due', SampleType::two->getFriendlyLabel(Language::italian));
     }
-    
+
     public function testGetChoiceFromEnumerations()
     {
         $choices = SampleType::getChoiceFromEnumerations(Language::italian);
@@ -49,6 +56,34 @@ class SelectableEnumerationTest extends TestCase
         $this->assertEquals([
             "uno" => "O",
             "due" => "T"
-        ], $choices);
+                ], $choices);
+    }
+}
+
+class SelectableEnumerationConfigTest extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        switch ($name) {
+            case 'rootPath':
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->language = Language::italian;
+        $this->localesPath = 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        $this->rootPath = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR;
     }
 }

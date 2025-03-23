@@ -37,7 +37,7 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class FixturesManager
 {
 
-    private static BaseConfig $config;
+    private BaseConfig $config;
     private array $fixturesArray;
     private array $entitiesArray = [];
     private DataMapper $dataMapper;
@@ -45,7 +45,7 @@ class FixturesManager
     public function __construct(DataMapper $dataMapper = new DataMapper(), ?BaseConfig $customConfig = null)
     {
         $this->dataMapper = $dataMapper;
-        $this->config = $customConfig ?? BaseConfig::getDefault();
+        $this->config = $customConfig ?? BaseConfig::getInstance();
     }
 
     public function isFixtures(array $pathParts): bool

@@ -39,7 +39,7 @@ class LockerTest extends TestCase
 
     public function testLockerClass()
     {
-        $testDirectoryPath = \Config\SYSTEM_PATH . \Config\APPLICATION_PATH . 'TestDirectory';
+        $testDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('lock_', true) . DIRECTORY_SEPARATOR;
         mkdir($testDirectoryPath);
         $this->assertFalse(Locker::folderIsLocked($testDirectoryPath));
         Locker::lockFolder($testDirectoryPath);

@@ -25,8 +25,7 @@
  */
 
 namespace SismaFramework\Orm\HelperClasses;
-
-use SismaFramework\Config\Config;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
@@ -70,7 +69,7 @@ class Cache
 
     public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null, ?BaseConfig $customConfig = null): array
     {
-        $config = $customConfig ?? Config::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         if (is_subclass_of($referencedEntityName, ReferencedEntity::class)) {
             if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
                 if (is_dir($config->referenceCacheDirectory) === false) {

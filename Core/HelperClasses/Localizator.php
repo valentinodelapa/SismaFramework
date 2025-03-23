@@ -44,7 +44,7 @@ class Localizator
     public function __construct(?Language $customLanguage = null, ?BaseConfig $customConfig = null)
     {
         $this->customLanguage = $customLanguage;
-        $this->config = $customConfig ?? BaseConfig::getDefault();
+        $this->config = $customConfig ?? BaseConfig::getInstance();
     }
 
     public function getPageLocaleArray(string $view): array
@@ -64,20 +64,10 @@ class Localizator
 
     private function getLocale(): array
     {
-        $language = $this->customLanguage ?? self::$injectedLanguage ?? $this->getDefaultLanguage();
+        $language = $this->customLanguage ?? self::$injectedLanguage ?? $this->config->language;
         $localePath = $this->getLocalePath($language);
         $locale = json_decode(file_get_contents($localePath), true);
         return $locale;
-    }
-
-    private function getDefaultLanguage(): Language
-    {
-        $defaultLanguage = Language::tryFrom($this->config->language);
-        if ($defaultLanguage instanceof Language) {
-            return $defaultLanguage;
-        } else {
-            throw new LocalizatorException('Formato lingua non corretto');
-        }
     }
 
     private function getLocalePath(Language $language): string
@@ -87,7 +77,7 @@ class Localizator
 
     public function getTemplateLocaleArray(string $template, ?BaseConfig $customConfig = null): array
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $locale = $this->getLocale($config);
         $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
         return $actualLocale;
@@ -96,7 +86,7 @@ class Localizator
     public function getEnumerationLocaleArray(\UnitEnum $enumeration, ?BaseConfig $customConfig = null): string
     {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $enumerationName = $reflectionEnumeration->getShortName();
         $locale = $this->getLocale($config);
         $field = $locale['enumerations'][lcfirst($enumerationName)];

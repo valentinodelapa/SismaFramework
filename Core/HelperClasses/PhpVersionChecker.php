@@ -41,7 +41,7 @@ class PhpVersionChecker
 
     public static function checkPhpVersion(?BaseConfig $customConfig = null): void
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         if (self::$currentMajorVersion < $config->minimumMajorPhpVersion) {
             throw new PhpVersionException($config);
         } elseif (self::$currentMajorVersion === $config->minimumMajorPhpVersion) {

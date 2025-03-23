@@ -49,7 +49,7 @@ class Render
             Debugger $debugger = new Debugger(),
             ?BaseConfig $customConfig = null): Response
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $response = self::getResponse($responseType);
         Debugger::setVars($vars);
         self::assemblesComponents($view, $localizator, $vars, $config);
@@ -112,7 +112,7 @@ class Render
             Localizator $localizator = new Localizator(),
             ?BaseConfig $customConfig = null): Response
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $response = self::getResponse($responseType);
         self::assemblesComponents($view, $localizator, $vars, $config);
         return $response;

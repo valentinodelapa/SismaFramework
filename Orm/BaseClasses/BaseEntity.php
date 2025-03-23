@@ -42,7 +42,7 @@ abstract class BaseEntity
     public bool $modified = false;
     public array $foreignKeys = [];
     protected DataMapper $dataMapper;
-    protected BaseConfig $baseConfig;
+    protected BaseConfig $config;
     protected static ?BaseEntity $instance = null;
     protected string $primaryKey = 'id';
     protected string $initializationVectorPropertyName = 'initializationVector';
@@ -53,7 +53,7 @@ abstract class BaseEntity
     public function __construct(DataMapper $dataMapper = new DataMapper(), ?BaseConfig $config = null)
     {
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? BaseConfig::getDefault();
+        $this->config = $config ?? BaseConfig::getInstance();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
         $reflectionClass = new \ReflectionClass($this);

@@ -38,14 +38,14 @@ class Logger
 
     public static function saveLog(string $message, int|string $code, string $file, string $line, ?BaseConfig $customConfig = null): void
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         self::createLogStructure($config);
         $handle = fopen($config->logPath, 'a');
         if ($handle !== false) {
             fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "(" . $line . ")" . "\n");
             fclose($handle);
         }
-        self::truncateLog($config);
+        self::truncateLog($config, $customConfig);
     }
 
     private static function createLogStructure(BaseConfig $config): void
@@ -97,7 +97,8 @@ class Logger
 
     public static function saveTrace(array $trace, ?BaseConfig $customConfig = null): void
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
+        self::createLogStructure($config);
         $handle = fopen($config->logPath, 'a');
         if ($handle !== false) {
             foreach ($trace as $call) {
@@ -111,28 +112,28 @@ class Logger
 
     public static function clearLog(?BaseConfig $customConfig = null): void
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         self::createLogStructure($config);
         file_put_contents($config->logPath, '');
     }
 
-    public static function getLog(): string|false
+    public static function getLog(?BaseConfig $customConfig = null): string|false
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         self::createLogStructure($config);
         return file_get_contents($config->logPath);
     }
 
-    public static function getLogRowByRow(): array|false
+    public static function getLogRowByRow(?BaseConfig $customConfig = null): array|false
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         self::createLogStructure($config);
         return file($config->logPath);
     }
 
     public static function getLogRowNumber(?BaseConfig $customConfig = null): int
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         self::createLogStructure($config);
         return count(file($config->logPath));
     }

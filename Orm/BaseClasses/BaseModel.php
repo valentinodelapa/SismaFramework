@@ -50,7 +50,7 @@ abstract class BaseModel
     public function __construct(DataMapper $dataMapper = new DataMapper(), ?BaseConfig $config = null)
     {
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? BaseConfig::getDefault();
+        $this->config = $config ?? BaseConfig::getInstance();
         $this->entityName = $this->getEntityName();
         $this->checkEntityName();
     }

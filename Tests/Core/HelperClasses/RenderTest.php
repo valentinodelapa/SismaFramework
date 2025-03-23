@@ -27,24 +27,36 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Localizator;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Tests\Config\ConfigFramework;
 
 /**
  * @author Valentino de Lapa
  */
 class RenderTest extends TestCase
 {
+
+    private Debugger $debuggerMock;
+    private Localizator $localizatorMock;
+    private RenderConfigTestDevelop $configTestDevelop;
+    private RenderConfigTestProduction $configTestProduction;
+
     #[\Override]
     public function setUp(): void
     {
+        $this->configTestDevelop = new RenderConfigTestDevelop();
+        $this->configTestProduction = new RenderConfigTestProduction();
+        BaseConfig::setInstance(new ConfigFramework());
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $this->localizatorMock = $this->createMock(Localizator::class);
+        $this->debuggerMock = $this->createMock(Debugger::class);
         ModuleManager::setApplicationModule('SismaFramework');
     }
 
@@ -58,19 +70,15 @@ class RenderTest extends TestCase
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        $localizatorMock = $this->createMock(Localizator::class);
-        $localizatorMock->expects($this->once())
+        $this->localizatorMock->expects($this->once())
                 ->method('getPageLocaleArray')
                 ->willReturn([]);
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $debuggerMock = $this->createMock(Debugger::class);
-        $debuggerMock->expects($this->once())
+        $this->debuggerMock->expects($this->once())
                 ->method('generateDebugBar')
                 ->willReturn('');
-        Render::setDevelopmentEnvironment();
-        Render::generateView('sample/index', $vars, ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
+        Render::generateView('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->debuggerMock, $this->configTestDevelop);
     }
-    
+
     public function testGenerateViewNotInDevelopmentEnvironment()
     {
         \ob_end_clean();
@@ -82,32 +90,28 @@ class RenderTest extends TestCase
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        $localizatorMock = $this->createMock(Localizator::class);
-        $localizatorMock->expects($this->once())
+        $this->localizatorMock->expects($this->once())
                 ->method('getPageLocaleArray')
                 ->willReturn([]);
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $debuggerMock = $this->createMock(Debugger::class);
-        $debuggerMock->expects($this->never())
+        $this->debuggerMock->expects($this->never())
                 ->method('generateDebugBar');
-        Render::setDevelopmentEnvironment(false);
-        Render::generateView('sample/index', $vars, ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
+        Render::generateView('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->debuggerMock, $this->configTestProduction);
     }
-    
+
     public function testGenerateViewStructural()
     {
         \ob_end_clean();
-        $this->expectOutputRegex('/Unexpected Error/');
-        $localizatorMock = $this->createMock(Localizator::class);
-        $localizatorMock->expects($this->never())
+        $this->expectOutputRegex('/debug bar/');
+        $this->localizatorMock->expects($this->never())
                 ->method('getPageLocaleArray');
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $debuggerMock = $this->createMock(Debugger::class);
+        $this->debuggerMock->expects($this->once())
+                ->method('generateDebugBar')
+                ->willReturn('debug bar');
         Render::setStructural();
-        Render::generateView('framework/internalServerError', [], ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
+        Render::generateView('framework/internalServerError', [], ResponseType::httpOk, $this->localizatorMock, $this->debuggerMock, $this->configTestDevelop);
         Render::setStructural(false);
     }
-    
+
     public function testGenerateDataInDevelopmentEnvironment()
     {
         \ob_end_clean();
@@ -120,10 +124,9 @@ class RenderTest extends TestCase
             'actionUrl' => 'index',
         ];
         Debugger::startExecutionTimeCalculation();
-        Render::setDevelopmentEnvironment();
-        Render::generateData('sample/index', $vars);
+        Render::generateData('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->configTestDevelop);
     }
-    
+
     public function testGenerateDataNotInDevelopmentEnvironment()
     {
         \ob_end_clean();
@@ -136,10 +139,9 @@ class RenderTest extends TestCase
             'actionUrl' => 'index',
         ];
         Debugger::startExecutionTimeCalculation();
-        Render::setDevelopmentEnvironment(false);
-        Render::generateData('sample/index', $vars);
+        Render::generateData('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->configTestProduction);
     }
-    
+
     public function testGenerareJson()
     {
         \ob_end_clean();
@@ -147,5 +149,53 @@ class RenderTest extends TestCase
         Render::setStructural();
         Render::generateJson(['message' => 'test']);
         Render::setStructural(false);
+    }
+}
+
+class RenderConfigTestDevelop extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = true;
+        $this->structuralViewsPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Views'. DIRECTORY_SEPARATOR;
+        $this->viewsPath = 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
+    }
+}
+
+class RenderConfigTestProduction extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = false;
+        $this->structuralViewsPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Views'. DIRECTORY_SEPARATOR;
+        $this->viewsPath = 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
     }
 }

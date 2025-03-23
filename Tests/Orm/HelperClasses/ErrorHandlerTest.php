@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Orm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
 use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Core\Enumerations\ResponseType;
@@ -40,6 +41,16 @@ use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
  */
 class ErrorHandlerTest extends TestCase
 {
+    private ErrorHandlerConfigTestDevelopement $configTestDevelopement;
+    private ErrorHandlerConfigTestProduction $configTestProduction;
+    
+    #[\Override]
+    public function setUp(): void
+    {
+        $this->configTestDevelopement = new ErrorHandlerConfigTestDevelopement();
+        $this->configTestProduction = new ErrorHandlerConfigTestProduction();
+    }
+
     public function testHandleBaseExceptionInDevelopmentEnvironment()
     {
         $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
@@ -48,10 +59,9 @@ class ErrorHandlerTest extends TestCase
         $structuralControllerMock->expects($this->once())
                 ->method('throwableError')
                 ->with($baseExceptionMock);
-        ErrorHandler::setDevelopmentEnvironment(true);
-        ErrorHandler::handleBaseException($baseExceptionMock,$defaultControllerMock, $structuralControllerMock);
+        ErrorHandler::handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock, $this->configTestDevelopement);
     }
-    
+
     public function testHandleBaseExceptionNotInDevelopmentEnvironment()
     {
         $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
@@ -63,27 +73,81 @@ class ErrorHandlerTest extends TestCase
         $baseExceptionMock->expects($this->once())
                 ->method('getResponseType')
                 ->willReturn(ResponseType::httpInternalServerError);
-        ErrorHandler::setDevelopmentEnvironment(false);
-        ErrorHandler::handleBaseException($baseExceptionMock,$defaultControllerMock, $structuralControllerMock);
+        ErrorHandler::handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock, $this->configTestProduction);
     }
+
     public function testHandleThrowableErrorInDevelopmentEnvironment()
     {
+        BaseConfig::setInstance($this->configTestDevelopement);
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
         $throwableMock = $this->createMock(\Throwable::class);
         $structuralControllerMock->expects($this->once())
                 ->method('throwableError')
                 ->with($throwableMock);
-        ErrorHandler::setDevelopmentEnvironment(true);
-        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock);
+        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock, $this->configTestDevelopement);
     }
-    
+
     public function testHandleThrowableErrorNotInDevelopmentEnvironment()
     {
+        BaseConfig::setInstance($this->configTestProduction);
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
         $throwableMock = $this->createMock(\Throwable::class);
         $structuralControllerMock->expects($this->once())
                 ->method('internalServerError');
-        ErrorHandler::setDevelopmentEnvironment(false);
-        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock);
+        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock, $this->configTestProduction);
+    }
+}
+
+class ErrorHandlerConfigTestDevelopement extends BaseConfig
+{
+    
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = true;
+        $this->logDevelopmentMaxRow = 100;
+        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->logPath = $this->logDirectoryPath . 'log.txt';
+        $this->logProductionMaxRow = 2;
+        $this->logVerboseActive = true;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
+    }
+}
+
+class ErrorHandlerConfigTestProduction extends BaseConfig
+{
+    
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = false;
+        $this->logDevelopmentMaxRow = 100;
+        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->logPath = $this->logDirectoryPath . 'log.txt';
+        $this->logProductionMaxRow = 2;
+        $this->logVerboseActive = true;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
     }
 }

@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\Logger;
 
 /**
@@ -34,49 +35,109 @@ use SismaFramework\Core\HelperClasses\Logger;
  */
 class LoggerTest extends TestCase
 {
+
+    private LoggerConfigTestOne $configTestOne;
+    private LoggerConfigTestTwo $configTestTwo;
+
+    public function setUp(): void
+    {
+        $this->configTestOne = new LoggerConfigTestOne();
+        $this->configTestTwo = new LoggerConfigTestTwo();
+    }
+
     public function testSaveLogAndGetLog()
     {
-        Logger::clearLog();
-        Logger::saveLog('sample message', 1, 'filePath', 0);
-        $log = Logger::getLog();
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->configTestOne);
+        $log = Logger::getLog($this->configTestOne);
         $this->assertStringContainsString("1\tsample message\tfilePath(0)\n", $log);
     }
-    
+
     public function testTruncateLog()
     {
-        Logger::setMaxRows(2);
-        Logger::clearLog();
-        $this->assertEquals(0, count(Logger::getLogRowByRow()));
-        Logger::saveLog('sample message', 1, 'filePath', 0);
-        $this->assertEquals(1, count(Logger::getLogRowByRow()));
-        Logger::saveLog('sample message', 1, 'filePath', 0);
-        $this->assertEquals(2, count(Logger::getLogRowByRow()));
-        Logger::saveLog('sample message', 1, 'filePath', 0);
-        $this->assertEquals(2, count(Logger::getLogRowByRow()));
+        $this->assertEquals(0, count(Logger::getLogRowByRow($this->configTestTwo)));
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->configTestTwo);
+        $this->assertEquals(1, count(Logger::getLogRowByRow($this->configTestTwo)));
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->configTestTwo);
+        $this->assertEquals(2, count(Logger::getLogRowByRow($this->configTestTwo)));
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->configTestTwo);
+        $this->assertEquals(2, count(Logger::getLogRowByRow($this->configTestTwo)));
     }
-    
+
     public function testSaveTrace()
     {
-        Logger::clearLog();
-        Logger::saveTrace(debug_backtrace());
-        $log = Logger::getLog();
+        Logger::saveTrace(debug_backtrace(), $this->configTestOne);
+        $log = Logger::getLog($this->configTestOne);
         $this->assertStringContainsString('SismaFramework\Tests\Core\HelperClasses\LoggerTest->testSaveTrace', $log);
     }
-    
+
     public function testAssertClearLog()
     {
-        $this->assertNotEquals(0, count(Logger::getLogRowByRow()));
-        Logger::clearLog();
-        $this->assertEquals(0, count(Logger::getLogRowByRow()));
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->configTestOne);
+        $this->assertNotEquals(0, count(Logger::getLogRowByRow($this->configTestOne)));
+        Logger::clearLog($this->configTestOne);
+        $this->assertEquals(0, count(Logger::getLogRowByRow($this->configTestOne)));
     }
-    
+
     public function testGetLogRowByRow()
     {
-        Logger::clearLog();
-        Logger::saveLog('sample message', 1, 'filePath', 0);
-        Logger::saveLog('sample message', 1, 'filePath', 0);
-        $log = Logger::getLogRowByRow();
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->configTestOne);
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->configTestOne);
+        $log = Logger::getLogRowByRow($this->configTestOne);
         $this->assertIsArray($log);
         $this->assertCount(2, $log);
+    }
+}
+
+class LoggerConfigTestOne extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = false;
+        $this->logDevelopmentMaxRow = 100;
+        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->logPath = $this->logDirectoryPath . 'log.txt';
+        $this->logProductionMaxRow = 100;
+        $this->logVerboseActive = true;
+    }
+}
+
+class LoggerConfigTestTwo extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = false;
+        $this->logDevelopmentMaxRow = 100;
+        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->logPath = $this->logDirectoryPath . 'log.txt';
+        $this->logProductionMaxRow = 2;
+        $this->logVerboseActive = true;
     }
 }

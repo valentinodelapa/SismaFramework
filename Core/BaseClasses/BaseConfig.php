@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
+use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Orm\Enumerations\AdapterType;
 
 /**
@@ -36,143 +37,154 @@ use SismaFramework\Orm\Enumerations\AdapterType;
 abstract class BaseConfig
 {
 
-    public readonly string $adapters;
-    public readonly string $application;
-    public readonly string $assets;
-    public readonly string $cache;
-    public readonly string $controllers;
-    public readonly string $core;
-    public readonly string $defaultPath;
-    public readonly string $defaultAction;
-    public readonly string $defaultController;
-    public readonly string $entities;
-    public readonly string $fixtures;
-    public readonly string $logs;
-    public readonly string $locales;
-    public readonly string $models;
-    public readonly string $orm;
-    public readonly string $project;
-    public readonly string $system;
-    public readonly string $structural;
-    public readonly string $templates;
-    public readonly string $resources;
-    public readonly string $views;
-    public readonly string $thisDirectory;
-    public readonly string $directoryUp;
+    protected readonly string $adapters;
+    protected readonly string $application;
+    protected readonly string $assets;
+    protected readonly string $cache;
+    protected readonly string $controllers;
+    protected readonly string $core;
+    protected readonly string $defaultPath;
+    protected readonly string $defaultAction;
+    protected readonly string $defaultController;
+    protected readonly string $entities;
+    protected readonly string $fixtures;
+    protected readonly string $logs;
+    protected readonly string $locales;
+    protected readonly string $models;
+    protected readonly string $orm;
+    protected readonly string $project;
+    protected readonly string $system;
+    protected readonly string $structural;
+    protected readonly string $templates;
+    protected readonly string $resources;
+    protected readonly string $views;
+    protected readonly string $thisDirectory;
+    protected readonly string $directoryUp;
 
     /* Base Constant */
-    public readonly string $language;
-    public readonly string $defaultMetaUrl;
-    public readonly int $minimumMajorPhpVersion;
-    public readonly int $minimumMinorPhpVersion;
-    public readonly int $minimumReleasePhpVersion;
-    public readonly int $maxReloadAttempts;
-    public readonly string $configurationPassword;
-    public readonly string $rootPath;
-    public readonly string $applicationPath;
-    public readonly string $applicationNamespace;
-    public readonly string $applicationAssetsPath;
-    public readonly string $systemPath;
-    public readonly string $corePath;
-    public readonly string $coreNamespace;
-    public readonly string $structuralPath;
-    public readonly string $structuralAssetsPath;
-    public readonly string $publicPath;
-    public readonly bool $developmentEnvironment;
-    public readonly bool $httpsIsForced;
-    public readonly array $moduleFolders;
-    public readonly array $autoloadNamespaceMapper;
-    public readonly array $autoloadClassMapper;
+    protected readonly Language $language;
+    protected readonly string $defaultMetaUrl;
+    protected readonly int $minimumMajorPhpVersion;
+    protected readonly int $minimumMinorPhpVersion;
+    protected readonly int $minimumReleasePhpVersion;
+    protected readonly int $maxReloadAttempts;
+    protected readonly string $configurationPassword;
+    protected readonly string $rootPath;
+    protected readonly string $applicationPath;
+    protected readonly string $applicationNamespace;
+    protected readonly string $applicationAssetsPath;
+    protected readonly string $systemPath;
+    protected readonly string $corePath;
+    protected readonly string $coreNamespace;
+    protected readonly string $structuralPath;
+    protected readonly string $structuralAssetsPath;
+    protected readonly string $publicPath;
+    protected readonly bool $developmentEnvironment;
+    protected readonly bool $httpsIsForced;
+    protected readonly array $moduleFolders;
+    protected readonly array $autoloadNamespaceMapper;
+    protected readonly array $autoloadClassMapper;
 
     /* Fixtures Constant */
-    public readonly string $fixturePath;
-    public readonly string $fixtureNamespace;
+    protected readonly string $fixturePath;
+    protected readonly string $fixtureNamespace;
 
     /* Object Relational Mapper Constant */
-    public readonly string $ormPath;
-    public readonly string $ormNamespace;
-    public readonly bool $ormCache;
-    public readonly string $referenceCacheDirectory;
-    public readonly string $referenceCachePath;
+    protected readonly string $ormPath;
+    protected readonly string $ormNamespace;
+    protected readonly bool $ormCache;
+    protected readonly string $referenceCacheDirectory;
+    protected readonly string $referenceCachePath;
 
     /* Adapter Constant */
-    public readonly string $adapterPath;
-    public readonly string $adapterNamespace;
-    public readonly AdapterType $defaultAdapterType;
+    protected readonly string $adapterPath;
+    protected readonly string $adapterNamespace;
+    protected readonly AdapterType $defaultAdapterType;
 
     /* Entities Constant */
-    public readonly string $entityPath;
-    public readonly string $entityNamespace;
+    protected readonly string $entityPath;
+    protected readonly string $entityNamespace;
 
     /* Models Constant */
-    public readonly string $modelPath;
-    public readonly string $modelNamespace;
+    protected readonly string $modelPath;
+    protected readonly string $modelNamespace;
 
     /* Forms Constant */
-    public readonly bool $primaryKeyPassAccepted;
+    protected readonly bool $primaryKeyPassAccepted;
 
     /* Dispatcher Constant */
-    public readonly string $controllerPath;
-    public readonly string $controllerNamespace;
-    public readonly string $defaultControllerPath;
-    public readonly string $defaultControllerNamespace;
-    public readonly int $fileGetContentMaxBytesLimit;
-    public readonly int $readFileMaxBytesLimit;
-    public readonly string $robotsFile;
+    protected readonly string $controllerPath;
+    protected readonly string $controllerNamespace;
+    protected readonly string $defaultControllerPath;
+    protected readonly string $defaultControllerNamespace;
+    protected readonly int $fileGetContentMaxBytesLimit;
+    protected readonly int $readfileMaxBytesLimit;
 
     /* Render Constant */
-    public readonly string $localesPath;
-    public readonly string $viewsPath;
-    public readonly string $structuralViewsPath;
+    protected readonly string $localesPath;
+    protected readonly string $viewsPath;
+    protected readonly string $structuralViewsPath;
 
     /* Templater Constant */
-    public readonly string $templatesPath;
-    public readonly string $structuralTemplatesPath;
+    protected readonly string $templatesPath;
+    protected readonly string $structuralTemplatesPath;
 
     /* Resource Constant */
-    public readonly string $resourcesPath;
-    public readonly string $structuralResourcesPath;
+    protected readonly string $resourcesPath;
+    protected readonly string $structuralResourcesPath;
 
     /* Log Constants */
-    public readonly string $logDirectoryPath;
-    public readonly string $logPath;
-    public readonly bool $logVerboseActive;
-    public readonly int $logDevelopmentMaxRow;
-    public readonly int $logProductionMaxRow;
-    public readonly int $logWarningRow;
-    public readonly int $logDangerRow;
+    protected readonly string $logDirectoryPath;
+    protected readonly string $logPath;
+    protected readonly bool $logVerboseActive;
+    protected readonly int $logDevelopmentMaxRow;
+    protected readonly int $logProductionMaxRow;
+    protected readonly int $logWarningRow;
+    protected readonly int $logDangerRow;
 
     /* Encryptor Constants */
-    public readonly string $simpleHashAlgorithm;
-    public readonly int $blowfishHashWorkload;
-    public readonly string $encryptionPassphrase;
-    public readonly string $encryptionAlgorithm;
-    public readonly int $initializationVectorBytes;
+    protected readonly string $simpleHashAlgorithm;
+    protected readonly int $blowfishHashWorkload;
+    protected readonly string $encryptionPassphrase;
+    protected readonly string $encryptionAlgorithm;
+    protected readonly int $initializationVectorBytes;
 
     /* Database Constant */
-    public readonly string $databaseHost;
-    public readonly string $databaseName;
-    public readonly string $databasePassword;
-    public readonly string $databasePort;
-    public readonly string $databaseUsername;
+    protected readonly string $databaseHost;
+    protected readonly string $databaseName;
+    protected readonly string $databasePassword;
+    protected readonly string $databasePort;
+    protected readonly string $databaseUsername;
 
     /* internal properties */
-    private static BaseConfig $defaultConfig;
+    private static BaseConfig $instance;
+    private int $countNumber = 0;
 
-    public static function setDefault(BaseConfig $defaultConfig): void
+    public static function setInstance(BaseConfig $instance): void
     {
-        self::$defaultConfig = $defaultConfig;
+        self::$instance = $instance;
     }
 
-    public static function getDefault(): self
+    public static function getInstance(): self
     {
-        return self::$defaultConfig;
+        return self::$instance;
     }
 
-    public function __construct()
+    public function __get(string $name): mixed
     {
-        $this->setFrameworkConfigurations();
+        if (isset($this->$name) === false) {
+            if ($this->isInitialConfiguration($name)) {
+                $this->setInitialConfiguration();
+            } else {
+                $this->setFrameworkConfigurations();
+            }
+        }
+        return $this->$name;
     }
+
+    abstract protected function isInitialConfiguration(string $name): bool;
+
+    abstract protected function setInitialConfiguration(): void;
 
     abstract protected function setFrameworkConfigurations(): void;
 }

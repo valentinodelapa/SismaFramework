@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\Encryptor;
 
 /**
@@ -34,37 +35,70 @@ use SismaFramework\Core\HelperClasses\Encryptor;
  */
 class EncryptorTest extends TestCase
 {
-    
+
+    private BaseConfig $configTest;
+
+    public function setUp(): void
+    {
+        $this->configTest = new EncryptorConfigTest();
+    }
+
     public function testGetSimpleRandomToken()
     {
         $this->assertIsString(Encryptor::getSimpleRandomToken());
     }
-    
+
     public function testGetVerifySimpleHash()
     {
         $testString = 'sample';
         $fakeTestString = 'fakeSample';
-        $testStringHash = Encryptor::getSimpleHash($testString);
-        $this->assertTrue(Encryptor::verifySimpleHash($testString, $testStringHash));
-        $this->assertFalse(Encryptor::verifySimpleHash($fakeTestString, $testStringHash));
+        $testStringHash = Encryptor::getSimpleHash($testString, $this->configTest);
+        $this->assertTrue(Encryptor::verifySimpleHash($testString, $testStringHash, $this->configTest));
+        $this->assertFalse(Encryptor::verifySimpleHash($fakeTestString, $testStringHash, $this->configTest));
     }
-    
+
     public function testGetVerifyBlowfishHash()
     {
         $testString = 'sample';
         $fakeTestString = 'fakeSample';
-        $testStringHash = Encryptor::getBlowfishHash($testString, '04');
+        $testStringHash = Encryptor::getBlowfishHash($testString, $this->configTest);
         $this->assertTrue(Encryptor::verifyBlowfishHash($testString, $testStringHash));
         $this->assertFalse(Encryptor::verifyBlowfishHash($fakeTestString, $testStringHash));
     }
-    
+
     public function testEncryptDecryptString()
     {
         $testString = 'sample';
         $fakeTestString = 'fakeSample';
-        $initializationVector = Encryptor::createInizializationVector();
-        $cryptTestString = Encryptor::encryptString($testString, $initializationVector);
-        $this->assertEquals($testString, Encryptor::decryptString($cryptTestString, $initializationVector));
-        $this->assertNotEquals($fakeTestString, Encryptor::decryptString($cryptTestString, $initializationVector));
+        $initializationVector = Encryptor::createInizializationVector($this->configTest);
+        $cryptTestString = Encryptor::encryptString($testString, $initializationVector, $this->configTest);
+        $this->assertEquals($testString, Encryptor::decryptString($cryptTestString, $initializationVector, $this->configTest));
+        $this->assertNotEquals($fakeTestString, Encryptor::decryptString($cryptTestString, $initializationVector, $this->configTest));
+    }
+}
+
+class EncryptorConfigTest extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->blowfishHashWorkload = 12;
+        $this->encryptionAlgorithm = 'AES-256-CBC';
+        $this->encryptionPassphrase = '';
+        $this->initializationVectorBytes = 16;
+        $this->simpleHashAlgorithm = 'sha256';
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
     }
 }

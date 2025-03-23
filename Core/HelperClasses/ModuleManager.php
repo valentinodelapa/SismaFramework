@@ -43,7 +43,7 @@ class ModuleManager
 
     public static function getModuleList(?BaseConfig $customConfig = null): array
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         return $config->moduleFolders;
     }
 
@@ -86,7 +86,7 @@ class ModuleManager
 
     public static function getExistingFilePath(string $path, Resource $resource, ?BaseConfig $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         if ((empty(self::$customVisualizationModule) === false) && file_exists($config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             self::$customVisualizationFileExists = true;
             return $config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
@@ -100,7 +100,7 @@ class ModuleManager
 
     public static function getConsequentFilePath(string $path, Resource $resource, ?BaseConfig $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getDefault();
+        $config = $customConfig ?? BaseConfig::getInstance();
         if (self::$customVisualizationFileExists && file_exists($config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             return $config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } elseif ((self::$customVisualizationFileExists === false) && file_exists($config->rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {

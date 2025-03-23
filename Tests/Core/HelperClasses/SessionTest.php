@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\Session;
 
 /**
@@ -34,6 +35,11 @@ use SismaFramework\Core\HelperClasses\Session;
  */
 class SessionTest extends TestCase
 {
+
+    public function setUp(): void
+    {
+        BaseConfig::setInstance(new SessionConfigTest());
+    }
 
     public function testSessionStart()
     {
@@ -81,7 +87,7 @@ class SessionTest extends TestCase
         unset($session);
         $this->assertEquals(PHP_SESSION_NONE, session_status());
     }
-    
+
     public function testSessionSetUnsetNestedItemStatic()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
@@ -119,7 +125,7 @@ class SessionTest extends TestCase
         Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
     }
-    
+
     public function testSessionAppendSimpleItem()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
@@ -142,7 +148,7 @@ class SessionTest extends TestCase
         Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
     }
-    
+
     public function testSessionAppendNestedItem()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
@@ -167,5 +173,28 @@ class SessionTest extends TestCase
         $this->assertFalse(Session::hasItem('test'));
         Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
+    }
+}
+
+class SessionConfigTest extends BaseConfig
+{
+
+    #[\Override]
+    protected function isInitialConfiguration(string $name): bool
+    {
+        return false;
+    }
+
+    #[\Override]
+    protected function setFrameworkConfigurations(): void
+    {
+        $this->developmentEnvironment = true;
+        $this->httpsIsForced = false;
+    }
+
+    #[\Override]
+    protected function setInitialConfiguration(): void
+    {
+        
     }
 }
