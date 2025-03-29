@@ -55,12 +55,14 @@ class Authentication extends Submittable
     private PasswordModelInterface $passwordModelInterface;
     private ?AuthenticableInterface $authenticableInterface;
     private AuthenticableModelInterface $authenticableModelInterface;
+    private Filter $filter;
 
     public function __construct(Request $request)
     {
         parent::__construct();
         $this->request = $request;
         $this->requestType = RequestType::from($request->server['REQUEST_METHOD']);
+        $this->filter = new Filter();
     }
 
     public function setAuthenticableModelInterface(AuthenticableModelInterface $authenticableModelInterface): void
@@ -93,7 +95,7 @@ class Authentication extends Submittable
         if ($withCsrfToken && ($this->checkCsrfToken() === false)) {
             return false;
         }
-        if (array_key_exists('identifier', $this->request->request) && Filter::isString($this->request->request['identifier'])) {
+        if (array_key_exists('identifier', $this->request->request) && $this->filter->isString($this->request->request['identifier'])) {
             $this->authenticableInterface = $this->authenticableModelInterface->getValidAuthenticableInterfaceByIdentifier($this->request->request['identifier']);
             if (($this->authenticableInterface instanceof AuthenticableInterface) && $this->checkPassword($this->authenticableInterface)) {
                 return true;
@@ -118,7 +120,7 @@ class Authentication extends Submittable
 
     public function checkPassword(AuthenticableInterface $authenticableInterface): bool
     {
-        if (array_key_exists('password', $this->request->request) && Filter::isString($this->request->request['password'])) {
+        if (array_key_exists('password', $this->request->request) && $this->filter->isString($this->request->request['password'])) {
             $passwordInterface = $this->passwordModelInterface->getPasswordByAuthenticableInterface($authenticableInterface);
             return Encryptor::verifyBlowfishHash($this->request->request['password'], $passwordInterface->password);
         }
