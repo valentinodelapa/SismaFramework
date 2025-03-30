@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2025 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,28 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Security\Interfaces\Entities;
+namespace SismaFramework\TestsApplication\Entities;
+
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Security\Interfaces\Entities\MultiFactorRecoveryInterface;
 
 /**
+ * Description of MultiFactorRecovery
  *
- * @author Valentino de Lapa
+ * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-interface MultiFactorRecoveryInterface
+class MultiFactorRecovery extends BaseEntity implements MultiFactorRecoveryInterface
 {
     
+    #[\Override]
+    protected function setEncryptedProperties(): void
+    {
+        
+    }
+
+    #[\Override]
+    protected function setPropertyDefaultValue(): void
+    {
+        
+    }
 }

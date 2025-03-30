@@ -55,6 +55,7 @@ THE SOFTWARE.
             <directory suffix=".php">../Autoload</directory>
             <directory suffix=".php">../Core</directory>
             <directory suffix=".php">../Orm</directory>
+            <directory suffix=".php">../Security</directory>
         </include>
     </source>
 </phpunit>

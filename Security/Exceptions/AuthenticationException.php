@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2025 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,22 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Security\Interfaces\Entities;
+namespace SismaFramework\Security\Exceptions;
+
+use SismaFramework\Core\Enumerations\ResponseType;
+use SismaFramework\Security\ExtendedClasses\NoLogException;
 
 /**
+ * Description of AuthenticationException
  *
- * @author Valentino de Lapa
+ * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-interface MultiFactorRecoveryInterface
+class AuthenticationException extends NoLogException
 {
-    
+
+    #[\Override]
+    public function getResponseType(): ResponseType
+    {
+        return ResponseType::httpForbidden;
+    }
 }
