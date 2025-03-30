@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2025 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +24,22 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Exceptions;
+namespace SismaFramework\Security\Exceptions;
 
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Security\ExtendedClasses\LogException;
+use SismaFramework\Security\ExtendedClasses\NoLogException;
 
 /**
- * @author Valentino de Lapa
+ * Description of AuthenticationException
+ *
+ * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class InvalidArgumentException extends LogException
+class AuthenticationException extends NoLogException
 {
-    
+
     #[\Override]
     protected function setResponseType(): ResponseType
     {
-        return ResponseType::httpInternalServerError;
+        return ResponseType::httpForbidden;
     }
 }

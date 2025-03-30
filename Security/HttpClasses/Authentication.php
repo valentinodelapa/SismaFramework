@@ -31,6 +31,7 @@ use SismaFramework\Core\Enumerations\RequestType;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Security\Exceptions\AuthenticationException;
 use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
 use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
 use SismaFramework\Security\Interfaces\Models\MultiFactorModelInterface;
@@ -158,6 +159,10 @@ class Authentication extends Submittable
 
     public function getAuthenticableInterface(): AuthenticableInterface
     {
-        return $this->authenticableInterface;
+        if (isset($this->authenticableInterface) && ($this->authenticableInterface instanceof AuthenticableInterface)) {
+            return $this->authenticableInterface;
+        } else {
+            throw new AuthenticationException();
+        }
     }
 }

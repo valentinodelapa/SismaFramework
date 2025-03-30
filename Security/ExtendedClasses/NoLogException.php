@@ -34,7 +34,7 @@ use SismaFramework\Core\HelperClasses\BufferManager;
  *
  * @author Valentino de Lapa
  */
-class NoLogException extends BaseException
+abstract class NoLogException extends BaseException
 {
     public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
     {

@@ -28,6 +28,7 @@ namespace SismaFramework\Security\ExtendedClasses;
 
 use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Core\Enumerations\ResponseType;
+use SismaFramework\Core\HttpClasses\Response;
 
 /**
  * Description of RedirectException
@@ -36,9 +37,11 @@ use SismaFramework\Core\Enumerations\ResponseType;
  */
 abstract class RedirectException extends BaseException
 {
-    abstract public function redirect();
-    
-    public function getResponseType(): ResponseType
+
+    abstract public function redirect(): Response;
+
+    #[\Override]
+    public function setResponseType(): ResponseType
     {
         return ResponseType::httpFound;
     }
