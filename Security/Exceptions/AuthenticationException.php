@@ -38,7 +38,7 @@ class AuthenticationException extends NoLogException
 {
 
     #[\Override]
-    public function getResponseType(): ResponseType
+    protected function setResponseType(): ResponseType
     {
         return ResponseType::httpForbidden;
     }

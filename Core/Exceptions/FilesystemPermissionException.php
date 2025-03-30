@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\Exceptions;
 
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Security\ExtendedClasses\NoLogException;
 
 /**
@@ -34,4 +35,9 @@ use SismaFramework\Security\ExtendedClasses\NoLogException;
 class FilesystemPermissionException extends NoLogException
 {
     
+    #[\Override]
+    protected function setResponseType(): ResponseType
+    {
+        return ResponseType::httpInternalServerError;
+    }
 }

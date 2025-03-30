@@ -34,9 +34,9 @@ use SismaFramework\Security\ExtendedClasses\LogException;
  */
 class AccessDeniedException extends LogException
 {
-    
 
-    public function getResponseType(): ResponseType
+    #[\Override]
+    protected function setResponseType(): ResponseType
     {
         return ResponseType::httpForbidden;
     }
