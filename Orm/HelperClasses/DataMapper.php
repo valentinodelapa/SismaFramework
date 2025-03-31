@@ -237,6 +237,15 @@ class DataMapper
         return true;
     }
 
+    public function updateBatch(array $columns, array $values, Query $query = new Query(), array $bindValues = [], array $bindTypes = []): bool
+    {
+        $query->close();
+        $cmd = $query->getCommandToExecute(Statement::update, ['columns' => $columns, 'values' => $values]);
+        Parser::unparseValues($bindValues);
+        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        return $result;
+    }
+
     public function delete(BaseEntity $entity, Query $query = new Query()): bool
     {
         if ($entity instanceof ReferencedEntity) {
