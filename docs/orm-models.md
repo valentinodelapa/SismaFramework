@@ -104,7 +104,7 @@ Implementa i seguenti metodi standard
 
 ## Modelli per entità dipendenti
 
-Nei casi in cui le entità abbiano chiavi esterne e si voglia sfruttarle per effettuare interrogazioni al database, è possibile scegliere di estendere, per il relativo modello, la classe ReferencedModel: essa fornisce metodi predefiniti aggiuntivi che vanno ad implementare tali interrogazioni:
+Nei casi in cui le entità abbiano chiavi esterne e si voglia sfruttarle per effettuare interrogazioni al database, è possibile scegliere di estendere, per il relativo modello, la classe DependentModel: essa fornisce metodi predefiniti aggiuntivi che vanno ad implementare tali interrogazioni:
 
 * `getEntityCollectionByEntity()`: questo metodo, dato un array associativo di entità ed una serie di altri parametri aggiuntivi, restituisce una collezione di entità che soddisfano i requisiti indicati.
   
