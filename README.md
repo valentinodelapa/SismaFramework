@@ -191,7 +191,6 @@ Questo progetto è stato sviluppato prendendo spunto da alcune librerie open sou
   Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreria orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
 
 * La libreria [**Doctrine Object Relational Mapper (ORM)**](https://github.com/doctrine/orm)
-  
   Nella rifattorizzazione della libreria **SimpleORM** e nell'evoluzione dei suoi meccanismi, questa libreria, utilizzata tra l'altro dal framework **Symfony**, ha rappresentato un preziosissimo spunto concettuale.
 
 * Il [**Template di errore 500**](https://codepen.io/gaiaian/details/QVVxaR).
