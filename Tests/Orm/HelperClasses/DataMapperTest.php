@@ -32,6 +32,7 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
+use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -994,7 +995,10 @@ class DataMapperTest extends TestCase
         $this->assertFalse($dataMapper->delete($baseSampleTwo, $queryMock));
         $baseSampleTree = new BaseSample();
         $baseSampleTree->id = 1;
+        Cache::setEntity($baseSampleTwo);
+        $this->assertTrue(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
         $this->assertTrue($dataMapper->delete($baseSampleTree, $queryMock));
+        $this->assertFalse(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
     }
 
     public function testDeleteBatch()
@@ -1008,8 +1012,14 @@ class DataMapperTest extends TestCase
                 ->method('getCommandToExecute')
                 ->willReturn('');
         $dataMapper = new DataMapper($baseAdapterMock);
+        $baseSample = new BaseSample();
+        $baseSample->id = 1;
+        Cache::setEntity($baseSample);
+        $this->assertTrue(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
         $this->assertFalse($dataMapper->deleteBatch($queryMock));
+        $this->assertTrue(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
         $this->assertTrue($dataMapper->deleteBatch($queryMock));
+        $this->assertFalse(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
     }
 
     public function testFind()

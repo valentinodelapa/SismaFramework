@@ -38,7 +38,7 @@ use SismaFramework\Core\HttpClasses\Response;
 class Render
 {
 
-    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
+    private static bool $developmentEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
     private static bool $isStructural = false;
     private static string $structuralViewsPath = \Config\STRUCTURAL_VIEWS_PATH;
     private static string $view;
@@ -100,7 +100,7 @@ class Render
 
     private static function generateDebugBar(Debugger $debugger): string
     {
-        if (self::$developementEnvironment) {
+        if (self::$developmentEnvironment) {
             return $debugger->generateDebugBar();
         } else {
             return '';
@@ -133,9 +133,9 @@ class Render
         return $response;
     }
 
-    public static function setDevelopementEnvironment(bool $developementEnvironment = true): void
+    public static function setDevelopmentEnvironment(bool $developmentEnvironment = true): void
     {
-        self::$developementEnvironment = $developementEnvironment;
+        self::$developmentEnvironment = $developmentEnvironment;
     }
 
     public static function setStructural(bool $isStructural = true): void

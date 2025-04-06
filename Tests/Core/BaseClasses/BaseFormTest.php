@@ -61,9 +61,9 @@ class BaseFormTest extends TestCase
 
     private DataMapper $dataMapperMock;
 
-    public function __construct($name = null, $data = [], $dataName = '')
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);

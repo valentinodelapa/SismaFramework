@@ -43,9 +43,9 @@ class BaseVoterTest extends TestCase
 
     private DataMapper $dataMapperMock;
     
-    public function __construct(string $name)
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);

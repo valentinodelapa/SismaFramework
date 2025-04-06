@@ -35,7 +35,7 @@ class Comunication
 {
 
     private static bool $httpsIsForced = \Config\HTTPS_IS_FORCED;
-    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
+    private static bool $developmentEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
 
     public static function getComunicationProtocol(): ComunicationProtocol
     {
@@ -47,7 +47,7 @@ class Comunication
         } elseif (isset($request->server['SERVER_PORT'])) {
             return (intval($request->server['SERVER_PORT']) === 443) ? ComunicationProtocol::https : ComunicationProtocol::http;
         } else {
-            return self::$developementEnvironment ? ComunicationProtocol::http : ComunicationProtocol::https;
+            return self::$developmentEnvironment ? ComunicationProtocol::http : ComunicationProtocol::https;
         }
     }
 }

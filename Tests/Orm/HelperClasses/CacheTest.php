@@ -27,11 +27,11 @@
 namespace SismaFramework\Tests\Orm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\CacheException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\ExtendedReferencedSample;
-use SismaFramework\TestsApplication\Entities\OtherBaseSample;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 
 /**
@@ -39,6 +39,14 @@ use SismaFramework\TestsApplication\Entities\ReferencedSample;
  */
 class CacheTest extends TestCase
 {
+    
+    public function setUp(): void
+    {
+       
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+    }
+
     public function testSetCheckGetEntityInCache()
     {
         $baseSample = new BaseSample();
@@ -49,13 +57,25 @@ class CacheTest extends TestCase
         $this->assertInstanceOf(BaseSample::class, Cache::getEntityById(BaseSample::class, 1));
         $this->assertEquals(1, $baseSample->id);
     }
-    
+
     public function testCheckExceptionWithBaseEntity()
     {
         $this->expectException(CacheException::class);
         Cache::getForeignKeyData(BaseSample::class);
     }
-    
+
+    public function checkUnsetEntity()
+    {
+        $baseSample = new BaseSample();
+        $baseSample->id = 1;
+        $this->assertFalse(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
+        Cache::setEntity($baseSample);
+        $this->assertTrue(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
+        $this->assertInstanceOf(BaseSample::class, Cache::getEntityById(BaseSample::class, 1));
+        Cache::clearEntityCache();
+        $this->assertFalse(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
+    }
+
     public function testGetForeignKeyData()
     {
         $cacheInformationsOne = Cache::getForeignKeyData(ReferencedSample::class);
@@ -67,7 +87,7 @@ class CacheTest extends TestCase
         $this->assertIsArray($cacheInformationsTwo);
         $this->assertArrayHasKey('referencedEntityWithoutInitialization', $cacheInformationsTwo);
         $this->assertSame($cacheInformationsTwo, $cacheInformationsOne['baseSample']);
-        
+
         $cacheInformationsThree = Cache::getForeignKeyData(ExtendedReferencedSample::class);
         $this->assertIsArray($cacheInformationsThree);
         $this->assertArrayHasKey('otherBaseSample', $cacheInformationsThree);
@@ -81,7 +101,7 @@ class CacheTest extends TestCase
         $this->assertArrayHasKey('referencedEntityWithoutInitialization', $cacheInformationsFifth);
         $this->assertSame($cacheInformationsFifth, $cacheInformationsThree['baseSample']);
     }
-    
+
     public function testGenerateReferencedCacheFile()
     {
         $this->assertTrue(file_exists(\Config\REFERENCE_CACHE_PATH));
@@ -98,7 +118,7 @@ class CacheTest extends TestCase
         $this->assertArrayHasKey('baseSample', $cacheInformationsTwo);
         $this->assertTrue(file_exists(\Config\REFERENCE_CACHE_PATH));
         unlink(\Config\REFERENCE_CACHE_PATH);
-        unlink(\Config\REFERENCE_CACHE_DIRECTORY.'.lock');
+        unlink(\Config\REFERENCE_CACHE_DIRECTORY . '.lock');
         rmdir(\Config\REFERENCE_CACHE_DIRECTORY);
         Cache::clearForeighKeyDataCache();
         $this->assertFalse(is_dir(\Config\REFERENCE_CACHE_DIRECTORY));
@@ -107,6 +127,6 @@ class CacheTest extends TestCase
         $this->assertIsArray($cacheInformationsThree);
         $this->assertArrayHasKey('baseSample', $cacheInformationsThree);
         $this->assertTrue(file_exists(\Config\REFERENCE_CACHE_PATH));
-        file_put_contents(\Config\REFERENCE_CACHE_DIRECTORY.'.lock', '');
+        file_put_contents(\Config\REFERENCE_CACHE_DIRECTORY . '.lock', '');
     }
 }

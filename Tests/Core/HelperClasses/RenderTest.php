@@ -40,15 +40,15 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class RenderTest extends TestCase
 {
-    public function __construct(string $name)
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         ModuleManager::setApplicationModule('SismaFramework');
     }
 
-    public function testGenerateViewInDevelopementEnvironment()
+    public function testGenerateViewInDevelopmentEnvironment()
     {
         \ob_end_clean();
         $this->expectOutputRegex('/sample - index/');
@@ -67,11 +67,11 @@ class RenderTest extends TestCase
         $debuggerMock->expects($this->once())
                 ->method('generateDebugBar')
                 ->willReturn('');
-        Render::setDevelopementEnvironment();
+        Render::setDevelopmentEnvironment();
         Render::generateView('sample/index', $vars, ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
     }
     
-    public function testGenerateViewNotInDevelopementEnvironment()
+    public function testGenerateViewNotInDevelopmentEnvironment()
     {
         \ob_end_clean();
         $this->expectOutputRegex('/sample - index/');
@@ -90,7 +90,7 @@ class RenderTest extends TestCase
         $debuggerMock = $this->createMock(Debugger::class);
         $debuggerMock->expects($this->never())
                 ->method('generateDebugBar');
-        Render::setDevelopementEnvironment(false);
+        Render::setDevelopmentEnvironment(false);
         Render::generateView('sample/index', $vars, ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
     }
     
@@ -108,7 +108,7 @@ class RenderTest extends TestCase
         Render::setStructural(false);
     }
     
-    public function testGenerateDataInDevelopementEnvironment()
+    public function testGenerateDataInDevelopmentEnvironment()
     {
         \ob_end_clean();
         $this->expectOutputRegex('/sample - index/');
@@ -120,11 +120,11 @@ class RenderTest extends TestCase
             'actionUrl' => 'index',
         ];
         Debugger::startExecutionTimeCalculation();
-        Render::setDevelopementEnvironment();
+        Render::setDevelopmentEnvironment();
         Render::generateData('sample/index', $vars);
     }
     
-    public function testGenerateDataNotInDevelopementEnvironment()
+    public function testGenerateDataNotInDevelopmentEnvironment()
     {
         \ob_end_clean();
         $this->expectOutputRegex('/sample - index/');
@@ -136,7 +136,7 @@ class RenderTest extends TestCase
             'actionUrl' => 'index',
         ];
         Debugger::startExecutionTimeCalculation();
-        Render::setDevelopementEnvironment(false);
+        Render::setDevelopmentEnvironment(false);
         Render::generateData('sample/index', $vars);
     }
     

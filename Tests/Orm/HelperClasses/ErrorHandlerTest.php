@@ -40,7 +40,7 @@ use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
  */
 class ErrorHandlerTest extends TestCase
 {
-    public function testHandleBaseExceptionInDevelopementEnvironment()
+    public function testHandleBaseExceptionInDevelopmentEnvironment()
     {
         $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
@@ -48,11 +48,11 @@ class ErrorHandlerTest extends TestCase
         $structuralControllerMock->expects($this->once())
                 ->method('throwableError')
                 ->with($baseExceptionMock);
-        ErrorHandler::setDevelopementEnvironment(true);
+        ErrorHandler::setDevelopmentEnvironment(true);
         ErrorHandler::handleBaseException($baseExceptionMock,$defaultControllerMock, $structuralControllerMock);
     }
     
-    public function testHandleBaseExceptionNotInDevelopementEnvironment()
+    public function testHandleBaseExceptionNotInDevelopmentEnvironment()
     {
         $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
@@ -63,27 +63,27 @@ class ErrorHandlerTest extends TestCase
         $baseExceptionMock->expects($this->once())
                 ->method('getResponseType')
                 ->willReturn(ResponseType::httpInternalServerError);
-        ErrorHandler::setDevelopementEnvironment(false);
+        ErrorHandler::setDevelopmentEnvironment(false);
         ErrorHandler::handleBaseException($baseExceptionMock,$defaultControllerMock, $structuralControllerMock);
     }
-    public function testHandleThrowableErrorInDevelopementEnvironment()
+    public function testHandleThrowableErrorInDevelopmentEnvironment()
     {
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
         $throwableMock = $this->createMock(\Throwable::class);
         $structuralControllerMock->expects($this->once())
                 ->method('throwableError')
                 ->with($throwableMock);
-        ErrorHandler::setDevelopementEnvironment(true);
+        ErrorHandler::setDevelopmentEnvironment(true);
         ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock);
     }
     
-    public function testHandleThrowableErrorNotInDevelopementEnvironment()
+    public function testHandleThrowableErrorNotInDevelopmentEnvironment()
     {
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
         $throwableMock = $this->createMock(\Throwable::class);
         $structuralControllerMock->expects($this->once())
                 ->method('internalServerError');
-        ErrorHandler::setDevelopementEnvironment(false);
+        ErrorHandler::setDevelopmentEnvironment(false);
         ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock);
     }
 }
