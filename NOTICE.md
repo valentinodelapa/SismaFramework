@@ -24,20 +24,43 @@ Copyright (c) 2004-present Fabien Potencier
 
 ---
 
-La componente *ORM* è stata sviluppata basandosi su codice originale presente nella repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze, come ad esempio:
+La componente *ORM* è stata sviluppata basandosi su codice originale presente nella repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze: data l'entità delle stesse ci limiteremo ed elencare esclusivamente quelle che conivolgolo in codice originale, limitandoci a citare, ove necessario per motivi di contesto, le funzionalità aggiunte per lo scopo del corrente progetto.
 
-* Modifiche alla struttura del codice, che hanno comportato la riorganizzazione delle classi e delle interfacce.
-* Modifiche alla gestione dei risultati delle query tramite l'elaborazione degli stessi in modo da soddisfare le esigenze del progetto.
-* Modifiche alla funzionalità del codice, che hanno comportato l'aggiunta di nuove funzionalità e la rimozione di funzionalità non necessarie e/o fuori contesto.
-* Modifiche dell'approccio che hanno comportato un cambiamento radicale del modo in cui il codice interagisce con il database, passando dal pattern active records al pattern *Data Mapper a mappatura implicita*.
+- Tutto il codice è stato rifattorizzato per aderire agli standard di forte tipizzazione che caratterizzano il progetto nel quale è stato integrato. Inoltre, trattandosi di codice risalente al 2015, sono state apportate (e saranno apportate in futuro) le modifiche necessarie per adeguarlo alle best practices correnti e per renderlo compatibile alla versione più recente del linguaggio di programmazione.
 
-Le modifiche apportate al codice originale riguardano l'intero codice, pertanto non è possibile elencarle tutte in modo dettagliato
+- In determinate circostanze, le costanti di classe utili a gestire parole chiave sono state sostituire da enum, introdotti con la versione di php 8.1. Questa scelta strategica, affiancata alla forte tipizzazione che caratterizza l'intero framework, è stata adottata per garantire la coerenza delle informazioni che lo sviluppatore andrà ad inviare all'architettura che si occuperà di interagire con il database ed a migliorare la user exprerience.
+
+- I namespace sono stati modificati per essere integrati in modo coerente nell'ambito di progetto.
+
+- Le classi base `Adapter` e `ResultSet` sono state riorganizzate, spostandole in una posizione comune che ne identifichi la funzione e rendendole astratte, quindi non direttamente utilizzabili. I metodi che vengono implementati nelle classi figlie e che nella libreria originale erano abbozzati in modo da restituire `null`, sono stati invece resi astratti ed implementati direttamente nelle classi che le estendono.
+
+- Le funzionalita che nella libreria originaria sono attribuite alle classi di tipo `Model` (ovvero alle estensioni della classe padre `Model`) sono state suddivise secondo l'SRP in due strutture separate, modificando il pattern architetturale originale *Active Record* in un pattern *Data Mapper a mappatura implicita*.
+  
+  - Le funzionalità di rappresentazione dei dati e l'implementazione della logica di dominio sono state demandate alle classi `Entity`, un nuovo tipo introdotto appositamente. Tale gerarchia di classi (che comprende `BaseEntity`, `ReferencedEntity `e `SelfReferencedEntity`) implementa numerosi comportamenti, non presenti nella concezione originaria della libreria. Come detto in precedenza, non reputiamo necessario dilungarci in tale sede nelle evolutive ed i meccanismi di meta-programmazione implementati (le cui caratteristiche è possile individuare all'interno della documentazione che correda la libreria corrente), ma ci limiteremo a specificare che la caratteristica che la classe `Entity` riprende dalla originaria classe `Model` è esclusivamente quella di *rappresentare* la tabella, modificando però l'approccio di accesso ai dati in stessa contenuti. Vengono inoltre gestite direttamente le *chiavi esterne* tramite la tipizzazione delle proprietà, utilizzando come tipo la classe alla quale la chiave esterna fa riferimento. Sono inoltre gestiti nativamente *vocabolari chiusi* per mezzo degli enum.
+  
+  - È stata creata la classe `DataMapper` alla quale sono state attribuite le funzionalità che si occupano della persistenza dei dati. La maggior parte dei metodi dell'originale classe *Model* (opportunamente rifattorizzati) sono quindi confluiti in essa; ad essi sono stati affiancati altri metodi specifici del contesto di progetto.
+
+- Relativamente alle classi `Model` (`BaseModel `, `DependentModel`, `SelfReferencedModel`) implementate dalla corrente libreria, nonostante rappresentino una caratteristica peculiare della stessa e non abbiano legami diretti con quelle presenti nella libreria originaria, riteniamo sia necessario effettuare alcune precisazioni. Esse sono demandate ad incapsulare la costruzione delle query secondo il dialetto implementato dalla classe `Adapter`. Per quanto riguarda le funzionalità aggiuntive ed i meccanismi di meta-programmazione implementati al loro interno facciamo riferimento all'apposita sezione della documentazione.
+
+- Le classi `ResulSet` sono state rifattorizzate in modo da restituire come risultato oggetti di tipo `Entity` (nel caso in cui la query restituisca una sola riga di risultato) o `SismaCollection` (qualora il risultato rappresenti molteplici record). Queste ultime sono un'estensione della classe nativa di PHP `ArrayObject` e sono state implementate in modo tale da mantenere la coerenza di tipo all'interno di ogni collezione. Come in precedenza, per ulteriori dettagli sulla funzionalità rappresentata dalla classe `SismaCollection`, facciamo riferimento all'apposita sezione della documentazione.
+
+- La classe Query è stata oggetto di attenta revisione che ha comportato l'aggiunta di alcuni comportamenti e la rimozione di altri non reputati necessari nell'ambito del corrente progetto.
 
 Ringraziamo gli autori del progetto **SimpleORM** per aver condiviso il loro lavoro con la comunità open source.
 
 Copia della [licenza della repository originale](https://github.com/davideairaghi/php/blob/master/LICENSE) è inclusa nella cartella third-party-licenses/SimpleOrm/ con indicata notifica di copyright, assente nell'originale e redatta seguendo il formato standard. Riportiamo la suddetta notifica di copyright anche di seguito.
 
 Copyright (c) 2015-present Davide Airaghi
+
+---
+
+Parte della rifattorizzazione della componente ORM è ispirata alla repository [Doctrine Object Relational Mapper (ORM)](https://github.com/doctrine/orm), rilasciato sotto licenza MIT.
+
+Ringraziamo gli autori del progetto **Doctrine Object Relational Mapper (ORM)** per aver condiviso il loro lavoro con la comunità open source.
+
+Copia della [licenza della repository originale](https://github.com/symfony/symfony/blob/6.4/LICENSE) è inclusa nella cartella third-party-licenses/DoctrineORM/ con indicata la notifica di copyright che riportiamo anche di seguito.
+
+Copyright (c) Doctrine Project
 
 ---
 
