@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright (c) 2020-present Valentino de Lapa.
@@ -22,6 +28,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * MODIFICHE APPORTATE RISPETTO ALLA CLASSE `MODEL` DI SIMPLEORM:
+ * - **Passaggio dal pattern Active Record al pattern Data Mapper:** La logica di persistenza è stata separata in una classe `DataMapper`.
+ * - **Introduzione di una classe `Entity` per la rappresentazione dei dati:** Sostituisce il ruolo della classe `Model` nella rappresentazione diretta della tabella.
+ * - **Gestione delle relazioni tramite proprietà tipizzate:** Le chiavi esterne sono gestite come proprietà che fanno riferimento ad altre `Entity`.
+ * - **Implementazione di comportamenti specifici delle `Entity`:** Sono state aggiunte funzionalità non presenti nella concezione originale di `Model`.
+ * - **Separazione della logica di costruzione delle query:** Demandata a classi dedicate (come `Query` e `Adapter`).
  */
 
 namespace SismaFramework\Orm\BaseClasses;

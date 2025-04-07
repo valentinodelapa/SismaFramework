@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright 2023 Valentino de Lapa.
@@ -22,6 +28,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * MODIFICHE APPORTATE RISPETTO ALLA CLASSE `MODEL` DI SIMPLEORM:
+ * - Significativa riorganizzazione e rifattorizzazione per l'applicazione della tipizzazione forte.
+ * - **Passaggio dal pattern Active Record al pattern Data Mapper:** La logica di persistenza è stata separata in una classe `DataMapper`.
+ * - **Separazione delle responsabilità:** Le operazioni di persistenza sono state estratte dalla classe che rappresentava i dati (`Model`).
+ * - **Nessun riferimento diretto alla rappresentazione dei dati (`Entity`):** Il `DataMapper` si concentra sulla persistenza, interagendo con le `Entity` tramite interfacce.
+ * - Implementazione di meccanismi e comportamenti specifici non presenti nella classe Model originale
  */
 
 namespace SismaFramework\Orm\HelperClasses;
