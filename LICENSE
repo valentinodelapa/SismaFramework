@@ -18,3 +18,23 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+This software includes third-party software components, the licenses for which
+are managed separately.
+
+The "ORM" component of this framework incorporates and is derived from code of 
+the SimpleORM library (https://github.com/davideairaghi/php), released under the
+Apache License 2.0. The full text of the Apache License 2.0 is available in the 
+file:
+
+    third-party-licenses/SimpleOrm/LICENSE
+
+Copyright notices for the SimpleORM library are included at the beginning of the
+derived source files within the "ORM" component.
+
+This framework also utilizes other third-party libraries, which are listed with 
+their respective licenses in the NOTICE.md file. Please refer to the NOTICE.md 
+file for complete details on the licenses of all third-party software used in 
+this project.
