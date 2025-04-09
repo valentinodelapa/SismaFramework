@@ -50,13 +50,13 @@ Ringraziamo gli autori del progetto **SimpleORM** per aver condiviso il loro lav
 
 Copia della [licenza della repository originale](https://github.com/davideairaghi/php/blob/master/LICENSE) è inclusa nella cartella third-party-licenses/SimpleOrm/ con indicata notifica di copyright, incompleta nell'originale (Copyright {yyyy} {name of copyright owner}) e redatta seguendo il formato standard. 
 
-Non siamo riusciti a contattare in alcun modo lo sviluppatore della repository originale pertanto abbiamo agito autonomamente, partendo dal presupposto che, avendo rilasciato codice open source con licenza Apache 2.0 lo abbia fatto con le migliori intenzioni e comprenda la nostra buona fede (anche in caso di eventuali errori) nel compilare autonomamente quanto, per una svista, lui ha dimenticato di compilare. Il nome dello sviluppatore è presente all'interno della repository e quindi è stato semplice dedurlo. 
+Non essendo riusciti a contattare lo sviluppatore della repository originale, abbiamo agito autonomamente. Siamo partiti, infatti,  dal presupposto che, avendo rilasciato codice open source con licenza Apache 2.0 lo abbia fatto con le migliori intenzioni e comprenda la nostra buona fede (anche in caso di eventuali errori) nel compilare autonomamente quanto, per una svista, lui ha dimenticato di compilare. Il nome dello sviluppatore è presente all'interno della repository e quindi è stato semplice dedurlo. 
 
 Riguardo l'anno abbiamo indicato come partenza quello di prima release (risalente al 6 ottobre 2015); nonostante l'ultima release risalga a pochi giorni dopo la prima (13 ottobre 2015) abbiamo ugualmente deciso di optare per il formato 2015-present, per tutelare al massimo i diritti dello sviluppatore originale. 
 
 Anche nei files sorgente originali non era presente alcuna notifica di copyright e, non appena ci siamo accorti della cosa, abbiamo provveduto ad includerla in ogni singolo file derivato, in testa alla licenza del progetto corrente, indicando anche le modifiche effettuate.
 
-Invitiamo lo stesso a contattaci qualora decida di editare tale informazione nella repository originale in formato diverso rispetto a quello da noi utilizzato e voglia che venga fatto altrettando anche nei riferimenti presenti nel corrente progetto. Riportiamo la suddetta notifica di copyright anche di seguito.
+Invitiamo lo sviluppatore della repository originale stesso a contattaci qualora decida di editare tale informazione nella repository originale in formato diverso rispetto a quello da noi utilizzato e voglia che venga fatto altrettando anche nei riferimenti presenti nel corrente progetto. Riportiamo la suddetta notifica di copyright anche di seguito.
 
 Copyright (c) 2015-present Davide Airaghi
 
