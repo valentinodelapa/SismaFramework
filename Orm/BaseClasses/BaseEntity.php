@@ -245,4 +245,33 @@ abstract class BaseEntity
     {
         return $this->foreignKeyIndexes;
     }
+
+    public function toArray(): array
+    {
+        $result = [];
+        $reflectionClass = new \ReflectionClass($this);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (self::checkFinalClassReflectionProperty($reflectionProperty)) {
+                $result[$reflectionProperty->getName()] = $this->parsePropterty($reflectionProperty);
+            }
+        }
+        return $result;
+    }
+
+    protected function parsePropterty(\ReflectionProperty $reflectionProperty)
+    {
+        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+            if (isset($this->foreignKeyIndexes[$reflectionProperty->getName()])) {
+                return $this->foreignKeyIndexes[$reflectionProperty->getName()];
+            } elseif ($reflectionProperty->isInitialized($this)) {
+                return $reflectionProperty->getValue($this)->toArray();
+            } else {
+                throw new InvalidPropertyException($reflectionProperty->getName());
+            }
+        } elseif ($reflectionProperty->isInitialized($this)) {
+            return Parser::unparseValue($reflectionProperty->getValue($this));
+        } else {
+            throw new InvalidPropertyException($reflectionProperty->getName());
+        }
+    }
 }
