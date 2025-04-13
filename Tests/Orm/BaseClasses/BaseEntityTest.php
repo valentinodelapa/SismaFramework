@@ -34,6 +34,9 @@ use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\DependentEntityThree;
+use SismaFramework\TestsApplication\Entities\EntityWithOneCollectionOne;
+use SismaFramework\TestsApplication\Entities\EntityWithOneCollectionTwo;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
@@ -312,5 +315,54 @@ class BaseEntityTest extends TestCase
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->timeNullableWithInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $this->assertTrue($baseSampleThree->modified);
+    }
+
+    public function testToArrayGood()
+    {
+        $dependentEntityThree = new DependentEntityThree($this->dataMapperMock);
+        $dependentEntityThree->id = 1;
+        $dependentEntityThree->string = 'sample-string';
+        $entityWithOneCollectionOne = new EntityWithOneCollectionOne();
+        $entityWithOneCollectionOne->id = 2;
+        $entityWithOneCollectionOne->string = 'other-sample-string';
+        $dependentEntityThree->entityWithOneCollectionOne = $entityWithOneCollectionOne;
+        $dependentEntityThree->entityWithOneCollectionTwo = 3;
+        $entityToArray = $dependentEntityThree->toArray();
+        $this->assertIsArray($entityToArray);
+        $this->assertEquals([
+            'id' => 1,
+            'string' => 'sample-string',
+            'entityWithOneCollectionOne' => [
+                'id' => 2,
+                'string' => 'other-sample-string',
+            ],
+            'entityWithOneCollectionTwo' => 3,
+                ], $entityToArray);
+    }
+
+    public function testToArrayWithExceptionOne()
+    {
+        $this->expectException(InvalidPropertyException::class);
+        $dependentEntityThree = new DependentEntityThree($this->dataMapperMock);
+        $dependentEntityThree->id = 1;
+        $dependentEntityThree->string = 'sample-string';
+        $entityWithOneCollectionOne = new EntityWithOneCollectionOne();
+        $entityWithOneCollectionOne->id = 2;
+        $entityWithOneCollectionOne->string = 'other-sample-string';
+        $dependentEntityThree->entityWithOneCollectionOne = $entityWithOneCollectionOne;
+        $dependentEntityThree->toArray();
+    }
+
+    public function testToArrayWithExceptionTwo()
+    {
+        $this->expectException(InvalidPropertyException::class);
+        $dependentEntityThree = new DependentEntityThree($this->dataMapperMock);
+        $dependentEntityThree->id = 1;
+        $entityWithOneCollectionOne = new EntityWithOneCollectionOne();
+        $entityWithOneCollectionOne->id = 2;
+        $entityWithOneCollectionOne->string = 'other-sample-string';
+        $dependentEntityThree->entityWithOneCollectionOne = $entityWithOneCollectionOne;
+        $dependentEntityThree->entityWithOneCollectionTwo = 3;
+        $dependentEntityThree->toArray();
     }
 }

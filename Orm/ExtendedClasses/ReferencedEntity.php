@@ -231,4 +231,17 @@ abstract class ReferencedEntity extends BaseEntity
         $model = new $modelName($this->dataMapper);
         return $model->countEntityCollectionByEntity([$foreignKeyName => $this]);
     }
+
+    #[\Override]
+    public function toArray(): array
+    {
+        $result = [];
+        $reflectionClass = new \ReflectionClass($this);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (self::checkFinalClassReflectionProperty($reflectionProperty)) {
+                $result[$reflectionProperty->getName()] = $this->parsePropterty($reflectionProperty);
+            }
+        }
+        return array_merge($result, $this->collections);
+    }
 }
