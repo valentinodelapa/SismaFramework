@@ -33,6 +33,7 @@ use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -45,6 +46,7 @@ use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
 use SismaFramework\TestsApplication\Entities\DependentEntityOne;
 use SismaFramework\TestsApplication\Entities\DependentEntityTwo;
 use SismaFramework\TestsApplication\Entities\EntityWithTwoCollection;
+use SismaFramework\TestsApplication\Entities\SimpleEntity;
 use SismaFramework\TestsApplication\Entities\SubdependentEntity;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
@@ -692,6 +694,27 @@ class DataMapperTest extends TestCase
         $dataMapper = new DataMapper($baseAdapterMock);
         $dataMapper->save($entityWithTwoCollection);
         $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $adapterMethodCallOrder);
+    }
+
+    public function testDoubleSaveAfterModification()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('execute')
+                ->willReturn(true);
+        $processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+        $dataMapper = new DataMapper($baseAdapterMock, $processedEntitiesCollectionMock);
+        $simpleEntity = new SimpleEntity($dataMapper, $processedEntitiesCollectionMock);
+        $processedEntitiesCollectionMock->expects($this->exactly(2))
+                ->method('append')
+                ->with($simpleEntity);
+        $processedEntitiesCollectionMock->expects($this->exactly(2))
+                ->method('remove')
+                ->with($simpleEntity);
+        $simpleEntity->string = 'test';
+        $dataMapper->save($simpleEntity);
+        $simpleEntity->string = 'test-modified';
+        $dataMapper->save($simpleEntity);
     }
 
     public function testSaveModificationOnSubnidificateCollection()

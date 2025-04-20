@@ -45,15 +45,14 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
-use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Permissions\ReferencedEntityDeletionPermission;
-use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 
 /**
@@ -64,12 +63,13 @@ class DataMapper
 
     private bool $ormCacheStatus = \Config\ORM_CACHE;
     private BaseAdapter $adapter;
+    private ProcessedEntitiesCollection $processedEntitiesCollection;
     private static bool $isActiveTransaction = false;
-    private array $processedEntity = [];
 
-    public function __construct(?BaseAdapter $adapter = null)
+    public function __construct(?BaseAdapter $adapter = null, ?ProcessedEntitiesCollection $processedEntityCollection = null)
     {
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
+        $this->processedEntitiesCollection = $processedEntityCollection ?? ProcessedEntitiesCollection::getInstance();
     }
 
     public function setOrmCacheStatus(bool $ormCacheStatus = true): void
@@ -98,10 +98,10 @@ class DataMapper
 
     public function save(BaseEntity $entity, Query $query = new Query()): bool
     {
-        if (in_array($entity, $this->processedEntity, true)) {
+        if ($this->processedEntitiesCollection->has($entity)) {
             return true;
         } else {
-            $this->processedEntity[] = $entity;
+            $this->processedEntitiesCollection->append($entity);
             $isFirstExecution = $this->startTransaction();
             if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
                 $result = $this->insert($entity, $query);
@@ -130,7 +130,7 @@ class DataMapper
         $cmd = $query->getCommandToExecute(Statement::insert, ['columns' => $columns, 'values' => $markers]);
         $result = $this->adapter->execute($cmd, $values);
         if ($result) {
-            $entity->{$entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
+            $entity->setPrimaryKeyAfterSave($this->adapter->lastInsertId());
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
             if ($this->ormCacheStatus) {
@@ -211,7 +211,7 @@ class DataMapper
         if (self::$isActiveTransaction && $checkAnnidation) {
             if ($this->adapter->commitTransaction()) {
                 self::$isActiveTransaction = false;
-                $this->processedEntity = [];
+                $this->processedEntitiesCollection->clear();
             }
         }
     }

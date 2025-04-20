@@ -43,6 +43,7 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 
 /**
@@ -54,7 +55,7 @@ abstract class BaseEntity
     public bool $modified = false;
     public array $foreignKeys = [];
     protected DataMapper $dataMapper;
-    protected static ?BaseEntity $instance = null;
+    protected ProcessedEntitiesCollection $processedEntitesCollection;
     protected string $primaryKey = 'id';
     protected string $initializationVectorPropertyName = 'initializationVector';
     protected bool $isActiveTransaction = false;
@@ -62,9 +63,10 @@ abstract class BaseEntity
     private array $foreignKeyIndexes = [];
     private static string $encryptionPassphrase = \Config\ENCRYPTION_PASSPHRASE;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper())
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?ProcessedEntitiesCollection $processedEntitesCollection = null)
     {
         $this->dataMapper = $dataMapper;
+        $this->processedEntitesCollection = $processedEntitesCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
         $reflectionClass = new \ReflectionClass($this);
@@ -110,6 +112,11 @@ abstract class BaseEntity
             unset($this->foreignKeyIndexes[$propertyName]);
         }
     }
+    
+    public function setPrimaryKeyAfterSave(int $value):void
+    {
+        $this->{$this->primaryKey} = $value;
+    }
 
     public function __set($name, $value)
     {
@@ -150,6 +157,7 @@ abstract class BaseEntity
     {
         if (((isset($this->foreignKeyIndexes[$name]) && ($this->foreignKeyIndexes[$name] !== $value)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name->id !== $value))))) {
+            $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
     }
@@ -165,6 +173,7 @@ abstract class BaseEntity
     {
         if (((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name != $value)))))) {
+            $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
     }
@@ -172,6 +181,7 @@ abstract class BaseEntity
     private function trackForeignKeyPropertyWithNullValueChanges(string $name): void
     {
         if ((isset($this->foreignKeyIndexes[$name]) || isset($this->$name))) {
+            $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
     }
@@ -180,6 +190,7 @@ abstract class BaseEntity
     {
         if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
                 $this->checkCustomDateTimeInterfacePropertyChange($reflectionNamedType, $name, $value)) {
+            $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
     }
