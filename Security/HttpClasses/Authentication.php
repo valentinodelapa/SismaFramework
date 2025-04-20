@@ -129,7 +129,7 @@ class Authentication extends Submittable
 
     public function checkMultiFactor(AuthenticableInterface $authenticableInterface): bool
     {
-        if (array_key_exists('code', $this->request->request) && Filter::isString($this->request->request['code'])) {
+        if (array_key_exists('code', $this->request->request) && $this->filter->isString($this->request->request['code'])) {
             $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByAuthenticableInterface($authenticableInterface);
             if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->request['code'])) {
                 return true;

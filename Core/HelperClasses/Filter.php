@@ -315,6 +315,6 @@ class Filter
     public static function __callStatic(string $name, array $arguments): mixed
     {
         $instance = new Filter();
-        $instance->$name(...$arguments);
+        return $instance->$name(...$arguments);
     }
 }

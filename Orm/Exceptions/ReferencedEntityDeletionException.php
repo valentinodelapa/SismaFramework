@@ -37,7 +37,7 @@ class ReferencedEntityDeletionException extends LogException
 
     private BaseEntity $entity;
 
-    public function __construct(BaseEntity $entity, string $message = "", int $code = 0, \Throwable $previous = NULL)
+    public function __construct(BaseEntity $entity, string $message = "", int $code = 0, ?\Throwable $previous = null)
     {
         $this->entity = $entity;
         parent::__construct($message, $code, $previous);
