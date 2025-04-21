@@ -62,4 +62,31 @@ class Locker
     {
         return file_exists($dirname . DIRECTORY_SEPARATOR . '.lock');
     }
+
+    public static function lockFile(string $filename): void
+    {
+        $file = fopen($filename . '.lock', 'w');
+        if ($file) {
+            fclose($file);
+        } else {
+            throw new FilesystemPermissionException();
+        }
+    }
+
+    public static function unlockFile(string $filename): void
+    {
+        if (file_exists($filename . '.lock')) {
+            $result = unlink($filename . '.lock');
+            if ($result === false) {
+                throw new FilesystemPermissionException();
+            }
+        } else {
+            throw new FilesystemPermissionException();
+        }
+    }
+
+    public static function fileIsLocked(string $filename): bool
+    {
+        return file_exists($filename . '.lock');
+    }
 }

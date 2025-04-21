@@ -37,7 +37,7 @@ use SismaFramework\Core\HelperClasses\Locker;
 class LockerTest extends TestCase
 {
 
-    public function testLockerClass()
+    public function testLockFolder()
     {
         $testDirectoryPath = \Config\SYSTEM_PATH . \Config\APPLICATION_PATH . 'TestDirectory';
         mkdir($testDirectoryPath);
@@ -46,6 +46,21 @@ class LockerTest extends TestCase
         $this->assertTrue(Locker::folderIsLocked($testDirectoryPath));
         Locker::unlockFolder($testDirectoryPath);
         $this->assertFalse(Locker::folderIsLocked($testDirectoryPath));
+        rmdir($testDirectoryPath);
+    }
+
+    public function testLockFile()
+    {
+        $testDirectoryPath = \Config\SYSTEM_PATH . \Config\APPLICATION_PATH . 'TestDirectory';
+        mkdir($testDirectoryPath);
+        $testFilePath = $testDirectoryPath . DIRECTORY_SEPARATOR . 'testFile.txt';
+        $file = fopen($testFilePath, 'w');
+        fclose($file);
+        $this->assertFalse(Locker::fileIsLocked($testFilePath));
+        Locker::lockFile($testFilePath);
+        $this->assertTrue(Locker::fileIsLocked($testFilePath));
+        Locker::unlockFile($testFilePath);
+        $this->assertFalse(Locker::fileIsLocked($testFilePath));
         rmdir($testDirectoryPath);
     }
 }

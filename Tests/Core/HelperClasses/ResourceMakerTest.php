@@ -64,6 +64,14 @@ class ResourceMakerTest extends TestCase
     }
 
     #[RunInSeparateProcess]
+    public function testMakeResourceWithFileNotAccessible()
+    {
+        $resourceMaker = new ResourceMaker();
+        $this->expectException(AccessDeniedException::class);
+        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/css/notAccessible.css');
+    }
+
+    #[RunInSeparateProcess]
     public function testMakeResourceWithFolderNotAccessible()
     {
         $resourceMaker = new ResourceMaker();
