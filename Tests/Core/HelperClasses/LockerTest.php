@@ -41,11 +41,12 @@ class LockerTest extends TestCase
     {
         $testDirectoryPath = \Config\SYSTEM_PATH . \Config\APPLICATION_PATH . 'TestDirectory';
         mkdir($testDirectoryPath);
-        $this->assertFalse(Locker::folderIsLocked($testDirectoryPath));
-        Locker::lockFolder($testDirectoryPath);
-        $this->assertTrue(Locker::folderIsLocked($testDirectoryPath));
-        Locker::unlockFolder($testDirectoryPath);
-        $this->assertFalse(Locker::folderIsLocked($testDirectoryPath));
+        $locker = new Locker();
+        $this->assertFalse($locker->folderIsLocked($testDirectoryPath));
+        $locker->lockFolder($testDirectoryPath);
+        $this->assertTrue($locker->folderIsLocked($testDirectoryPath));
+        $locker->unlockFolder($testDirectoryPath);
+        $this->assertFalse($locker->folderIsLocked($testDirectoryPath));
         rmdir($testDirectoryPath);
     }
 
@@ -56,11 +57,12 @@ class LockerTest extends TestCase
         $testFilePath = $testDirectoryPath . DIRECTORY_SEPARATOR . 'testFile.txt';
         $file = fopen($testFilePath, 'w');
         fclose($file);
-        $this->assertFalse(Locker::fileIsLocked($testFilePath));
-        Locker::lockFile($testFilePath);
-        $this->assertTrue(Locker::fileIsLocked($testFilePath));
-        Locker::unlockFile($testFilePath);
-        $this->assertFalse(Locker::fileIsLocked($testFilePath));
+        $locker = new Locker();
+        $this->assertFalse($locker->fileIsLocked($testFilePath));
+        $locker->lockFile($testFilePath);
+        $this->assertTrue($locker->fileIsLocked($testFilePath));
+        $locker->unlockFile($testFilePath);
+        $this->assertFalse($locker->fileIsLocked($testFilePath));
         unlink($testFilePath);
         rmdir($testDirectoryPath);
     }

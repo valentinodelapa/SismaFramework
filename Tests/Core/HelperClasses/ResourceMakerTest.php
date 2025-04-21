@@ -29,6 +29,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
+use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
 
 /**
@@ -38,6 +39,13 @@ use SismaFramework\Core\HelperClasses\ResourceMaker;
  */
 class ResourceMakerTest extends TestCase
 {
+
+    private Locker $lockerMock;
+
+    public function setUp(): void
+    {
+        $this->lockerMock = $this->createMock(Locker::class);
+    }
 
     #[RunInSeparateProcess]
     public function testIsAcceptedResourceFile()
@@ -50,69 +58,137 @@ class ResourceMakerTest extends TestCase
     #[RunInSeparateProcess]
     public function testMakeResourceNotRenderable()
     {
+        $filePath = __DIR__ . '/../../../TestsApplication/Controllers/SampleController.php';
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
         $resourceMaker = new ResourceMaker();
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Controllers/SampleController.php');
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
     #[RunInSeparateProcess]
     public function testMakeResourceNotDownloadable()
     {
+        $filePath = __DIR__ . '/../../../TestsApplication/Controllers/SampleController.php';
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
         $resourceMaker = new ResourceMaker();
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Controllers/SampleController.php', true);
+        $resourceMaker->makeResource($filePath, true, $this->lockerMock);
     }
 
     #[RunInSeparateProcess]
     public function testMakeResourceWithFileNotAccessible()
     {
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/notAccessible.css';
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(true);
         $resourceMaker = new ResourceMaker();
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/css/notAccessible.css');
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
     #[RunInSeparateProcess]
     public function testMakeResourceWithFolderNotAccessible()
     {
+        $filePath = __DIR__ . '/../../../TestsApplication/Cache/referencedCache.json';
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(true);
         $resourceMaker = new ResourceMaker();
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Cache/referencedCache.json');
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
     #[RunInSeparateProcess]
     public function testMakeResourceViaFileGetContent()
     {
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/sample.css';
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
         $this->expectOutputString(file_get_contents(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css'));
         $resourceMaker = new ResourceMaker();
-        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css');
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
     #[RunInSeparateProcess]
     public function testMakeResourceViaReadFile()
     {
-        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css'));
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/sample.css';
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        $this->expectOutputString(file_get_contents($filePath));
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setFileGetContentMaxBytesLimit(4);
-        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css');
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
     #[RunInSeparateProcess]
     public function testMakeResourceViaFopen()
     {
-        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css'));
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/sample.css';
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        $this->expectOutputString(file_get_contents($filePath));
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setFileGetContentMaxBytesLimit(4);
         $resourceMaker->setReadfileMaxBytesLimit(4);
-        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/css/sample.css');
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
     #[RunInSeparateProcess]
     public function testFileWithStreamContent()
     {
-        $this->expectOutputString(file_get_contents(__DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js'));
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js';
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        $this->expectOutputString(file_get_contents($filePath));
         $_SERVER['QUERY_STRING'] = 'resource=resource';
         $resourceMaker = new ResourceMaker();
         $resourceMaker->setStreamContex();
-        $resourceMaker->makeResource(__DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js');
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 }

@@ -44,9 +44,9 @@ class Logger
         self::$maxRows = $maxRows;
     }
 
-    public static function saveLog(string $message, int|string $code, string $file, string $line): void
+    public static function saveLog(string $message, int|string $code, string $file, string $line, Locker $locker = new Locker()): void
     {
-        self::createLogStructure();
+        self::createLogStructure($locker);
         $handle = fopen(self::$logPath, 'a');
         if ($handle !== false) {
             fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "(" . $line . ")" . "\n");
@@ -55,20 +55,20 @@ class Logger
         self::truncateLog();
     }
 
-    private static function createLogStructure(): void
+    private static function createLogStructure(Locker $locker): void
     {
-        self::createLogDirectory();
+        self::createLogDirectory($locker);
         self::createLogFile();
     }
 
-    private static function createLogDirectory(): void
+    private static function createLogDirectory(Locker $locker): void
     {
         if (is_dir(self::$logDirectoryPath) === false) {
             mkdir(self::$logDirectoryPath);
             $handle = fopen(self::$logPath, 'a');
             fclose($handle);
         }
-        Locker::lockFolder(self::$logDirectoryPath);
+        $locker->lockFolder(self::$logDirectoryPath);
     }
 
     private static function createLogFile(): void
@@ -114,27 +114,27 @@ class Logger
         }
     }
 
-    public static function clearLog(): void
+    public static function clearLog(Locker $locker = new Locker()): void
     {
-        self::createLogStructure();
+        self::createLogStructure($locker);
         file_put_contents(self::$logPath, '');
     }
 
-    public static function getLog(): string|false
+    public static function getLog(Locker $locker = new Locker()): string|false
     {
-        self::createLogStructure();
+        self::createLogStructure($locker);
         return file_get_contents(self::$logPath);
     }
 
-    public static function getLogRowByRow(): array|false
+    public static function getLogRowByRow(Locker $locker = new Locker()): array|false
     {
-        self::createLogStructure();
+        self::createLogStructure($locker);
         return file(self::$logPath);
     }
 
-    public static function getLogRowNumber(): int
+    public static function getLogRowNumber(Locker $locker = new Locker()): int
     {
-        self::createLogStructure();
+        self::createLogStructure($locker);
         return count(file(self::$logPath));
     }
 }
