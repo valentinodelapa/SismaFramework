@@ -61,6 +61,7 @@ class LockerTest extends TestCase
         $this->assertTrue(Locker::fileIsLocked($testFilePath));
         Locker::unlockFile($testFilePath);
         $this->assertFalse(Locker::fileIsLocked($testFilePath));
+        unlink($testFilePath);
         rmdir($testDirectoryPath);
     }
 }
