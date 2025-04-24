@@ -2946,6 +2946,21 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Locker.html#method_folderIsLocked"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Locker\u003A\u003AlockFile\u0028\u0029",
+            "name": "lockFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Locker.html#method_lockFile"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Locker\u003A\u003AunlockFile\u0028\u0029",
+            "name": "unlockFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Locker.html#method_unlockFile"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Locker\u003A\u003AfileIsLocked\u0028\u0029",
+            "name": "fileIsLocked",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Locker.html#method_fileIsLocked"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Logger",
             "name": "Logger",
             "summary": "",
@@ -5456,6 +5471,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Cache.html#method_clearForeighKeyDataCache"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Cache\u003A\u003A\u0024locker",
+            "name": "locker",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Cache.html#property_locker"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Cache\u003A\u003A\u0024entityCache",
             "name": "entityCache",
             "summary": "",
@@ -7341,10 +7361,15 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020LockerTest",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-LockerTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\LockerTest\u003A\u003AtestLockerClass\u0028\u0029",
-            "name": "testLockerClass",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\LockerTest\u003A\u003AtestLockFolder\u0028\u0029",
+            "name": "testLockFolder",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-LockerTest.html#method_testLockerClass"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-LockerTest.html#method_testLockFolder"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\LockerTest\u003A\u003AtestLockFile\u0028\u0029",
+            "name": "testLockFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-LockerTest.html#method_testLockFile"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\LoggerTest",
             "name": "LoggerTest",
@@ -7626,6 +7651,11 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020ResourceMakerTest",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_setUp"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestIsAcceptedResourceFile\u0028\u0029",
             "name": "testIsAcceptedResourceFile",
             "summary": "",
@@ -7640,6 +7670,11 @@ Search.appendIndex(
             "name": "testMakeResourceNotDownloadable",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceNotDownloadable"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestMakeResourceWithFileNotAccessible\u0028\u0029",
+            "name": "testMakeResourceWithFileNotAccessible",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithFileNotAccessible"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestMakeResourceWithFolderNotAccessible\u0028\u0029",
             "name": "testMakeResourceWithFolderNotAccessible",
@@ -7665,6 +7700,11 @@ Search.appendIndex(
             "name": "testFileWithStreamContent",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testFileWithStreamContent"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003A\u0024lockerMock",
+            "name": "lockerMock",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_lockerMock"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RouterTest",
             "name": "RouterTest",
