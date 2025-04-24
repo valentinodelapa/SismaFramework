@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Orm\Exceptions;
 
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Security\ExtendedClasses\LogException;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 
@@ -43,4 +44,9 @@ class ReferencedEntityDeletionException extends LogException
         parent::__construct($message, $code, $previous);
     }
 
+    #[\Override]
+    protected function setResponseType(): ResponseType
+    {
+        return ResponseType::httpInternalServerError;
+    }
 }

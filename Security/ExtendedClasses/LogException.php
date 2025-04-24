@@ -35,7 +35,8 @@ use SismaFramework\Core\HelperClasses\Logger;
  */
 abstract class LogException extends BaseException
 {
-    protected static bool $logVerboseActive =  \Config\LOG_VERBOSE_ACTIVE;
+	
+    protected static bool $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
     
     public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
     {

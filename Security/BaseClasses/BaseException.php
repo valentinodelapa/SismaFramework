@@ -27,24 +27,22 @@
 namespace SismaFramework\Security\BaseClasses;
 
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HttpClasses\Response;
 
 /**
  * @author Valentino de Lapa
  */
 abstract class BaseException extends \Exception
 {
-
-    protected Response $response;
-
+	
     public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
-        $this->response = new Response();
     }
+
+    abstract protected function setResponseType(): ResponseType;
 
     public function getResponseType(): ResponseType
     {
-        return ResponseType::httpInternalServerError;
+        return $this->setResponseType();
     }
 }
