@@ -31,6 +31,7 @@ use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 
 /**
  * Description of FixturesManagerTest
@@ -49,8 +50,9 @@ class FixturesManagerTest extends TestCase
         BaseConfig::setInstance($this->configTest);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
         $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([$baseAdapterMock, $this->configTest])
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configTest])
                 ->getMock();
     }
 

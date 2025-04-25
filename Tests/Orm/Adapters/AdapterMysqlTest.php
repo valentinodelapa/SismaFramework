@@ -37,6 +37,7 @@ use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
@@ -57,8 +58,9 @@ class AdapterMysqlTest extends TestCase
         $this->configTest = new AdapterMysqlConfigTest();
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
         $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([$baseAdapterMock, $this->configTest])
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configTest])
                 ->getMock();
         BaseConfig::setInstance($this->configTest);
         $connectionMock = $this->createMock(\PDO::class);

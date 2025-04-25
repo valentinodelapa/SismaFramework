@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Orm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\CacheException;
 use SismaFramework\Orm\HelperClasses\Cache;
@@ -42,6 +43,7 @@ class CacheTest extends TestCase
 {
 
     private CacheConfigTest $configTest;
+    private Locker $lockerMock;
 
     public function setUp(): void
     {
@@ -49,6 +51,7 @@ class CacheTest extends TestCase
         BaseConfig::setInstance($this->configTest);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $this->lockerMock = $this->createMock(Locker::class);
     }
 
     public function testSetCheckGetEntityInCache()
@@ -65,7 +68,7 @@ class CacheTest extends TestCase
     public function testCheckExceptionWithBaseEntity()
     {
         $this->expectException(CacheException::class);
-        Cache::getForeignKeyData(BaseSample::class, null, $this->configTest);
+        Cache::getForeignKeyData(BaseSample::class, null, $this->lockerMock, $this->configTest);
     }
 
     public function checkUnsetEntity()
@@ -82,25 +85,25 @@ class CacheTest extends TestCase
 
     public function testGetForeignKeyData()
     {
-        $cacheInformationsOne = Cache::getForeignKeyData(ReferencedSample::class, null, $this->configTest);
+        $cacheInformationsOne = Cache::getForeignKeyData(ReferencedSample::class, null, $this->lockerMock, $this->configTest);
         $this->assertIsArray($cacheInformationsOne);
         $this->assertArrayHasKey('baseSample', $cacheInformationsOne);
         $this->assertIsArray($cacheInformationsOne['baseSample']);
         $this->assertArrayHasKey('referencedEntityWithoutInitialization', $cacheInformationsOne['baseSample']);
-        $cacheInformationsTwo = Cache::getForeignKeyData(ReferencedSample::class, 'baseSample', $this->configTest);
+        $cacheInformationsTwo = Cache::getForeignKeyData(ReferencedSample::class, 'baseSample', $this->lockerMock, $this->configTest);
         $this->assertIsArray($cacheInformationsTwo);
         $this->assertArrayHasKey('referencedEntityWithoutInitialization', $cacheInformationsTwo);
         $this->assertSame($cacheInformationsTwo, $cacheInformationsOne['baseSample']);
 
-        $cacheInformationsThree = Cache::getForeignKeyData(ExtendedReferencedSample::class, null, $this->configTest);
+        $cacheInformationsThree = Cache::getForeignKeyData(ExtendedReferencedSample::class, null, $this->lockerMock, $this->configTest);
         $this->assertIsArray($cacheInformationsThree);
         $this->assertArrayHasKey('otherBaseSample', $cacheInformationsThree);
         $this->assertIsArray($cacheInformationsThree['otherBaseSample']);
-        $cacheInformationsFour = Cache::getForeignKeyData(ExtendedReferencedSample::class, 'otherBaseSample', $this->configTest);
+        $cacheInformationsFour = Cache::getForeignKeyData(ExtendedReferencedSample::class, 'otherBaseSample', $this->lockerMock, $this->configTest);
         $this->assertIsArray($cacheInformationsFour);
         $this->assertArrayHasKey('extendedReferencedSample', $cacheInformationsFour);
         $this->assertSame($cacheInformationsFour, $cacheInformationsThree['otherBaseSample']);
-        $cacheInformationsFifth = Cache::getForeignKeyData(ExtendedReferencedSample::class, 'baseSample', $this->configTest);
+        $cacheInformationsFifth = Cache::getForeignKeyData(ExtendedReferencedSample::class, 'baseSample', $this->lockerMock, $this->configTest);
         $this->assertIsArray($cacheInformationsFifth);
         $this->assertArrayHasKey('referencedEntityWithoutInitialization', $cacheInformationsFifth);
         $this->assertSame($cacheInformationsFifth, $cacheInformationsThree['baseSample']);

@@ -52,7 +52,7 @@ class LockerTest extends TestCase
 
     public function testLockFile()
     {
-        $testDirectoryPath = \Config\SYSTEM_PATH . \Config\APPLICATION_PATH . 'TestDirectory';
+        $testDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('lock_', true) . DIRECTORY_SEPARATOR;
         mkdir($testDirectoryPath);
         $testFilePath = $testDirectoryPath . DIRECTORY_SEPARATOR . 'testFile.txt';
         $file = fopen($testFilePath, 'w');

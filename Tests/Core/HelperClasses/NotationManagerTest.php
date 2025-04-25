@@ -31,6 +31,7 @@ use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 
 /**
@@ -60,10 +61,10 @@ class NotationManagerTest extends TestCase
     
     public function testConvertToSnakeCase()
     {
-        $result = NotationManager::convertToSnakeCase('StudlyCaps');
-        $this->assertEquals('studly_caps', $result);
-        $result = NotationManager::convertToSnakeCase('camelCase');
-        $this->assertEquals('camel_case', $result);
+        $resultOne = NotationManager::convertToSnakeCase('StudlyCaps');
+        $this->assertEquals('studly_caps', $resultOne);
+        $resultTwo = NotationManager::convertToSnakeCase('camelCase');
+        $this->assertEquals('camel_case', $resultTwo);
     }
     
     public function testConvertEntityToTableName()
@@ -72,10 +73,11 @@ class NotationManagerTest extends TestCase
         BaseConfig::setInstance($configTest);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
         $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([$baseAdapterMock, $configTest])
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $configTest])
                 ->getMock();
-        $baseSample = new BaseSample($dataMapperMock, $configTest);
+        $baseSample = new BaseSample($dataMapperMock, $processedEntitesCollectionMock, $configTest);
         $result =NotationManager::convertEntityToTableName($baseSample);
         $this->assertEquals('base_sample', $result);
     }
