@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright (c) 2020-present Valentino de Lapa.
@@ -22,6 +28,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ * 
+ * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM\ADAPTERS\ADAPTERMYSQL:
+ * - Modifica del namespace per l'integrazione nel SismaFramework.
+ * - Implementazione della forte tipizzazione per proprietà e parametri.
+ * - Utilizzo degli enum (PHP 8.1+) per le parole chiave e gli operatori SQL nella costruzione delle query.
+ * - Potenziale aggiunta di metodi specifici per funzionalità MySQL non presenti nell'adapter originale o necessarie al SismaFramework.
  */
 
 namespace SismaFramework\Orm\Adapters;

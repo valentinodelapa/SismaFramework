@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright 2023 Valentino de Lapa.
@@ -22,6 +28,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * MODIFICHE APPORTATE RISPETTO ALLA CLASSE `MODEL` DI SIMPLEORM:
+ * - Significativa riorganizzazione e rifattorizzazione per l'applicazione della tipizzazione forte.
+ * - **Passaggio dal pattern Active Record al pattern Data Mapper:** La logica di persistenza è stata separata in una classe `DataMapper`.
+ * - **Separazione delle responsabilità:** Le operazioni di persistenza sono state estratte dalla classe che rappresentava i dati (`Model`).
+ * - **Nessun riferimento diretto alla rappresentazione dei dati (`Entity`):** Il `DataMapper` si concentra sulla persistenza, interagendo con le `Entity` tramite interfacce.
+ * - Implementazione di meccanismi e comportamenti specifici non presenti nella classe Model originale
  */
 
 namespace SismaFramework\Orm\HelperClasses;
@@ -33,15 +46,14 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
-use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Permissions\ReferencedEntityDeletionPermission;
-use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 
 /**
@@ -53,13 +65,14 @@ class DataMapper
     private bool $ormCacheStatus;
     private BaseAdapter $adapter;
     private BaseConfig $config;
+    private ProcessedEntitiesCollection $processedEntitiesCollection;
     private static bool $isActiveTransaction = false;
-    private array $processedEntity = [];
-
-    public function __construct(?BaseAdapter $adapter = null, ?BaseConfig $config = null)
+	
+    public function __construct(?BaseAdapter $adapter = null, ?ProcessedEntitiesCollection $processedEntityCollection = null, ?BaseConfig $config = null)
     {
-        $this->adapter = $adapter ?? BaseAdapter::getDefault();
         $this->config = $config ?? BaseConfig::getInstance();
+        $this->adapter = $adapter ?? BaseAdapter::getDefault();
+        $this->processedEntitiesCollection = $processedEntityCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->ormCacheStatus = $this->config->ormCache;
     }
 
@@ -89,10 +102,10 @@ class DataMapper
 
     public function save(BaseEntity $entity, Query $query = new Query()): bool
     {
-        if (in_array($entity, $this->processedEntity, true)) {
+        if ($this->processedEntitiesCollection->has($entity)) {
             return true;
         } else {
-            $this->processedEntity[] = $entity;
+            $this->processedEntitiesCollection->append($entity);
             $isFirstExecution = $this->startTransaction();
             if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
                 $result = $this->insert($entity, $query);
@@ -121,7 +134,7 @@ class DataMapper
         $cmd = $query->getCommandToExecute(Statement::insert, ['columns' => $columns, 'values' => $markers]);
         $result = $this->adapter->execute($cmd, $values);
         if ($result) {
-            $entity->{$entity->getPrimaryKeyPropertyName()} = $this->adapter->lastInsertId();
+            $entity->setPrimaryKeyAfterSave($this->adapter->lastInsertId());
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
             if ($this->ormCacheStatus) {
@@ -202,7 +215,7 @@ class DataMapper
         if (self::$isActiveTransaction && $checkAnnidation) {
             if ($this->adapter->commitTransaction()) {
                 self::$isActiveTransaction = false;
-                $this->processedEntity = [];
+                $this->processedEntitiesCollection->clear();
             }
         }
     }

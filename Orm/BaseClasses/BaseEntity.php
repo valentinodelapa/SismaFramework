@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright (c) 2020-present Valentino de Lapa.
@@ -22,6 +28,13 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * MODIFICHE APPORTATE RISPETTO ALLA CLASSE `MODEL` DI SIMPLEORM:
+ * - **Passaggio dal pattern Active Record al pattern Data Mapper:** La logica di persistenza è stata separata in una classe `DataMapper`.
+ * - **Introduzione di una classe `Entity` per la rappresentazione dei dati:** Sostituisce il ruolo della classe `Model` nella rappresentazione diretta della tabella.
+ * - **Gestione delle relazioni tramite proprietà tipizzate:** Le chiavi esterne sono gestite come proprietà che fanno riferimento ad altre `Entity`.
+ * - **Implementazione di comportamenti specifici delle `Entity`:** Sono state aggiunte funzionalità non presenti nella concezione originale di `Model`.
+ * - **Separazione della logica di costruzione delle query:** Demandata a classi dedicate (come `Query` e `Adapter`).
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -31,6 +44,7 @@ use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 
 /**
@@ -43,17 +57,18 @@ abstract class BaseEntity
     public array $foreignKeys = [];
     protected DataMapper $dataMapper;
     protected BaseConfig $config;
-    protected static ?BaseEntity $instance = null;
+    protected ProcessedEntitiesCollection $processedEntitesCollection;
     protected string $primaryKey = 'id';
     protected string $initializationVectorPropertyName = 'initializationVector';
     protected bool $isActiveTransaction = false;
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
-
-    public function __construct(DataMapper $dataMapper = new DataMapper(), ?BaseConfig $config = null)
+	
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?ProcessedEntitiesCollection $processedEntitesCollection = null, ?BaseConfig $config = null)
     {
         $this->dataMapper = $dataMapper;
         $this->config = $config ?? BaseConfig::getInstance();
+        $this->processedEntitesCollection = $processedEntitesCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
         $reflectionClass = new \ReflectionClass($this);
@@ -99,6 +114,11 @@ abstract class BaseEntity
             unset($this->foreignKeyIndexes[$propertyName]);
         }
     }
+    
+    public function setPrimaryKeyAfterSave(int $value):void
+    {
+        $this->{$this->primaryKey} = $value;
+    }
 
     public function __set($name, $value)
     {
@@ -139,6 +159,7 @@ abstract class BaseEntity
     {
         if (((isset($this->foreignKeyIndexes[$name]) && ($this->foreignKeyIndexes[$name] !== $value)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name->id !== $value))))) {
+            $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
     }
@@ -154,6 +175,7 @@ abstract class BaseEntity
     {
         if (((isset($this->foreignKeyIndexes[$name]) && (!isset($value->id) || ($this->foreignKeyIndexes[$name] !== $value->id)) ||
                 (!isset($this->foreignKeyIndexes[$name]) && (!isset($this->$name->id) || ($this->$name != $value)))))) {
+            $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
     }
@@ -161,6 +183,7 @@ abstract class BaseEntity
     private function trackForeignKeyPropertyWithNullValueChanges(string $name): void
     {
         if ((isset($this->foreignKeyIndexes[$name]) || isset($this->$name))) {
+            $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
     }
@@ -169,6 +192,7 @@ abstract class BaseEntity
     {
         if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
                 $this->checkCustomDateTimeInterfacePropertyChange($reflectionNamedType, $name, $value)) {
+            $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
     }
@@ -233,5 +257,34 @@ abstract class BaseEntity
     public function getForeignKeyIndexes(): array
     {
         return $this->foreignKeyIndexes;
+    }
+
+    public function toArray(): array
+    {
+        $result = [];
+        $reflectionClass = new \ReflectionClass($this);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (self::checkFinalClassReflectionProperty($reflectionProperty)) {
+                $result[$reflectionProperty->getName()] = $this->parsePropterty($reflectionProperty);
+            }
+        }
+        return $result;
+    }
+
+    protected function parsePropterty(\ReflectionProperty $reflectionProperty)
+    {
+        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+            if (isset($this->foreignKeyIndexes[$reflectionProperty->getName()])) {
+                return $this->foreignKeyIndexes[$reflectionProperty->getName()];
+            } elseif ($reflectionProperty->isInitialized($this)) {
+                return $reflectionProperty->getValue($this)->toArray();
+            } else {
+                throw new InvalidPropertyException($reflectionProperty->getName());
+            }
+        } elseif ($reflectionProperty->isInitialized($this)) {
+            return Parser::unparseValue($reflectionProperty->getValue($this));
+        } else {
+            throw new InvalidPropertyException($reflectionProperty->getName());
+        }
     }
 }

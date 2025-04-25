@@ -40,6 +40,7 @@ use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 class Cache
 {
 
+    private static Locker $locker;
     private static array $entityCache = [];
     private static array $foreighKeyDataCache = [];
 
@@ -66,9 +67,10 @@ class Cache
     {
         static::$entityCache = [];
     }
-
-    public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null, ?BaseConfig $customConfig = null): array
+	
+    public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null, Locker $locker = new Locker(), ?BaseConfig $customConfig = null): array
     {
+        self::$locker = $locker;
         $config = $customConfig ?? BaseConfig::getInstance();
         if (is_subclass_of($referencedEntityName, ReferencedEntity::class)) {
             if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
@@ -156,7 +158,7 @@ class Cache
             }
         }
         file_put_contents($config->referenceCachePath, json_encode(static::$foreighKeyDataCache));
-        Locker::lockFolder($config->referenceCacheDirectory);
+        self::$locker->lockFolder($config->referenceCacheDirectory);
     }
 
     private static function scanModuleEntities($module, $directory, BaseConfig $config): void

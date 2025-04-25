@@ -36,7 +36,7 @@ use SismaFramework\Core\Exceptions\FilesystemPermissionException;
 class Locker
 {
 
-    public static function lockFolder(string $dirname): void
+    public function lockFolder(string $dirname): void
     {
         $file = fopen($dirname . DIRECTORY_SEPARATOR . '.lock', 'w');
         if ($file) {
@@ -46,7 +46,7 @@ class Locker
         }
     }
 
-    public static function unlockFolder(string $dirname): void
+    public function unlockFolder(string $dirname): void
     {
         if (file_exists($dirname . DIRECTORY_SEPARATOR . '.lock')) {
             $result = unlink($dirname . DIRECTORY_SEPARATOR . '.lock');
@@ -58,8 +58,35 @@ class Locker
         }
     }
 
-    public static function folderIsLocked(string $dirname): bool
+    public function folderIsLocked(string $dirname): bool
     {
         return file_exists($dirname . DIRECTORY_SEPARATOR . '.lock');
+    }
+
+    public function lockFile(string $filename): void
+    {
+        $file = fopen($filename . '.lock', 'w');
+        if ($file) {
+            fclose($file);
+        } else {
+            throw new FilesystemPermissionException();
+        }
+    }
+
+    public function unlockFile(string $filename): void
+    {
+        if (file_exists($filename . '.lock')) {
+            $result = unlink($filename . '.lock');
+            if ($result === false) {
+                throw new FilesystemPermissionException();
+            }
+        } else {
+            throw new FilesystemPermissionException();
+        }
+    }
+
+    public function fileIsLocked(string $filename): bool
+    {
+        return file_exists($filename . '.lock');
     }
 }

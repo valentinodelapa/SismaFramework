@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright (c) 2020-present Valentino de Lapa.
@@ -22,6 +28,14 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ * 
+ * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM:
+ * - Significativa riorganizzazione e rifattorizzazione per l'applicazione della tipizzazione forte.
+ * - Sostituzione delle costanti di classe con enum (PHP 8.1+).
+ * - Modifica del namespace per l'integrazione nel SismaFramework.
+ * - Miglioramento della nomenclatura di metodi, parametri e variabili per maggiore chiarezza.
+ * - Trasformazione della classe in astratta per definire un'interfaccia comune.
+ * - Definizione come astratti dei metodi precedentemente abbozzati, la cui implementazione è demandata alle classi derivate.
  */
 
 namespace SismaFramework\Orm\BaseClasses;

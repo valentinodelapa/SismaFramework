@@ -36,10 +36,10 @@ use SismaFramework\Core\Exceptions\LoggerException;
 class Logger
 {
 
-    public static function saveLog(string $message, int|string $code, string $file, string $line, ?BaseConfig $customConfig = null): void
+    public static function saveLog(string $message, int|string $code, string $file, string $line, Locker $locker = new Locker(), ?BaseConfig $customConfig = null): void
     {
         $config = $customConfig ?? BaseConfig::getInstance();
-        self::createLogStructure($config);
+        self::createLogStructure($locker, $config);
         $handle = fopen($config->logPath, 'a');
         if ($handle !== false) {
             fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "(" . $line . ")" . "\n");
@@ -48,20 +48,20 @@ class Logger
         self::truncateLog($config, $customConfig);
     }
 
-    private static function createLogStructure(BaseConfig $config): void
+    private static function createLogStructure(Locker $locker, BaseConfig $config): void
     {
-        self::createLogDirectory($config);
+        self::createLogDirectory($locker, $config);
         self::createLogFile($config);
-    }
+	}
 
-    private static function createLogDirectory(BaseConfig $config): void
+    private static function createLogDirectory(Locker $locker, BaseConfig $config): void
     {
         if (is_dir($config->logDirectoryPath) === false) {
             mkdir($config->logDirectoryPath);
             $handle = fopen($config->logPath, 'a');
             fclose($handle);
         }
-        Locker::lockFolder($config->logDirectoryPath);
+        $locker->lockFolder($config->logDirectoryPath);
     }
 
     private static function createLogFile(BaseConfig $config): void
@@ -95,10 +95,10 @@ class Logger
         }
     }
 
-    public static function saveTrace(array $trace, ?BaseConfig $customConfig = null): void
+    public static function saveTrace(array $trace, Locker $locker = new Locker(), ?BaseConfig $customConfig = null): void
     {
         $config = $customConfig ?? BaseConfig::getInstance();
-        self::createLogStructure($config);
+        self::createLogStructure($locker, $config);
         $handle = fopen($config->logPath, 'a');
         if ($handle !== false) {
             foreach ($trace as $call) {
@@ -110,31 +110,31 @@ class Logger
         }
     }
 
-    public static function clearLog(?BaseConfig $customConfig = null): void
+    public static function clearLog(Locker $locker = new Locker(), ?BaseConfig $customConfig = null): void
     {
         $config = $customConfig ?? BaseConfig::getInstance();
-        self::createLogStructure($config);
+        self::createLogStructure($locker, $config);
         file_put_contents($config->logPath, '');
     }
 
-    public static function getLog(?BaseConfig $customConfig = null): string|false
+    public static function getLog(Locker $locker = new Locker(), ?BaseConfig $customConfig = null): string|false
     {
         $config = $customConfig ?? BaseConfig::getInstance();
-        self::createLogStructure($config);
+        self::createLogStructure($locker, $config);
         return file_get_contents($config->logPath);
     }
 
-    public static function getLogRowByRow(?BaseConfig $customConfig = null): array|false
+    public static function getLogRowByRow(Locker $locker = new Locker(), ?BaseConfig $customConfig = null): array|false
     {
         $config = $customConfig ?? BaseConfig::getInstance();
-        self::createLogStructure($config);
+        self::createLogStructure($locker, $config);
         return file($config->logPath);
     }
 
-    public static function getLogRowNumber(?BaseConfig $customConfig = null): int
+    public static function getLogRowNumber(Locker $locker = new Locker(), ?BaseConfig $customConfig = null): int
     {
         $config = $customConfig ?? BaseConfig::getInstance();
-        self::createLogStructure($config);
+        self::createLogStructure($locker, $config);
         return count(file($config->logPath));
     }
 }

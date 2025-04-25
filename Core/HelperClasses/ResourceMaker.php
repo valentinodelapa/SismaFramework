@@ -66,10 +66,12 @@ class ResourceMaker
         return strtolower(end($splittedPath));
     }
 
-    public function makeResource(string $filename, $forceDownload = false): Response
+    public function makeResource(string $filename, $forceDownload = false, Locker $locker = new Locker()): Response
     {
         $resource = Resource::from($this->getExtension($filename));
-        if (Locker::folderIsLocked(dirname($filename)) === false) {
+        if ($locker->fileIsLocked($filename) || $locker->folderIsLocked(dirname($filename))) {
+            throw new AccessDeniedException($filename);
+        } else {
             if ($resource->isRenderable() && ($forceDownload === false)) {
                 return $this->viewResource($filename, $resource);
             } elseif ($resource->isDownloadable()) {
@@ -77,8 +79,6 @@ class ResourceMaker
             } else {
                 throw new AccessDeniedException($filename);
             }
-        } else {
-            throw new AccessDeniedException($filename);
         }
     }
 

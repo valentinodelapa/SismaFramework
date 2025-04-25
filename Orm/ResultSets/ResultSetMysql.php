@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright (c) 2020-present Valentino de Lapa.
@@ -22,6 +28,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ * 
+ * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM\RESULTSETS\RESULTSETMYSQL:
+ * - Modifica del namespace per l'integrazione nel SismaFramework.
+ * - Estensione della classe astratta `BaseResultSet` implementata nel framework.
+ * - Implementazione dei metodi astratti `next()`, `key()`, `valid()` e `rewind()` definiti in `BaseResultSet` per la gestione specifica dei risultati MySQL.
+ * - Potenziale adattamento o estensione della logica di idratazione per gestire specificità di MySQL o delle tue Entities.
  */
 
 namespace SismaFramework\Orm\ResultSets;
@@ -69,7 +81,7 @@ class ResultSetMysql extends BaseResultSet
                 if ($autoNext) {
                     $this->next();
                 }
-                return $this->transformResult($dbdata);
+                return $this->hydrate($dbdata);
             } else {
                 return null;
             }

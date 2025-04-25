@@ -36,6 +36,7 @@ use SismaFramework\Security\BaseClasses\BaseException;
  */
 abstract class LogException extends BaseException
 {
+	
     protected BaseConfig $config;
 
     public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null, ?BaseConfig $config = null)
