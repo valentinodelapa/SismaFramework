@@ -45,7 +45,7 @@ class Logger
             fwrite($handle, date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message . "\t" . $file . "(" . $line . ")" . "\n");
             fclose($handle);
         }
-        self::truncateLog($config, $customConfig);
+        self::truncateLog($config);
     }
 
     private static function createLogStructure(Locker $locker, BaseConfig $config): void

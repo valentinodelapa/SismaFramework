@@ -75,20 +75,18 @@ class Localizator
         return ModuleManager::getConsequentFilePath($this->config->localesPath . $language->value, Resource::json);
     }
 
-    public function getTemplateLocaleArray(string $template, ?BaseConfig $customConfig = null): array
+    public function getTemplateLocaleArray(string $template): array
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
-        $locale = $this->getLocale($config);
+        $locale = $this->getLocale();
         $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
         return $actualLocale;
     }
 
-    public function getEnumerationLocaleArray(\UnitEnum $enumeration, ?BaseConfig $customConfig = null): string
+    public function getEnumerationLocaleArray(\UnitEnum $enumeration): string
     {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
-        $config = $customConfig ?? BaseConfig::getInstance();
         $enumerationName = $reflectionEnumeration->getShortName();
-        $locale = $this->getLocale($config);
+        $locale = $this->getLocale();
         $field = $locale['enumerations'][lcfirst($enumerationName)];
         return $field[$enumeration->name];
     }

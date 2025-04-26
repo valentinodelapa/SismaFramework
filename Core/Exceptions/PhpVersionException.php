@@ -34,12 +34,16 @@ use SismaFramework\Core\BaseClasses\BaseConfig;
 class PhpVersionException extends \Exception
 {
 
-    public function __construct(?BaseConfig $customConfig = null)
+    public function __construct(?BaseConfig $customConfig = null, int $code = 0, ?\Throwable $previous = null)
     {
-        $config = $config ?? BaseConfig::getInstance();
+        $config = $customConfig ?? BaseConfig::getInstance();
         $phpMinimumVersionRequired = $config->minimumMajorPhpVersion . '.' . $config->minimumMinorPhpVersion . '.' . $config->minimumReleasePhpVersion;
         $phpActualVersion = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION;
-        $message = "The minimum required version of PHP is " . $phpMinimumVersionRequired . ". Your version of PHP is " . $phpActualVersion . ".<br />Please update your PHP version to " . $phpMinimumVersionRequired . " or higher in order to use this application.";
-        parent::__construct($message);
+        $message = <<<MESSAGE
+The minimum required version of PHP is $phpMinimumVersionRequired.
+Your version of PHP is $phpActualVersion.
+Please update your PHP version to $phpMinimumVersionRequired or higher in order to use this application.
+MESSAGE;
+        parent::__construct($message, $code, $previous);
     }
 }
