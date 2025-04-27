@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Orm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseConfig;
 use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
@@ -55,6 +56,27 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
  */
 class DataMapperTest extends TestCase
 {
+
+    public function setUp(): void
+    {
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
+        $configMock = $this->createMock(BaseConfig::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+                    ['ormCache', true],
+        ]);
+        BaseConfig::setInstance($configMock);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+    }
 
     public function testSaveNewBaseEntityWithInsertInsertInsert()
     {

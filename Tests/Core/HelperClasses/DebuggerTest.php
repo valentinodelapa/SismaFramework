@@ -44,7 +44,16 @@ class DebuggerTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        BaseConfig::setInstance(new DebuggerConfigTest());
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $configMock = $this->createMock(BaseConfig::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['structuralTemplatesPath', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+        ]);
+        BaseConfig::setInstance($configMock);
         Debugger::startExecutionTimeCalculation();
     }
 
@@ -58,7 +67,6 @@ class DebuggerTest extends TestCase
 
     public function testGenerateDebugBar()
     {
-        BaseConfig::setInstance(new DebuggerConfigTest);
         Debugger::addQueryExecuted('sample query');
         $debugger = new Debugger();
         $result = $debugger->generateDebugBar();
@@ -121,29 +129,5 @@ class DebuggerTest extends TestCase
         $this->assertStringContainsString('1.1', $debugBbar);
         $this->assertStringContainsString('sample', $debugBbar);
         $this->assertStringContainsString('object', $debugBbar);
-    }
-}
-
-class DebuggerConfigTest extends BaseConfig
-{
-
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        return false;
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->structuralTemplatesPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR;
-        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->logPath = $this->logDirectoryPath . 'log.txt';
     }
 }

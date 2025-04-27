@@ -38,7 +38,14 @@ class SessionTest extends TestCase
 
     public function setUp(): void
     {
-        BaseConfig::setInstance(new SessionConfigTest());
+        $configMock = $this->createMock(BaseConfig::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', true],
+                    ['httpsIsForced', false],
+        ]);
+        BaseConfig::setInstance($configMock);
     }
 
     public function testSessionStart()
@@ -173,28 +180,5 @@ class SessionTest extends TestCase
         $this->assertFalse(Session::hasItem('test'));
         Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-    }
-}
-
-class SessionConfigTest extends BaseConfig
-{
-
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        return false;
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->developmentEnvironment = true;
-        $this->httpsIsForced = false;
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        
     }
 }

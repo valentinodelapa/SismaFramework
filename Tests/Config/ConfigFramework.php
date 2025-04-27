@@ -27,8 +27,6 @@
 namespace SismaFramework\Tests\Config;
 
 use SismaFramework\Core\BaseClasses\BaseConfig;
-use SismaFramework\Core\Enumerations\Language;
-use SismaFramework\Orm\Enumerations\AdapterType;
 
 require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'BaseClasses' . DIRECTORY_SEPARATOR . 'BaseConfig.php';
 

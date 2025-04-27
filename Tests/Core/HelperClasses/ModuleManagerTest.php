@@ -39,13 +39,26 @@ use SismaFramework\Core\Exceptions\ModuleException;
 class ModuleManagerTest extends TestCase
 {
 
-    private ModuleManagerConfigTest $moduleManagerConfigTest;
-    
+    private BaseConfig $configMock;
+
     #[\Override]
     public function setUp(): void
     {
-        $this->moduleManagerConfigTest = new ModuleManagerConfigTest();
-        BaseConfig::setInstance($this->moduleManagerConfigTest);
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 100],
+                    ['logVerboseActive', true],
+                    ['moduleFolders', ['SismaFramework']],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+        ]);
+        BaseConfig::setInstance($this->configMock);
     }
 
     public function testGetModuleList()
@@ -110,7 +123,7 @@ class ModuleManagerTest extends TestCase
     public function testGetExistingFilePathWithException()
     {
         $this->expectException(ModuleException::class);
-        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php, $this->moduleManagerConfigTest);
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php, $this->configMock);
     }
 
     #[RunInSeparateProcess]
@@ -118,42 +131,7 @@ class ModuleManagerTest extends TestCase
     {
         $this->expectException(ModuleException::class);
         ModuleManager::setApplicationModule('SismaFramework');
-        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php, $this->moduleManagerConfigTest);
-        ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'en_EN', Resource::json, $this->moduleManagerConfigTest);
-    }
-}
-
-class ModuleManagerConfigTest extends BaseConfig
-{
-
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        switch ($name) {
-            case 'rootPath':
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->developmentEnvironment = false;
-        $this->logDevelopmentMaxRow = 100;
-        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->logPath = $this->logDirectoryPath . 'log.txt';
-        $this->logProductionMaxRow = 2;
-        $this->logVerboseActive = true;
-        $this->moduleFolders = [
-            'SismaFramework',
-        ];
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        $this->rootPath = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR;
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php, $this->configMock);
+        ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'en_EN', Resource::json, $this->configMock);
     }
 }

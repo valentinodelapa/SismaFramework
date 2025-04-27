@@ -40,7 +40,15 @@ class SelectableEnumerationTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        BaseConfig::setInstance(new SelectableEnumerationConfigTest());
+        $configMock = $this->createMock(BaseConfig::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['language', Language::italian],
+                    ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+        ]);
+        BaseConfig::setInstance($configMock);
     }
 
     public function testGetFriendlyLabel()
@@ -57,33 +65,5 @@ class SelectableEnumerationTest extends TestCase
             "uno" => "O",
             "due" => "T"
                 ], $choices);
-    }
-}
-
-class SelectableEnumerationConfigTest extends BaseConfig
-{
-
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        switch ($name) {
-            case 'rootPath':
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->language = Language::italian;
-        $this->localesPath = 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR;
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        $this->rootPath = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR;
     }
 }

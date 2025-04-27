@@ -41,14 +41,36 @@ use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
  */
 class ErrorHandlerTest extends TestCase
 {
-    private ErrorHandlerConfigTestDevelopement $configTestDevelopement;
-    private ErrorHandlerConfigTestProduction $configTestProduction;
-    
+
+    private BaseConfig $configMockDevelopement;
+    private BaseConfig $configMockProduction;
+
     #[\Override]
     public function setUp(): void
     {
-        $this->configTestDevelopement = new ErrorHandlerConfigTestDevelopement();
-        $this->configTestProduction = new ErrorHandlerConfigTestProduction();
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->configMockDevelopement = $this->createMock(BaseConfig::class);
+        $this->configMockDevelopement->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', true],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+        ]);
+        $this->configMockProduction = $this->createMock(BaseConfig::class);
+        $this->configMockProduction->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+        ]);
     }
 
     public function testHandleBaseExceptionInDevelopmentEnvironment()
@@ -59,7 +81,7 @@ class ErrorHandlerTest extends TestCase
         $structuralControllerMock->expects($this->once())
                 ->method('throwableError')
                 ->with($baseExceptionMock);
-        ErrorHandler::handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock, $this->configTestDevelopement);
+        ErrorHandler::handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock, $this->configMockDevelopement);
     }
 
     public function testHandleBaseExceptionNotInDevelopmentEnvironment()
@@ -73,81 +95,27 @@ class ErrorHandlerTest extends TestCase
         $baseExceptionMock->expects($this->once())
                 ->method('getResponseType')
                 ->willReturn(ResponseType::httpInternalServerError);
-        ErrorHandler::handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock, $this->configTestProduction);
+        ErrorHandler::handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock, $this->configMockProduction);
     }
 
     public function testHandleThrowableErrorInDevelopmentEnvironment()
     {
-        BaseConfig::setInstance($this->configTestDevelopement);
+        BaseConfig::setInstance($this->configMockDevelopement);
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
         $throwableMock = $this->createMock(\Throwable::class);
         $structuralControllerMock->expects($this->once())
                 ->method('throwableError')
                 ->with($throwableMock);
-        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock, $this->configTestDevelopement);
+        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock, $this->configMockDevelopement);
     }
 
     public function testHandleThrowableErrorNotInDevelopmentEnvironment()
     {
-        BaseConfig::setInstance($this->configTestProduction);
+        BaseConfig::setInstance($this->configMockProduction);
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
         $throwableMock = $this->createMock(\Throwable::class);
         $structuralControllerMock->expects($this->once())
                 ->method('internalServerError');
-        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock, $this->configTestProduction);
-    }
-}
-
-class ErrorHandlerConfigTestDevelopement extends BaseConfig
-{
-    
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        return false;
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->developmentEnvironment = true;
-        $this->logDevelopmentMaxRow = 100;
-        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->logPath = $this->logDirectoryPath . 'log.txt';
-        $this->logProductionMaxRow = 2;
-        $this->logVerboseActive = true;
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        
-    }
-}
-
-class ErrorHandlerConfigTestProduction extends BaseConfig
-{
-    
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        return false;
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->developmentEnvironment = false;
-        $this->logDevelopmentMaxRow = 100;
-        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->logPath = $this->logDirectoryPath . 'log.txt';
-        $this->logProductionMaxRow = 2;
-        $this->logVerboseActive = true;
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        
+        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock, $this->configMockProduction);
     }
 }

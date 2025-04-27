@@ -49,20 +49,35 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
  */
 class AdapterMysqlTest extends TestCase
 {
-    private AdapterMysqlConfigTest $configTest;
+
+    private BaseConfig $configMock;
     private DataMapper $dataMapperMock;
 
     #[\Override]
     public function setUp(): void
     {
-        $this->configTest = new AdapterMysqlConfigTest();
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['defaultAdapterType', AdapterType::mysql],
+                    ['developmentEnvironment', false],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+                    ['ormCache', true],
+        ]);
+        BaseConfig::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
         $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configTest])
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configMock])
                 ->getMock();
-        BaseConfig::setInstance($this->configTest);
+        BaseConfig::setInstance($this->configMock);
         $connectionMock = $this->createMock(\PDO::class);
         AdapterMysql::setConnection($connectionMock);
     }
@@ -547,34 +562,5 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('code', $adapterMysql->getLastErrorCode());
         AdapterMysql::setConnection(null);
         $this->assertEquals(-1, $adapterMysql->getLastErrorCode());
-    }
-}
-
-class AdapterMysqlConfigTest extends BaseConfig
-{
-
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        return false;
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->defaultAdapterType = AdapterType::mysql;
-        $this->developmentEnvironment = false;
-        $this->logDevelopmentMaxRow = 100;
-        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->logPath = $this->logDirectoryPath . 'log.txt';
-        $this->logProductionMaxRow = 2;
-        $this->logVerboseActive = true;
-        $this->ormCache = true;
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        
     }
 }

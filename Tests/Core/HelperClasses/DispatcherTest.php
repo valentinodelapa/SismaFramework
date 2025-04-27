@@ -49,7 +49,7 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class DispatcherTest extends TestCase
 {
 
-    private DispatcherConfigTest $configTest;
+    private BaseConfig $configMock;
     private Request $requestMock;
     private FixturesManager $fixturesManagerMock;
     private DataMapper $dataMapperMock;
@@ -57,8 +57,27 @@ class DispatcherTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        $this->configTest = new DispatcherConfigTest();
-        BaseConfig::setInstance($this->configTest);
+        $systemPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR;
+        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['applicationAssetsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR],
+                    ['controllerNamespace', 'TestsApplication\\Controllers\\'],
+                    ['defaultAction', 'index'],
+                    ['defaultPath', 'sample'],
+                    ['developmentEnvironment', false],
+                    ['httpsIsForced', false],
+                    ['language', Language::italian],
+                    ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
+                    ['maxReloadAttempts', 3],
+                    ['moduleFolders', ['SismaFramework']],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['systemPath', $systemPath],
+                    ['structuralAssetsPath', $systemPath . 'Structural' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR],
+                    ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
+        ]);
+        BaseConfig::setInstance($this->configMock);
         $this->requestMock = $this->createMock(Request::class);
         $this->requestMock->server['REQUEST_URI'] = '/';
         $this->requestMock->server['QUERY_STRING'] = '';
@@ -80,7 +99,7 @@ class DispatcherTest extends TestCase
         $routerMock = $this->createMock(Router::class);
         $routerMock->expects($this->once())
                 ->method('reloadWithParsedQueryString');
-        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run($routerMock);
     }
 
@@ -93,8 +112,8 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with($this->configTest->structuralAssetsPath . 'css' . DIRECTORY_SEPARATOR . 'debugBar.css');
-        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+                ->with($this->configMock->structuralAssetsPath . 'css' . DIRECTORY_SEPARATOR . 'debugBar.css');
+        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -107,8 +126,8 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with($this->configTest->systemPath . $this->configTest->applicationAssetsPath . 'css' . DIRECTORY_SEPARATOR . 'sample.css');
-        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+                ->with($this->configMock->systemPath . $this->configMock->applicationAssetsPath . 'css' . DIRECTORY_SEPARATOR . 'sample.css');
+        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -121,8 +140,8 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with($this->configTest->systemPath . $this->configTest->applicationAssetsPath . 'vendor' . DIRECTORY_SEPARATOR . 'sample-vendor' . DIRECTORY_SEPARATOR . 'sample-vendor.css');
-        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+                ->with($this->configMock->systemPath . $this->configMock->applicationAssetsPath . 'vendor' . DIRECTORY_SEPARATOR . 'sample-vendor' . DIRECTORY_SEPARATOR . 'sample-vendor.css');
+        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -136,8 +155,8 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with($this->configTest->systemPath . $this->configTest->applicationAssetsPath . 'css' . DIRECTORY_SEPARATOR . 'sample.css');
-        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+                ->with($this->configMock->systemPath . $this->configMock->applicationAssetsPath . 'css' . DIRECTORY_SEPARATOR . 'sample.css');
+        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -151,8 +170,8 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with($this->configTest->rootPath . 'composer.json');
-        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+                ->with($this->configMock->rootPath . 'composer.json');
+        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -168,8 +187,8 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with($this->configTest->systemPath . $this->configTest->applicationAssetsPath . 'javascript' . DIRECTORY_SEPARATOR . 'sample.js');
-        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+                ->with($this->configMock->systemPath . $this->configMock->applicationAssetsPath . 'javascript' . DIRECTORY_SEPARATOR . 'sample.js');
+        $dispatcher = new Dispatcher($this->requestMock, $resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -178,7 +197,7 @@ class DispatcherTest extends TestCase
         $this->requestMock->server['REQUEST_URI'] = 'fake/fake/fake/fake/fake.css';
         $this->requestMock->server['QUERY_STRING'] = '';
         $this->expectException(PageNotFoundException::class);
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -187,7 +206,7 @@ class DispatcherTest extends TestCase
         $this->requestMock->server['REQUEST_URI'] = 'fake.css';
         $this->requestMock->server['QUERY_STRING'] = '';
         $this->expectException(PageNotFoundException::class);
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -199,7 +218,7 @@ class DispatcherTest extends TestCase
         $this->fixturesManagerMock->expects($this->once())
                 ->method('run');
         $this->requestMock->server['REQUEST_URI'] = '/fixtures/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -211,7 +230,7 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $sitemapBuilderMock->expects($this->once())
                 ->method('generate');
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->addCrawlComponentMaker($sitemapBuilderMock);
         $dispatcher->run();
     }
@@ -222,7 +241,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
         $this->requestMock->server['REQUEST_URI'] = '/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -232,7 +251,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
         $this->requestMock->server['REQUEST_URI'] = '/sample/index/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -242,7 +261,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
         $this->requestMock->server['REQUEST_URI'] = '/index/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -252,7 +271,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/Hello World/');
         $this->requestMock->server['REQUEST_URI'] = '/sample/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -262,7 +281,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/sample - index/');
         $this->expectOutputRegex('/test message/');
         $this->requestMock->server['REQUEST_URI'] = '/notify/message/test+message/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -272,7 +291,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/other - index/');
         $this->expectOutputRegex('/test message/');
         $this->requestMock->server['REQUEST_URI'] = '/other/parameter/test+message/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -282,7 +301,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/other - index/');
         $this->expectOutputRegex('/other test message/');
         $this->requestMock->server['REQUEST_URI'] = '/fake/other/index/parameter/other+test+message/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -293,7 +312,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/test parameter/');
         $this->requestMock->request['parameter'] = 'test parameter';
         $this->requestMock->server['REQUEST_URI'] = '/other/action-with-request/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -305,7 +324,7 @@ class DispatcherTest extends TestCase
         $_POST['username'] = 'username';
         $this->requestMock->server['REQUEST_URI'] = '/other/action-with-authentication/';
         $this->requestMock->server['REQUEST_METHOD'] = 'GET';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -315,7 +334,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/other - action-with-default-value/');
         $this->expectOutputRegex('/is default/');
         $this->requestMock->server['REQUEST_URI'] = '/other/action-with-default-value/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -327,7 +346,7 @@ class DispatcherTest extends TestCase
         $this->expectOutputRegex('/1: second/');
         $this->expectOutputRegex('/2: third/');
         $this->requestMock->server['REQUEST_URI'] = '/other/action-with-array/array/first/array/second/array/third/';
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -335,7 +354,7 @@ class DispatcherTest extends TestCase
     {
         $this->requestMock->server['REQUEST_URI'] = '/other/fake/test/';
         $this->expectException(BadRequestException::class);
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
@@ -343,55 +362,12 @@ class DispatcherTest extends TestCase
     {
         $this->requestMock->server['REQUEST_URI'] = '/fake/fake/fake/fake/fake/fake/';
         $this->expectException(PageNotFoundException::class);
-        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configTest);
+        $dispatcher = new Dispatcher($this->requestMock, new ResourceMaker(), $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
         $dispatcher->run();
     }
 
     public function tearDown(): void
     {
         Router::resetMetaUrl();
-    }
-}
-
-class DispatcherConfigTest extends BaseConfig
-{
-
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        switch ($name) {
-            case 'rootPath':
-            case 'autoloadNamespaceMapper':
-            case 'autoloadClassMapper':
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        $this->rootPath = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR;
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->applicationAssetsPath = 'TestsApplication' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
-        $this->controllerNamespace = 'TestsApplication\\Controllers\\';
-        $this->defaultAction = 'index';
-        $this->defaultPath = 'sample';
-        $this->developmentEnvironment = false;
-        $this->httpsIsForced = false;
-        $this->language = Language::italian;
-        $this->localesPath = 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR;
-        $this->maxReloadAttempts = 3;
-        $this->moduleFolders = [
-            'SismaFramework',
-        ];
-        $this->systemPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR;
-        $this->structuralAssetsPath = $this->systemPath . 'Structural' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR;
-        $this->viewsPath = 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR;
     }
 }

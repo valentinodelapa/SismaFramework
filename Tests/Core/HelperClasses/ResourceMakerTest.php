@@ -41,23 +41,36 @@ use SismaFramework\Core\HttpClasses\Request;
  */
 class ResourceMakerTest extends TestCase
 {
-	
+
     private Locker $lockerMock;
     private Request $requestMock;
-    private ResourceMakerConfigTest $configTest;
+    private BaseConfig $configMock;
 
     public function setUp(): void
     {
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $this->requestMock = $this->createMock(Request::class);
-        $this->configTest = new ResourceMakerConfigTest();
-        BaseConfig::setInstance($this->configTest);
+        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['fileGetContentMaxBytesLimit', 10],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+                    ['readfileMaxBytesLimit', 1000],
+        ]);
+        BaseConfig::setInstance($this->configMock);
         $this->lockerMock = $this->createMock(Locker::class);
     }
 
     #[RunInSeparateProcess]
     public function testIsAcceptedResourceFile()
     {
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configTest);
+        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $this->assertTrue($resourceMaker->isAcceptedResourceFile('/sample.js'));
         $this->assertFalse($resourceMaker->isAcceptedResourceFile('/notify/'));
     }
@@ -74,7 +87,7 @@ class ResourceMakerTest extends TestCase
                 ->method('folderIsLocked')
                 ->with(dirname($filePath))
                 ->willReturn(false);
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configTest);
+        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $this->expectException(AccessDeniedException::class);
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
@@ -91,7 +104,7 @@ class ResourceMakerTest extends TestCase
                 ->method('folderIsLocked')
                 ->with(dirname($filePath))
                 ->willReturn(false);
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configTest);
+        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $this->expectException(AccessDeniedException::class);
         $resourceMaker->makeResource($filePath, true, $this->lockerMock);
     }
@@ -121,7 +134,7 @@ class ResourceMakerTest extends TestCase
                 ->method('folderIsLocked')
                 ->with(dirname($filePath))
                 ->willReturn(true);
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configTest);
+        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $this->expectException(AccessDeniedException::class);
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
@@ -139,7 +152,7 @@ class ResourceMakerTest extends TestCase
                 ->with(dirname($filePath))
                 ->willReturn(false);
         $this->expectOutputString(file_get_contents($filePath));
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configTest);
+        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
@@ -156,14 +169,14 @@ class ResourceMakerTest extends TestCase
                 ->with(dirname($filePath))
                 ->willReturn(false);
         $this->expectOutputString(file_get_contents($filePath));
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configTest);
+        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
     #[RunInSeparateProcess]
     public function testMakeResourceViaFopen()
     {
-		$filePath = __DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js';
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js';
         $this->lockerMock->expects($this->once())
                 ->method('fileIsLocked')
                 ->with($filePath)
@@ -173,7 +186,7 @@ class ResourceMakerTest extends TestCase
                 ->with(dirname($filePath))
                 ->willReturn(false);
         $this->expectOutputString(file_get_contents($filePath));
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configTest);
+        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
@@ -191,37 +204,8 @@ class ResourceMakerTest extends TestCase
                 ->willReturn(false);
         $this->expectOutputString(file_get_contents($filePath));
         $_SERVER['QUERY_STRING'] = 'resource=resource';
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configTest);
+        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $resourceMaker->setStreamContex();
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
-    }
-}
-
-class ResourceMakerConfigTest extends BaseConfig
-{
-
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        return false;
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->developmentEnvironment = false;
-        $this->fileGetContentMaxBytesLimit = 10;
-        $this->logDevelopmentMaxRow = 100;
-        $this->logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->logPath = $this->logDirectoryPath . 'log.txt';
-        $this->logProductionMaxRow = 2;
-        $this->logVerboseActive = true;
-        $this->readfileMaxBytesLimit = 1000;
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        
     }
 }

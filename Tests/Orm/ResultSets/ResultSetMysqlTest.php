@@ -38,9 +38,17 @@ use SismaFramework\TestsApplication\Entities\BaseSample;
  */
 class ResultSetMysqlTest extends TestCase
 {
+
     public function setUp(): void
     {
-        BaseConfig::setInstance(new ResultSetMysqlConfigTest());
+        $configMock = $this->createMock(BaseConfig::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', true],
+                    ['ormCache', true],
+        ]);
+        BaseConfig::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
     }
@@ -153,7 +161,7 @@ class ResultSetMysqlTest extends TestCase
                     $rowsNum--;
                     return $actualRowsNum;
                 });
-                $matcher = $this->exactly(4);
+        $matcher = $this->exactly(4);
         $PDOStatementMock->expects($matcher)
                 ->method('fetch')
                 ->willReturnCallback(function () use ($matcher) {
@@ -232,28 +240,5 @@ class ResultSetMysqlTest extends TestCase
             $this->assertInstanceOf(BaseSample::class, $baseSample);
             $current++;
         }
-    }
-}
-
-class ResultSetMysqlConfigTest extends BaseConfig
-{
-    
-    #[\Override]
-    protected function isInitialConfiguration(string $name): bool
-    {
-        return false;
-    }
-
-    #[\Override]
-    protected function setFrameworkConfigurations(): void
-    {
-        $this->developmentEnvironment = true;
-        $this->ormCache = true;
-    }
-
-    #[\Override]
-    protected function setInitialConfiguration(): void
-    {
-        
     }
 }
