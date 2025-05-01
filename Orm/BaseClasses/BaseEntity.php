@@ -39,7 +39,7 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
@@ -56,7 +56,7 @@ abstract class BaseEntity
     public bool $modified = false;
     public array $foreignKeys = [];
     protected DataMapper $dataMapper;
-    protected BaseConfig $config;
+    protected Config $config;
     protected ProcessedEntitiesCollection $processedEntitesCollection;
     protected string $primaryKey = 'id';
     protected string $initializationVectorPropertyName = 'initializationVector';
@@ -64,10 +64,10 @@ abstract class BaseEntity
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
 	
-    public function __construct(DataMapper $dataMapper = new DataMapper(), ?ProcessedEntitiesCollection $processedEntitesCollection = null, ?BaseConfig $config = null)
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?ProcessedEntitiesCollection $processedEntitesCollection = null, ?Config $config = null)
     {
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? BaseConfig::getInstance();
+        $this->config = $config ?? Config::getInstance();
         $this->processedEntitesCollection = $processedEntitesCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();

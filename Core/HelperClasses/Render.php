@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HttpClasses\Request;
@@ -47,9 +47,9 @@ class Render
             ResponseType $responseType = ResponseType::httpOk,
             Localizator $localizator = new Localizator(),
             Debugger $debugger = new Debugger(),
-            ?BaseConfig $customConfig = null): Response
+            ?Config $customConfig = null): Response
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         $response = self::getResponse($responseType);
         Debugger::setVars($vars);
         self::assemblesComponents($view, $localizator, $vars, $config);
@@ -64,7 +64,7 @@ class Render
         return $response;
     }
 
-    private static function assemblesComponents(string $view, Localizator $localizator, array $vars, BaseConfig $config): void
+    private static function assemblesComponents(string $view, Localizator $localizator, array $vars, Config $config): void
     {
         BufferManager::start();
         self::$view = $view;
@@ -89,7 +89,7 @@ class Render
         }
     }
 
-    private static function getViewPath(string $view, BaseConfig $config): string
+    private static function getViewPath(string $view, Config $config): string
     {
         if (self::$isStructural) {
             return $config->structuralViewsPath . $view . '.' . Resource::php->value;
@@ -98,7 +98,7 @@ class Render
         }
     }
 
-    private static function generateDebugBar(Debugger $debugger, BaseConfig $config): string
+    private static function generateDebugBar(Debugger $debugger, Config $config): string
     {
         if ($config->developmentEnvironment) {
             return $debugger->generateDebugBar();
@@ -110,9 +110,9 @@ class Render
     public static function generateData(string $view, array $vars,
             ResponseType $responseType = ResponseType::httpOk,
             Localizator $localizator = new Localizator(),
-            ?BaseConfig $customConfig = null): Response
+            ?Config $customConfig = null): Response
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         $response = self::getResponse($responseType);
         self::assemblesComponents($view, $localizator, $vars, $config);
         return $response;

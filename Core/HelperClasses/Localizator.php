@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\LocalizatorException;
@@ -39,12 +39,12 @@ class Localizator
 
     private static Language $injectedLanguage;
     private ?Language $customLanguage;
-    private BaseConfig $config;
+    private Config $config;
 
-    public function __construct(?Language $customLanguage = null, ?BaseConfig $customConfig = null)
+    public function __construct(?Language $customLanguage = null, ?Config $customConfig = null)
     {
         $this->customLanguage = $customLanguage;
-        $this->config = $customConfig ?? BaseConfig::getInstance();
+        $this->config = $customConfig ?? Config::getInstance();
     }
 
     public function getPageLocaleArray(string $view): array

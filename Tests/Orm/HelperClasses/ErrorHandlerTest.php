@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Orm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
 use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Core\Enumerations\ResponseType;
@@ -42,14 +42,14 @@ use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
 class ErrorHandlerTest extends TestCase
 {
 
-    private BaseConfig $configMockDevelopement;
-    private BaseConfig $configMockProduction;
+    private Config $configMockDevelopement;
+    private Config $configMockProduction;
 
     #[\Override]
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->configMockDevelopement = $this->createMock(BaseConfig::class);
+        $this->configMockDevelopement = $this->createMock(Config::class);
         $this->configMockDevelopement->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -60,7 +60,7 @@ class ErrorHandlerTest extends TestCase
                     ['logProductionMaxRow', 2],
                     ['logVerboseActive', true],
         ]);
-        $this->configMockProduction = $this->createMock(BaseConfig::class);
+        $this->configMockProduction = $this->createMock(Config::class);
         $this->configMockProduction->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -100,7 +100,7 @@ class ErrorHandlerTest extends TestCase
 
     public function testHandleThrowableErrorInDevelopmentEnvironment()
     {
-        BaseConfig::setInstance($this->configMockDevelopement);
+        Config::setInstance($this->configMockDevelopement);
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
         $throwableMock = $this->createMock(\Throwable::class);
         $structuralControllerMock->expects($this->once())
@@ -111,7 +111,7 @@ class ErrorHandlerTest extends TestCase
 
     public function testHandleThrowableErrorNotInDevelopmentEnvironment()
     {
-        BaseConfig::setInstance($this->configMockProduction);
+        Config::setInstance($this->configMockProduction);
         $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
         $throwableMock = $this->createMock(\Throwable::class);
         $structuralControllerMock->expects($this->once())

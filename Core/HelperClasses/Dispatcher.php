@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
@@ -74,19 +74,19 @@ class Dispatcher
     private array $reflectionConstructorArguments;
     private \ReflectionMethod $reflectionAction;
     private array $reflectionActionArguments;
-    private BaseConfig $config;
+    private Config $config;
 
-    public function __construct(Request $request = new Request,
-            ResourceMaker $resourceMaker = new ResourceMaker,
+    public function __construct(Request $request = new Request(),
+            ResourceMaker $resourceMaker = new ResourceMaker(),
             FixturesManager $fixtureManager = new FixturesManager(),
             DataMapper $dataMapper = new DataMapper(),
-            ?BaseConfig $config = null)
+            ?Config $config = null)
     {
         $this->request = $request;
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? BaseConfig::getInstance();
+        $this->config = $config ?? Config::getInstance();
     }
 
     public function addCrawlComponentMaker(CrawlComponentMakerInterface $crawlComponentMaker): void

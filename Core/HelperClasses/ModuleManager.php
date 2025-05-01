@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\ModuleException;
 
@@ -41,9 +41,9 @@ class ModuleManager
     private static ?string $customVisualizationModule = null;
     private static bool $customVisualizationFileExists = false;
 
-    public static function getModuleList(?BaseConfig $customConfig = null): array
+    public static function getModuleList(?Config $customConfig = null): array
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         return $config->moduleFolders;
     }
 
@@ -84,9 +84,9 @@ class ModuleManager
         return self::$customVisualizationModule;
     }
 
-    public static function getExistingFilePath(string $path, Resource $resource, ?BaseConfig $customConfig = null): string
+    public static function getExistingFilePath(string $path, Resource $resource, ?Config $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         if ((empty(self::$customVisualizationModule) === false) && file_exists($config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             self::$customVisualizationFileExists = true;
             return $config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
@@ -98,9 +98,9 @@ class ModuleManager
         }
     }
 
-    public static function getConsequentFilePath(string $path, Resource $resource, ?BaseConfig $customConfig = null): string
+    public static function getConsequentFilePath(string $path, Resource $resource, ?Config $customConfig = null): string
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         if (self::$customVisualizationFileExists && file_exists($config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {
             return $config->rootPath . self::$customVisualizationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value;
         } elseif ((self::$customVisualizationFileExists === false) && file_exists($config->rootPath . self::$applicationModule . DIRECTORY_SEPARATOR . $path . '.' . $resource->value)) {

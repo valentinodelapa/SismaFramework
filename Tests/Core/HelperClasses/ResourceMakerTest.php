@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
@@ -44,13 +44,13 @@ class ResourceMakerTest extends TestCase
 
     private Locker $lockerMock;
     private Request $requestMock;
-    private BaseConfig $configMock;
+    private Config $configMock;
 
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $this->requestMock = $this->createMock(Request::class);
-        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock = $this->createMock(Config::class);
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -63,7 +63,7 @@ class ResourceMakerTest extends TestCase
                     ['logVerboseActive', true],
                     ['readfileMaxBytesLimit', 1000],
         ]);
-        BaseConfig::setInstance($this->configMock);
+        Config::setInstance($this->configMock);
         $this->lockerMock = $this->createMock(Locker::class);
     }
 

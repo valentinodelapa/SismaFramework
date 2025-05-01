@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\CustomTypes\FormFilterError;
 use SismaFramework\Core\HelperClasses\Debugger;
 
@@ -45,7 +45,7 @@ class DebuggerTest extends TestCase
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $configMock = $this->createMock(BaseConfig::class);
+        $configMock = $this->createMock(Config::class);
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -53,7 +53,7 @@ class DebuggerTest extends TestCase
                     ['logDirectoryPath', $logDirectoryPath],
                     ['logPath', $logDirectoryPath . 'log.txt'],
         ]);
-        BaseConfig::setInstance($configMock);
+        Config::setInstance($configMock);
         Debugger::startExecutionTimeCalculation();
     }
 

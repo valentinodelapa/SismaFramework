@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Autoload;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 
 /**
  *
@@ -35,14 +35,14 @@ use SismaFramework\Core\BaseClasses\BaseConfig;
 class Autoloader
 {
 
-    private BaseConfig $config;
+    private Config $config;
     private string $className;
     private string $classPath;
 
-    public function __construct(string $className, ?BaseConfig $config = null)
+    public function __construct(string $className, ?Config $config = null)
     {
         $this->className = $className;
-        $this->config = $config ?? BaseConfig::getInstance();
+        $this->config = $config ?? Config::getInstance();
     }
 
     public function findClass(): bool

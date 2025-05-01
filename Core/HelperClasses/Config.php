@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
+namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Orm\Enumerations\AdapterType;
@@ -34,7 +34,7 @@ use SismaFramework\Orm\Enumerations\AdapterType;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-abstract class BaseConfig
+class Config
 {
 
     protected readonly string $adapters;
@@ -157,34 +157,33 @@ abstract class BaseConfig
     protected readonly string $databaseUsername;
 
     /* internal properties */
-    private static BaseConfig $instance;
-    private int $countNumber = 0;
-
-    public static function setInstance(BaseConfig $instance): void
+    private static Config $instance;
+    
+    public function __construct()
+    {
+        self::$instance = $this;
+    }
+    
+    public static function setInstance(Config $instance): void
     {
         self::$instance = $instance;
     }
 
     public static function getInstance(): self
     {
+        if (isset(self::$instance) === false) {
+            self::$instance = new Config();
+        }
         return self::$instance;
     }
 
     public function __get(string $name): mixed
     {
         if (isset($this->$name) === false) {
-            if ($this->isInitialConfiguration($name)) {
-                $this->setInitialConfiguration();
-            } else {
-                $this->setFrameworkConfigurations();
-            }
+            $constantName = 'Config\\' . NotationManager::convertToUpperSnakeCase($name);
+            $reflectionProperty = new \ReflectionProperty($this, $name);
+            $this->$name = Parser::simpleParseValue($reflectionProperty->getType(), constant($constantName));
         }
         return $this->$name;
     }
-
-    abstract protected function isInitialConfiguration(string $name): bool;
-
-    abstract protected function setInitialConfiguration(): void;
-
-    abstract protected function setFrameworkConfigurations(): void;
 }

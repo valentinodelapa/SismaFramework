@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 
 /**
@@ -39,9 +39,9 @@ class PhpVersionChecker
     private static int $currentMinorVersion = PHP_MINOR_VERSION;
     private static int $currentReleaseVersion = PHP_RELEASE_VERSION;
 
-    public static function checkPhpVersion(?BaseConfig $customConfig = null): void
+    public static function checkPhpVersion(?Config $customConfig = null): void
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         if (self::$currentMajorVersion < $config->minimumMajorPhpVersion) {
             throw new PhpVersionException($config);
         } elseif (self::$currentMajorVersion === $config->minimumMajorPhpVersion) {

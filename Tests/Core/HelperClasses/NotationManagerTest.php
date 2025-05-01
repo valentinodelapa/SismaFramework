@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
@@ -70,13 +70,13 @@ class NotationManagerTest extends TestCase
 
     public function testConvertEntityToTableName()
     {
-        $configMock = $this->createMock(BaseConfig::class);
+        $configMock = $this->createMock(Config::class);
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
                     ['ormCache', true],
         ]);
-        BaseConfig::setInstance($configMock);
+        Config::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);

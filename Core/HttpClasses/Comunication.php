@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HttpClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\ComunicationProtocol;
 
 /**
@@ -35,9 +35,9 @@ use SismaFramework\Core\Enumerations\ComunicationProtocol;
 class Comunication
 {
 
-    public static function getComunicationProtocol(?BaseConfig $customConfig = null): ComunicationProtocol
+    public static function getComunicationProtocol(?Config $customConfig = null): ComunicationProtocol
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         $request = new Request();
         if ($config->httpsIsForced) {
             return ComunicationProtocol::https;

@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
@@ -41,12 +41,12 @@ class ResourceMaker
 {
 
     private Request $request;
-    private BaseConfig $config;
+    private Config $config;
     private $streamContex = null;
 
-    public function __construct(Request $request = new Request(), ?BaseConfig $customConfig = null)
+    public function __construct(Request $request = new Request(), ?Config $customConfig = null)
     {
-        $this->config = $customConfig ?? BaseConfig::getInstance();
+        $this->config = $customConfig ?? Config::getInstance();
         $this->request = $request;
     }
 

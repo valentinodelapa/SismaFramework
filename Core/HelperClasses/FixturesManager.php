@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -37,15 +37,15 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class FixturesManager
 {
 
-    private BaseConfig $config;
+    private Config $config;
     private array $fixturesArray;
     private array $entitiesArray = [];
     private DataMapper $dataMapper;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper(), ?BaseConfig $customConfig = null)
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?Config $customConfig = null)
     {
         $this->dataMapper = $dataMapper;
-        $this->config = $customConfig ?? BaseConfig::getInstance();
+        $this->config = $customConfig ?? Config::getInstance();
     }
 
     public function isFixtures(array $pathParts): bool

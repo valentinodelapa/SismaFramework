@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Locker;
 
@@ -37,14 +37,14 @@ use SismaFramework\Core\HelperClasses\Locker;
 class LoggerTest extends TestCase
 {
 
-    private BaseConfig $configMockOne;
-    private BaseConfig $configMockTwo;
+    private Config $configMockOne;
+    private Config $configMockTwo;
     private Locker $lockerMock;
 
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->configMockOne = $this->createMock(BaseConfig::class);
+        $this->configMockOne = $this->createMock(Config::class);
         $this->configMockOne->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -55,7 +55,7 @@ class LoggerTest extends TestCase
                     ['logProductionMaxRow', 100],
                     ['logVerboseActive', true],
         ]);
-        $this->configMockTwo = $this->createMock(BaseConfig::class);
+        $this->configMockTwo = $this->createMock(Config::class);
         $this->configMockTwo->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([

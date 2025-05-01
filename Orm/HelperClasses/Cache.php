@@ -25,7 +25,7 @@
  */
 
 namespace SismaFramework\Orm\HelperClasses;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
@@ -68,10 +68,10 @@ class Cache
         static::$entityCache = [];
     }
 	
-    public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null, Locker $locker = new Locker(), ?BaseConfig $customConfig = null): array
+    public static function getForeignKeyData(string $referencedEntityName, ?string $propertyName = null, Locker $locker = new Locker(), ?Config $customConfig = null): array
     {
         self::$locker = $locker;
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         if (is_subclass_of($referencedEntityName, ReferencedEntity::class)) {
             if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
                 if (is_dir($config->referenceCacheDirectory) === false) {
@@ -141,7 +141,7 @@ class Cache
         }
     }
 
-    private static function getForeignKeyDataFromCacheFile(string $referencedEntityName, ?string $propertyName, BaseConfig $config): void
+    private static function getForeignKeyDataFromCacheFile(string $referencedEntityName, ?string $propertyName, Config $config): void
     {
         static::$foreighKeyDataCache = json_decode(file_get_contents($config->referenceCachePath), true) ?? [];
         if (self::checkEntityPresence($referencedEntityName, $propertyName) === false) {
@@ -149,7 +149,7 @@ class Cache
         }
     }
 
-    private static function setForeignKeyDataFromEntities(BaseConfig $config): void
+    private static function setForeignKeyDataFromEntities(Config $config): void
     {
         foreach (ModuleManager::getModuleList() as $module) {
             $entitiesDirectory = $config->rootPath . $module . DIRECTORY_SEPARATOR . $config->entityPath;
@@ -161,7 +161,7 @@ class Cache
         self::$locker->lockFolder($config->referenceCacheDirectory);
     }
 
-    private static function scanModuleEntities($module, $directory, BaseConfig $config): void
+    private static function scanModuleEntities($module, $directory, Config $config): void
     {
         foreach (array_diff(scandir($directory), ['.', '..']) as $entityFileName) {
             $entitySimpleName = str_replace('.php', '', $entityFileName);

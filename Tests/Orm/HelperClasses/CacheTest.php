@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Orm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\CacheException;
@@ -42,14 +42,14 @@ use SismaFramework\TestsApplication\Entities\ReferencedSample;
 class CacheTest extends TestCase
 {
 
-    private BaseConfig $configMock;
+    private Config $configMock;
     private Locker $lockerMock;
 
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock = $this->createMock(Config::class);
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -67,7 +67,7 @@ class CacheTest extends TestCase
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
-        BaseConfig::setInstance($this->configMock);
+        Config::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->lockerMock = $this->createMock(Locker::class);
@@ -126,14 +126,16 @@ class CacheTest extends TestCase
         $this->assertIsArray($cacheInformationsFifth);
         $this->assertArrayHasKey('referencedEntityWithoutInitialization', $cacheInformationsFifth);
         $this->assertSame($cacheInformationsFifth, $cacheInformationsThree['baseSample']);
+        Cache::clearForeighKeyDataCache();
     }
 
     public function testGenerateReferencedCacheFile()
     {
+        $this->assertFalse(file_exists($this->configMock->referenceCachePath));
         $cacheInformationsOne = Cache::getForeignKeyData(ReferencedSample::class);
         $this->assertIsArray($cacheInformationsOne);
         $this->assertArrayHasKey('baseSample', $cacheInformationsOne);
-        $this->assertFalse(file_exists($this->configMock->referenceCachePath));
+        $this->assertTrue(file_exists($this->configMock->referenceCachePath));
         Cache::clearForeighKeyDataCache();
         $cacheInformationsTwo = Cache::getForeignKeyData(ReferencedSample::class);
         $this->assertIsArray($cacheInformationsTwo);
@@ -149,6 +151,6 @@ class CacheTest extends TestCase
         $this->assertIsArray($cacheInformationsThree);
         $this->assertArrayHasKey('baseSample', $cacheInformationsThree);
         $this->assertTrue(file_exists($this->configMock->referenceCachePath));
-        file_put_contents($this->configMock->referenceCacheDirectory . '.lock', '');
+        Cache::clearForeighKeyDataCache();
     }
 }

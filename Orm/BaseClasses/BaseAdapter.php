@@ -40,7 +40,7 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\NotationManager;
@@ -83,9 +83,9 @@ abstract class BaseAdapter
         self::$connection = $connection;
     }
 
-    public static function &getDefault(?BaseConfig $customConfig = null): ?BaseAdapter
+    public static function &getDefault(?Config $customConfig = null): ?BaseAdapter
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         if (static::$adapter === null) {
             $defaultAdapterType = $config->defaultAdapterType;
             $defaultAdapter = static::create($defaultAdapterType->getAdapterClass(), [

@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
@@ -42,12 +42,12 @@ class FixturesManagerTest extends TestCase
 {
 
     private DataMapper $dataMapperMock;
-    private BaseConfig $configMock;
+    private Config $configMock;
 
     public function setUp(): void
     {
         $fixtures = 'Fixtures';
-        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock = $this->createMock(Config::class);
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -59,7 +59,7 @@ class FixturesManagerTest extends TestCase
                     ['ormCache', true],
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
-        BaseConfig::setInstance($this->configMock);
+        Config::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);

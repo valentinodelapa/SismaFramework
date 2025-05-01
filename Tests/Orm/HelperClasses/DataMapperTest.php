@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Orm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
@@ -61,19 +61,25 @@ class DataMapperTest extends TestCase
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
-        $configMock = $this->createMock(BaseConfig::class);
+        $configMock = $this->createMock(Config::class);
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', false],
+                    ['entityNamespace', 'TestsApplication\\Entities\\'],
+                    ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
                     ['logPath', $logDirectoryPath . 'log.txt'],
                     ['logProductionMaxRow', 2],
                     ['logVerboseActive', true],
+                    ['moduleFolders', ['SismaFramework']],
                     ['ormCache', true],
+                    ['referenceCacheDirectory', $referenceCacheDirectory],
+                    ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
-        BaseConfig::setInstance($configMock);
+        Config::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
     }

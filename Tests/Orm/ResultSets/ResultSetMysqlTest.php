@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Orm\ResultSets;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
@@ -41,14 +41,14 @@ class ResultSetMysqlTest extends TestCase
 
     public function setUp(): void
     {
-        $configMock = $this->createMock(BaseConfig::class);
+        $configMock = $this->createMock(Config::class);
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', true],
                     ['ormCache', true],
         ]);
-        BaseConfig::setInstance($configMock);
+        Config::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
     }

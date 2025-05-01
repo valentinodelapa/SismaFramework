@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
 
 /**
@@ -36,11 +36,11 @@ use SismaFramework\Core\HelperClasses\Encryptor;
 class EncryptorTest extends TestCase
 {
 
-    private BaseConfig $configMock;
+    private Config $configMock;
 
     public function setUp(): void
     {
-        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock = $this->createMock(Config::class);
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([

@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 
@@ -40,12 +40,12 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
 class PhpVersionCheckerTest extends TestCase
 {
 
-    private BaseConfig $configMock;
+    private Config $configMock;
 
     #[\Override]
     public function setUp(): void
     {
-        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock = $this->createMock(Config::class);
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -53,7 +53,7 @@ class PhpVersionCheckerTest extends TestCase
                     ['minimumMinorPhpVersion', 1],
                     ['minimumReleasePhpVersion', 1],
         ]);
-        BaseConfig::setInstance($this->configMock);
+        Config::setInstance($this->configMock);
     }
 
     #[RunInSeparateProcess]

@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Orm\CustomTypes;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -47,7 +47,7 @@ class SismaCollectionTest extends TestCase
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $configMock = $this->createMock(BaseConfig::class);
+        $configMock = $this->createMock(Config::class);
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -59,7 +59,7 @@ class SismaCollectionTest extends TestCase
                     ['logVerboseActive', true],
                     ['ormCache', true],
         ]);
-        BaseConfig::setInstance($configMock);
+        Config::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);

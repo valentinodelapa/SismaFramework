@@ -26,8 +26,7 @@
 
 namespace SismaFramework\Public;
 
-use SismaFramework\Config\ConfigFramework;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
@@ -37,8 +36,10 @@ use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Security\ExtendedClasses\RedirectException;
 
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'ConfigFramework.php';
-$config = new ConfigFramework();
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Config.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'NotationManager.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Parser.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 ini_set('display_errors', 0);
@@ -47,7 +48,6 @@ error_reporting(0);
 date_default_timezone_set('Europe/Rome');
 
 try {
-    BaseConfig::setInstance($config);
     ErrorHandler::handleNonThrowableError();
     Debugger::startExecutionTimeCalculation();
     PhpVersionChecker::checkPhpVersion();

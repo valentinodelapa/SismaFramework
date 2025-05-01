@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Localizator;
@@ -44,29 +44,31 @@ class RenderTest extends TestCase
 
     private Debugger $debuggerMock;
     private Localizator $localizatorMock;
-    private BaseConfig $configMockDevelop;
-    private BaseConfig $configMockProduction;
+    private Config $configMockDevelop;
+    private Config $configMockProduction;
 
     #[\Override]
     public function setUp(): void
     {
-        $this->configMockDevelop = $this->createMock(BaseConfig::class);
+        $this->configMockDevelop = $this->createMock(Config::class);
         $this->configMockDevelop->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', true],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['structuralViewsPath', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
                     ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
         ]);
-        $this->configMockProduction = $this->createMock(BaseConfig::class);
+        $this->configMockProduction = $this->createMock(Config::class);
         $this->configMockProduction->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', false],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['structuralViewsPath', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
                     ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
         ]);
-        BaseConfig::setInstance(new ConfigFramework());
+        Config::setInstance($this->configMockDevelop);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->localizatorMock = $this->createMock(Localizator::class);

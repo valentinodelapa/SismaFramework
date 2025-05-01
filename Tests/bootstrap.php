@@ -29,9 +29,10 @@
  */
 // TODO: check include path
 //ini_set('include_path', ini_get('include_path'));
-use SismaFramework\Tests\Config\ConfigFramework;
+spl_autoload_register(function (string $className) {
+    $actualClassPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
+    if (file_exists($actualClassPath)) {
+        require_once($actualClassPath);
+    }
+});
 
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'ConfigFramework.php';
-$config = new ConfigFramework();
-ConfigFramework::setInstance($config);
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';

@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Session;
 
 /**
@@ -38,14 +38,14 @@ class SessionTest extends TestCase
 
     public function setUp(): void
     {
-        $configMock = $this->createMock(BaseConfig::class);
+        $configMock = $this->createMock(Config::class);
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', true],
                     ['httpsIsForced', false],
         ]);
-        BaseConfig::setInstance($configMock);
+        Config::setInstance($configMock);
     }
 
     public function testSessionStart()

@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\AbstractClasses\Submittable;
 use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 use SismaFramework\Core\Enumerations\ResponseType;
@@ -57,16 +57,16 @@ abstract class BaseForm extends Submittable
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     private DataMapper $dataMapper;
-    private BaseConfig $config;
+    private Config $config;
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
     private ResponseType $responseType = ResponseType::httpOk;
 
-    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper(), ?BaseConfig $config = null)
+    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper(), ?Config $config = null)
     {
         parent::__construct();
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? BaseConfig::getInstance();
+        $this->config = $config ?? Config::getInstance();
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
     }

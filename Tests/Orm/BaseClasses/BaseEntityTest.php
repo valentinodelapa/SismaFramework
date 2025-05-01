@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
@@ -48,7 +48,7 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 class BaseEntityTest extends TestCase
 {
 
-    private BaseConfig $configMock;
+    private Config $configMock;
     private DataMapper $dataMapperMock;
     private ProcessedEntitiesCollection $processedEntitiesCollectionMock;
 
@@ -56,7 +56,7 @@ class BaseEntityTest extends TestCase
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock = $this->createMock(Config::class);
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -70,7 +70,7 @@ class BaseEntityTest extends TestCase
                     ['modelNamespace', 'TestsApplication\\Models\\'],
                     ['ormCache', true],
         ]);
-        BaseConfig::setInstance($this->configMock);
+        Config::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);

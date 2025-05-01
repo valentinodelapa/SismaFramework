@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Security\HttpClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
@@ -56,7 +56,7 @@ use SismaFramework\TestsApplication\Entities\Password;
 class AuthenticationTest extends TestCase
 {
 
-    private BaseConfig $baseConfigMock;
+    private Config $configMock;
     private DataMapper $dataMapperMock;
     private Authentication $authentication;
     private Filter $filterMock;
@@ -74,8 +74,8 @@ class AuthenticationTest extends TestCase
 
     public function setUp(): void
     {
-        $this->baseConfigMock = $this->createMock(BaseConfig::class);
-        $this->baseConfigMock->expects($this->any())
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
                     ['blowfishHashWorkload', 10],
@@ -148,7 +148,7 @@ class AuthenticationTest extends TestCase
         $this->passwordMock->expects($this->once())
                 ->method('__get')
                 ->with('password')
-                ->willReturn(Encryptor::getBlowfishHash('password-test', $this->baseConfigMock));
+                ->willReturn(Encryptor::getBlowfishHash('password-test', $this->configMock));
         $this->requestMock->request['csrfToken'] = 'csfr-token-test';
         $this->assertFalse($this->authentication->checkAuthenticable(true));
         $this->assertFalse($this->authentication->checkAuthenticable(true));
@@ -241,9 +241,9 @@ class AuthenticationTest extends TestCase
                     $this->assertEquals('password', $name);
                     switch ($matcherThree->numberOfInvocations()) {
                         case 1:
-                            return Encryptor::getBlowfishHash('fake-password-test', $this->baseConfigMock);
+                            return Encryptor::getBlowfishHash('fake-password-test', $this->configMock);
                         default :
-                            return Encryptor::getBlowfishHash('password-test', $this->baseConfigMock);
+                            return Encryptor::getBlowfishHash('password-test', $this->configMock);
                     }
                 });
         $this->requestMock->request = [];
@@ -312,7 +312,7 @@ class AuthenticationTest extends TestCase
         $this->multiFactorRecoveryMock->expects($this->once())
                 ->method('__get')
                 ->with('token')
-                ->willReturn(Encryptor::getBlowfishHash('code-test', $this->baseConfigMock));
+                ->willReturn(Encryptor::getBlowfishHash('code-test', $this->configMock));
         $this->dataMapperMock->expects($this->once())
                 ->method('delete')
                 ->with($this->multiFactorRecoveryMock)
@@ -323,7 +323,7 @@ class AuthenticationTest extends TestCase
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
         $this->assertTrue($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
-        $this->multiFactorRecoveryMock->token = Encryptor::getBlowfishHash('code-test', $this->baseConfigMock);
+        $this->multiFactorRecoveryMock->token = Encryptor::getBlowfishHash('code-test', $this->configMock);
         $this->assertTrue($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
     }
@@ -352,9 +352,9 @@ class AuthenticationTest extends TestCase
                     $this->assertEquals('token', $name);
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
-                            return Encryptor::getBlowfishHash('fake-code-test', $this->baseConfigMock);
+                            return Encryptor::getBlowfishHash('fake-code-test', $this->configMock);
                         case 2:
-                            return Encryptor::getBlowfishHash('code-test', $this->baseConfigMock);
+                            return Encryptor::getBlowfishHash('code-test', $this->configMock);
                     }
                 });
         $this->dataMapperMock->expects($this->once())
@@ -399,7 +399,7 @@ class AuthenticationTest extends TestCase
         $this->passwordMock->expects($this->once())
                 ->method('__get')
                 ->with('password')
-                ->willReturn(Encryptor::getBlowfishHash('password-test', $this->baseConfigMock));
+                ->willReturn(Encryptor::getBlowfishHash('password-test', $this->configMock));
         $this->requestMock->request['csrfToken'] = 'csfr-token-test';
         $this->requestMock->request['identifier'] = 'identifier-test';
         $this->requestMock->request['password'] = 'password-test';

@@ -32,7 +32,7 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -50,13 +50,13 @@ abstract class BaseModel
 {
 
     protected DataMapper $dataMapper;
-    protected BaseConfig $config;
+    protected Config $config;
     protected readonly string $entityName;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper(), ?BaseConfig $config = null)
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?Config $config = null)
     {
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? BaseConfig::getInstance();
+        $this->config = $config ?? Config::getInstance();
         $this->entityName = $this->getEntityName();
         $this->checkEntityName();
     }

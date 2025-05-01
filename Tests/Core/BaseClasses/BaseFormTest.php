@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\BaseClasses;
 
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
@@ -60,7 +60,7 @@ use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
 class BaseFormTest extends TestCase
 {
 
-    private BaseConfig $configMock;
+    private Config $configMock;
     private DataMapper $dataMapperMock;
 
     #[\Override]
@@ -68,7 +68,7 @@ class BaseFormTest extends TestCase
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(BaseConfig::class);
+        $this->configMock = $this->createMock(Config::class);
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
@@ -87,7 +87,7 @@ class BaseFormTest extends TestCase
                     ['referenceCacheDirectory', $referenceCacheDirectory],
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
         ]);
-        BaseConfig::setInstance($this->configMock);
+        Config::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);

@@ -39,7 +39,7 @@
 
 namespace SismaFramework\Orm\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
@@ -64,13 +64,13 @@ class DataMapper
 
     private bool $ormCacheStatus;
     private BaseAdapter $adapter;
-    private BaseConfig $config;
+    private Config $config;
     private ProcessedEntitiesCollection $processedEntitiesCollection;
     private static bool $isActiveTransaction = false;
 	
-    public function __construct(?BaseAdapter $adapter = null, ?ProcessedEntitiesCollection $processedEntityCollection = null, ?BaseConfig $config = null)
+    public function __construct(?BaseAdapter $adapter = null, ?ProcessedEntitiesCollection $processedEntityCollection = null, ?Config $config = null)
     {
-        $this->config = $config ?? BaseConfig::getInstance();
+        $this->config = $config ?? Config::getInstance();
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
         $this->processedEntitiesCollection = $processedEntityCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->ormCacheStatus = $this->config->ormCache;

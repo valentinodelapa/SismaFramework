@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\BaseClasses\BaseConfig;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Router;
@@ -46,9 +46,9 @@ use Throwable;
 class ErrorHandler
 {
 
-    public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController(), ?BaseConfig $customConfig = null): void
+    public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController(), ?Config $customConfig = null): void
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         register_shutdown_function(function () use ($controller, $config) {
             $error = error_get_last();
             $backtrace = debug_backtrace();
@@ -82,9 +82,9 @@ class ErrorHandler
     public static function handleBaseException(BaseException $exception,
             DefaultControllerInterface $defaultController = new SampleController(),
             StructuralControllerInterface $structuralController = new FrameworkController(),
-            ?BaseConfig $customConfig = null): Response
+            ?Config $customConfig = null): Response
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         if ($config->developmentEnvironment) {
             return self::callThrowableErrorAction($structuralController, $exception);
         } else {
@@ -108,9 +108,9 @@ class ErrorHandler
 
     public static function handleThrowableError(Throwable $throwable,
             StructuralControllerInterface $structuralController = new FrameworkController(),
-            ?BaseConfig $customConfig = null): Response
+            ?Config $customConfig = null): Response
     {
-        $config = $customConfig ?? BaseConfig::getInstance();
+        $config = $customConfig ?? Config::getInstance();
         BufferManager::clear();
         Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
         if ($config->logVerboseActive) {
