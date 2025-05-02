@@ -202,11 +202,6 @@ class Session
         return (self::getItem('token') === $value);
     }
 
-    public function __destruct()
-    {
-        self::end();
-    }
-
     public static function end(): void
     {
         if (session_status() == PHP_SESSION_ACTIVE) {

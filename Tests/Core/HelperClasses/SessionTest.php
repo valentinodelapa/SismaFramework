@@ -50,6 +50,7 @@ class SessionTest extends TestCase
 
     public function testSessionStart()
     {
+        Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
         Session::start();
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
@@ -58,11 +59,12 @@ class SessionTest extends TestCase
         $session = new Session();
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
         unset($session);
-        $this->assertEquals(PHP_SESSION_NONE, session_status());
+        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
     }
 
     public function testSessionSetUnsetSampleItemStatic()
     {
+        Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
         Session::start();
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
@@ -81,6 +83,7 @@ class SessionTest extends TestCase
 
     public function testSessionSetUnsetSampleItemObject()
     {
+        Session::end();
         $session = new Session();
         $this->assertArrayNotHasKey('test', $_SESSION);
         $session->test = 'value';
@@ -92,11 +95,12 @@ class SessionTest extends TestCase
         $this->assertArrayNotHasKey('test', $_SESSION);
         $this->assertFalse(isset($session->test));
         unset($session);
-        $this->assertEquals(PHP_SESSION_NONE, session_status());
+        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
     }
 
     public function testSessionSetUnsetNestedItemStatic()
     {
+        Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
         Session::start();
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
@@ -135,6 +139,7 @@ class SessionTest extends TestCase
 
     public function testSessionAppendSimpleItem()
     {
+        Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
         Session::start();
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
@@ -158,6 +163,7 @@ class SessionTest extends TestCase
 
     public function testSessionAppendNestedItem()
     {
+        Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
         Session::start();
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
