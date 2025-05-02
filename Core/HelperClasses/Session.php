@@ -200,11 +200,6 @@ class Session
         $value = hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']);
         return (self::getItem('token') === $value);
     }
-    
-    public function __destruct()
-    {
-        self::end();
-    }
 
     public static function end(): void
     {
