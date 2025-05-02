@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
@@ -132,7 +131,6 @@ class ParserTest extends TestCase
         $this->assertEquals(0.0, Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
     }
 
-    #[RunInSeparateProcess]
     public function testParseValueWithEntity()
     {
         $baseSample = new BaseSample($this->dataMapperMock);
@@ -219,7 +217,6 @@ class ParserTest extends TestCase
         $this->assertIsArray(Parser::parseValue($reflectionNamedTypeMock, [], true, $this->dataMapperMock));
     }
 
-    #[RunInSeparateProcess]
     public function testParseValueWithException()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -233,7 +230,6 @@ class ParserTest extends TestCase
         Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock);
     }
 
-    #[RunInSeparateProcess]
     public function testParseEnumerationWithException()
     {
         $this->expectException(InvalidArgumentException::class);

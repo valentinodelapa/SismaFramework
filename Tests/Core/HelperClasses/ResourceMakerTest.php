@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
@@ -67,7 +66,6 @@ class ResourceMakerTest extends TestCase
         $this->lockerMock = $this->createMock(Locker::class);
     }
 
-    #[RunInSeparateProcess]
     public function testIsAcceptedResourceFile()
     {
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
@@ -75,7 +73,6 @@ class ResourceMakerTest extends TestCase
         $this->assertFalse($resourceMaker->isAcceptedResourceFile('/notify/'));
     }
 
-    #[RunInSeparateProcess]
     public function testMakeResourceNotRenderable()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Controllers/SampleController.php';
@@ -92,7 +89,6 @@ class ResourceMakerTest extends TestCase
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
-    #[RunInSeparateProcess]
     public function testMakeResourceNotDownloadable()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Controllers/SampleController.php';
@@ -109,7 +105,6 @@ class ResourceMakerTest extends TestCase
         $resourceMaker->makeResource($filePath, true, $this->lockerMock);
     }
 
-    #[RunInSeparateProcess]
     public function testMakeResourceWithFileNotAccessible()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/notAccessible.css';
@@ -122,7 +117,6 @@ class ResourceMakerTest extends TestCase
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
-    #[RunInSeparateProcess]
     public function testMakeResourceWithFolderNotAccessible()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Cache/referencedCache.json';
@@ -139,7 +133,6 @@ class ResourceMakerTest extends TestCase
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
-    #[RunInSeparateProcess]
     public function testMakeResourceViaFileGetContent()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/sample.css';
@@ -156,7 +149,6 @@ class ResourceMakerTest extends TestCase
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
-    #[RunInSeparateProcess]
     public function testMakeResourceViaReadFile()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Assets/vendor/sample-vendor/sample-vendor.css';
@@ -173,7 +165,6 @@ class ResourceMakerTest extends TestCase
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
-    #[RunInSeparateProcess]
     public function testMakeResourceViaFopen()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js';
@@ -190,7 +181,6 @@ class ResourceMakerTest extends TestCase
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 
-    #[RunInSeparateProcess]
     public function testFileWithStreamContent()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js';

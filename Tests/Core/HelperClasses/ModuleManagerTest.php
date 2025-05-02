@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\ModuleManager;
@@ -124,14 +123,12 @@ class ModuleManagerTest extends TestCase
         $this->assertStringContainsString('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT.json', $locales);
     }
 
-    #[RunInSeparateProcess]
     public function testGetExistingFilePathWithException()
     {
         $this->expectException(ModuleException::class);
         ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php, $this->configMock);
     }
 
-    #[RunInSeparateProcess]
     public function testGetConsequentFilePathWithException()
     {
         $this->expectException(ModuleException::class);
