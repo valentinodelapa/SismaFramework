@@ -46,6 +46,13 @@ use Throwable;
 class ErrorHandler
 {
 
+    public static function disabligErrorDisplay()
+    {
+        ini_set('display_errors', 0);
+        ini_set('display_startup_errors', 0);
+        error_reporting(0);
+    }
+
     public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController(), ?Config $customConfig = null): void
     {
         $config = $customConfig ?? Config::getInstance();
@@ -120,6 +127,16 @@ class ErrorHandler
             return self::callThrowableErrorAction($structuralController, $throwable);
         } else {
             return self::callInternalServerErrorAction($structuralController);
+        }
+    }
+
+    public static function showErrorInDevelopementEnvironment(?Config $customConfig = null): void
+    {
+        $config = $customConfig ?? Config::getInstance();
+        if ($config->developmentEnvironment) {
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL | E_STRICT);
         }
     }
 }
