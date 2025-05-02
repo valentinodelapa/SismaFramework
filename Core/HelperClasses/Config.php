@@ -180,7 +180,7 @@ class Config
     public function __get(string $name): mixed
     {
         if (isset($this->$name) === false) {
-            $constantName = 'Config\\' . NotationManager::convertToUpperSnakeCase($name);
+            $constantName = '\\Config\\' . NotationManager::convertToUpperSnakeCase($name);
             $reflectionProperty = new \ReflectionProperty($this, $name);
             $this->$name = Parser::simpleParseValue($reflectionProperty->getType(), constant($constantName));
         }

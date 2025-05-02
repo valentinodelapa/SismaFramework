@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2025 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,18 +24,14 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Autoload;
+namespace TestsApplication\Vendor;
 
-use SismaFramework\Core\HelperClasses\Autoloader;
-
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Autoloader.php';
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Config.php';
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'NotationManager.php';
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Parser.php';
-
-spl_autoload_register(function (string $className) {
-    $autoloader = new Autoloader($className);
-    if ($autoloader->findClass()) {
-        require_once($autoloader->getClassPath());
-    }
-});
+/**
+ * Description of ClassWithNamespace
+ *
+ * @author Valentino de Lapa <valentino.delapa@gmail.com>
+ */
+class ClassWithNamespace
+{
+    //put your code here
+}

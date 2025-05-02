@@ -127,6 +127,8 @@ class Parser
         if ($reflectionNamedType->isBuiltin()) {
             settype($value, $reflectionNamedType->getName());
             return $value;
+        } elseif (enum_exists($reflectionNamedType->getName())) {
+            return self::parseEnumeration($reflectionNamedType->getName(), $value);
         } else {
             return new $value();
         }

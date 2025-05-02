@@ -24,9 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Autoload;
-
-use SismaFramework\Core\HelperClasses\Config;
+namespace SismaFramework\Core\HelperClasses;
 
 /**
  *
