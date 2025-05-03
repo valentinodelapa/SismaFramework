@@ -128,11 +128,11 @@ class DataMapper
     {
         $query->setTable(NotationManager::convertEntityToTableName($entity));
         $query->close();
-        $columns = $values = $markers = [];
-        $this->parseValues($entity, $columns, $values, $markers);
-        $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
-        $cmd = $query->getCommandToExecute(Statement::insert, ['columns' => $columns, 'values' => $markers]);
-        $result = $this->adapter->execute($cmd, $values);
+        $columns = $values = $types = [];
+        $this->parseValues($entity, $columns, $values, $types);
+        $this->parseForeignKeyIndexes($entity, $columns, $values, $types);
+        $cmd = $query->getCommandToExecute(Statement::insert, ['columns' => $columns, 'values' => array_fill(0, count($columns), $this->adapter->getPlaceholder())]);
+        $result = $this->adapter->execute($cmd, $values, $types);
         if ($result) {
             $entity->setPrimaryKeyAfterSave($this->adapter->lastInsertId());
             $entity->modified = false;
@@ -144,12 +144,12 @@ class DataMapper
         return $result;
     }
 
-    private function parseValues(BaseEntity $entity, array &$columns, array &$values, array &$markers): void
+    private function parseValues(BaseEntity $entity, array &$columns, array &$values, array &$types): void
     {
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             if ($this->propertyIsParsable($reflectionProperty, $entity)) {
-                $this->parseSingleProperty($reflectionProperty, $entity, $columns, $values, $markers);
+                $this->parseSingleProperty($reflectionProperty, $entity, $columns, $values, $types);
             }
         }
     }
@@ -169,7 +169,7 @@ class DataMapper
         }
     }
 
-    private function parseSingleProperty(\ReflectionProperty $reflectionProperty, BaseEntity $entity, array &$columns, array &$values, array &$markers): void
+    private function parseSingleProperty(\ReflectionProperty $reflectionProperty, BaseEntity $entity, array &$columns, array &$values, array &$types): void
     {
         $currentValue = $reflectionProperty->getValue($entity);
         if ($currentValue instanceof BaseEntity) {
@@ -183,21 +183,46 @@ class DataMapper
             }
             $initializationVectorColumnName = $this->adapter->escapeColumn($initializationVectorPropertyName);
             if (in_array($initializationVectorColumnName, $columns) === false) {
-                $markers[] = $this->adapter->getPlaceholder();
+                $types[] = DataType::typeString;
                 $columns[] = $initializationVectorColumnName;
                 $values[] = Parser::unparseValue($entity->$initializationVectorPropertyName);
             }
             $parsedValue = Encryptor::encryptString($parsedValue, $entity->$initializationVectorPropertyName);
         }
-        $markers[] = $this->adapter->getPlaceholder();
+        $types[] = $this->getType($reflectionProperty->getType(), $parsedValue);
         $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
         $values[] = $parsedValue;
     }
 
-    private function parseForeignKeyIndexes(BaseEntity $entity, array &$columns, array &$values, array &$markers): void
+    private function getType(\ReflectionNamedType $reflectionNamedType, mixed $value): DataType
+    {
+        if ($reflectionNamedType->getName() === 'bool') {
+            return DataType::typeBoolean;
+        } elseif ($reflectionNamedType->getName() === 'int') {
+            return DataType::typeInteger;
+        } elseif ($reflectionNamedType->getName() === 'float') {
+            return DataType::typeDecimal;
+        } elseif ($reflectionNamedType->getName() === 'string') {
+            if (mb_detect_encoding($value ?? '', 'UTF-8', true)) {
+                return DataType::typeString;
+            } else {
+                return DataType::typeBinary;
+            }
+        } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
+            return DataType::typeEntity;
+        } elseif (enum_exists($reflectionNamedType->getName())) {
+            return DataType::typeEnumeration;
+        } elseif (is_subclass_of($reflectionNamedType->getName(), \DateTimeInterface::class)) {
+            return DataType::typeDate;
+        } else {
+            return DataType::typeGeneric;
+        }
+    }
+
+    private function parseForeignKeyIndexes(BaseEntity $entity, array &$columns, array &$values, array &$types): void
     {
         foreach ($entity->getForeignKeyIndexes() as $propertyName => $propertyValue) {
-            $markers[] = $this->adapter->getPlaceholder();
+            $types[] = DataType::typeInteger;
             $columns[] = $this->adapter->escapeColumn($propertyName, true);
             $values[] = $propertyValue;
         }
@@ -253,12 +278,13 @@ class DataMapper
         $query->setWhere();
         $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
-        $columns = $values = $markers = [];
-        $this->parseValues($entity, $columns, $values, $markers);
-        $this->parseForeignKeyIndexes($entity, $columns, $values, $markers);
-        $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $columns, 'values' => $markers));
+        $columns = $values = $types = [];
+        $this->parseValues($entity, $columns, $values, $types);
+        $this->parseForeignKeyIndexes($entity, $columns, $values, $types);
+        $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $columns, 'values' => array_fill(0, count($columns), $this->adapter->getPlaceholder())));
         $values[] = $entity->{$entity->getPrimaryKeyPropertyName()};
-        $result = $this->adapter->execute($cmd, $values);
+        $types[] = DataType::typeInteger;
+        $result = $this->adapter->execute($cmd, $values, $types);
         if ($result) {
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);

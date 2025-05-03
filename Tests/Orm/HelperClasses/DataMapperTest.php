@@ -32,6 +32,7 @@ use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\HelperClasses\Cache;
@@ -108,17 +109,39 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["referenced sample", null], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample"], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString], $param3);
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
                             $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeBoolean,
+                                    ], $param3);
                             break;
                     }
                     return true;
@@ -156,17 +179,39 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["referenced sample", null], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample", 2], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
                             $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeBoolean,
+                                    ], $param3);
                             break;
                     }
                     return true;
@@ -207,12 +252,34 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample", 3], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals([2, 2, null, 3, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeBoolean,
+                                    ], $param3);
                             break;
                     }
                     return true;
@@ -255,17 +322,40 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["referenced sample", null], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample"], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString], $param3);
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
                             $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 2], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeBoolean,
+                                DataType::typeInteger,
+                                    ], $param3);
                             break;
                     }
                     return true;
@@ -306,17 +396,40 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["referenced sample", null], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample", 2], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
                             $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeBoolean,
+                                DataType::typeInteger,
+                                    ], $param3);
                             break;
                     }
                     return true;
@@ -358,12 +471,35 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample", 2], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeBoolean,
+                                DataType::typeInteger,
+                                    ], $param3);
                             break;
                     }
                     return true;
@@ -402,12 +538,12 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["referenced sample", null], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample"], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString], $param3);
                             break;
                     }
                     return true;
@@ -447,12 +583,12 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["referenced sample", null], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample", 2], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                     }
                     return true;
@@ -492,7 +628,7 @@ class DataMapperTest extends TestCase
                 ->willReturnCallback(function ($param1, $param2, $param3) {
                     $this->assertEquals('', $param1);
                     $this->assertEquals(["other referenced sample", 2], $param2);
-                    $this->assertEquals([], $param3);
+                    $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                     return true;
                 });
         $this->baseAdapterMock->expects($this->exactly(1))
@@ -531,10 +667,10 @@ class DataMapperTest extends TestCase
                 ->method('execute')
                 ->willReturnCallback(function ($param1, $param2, $param3) use ($propertyValueOne, $propertyValueTwo, $propertyValueThree, $matcher, &$initializationVector) {
                     $this->assertEquals('', $param1);
-                    $this->assertCount(3, $param2);
-                    $this->assertEquals([], $param3);
                     switch ($matcher->numberOfInvocations()) {
                         case 1:
+                            $this->assertCount(3, $param2);
+                            $this->assertEquals([DataType::typeString, DataType::typeString, DataType::typeString], $param3);
                             $initializationVector = $param2[0];
                             $this->assertNotNull($initializationVector);
                             $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
@@ -543,6 +679,8 @@ class DataMapperTest extends TestCase
                             $this->assertEquals($encryptedPropertyValueTwo, $param2[2]);
                             break;
                         case 2:
+                            $this->assertCount(4, $param2);
+                            $this->assertEquals([DataType::typeString, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
                             $this->assertEquals($initializationVector, $param2[0]);
                             $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
                             $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $initializationVector);
@@ -551,6 +689,9 @@ class DataMapperTest extends TestCase
                     }
                     return true;
                 });
+        $this->baseAdapterMock->expects($this->once())
+                ->method('lastInsertId')
+                ->willReturn(1);
         $entityWithEncryptedPropertyOne = new EntityWithEncryptedPropertyOne();
         $entityWithEncryptedPropertyOne->encryptedPropertyOne = $propertyValueOne;
         $entityWithEncryptedPropertyOne->encryptedPropertyTwo = $propertyValueTwo;
@@ -571,10 +712,10 @@ class DataMapperTest extends TestCase
                 ->method('execute')
                 ->willReturnCallback(function ($param1, $param2, $param3) use ($propertyValueOne, $propertyValueTwo, $propertyValueThree, $matcher, &$initializationVector) {
                     $this->assertEquals('', $param1);
-                    $this->assertCount(3, $param2);
-                    $this->assertEquals([], $param3);
                     switch ($matcher->numberOfInvocations()) {
                         case 1:
+                            $this->assertCount(3, $param2);
+                            $this->assertEquals([DataType::typeString, DataType::typeString, DataType::typeString], $param3);
                             $initializationVector = $param2[0];
                             $this->assertNotNull($initializationVector);
                             $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
@@ -583,6 +724,8 @@ class DataMapperTest extends TestCase
                             $this->assertEquals($encryptedPropertyValueTwo, $param2[2]);
                             break;
                         case 2:
+                            $this->assertCount(4, $param2);
+                            $this->assertEquals([DataType::typeString, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
                             $this->assertEquals($initializationVector, $param2[0]);
                             $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
                             $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $initializationVector);
@@ -591,6 +734,9 @@ class DataMapperTest extends TestCase
                     }
                     return true;
                 });
+        $this->baseAdapterMock->expects($this->once())
+                ->method('lastInsertId')
+                ->willReturn(1);
         $entityWithEncryptedPropertyTwo = new EntityWithEncryptedPropertyTwo();
         $entityWithEncryptedPropertyTwo->encryptedPropertyOne = $propertyValueOne;
         $entityWithEncryptedPropertyTwo->encryptedPropertyTwo = $propertyValueTwo;
@@ -608,7 +754,7 @@ class DataMapperTest extends TestCase
                     $this->assertEquals('', $param1);
                     $this->assertCount(1, $param2);
                     $this->assertEquals(2, $param2[0]);
-                    $this->assertEquals([], $param3);
+                    $this->assertEquals([DataType::typeInteger], $param3);
                     return true;
                 });
         $dependentEntityOne = new DependentEntityOne();
@@ -627,17 +773,39 @@ class DataMapperTest extends TestCase
                         case 1:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["referenced sample", null], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString, DataType::typeInteger], $param3);
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
                             $this->assertEquals(["other referenced sample"], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([DataType::typeString], $param3);
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
                             $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
-                            $this->assertEquals([], $param3);
+                            $this->assertEquals([
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeEntity,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeDate,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeEnumeration,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeString,
+                                DataType::typeBoolean,
+                                    ], $param3);
                             break;
                     }
                     return true;
