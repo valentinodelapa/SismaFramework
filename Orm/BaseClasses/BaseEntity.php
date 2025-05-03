@@ -232,6 +232,11 @@ abstract class BaseEntity
         return ((empty($this->config->encryptionPassphrase) === false) && in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->initializationVectorPropertyName)));
     }
 
+    public function isInitializationVector(string $propertyName): bool
+    {
+        return ($propertyName === $this->initializationVectorPropertyName);
+    }
+
     public function getInitializationVectorPropertyName(): string
     {
         return $this->initializationVectorPropertyName;

@@ -67,7 +67,7 @@ class DataMapper
     private Config $config;
     private ProcessedEntitiesCollection $processedEntitiesCollection;
     private static bool $isActiveTransaction = false;
-	
+
     public function __construct(?BaseAdapter $adapter = null, ?ProcessedEntitiesCollection $processedEntityCollection = null, ?Config $config = null)
     {
         $this->config = $config ?? Config::getInstance();
@@ -148,23 +148,50 @@ class DataMapper
     {
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) && $reflectionProperty->isInitialized($entity) && ($entity->isPrimaryKey($reflectionProperty->getName()) === false)) {
-                $markers[] = $this->adapter->getPlaceholder();
-                $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
-                $currentValue = $reflectionProperty->getValue($entity);
-                if ($currentValue instanceof BaseEntity) {
-                    $this->save($currentValue);
-                }
-                $parsedValue = Parser::unparseValue($currentValue);
-                if ($entity->isEncryptedProperty($reflectionProperty->getName())) {
-                    if (empty($entity->{$entity->getInitializationVectorPropertyName()})) {
-                        $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInizializationVector();
-                    }
-                    $parsedValue = Encryptor::encryptString($parsedValue, $entity->{$entity->getInitializationVectorPropertyName()});
-                }
-                $values[] = $parsedValue;
+            if ($this->propertyIsParsable($reflectionProperty, $entity)) {
+                $this->parseSingleProperty($reflectionProperty, $entity, $columns, $values, $markers);
             }
         }
+    }
+
+    private function propertyIsParsable(\ReflectionProperty $reflectionProperty, BaseEntity $entity): bool
+    {
+        if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) === false) {
+            return false;
+        } elseif ($reflectionProperty->isInitialized($entity) === false) {
+            return false;
+        } elseif ($entity->isPrimaryKey($reflectionProperty->getName())) {
+            return false;
+        } elseif ($entity->isInitializationVector($reflectionProperty->getName())) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private function parseSingleProperty(\ReflectionProperty $reflectionProperty, BaseEntity $entity, array &$columns, array &$values, array &$markers): void
+    {
+        $currentValue = $reflectionProperty->getValue($entity);
+        if ($currentValue instanceof BaseEntity) {
+            $this->save($currentValue);
+        }
+        $parsedValue = Parser::unparseValue($currentValue);
+        if ($entity->isEncryptedProperty($reflectionProperty->getName())) {
+            $initializationVectorPropertyName = $entity->getInitializationVectorPropertyName();
+            if (empty($entity->$initializationVectorPropertyName)) {
+                $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInizializationVector();
+            }
+            $initializationVectorColumnName = $this->adapter->escapeColumn($initializationVectorPropertyName);
+            if (in_array($initializationVectorColumnName, $columns) === false) {
+                $markers[] = $this->adapter->getPlaceholder();
+                $columns[] = $initializationVectorColumnName;
+                $values[] = Parser::unparseValue($entity->$initializationVectorPropertyName);
+            }
+            $parsedValue = Encryptor::encryptString($parsedValue, $entity->$initializationVectorPropertyName);
+        }
+        $markers[] = $this->adapter->getPlaceholder();
+        $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
+        $values[] = $parsedValue;
     }
 
     private function parseForeignKeyIndexes(BaseEntity $entity, array &$columns, array &$values, array &$markers): void

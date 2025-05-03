@@ -33,7 +33,7 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
-use SismaFramework\TestsApplication\Entities\EntityWithEncryptedProperty;
+use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
 
 /**
  * @author Valentino de Lapa
@@ -185,11 +185,11 @@ class ResultSetMysqlTest extends TestCase
                 ->method('fetch')
                 ->willReturn($result);
         $resultSetMysql = new ResultSetMysql($PDOStatementMock);
-        $resultSetMysql->setReturnType(EntityWithEncryptedProperty::class);
+        $resultSetMysql->setReturnType(EntityWithEncryptedPropertyOne::class);
         $this->assertTrue($resultSetMysql->valid());
         $this->assertEquals(0, $resultSetMysql->key());
         $entityWithEncryptedProperty = $resultSetMysql->fetch();
-        $this->assertInstanceOf(EntityWithEncryptedProperty::class, $entityWithEncryptedProperty);
+        $this->assertInstanceOf(EntityWithEncryptedPropertyOne::class, $entityWithEncryptedProperty);
         $this->assertEquals($propertyValueOne, $entityWithEncryptedProperty->encryptedPropertyOne);
         $this->assertEquals($propertyValueTwo, $entityWithEncryptedProperty->encryptedPropertyTwo);
         $this->assertEquals($initializationVector, $entityWithEncryptedProperty->initializationVector);

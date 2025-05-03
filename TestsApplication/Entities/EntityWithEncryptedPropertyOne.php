@@ -33,13 +33,13 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class EntityWithEncryptedProperty extends BaseEntity
+class EntityWithEncryptedPropertyOne extends BaseEntity
 {
 
     protected int $id;
     protected string $encryptedPropertyOne;
     protected string $encryptedPropertyTwo;
-    protected string $initializationVector;
+    protected ?string $initializationVector = null;
 
     #[\Override]
     protected function setEncryptedProperties(): void

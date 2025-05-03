@@ -47,7 +47,8 @@ use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
 use SismaFramework\TestsApplication\Entities\DependentEntityOne;
 use SismaFramework\TestsApplication\Entities\DependentEntityTwo;
-use SismaFramework\TestsApplication\Entities\EntityWithEncryptedProperty;
+use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
+use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyTwo;
 use SismaFramework\TestsApplication\Entities\EntityWithTwoCollection;
 use SismaFramework\TestsApplication\Entities\SimpleEntity;
 use SismaFramework\TestsApplication\Entities\SubdependentEntity;
@@ -127,7 +128,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(3))
                 ->method('lastInsertId')
                 ->willReturn(1);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -178,7 +178,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('lastInsertId')
                 ->willReturn(1);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -225,7 +224,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(1))
                 ->method('lastInsertId')
                 ->willReturn(1);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->id = 2;
         $referencedSample->text = 'referenced sample';
@@ -279,7 +277,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('lastInsertId')
                 ->willReturn(1);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -331,7 +328,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(1))
                 ->method('lastInsertId')
                 ->willReturn(1);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -374,7 +370,6 @@ class DataMapperTest extends TestCase
                 });
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('parseUpdate');
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->id = 1;
         $referencedSample->text = 'referenced sample';
@@ -422,7 +417,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('lastInsertId')
                 ->willReturn(1);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -470,7 +464,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(1))
                 ->method('lastInsertId')
                 ->willReturn(1);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -504,7 +497,6 @@ class DataMapperTest extends TestCase
                 });
         $this->baseAdapterMock->expects($this->exactly(1))
                 ->method('parseUpdate');
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->id = 1;
         $referencedSample->text = 'referenced sample';
@@ -528,28 +520,101 @@ class DataMapperTest extends TestCase
         $dataMapper->save($baseSample);
     }
 
-    public function testSaveNewEntityWithEncryptedProperty()
+    public function testSaveNewEntityWithEncryptedPropertyOne()
     {
+        $initializationVector = null;
         $propertyValueOne = 'test-value-one';
         $propertyValueTwo = 'test-value-two';
-        $this->baseAdapterMock->expects($this->once())
+        $propertyValueThree = 'test-value-three';
+        $matcher = $this->exactly(2);
+        $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) use ($propertyValueOne, $propertyValueTwo) {
-                    $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $param2[2]);
-                    $encryptedPropertyValueTwo = Encryptor::encryptString($propertyValueTwo, $param2[2]);
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($propertyValueOne, $propertyValueTwo, $propertyValueThree, $matcher, &$initializationVector) {
                     $this->assertEquals('', $param1);
                     $this->assertCount(3, $param2);
-                    $this->assertEquals($encryptedPropertyValueOne, $param2[0]);
-                    $this->assertEquals($encryptedPropertyValueTwo, $param2[1]);
+                    $this->assertEquals([], $param3);
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $initializationVector = $param2[0];
+                            $this->assertNotNull($initializationVector);
+                            $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
+                            $encryptedPropertyValueTwo = Encryptor::encryptString($propertyValueTwo, $initializationVector);
+                            $this->assertEquals($encryptedPropertyValueOne, $param2[1]);
+                            $this->assertEquals($encryptedPropertyValueTwo, $param2[2]);
+                            break;
+                        case 2:
+                            $this->assertEquals($initializationVector, $param2[0]);
+                            $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
+                            $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $initializationVector);
+                            $this->assertEquals($encryptedPropertyValueOne, $param2[1]);
+                            $this->assertEquals($encryptedPropertyValueThree, $param2[2]);
+                    }
+                    return true;
+                });
+        $entityWithEncryptedPropertyOne = new EntityWithEncryptedPropertyOne();
+        $entityWithEncryptedPropertyOne->encryptedPropertyOne = $propertyValueOne;
+        $entityWithEncryptedPropertyOne->encryptedPropertyTwo = $propertyValueTwo;
+        $dataMapper = new DataMapper();
+        $dataMapper->save($entityWithEncryptedPropertyOne);
+        $entityWithEncryptedPropertyOne->encryptedPropertyTwo = $propertyValueThree;
+        $dataMapper->save($entityWithEncryptedPropertyOne);
+    }
+
+    public function testSaveNewEntityWithEncryptedPropertyTwo()
+    {
+        $initializationVector = null;
+        $propertyValueOne = 'test-value-one';
+        $propertyValueTwo = 'test-value-two';
+        $propertyValueThree = 'test-value-three';
+        $matcher = $this->exactly(2);
+        $this->baseAdapterMock->expects($matcher)
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($propertyValueOne, $propertyValueTwo, $propertyValueThree, $matcher, &$initializationVector) {
+                    $this->assertEquals('', $param1);
+                    $this->assertCount(3, $param2);
+                    $this->assertEquals([], $param3);
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $initializationVector = $param2[0];
+                            $this->assertNotNull($initializationVector);
+                            $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
+                            $encryptedPropertyValueTwo = Encryptor::encryptString($propertyValueTwo, $initializationVector);
+                            $this->assertEquals($encryptedPropertyValueOne, $param2[1]);
+                            $this->assertEquals($encryptedPropertyValueTwo, $param2[2]);
+                            break;
+                        case 2:
+                            $this->assertEquals($initializationVector, $param2[0]);
+                            $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
+                            $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $initializationVector);
+                            $this->assertEquals($encryptedPropertyValueOne, $param2[1]);
+                            $this->assertEquals($encryptedPropertyValueThree, $param2[2]);
+                    }
+                    return true;
+                });
+        $entityWithEncryptedPropertyTwo = new EntityWithEncryptedPropertyTwo();
+        $entityWithEncryptedPropertyTwo->encryptedPropertyOne = $propertyValueOne;
+        $entityWithEncryptedPropertyTwo->encryptedPropertyTwo = $propertyValueTwo;
+        $dataMapper = new DataMapper();
+        $dataMapper->save($entityWithEncryptedPropertyTwo);
+        $entityWithEncryptedPropertyTwo->encryptedPropertyTwo = $propertyValueThree;
+        $dataMapper->save($entityWithEncryptedPropertyTwo);
+    }
+
+    public function testSaveNewDependentEntityWithForeignKeyIndex()
+    {
+        $this->baseAdapterMock->expects($this->once())
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) {
+                    $this->assertEquals('', $param1);
+                    $this->assertCount(1, $param2);
+                    $this->assertEquals(2, $param2[0]);
                     $this->assertEquals([], $param3);
                     return true;
                 });
-        BaseAdapter::setDefault($this->baseAdapterMock);
-        $entityWithEncryptedProperty = new EntityWithEncryptedProperty();
-        $entityWithEncryptedProperty->encryptedPropertyOne = $propertyValueOne;
-        $entityWithEncryptedProperty->encryptedPropertyTwo = $propertyValueTwo;
+        $dependentEntityOne = new DependentEntityOne();
+        $dependentEntityOne->entityWithTwoCollection = 2;
         $dataMapper = new DataMapper();
-        $dataMapper->save($entityWithEncryptedProperty);
+        $dataMapper->save($dependentEntityOne);
     }
 
     public function testNewReferencedEntityWithInsertInsertInsert()
@@ -582,7 +647,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(3))
                 ->method('lastInsertId')
                 ->willReturn(1);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -607,7 +671,6 @@ class DataMapperTest extends TestCase
 
     public function testInitQuery()
     {
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $query = $this->createMock(Query::class);
         $query->expects($this->any())
                 ->method('setTable')
@@ -630,7 +693,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->once())
                 ->method('commitTransaction')
                 ->willReturn(true);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -676,7 +738,6 @@ class DataMapperTest extends TestCase
                     $adapterMethodCallOrder[] = 'commitTransaction';
                     return true;
                 });
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
@@ -733,7 +794,6 @@ class DataMapperTest extends TestCase
                     $adapterMethodCallOrder[] = 'commitTransaction';
                     return true;
                 });
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $entityWithTwoCollection = new EntityWithTwoCollection();
         $entityWithTwoCollection->addDependentEntityOne(new DependentEntityOne());
         $entityWithTwoCollection->addDependentEntityTwo(new DependentEntityTwo());
@@ -850,7 +910,6 @@ class DataMapperTest extends TestCase
                     $adapterMethodCallOrder[] = 'commitTransaction';
                     return true;
                 });
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $entityWithTwoCollection = new EntityWithTwoCollection();
         $entityWithTwoCollection->addDependentEntityOne(new DependentEntityOne());
         $dependentEntityTwo = new DependentEntityTwo();
@@ -972,7 +1031,6 @@ class DataMapperTest extends TestCase
                     $adapterMethodCallOrder[] = 'commitTransaction';
                     return true;
                 });
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $dependentEntityOne = new DependentEntityOne();
         $dependentEntityOne->entityWithTwoCollection = new EntityWithTwoCollection();
         $dependentEntityTwo = new DependentEntityTwo();
@@ -1020,7 +1078,6 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->once())
                 ->method('commitTransaction')
                 ->willReturn(true);
-        BaseAdapter::setDefault($this->baseAdapterMock);
         $referencedSample = new ReferencedSample();
         $referencedSample->text = 'referenced sample';
         $otherReferencedSample = new OtherReferencedSample();
