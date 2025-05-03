@@ -63,7 +63,7 @@ abstract class BaseEntity
     protected bool $isActiveTransaction = false;
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
-	
+
     public function __construct(DataMapper $dataMapper = new DataMapper(), ?ProcessedEntitiesCollection $processedEntitesCollection = null, ?Config $config = null)
     {
         $this->dataMapper = $dataMapper;
@@ -114,8 +114,8 @@ abstract class BaseEntity
             unset($this->foreignKeyIndexes[$propertyName]);
         }
     }
-    
-    public function setPrimaryKeyAfterSave(int $value):void
+
+    public function setPrimaryKeyAfterSave(int $value): void
     {
         $this->{$this->primaryKey} = $value;
     }
