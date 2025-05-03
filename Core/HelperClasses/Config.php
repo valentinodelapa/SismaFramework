@@ -145,7 +145,7 @@ class Config
     /* Encryptor Constants */
     protected readonly string $simpleHashAlgorithm;
     protected readonly int $blowfishHashWorkload;
-    protected readonly string $encryptionPassphrase;
+    protected readonly ?string $encryptionPassphrase;
     protected readonly string $encryptionAlgorithm;
     protected readonly int $initializationVectorBytes;
 
@@ -179,11 +179,22 @@ class Config
 
     public function __get(string $name): mixed
     {
+        $this->forceSet($name);
+        return $this->$name;
+    }
+    
+    private function forceSet(string $name):void
+    {
         if (isset($this->$name) === false) {
             $constantName = '\\Config\\' . NotationManager::convertToUpperSnakeCase($name);
             $reflectionProperty = new \ReflectionProperty($this, $name);
             $this->$name = Parser::simpleParseValue($reflectionProperty->getType(), constant($constantName));
         }
-        return $this->$name;
+    }
+    
+    public function __isset(string $name): bool
+    {
+        $this->forceSet($name);
+        return isset($this->$name);
     }
 }
