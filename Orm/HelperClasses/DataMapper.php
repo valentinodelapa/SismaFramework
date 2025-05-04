@@ -94,8 +94,9 @@ class DataMapper
 
     public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()): bool
     {
+        $query->setVariable($variable);
         $query->close();
-        $cmd = $query->getCommandToExecute(Statement::set, ["variable" => $variable, "value" => $this->adapter->getPlaceholder()]);
+        $cmd = $query->getCommandToExecute(Statement::set);
         Parser::unparseValue($bindValue);
         $result = $this->adapter->execute($cmd, [$bindValue], [$bindType]);
         return $result;
@@ -127,13 +128,13 @@ class DataMapper
 
     private function insert(BaseEntity $entity, Query $query = new Query()): bool
     {
+        $bindValues = $bindTypes = [];
         $query->setTable(NotationManager::convertEntityToTableName($entity));
+        $this->parseValues($entity, $query, $bindValues, $bindTypes);
+        $this->parseForeignKeyIndexes($entity, $query, $bindValues, $bindTypes);
         $query->close();
-        $columns = $values = $types = [];
-        $this->parseValues($entity, $columns, $values, $types);
-        $this->parseForeignKeyIndexes($entity, $columns, $values, $types);
-        $cmd = $query->getCommandToExecute(Statement::insert, ['columns' => $columns, 'values' => array_fill(0, count($columns), $this->adapter->getPlaceholder())]);
-        $result = $this->adapter->execute($cmd, $values, $types);
+        $cmd = $query->getCommandToExecute(Statement::insert);
+        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
             $entity->setPrimaryKeyAfterSave($this->adapter->lastInsertId());
             $entity->modified = false;
@@ -145,12 +146,12 @@ class DataMapper
         return $result;
     }
 
-    private function parseValues(BaseEntity $entity, array &$columns, array &$values, array &$types): void
+    private function parseValues(BaseEntity $entity, Query $query, array &$bindValues, array &$bindTypes): void
     {
         $reflectionClass = new \ReflectionClass($entity);
         foreach ($reflectionClass->getProperties() as $reflectionProperty) {
             if ($this->propertyIsParsable($reflectionProperty, $entity)) {
-                $this->parseSingleProperty($reflectionProperty, $entity, $columns, $values, $types);
+                $this->parseSingleProperty($reflectionProperty, $entity, $query, $bindValues, $bindTypes);
             }
         }
     }
@@ -170,7 +171,7 @@ class DataMapper
         }
     }
 
-    private function parseSingleProperty(\ReflectionProperty $reflectionProperty, BaseEntity $entity, array &$columns, array &$values, array &$types): void
+    private function parseSingleProperty(\ReflectionProperty $reflectionProperty, BaseEntity $entity, Query $query, array &$bindValues, array &$bindTypes): void
     {
         $currentValue = $reflectionProperty->getValue($entity);
         if ($currentValue instanceof BaseEntity) {
@@ -182,17 +183,16 @@ class DataMapper
             if (empty($entity->$initializationVectorPropertyName)) {
                 $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInizializationVector();
             }
-            $initializationVectorColumnName = $this->adapter->escapeColumn($initializationVectorPropertyName);
-            if (in_array($initializationVectorColumnName, $columns) === false) {
-                $types[] = DataType::typeBinary;
-                $columns[] = $initializationVectorColumnName;
-                $values[] = Parser::unparseValue($entity->$initializationVectorPropertyName);
+            if ($query->hasColumn($initializationVectorPropertyName) === false) {
+                $query->appendColumnValue($initializationVectorPropertyName);
+                $bindTypes[] = DataType::typeBinary;
+                $bindValues[] = Parser::unparseValue($entity->$initializationVectorPropertyName);
             }
             $parsedValue = Encryptor::encryptString($parsedValue, $entity->$initializationVectorPropertyName);
         }
-        $types[] = $this->getType($reflectionProperty->getType(), $parsedValue);
-        $columns[] = $this->adapter->escapeColumn($reflectionProperty->getName(), is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
-        $values[] = $parsedValue;
+        $bindTypes[] = $this->getType($reflectionProperty->getType(), $parsedValue);
+        $query->appendColumnValue($reflectionProperty->getName(), Placeholder::placeholder, is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
+        $bindValues[] = $parsedValue;
     }
 
     private function getType(\ReflectionNamedType $reflectionNamedType, mixed $value): DataType
@@ -220,12 +220,12 @@ class DataMapper
         }
     }
 
-    private function parseForeignKeyIndexes(BaseEntity $entity, array &$columns, array &$values, array &$types): void
+    private function parseForeignKeyIndexes(BaseEntity $entity, Query $query, array &$bindValues, array &$bindTypes): void
     {
         foreach ($entity->getForeignKeyIndexes() as $propertyName => $propertyValue) {
-            $types[] = DataType::typeInteger;
-            $columns[] = $this->adapter->escapeColumn($propertyName, true);
-            $values[] = $propertyValue;
+            $query->appendColumnValue($propertyName, Placeholder::placeholder, true);
+            $bindTypes[] = DataType::typeInteger;
+            $bindValues[] = $propertyValue;
         }
     }
 
@@ -275,17 +275,17 @@ class DataMapper
 
     private function update(BaseEntity $entity, Query $query = new Query()): bool
     {
+        $bindValues = $bindTypes = [];
         $query->setTable(NotationManager::convertEntityToTableName($entity));
+        $this->parseValues($entity, $query, $bindValues, $bindTypes);
+        $this->parseForeignKeyIndexes($entity, $query, $bindValues, $bindTypes);
         $query->setWhere();
         $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
         $query->close();
-        $columns = $values = $types = [];
-        $this->parseValues($entity, $columns, $values, $types);
-        $this->parseForeignKeyIndexes($entity, $columns, $values, $types);
-        $cmd = $query->getCommandToExecute(Statement::update, array('columns' => $columns, 'values' => array_fill(0, count($columns), $this->adapter->getPlaceholder())));
-        $values[] = $entity->{$entity->getPrimaryKeyPropertyName()};
-        $types[] = DataType::typeInteger;
-        $result = $this->adapter->execute($cmd, $values, $types);
+        $cmd = $query->getCommandToExecute(Statement::update);
+        $bindValues[] = $entity->{$entity->getPrimaryKeyPropertyName()};
+        $bindTypes[] = DataType::typeInteger;
+        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);

@@ -33,6 +33,7 @@ use SismaFramework\Core\Exceptions\InvalidTypeException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
@@ -695,12 +696,54 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->once())
                 ->method('lastInsertId')
                 ->willReturn(1);
-        $matcherTwo = $this->exactly(2);
+        $matcherTwo = $this->exactly(4);
         $this->queryMock->expects($matcherTwo)
-                ->method('getCommandToExecute')
-                ->willReturnCallback(function ($cmdType, $extra) use ($matcherTwo) {
-                    $this->assertEquals(['columns' => ['initialization_vector', 'encrypted_property_one', 'encrypted_property_two'], 'values' => ['?', '?', '?']], $extra);
+                ->method('hasColumn')
+                ->willReturnCallback(function ($column, $foreignKey) use ($matcherTwo) {
+                    $this->assertFalse($foreignKey);
+                    $this->assertEquals('initializationVector', $column);
                     switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                        case 3:
+                            return false;
+                        case 2:
+                        case 4:
+                            return true;
+                    }
+                });
+        $matcherThree = $this->exactly(6);
+        $this->queryMock->expects($matcherThree)
+                ->method('appendColumnValue')
+                ->willReturnCallback(function ($column, $value, $foreignKey) use ($matcherThree) {
+                    $this->assertEquals(Placeholder::placeholder, $value);
+                    $this->assertFalse($foreignKey);
+                    switch ($matcherThree->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('initializationVector', $column);
+                            break;
+                        case 2:
+                            $this->assertEquals('encryptedPropertyOne', $column);
+                            break;
+                        case 3:
+                            $this->assertEquals('encryptedPropertyTwo', $column);
+                            break;
+                        case 4:
+                            $this->assertEquals('initializationVector', $column);
+                            break;
+                        case 5:
+                            $this->assertEquals('encryptedPropertyOne', $column);
+                            break;
+                        case 6:
+                            $this->assertEquals('encryptedPropertyTwo', $column);
+                            break;
+                    }
+                    return $this->queryMock;
+                });
+        $matcherFour = $this->exactly(2);
+        $this->queryMock->expects($matcherFour)
+                ->method('getCommandToExecute')
+                ->willReturnCallback(function ($cmdType) use ($matcherFour) {
+                    switch ($matcherFour->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals(Statement::insert, $cmdType);
                             break;
@@ -710,41 +753,6 @@ class DataMapperTest extends TestCase
                     }
                     return 'query';
                 });
-        $matcherThree = $this->exactly(8);
-        $this->baseAdapterMock->expects($matcherThree)
-                ->method('escapeColumn')
-                ->willReturnCallback(function (string $name, bool $foreignKey = false) use ($matcherThree) {
-                    $this->assertFalse($foreignKey);
-                    switch ($matcherThree->numberOfInvocations()) {
-                        case 1:
-                            $this->assertEquals('initializationVector', $name);
-                            return 'initialization_vector';
-                        case 2:
-                            $this->assertEquals('encryptedPropertyOne', $name);
-                            return 'encrypted_property_one';
-                        case 3:
-                            $this->assertEquals('initializationVector', $name);
-                            return 'initialization_vector';
-                        case 4:
-                            $this->assertEquals('encryptedPropertyTwo', $name);
-                            return 'encrypted_property_two';
-                        case 5:
-                            $this->assertEquals('initializationVector', $name);
-                            return 'initialization_vector';
-                        case 6:
-                            $this->assertEquals('encryptedPropertyOne', $name);
-                            return 'encrypted_property_one';
-                        case 7:
-                            $this->assertEquals('initializationVector', $name);
-                            return 'initialization_vector';
-                        case 8:
-                            $this->assertEquals('encryptedPropertyTwo', $name);
-                            return 'encrypted_property_two';
-                    }
-                });
-        $this->baseAdapterMock->expects($this->exactly(2))
-                ->method('getPlaceholder')
-                ->willReturn('?');
         $entityWithEncryptedPropertyOne = new EntityWithEncryptedPropertyOne();
         $entityWithEncryptedPropertyOne->encryptedPropertyOne = $propertyValueOne;
         $entityWithEncryptedPropertyOne->encryptedPropertyTwo = $propertyValueTwo;
@@ -760,12 +768,12 @@ class DataMapperTest extends TestCase
         $propertyValueOne = 'test-value-one';
         $propertyValueTwo = 'test-value-two';
         $propertyValueThree = 'test-value-three';
-        $matcher = $this->exactly(2);
-        $this->baseAdapterMock->expects($matcher)
+        $matcherOne = $this->exactly(2);
+        $this->baseAdapterMock->expects($matcherOne)
                 ->method('execute')
-                ->willReturnCallback(function ($param1, $param2, $param3) use ($propertyValueOne, $propertyValueTwo, $propertyValueThree, $matcher, &$initializationVector) {
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($propertyValueOne, $propertyValueTwo, $propertyValueThree, $matcherOne, &$initializationVector) {
                     $this->assertEquals('query', $param1);
-                    switch ($matcher->numberOfInvocations()) {
+                    switch ($matcherOne->numberOfInvocations()) {
                         case 1:
                             $this->assertCount(3, $param2);
                             $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString], $param3);
@@ -790,12 +798,54 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->once())
                 ->method('lastInsertId')
                 ->willReturn(1);
-        $matcherTwo = $this->exactly(2);
+        $matcherTwo = $this->exactly(4);
         $this->queryMock->expects($matcherTwo)
-                ->method('getCommandToExecute')
-                ->willReturnCallback(function ($cmdType, $extra) use ($matcherTwo) {
-                    $this->assertEquals(['columns' => ['initialization_vector', 'encrypted_property_one', 'encrypted_property_two'], 'values' => ['?', '?', '?']], $extra);
+                ->method('hasColumn')
+                ->willReturnCallback(function ($column, $foreignKey) use ($matcherTwo) {
+                    $this->assertFalse($foreignKey);
+                    $this->assertEquals('initializationVector', $column);
                     switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                        case 3:
+                            return false;
+                        case 2:
+                        case 4:
+                            return true;
+                    }
+                });
+        $matcherThree = $this->exactly(6);
+        $this->queryMock->expects($matcherThree)
+                ->method('appendColumnValue')
+                ->willReturnCallback(function ($column, $value, $foreignKey) use ($matcherThree) {
+                    $this->assertEquals(Placeholder::placeholder, $value);
+                    $this->assertFalse($foreignKey);
+                    switch ($matcherThree->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('initializationVector', $column);
+                            break;
+                        case 2:
+                            $this->assertEquals('encryptedPropertyOne', $column);
+                            break;
+                        case 3:
+                            $this->assertEquals('encryptedPropertyTwo', $column);
+                            break;
+                        case 4:
+                            $this->assertEquals('initializationVector', $column);
+                            break;
+                        case 5:
+                            $this->assertEquals('encryptedPropertyOne', $column);
+                            break;
+                        case 6:
+                            $this->assertEquals('encryptedPropertyTwo', $column);
+                            break;
+                    }
+                    return $this->queryMock;
+                });
+        $matcherFour = $this->exactly(2);
+        $this->queryMock->expects($matcherFour)
+                ->method('getCommandToExecute')
+                ->willReturnCallback(function ($cmdType) use ($matcherFour) {
+                    switch ($matcherFour->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals(Statement::insert, $cmdType);
                             break;
@@ -805,41 +855,6 @@ class DataMapperTest extends TestCase
                     }
                     return 'query';
                 });
-        $matcherThree = $this->exactly(8);
-        $this->baseAdapterMock->expects($matcherThree)
-                ->method('escapeColumn')
-                ->willReturnCallback(function (string $name, bool $foreignKey = false) use ($matcherThree) {
-                    $this->assertFalse($foreignKey);
-                    switch ($matcherThree->numberOfInvocations()) {
-                        case 1:
-                            $this->assertEquals('initializationVector', $name);
-                            return 'initialization_vector';
-                        case 2:
-                            $this->assertEquals('encryptedPropertyOne', $name);
-                            return 'encrypted_property_one';
-                        case 3:
-                            $this->assertEquals('initializationVector', $name);
-                            return 'initialization_vector';
-                        case 4:
-                            $this->assertEquals('encryptedPropertyTwo', $name);
-                            return 'encrypted_property_two';
-                        case 5:
-                            $this->assertEquals('initializationVector', $name);
-                            return 'initialization_vector';
-                        case 6:
-                            $this->assertEquals('encryptedPropertyOne', $name);
-                            return 'encrypted_property_one';
-                        case 7:
-                            $this->assertEquals('initializationVector', $name);
-                            return 'initialization_vector';
-                        case 8:
-                            $this->assertEquals('encryptedPropertyTwo', $name);
-                            return 'encrypted_property_two';
-                    }
-                });
-        $this->baseAdapterMock->expects($this->exactly(2))
-                ->method('getPlaceholder')
-                ->willReturn('?');
         $entityWithEncryptedPropertyTwo = new EntityWithEncryptedPropertyTwo();
         $entityWithEncryptedPropertyTwo->encryptedPropertyOne = $propertyValueOne;
         $entityWithEncryptedPropertyTwo->encryptedPropertyTwo = $propertyValueTwo;
