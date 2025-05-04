@@ -31,10 +31,11 @@
  *
  * MODIFICHE APPORTATE RISPETTO ALLA CLASSE `MODEL` DI SIMPLEORM:
  * - Significativa riorganizzazione e rifattorizzazione per l'applicazione della tipizzazione forte.
- * - **Passaggio dal pattern Active Record al pattern Data Mapper:** La logica di persistenza è stata separata in una classe `DataMapper`.
- * - **Separazione delle responsabilità:** Le operazioni di persistenza sono state estratte dalla classe che rappresentava i dati (`Model`).
- * - **Nessun riferimento diretto alla rappresentazione dei dati (`Entity`):** Il `DataMapper` si concentra sulla persistenza, interagendo con le `Entity` tramite interfacce.
+ * - Passaggio dal pattern Active Record al pattern Data Mapper: La logica di persistenza è stata separata in una classe DataMapper.
+ * - Separazione delle responsabilità:** Le operazioni di persistenza sono state estratte dalla classe che rappresentava i dati (Model).
+ * - Nessun riferimento diretto alla rappresentazione dei dati (Entity): Il DataMapper si concentra sulla persistenza, interagendo con le `Entity` tramite interfacce.
  * - Implementazione di meccanismi e comportamenti specifici non presenti nella classe Model originale
+ * - Implementazione meccanismo dei tipo di binding specifici nelle query di insert e update. 
  */
 
 namespace SismaFramework\Orm\HelperClasses;
