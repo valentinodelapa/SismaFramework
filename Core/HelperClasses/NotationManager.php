@@ -59,6 +59,13 @@ class NotationManager
                 }, array_filter(preg_split('/(?=[A-Z])/', $studlyCapsOrCamelCaseString))));
     }
 
+    public static function convertToUpperSnakeCase(string $studlyCapsOrCamelCaseString): string
+    {
+        return implode('_', array_map(function ($value) {
+                    return strtoupper($value);
+                }, array_filter(preg_split('/(?=[A-Z])/', $studlyCapsOrCamelCaseString))));
+    }
+
     public static function convertEntityToTableName(BaseEntity $entity): string
     {
         return self::convertEntityNameToTableName(get_class($entity));

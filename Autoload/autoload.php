@@ -26,7 +26,12 @@
 
 namespace SismaFramework\Autoload;
 
-require_once __DIR__.'/Autoloader.php';
+use SismaFramework\Core\HelperClasses\Autoloader;
+
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Autoloader.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Config.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'NotationManager.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Parser.php';
 
 spl_autoload_register(function (string $className) {
     $autoloader = new Autoloader($className);

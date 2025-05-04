@@ -34,7 +34,9 @@ use SismaFramework\Security\ExtendedClasses\NoLogException;
  */
 class BadRequestException extends NoLogException
 {
-    public function getResponseType(): ResponseType
+
+    #[\Override]
+    protected function setResponseType(): ResponseType
     {
         return ResponseType::httpBadRequest;
     }

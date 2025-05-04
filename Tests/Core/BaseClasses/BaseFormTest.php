@@ -26,8 +26,16 @@
 
 namespace SismaFramework\Tests\Core\BaseClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\Enumerations\ResponseType;
+use SismaFramework\Core\Exceptions\FormException;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\FakeBaseSample;
 use SismaFramework\TestsApplication\Entities\FakeReferencedSample;
@@ -42,14 +50,6 @@ use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\Exceptions\FormException;
-use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Orm\ExtendedClasses\StandardEntity;
-use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Orm\CustomTypes\SismaCollection;
 
 /**
  * Description of BaseFormTest
@@ -59,26 +59,49 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
 class BaseFormTest extends TestCase
 {
 
+    private Config $configMock;
     private DataMapper $dataMapperMock;
 
     #[\Override]
     public function setUp(): void
     {
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['entityNamespace', 'TestsApplication\\Entities\\'],
+                    ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 100],
+                    ['logVerboseActive', true],
+                    ['moduleFolders', ['SismaFramework']],
+                    ['ormCache', true],
+                    ['primaryKeyPassAccepted', false],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['referenceCacheDirectory', $referenceCacheDirectory],
+                    ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
+        ]);
+        Config::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
-    
+
     public function testAddEntityFromFormWithException()
     {
         $this->expectException(FormException::class);
-        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm();
+        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->configMock);
         $baseSampleFormWithFakeEntityFromForm->handleRequest(new Request());
     }
 
     public function testFormForBaseEntityNotSubmitted()
     {
-        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
+        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->configMock);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $baseSampleForm->handleRequest($requestMock);
@@ -442,21 +465,18 @@ class BaseFormTest extends TestCase
         $this->assertEquals('self referenced sample three', $selfReferencedSampleResult->sonCollection[1]->text);
     }
 
-    #[RunInSeparateProcess]
     public function testFormWhithNotInitializedEntity()
     {
         $this->expectException(FormException::class);
         $entityNotInitializedForm = new EntityNotInitializedForm(null, $this->dataMapperMock);
     }
 
-    #[RunInSeparateProcess]
     public function testFormWithNotValidEntity()
     {
         $this->expectException(InvalidArgumentException::class);
         $baseSampleForm = new BaseSampleForm(new ReferencedSample($this->dataMapperMock), $this->dataMapperMock);
     }
 
-    #[RunInSeparateProcess]
     public function testFormUpdateWithNotValidReferencedEntityType()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -467,7 +487,6 @@ class BaseFormTest extends TestCase
         $fakeBaseSampleForm->handleRequest($requestMock);
     }
 
-    #[RunInSeparateProcess]
     public function testFormUpdateWithNotValidReferencedEntityTypeInCollection()
     {
         $this->expectException(InvalidArgumentException::class);

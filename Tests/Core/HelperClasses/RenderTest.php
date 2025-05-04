@@ -27,24 +27,52 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Localizator;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Tests\Config\ConfigFramework;
 
 /**
  * @author Valentino de Lapa
  */
 class RenderTest extends TestCase
 {
+
+    private Debugger $debuggerMock;
+    private Localizator $localizatorMock;
+    private Config $configMockDevelop;
+    private Config $configMockProduction;
+
     #[\Override]
     public function setUp(): void
     {
+        $this->configMockDevelop = $this->createMock(Config::class);
+        $this->configMockDevelop->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', true],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['structuralViewsPath', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
+                    ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
+        ]);
+        $this->configMockProduction = $this->createMock(Config::class);
+        $this->configMockProduction->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['structuralViewsPath', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
+                    ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
+        ]);
+        Config::setInstance($this->configMockDevelop);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $this->localizatorMock = $this->createMock(Localizator::class);
+        $this->debuggerMock = $this->createMock(Debugger::class);
         ModuleManager::setApplicationModule('SismaFramework');
     }
 
@@ -58,19 +86,15 @@ class RenderTest extends TestCase
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        $localizatorMock = $this->createMock(Localizator::class);
-        $localizatorMock->expects($this->once())
+        $this->localizatorMock->expects($this->once())
                 ->method('getPageLocaleArray')
                 ->willReturn([]);
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $debuggerMock = $this->createMock(Debugger::class);
-        $debuggerMock->expects($this->once())
+        $this->debuggerMock->expects($this->once())
                 ->method('generateDebugBar')
                 ->willReturn('');
-        Render::setDevelopmentEnvironment();
-        Render::generateView('sample/index', $vars, ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
+        Render::generateView('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->debuggerMock, $this->configMockDevelop);
     }
-    
+
     public function testGenerateViewNotInDevelopmentEnvironment()
     {
         \ob_end_clean();
@@ -82,32 +106,28 @@ class RenderTest extends TestCase
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        $localizatorMock = $this->createMock(Localizator::class);
-        $localizatorMock->expects($this->once())
+        $this->localizatorMock->expects($this->once())
                 ->method('getPageLocaleArray')
                 ->willReturn([]);
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $debuggerMock = $this->createMock(Debugger::class);
-        $debuggerMock->expects($this->never())
+        $this->debuggerMock->expects($this->never())
                 ->method('generateDebugBar');
-        Render::setDevelopmentEnvironment(false);
-        Render::generateView('sample/index', $vars, ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
+        Render::generateView('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->debuggerMock, $this->configMockProduction);
     }
-    
+
     public function testGenerateViewStructural()
     {
         \ob_end_clean();
-        $this->expectOutputRegex('/Unexpected Error/');
-        $localizatorMock = $this->createMock(Localizator::class);
-        $localizatorMock->expects($this->never())
+        $this->expectOutputRegex('/debug bar/');
+        $this->localizatorMock->expects($this->never())
                 ->method('getPageLocaleArray');
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $debuggerMock = $this->createMock(Debugger::class);
+        $this->debuggerMock->expects($this->once())
+                ->method('generateDebugBar')
+                ->willReturn('debug bar');
         Render::setStructural();
-        Render::generateView('framework/internalServerError', [], ResponseType::httpOk, $localizatorMock, $debuggerMock, $dataMapperMock);
+        Render::generateView('framework/internalServerError', [], ResponseType::httpOk, $this->localizatorMock, $this->debuggerMock, $this->configMockDevelop);
         Render::setStructural(false);
     }
-    
+
     public function testGenerateDataInDevelopmentEnvironment()
     {
         \ob_end_clean();
@@ -120,10 +140,9 @@ class RenderTest extends TestCase
             'actionUrl' => 'index',
         ];
         Debugger::startExecutionTimeCalculation();
-        Render::setDevelopmentEnvironment();
-        Render::generateData('sample/index', $vars);
+        Render::generateData('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->configMockDevelop);
     }
-    
+
     public function testGenerateDataNotInDevelopmentEnvironment()
     {
         \ob_end_clean();
@@ -136,10 +155,9 @@ class RenderTest extends TestCase
             'actionUrl' => 'index',
         ];
         Debugger::startExecutionTimeCalculation();
-        Render::setDevelopmentEnvironment(false);
-        Render::generateData('sample/index', $vars);
+        Render::generateData('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->configMockProduction);
     }
-    
+
     public function testGenerareJson()
     {
         \ob_end_clean();

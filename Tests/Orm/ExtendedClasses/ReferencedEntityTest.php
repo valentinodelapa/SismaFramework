@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Orm\ExtendedClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
@@ -43,29 +44,49 @@ class ReferencedEntityTest extends TestCase
 {
 
     private DataMapper $dataMapperMock;
-    
+
     #[\Override]
     public function setUp(): void
     {
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['entityNamespace', 'TestsApplication\\Entities\\'],
+                    ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+                    ['moduleFolders', ['SismaFramework']],
+                    ['ormCache', true],
+                    ['referenceCacheDirectory', $referenceCacheDirectory],
+                    ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
+        ]);
+        Config::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
-    
+
     public function testGetCollectionNames()
     {
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $this->assertIsArray($otherReferencedSample->getCollectionNames());
         $this->assertContains('baseSampleCollectionOtherReferencedSample', $otherReferencedSample->getCollectionNames());
     }
-    
+
     public function testGetInvalidProperty()
     {
         $this->expectException(InvalidPropertyException::class);
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $otherReferencedSample->inexistentProperty;
     }
-    
+
     public function testSetCollectionProperty()
     {
         $baseSampleCollection = new SismaCollection(BaseSample::class);
@@ -76,12 +97,12 @@ class ReferencedEntityTest extends TestCase
         $this->assertEquals($baseSampleCollection, $referencedSample->baseSampleCollectionReferencedEntityWithInitialization);
         $referencedSample->baseSampleCollectionNullableReferencedEntityWithInitialization = $baseSampleCollection;
         $this->assertEquals($baseSampleCollection, $referencedSample->baseSampleCollectionNullableReferencedEntityWithInitialization);
-        
+
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $otherReferencedSample->baseSampleCollection = $baseSampleCollection;
         $this->assertEquals($baseSampleCollection, $otherReferencedSample->baseSampleCollection);
     }
-    
+
     public function testSetInconsistentEntityInCollection()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -89,14 +110,14 @@ class ReferencedEntityTest extends TestCase
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $otherReferencedSample->baseSampleCollection = $referencedSampleCollection;
     }
-    
+
     public function testSetInvalidProperty()
     {
         $this->expectException(InvalidPropertyException::class);
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $otherReferencedSample->inexistentProperty = 'value';
     }
-    
+
     public function testCheckCollectionExsists()
     {
         $referencedSample = new ReferencedSample($this->dataMapperMock);
@@ -104,16 +125,16 @@ class ReferencedEntityTest extends TestCase
         $this->assertTrue($referencedSample->checkCollectionExists('baseSampleCollectionReferencedEntityWithInitialization'));
         $this->assertTrue($referencedSample->checkCollectionExists('baseSampleCollectionNullableReferencedEntityWithInitialization'));
         $this->assertFalse($referencedSample->checkCollectionExists('baseSampleCollection'));
-        
+
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $this->assertTrue($otherReferencedSample->checkCollectionExists('baseSampleCollection'));
     }
-    
+
     public function testCheckIssetAndCountCollectionProperty()
     {
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $this->dataMapperMock->expects($this->exactly(2))
-                ->method ('getCount')
+                ->method('getCount')
                 ->willReturnOnConsecutiveCalls(0, 1);
         $this->assertTrue(isset($otherReferencedSample->baseSampleCollection));
         $this->assertInstanceOf(SismaCollection::class, $otherReferencedSample->baseSampleCollection);

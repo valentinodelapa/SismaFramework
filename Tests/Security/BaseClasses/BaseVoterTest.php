@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Tests\Security\BaseClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
@@ -51,19 +50,16 @@ class BaseVoterTest extends TestCase
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
 
-    #[RunInSeparateProcess]
     public function testIstanceNotPermitted()
     {
         $this->assertFalse(SampleVoter::isAllowed(new ReferencedSample($this->dataMapperMock), AccessControlEntry::allow));
     }
 
-    #[RunInSeparateProcess]
     public function testCheckVoterFalse()
     {
         $this->assertFalse(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock), AccessControlEntry::allow));
     }
 
-    #[RunInSeparateProcess]
     public function testCheckVoterTrue()
     {
         $this->assertTrue(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock), AccessControlEntry::deny));

@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\ModuleException;
@@ -37,6 +37,28 @@ use SismaFramework\Core\Exceptions\ModuleException;
  */
 class ModuleManagerTest extends TestCase
 {
+
+    private Config $configMock;
+
+    #[\Override]
+    public function setUp(): void
+    {
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 100],
+                    ['logVerboseActive', true],
+                    ['moduleFolders', ['SismaFramework']],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+        ]);
+        Config::setInstance($this->configMock);
+    }
 
     public function testGetModuleList()
     {
@@ -64,6 +86,7 @@ class ModuleManagerTest extends TestCase
 
     public function testUnsetCustomVisualizationModule()
     {
+        ModuleManager::setCustomVisualizationModule('TestsApplicationModule');
         $this->assertEquals('TestsApplicationModule', ModuleManager::getCustomVisualizationModule());
         ModuleManager::unsetCustomVisualizationModule();
         $this->assertNull(ModuleManager::getCustomVisualizationModule());
@@ -78,6 +101,8 @@ class ModuleManagerTest extends TestCase
 
     public function testGetConsequentFilePathWithCustomModule()
     {
+        ModuleManager::setCustomVisualizationModule('SismaFramework');
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
         $locales = ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT', Resource::json);
         $this->assertStringContainsString('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT.json', $locales);
     }
@@ -92,24 +117,23 @@ class ModuleManagerTest extends TestCase
 
     public function testGetConsequentFilePathWithApplicationModule()
     {
+        ModuleManager::setApplicationModule('SismaFramework');
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
         $locales = ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT', Resource::json);
         $this->assertStringContainsString('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT.json', $locales);
     }
 
-    #[RunInSeparateProcess]
     public function testGetExistingFilePathWithException()
     {
         $this->expectException(ModuleException::class);
-        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php);
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php, $this->configMock);
     }
 
-    #[RunInSeparateProcess]
     public function testGetConsequentFilePathWithException()
     {
         $this->expectException(ModuleException::class);
         ModuleManager::setApplicationModule('SismaFramework');
-        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
-        ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'en_EN', Resource::json);
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php, $this->configMock);
+        ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'en_EN', Resource::json, $this->configMock);
     }
-
 }

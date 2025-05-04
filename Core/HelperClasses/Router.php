@@ -36,7 +36,7 @@ use SismaFramework\Core\HttpClasses\Response;
 class Router
 {
 
-    private static $metaUrl = \Config\DEFAULT_META_URL;
+    private static $metaUrl = '';
     private static $controllerUrl = null;
     private static $actionUrl = null;
     private static $actualCleanUrl = null;
@@ -91,6 +91,11 @@ class Router
         $requestUri = $request->server['REQUEST_URI'];
         $relativeUrl = str_replace(self::$metaUrl, '', $requestUri);
         return substr($relativeUrl, 1);
+    }
+
+    public static function resetMetaUrl(): void
+    {
+        self::$metaUrl = '';
     }
 
     public function reloadWithParsedQueryString($request = new Request()): Response

@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Resource;
 
 /**
@@ -35,12 +36,10 @@ use SismaFramework\Core\Enumerations\Resource;
 class Templater
 {
 
-    private static string $structuralTemplatesPath = \Config\STRUCTURAL_TEMPLATES_PATH;
-    private static string $templatesPath = \Config\TEMPLATES_PATH;
-
-    public static function generateTemplate(string $template, array $vars, Localizator $localizator = new Localizator()): string
+    public static function generateTemplate(string $template, array $vars, Localizator $localizator = new Localizator(), ?Config $customConfig = null): string
     {
-        $templatePath = ModuleManager::getExistingFilePath(self::$templatesPath . $template, Resource::tpl);
+        $config = $customConfig ?? Config::getInstance();
+        $templatePath = ModuleManager::getExistingFilePath($config->templatesPath . $template, Resource::tpl);
         $varsAndLocales = array_merge($vars, $localizator->getTemplateLocaleArray($template));
         return self::parseTemplate($templatePath, $varsAndLocales);
     }
@@ -55,9 +54,10 @@ class Templater
         return $parsedTemplateContent;
     }
 
-    public static function generateStructuralTemplate(string $template, array $vars): string
+    public static function generateStructuralTemplate(string $template, array $vars, ?Config $customConfig = null): string
     {
-        $templatePath = self::$structuralTemplatesPath . $template . '.' . Resource::tpl->value;
+        $config = $customConfig ?? Config::getInstance();
+        $templatePath = $config->structuralTemplatesPath . $template . '.' . Resource::tpl->value;
         return self::parseTemplate($templatePath, $vars);
     }
 }

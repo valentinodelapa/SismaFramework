@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HttpClasses\Request;
@@ -38,22 +39,21 @@ use SismaFramework\Core\HttpClasses\Response;
 class Render
 {
 
-    private static bool $developmentEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
     private static bool $isStructural = false;
-    private static string $structuralViewsPath = \Config\STRUCTURAL_VIEWS_PATH;
     private static string $view;
-    private static string $viewsPath = \Config\VIEWS_PATH;
 
     public static function generateView(string $view,
             array $vars,
             ResponseType $responseType = ResponseType::httpOk,
             Localizator $localizator = new Localizator(),
-            Debugger $debugger = new Debugger()): Response
+            Debugger $debugger = new Debugger(),
+            ?Config $customConfig = null): Response
     {
+        $config = $customConfig ?? Config::getInstance();
         $response = self::getResponse($responseType);
         Debugger::setVars($vars);
-        self::assemblesComponents($view, $localizator, $vars);
-        echo static::generateDebugBar($debugger);
+        self::assemblesComponents($view, $localizator, $vars, $config);
+        echo static::generateDebugBar($debugger, $config);
         return $response;
     }
 
@@ -64,12 +64,12 @@ class Render
         return $response;
     }
 
-    private static function assemblesComponents(string $view, Localizator $localizator, array $vars): void
+    private static function assemblesComponents(string $view, Localizator $localizator, array $vars, Config $config): void
     {
         BufferManager::start();
         self::$view = $view;
         $deviceClass = self::getDeviceClass();
-        $viewPath = self::getViewPath(self::$view);
+        $viewPath = self::getViewPath(self::$view, $config);
         if (self::$isStructural === false) {
             $locale = $localizator->getPageLocaleArray(self::$view);
             extract($locale);
@@ -89,18 +89,18 @@ class Render
         }
     }
 
-    private static function getViewPath(string $view): string
+    private static function getViewPath(string $view, Config $config): string
     {
         if (self::$isStructural) {
-            return self::$structuralViewsPath . $view . '.' . Resource::php->value;
+            return $config->structuralViewsPath . $view . '.' . Resource::php->value;
         } else {
-            return ModuleManager::getExistingFilePath(self::$viewsPath . $view, Resource::php);
+            return ModuleManager::getExistingFilePath($config->viewsPath . $view, Resource::php);
         }
     }
 
-    private static function generateDebugBar(Debugger $debugger): string
+    private static function generateDebugBar(Debugger $debugger, Config $config): string
     {
-        if (self::$developmentEnvironment) {
+        if ($config->developmentEnvironment) {
             return $debugger->generateDebugBar();
         } else {
             return '';
@@ -109,10 +109,12 @@ class Render
 
     public static function generateData(string $view, array $vars,
             ResponseType $responseType = ResponseType::httpOk,
-            Localizator $localizator = new Localizator()): Response
+            Localizator $localizator = new Localizator(),
+            ?Config $customConfig = null): Response
     {
+        $config = $customConfig ?? Config::getInstance();
         $response = self::getResponse($responseType);
-        self::assemblesComponents($view, $localizator, $vars);
+        self::assemblesComponents($view, $localizator, $vars, $config);
         return $response;
     }
 
@@ -131,11 +133,6 @@ class Render
         header("Content-Length: " . strlen($encodedJsonData));
         echo $encodedJsonData;
         return $response;
-    }
-
-    public static function setDevelopmentEnvironment(bool $developmentEnvironment = true): void
-    {
-        self::$developmentEnvironment = $developmentEnvironment;
     }
 
     public static function setStructural(bool $isStructural = true): void

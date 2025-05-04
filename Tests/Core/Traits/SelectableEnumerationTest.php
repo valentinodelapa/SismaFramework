@@ -27,7 +27,10 @@
 namespace SismaFramework\Tests\Core\Traits;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
@@ -36,19 +39,37 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 class SelectableEnumerationTest extends TestCase
 {
 
+    #[\Override]
+    public function setUp(): void
+    {
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['language', Language::italian],
+                    ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+        ]);
+        Config::setInstance($configMock);
+    }
+
     public function testGetFriendlyLabel()
     {
+        ModuleManager::setApplicationModule('SismaFramework');
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
         $this->assertEquals('uno', SampleType::one->getFriendlyLabel(Language::italian));
         $this->assertEquals('due', SampleType::two->getFriendlyLabel(Language::italian));
     }
-    
+
     public function testGetChoiceFromEnumerations()
     {
+        ModuleManager::setApplicationModule('SismaFramework');
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
         $choices = SampleType::getChoiceFromEnumerations(Language::italian);
         $this->assertIsArray($choices);
         $this->assertEquals([
             "uno" => "O",
             "due" => "T"
-        ], $choices);
+                ], $choices);
     }
 }

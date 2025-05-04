@@ -27,7 +27,11 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\NotationManager;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 
 /**
@@ -35,8 +39,9 @@ use SismaFramework\TestsApplication\Entities\BaseSample;
  */
 class NotationManagerTest extends TestCase
 {
+
     private \ReflectionClass $reflectionNotationManager;
-    
+
     public function testConvertToStudlyCaps()
     {
         $result = NotationManager::convertToStudlyCaps('fake-fake-fake');
@@ -48,34 +53,47 @@ class NotationManagerTest extends TestCase
         $result = NotationManager::convertToCamelCase('fake-fake-fake');
         $this->assertEquals('fakeFakeFake', $result);
     }
-    
+
     public function testConvertToKebabKase()
     {
         $result = NotationManager::convertToKebabCase('fakeFakeFake');
         $this->assertEquals('fake-fake-fake', $result);
     }
-    
+
     public function testConvertToSnakeCase()
     {
-        $result = NotationManager::convertToSnakeCase('StudlyCaps');
-        $this->assertEquals('studly_caps', $result);
-        $result = NotationManager::convertToSnakeCase('camelCase');
-        $this->assertEquals('camel_case', $result);
+        $resultOne = NotationManager::convertToSnakeCase('StudlyCaps');
+        $this->assertEquals('studly_caps', $resultOne);
+        $resultTwo = NotationManager::convertToSnakeCase('camelCase');
+        $this->assertEquals('camel_case', $resultTwo);
     }
-    
+
     public function testConvertEntityToTableName()
     {
-        $baseSample = new BaseSample();
-        $result =NotationManager::convertEntityToTableName($baseSample);
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['ormCache', true],
+        ]);
+        Config::setInstance($configMock);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $configMock])
+                ->getMock();
+        $baseSample = new BaseSample($dataMapperMock, $processedEntitesCollectionMock, $configMock);
+        $result = NotationManager::convertEntityToTableName($baseSample);
         $this->assertEquals('base_sample', $result);
     }
-    
+
     public function testConvertEntityNameToTableName()
     {
         $result = NotationManager::convertEntityNameToTableName(BaseSample::class);
         $this->assertEquals('base_sample', $result);
     }
-    
+
     public function testConvertColumnNameToPropertyName()
     {
         $result = NotationManager::convertColumnNameToPropertyName('referenced_entity_without_initialization_id');

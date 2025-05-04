@@ -70,7 +70,6 @@ class Debugger
             $debugBarLog .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $logRow]);
         }
         $debugBarForm = self::generateDebugBarForm(self::$formFilter);
-        self::$varsNumber = count(self::$vars);
         $debugBarVars = self::generateDebugBarVars();
         $vars = array_merge(self::getInformations(), [
             'debugBarQuery' => $debugBarQuery,
@@ -89,7 +88,6 @@ class Debugger
                 $debugBarForm .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $tabulation . $field . ':']);
                 $debugBarForm .= self::generateDebugBarForm($information, $tabulation . '&emsp;');
             } else {
-                self::$formFilterNumber++;
                 $debugBarForm .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $tabulation . $field . ': ' . (($information) ? 'true' : 'false')]);
             }
         }
@@ -143,20 +141,22 @@ class Debugger
     public static function setFormFilter(FormFilterError $formFilter): void
     {
         self::$formFilter = $formFilter->getErrorsToArray();
+        self::$formFilterNumber = count(self::$formFilter);
     }
 
     public static function setVars(array $vars): void
     {
         $parsedVars = [];
         foreach ($vars as $key => $value) {
-            if(is_string($value)){
+            if (is_string($value)) {
                 $parsedVars[$key] = htmlentities($value);
-            }elseif (is_scalar($value)) {
+            } elseif (is_scalar($value)) {
                 $parsedVars[$key] = $value;
             } else {
                 $parsedVars[$key] = gettype($value);
             }
         }
         self::$vars = $parsedVars;
+        self::$varsNumber = count(self::$vars);
     }
 }

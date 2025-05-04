@@ -40,6 +40,7 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\NotationManager;
@@ -82,16 +83,16 @@ abstract class BaseAdapter
         self::$connection = $connection;
     }
 
-    public static function &getDefault(): ?BaseAdapter
+    public static function &getDefault(?Config $customConfig = null): ?BaseAdapter
     {
+        $config = $customConfig ?? Config::getInstance();
         if (static::$adapter === null) {
-            $defaultAdapterType = AdapterType::from(\Config\DEFAULT_ADAPTER_TYPE);
-            $defaultAdapter = static::create($defaultAdapterType->getAdapterClass(), [
-                        'database' => \Config\DATABASE_NAME,
-                        'hostname' => \Config\DATABASE_HOST,
-                        'password' => \Config\DATABASE_PASSWORD,
-                        'port' => \Config\DATABASE_PORT,
-                        'username' => \Config\DATABASE_USERNAME,
+            $defaultAdapter = static::create($config->defaultAdapterType->getAdapterClass(), [
+                'database' => $config->databaseName,
+                'hostname' => $config->databaseHost,
+                'password' => $config->databasePassword,
+                'port' => $config->databasePort,
+                'username' => $config->databaseUsername,
             ]);
             static::setDefault($defaultAdapter);
         }
@@ -182,13 +183,13 @@ abstract class BaseAdapter
                 }
         }
     }
-    
-    public function getPlaceholder():string
+
+    public function getPlaceholder(): string
     {
         return Placeholder::placeholder->getAdapterVersion($this->adapterType);
     }
-    
-    public function parseComparisonOperator(ComparisonOperator $comparisonOperator):string
+
+    public function parseComparisonOperator(ComparisonOperator $comparisonOperator): string
     {
         return $comparisonOperator->getAdapterVersion($this->adapterType);
     }

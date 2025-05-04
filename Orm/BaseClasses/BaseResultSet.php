@@ -115,7 +115,7 @@ abstract class BaseResultSet implements \Iterator
         }
     }
 
-    protected function transformResult(\stdClass &$result): StandardEntity|BaseEntity
+    protected function hydrate(\stdClass &$result): StandardEntity|BaseEntity
     {
         if ($this->returnType == StandardEntity::class) {
             return $this->convertToStandardEntity($result);

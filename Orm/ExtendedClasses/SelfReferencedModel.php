@@ -213,7 +213,7 @@ abstract class SelfReferencedModel extends DependentModel
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
-    public function getEntityTree(?BaseEntity $parentEntity = null, array $order = null): SismaCollection
+    public function getEntityTree(?BaseEntity $parentEntity = null, ?array $order = null): SismaCollection
     {
         $entityTree = $this->getEntityCollectionByParent($parentEntity, null, $order);
         foreach ($entityTree as $key => $entity) {
@@ -222,7 +222,7 @@ abstract class SelfReferencedModel extends DependentModel
         return $entityTree;
     }
 
-    public function deleteEntityCollectionByParent(BaseEntity $parentEntity = null, ?string $searchKey = null): bool
+    public function deleteEntityCollectionByParent(?BaseEntity $parentEntity = null, ?string $searchKey = null): bool
     {
         $query = $this->initQuery();
         $query->setWhere();

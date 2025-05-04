@@ -32,6 +32,7 @@
 
 namespace SismaFramework\Orm\BaseClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -49,12 +50,13 @@ abstract class BaseModel
 {
 
     protected DataMapper $dataMapper;
+    protected Config $config;
     protected readonly string $entityName;
-    protected static bool $ormCacheStatus = \Config\ORM_CACHE;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper())
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?Config $config = null)
     {
         $this->dataMapper = $dataMapper;
+        $this->config = $config ?? Config::getInstance();
         $this->entityName = $this->getEntityName();
         $this->checkEntityName();
     }
@@ -133,7 +135,7 @@ abstract class BaseModel
 
     public function getEntityById(int $id): ?BaseEntity
     {
-        if (self::$ormCacheStatus && Cache::checkEntityPresenceInCache($this->entityName, $id)) {
+        if ($this->config->ormCache && Cache::checkEntityPresenceInCache($this->entityName, $id)) {
             return Cache::getEntityById($this->entityName, $id);
         } else {
             $query = $this->initQuery();
@@ -169,7 +171,7 @@ abstract class BaseModel
                 ->setLimit(1);
         $this->dataMapper->setOrmCacheStatus(false);
         $result = $this->dataMapper->findFirst($entityName, $query);
-        $this->dataMapper->setOrmCacheStatus(\Config\ORM_CACHE);
+        $this->dataMapper->setOrmCacheStatus($this->config->ormCache);
         return $result;
     }
 }

@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\AbstractClasses\Submittable;
 use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -57,15 +57,16 @@ abstract class BaseForm extends Submittable
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     private DataMapper $dataMapper;
+    private Config $config;
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
-    private static bool $primaryKeyPassAccepted = \Config\PRIMARY_KEY_PASS_ACCEPTED;
     private ResponseType $responseType = ResponseType::httpOk;
 
-    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper())
+    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper(), ?Config $config = null)
     {
         parent::__construct();
         $this->dataMapper = $dataMapper;
+        $this->config = $config ?? Config::getInstance();
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
     }
@@ -282,7 +283,7 @@ abstract class BaseForm extends Submittable
 
     private function isNotPrimaryKeyOrPassIsActive(\ReflectionProperty $property): bool
     {
-        return (($this->entity->isPrimaryKey($property->name) === false) || (self::$primaryKeyPassAccepted));
+        return (($this->entity->isPrimaryKey($property->name) === false) || ($this->config->primaryKeyPassAccepted));
     }
 
     private function parseSingleStandardProperty(\ReflectionProperty $property): void

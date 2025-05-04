@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\LocalizatorException;
@@ -37,13 +38,13 @@ class Localizator
 {
 
     private static Language $injectedLanguage;
-    private Resource $localeType;
     private ?Language $customLanguage;
-    private static string $localesPath = \Config\LOCALES_PATH;
+    private Config $config;
 
-    public function __construct(?Language $customLanguage = null)
+    public function __construct(?Language $customLanguage = null, ?Config $customConfig = null)
     {
         $this->customLanguage = $customLanguage;
+        $this->config = $customConfig ?? Config::getInstance();
     }
 
     public function getPageLocaleArray(string $view): array
@@ -63,28 +64,18 @@ class Localizator
 
     private function getLocale(): array
     {
-        $language = $this->customLanguage ?? self::$injectedLanguage ?? self::getDefaultLanguage();
+        $language = $this->customLanguage ?? self::$injectedLanguage ?? $this->config->language;
         $localePath = $this->getLocalePath($language);
         $locale = json_decode(file_get_contents($localePath), true);
         return $locale;
     }
 
-    private static function getDefaultLanguage(): Language
-    {
-        $defaultLanguage = Language::tryFrom(\Config\LANGUAGE);
-        if ($defaultLanguage instanceof Language) {
-            return $defaultLanguage;
-        } else {
-            throw new LocalizatorException('Formato lingua non corretto');
-        }
-    }
-
     private function getLocalePath(Language $language): string
     {
-        return ModuleManager::getConsequentFilePath(self::$localesPath . $language->value, Resource::json);
+        return ModuleManager::getConsequentFilePath($this->config->localesPath . $language->value, Resource::json);
     }
 
-    public function getTemplateLocaleArray(string $template, ?Language $customLanguage = null): array
+    public function getTemplateLocaleArray(string $template): array
     {
         $locale = $this->getLocale();
         $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];

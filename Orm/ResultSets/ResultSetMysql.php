@@ -81,7 +81,7 @@ class ResultSetMysql extends BaseResultSet
                 if ($autoNext) {
                     $this->next();
                 }
-                return $this->transformResult($dbdata);
+                return $this->hydrate($dbdata);
             } else {
                 return null;
             }

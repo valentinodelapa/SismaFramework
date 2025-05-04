@@ -27,9 +27,11 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 
 /**
  * Description of FixturesManagerTest
@@ -38,11 +40,37 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class FixturesManagerTest extends TestCase
 {
-    
+
+    private DataMapper $dataMapperMock;
+    private Config $configMock;
+
+    public function setUp(): void
+    {
+        $fixtures = 'Fixtures';
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', true],
+                    ['fixtures', $fixtures],
+                    ['fixtureNamespace', 'TestsApplication\\' . $fixtures . '\\'],
+                    ['fixturePath', 'TestsApplication' . DIRECTORY_SEPARATOR . $fixtures],
+                    ['moduleFolders', ['SismaFramework']],
+                    ['ormCache', true],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+        ]);
+        Config::setInstance($this->configMock);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+        $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configMock])
+                ->getMock();
+    }
+
     public function testIsFixtures()
     {
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $fixtureManager = new FixturesManager($dataMapperMock);
+        $fixtureManager = new FixturesManager($this->dataMapperMock, $this->configMock);
         $this->assertTrue($fixtureManager->isFixtures(['fixtures']));
         $this->assertFalse($fixtureManager->isFixtures(['fixtures', 'fixtures']));
         $this->assertFalse($fixtureManager->isFixtures(['cms', 'fixtures']));
@@ -52,14 +80,10 @@ class FixturesManagerTest extends TestCase
 
     public function testFixtureManager()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $dataMapperMock->method('save')
+        $this->dataMapperMock->method('save')
                 ->willReturn(true);
-        $fixtureManager = new FixturesManager($dataMapperMock);
+        $fixtureManager = new FixturesManager($this->dataMapperMock, $this->configMock);
         $fixtureManager->run();
         $this->assertTrue($fixtureManager->extecuted());
     }
-
 }

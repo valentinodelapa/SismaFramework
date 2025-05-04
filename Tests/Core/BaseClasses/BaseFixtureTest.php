@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Tests\Core\BaseClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\FixtureException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
@@ -50,10 +50,23 @@ class BaseFixtureTest extends TestCase
 {
 
     private DataMapper $dataMapperMock;
-    
+
     #[\Override]
     public function setUp(): void
     {
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 100],
+                    ['logVerboseActive', true],
+        ]);
+        Config::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
@@ -77,7 +90,6 @@ class BaseFixtureTest extends TestCase
         $this->assertInstanceOf(OtherReferencedSample::class, $baseSample->otherReferencedSample);
     }
 
-    #[RunInSeparateProcess]
     public function testFakeBaseSampleFixtureWithException()
     {
         $this->expectException(FixtureException::class);
@@ -87,5 +99,4 @@ class BaseFixtureTest extends TestCase
         $fakeBaseSampleFixture = new FakeBaseSampleFixture($this->dataMapperMock);
         $fakeBaseSampleFixture->execute($entitesArray);
     }
-
 }

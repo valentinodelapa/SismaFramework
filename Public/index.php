@@ -26,22 +26,20 @@
 
 namespace SismaFramework\Public;
 
-use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
 use SismaFramework\Core\HelperClasses\Session;
+use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Security\ExtendedClasses\RedirectException;
 
-require_once(dirname(__DIR__) . '/Config/config.php');
-require_once(dirname(__DIR__) . '/Autoload/autoload.php');
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
-error_reporting(0);
 date_default_timezone_set('Europe/Rome');
+ErrorHandler::disabligErrorDisplay();
 
 try {
     ErrorHandler::handleNonThrowableError();
@@ -61,9 +59,5 @@ try {
 } catch (\Throwable $throwable) {
     ErrorHandler::handleThrowableError($throwable);
 } finally {
-    if (\Config\DEVELOPMENT_ENVIRONMENT) {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
-        error_reporting(E_ALL | E_STRICT);
-    }
+    ErrorHandler::showErrorInDevelopementEnvironment();
 }

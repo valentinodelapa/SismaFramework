@@ -26,6 +26,8 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
+
 /**
  *
  * @author Valentino de Lapa
@@ -33,29 +35,28 @@ namespace SismaFramework\Core\HelperClasses;
 class Encryptor
 {
 
-    private static string $encryptionAlgorithm = \Config\ENCRYPTION_ALGORITHM;
-    private static string $encryptionPassphrase = \Config\ENCRYPTION_PASSPHRASE;
-    private static int $initializazionVectorBytes = \Config\INITIALIZATION_VECTOR_BYTES;
-
     public static function getSimpleRandomToken(): string
     {
         return bin2hex(random_bytes(16));
     }
 
-    public static function getSimpleHash(string $text, string $algorithm = \Config\SIMPLE_HASH_ALGORITHM): string
+    public static function getSimpleHash(string $text, ?Config $customConfig = null): string
     {
-        return hash($algorithm, $text);
+        $config = $customConfig ?? Config::getInstance();
+        return hash($config->simpleHashAlgorithm, $text);
     }
 
-    public static function verifySimpleHash(string $text, string $hash, string $algorithm = \Config\SIMPLE_HASH_ALGORITHM): bool
+    public static function verifySimpleHash(string $text, string $hash, ?Config $customConfig = null): bool
     {
-        return hash($algorithm, $text) === $hash;
+        $config = $customConfig ?? Config::getInstance();
+        return hash($config->simpleHashAlgorithm, $text) === $hash;
     }
 
-    public static function getBlowfishHash(string $text, int $workload = \Config\BLOWFISH_HASH_WORKLOAD): string
+    public static function getBlowfishHash(string $text, ?Config $customConfig = null): string
     {
+        $config = $customConfig ?? Config::getInstance();
         return password_hash($text, PASSWORD_BCRYPT, [
-            'cost' => $workload
+            'cost' => $config->blowfishHashWorkload
         ]);
     }
 
@@ -64,18 +65,21 @@ class Encryptor
         return password_verify($text, $hash);
     }
 
-    public static function createInizializationVector(): string
+    public static function createInizializationVector(?Config $customConfig = null): string
     {
-        return openssl_random_pseudo_bytes(self::$initializazionVectorBytes);
+        $config = $customConfig ?? Config::getInstance();
+        return openssl_random_pseudo_bytes($config->initializationVectorBytes);
     }
 
-    public static function encryptString(string $plainText, string $initializationVector): string
+    public static function encryptString(string $plainText, string $initializationVector, ?Config $customConfig = null): string
     {
-        return openssl_encrypt($plainText, self::$encryptionAlgorithm, self::$encryptionPassphrase, 0, $initializationVector);
+        $config = $customConfig ?? Config::getInstance();
+        return openssl_encrypt($plainText, $config->encryptionAlgorithm, $config->encryptionPassphrase, 0, $initializationVector);
     }
 
-    public static function decryptString(string $cipherText, string $initializationVector): string|false
+    public static function decryptString(string $cipherText, string $initializationVector, ?Config $customConfig = null): string|false
     {
-        return openssl_decrypt($cipherText, self::$encryptionAlgorithm, self::$encryptionPassphrase, 0, $initializationVector);
+        $config = $customConfig ?? Config::getInstance();
+        return openssl_decrypt($cipherText, $config->encryptionAlgorithm, $config->encryptionPassphrase, 0, $initializationVector);
     }
 }

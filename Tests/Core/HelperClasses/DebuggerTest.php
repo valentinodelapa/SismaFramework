@@ -28,12 +28,9 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\CustomTypes\FormFilterError;
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\HelperClasses\ModuleManager;
-use SismaFramework\Core\HelperClasses\Templater;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
-use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  * Description of DebuggerTest
@@ -44,99 +41,75 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class DebuggerTest extends TestCase
 {
 
-    private \ReflectionClass $debuggerReflection;
-
     #[\Override]
     public function setUp(): void
     {
-        $this->debuggerReflection = new \ReflectionClass(Debugger::class);
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['structuralTemplatesPath', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+        ]);
+        Config::setInstance($configMock);
+        Debugger::startExecutionTimeCalculation();
     }
 
     public function testStartExecutionTimeCalculation()
     {
-        $startMicrotimeProperty = $this->debuggerReflection->getProperty('startMicrotime');
-        $startMicrotimeProperty->setAccessible(true);
-        Debugger::startExecutionTimeCalculation();
-        $this->assertIsFloat($startMicrotimeProperty->getValue());
+        $debugger = new Debugger();
+        $result = $debugger->getInformations();
+        $this->assertIsArray($result);
+        $this->isFloat($result['memoryUsed']);
     }
-    
+
     public function testGenerateDebugBar()
     {
-        ModuleManager::setRootPath(dirname(__DIR__, 3).'/');
-        $queryExecutedProperty = $this->debuggerReflection->getProperty('queryExecuted');
-        $queryExecutedProperty->setAccessible(true);
-        $queryExecutedProperty->setValue(new Debugger, ['sample query']);
-        $generateDebugBarMethod = $this->debuggerReflection->getMethod('generateDebugBar');
-        Debugger::startExecutionTimeCalculation();
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $result = $generateDebugBarMethod->invoke(new Debugger(), $dataMapperMock);
+        Debugger::addQueryExecuted('sample query');
+        $debugger = new Debugger();
+        $result = $debugger->generateDebugBar();
         $this->assertIsString($result);
         $this->assertStringContainsString('sample query', $result);
     }
-    
-    public function testGenerateDebugBarForm()
-    {
-        $generateDebugBarFormMethod = $this->debuggerReflection->getMethod('generateDebugBarForm');
-        $result = $generateDebugBarFormMethod->invoke(new Debugger, ['sampleSimpleField' => false, 'sampleComplexField' => ['sampleSubField' => true]]);
-        $this->assertIsString($result);
-        $this->assertStringContainsString('sampleSimpleField', $result);
-        $this->assertStringContainsString('sampleComplexField', $result);
-        $this->assertStringContainsString('sampleSubField', $result);
-    }
-    
-    public function testGenerateDebugBarVars()
-    {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
-        $varsProperty = $this->debuggerReflection->getProperty('vars');
-        $varsProperty->setAccessible(true);
-        $varsProperty->setValue(new Debugger, ['sampleVars' => 'sample value']);
-        $generateDebugBarVarsMethod = $this->debuggerReflection->getMethod('generateDebugBarVars');
-        $result = $generateDebugBarVarsMethod->invoke(new Debugger());
-        $this->assertIsString($result);
-        $this->assertStringContainsString('sampleVars', $result);
-        $this->assertStringContainsString('sample value', $result);
-    }
-    
+
     public function testGetInformations()
     {
-        Debugger::startExecutionTimeCalculation();
-        $geInformationsMethod = $this->debuggerReflection->getMethod('getInformations');
-        $result = $geInformationsMethod->invoke(new Debugger);
+        $debugger = new Debugger();
+        $result = $debugger->getInformations();
         $this->assertIsArray($result);
+        $this->isFloat($result['memoryUsed']);
     }
-    
-    public function testGetMemoryUsed()
-    {
-        $getMemoryUsedMethod = $this->debuggerReflection->getMethod('getMemoryUsed');
-        $result = $getMemoryUsedMethod->invoke(new Debugger);
-        $this->assertIsFloat($result);
-    }
-    
+
     public function testAddQueryExecuted()
     {
-        $addQueryExecutedMethod = $this->debuggerReflection->getMethod('addQueryExecuted');
-        $addQueryExecutedMethod->invoke(new Debugger, 'sample query');
-        $queryExecutedProperty = $this->debuggerReflection->getProperty('queryExecuted');
-        $queryExecutedProperty->setAccessible(true);
-        $this->assertIsArray($queryExecutedProperty->getValue());
-        $this->assertEquals('sample query', $queryExecutedProperty->getValue()[0]);
+        Debugger::addQueryExecuted('sample query one');
+        Debugger::addQueryExecuted('sample query two');
+        $debugger = new Debugger();
+        $informations = $debugger->getInformations();
+        $this->assertEquals(2, $informations['queryExecutedNumber']);
+        $debugBbar = $debugger->generateDebugBar();
+        $this->assertStringContainsString('sample query one', $debugBbar);
+        $this->assertStringContainsString('sample query two', $debugBbar);
     }
-    
+
     public function testSetFormFilter()
     {
-        $formFilterError = new FormFilterError();
-        $formFilterError->sampleFieldError = false;
-        $setFormFilterMethod = $this->debuggerReflection->getMethod('setFormFilter');
-        $setFormFilterMethod->invoke(new Debugger, $formFilterError);
-        $formFilterProperty = $this->debuggerReflection->getProperty('formFilter');
-        $formFilterProperty->setAccessible(true);
-        $this->assertIsArray($formFilterProperty->getValue());
-        $this->assertArrayHasKey('sampleFieldError', $formFilterProperty->getValue());
+        $formFilter = new FormFilterError();
+        $formFilter->sampleFieldOneError = false;
+        $formFilter->sampleFieldTwoError = true;
+        $formFilter->sampleFieldThreeError = true;
+        $debugger = new Debugger();
+        $debugger::setFormFilter($formFilter);
+        $informations = $debugger->getInformations();
+        $this->assertEquals(3, $informations['formFilterNumber']);
+        $debugBbar = $debugger->generateDebugBar();
+        $this->assertStringContainsString('sampleFieldOneError', $debugBbar);
+        $this->assertStringContainsString('sampleFieldTwoError', $debugBbar);
+        $this->assertStringContainsString('sampleFieldThreeError', $debugBbar);
     }
-    
+
     public function testSetVars()
     {
         $vars = [
@@ -146,16 +119,15 @@ class DebuggerTest extends TestCase
             'string' => 'sample',
             'object' => new \stdClass(),
         ];
-        $setVarsMethod = $this->debuggerReflection->getMethod('setVars');
-        $setVarsMethod->invoke(new Debugger, $vars);
-        $varsProperty = $this->debuggerReflection->getProperty('vars');
-        $varsProperty->setAccessible(true);
-        $this->assertIsArray($varsProperty->getValue());
-        $this->assertIsBool($varsProperty->getValue()['boolean']);
-        $this->assertIsInt($varsProperty->getValue()['integer']);
-        $this->assertIsFloat($varsProperty->getValue()['double']);
-        $this->assertIsString($varsProperty->getValue()['string']);
-        $this->assertIsString($varsProperty->getValue()['object']);
+        $debugger = new Debugger();
+        $debugger->setVars($vars);
+        $informations = $debugger->getInformations();
+        $this->assertEquals(5, $informations['varsNumber']);
+        $debugBbar = $debugger->generateDebugBar();
+        $this->assertStringContainsString('1', $debugBbar);
+        $this->assertStringContainsString('1', $debugBbar);
+        $this->assertStringContainsString('1.1', $debugBbar);
+        $this->assertStringContainsString('sample', $debugBbar);
+        $this->assertStringContainsString('object', $debugBbar);
     }
-
 }

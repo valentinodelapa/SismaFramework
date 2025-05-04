@@ -25,6 +25,7 @@
  */
 
 namespace SismaFramework\Security\Interfaces\Entities;
+
 /**
  *
  * @author Valentino de Lapa

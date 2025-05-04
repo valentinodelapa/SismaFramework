@@ -26,23 +26,26 @@
 
 namespace SismaFramework\Security\ExtendedClasses;
 
-use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
+use SismaFramework\Security\BaseClasses\BaseException;
 
 /**
  * @author Valentino de Lapa
  */
 abstract class LogException extends BaseException
 {
-    protected static bool $logVerboseActive =  \Config\LOG_VERBOSE_ACTIVE;
-    
-    public function __construct(string $message = "", int $code = 0, \Throwable $previous = null)
+	
+    protected Config $config;
+
+    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null, ?Config $config = null)
     {
         parent::__construct($message, $code, $previous);
+        $this->config = $config ?? Config::getInstance();
         BufferManager::clear();
         Logger::saveLog($message, $code, $this->getFile(), $this->getLine());
-        if (self::$logVerboseActive) {
+        if ($this->config->logVerboseActive) {
             Logger::saveTrace($this->getTrace());
         }
     }

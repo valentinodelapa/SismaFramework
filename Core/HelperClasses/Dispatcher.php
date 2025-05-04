@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
@@ -73,28 +74,19 @@ class Dispatcher
     private array $reflectionConstructorArguments;
     private \ReflectionMethod $reflectionAction;
     private array $reflectionActionArguments;
-    private static string $applicationAssetsPath = \Config\APPLICATION_ASSETS_PATH;
-    private static string $controllerNamespace = \Config\CONTROLLER_NAMESPACE;
-    private static string $defaultAction = \Config\DEFAULT_ACTION;
-    private static string $defaultPath = \Config\DEFAULT_PATH;
-    private static int $maxReoladAttempts = \Config\MAX_RELOAD_ATTEMPTS;
-    private static string $rootPath = \Config\ROOT_PATH;
-    private static string $structuralAssetsPath = \Config\STRUCTURAL_ASSETS_PATH;
+    private Config $config;
 
-    public function __construct(Request $request = new Request,
-            ResourceMaker $resourceMaker = new ResourceMaker,
+    public function __construct(Request $request = new Request(),
+            ResourceMaker $resourceMaker = new ResourceMaker(),
             FixturesManager $fixtureManager = new FixturesManager(),
-            DataMapper $dataMapper = new DataMapper())
+            DataMapper $dataMapper = new DataMapper(),
+            ?Config $config = null)
     {
         $this->request = $request;
         $this->resourceMaker = $resourceMaker;
         $this->fixturesManager = $fixtureManager;
         $this->dataMapper = $dataMapper;
-    }
-
-    public static function setCustomRootPath(string $customRootPath): void
-    {
-        self::$rootPath = $customRootPath;
+        $this->config = $config ?? Config::getInstance();
     }
 
     public function addCrawlComponentMaker(CrawlComponentMakerInterface $crawlComponentMaker): void
@@ -125,8 +117,8 @@ class Dispatcher
                 }));
         $cleanPathPartsNumber = count($this->cleanPathParts);
         if ($cleanPathPartsNumber === 0) {
-            $this->pathController = self::$defaultPath;
-            $this->parsedAction = $this->pathAction = self::$defaultAction;
+            $this->pathController = $this->config->defaultPath;
+            $this->parsedAction = $this->pathAction = $this->config->defaultAction;
         } else {
             $this->parsePathWithMultipleCleanParts($cleanPathPartsNumber);
         }
@@ -137,28 +129,16 @@ class Dispatcher
     {
         $this->pathController = $this->cleanArrayShift($this->pathParts);
         if ($cleanPathPartsNumber === 1) {
-            $this->pathAction = self::$defaultAction;
+            $this->pathAction = $this->config->defaultAction;
             if (($this->resourceMaker->isAcceptedResourceFile($this->path) === false) &&
                     ($this->fixturesManager->isFixtures($this->pathParts) === false)) {
                 $this->defaultActionInjected = true;
-                $this->parsedAction = NotationManager::convertToCamelCase(self::$defaultAction);
+                $this->parsedAction = NotationManager::convertToCamelCase($this->config->defaultAction);
             }
         } else {
             $this->pathAction = $this->cleanArrayShift($this->pathParts);
             $this->parsedAction = NotationManager::convertToCamelCase($this->pathAction);
             $this->actionArguments = $this->pathParts;
-        }
-    }
-
-    private function selectModule(): void
-    {
-        ModuleManager::initializeApplicationModule();
-        foreach (ModuleManager::getModuleList() as $module) {
-            $this->controllerClassName = $module . '\\' . self::$controllerNamespace . NotationManager::convertToStudlyCaps($this->pathController . 'Controller');
-            if ($this->checkControllerPresence() || $this->checkFilePresence($module)) {
-                ModuleManager::setApplicationModule($module);
-                break;
-            }
         }
     }
 
@@ -171,6 +151,18 @@ class Dispatcher
         return $element;
     }
 
+    private function selectModule(): void
+    {
+        ModuleManager::initializeApplicationModule();
+        foreach (ModuleManager::getModuleList() as $module) {
+            $this->controllerClassName = $module . '\\' . $this->config->controllerNamespace . NotationManager::convertToStudlyCaps($this->pathController . 'Controller');
+            if ($this->checkControllerPresence() || $this->checkFilePresence($module)) {
+                ModuleManager::setApplicationModule($module);
+                break;
+            }
+        }
+    }
+
     private function checkControllerPresence(): bool
     {
         return class_exists($this->controllerClassName);
@@ -178,7 +170,7 @@ class Dispatcher
 
     private function checkFilePresence(string $module): bool
     {
-        return ($this->resourceMaker->isAcceptedResourceFile($this->path) && (file_exists(self::$rootPath . $module . DIRECTORY_SEPARATOR . self::$applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))));
+        return ($this->resourceMaker->isAcceptedResourceFile($this->path) && (file_exists($this->config->rootPath . $module . DIRECTORY_SEPARATOR . $this->config->applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))));
     }
 
     private function handle(): Response
@@ -209,12 +201,12 @@ class Dispatcher
 
     private function handleFile(): Response
     {
-        if (file_exists(self::$rootPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
-            return $this->resourceMaker->makeResource(self::$rootPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
-        } elseif (file_exists(self::$structuralAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
-            return $this->resourceMaker->makeResource(self::$structuralAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
-        } elseif (file_exists(self::$rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . self::$applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
-            return $this->resourceMaker->makeResource(self::$rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . self::$applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
+        if (file_exists($this->config->rootPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
+            return $this->resourceMaker->makeResource($this->config->rootPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
+        } elseif (file_exists($this->config->structuralAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
+            return $this->resourceMaker->makeResource($this->config->structuralAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
+        } elseif (file_exists($this->config->rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . $this->config->applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
+            return $this->resourceMaker->makeResource($this->config->rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . $this->config->applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
         } else {
             return $this->switchNotFoundActions();
         }
@@ -222,7 +214,7 @@ class Dispatcher
 
     private function switchNotFoundActions(): Response
     {
-        if ($this->reloadAttempts < self::$maxReoladAttempts) {
+        if ($this->reloadAttempts < $this->config->maxReloadAttempts) {
             return $this->reloadDispatcher();
         } else {
             throw new PageNotFoundException($this->originalPath);
@@ -261,7 +253,7 @@ class Dispatcher
 
     private function injectDefaultController(): void
     {
-        array_unshift($this->pathParts, self::$defaultPath, $this->pathController, $this->pathAction);
+        array_unshift($this->pathParts, $this->config->defaultPath, $this->pathController, $this->pathAction);
         $this->defaultControllerInjected = true;
         if ($this->defaultActionInjected) {
             $this->defaultActionInjected = false;
@@ -274,7 +266,7 @@ class Dispatcher
     private function injectDefaultAction(): void
     {
         $this->defaultControllerInjected = false;
-        $this->pathParts = [$this->pathAction, self::$defaultAction, ...$this->pathParts];
+        $this->pathParts = [$this->pathAction, $this->config->defaultAction, ...$this->pathParts];
         $this->path = '/' . implode('/', $this->pathParts);
         $this->defaultActionChecked = true;
     }
@@ -306,7 +298,7 @@ class Dispatcher
             ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
             $methodExsist = true;
         }
-        if ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains(self::$rootPath, $this->pathAction) === false)) {
+        if ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains($this->config->rootPath, $this->pathAction) === false)) {
             return is_callable([$this->instanceControllerClass(), $this->parsedAction]);
         } else {
             return $methodExsist;
