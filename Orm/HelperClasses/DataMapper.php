@@ -183,7 +183,7 @@ class DataMapper
             }
             $initializationVectorColumnName = $this->adapter->escapeColumn($initializationVectorPropertyName);
             if (in_array($initializationVectorColumnName, $columns) === false) {
-                $types[] = DataType::typeString;
+                $types[] = DataType::typeBinary;
                 $columns[] = $initializationVectorColumnName;
                 $values[] = Parser::unparseValue($entity->$initializationVectorPropertyName);
             }

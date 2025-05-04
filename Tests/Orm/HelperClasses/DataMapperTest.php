@@ -63,6 +63,7 @@ class DataMapperTest extends TestCase
 
     private BaseAdapter $baseAdapterMock;
     private Config $configMock;
+    private Query $queryMock;
 
     public function setUp(): void
     {
@@ -97,6 +98,7 @@ class DataMapperTest extends TestCase
         Config::setInstance($this->configMock);
         $this->baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($this->baseAdapterMock);
+        $this->queryMock = $this->createMock(Query::class);
     }
 
     public function testSaveNewBaseEntityWithInsertInsertInsert()
@@ -670,7 +672,7 @@ class DataMapperTest extends TestCase
                     switch ($matcher->numberOfInvocations()) {
                         case 1:
                             $this->assertCount(3, $param2);
-                            $this->assertEquals([DataType::typeString, DataType::typeString, DataType::typeString], $param3);
+                            $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString], $param3);
                             $initializationVector = $param2[0];
                             $this->assertNotNull($initializationVector);
                             $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
@@ -680,7 +682,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 2:
                             $this->assertCount(4, $param2);
-                            $this->assertEquals([DataType::typeString, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
+                            $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
                             $this->assertEquals($initializationVector, $param2[0]);
                             $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
                             $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $initializationVector);
@@ -715,7 +717,7 @@ class DataMapperTest extends TestCase
                     switch ($matcher->numberOfInvocations()) {
                         case 1:
                             $this->assertCount(3, $param2);
-                            $this->assertEquals([DataType::typeString, DataType::typeString, DataType::typeString], $param3);
+                            $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString], $param3);
                             $initializationVector = $param2[0];
                             $this->assertNotNull($initializationVector);
                             $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
@@ -725,7 +727,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 2:
                             $this->assertCount(4, $param2);
-                            $this->assertEquals([DataType::typeString, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
+                            $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
                             $this->assertEquals($initializationVector, $param2[0]);
                             $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
                             $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $initializationVector);
@@ -839,8 +841,7 @@ class DataMapperTest extends TestCase
 
     public function testInitQuery()
     {
-        $query = $this->createMock(Query::class);
-        $query->expects($this->any())
+        $this->queryMock->expects($this->any())
                 ->method('setTable')
                 ->with('entity_name');
         $dataMapper = new DataMapper($this->baseAdapterMock);
@@ -1270,23 +1271,22 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('execute')
                 ->willReturnOnConsecutiveCalls(false, true);
-        $queryMock = $this->createMock(Query::class);
-        $queryMock->expects($this->exactly(2))
+        $this->queryMock->expects($this->exactly(2))
                 ->method('getCommandToExecute')
                 ->willReturn('');
         $dataMapper = new DataMapper($this->baseAdapterMock);
         $baseSampleOne = new BaseSample();
         $baseSampleOne->id = 1;
         $baseSampleOne->setPrimaryKeyPropertyName('');
-        $this->assertFalse($dataMapper->delete($baseSampleOne, $queryMock));
+        $this->assertFalse($dataMapper->delete($baseSampleOne, $this->queryMock));
         $baseSampleTwo = new BaseSample();
         $baseSampleTwo->id = 1;
-        $this->assertFalse($dataMapper->delete($baseSampleTwo, $queryMock));
+        $this->assertFalse($dataMapper->delete($baseSampleTwo, $this->queryMock));
         $baseSampleTree = new BaseSample();
         $baseSampleTree->id = 1;
         Cache::setEntity($baseSampleTwo);
         $this->assertTrue(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
-        $this->assertTrue($dataMapper->delete($baseSampleTree, $queryMock));
+        $this->assertTrue($dataMapper->delete($baseSampleTree, $this->queryMock));
         $this->assertFalse(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
     }
 
@@ -1295,8 +1295,7 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('execute')
                 ->willReturnOnConsecutiveCalls(false, true);
-        $queryMock = $this->createMock(Query::class);
-        $queryMock->expects($this->exactly(2))
+        $this->queryMock->expects($this->exactly(2))
                 ->method('getCommandToExecute')
                 ->willReturn('');
         $dataMapper = new DataMapper($this->baseAdapterMock);
@@ -1304,9 +1303,9 @@ class DataMapperTest extends TestCase
         $baseSample->id = 1;
         Cache::setEntity($baseSample);
         $this->assertTrue(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
-        $this->assertFalse($dataMapper->deleteBatch($queryMock));
+        $this->assertFalse($dataMapper->deleteBatch($this->queryMock));
         $this->assertTrue(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
-        $this->assertTrue($dataMapper->deleteBatch($queryMock));
+        $this->assertTrue($dataMapper->deleteBatch($this->queryMock));
         $this->assertFalse(Cache::checkEntityPresenceInCache(BaseSample::class, 1));
     }
 
@@ -1353,19 +1352,18 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(3))
                 ->method('select')
                 ->willReturnOnConsecutiveCalls(null, $firstBaseResultSetMock, $secondBaseResultSetMock);
-        $queryMock = $this->createMock(Query::class);
-        $queryMock->expects($this->exactly(3))
+        $this->queryMock->expects($this->exactly(3))
                 ->method('getCommandToExecute')
                 ->willReturn('');
         $dataMapper = new DataMapper($this->baseAdapterMock);
-        $firstEntityCollection = $dataMapper->find(BaseSample::class, $queryMock);
+        $firstEntityCollection = $dataMapper->find(BaseSample::class, $this->queryMock);
         $this->assertInstanceOf(SismaCollection::class, $firstEntityCollection);
         $this->assertCount(0, $firstEntityCollection);
-        $secondEntityCollection = $dataMapper->find(BaseSample::class, $queryMock);
+        $secondEntityCollection = $dataMapper->find(BaseSample::class, $this->queryMock);
         $this->assertInstanceOf(SismaCollection::class, $secondEntityCollection);
         $this->assertCount(2, $secondEntityCollection);
         $this->expectException(InvalidTypeException::class);
-        $dataMapper->find(ReferencedSample::class, $queryMock);
+        $dataMapper->find(ReferencedSample::class, $this->queryMock);
     }
 
     public function testGetCount()
@@ -1379,14 +1377,13 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(3))
                 ->method('select')
                 ->willReturnOnConsecutiveCalls(null, $baseResultSetMock, $baseResultSetMock);
-        $queryMock = $this->createMock(Query::class);
-        $queryMock->expects($this->exactly(3))
+        $this->queryMock->expects($this->exactly(3))
                 ->method('getCommandToExecute')
                 ->willReturn('');
         $dataMapper = new DataMapper($this->baseAdapterMock);
-        $this->assertEquals(0, $dataMapper->getCount($queryMock));
-        $this->assertEquals(0, $dataMapper->getCount($queryMock));
-        $this->assertEquals(5, $dataMapper->getCount($queryMock));
+        $this->assertEquals(0, $dataMapper->getCount($this->queryMock));
+        $this->assertEquals(0, $dataMapper->getCount($this->queryMock));
+        $this->assertEquals(5, $dataMapper->getCount($this->queryMock));
     }
 
     public function testFindFirst()
@@ -1411,15 +1408,14 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock->expects($this->exactly(4))
                 ->method('select')
                 ->willReturnOnConsecutiveCalls(null, $firstBaseResultSetMock, $secondBaseResultSetMock, $thidBaseResultSetMock);
-        $queryMock = $this->createMock(Query::class);
-        $queryMock->expects($this->exactly(4))
+        $this->queryMock->expects($this->exactly(4))
                 ->method('getCommandToExecute')
                 ->willReturn('');
         $dataMapper = new DataMapper($this->baseAdapterMock);
-        $this->assertNull($dataMapper->findFirst(BaseSample::class, $queryMock));
-        $this->assertNull($dataMapper->findFirst(BaseSample::class, $queryMock));
-        $this->assertInstanceOf(BaseSample::class, $dataMapper->findFirst(BaseSample::class, $queryMock));
+        $this->assertNull($dataMapper->findFirst(BaseSample::class, $this->queryMock));
+        $this->assertNull($dataMapper->findFirst(BaseSample::class, $this->queryMock));
+        $this->assertInstanceOf(BaseSample::class, $dataMapper->findFirst(BaseSample::class, $this->queryMock));
         $this->expectException(DataMapperException::class);
-        $dataMapper->findFirst(BaseSample::class, $queryMock);
+        $dataMapper->findFirst(BaseSample::class, $this->queryMock);
     }
 }
