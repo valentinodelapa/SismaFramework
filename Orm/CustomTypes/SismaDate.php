@@ -34,6 +34,14 @@ use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 class SismaDate extends \DateTimeImmutable implements CustomDateTimeInterface
 {
 
+    public function __construct(string $datetime = "now", ?\DateTimeZone $timezone = null)
+    {
+        $tempDateTime = new \DateTimeImmutable($datetime, $timezone);
+        $dateOnlyString = $tempDateTime->format('Y-m-d');
+        $midnightDateTimeString = $dateOnlyString . ' 00:00:00';
+        parent::__construct($midnightDateTimeString, $timezone);
+    }
+
     public function equals(CustomDateTimeInterface $other): bool
     {
         return $this->getTimestamp() === $other->getTimestamp();

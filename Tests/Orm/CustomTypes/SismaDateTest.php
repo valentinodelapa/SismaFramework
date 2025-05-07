@@ -42,14 +42,19 @@ class SismaDateTest extends TestCase
         $date = $sismaDate->format('Y-m-d');
         $this->assertIsString($date);
         $this->assertEquals($originalDate, $date);
+        $this->assertEquals('00:00:00', $sismaDate->format('H:i:s'));
     }
     
     public function testEquals()
     {
         $sismaDateOne = new SismaDate('2020-01-01');
+        $this->assertEquals('00:00:00', $sismaDateOne->format('H:i:s'));
         $sismaDateTwo = new SismaDate('2020-01-01');
+        $this->assertEquals('00:00:00', $sismaDateTwo->format('H:i:s'));
         $sismaDateThree = new SismaDate('2020-01-02');
+        $this->assertEquals('00:00:00', $sismaDateThree->format('H:i:s'));
         $this->assertTrue($sismaDateOne->equals($sismaDateTwo));
         $this->assertfalse($sismaDateOne->equals($sismaDateThree));
+        
     }
 }
