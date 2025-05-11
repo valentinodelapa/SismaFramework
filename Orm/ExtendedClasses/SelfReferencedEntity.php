@@ -64,11 +64,9 @@ abstract class SelfReferencedEntity extends ReferencedEntity
             $this->switchSettingType($name, $value);
         } elseif ($name === self::SON_COLLECTION_PROPERTY_NAME) {
             $calledClassNamePartes = explode("\\", static::class);
-            $this->collectionPropertiesSetted[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = true;
             $this->collections[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = $value;
         } elseif ($this->checkCollectionExists($name)) {
-            $this->checkCollectionTypeConsistency($name, $value);
-            $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = true;
+            $this->checkCollectionTypeConsistency($name, $value);ue;
             $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
         } else {
             throw new InvalidPropertyException($name);
