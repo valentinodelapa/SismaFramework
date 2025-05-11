@@ -119,6 +119,92 @@ class ReferencedEntityTest extends TestCase
         $this->assertInstanceOf(SismaCollection::class, $otherReferencedSample->baseSampleCollection);
         $this->assertEquals(0, $otherReferencedSample->countEntityCollection('baseSampleCollection'));
         $this->assertTrue(isset($otherReferencedSample->baseSampleCollection));
-        $this->assertEquals(1, $otherReferencedSample->countEntityCollection('baseSampleCollection'));
+        $this->assertEquals(1, $otherReferencedSample->countBaseSampleCollection());
+    }
+
+    public function testForceCollectionPropertyWithId()
+    {
+        $baseSampleOne = new BaseSample($this->dataMapperMock);
+        $sismaCollectionOne = new SismaCollection(BaseSample::class);
+        $sismaCollectionOne->append($baseSampleOne);
+        $this->dataMapperMock->expects($this->once())
+                ->method('find')
+                ->willReturn($sismaCollectionOne);
+        $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
+        $otherReferencedSampleOne->id = 1;
+        $this->assertEquals($sismaCollectionOne, $otherReferencedSampleOne->baseSampleCollection);
+        $this->assertEquals($baseSampleOne, $otherReferencedSampleOne->baseSampleCollection[0]);
+    }
+
+    public function testNotForceCollectionPropertyWithoutId()
+    {
+        $this->dataMapperMock->expects($this->never())
+                ->method('find');
+        $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
+        $this->assertInstanceOf(SismaCollection::class, $otherReferencedSampleOne->baseSampleCollection);
+    }
+
+    public function testNotForceCollectionProperty()
+    {
+        $this->dataMapperMock->expects($this->never())
+                ->method('find');
+        $baseSampleOne = new BaseSample();
+        $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
+        $otherReferencedSampleOne->id = 1;
+        $otherReferencedSampleOne->addBaseSample($baseSampleOne);
+        $this->assertInstanceOf(SismaCollection::class, $otherReferencedSampleOne->baseSampleCollection);
+        $this->assertEquals($baseSampleOne, $otherReferencedSampleOne->baseSampleCollection[0]);
+        $otherReferencedSampleTwo = new OtherReferencedSample($this->dataMapperMock);
+        $otherReferencedSampleTwo->id = 2;
+        $otherReferencedSampleTwo->addEntityToEntityCollection('baseSampleCollection', $baseSampleOne);
+        $this->assertInstanceOf(SismaCollection::class, $otherReferencedSampleTwo->baseSampleCollection);
+        $this->assertEquals($baseSampleOne, $otherReferencedSampleTwo->baseSampleCollection[0]);
+        $sismaCollectionOne = new SismaCollection(BaseSample::class);
+        $otherReferencedSampleThree = new OtherReferencedSample($this->dataMapperMock);
+        $otherReferencedSampleThree->id = 3;
+        $otherReferencedSampleThree->setBaseSampleCollection($sismaCollectionOne);
+        $this->assertInstanceOf(SismaCollection::class, $otherReferencedSampleThree->baseSampleCollection);
+        $this->assertEquals($sismaCollectionOne, $otherReferencedSampleThree->baseSampleCollection);
+        $otherReferencedSampleFour = new OtherReferencedSample($this->dataMapperMock);
+        $otherReferencedSampleFour->id = 4;
+        $otherReferencedSampleFour->setEntityCollection('baseSampleCollection', $sismaCollectionOne);
+        $this->assertInstanceOf(SismaCollection::class, $otherReferencedSampleFour->baseSampleCollection);
+        $this->assertEquals($sismaCollectionOne, $otherReferencedSampleFour->baseSampleCollection);
+    }
+
+    public function testCollectionPropertyIsSettedWithSetCollection()
+    {
+        $this->dataMapperMock->expects($this->never())
+                ->method('find');
+        $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
+        $this->assertFalse($otherReferencedSampleOne->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleOne->baseSampleCollection = new SismaCollection(BaseSample::class);
+        $this->assertTrue($otherReferencedSampleOne->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleTwo = new OtherReferencedSample($this->dataMapperMock);
+        $this->assertFalse($otherReferencedSampleTwo->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleTwo->setBaseSampleCollection(new SismaCollection(BaseSample::class));
+        $this->assertTrue($otherReferencedSampleTwo->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleThree = new OtherReferencedSample($this->dataMapperMock);
+        $this->assertFalse($otherReferencedSampleThree->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleThree->setEntityCollection('baseSampleCollection', new SismaCollection(BaseSample::class));
+        $this->assertTrue($otherReferencedSampleThree->collectionPropertyIsSetted('baseSampleCollection'));
+    }
+
+    public function testCollectionPropertyIsSettedWithAddEntityOnCollection()
+    {
+        $this->dataMapperMock->expects($this->never())
+                ->method('find');
+        $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
+        $this->assertFalse($otherReferencedSampleOne->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleOne->baseSampleCollection->append(new BaseSample());
+        $this->assertTrue($otherReferencedSampleOne->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleTwo = new OtherReferencedSample($this->dataMapperMock);
+        $this->assertFalse($otherReferencedSampleTwo->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleTwo->addBaseSample(new BaseSample());
+        $this->assertTrue($otherReferencedSampleTwo->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleThree = new OtherReferencedSample($this->dataMapperMock);
+        $this->assertFalse($otherReferencedSampleThree->collectionPropertyIsSetted('baseSampleCollection'));
+        $otherReferencedSampleThree->addEntityToEntityCollection('baseSampleCollection', new BaseSample());
+        $this->assertTrue($otherReferencedSampleThree->collectionPropertyIsSetted('baseSampleCollection'));
     }
 }

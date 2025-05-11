@@ -92,9 +92,7 @@ abstract class ReferencedEntity extends BaseEntity
 
     protected function forceCollectionPropertySet(string $propertyName): void
     {
-        if ((isset($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)]) === false) ||
-                ((count($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)]) === 0) &&
-                ($this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] === false))) {
+        if ($this->collectionPropertyIsSetted($propertyName) === false) {
             $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
             $foreignKeyName = static::getForeignKeyName($propertyName);
             $model = new $modelName($this->dataMapper);
@@ -207,6 +205,7 @@ abstract class ReferencedEntity extends BaseEntity
         $entityPropertyName = static::getForeignKeyName($propertyName);
         $this->switchAdditionType($propertyName, $entity);
         $entity->$entityPropertyName = $this;
+        $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = true;
     }
 
     private function switchAdditionType(string $propertyName, BaseEntity $entity): void
@@ -243,5 +242,15 @@ abstract class ReferencedEntity extends BaseEntity
             }
         }
         return array_merge($result, $this->collections);
+    }
+
+    public function collectionPropertyIsSetted(string $propertyName): bool
+    {
+        if (array_key_exists($this->getForeignKeyReference($propertyName), $this->collectionPropertiesSetted)) {
+            if (array_key_exists(static::getForeignKeyName($propertyName), $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)])) {
+                return $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)];
+            }
+        }
+        return false;
     }
 }
