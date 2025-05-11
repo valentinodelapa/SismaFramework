@@ -66,6 +66,7 @@ class ReferencedEntityTest extends TestCase
                     ['ormCache', true],
                     ['referenceCacheDirectory', $referenceCacheDirectory],
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
         Config::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
