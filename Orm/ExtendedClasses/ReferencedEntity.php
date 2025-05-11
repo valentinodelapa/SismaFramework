@@ -40,7 +40,6 @@ use SismaFramework\Orm\HelperClasses\Cache;
 abstract class ReferencedEntity extends BaseEntity
 {
 
-    protected array $collectionPropertiesSetted = [];
     protected array $collections = [];
 
     public const FOREIGN_KEY_TYPE = 'foreignKeyType';
@@ -97,7 +96,6 @@ abstract class ReferencedEntity extends BaseEntity
             $foreignKeyName = static::getForeignKeyName($propertyName);
             $model = new $modelName($this->dataMapper);
             $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : new SismaCollection($this->getCollectionDataInformation($propertyName));
-            $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = true;
             $this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = $entityCollection;
         }
     }
@@ -141,7 +139,6 @@ abstract class ReferencedEntity extends BaseEntity
             $this->switchSettingType($name, $value);
         } elseif ($this->checkCollectionExists($name) && ($value instanceof SismaCollection)) {
             $this->checkCollectionTypeConsistency($name, $value);
-            $this->collectionPropertiesSetted[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = true;
             $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
         } else {
             throw new InvalidPropertyException($name);
@@ -190,7 +187,6 @@ abstract class ReferencedEntity extends BaseEntity
         foreach ($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] as $entity) {
             $entity->$entityPropertyName = $this;
         }
-        $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = true;
     }
 
     private function inizializeEntityCollection(string $propertyName): void
@@ -205,7 +201,6 @@ abstract class ReferencedEntity extends BaseEntity
         $entityPropertyName = static::getForeignKeyName($propertyName);
         $this->switchAdditionType($propertyName, $entity);
         $entity->$entityPropertyName = $this;
-        $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)] = true;
     }
 
     private function switchAdditionType(string $propertyName, BaseEntity $entity): void
@@ -246,11 +241,6 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function collectionPropertyIsSetted(string $propertyName): bool
     {
-        if (array_key_exists($this->getForeignKeyReference($propertyName), $this->collectionPropertiesSetted)) {
-            if (array_key_exists(static::getForeignKeyName($propertyName), $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)])) {
-                return $this->collectionPropertiesSetted[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)];
-            }
-        }
-        return false;
+        return isset($this->collections[$this->getForeignKeyReference($propertyName)][static::getForeignKeyName($propertyName)]);
     }
 }
