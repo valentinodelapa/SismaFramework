@@ -41,7 +41,7 @@ class Session
 
     public function __construct()
     {
-        if (session_status() == PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE) {
             self::start();
         }
     }
@@ -204,8 +204,7 @@ class Session
 
     public static function end(): void
     {
-        if (session_status() == PHP_SESSION_ACTIVE) {
-            session_unset();
+        if (session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
     }
