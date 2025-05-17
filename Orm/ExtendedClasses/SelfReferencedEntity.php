@@ -37,19 +37,16 @@ use SismaFramework\Orm\HelperClasses\Cache;
 abstract class SelfReferencedEntity extends ReferencedEntity
 {
 
-    public const PARENT_PREFIX_PROPERTY_NAME = 'parent';
-    public const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
-
     public function __get($name)
     {
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
             $this->forceForeignKeyPropertySet($name);
             return $this->$name;
-        } elseif ($name === self::SON_COLLECTION_PROPERTY_NAME) {
+        } elseif ($name === $this->config->sonCollectionPropertyName) {
             $calledClassNamePartes = explode("\\", static::class);
-            $collectionName = lcfirst(end($calledClassNamePartes)) . self::FOREIGN_KEY_SUFFIX . ucfirst(self::PARENT_PREFIX_PROPERTY_NAME) . end($calledClassNamePartes);
+            $collectionName = lcfirst(end($calledClassNamePartes)) . $this->config->foreignKeySuffix . ucfirst($this->config->parentPrefixPropertyName) . end($calledClassNamePartes);
             $this->forceCollectionPropertySet($collectionName);
-            return $this->collections[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)];
+            return $this->collections[lcfirst(end($calledClassNamePartes))][$this->config->parentPrefixPropertyName . end($calledClassNamePartes)];
         } elseif ($this->checkCollectionExists($name)) {
             $this->forceCollectionPropertySet($name);
             return $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)];
@@ -62,9 +59,9 @@ abstract class SelfReferencedEntity extends ReferencedEntity
     {
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
             $this->switchSettingType($name, $value);
-        } elseif ($name === self::SON_COLLECTION_PROPERTY_NAME) {
+        } elseif ($name === $this->config->sonCollectionPropertyName) {
             $calledClassNamePartes = explode("\\", static::class);
-            $this->collections[lcfirst(end($calledClassNamePartes))][self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes)] = $value;
+            $this->collections[lcfirst(end($calledClassNamePartes))][$this->config->parentPrefixPropertyName . end($calledClassNamePartes)] = $value;
         } elseif ($this->checkCollectionExists($name)) {
             $this->checkCollectionTypeConsistency($name, $value);ue;
             $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
@@ -75,7 +72,7 @@ abstract class SelfReferencedEntity extends ReferencedEntity
 
     public function getForeignKeyReference(string $collectionName): string
     {
-        if ($collectionName === self::SON_COLLECTION_PROPERTY_NAME) {
+        if ($collectionName === $this->config->sonCollectionPropertyName) {
             $calledClassNamePartes = explode("\\", static::class);
             return lcfirst(end($calledClassNamePartes));
         } else {
@@ -83,15 +80,15 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         }
     }
 
-    public static function getForeignKeyName(string $collectionName): ?string
+    public function getForeignKeyName(string $collectionName): ?string
     {
-        $collectionNameParts = array_diff(explode(self::FOREIGN_KEY_SUFFIX, $collectionName), ['']);
-        if ($collectionName === self::SON_COLLECTION_PROPERTY_NAME) {
+        $collectionNameParts = array_diff(explode($this->config->foreignKeySuffix, $collectionName), ['']);
+        if ($collectionName === $this->config->sonCollectionPropertyName) {
             $calledClassNamePartes = explode("\\", static::class);
-            return self::PARENT_PREFIX_PROPERTY_NAME . end($calledClassNamePartes);
-        } elseif (str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) && count(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])) === 1) {
+            return $this->config->parentPrefixPropertyName . end($calledClassNamePartes);
+        } elseif (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])) === 1) {
             return array_key_first(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0]));
-        } elseif ((str_ends_with($collectionName, self::FOREIGN_KEY_SUFFIX) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
+        } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
             return lcfirst($collectionNameParts[1]);
         } else {
             return null;

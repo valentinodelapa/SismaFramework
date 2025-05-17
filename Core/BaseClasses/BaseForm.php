@@ -212,12 +212,12 @@ abstract class BaseForm extends Submittable
     private function parseCollectionProperties(): void
     {
         foreach (Cache::getForeignKeyData(static::getEntityName()) as $propertyName => $propertyData) {
-            if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX, $this->request->request)) {
-                $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX);
+            if (array_key_exists($propertyName . $this->config->foreignKeySuffix, $this->request->request)) {
+                $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix);
             } elseif (count($propertyData) > 1) {
                 $this->parseCollectionWithMultipleReferencedForeignKey($propertyName, $propertyData);
             } elseif ($this->isSelfReferencedProperty($propertyData)) {
-                $this->switchFormPropertyType(SelfReferencedEntity::SON_COLLECTION_PROPERTY_NAME);
+                $this->switchFormPropertyType($this->config->sonCollectionPropertyName);
             }
         }
     }
@@ -261,8 +261,8 @@ abstract class BaseForm extends Submittable
     {
         foreach (array_keys($propertyData) as $foreignKeyPropertyName) {
             $parsedForeignKeyPropertyName = ucfirst($foreignKeyPropertyName);
-            if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX . $parsedForeignKeyPropertyName, $this->request->request)) {
-                $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX . $parsedForeignKeyPropertyName);
+            if (array_key_exists($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName, $this->request->request)) {
+                $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName);
             }
         }
     }
@@ -342,7 +342,7 @@ abstract class BaseForm extends Submittable
     {
         $foreignKeyPropertyName = array_key_first($propertyData);
         $referentEntity = $propertyData[$foreignKeyPropertyName];
-        if (str_contains($foreignKeyPropertyName, SelfReferencedEntity::PARENT_PREFIX_PROPERTY_NAME) && ($referentEntity === get_class($this->entity))) {
+        if (str_contains($foreignKeyPropertyName, $this->config->parentPrefixPropertyName) && ($referentEntity === get_class($this->entity))) {
             return true;
         } else {
             return false;

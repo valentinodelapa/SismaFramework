@@ -104,10 +104,14 @@ class Config
     /* Entities Constant */
     protected readonly string $entityPath;
     protected readonly string $entityNamespace;
+    protected readonly string $foreignKeySuffix;
+    protected readonly string $parentPrefixPropertyName;
+    protected readonly string $sonCollectionPropertyName;
 
     /* Models Constant */
     protected readonly string $modelPath;
     protected readonly string $modelNamespace;
+    protected readonly string $sonCollectionGetterMethod;
 
     /* Forms Constant */
     protected readonly bool $primaryKeyPassAccepted;
@@ -158,12 +162,12 @@ class Config
 
     /* internal properties */
     private static Config $instance;
-    
+
     public function __construct()
     {
         self::$instance = $this;
     }
-    
+
     public static function setInstance(Config $instance): void
     {
         self::$instance = $instance;
@@ -182,8 +186,8 @@ class Config
         $this->forceSet($name);
         return $this->$name;
     }
-    
-    private function forceSet(string $name):void
+
+    private function forceSet(string $name): void
     {
         if (isset($this->$name) === false) {
             $constantName = '\\Config\\' . NotationManager::convertToUpperSnakeCase($name);
@@ -191,7 +195,7 @@ class Config
             $this->$name = Parser::simpleParseValue($reflectionProperty->getType(), constant($constantName));
         }
     }
-    
+
     public function __isset(string $name): bool
     {
         $this->forceSet($name);

@@ -74,6 +74,7 @@ class BaseFormTest extends TestCase
                     ['developmentEnvironment', false],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
+                    ['foreignKeySuffix', 'Collection'],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
                     ['logPath', $logDirectoryPath . 'log.txt'],
@@ -81,10 +82,12 @@ class BaseFormTest extends TestCase
                     ['logVerboseActive', true],
                     ['moduleFolders', ['SismaFramework']],
                     ['ormCache', true],
+                    ['parentPrefixPropertyName', 'parent'],
                     ['primaryKeyPassAccepted', false],
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['referenceCacheDirectory', $referenceCacheDirectory],
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
+                    ['sonCollectionPropertyName', 'sonCollection'],
         ]);
         Config::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
