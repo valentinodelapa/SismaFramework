@@ -49,8 +49,8 @@ abstract class SelfReferencedModel extends DependentModel
     public function __construct(DataMapper $dataMapper = new DataMapper(), ?Config $config = null)
     {
         parent::__construct($dataMapper, $config);
-        $entitySimpleName = explode("\\", $this->entityName);
-        $this->parentForeignKey = $this->config->parentPrefixPropertyName.end($entitySimpleName);
+        $entityNameParts = explode("\\", $this->entityName);
+        $this->parentForeignKey = $this->config->parentPrefixPropertyName.end($entityNameParts);
     }
 
     public function __call($name, $arguments): SismaCollection|int|bool

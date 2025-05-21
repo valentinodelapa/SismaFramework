@@ -37,6 +37,7 @@ use SismaFramework\Orm\HelperClasses\Cache;
 abstract class SelfReferencedEntity extends ReferencedEntity
 {
 
+    #[\Override]
     public function __get($name)
     {
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
@@ -55,6 +56,7 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         }
     }
 
+    #[\Override]
     public function __set($name, $value)
     {
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
@@ -63,14 +65,15 @@ abstract class SelfReferencedEntity extends ReferencedEntity
             $calledClassNamePartes = explode("\\", static::class);
             $this->collections[lcfirst(end($calledClassNamePartes))][$this->config->parentPrefixPropertyName . end($calledClassNamePartes)] = $value;
         } elseif ($this->checkCollectionExists($name)) {
-            $this->checkCollectionTypeConsistency($name, $value);ue;
+            $this->checkCollectionTypeConsistency($name, $value);
             $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
         } else {
             throw new InvalidPropertyException($name);
         }
     }
 
-    public function getForeignKeyReference(string $collectionName): string
+    #[\Override]
+    protected function getForeignKeyReference(string $collectionName): string
     {
         if ($collectionName === $this->config->sonCollectionPropertyName) {
             $calledClassNamePartes = explode("\\", static::class);
@@ -80,12 +83,13 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         }
     }
 
-    public function getForeignKeyName(string $collectionName): ?string
+    #[\Override]
+    protected function getForeignKeyName(string $collectionName): ?string
     {
         $collectionNameParts = array_diff(explode($this->config->foreignKeySuffix, $collectionName), ['']);
         if ($collectionName === $this->config->sonCollectionPropertyName) {
-            $calledClassNamePartes = explode("\\", static::class);
-            return $this->config->parentPrefixPropertyName . end($calledClassNamePartes);
+            $calledClassNameParts = explode("\\", static::class);
+            return $this->config->parentPrefixPropertyName . end($calledClassNameParts);
         } elseif (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])) === 1) {
             return array_key_first(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0]));
         } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {

@@ -59,6 +59,7 @@ abstract class ReferencedEntity extends BaseEntity
         return $collectionNames;
     }
 
+    #[\Override]
     public function __get($name)
     {
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
@@ -96,6 +97,7 @@ abstract class ReferencedEntity extends BaseEntity
         }
     }
 
+    #[\Override]
     public function __isset($name)
     {
         if ($this->checkCollectionExists($name)) {
@@ -111,13 +113,13 @@ abstract class ReferencedEntity extends BaseEntity
         return Cache::getForeignKeyData(get_called_class(), $this->getForeignKeyReference($collectionName))[$this->getForeignKeyName($collectionName)];
     }
 
-    public function getForeignKeyReference(string $collectionName): string
+    protected function getForeignKeyReference(string $collectionName): string
     {
         $collectionNameParts = explode($this->config->foreignKeySuffix, $collectionName);
         return $collectionNameParts[0];
     }
 
-    public function getForeignKeyName(string $collectionName): ?string
+    protected function getForeignKeyName(string $collectionName): ?string
     {
         $collectionNameParts = array_diff(explode($this->config->foreignKeySuffix, $collectionName), ['']);
         if (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])) === 1) {
