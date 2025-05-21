@@ -42,9 +42,9 @@ class Router
     private static $actualCleanUrl = null;
     private $parsedUrl = null;
 
-    public static function redirect(string $relativeUrl): Response
+    public static function redirect(string $relativeUrl, $request = new Request()): Response
     {
-        header("Location: " . self::$metaUrl . '/' . $relativeUrl);
+        header("Location: " . self::getRootUrl($request) . '/' . $relativeUrl);
         return new Response();
     }
 
