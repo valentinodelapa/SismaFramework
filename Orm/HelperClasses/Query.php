@@ -57,12 +57,15 @@ class Query
     protected string $table = '';
     protected bool $distinct = false;
     protected array $columns = [];
+    protected array $values = [];
     protected array $where = [];
     protected int $offset = 0;
     protected int $limit = 0;
     protected array $group = [];
     protected array $having = [];
     protected array $order = [];
+    protected string $variable;
+    protected string $value;
     protected bool $closed = false;
     protected string $command = '';
     static protected ?Query $instance = null;
@@ -76,7 +79,6 @@ class Query
         } else {
             $this->adapter = &$adapter;
         }
-        $this->setColumn();
     }
 
     public function &getAdapter(): BaseAdapter
@@ -119,6 +121,7 @@ class Query
     public function &setFulltextIndexColumn(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null, bool $append = false): self
     {
         if ($append) {
+            $this->initializeColumn();
             $this->columns[] = $this->adapter->opFulltextIndex($columns, $value, $columnAlias);
         } else {
             $this->columns = [$this->adapter->opFulltextIndex($columns, $value, $columnAlias)];
@@ -126,14 +129,35 @@ class Query
         return $this;
     }
 
+    private function initializeColumn()
+    {
+        if (count($this->columns) === 0) {
+            $this->columns = [$this->adapter->allColumns()];
+        }
+    }
+
     public function &setSubqueryColumn(Query $subquery, ?string $columnAlias = null, bool $append = false): self
     {
         if ($append) {
+            $this->initializeColumn();
             $this->columns[] = $this->adapter->opSubquery($subquery, $columnAlias);
         } else {
             $this->columns = [$this->adapter->opSubquery($subquery, $columnAlias)];
         }
         return $this;
+    }
+
+    public function &appendColumnValue(string $column, Placeholder|string $value = Placeholder::placeholder, bool $foreignKey = false): self
+    {
+        $this->columns[] = $this->adapter->escapeColumn($column, $foreignKey);
+        $this->values[] = $this->adapter->escapeValue($value);
+        return $this;
+    }
+
+    public function hasColumn(string $column, bool $foreignKey = false): bool
+    {
+        $parsedColumn = $this->adapter->escapeColumn($column, $foreignKey);
+        return in_array($parsedColumn, $this->columns);
     }
 
     public function &setTable(string $table, ?string $tableAlias = null): self
@@ -222,7 +246,7 @@ class Query
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
-            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn). ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
+            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         if ($this->currentCondition == Condition::having) {
             $this->having[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
@@ -305,7 +329,15 @@ class Query
 
     public function close(): void
     {
+        $this->initializeColumn();
         $this->closed = true;
+    }
+
+    public function setVariable(string $variable, Placeholder|string $value = Placeholder::placeholder): self
+    {
+        $this->variable = $this->adapter->escapeColumn($variable);
+        $this->value = $this->adapter->escapeValue($value);
+        return $this;
     }
 
     public function &setCommand(string $cmd): self
@@ -315,30 +347,31 @@ class Query
         return $this;
     }
 
-    public function getCommandToExecute(Statement $cmdType = Statement::select, array $extra = []): ?string
+    public function getCommandToExecute(Statement $cmdType = Statement::select): ?string
     {
-        if (!$this->closed) {
+        if ($this->closed) {
+            switch ($cmdType) {
+                case Statement::insert:
+                    $this->command = $this->adapter->parseInsert($this->table, $this->columns, $this->values);
+                    break;
+                case Statement::update:
+                    $this->command = $this->adapter->parseUpdate($this->table, $this->columns, $this->values, $this->where);
+                    break;
+                case Statement::delete:
+                    $this->command = $this->adapter->parseDelete($this->table, $this->where);
+                    break;
+                case Statement::set:
+                    $this->command = $this->adapter->parseSet($this->variable, $this->value);
+                    break;
+                case Statement::select:
+                default:
+                    $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
+                    break;
+            }
+            return $this->command;
+        } else {
             return null;
         }
-        switch ($cmdType) {
-            case Statement::insert:
-                $this->command = $this->adapter->parseInsert($this->table, $extra['columns'], $extra['values']);
-                break;
-            case Statement::update:
-                $this->command = $this->adapter->parseUpdate($this->table, $extra['columns'], $extra['values'], $this->where);
-                break;
-            case Statement::delete:
-                $this->command = $this->adapter->parseDelete($this->table, $this->where);
-                break;
-            case Statement::set:
-                $this->command = $this->adapter->parseSet($extra['variable'], $extra['value']);
-                break;
-            case Statement::select:
-            default:
-                $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
-                break;
-        }
-        return $this->command;
     }
 }
 

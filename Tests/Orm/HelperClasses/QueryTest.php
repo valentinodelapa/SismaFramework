@@ -81,7 +81,7 @@ class QueryTest extends TestCase
     public function testSelectAllColumns()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(5))
+        $baseAdapterMock->expects($this->exactly(3))
                 ->method('allColumns')
                 ->willReturn('*');
         $baseAdapterMock->expects($this->exactly(3))
@@ -148,7 +148,7 @@ class QueryTest extends TestCase
     public function testSelectSetFullIndexColumnAndCondition()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(2))
+        $baseAdapterMock->expects($this->exactly(1))
                 ->method('allColumns')
                 ->willReturn('*');
         $matcherOne = $this->exactly(2);
@@ -230,10 +230,11 @@ class QueryTest extends TestCase
     public function testSelectSetSubqueryColumn()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(3))
+        $baseAdapterMock->expects($this->exactly(2))
                 ->method('allColumns')
                 ->willReturn('*');
         $subquery = new Query($baseAdapterMock);
+        $subquery->close();
         $matcherOne = $this->exactly(2);
         $baseAdapterMock->expects($matcherOne)
                 ->method('opSubquery')
