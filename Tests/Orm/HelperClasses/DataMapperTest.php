@@ -79,6 +79,7 @@ class DataMapperTest extends TestCase
                     ['encryptionAlgorithm', 'AES-256-CBC'],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
+                    ['foreignKeySuffix', 'Collection'],
                     ['initializationVectorBytes', 16],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
@@ -87,9 +88,11 @@ class DataMapperTest extends TestCase
                     ['logVerboseActive', true],
                     ['moduleFolders', ['SismaFramework']],
                     ['ormCache', true],
+                    ['parentPrefixPropertyName', 'parent'],
                     ['referenceCacheDirectory', $referenceCacheDirectory],
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['sonCollectionPropertyName', 'sonCollection'],
         ]);
         $this->configMock->expects($this->any())
                 ->method('__isset')

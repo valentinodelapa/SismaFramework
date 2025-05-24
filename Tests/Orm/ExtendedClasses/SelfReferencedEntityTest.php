@@ -54,6 +54,7 @@ class SelfReferencedEntityTest extends TestCase
                     ['developmentEnvironment', false],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
+                    ['foreignKeySuffix', 'Collection'],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
                     ['logPath', $logDirectoryPath . 'log.txt'],
@@ -61,9 +62,11 @@ class SelfReferencedEntityTest extends TestCase
                     ['logVerboseActive', true],
                     ['moduleFolders', ['SismaFramework']],
                     ['ormCache', true],
+                    ['parentPrefixPropertyName', 'parent'],
                     ['referenceCacheDirectory', $referenceCacheDirectory],
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['sonCollectionPropertyName', 'sonCollection'],
         ]);
         Config::setInstance($configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);

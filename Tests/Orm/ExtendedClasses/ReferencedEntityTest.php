@@ -57,6 +57,7 @@ class ReferencedEntityTest extends TestCase
                     ['developmentEnvironment', false],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
+                    ['foreignKeySuffix', 'Collection'],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
                     ['logPath', $logDirectoryPath . 'log.txt'],
