@@ -192,7 +192,7 @@ class Query
     {
         $parsedColumn = $this->adapter->escapeColumn($column);
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
-        $this->order[$parsedColumn] = $parsedIndexing;
+        $this->order[] = $parsedColumn . ' ' . $parsedIndexing;
         return $this;
     }
 
@@ -200,7 +200,7 @@ class Query
     {
         $parsedQuery = $this->adapter->openBlock() . $query->getCommandToExecute() . $this->adapter->closeBlock();
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
-        $this->order[$parsedQuery] = $parsedIndexing;
+        $this->order[] = $parsedQuery . ' ' . $parsedIndexing;
         return $this;
     }
 
@@ -374,5 +374,3 @@ class Query
         }
     }
 }
-
-?>

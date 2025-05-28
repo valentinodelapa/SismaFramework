@@ -608,7 +608,7 @@ class QueryTest extends TestCase
                 ->willReturn(')');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], '', [], [], [], ['id' => 'ASC', '(subquery)' => 'ASC'], 0, 0);
+                ->with(false, ['*'], '', [], [], [], ['id ASC', '(subquery) ASC'], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setWhere()
                 ->setOrderBy(['id' => Indexing::asc])
