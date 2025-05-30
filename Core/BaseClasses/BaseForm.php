@@ -40,7 +40,6 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
