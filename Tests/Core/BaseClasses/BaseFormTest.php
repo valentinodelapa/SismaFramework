@@ -42,11 +42,13 @@ use SismaFramework\TestsApplication\Entities\FakeReferencedSample;
 use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
+use SismaFramework\TestsApplication\Entities\SimpleEntity;
 use SismaFramework\TestsApplication\Forms\BaseSampleForm;
 use SismaFramework\TestsApplication\Forms\BaseSampleFormWithFakeEntityFromForm;
 use SismaFramework\TestsApplication\Forms\EntityNotInitializedForm;
 use SismaFramework\TestsApplication\Forms\FakeBaseSampleForm;
 use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\IncompleteSimpleEntityFrom;
 use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
@@ -499,5 +501,24 @@ class BaseFormTest extends TestCase
         $fakeReferencedSampleForm = new FakeReferencedSampleForm($fakeReferencedSample, $this->dataMapperMock);
         $requestMock = $this->createMock(Request::class);
         $fakeReferencedSampleForm->handleRequest($requestMock);
+    }
+
+    public function testNotFilteredSubmittedPropertyValue()
+    {
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Typed property SismaFramework\TestsApplication\Entities\SimpleEntity::$string must not be accessed before initialization');
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
+        $requestMock->request = [
+            'string' => 'sample-string',
+            'submitted' => 'on'
+        ];
+        $incompleteSimpleEntityForm = new IncompleteSimpleEntityFrom();
+        $incompleteSimpleEntityForm->handleRequest($requestMock);
+        $this->assertTrue($incompleteSimpleEntityForm->isSubmitted());
+        $this->assertTrue($incompleteSimpleEntityForm->isValid());
+        $simpleEntity = $incompleteSimpleEntityForm->resolveEntity();
+        $this->assertInstanceOf(SimpleEntity::class, $simpleEntity);
+        $simpleEntity->string;
     }
 }

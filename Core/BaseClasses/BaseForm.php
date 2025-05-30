@@ -274,7 +274,7 @@ abstract class BaseForm extends Submittable
         foreach ($reflectionProperties as $property) {
             if (array_key_exists($property->name, $this->entityFromForm)) {
                 $this->switchFormPropertyType($property->name);
-            } elseif (BaseEntity::checkFinalClassReflectionProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property)) {
+            } elseif (BaseEntity::checkFinalClassReflectionProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property) && $this->isFiltered($property)) {
                 $this->parseSingleStandardProperty($property);
                 $this->switchFilter($property->name);
             }
@@ -284,6 +284,11 @@ abstract class BaseForm extends Submittable
     private function isNotPrimaryKeyOrPassIsActive(\ReflectionProperty $property): bool
     {
         return (($this->entity->isPrimaryKey($property->name) === false) || ($this->config->primaryKeyPassAccepted));
+    }
+
+    private function isFiltered(\ReflectionProperty $property): bool
+    {
+        return in_array($property->name, array_keys($this->filterFiledsMode));
     }
 
     private function parseSingleStandardProperty(\ReflectionProperty $property): void
