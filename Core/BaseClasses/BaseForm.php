@@ -31,7 +31,6 @@ use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -273,7 +272,7 @@ abstract class BaseForm extends Submittable
         foreach ($reflectionProperties as $property) {
             if (array_key_exists($property->name, $this->entityFromForm)) {
                 $this->switchFormPropertyType($property->name);
-            } elseif (BaseEntity::checkFinalClassReflectionProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property)) {
+            } elseif (BaseEntity::checkFinalClassReflectionProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property) && $this->isFiltered($property)) {
                 $this->parseSingleStandardProperty($property);
                 $this->switchFilter($property->name);
             }
@@ -283,6 +282,11 @@ abstract class BaseForm extends Submittable
     private function isNotPrimaryKeyOrPassIsActive(\ReflectionProperty $property): bool
     {
         return (($this->entity->isPrimaryKey($property->name) === false) || (self::$primaryKeyPassAccepted));
+    }
+
+    private function isFiltered(\ReflectionProperty $property): bool
+    {
+        return in_array($property->name, array_keys($this->filterFiledsMode));
     }
 
     private function parseSingleStandardProperty(\ReflectionProperty $property): void
