@@ -200,7 +200,7 @@ class Query
     {
         $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
         $escapedValue = $this->adapter->escapeValue($value, $operator);
-        $parsedCondiotion = $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
+        $parsedCondiotion = $this->adapter->openBlock() . $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue . $this->adapter->closeBlock();
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
         $this->order[] = $parsedCondiotion . ' ' . $parsedIndexing;
         return $this;
