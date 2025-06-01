@@ -196,6 +196,16 @@ class Query
         return $this;
     }
 
+    public function &appendOrderByCondition(string $column, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder, $Indexing = null, bool $foreignKey = false): self
+    {
+        $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
+        $escapedValue = $this->adapter->escapeValue($value, $operator);
+        $parsedCondiotion = $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
+        $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
+        $this->order[] = $parsedCondiotion . ' ' . $parsedIndexing;
+        return $this;
+    }
+
     public function &appendOrderBySubquery(Query $query, null|string|Indexing $Indexing = null): self
     {
         $parsedQuery = $this->adapter->openBlock() . $query->getCommandToExecute() . $this->adapter->closeBlock();
