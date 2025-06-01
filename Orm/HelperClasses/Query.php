@@ -192,7 +192,17 @@ class Query
     {
         $parsedColumn = $this->adapter->escapeColumn($column);
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
-        $this->order[$parsedColumn] = $parsedIndexing;
+        $this->order[] = $parsedColumn . ' ' . $parsedIndexing;
+        return $this;
+    }
+
+    public function &appendOrderByCondition(string $column, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder, $Indexing = null, bool $foreignKey = false): self
+    {
+        $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
+        $escapedValue = $this->adapter->escapeValue($value, $operator);
+        $parsedCondiotion = $this->adapter->openBlock() . $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue . $this->adapter->closeBlock();
+        $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
+        $this->order[] = $parsedCondiotion . ' ' . $parsedIndexing;
         return $this;
     }
 
@@ -200,7 +210,7 @@ class Query
     {
         $parsedQuery = $this->adapter->openBlock() . $query->getCommandToExecute() . $this->adapter->closeBlock();
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
-        $this->order[$parsedQuery] = $parsedIndexing;
+        $this->order[] = $parsedQuery . ' ' . $parsedIndexing;
         return $this;
     }
 
@@ -374,5 +384,3 @@ class Query
         }
     }
 }
-
-?>

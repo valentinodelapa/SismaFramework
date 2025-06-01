@@ -246,9 +246,6 @@ abstract class BaseAdapter
 
     public function parseSelect(bool $distinct, array $select, string $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
     {
-        foreach ($orderby as $k => $v) {
-            $orderby[$k] = $k . ' ' . $v;
-        }
         $query = Statement::select->getAdapterVersion($this->adapterType) . ' ' .
                 ($distinct ? Keyword::distinct->getAdapterVersion($this->adapterType) . ' ' : '') .
                 implode(',', $select) . ' ' .
@@ -323,5 +320,3 @@ abstract class BaseAdapter
 
     abstract public function getLastErrorCode(): string;
 }
-
-?>

@@ -581,7 +581,7 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
                 ->willReturn('*');
-        $matcherOne = $this->once();
+        $matcherOne = $this->exactly(3);
         $baseAdapterMock->expects($matcherOne)
                 ->method('escapeColumn')
                 ->willReturnCallback(function ($column, $foreignKey) use ($matcherOne) {
@@ -590,29 +590,58 @@ class QueryTest extends TestCase
                             $this->assertEquals('id', $column);
                             $this->assertFalse($foreignKey);
                             return 'id';
+                        case 2:
+                            $this->assertEquals('column', $column);
+                            $this->assertFalse($foreignKey);
+                            return 'column';
+                        case 3:
+                            $this->assertEquals('foreignKey', $column);
+                            $this->assertTrue($foreignKey);
+                            return 'foreign_key_id';
                     }
                 });
         $baseAdapterMock->expects($this->exactly(2))
+                ->method('parseComparisonOperator')
+                ->with(ComparisonOperator::equal)
+                ->willReturn('=');
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('escapeValue')
+                ->with(Placeholder::placeholder)
+                ->willReturn('?');
+        $matcherTwo = $this->exactly(4);
+        $baseAdapterMock->expects($matcherTwo)
                 ->method('escapeOrderIndexing')
-                ->with(Indexing::asc)
-                ->willReturn('ASC');
-        $subqueryMock = $this->createMock(Query::class);
-        $baseAdapterMock->expects($this->once())
+                ->willReturnCallback(function ($order) use ($matcherTwo) {
+                    switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                        case 3:
+                            $this->assertEquals(Indexing::asc, $order);
+                            return 'ASC';
+                        case 2:
+                        case 4:
+                            $this->assertEquals(Indexing::desc, $order);
+                            return 'DESC';
+                    }
+                });
+        $baseAdapterMock->expects($this->exactly(3))
                 ->method('openBlock')
                 ->willReturn('(');
+        $baseAdapterMock->expects($this->exactly(3))
+                ->method('closeBlock')
+                ->willReturn(')');
+        $subqueryMock = $this->createMock(Query::class);
         $subqueryMock->expects($this->once())
                 ->method('getCommandToExecute')
                 ->willReturn('subquery');
         $baseAdapterMock->expects($this->once())
-                ->method('closeBlock')
-                ->willReturn(')');
-        $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], '', [], [], [], ['id' => 'ASC', '(subquery)' => 'ASC'], 0, 0);
+                ->with(false, ['*'], '', [], [], [], ['id ASC', '(column = ?) DESC', '(foreign_key_id = ?) ASC', '(subquery) DESC'], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setWhere()
                 ->setOrderBy(['id' => Indexing::asc])
-                ->appendOrderBySubquery($subqueryMock, Indexing::asc)
+                ->appendOrderByCondition('column', ComparisonOperator::equal, Placeholder::placeholder, Indexing::desc)
+                ->appendOrderByCondition('foreignKey', ComparisonOperator::equal, Placeholder::placeholder, Indexing::asc, true)
+                ->appendOrderBySubquery($subqueryMock, Indexing::desc)
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
     }

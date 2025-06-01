@@ -220,7 +220,7 @@ class AdapterMysqlTest extends TestCase
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('SELECT * FROM `table_name` WHERE `table_name`.`id` = 1 ', $adapterMysql->parseSelect(false, ['*'], '`table_name`', ['`table_name`.`id` = 1'], [], [], [], 0, 0));
         $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP_BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
-                $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], '`table_name`', ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id`' => 'ASC'], 1, 10));
+                $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], '`table_name`', ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id` ASC'], 1, 10));
     }
 
     public function testParseInsert()
