@@ -36,6 +36,7 @@
  * - Aggiunta di metodi e proprietà per supportare clausole SQL aggiuntive o specifiche del framework.
  * - Potenziale rimozione o modifica di metodi non ritenuti necessari nel contesto del SismaFramework.
  * - Aggiornamento della logica di costruzione delle query per riflettere le esigenze del DataMapper implementato.
+ * - Modifica alla gestione della clausola order by.
  */
 
 namespace SismaFramework\Orm\HelperClasses;
