@@ -1,10 +1,10 @@
 # NOTICE
 
-Parte di questo software è ispirata alla repository [**MVC_todo**](https://github.com/ngrt/MVC_todo).
+Parte della struttura concettuale e organizzativa di questo software è ispirata alla repository [**MVC_todo**](https://github.com/ngrt/MVC_todo).
 
 Ringraziamo gli autori del progetto **MVC_todo** per aver condiviso il loro lavoro con la comunità open source.
 
-La repository non risulta essere soggetta ad alcuna licenza e non riporta alcuna notifica di copyright.
+La repository non risulta essere soggetta ad alcuna licenza e non riporta alcuna notifica di copyright. Si sottolinea che, in conformità all'assenza di licenza che sottintende la presenza di diritto d'autore, il codice sorgente di MVC_todo non è stato integrato né copiato in alcun modo in questo progetto."
 
 ---
 
