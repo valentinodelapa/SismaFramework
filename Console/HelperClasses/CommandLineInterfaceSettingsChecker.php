@@ -26,8 +26,6 @@
 
 namespace SismaFramework\Console\HelperClasses;
 
-use SismaFramework\Console\Exceptions\ProjectDirectoryException;
-
 /**
  * Description of CLIChecker
  *

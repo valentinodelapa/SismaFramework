@@ -27,7 +27,6 @@
 namespace SismaFramework\Console\HelperClasses;
 
 use SismaFramework\Console\BaseClasses\BaseCommand;
-use SismaFramework\Console\Exceptions\UnknownCommandException;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
