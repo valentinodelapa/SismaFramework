@@ -55,7 +55,7 @@ class Filter
 
     public function isNotEmpty($value): bool
     {
-        if ($value === 0) {
+        if ($value == 0) {
             return true;
         } else {
             return empty($value) ? false : true;
