@@ -70,6 +70,9 @@ class FilterTest extends TestCase
     public function testIsNotEmpty()
     {
         $this->assertTrue($this->filter->isNotEmpty(0));
+        $this->assertTrue($this->filter->isNotEmpty('0'));
+        $this->assertTrue($this->filter->isNotEmpty(0.0));
+        $this->assertTrue($this->filter->isNotEmpty('0.0'));
         $this->assertTrue($this->filter->isNotEmpty('not empty value'));
         $this->assertFalse($this->filter->isNotEmpty(''));
     }
@@ -235,7 +238,9 @@ class FilterTest extends TestCase
     public function testIsNumeric()
     {
         $this->assertTrue($this->filter->isNumeric(1));
+        $this->assertTrue($this->filter->isNumeric(0));
         $this->assertTrue($this->filter->isNumeric(1.1));
+        $this->assertTrue($this->filter->isNumeric(0.0));
         $this->assertFalse($this->filter->isNumeric('string'));
         $this->assertFalse($this->filter->isNumeric(true));
         $this->assertFalse($this->filter->isNumeric(false));
@@ -247,7 +252,9 @@ class FilterTest extends TestCase
     public function testIsInteger()
     {
         $this->assertTrue($this->filter->isInteger(1));
+        $this->assertTrue($this->filter->isInteger(0));
         $this->assertFalse($this->filter->isInteger(1.1));
+        $this->assertFalse($this->filter->isInteger(0.0));
         $this->assertFalse($this->filter->isInteger('string'));
         $this->assertFalse($this->filter->isInteger(true));
         $this->assertFalse($this->filter->isInteger(false));
@@ -259,7 +266,9 @@ class FilterTest extends TestCase
     public function testIsFloat()
     {
         $this->assertTrue($this->filter->isFloat(1.1));
+        $this->assertTrue($this->filter->isFloat(0.0));
         $this->assertFalse($this->filter->isFloat(1));
+        $this->assertFalse($this->filter->isFloat(0));
         $this->assertFalse($this->filter->isFloat('string'));
         $this->assertFalse($this->filter->isFloat(true));
         $this->assertFalse($this->filter->isFloat(false));
@@ -273,7 +282,9 @@ class FilterTest extends TestCase
         $this->assertTrue($this->filter->isBoolean(true));
         $this->assertTrue($this->filter->isBoolean(false));
         $this->assertFalse($this->filter->isBoolean(1.1));
+        $this->assertFalse($this->filter->isBoolean(0.0));
         $this->assertFalse($this->filter->isBoolean(1));
+        $this->assertFalse($this->filter->isBoolean(0));
         $this->assertFalse($this->filter->isBoolean('string'));
         $this->assertFalse($this->filter->isBoolean(null));
         $this->assertFalse($this->filter->isBoolean(''));
@@ -284,7 +295,9 @@ class FilterTest extends TestCase
     {
         $this->assertTrue($this->filter->isArray(['array']));
         $this->assertFalse($this->filter->isArray(1.1));
+        $this->assertFalse($this->filter->isArray(0.0));
         $this->assertFalse($this->filter->isArray(1));
+        $this->assertFalse($this->filter->isArray(0));
         $this->assertFalse($this->filter->isArray('string'));
         $this->assertFalse($this->filter->isArray(true));
         $this->assertFalse($this->filter->isArray(false));
@@ -299,7 +312,9 @@ class FilterTest extends TestCase
         $this->assertFalse($this->filter->isDate(SismaTime::createFromStandardTimeFormat('20:15:50')));
         $this->assertFalse($this->filter->isDate(['array']));
         $this->assertFalse($this->filter->isDate(1.1));
+        $this->assertFalse($this->filter->isDate(0.0));
         $this->assertFalse($this->filter->isDate(1));
+        $this->assertFalse($this->filter->isDate(0));
         $this->assertFalse($this->filter->isDate('string'));
         $this->assertFalse($this->filter->isDate(true));
         $this->assertFalse($this->filter->isDate(false));
@@ -314,7 +329,9 @@ class FilterTest extends TestCase
         $this->assertFalse($this->filter->isDatetime(SismaTime::createFromStandardTimeFormat('20:15:50')));
         $this->assertFalse($this->filter->isDatetime(['array']));
         $this->assertFalse($this->filter->isDatetime(1.1));
+        $this->assertFalse($this->filter->isDatetime(0.0));
         $this->assertFalse($this->filter->isDatetime(1));
+        $this->assertFalse($this->filter->isDatetime(0));
         $this->assertFalse($this->filter->isDatetime('string'));
         $this->assertFalse($this->filter->isDatetime(true));
         $this->assertFalse($this->filter->isDatetime(false));
@@ -329,7 +346,9 @@ class FilterTest extends TestCase
         $this->assertFalse($this->filter->isTime(new SismaDateTime()));
         $this->assertFalse($this->filter->isTime(['array']));
         $this->assertFalse($this->filter->isTime(1.1));
+        $this->assertFalse($this->filter->isTime(0.0));
         $this->assertFalse($this->filter->isTime(1));
+        $this->assertFalse($this->filter->isTime(0));
         $this->assertFalse($this->filter->isTime('string'));
         $this->assertFalse($this->filter->isTime(true));
         $this->assertFalse($this->filter->isTime(false));
@@ -345,7 +364,9 @@ class FilterTest extends TestCase
         $this->assertTrue($this->filter->isEntity(new BaseSample($dataMapperMock)));
         $this->assertFalse($this->filter->isEntity(['array']));
         $this->assertFalse($this->filter->isEntity(1.1));
+        $this->assertFalse($this->filter->isEntity(0.0));
         $this->assertFalse($this->filter->isEntity(1));
+        $this->assertFalse($this->filter->isEntity(0));
         $this->assertFalse($this->filter->isEntity('string'));
         $this->assertFalse($this->filter->isEntity(true));
         $this->assertFalse($this->filter->isEntity(false));
@@ -358,7 +379,9 @@ class FilterTest extends TestCase
         $this->assertTrue($this->filter->isEnumeration(SampleType::one));
         $this->assertFalse($this->filter->isEnumeration(['array']));
         $this->assertFalse($this->filter->isEnumeration(1.1));
+        $this->assertFalse($this->filter->isEnumeration(0.0));
         $this->assertFalse($this->filter->isEnumeration(1));
+        $this->assertFalse($this->filter->isEnumeration(0));
         $this->assertFalse($this->filter->isEnumeration('string'));
         $this->assertFalse($this->filter->isEnumeration(true));
         $this->assertFalse($this->filter->isEnumeration(false));
