@@ -4,6 +4,7 @@ namespace SismaFramework\Tests\Console\Services\Scaffolding;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Console\Services\Scaffolding\ScaffoldingManager;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 
@@ -13,12 +14,18 @@ class ScaffoldingManagerTest extends TestCase
     private ScaffoldingManager $scaffoldingManager;
     private string $tempDir;
 
+    #[\Override]
     protected function setUp(): void
     {
-        $this->scaffoldingManager = new ScaffoldingManager();
         $this->tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'scaffolding_test_' . uniqid() . DIRECTORY_SEPARATOR;
         mkdir($this->tempDir, 0777, true);
-        $this->scaffoldingManager->setRootPath($this->tempDir);
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['rootPath', $this->tempDir],
+        ]);
+        $this->scaffoldingManager = new ScaffoldingManager($configMock);
 
         // Creiamo la struttura delle directory necessaria
         //mkdir($this->tempDir . '/SismaFramework', 0777, true);
@@ -28,6 +35,7 @@ class ScaffoldingManagerTest extends TestCase
         mkdir($this->tempDir . '/TestModule/Application/Forms', 0777, true);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->removeDirectory($this->tempDir);

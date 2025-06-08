@@ -29,6 +29,11 @@ namespace SismaFramework\Tests\Core\Enumerations;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Sample\Entities\SampleBaseEntity;
+use SismaFramework\TestsApplication\Enumerations\SampleType;
+use SismaFramework\Orm\CustomTypes\SismaDate;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaTime;
 
 /**
  * Description of FilterTypeTest
@@ -291,5 +296,72 @@ class FilterTypeTest extends TestCase
                 ->method(FilterType::customFilter->name)
                 ->with('value', 'regulatExpression');
         FilterType::customFilter->applyFilter('value', ['regulatExpression'], $this->filterMock);
+    }
+
+    public function testFromPhpType()
+    {
+        $reflectionNabedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $matcherOne = $this->exactly(9);
+        $reflectionNabedTypeMock->expects($matcherOne)
+                ->method('isBuiltin')
+                ->willReturnCallback(function ()use ($matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                            return true;
+                        case 5:
+                        case 6;
+                        case 7:
+                        case 8:
+                        case 9:
+                            return false;
+                    }
+                });
+        $matcherTwo = $this->exactly(19);
+        $reflectionNabedTypeMock->expects($matcherTwo)
+                ->method('getName')
+                ->willReturnCallback(function ()use ($matcherTwo) {
+                    switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                            return 'int';
+                        case 2:
+                            return 'float';
+                        case 3:
+                            return 'string';
+                        case 4:
+                            return 'bool';
+                        case 5:
+                            return SampleBaseEntity::class;
+                        case 6;
+                        case 7:
+                            return SampleType::class;
+                        case 8:
+                        case 9:
+                        case 10:
+                            return SismaDate::class;
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+                            return SismaDateTime::class;
+                        case 15:
+                        case 16:
+                        case 17:
+                        case 18:
+                        case 19:
+                            return SismaTime::class;
+                    }
+                });
+        $this->assertEquals(FilterType::isInteger, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isFloat, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isString, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isBoolean, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isEntity, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isEnumeration, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isDate, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isDatetime, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isTime, FilterType::fromPhpType($reflectionNabedTypeMock));
     }
 }

@@ -45,8 +45,6 @@ class ScaffoldCommandTest extends TestCase
         $this->command = new ScaffoldCommand($this->mockScaffoldingManager);
     }
 
-
-
     public function testCheckCompatibility(): void
     {
         $this->assertTrue($this->command->checkCompatibility('scaffold'));

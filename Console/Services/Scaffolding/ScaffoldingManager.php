@@ -28,6 +28,7 @@ namespace SismaFramework\Console\Services\Scaffolding;
 
 use SismaFramework\Console\Enumerations\ModelType;
 use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Templater;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
@@ -44,17 +45,13 @@ class ScaffoldingManager
     private bool $force = false;
     private ?string $customType = null;
     private ?string $customTemplatePath = null;
-    private string $rootPath = \Config\ROOT_PATH;
+    private Config $config;
 
-    public function __construct()
+    public function __construct(Config $config = new Config())
     {
         $this->templatesPath = __DIR__ . '/Templates/';
         $this->placeholders = [];
-    }
-    
-    public function setRootPath(string $rootPath):void
-    {
-        $this->rootPath = $rootPath;
+        $this->config = $config;
     }
 
     public function setForce(bool $force): self
@@ -78,7 +75,7 @@ class ScaffoldingManager
     public function generateScaffolding(string $entityName, string $module): bool
     {
         // Check if module exists in project root
-        $modulePath = $this->rootPath . $module;
+        $modulePath = $this->config->rootPath . $module;
         if (!is_dir($modulePath)) {
             throw new \RuntimeException(<<<ERROR
 Module directory not found: {$module} .
@@ -247,24 +244,13 @@ ERROR);
     private function analyzeEntityProperties(\ReflectionClass $entityReflection): array
     {
         $properties = [];
-
-        // Prendiamo solo le proprietà protected
         foreach ($entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-            // Verifichiamo se è una proprietà della classe finale usando il metodo statico della BaseEntity
             if (!BaseEntity::checkFinalClassReflectionProperty($property)) {
                 continue;
             }
-
-            // Otteniamo il tipo della proprietà
-            $type = $property->getType();
-            if ($type === null) {
-                continue;
-            }
-
             $properties[] = [
                 'name' => $property->getName(),
-                'type' => $type->getName(),
-                'nullable' => $type->allowsNull(),
+                'type' => $property->getType(),
             ];
         }
 
@@ -284,14 +270,14 @@ ERROR);
                     '        $this->addFilterFieldMode("%s", FilterType::%s%s)',
                     $property['name'],
                     $filterType,
-                    $property['nullable'] ? ', [], true' : ''
+                    $property['type']->allowsNull() ? ', [], true' : ''
             )];
 
         $lastProperty = end($properties);
         foreach ($properties as $property) {
             $filterType = FilterType::fromPhpType($property['type'])->name;
 
-            if ($property['nullable']) {
+            if ($property['type']->allowsNull()) {
                 $code[] = sprintf(
                         '            ->addFilterFieldMode("%s", FilterType::%s, [], true)%s',
                         $property['name'],
