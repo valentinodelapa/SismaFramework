@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Security\ExtendedClasses\NoLogException;
 use SismaFramework\Core\Enumerations\ResponseType;
+use SismaFramework\Security\ExtendedClasses\NoLogException;
 
 /**
  * @author Valentino de Lapa
@@ -35,7 +35,8 @@ use SismaFramework\Core\Enumerations\ResponseType;
 class PageNotFoundException extends NoLogException
 {
 
-    public function getResponseType(): ResponseType
+    #[\Override]
+    protected function setResponseType(): ResponseType
     {
         return ResponseType::httpNotFound;
     }

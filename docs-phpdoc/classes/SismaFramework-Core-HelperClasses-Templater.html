@@ -201,12 +201,6 @@
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Templater.html#property_isStructural">$isStructural</a>
-    <span>
-                        &nbsp;: bool            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Templater.html#property_structuralTemplatesPath">$structuralTemplatesPath</a>
     <span>
                         &nbsp;: string            </span>
@@ -227,21 +221,21 @@
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateStructuralTemplate">generateStructuralTemplate()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateTemplate">generateTemplate()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_setStructural">setStructural()</a>
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_parseTemplate">parseTemplate()</a>
     <span>
-                                &nbsp;: mixed    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_getTemplatePath">getTemplatePath()</a>
-    <span>
-                                &nbsp;: mixed    </span>
+                                &nbsp;: string    </span>
 </dt>
 
     </dl>
@@ -264,42 +258,6 @@
             -private
             -static                                            "
 >
-    <h4 class="phpdocumentor-element__name" id="property_isStructural">
-        $isStructural
-        <a href="classes/SismaFramework-Core-HelperClasses-Templater.html#property_isStructural" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Templater.php"><a href="files/core-helperclasses-templater.html"><abbr title="Core/HelperClasses/Templater.php">Templater.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">38</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">bool</span>
-    <span class="phpdocumentor-signature__name">$isStructural</span>
-     = <span class="phpdocumentor-signature__default-value">false</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
     <h4 class="phpdocumentor-element__name" id="property_structuralTemplatesPath">
         $structuralTemplatesPath
         <a href="classes/SismaFramework-Core-HelperClasses-Templater.html#property_structuralTemplatesPath" class="headerlink"><i class="fas fa-link"></i></a>
@@ -310,7 +268,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Templater.php"><a href="files/core-helperclasses-templater.html"><abbr title="Core/HelperClasses/Templater.php">Templater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">39</span>
+    <span class="phpdocumentor-element-found-in__line">38</span>
 
     </aside>
 
@@ -346,7 +304,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Templater.php"><a href="files/core-helperclasses-templater.html"><abbr title="Core/HelperClasses/Templater.php">Templater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">40</span>
+    <span class="phpdocumentor-element-found-in__line">39</span>
 
     </aside>
 
@@ -379,6 +337,61 @@
             -public
                                     -static                    "
 >
+    <h4 class="phpdocumentor-element__name" id="method_generateStructuralTemplate">
+        generateStructuralTemplate()
+        <a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateStructuralTemplate" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Templater.php"><a href="files/core-helperclasses-templater.html"><abbr title="Core/HelperClasses/Templater.php">Templater.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">58</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">generateStructuralTemplate</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$template</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$vars</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$template</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$vars</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
     <h4 class="phpdocumentor-element__name" id="method_generateTemplate">
         generateTemplate()
         <a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateTemplate" class="headerlink"><i class="fas fa-link"></i></a>
@@ -387,7 +400,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Templater.php"><a href="files/core-helperclasses-templater.html"><abbr title="Core/HelperClasses/Templater.php">Templater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">47</span>
+    <span class="phpdocumentor-element-found-in__line">41</span>
 
     </aside>
 
@@ -441,22 +454,22 @@
             -public
                                     -static                    "
 >
-    <h4 class="phpdocumentor-element__name" id="method_setStructural">
-        setStructural()
-        <a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_setStructural" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_parseTemplate">
+        parseTemplate()
+        <a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_parseTemplate" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Templater.php"><a href="files/core-helperclasses-templater.html"><abbr title="Core/HelperClasses/Templater.php">Templater.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">42</span>
+    <span class="phpdocumentor-element-found-in__line">48</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">setStructural</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$isStructural</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">true</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">parseTemplate</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$templatePath</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$vars</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -465,52 +478,15 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$isStructural</span>
-                : <span class="phpdocumentor-signature__argument__return-type">bool</span>
-                 = <span class="phpdocumentor-signature__argument__default-value">true</span>            </dt>
+                <span class="phpdocumentor-signature__argument__name">$templatePath</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
-            </dl>
-
-    
-
-    
-
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -private
-                                    -static                    "
->
-    <h4 class="phpdocumentor-element__name" id="method_getTemplatePath">
-        getTemplatePath()
-        <a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_getTemplatePath" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Templater.php"><a href="files/core-helperclasses-templater.html"><abbr title="Core/HelperClasses/Templater.php">Templater.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">59</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">getTemplatePath</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$template</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$template</span>
-                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$vars</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -521,7 +497,11 @@
 
     
 
-    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
 </article>
             </section>
 
@@ -636,7 +616,6 @@
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Templater.html#property_isStructural">$isStructural</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Templater.html#property_structuralTemplatesPath">$structuralTemplatesPath</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Templater.html#property_templatesPath">$templatesPath</a></li>
                                             </ul>
@@ -645,9 +624,9 @@
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateStructuralTemplate">generateStructuralTemplate()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateTemplate">generateTemplate()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_setStructural">setStructural()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_getTemplatePath">getTemplatePath()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Templater.html#method_parseTemplate">parseTemplate()</a></li>
                                     </ul>
             </li>
                     </ul>

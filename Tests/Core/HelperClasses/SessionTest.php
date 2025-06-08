@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Session;
 
 /**
@@ -34,6 +35,19 @@ use SismaFramework\Core\HelperClasses\Session;
  */
 class SessionTest extends TestCase
 {
+
+    public function setUp(): void
+    {
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', true],
+                    ['httpsIsForced', false],
+        ]);
+        Config::setInstance($configMock);
+        Session::end();
+    }
 
     public function testSessionStart()
     {
@@ -45,7 +59,7 @@ class SessionTest extends TestCase
         $session = new Session();
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
         unset($session);
-        $this->assertEquals(PHP_SESSION_NONE, session_status());
+        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
     }
 
     public function testSessionSetUnsetSampleItemStatic()
@@ -79,11 +93,12 @@ class SessionTest extends TestCase
         $this->assertArrayNotHasKey('test', $_SESSION);
         $this->assertFalse(isset($session->test));
         unset($session);
-        $this->assertEquals(PHP_SESSION_NONE, session_status());
+        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
     }
-    
+
     public function testSessionSetUnsetNestedItemStatic()
     {
+        Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
         Session::start();
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
@@ -119,7 +134,7 @@ class SessionTest extends TestCase
         Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
     }
-    
+
     public function testSessionAppendSimpleItem()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
@@ -142,7 +157,7 @@ class SessionTest extends TestCase
         Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
     }
-    
+
     public function testSessionAppendNestedItem()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());

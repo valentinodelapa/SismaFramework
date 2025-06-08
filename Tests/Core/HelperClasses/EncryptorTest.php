@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
 
 /**
@@ -34,37 +35,53 @@ use SismaFramework\Core\HelperClasses\Encryptor;
  */
 class EncryptorTest extends TestCase
 {
-    
+
+    private Config $configMock;
+
+    public function setUp(): void
+    {
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['blowfishHashWorkload', 12],
+                    ['encryptionAlgorithm', 'AES-256-CBC'],
+                    ['encryptionPassphrase', ''],
+                    ['initializationVectorBytes', 16],
+                    ['simpleHashAlgorithm', 'sha256'],
+        ]);
+    }
+
     public function testGetSimpleRandomToken()
     {
         $this->assertIsString(Encryptor::getSimpleRandomToken());
     }
-    
+
     public function testGetVerifySimpleHash()
     {
         $testString = 'sample';
         $fakeTestString = 'fakeSample';
-        $testStringHash = Encryptor::getSimpleHash($testString);
-        $this->assertTrue(Encryptor::verifySimpleHash($testString, $testStringHash));
-        $this->assertFalse(Encryptor::verifySimpleHash($fakeTestString, $testStringHash));
+        $testStringHash = Encryptor::getSimpleHash($testString, $this->configMock);
+        $this->assertTrue(Encryptor::verifySimpleHash($testString, $testStringHash, $this->configMock));
+        $this->assertFalse(Encryptor::verifySimpleHash($fakeTestString, $testStringHash, $this->configMock));
     }
-    
+
     public function testGetVerifyBlowfishHash()
     {
         $testString = 'sample';
         $fakeTestString = 'fakeSample';
-        $testStringHash = Encryptor::getBlowfishHash($testString, '04');
+        $testStringHash = Encryptor::getBlowfishHash($testString, $this->configMock);
         $this->assertTrue(Encryptor::verifyBlowfishHash($testString, $testStringHash));
         $this->assertFalse(Encryptor::verifyBlowfishHash($fakeTestString, $testStringHash));
     }
-    
+
     public function testEncryptDecryptString()
     {
         $testString = 'sample';
         $fakeTestString = 'fakeSample';
-        $initializationVector = Encryptor::createInizializationVector();
-        $cryptTestString = Encryptor::encryptString($testString, $initializationVector);
-        $this->assertEquals($testString, Encryptor::decryptString($cryptTestString, $initializationVector));
-        $this->assertNotEquals($fakeTestString, Encryptor::decryptString($cryptTestString, $initializationVector));
+        $initializationVector = Encryptor::createInizializationVector($this->configMock);
+        $cryptTestString = Encryptor::encryptString($testString, $initializationVector, $this->configMock);
+        $this->assertEquals($testString, Encryptor::decryptString($cryptTestString, $initializationVector, $this->configMock));
+        $this->assertNotEquals($fakeTestString, Encryptor::decryptString($cryptTestString, $initializationVector, $this->configMock));
     }
 }

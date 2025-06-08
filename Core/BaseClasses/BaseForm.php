@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\AbstractClasses\Submittable;
 use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -40,7 +40,6 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -57,15 +56,16 @@ abstract class BaseForm extends Submittable
     protected array $entityFromForm = [];
     protected array $filterFiledsMode = [];
     private DataMapper $dataMapper;
+    private Config $config;
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
-    private static bool $primaryKeyPassAccepted = \Config\PRIMARY_KEY_PASS_ACCEPTED;
     private ResponseType $responseType = ResponseType::httpOk;
 
-    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper())
+    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper(), ?Config $config = null)
     {
         parent::__construct();
         $this->dataMapper = $dataMapper;
+        $this->config = $config ?? Config::getInstance();
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
     }
@@ -211,12 +211,12 @@ abstract class BaseForm extends Submittable
     private function parseCollectionProperties(): void
     {
         foreach (Cache::getForeignKeyData(static::getEntityName()) as $propertyName => $propertyData) {
-            if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX, $this->request->request)) {
-                $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX);
+            if (array_key_exists($propertyName . $this->config->foreignKeySuffix, $this->request->request)) {
+                $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix);
             } elseif (count($propertyData) > 1) {
                 $this->parseCollectionWithMultipleReferencedForeignKey($propertyName, $propertyData);
             } elseif ($this->isSelfReferencedProperty($propertyData)) {
-                $this->switchFormPropertyType(SelfReferencedEntity::SON_COLLECTION_PROPERTY_NAME);
+                $this->switchFormPropertyType($this->config->sonCollectionPropertyName);
             }
         }
     }
@@ -260,8 +260,8 @@ abstract class BaseForm extends Submittable
     {
         foreach (array_keys($propertyData) as $foreignKeyPropertyName) {
             $parsedForeignKeyPropertyName = ucfirst($foreignKeyPropertyName);
-            if (array_key_exists($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX . $parsedForeignKeyPropertyName, $this->request->request)) {
-                $this->switchFormPropertyType($propertyName . ReferencedEntity::FOREIGN_KEY_SUFFIX . $parsedForeignKeyPropertyName);
+            if (array_key_exists($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName, $this->request->request)) {
+                $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName);
             }
         }
     }
@@ -273,7 +273,7 @@ abstract class BaseForm extends Submittable
         foreach ($reflectionProperties as $property) {
             if (array_key_exists($property->name, $this->entityFromForm)) {
                 $this->switchFormPropertyType($property->name);
-            } elseif (BaseEntity::checkFinalClassReflectionProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property)) {
+            } elseif (BaseEntity::checkFinalClassReflectionProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property) && $this->isFiltered($property)) {
                 $this->parseSingleStandardProperty($property);
                 $this->switchFilter($property->name);
             }
@@ -282,7 +282,12 @@ abstract class BaseForm extends Submittable
 
     private function isNotPrimaryKeyOrPassIsActive(\ReflectionProperty $property): bool
     {
-        return (($this->entity->isPrimaryKey($property->name) === false) || (self::$primaryKeyPassAccepted));
+        return (($this->entity->isPrimaryKey($property->name) === false) || ($this->config->primaryKeyPassAccepted));
+    }
+
+    private function isFiltered(\ReflectionProperty $property): bool
+    {
+        return in_array($property->name, array_keys($this->filterFiledsMode));
     }
 
     private function parseSingleStandardProperty(\ReflectionProperty $property): void
@@ -325,8 +330,7 @@ abstract class BaseForm extends Submittable
 
     private function filterHasFailed(string $propertyName): bool
     {
-        $filterFunction = $this->filterFiledsMode[$propertyName]['filterType']->value;
-        return !Filter::$filterFunction($this->entityData->$propertyName);
+        return !$this->filterFiledsMode[$propertyName]['filterType']->applyFilter($this->entityData->$propertyName, $this->filterFiledsMode[$propertyName]['parameters']);
     }
 
     private function isNullButNotNullable(string $propertyName): bool
@@ -342,7 +346,7 @@ abstract class BaseForm extends Submittable
     {
         $foreignKeyPropertyName = array_key_first($propertyData);
         $referentEntity = $propertyData[$foreignKeyPropertyName];
-        if (str_contains($foreignKeyPropertyName, SelfReferencedEntity::PARENT_PREFIX_PROPERTY_NAME) && ($referentEntity === get_class($this->entity))) {
+        if (str_contains($foreignKeyPropertyName, $this->config->parentPrefixPropertyName) && ($referentEntity === get_class($this->entity))) {
             return true;
         } else {
             return false;

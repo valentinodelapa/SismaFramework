@@ -176,8 +176,7 @@ Anche in questo caso sono presenti tre diverse classi astratte dalle quali esten
 Questo progetto è stato sviluppato prendendo spunto da alcune librerie open souce e guide presenti sul web. Vengono citate di seguito:
 
 * La libreria [**MVC_todo**](https://github.com/ngrt/MVC_todo).
-  Questa libreria, consistente anch'essa in un semplice framework basato su patter MVC, è stata molto utile per un'iniziale panoramica su come organizzare l'albero delle classi che compongono la libreria.
-  Successivamente lo stesso è stato più volte rimaneggiato ma il contributo fornito dalla libreria citata è innegabile
+  Questa libreria, consistente anch'essa in un semplice framework basato su patter MVC, è stata molto utile per un'iniziale panoramica su come organizzare l'albero delle classi che compongono la libreria. La mia implementazione è stata successivamente sviluppata in modo indipendente e più volte rimaneggiata, ma il contributo originario fornito dalla libreria citata è innegabile
 
 * La guida [**Creare un e-commerce con PHP**](https://www.html.it/guide/creare-un-e-commerce-con-php/) e, nello specifico le lezioni riguardanti il pattern MVC.
   Probabilmente lo sviluppo embrionale della classe Dispatcher della presente libreria deve molto alla relativa lezione di questa guida.
@@ -189,6 +188,9 @@ Questo progetto è stato sviluppato prendendo spunto da alcune librerie open sou
 * La libreria [**SimpleORM**](https://github.com/davideairaghi/php/tree/master/library/Airaghi/DB/SimpleORM).
   Discorso a parte va fatto per questa libreria, che è stata utilizzata come punto di partenza per sviluppare l'ORM presente all'interno del progetto.
   Dopo varie rifattorizzazioni, aggiunta di funzionalità specifiche e rimozione di altre fuori contesto vi è ormai poco della libreria orginaria nel modulo attuale ma di certo essa è stata fondamentale per il suo sviluppo.
+
+* La libreria [**Doctrine Object Relational Mapper (ORM)**](https://github.com/doctrine/orm)
+  Nella rifattorizzazione della libreria **SimpleORM** e nell'evoluzione dei suoi meccanismi, questa libreria, utilizzata tra l'altro dal framework **Symfony**, ha rappresentato un preziosissimo spunto concettuale.
 
 * Il [**Template di errore 500**](https://codepen.io/gaiaian/details/QVVxaR).
   Nella presente libreria è stato incluso un template di errore predefinito, riconducibile alla libreria di terze parti linkata nell'intestazione del corrente punto. Tale libreria è stata inclusa per intero, con piccole modifiche utili esclusivamente ad embeddare tutto il contenuto nella stessa pagina web. Questo per evitare che, nel caso vi siano errori, gli stessi impediscano il reperimento di eventuali risorse esterne.

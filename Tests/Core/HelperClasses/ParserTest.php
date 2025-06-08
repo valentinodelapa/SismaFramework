@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
@@ -43,11 +43,29 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
  */
 class ParserTest extends TestCase
 {
+
+    private Config $configMock;
     private DataMapper $dataMapperMock;
-    
-    public function __construct(string $name)
+
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name);
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['entityNamespace', 'TestsApplication\\Entities\\'],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+                    ['modelNamespace', 'TestsApplication\\Models\\'],
+                    ['ormCache', true],
+        ]);
+        Config::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
@@ -113,7 +131,6 @@ class ParserTest extends TestCase
         $this->assertEquals(0.0, Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
     }
 
-    #[RunInSeparateProcess]
     public function testParseValueWithEntity()
     {
         $baseSample = new BaseSample($this->dataMapperMock);
@@ -121,7 +138,7 @@ class ParserTest extends TestCase
         $this->dataMapperMock->expects($this->any())
                 ->method('initQuery');
         $this->dataMapperMock->expects($this->any())
-                ->method ('findFirst')
+                ->method('findFirst')
                 ->willReturn($baseSample);
         $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
@@ -130,12 +147,12 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn(BaseSample::class);
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock));
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock, $this->configMock));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock, $this->configMock));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->configMock));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->configMock));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->configMock));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->configMock));
     }
 
     public function testParseValueWithEnumeration()
@@ -200,7 +217,6 @@ class ParserTest extends TestCase
         $this->assertIsArray(Parser::parseValue($reflectionNamedTypeMock, [], true, $this->dataMapperMock));
     }
 
-    #[RunInSeparateProcess]
     public function testParseValueWithException()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -214,13 +230,12 @@ class ParserTest extends TestCase
         Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock);
     }
 
-    #[RunInSeparateProcess]
     public function testParseEnumerationWithException()
     {
         $this->expectException(InvalidArgumentException::class);
         Parser::parseEnumeration(SampleType::class, 'F', true, $this->dataMapperMock);
     }
-    
+
     public function testUnparseValue()
     {
         $baseSample = new BaseSample($this->dataMapperMock);
@@ -243,5 +258,4 @@ class ParserTest extends TestCase
         $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $array['sismaDateTime']);
         $this->assertEquals($sismaTime->formatToStandardTimeFormat(), $array['sismaTime']);
     }
-
 }

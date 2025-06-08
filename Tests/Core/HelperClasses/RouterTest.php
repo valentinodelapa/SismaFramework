@@ -37,29 +37,36 @@ use SismaFramework\Core\Enumerations\ResponseType;
  */
 class RouterTest extends TestCase
 {
+
+    private Request $requestMock;
+
+    public function setUp(): void
+    {
+        $this->requestMock = $this->createMock(Request::class);
+    }
+
     public function testRedirect()
     {
         $response = Router::redirect('sample/notify/message/notify/');
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals(ResponseType::httpFound->value, http_response_code());
     }
-    
+
     public function testGetActualUrl()
     {
         Router::concatenateMetaUrl('/meta/url');
-        $_SERVER['REQUEST_URI'] = '/meta/url/sample/error/';
-        $this->assertEquals('sample/error/', Router::getActualUrl());
+        $this->requestMock->server['REQUEST_URI'] = '/meta/url/sample/error/';
+        $this->assertEquals('sample/error/', Router::getActualUrl($this->requestMock));
     }
-    
+
     public function testReloadWithParsedQueryString()
     {
-        $requestMock = $this->createMock(Request::class);
-        $requestMock->server['REQUEST_URI'] = '/sample/notify?message=notify';
-        $requestMock->query = [
+        $this->requestMock->server['REQUEST_URI'] = '/sample/notify?message=notify';
+        $this->requestMock->query = [
             "message" => "notify",
         ];
         $router = new Router();
-        $response = $router->reloadWithParsedQueryString($requestMock);
+        $response = $router->reloadWithParsedQueryString($this->requestMock);
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals(ResponseType::httpFound->value, http_response_code());
         $this->assertEquals('/sample/notify/message/notify/', $router->getParsedUrl());

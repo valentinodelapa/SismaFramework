@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 
@@ -39,31 +39,43 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
 class PhpVersionCheckerTest extends TestCase
 {
 
-    #[RunInSeparateProcess]
+    private Config $configMock;
+
+    #[\Override]
+    public function setUp(): void
+    {
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['minimumMajorPhpVersion', 8],
+                    ['minimumMinorPhpVersion', 1],
+                    ['minimumReleasePhpVersion', 1],
+        ]);
+        Config::setInstance($this->configMock);
+    }
+
     public function testMinimumMajorVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);
         PhpVersionChecker::forceCurrentMajorVersionValue(7);
-        PhpVersionChecker::checkPhpVersion();
+        PhpVersionChecker::checkPhpVersion($this->configMock);
     }
-    
-    #[RunInSeparateProcess]
+
     public function testMinimumMinorVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);
         PhpVersionChecker::forceCurrentMajorVersionValue(8);
         PhpVersionChecker::forceCurrentMinorVersionValue(0);
-        PhpVersionChecker::checkPhpVersion();
+        PhpVersionChecker::checkPhpVersion($this->configMock);
     }
-    
-    #[RunInSeparateProcess]
+
     public function testMinimumReleaseVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);
         PhpVersionChecker::forceCurrentMajorVersionValue(8);
         PhpVersionChecker::forceCurrentMinorVersionValue(1);
         PhpVersionChecker::forceCurrentReleaseVersionValue(0);
-        PhpVersionChecker::forceMinimumReleaseVersionValue(1);
-        PhpVersionChecker::checkPhpVersion();
+        PhpVersionChecker::checkPhpVersion($this->configMock);
     }
 }

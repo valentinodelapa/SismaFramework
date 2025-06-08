@@ -26,48 +26,50 @@
 
 namespace SismaFramework\Core\Enumerations;
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Core\HelperClasses\Filter;
 
 /**
  *
  * @author Valentino de Lapa
  */
-enum FilterType: string
+enum FilterType
 {
 
-    case noFilter = 'noFilter';
-    case isString = 'isString';
-    case isAlphabeticString = 'isAlphabeticString';
-    case isStrictAlphanumericString = 'isStrictAlphanumericString';
-    case isAlphanumericString = 'isAlphanumericString';
-    case isSecurePassword = 'isSecurePassword';
-    case isEmail = 'isEmail';
-    case isNumeric = 'isNumeric';
-    case isInteger = 'isInteger';
-    case isFloat = 'isFloat';
-    case isBoolean = 'isBoolean';
-    case isArray = 'isArray';
-    case isDate = 'isDate';
-    case isDatetime = 'isDatetime';
-    case isTime = 'isTime';
-    case isUploadedFile = 'isUploadedFile';
-    case isEnumeration = 'isEnumeration';
-    case isEntity = 'isEntity';
-
-    public static function fromPhpType(string $type): self 
+    case noFilter;
+    case isString;
+    case isMinLimitString;
+    case isMaxLimitString;
+    case isLimitString;
+    case isAlphabeticString;
+    case isMinLimitAlphabeticString;
+    case isMaxLimitAlphabeticString;
+    case isLimitAlphabeticString;
+    case isAlphanumericString;
+    case isMinLimitAlphanumericString;
+    case isMaxLimitAlphanumericString;
+    case isLimitAlphanumericString;
+    case isStrictAlphanumericString;
+    case isMinLimitStrictAlphanumericString;
+    case isMaxLimitStrictAlphanumericString;
+    case isLimitStrictAlphanumericString;
+    case isSecurePassword;
+    case isEmail;
+    case isNumeric;
+    case isInteger;
+    case isFloat;
+    case isBoolean;
+    case isArray;
+    case isDate;
+    case isDatetime;
+    case isTime;
+    case isUploadedFile;
+    case isEntity;
+    case isEnumeration;
+    case customFilter;
+	
+    public function applyFilter(mixed $value, array $parameters, Filter $filter = new Filter()): bool
     {
-        if (class_exists($type) && is_subclass_of($type, BaseEntity::class)) {
-            return self::isEntity;
-        }
-
-        return match($type) {
-            'int' => self::isInteger,
-            'float' => self::isFloat,
-            'string' => self::isString,
-            'bool' => self::isBoolean,
-            'DateTime' => self::isDatetime,
-            default => self::isString
-        };
+        return $filter->{$this->name}($value, ...$parameters);
     }
-
+	
 }

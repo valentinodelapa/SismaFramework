@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright (c) 2020-present Valentino de Lapa.
@@ -22,6 +28,12 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ * 
+ * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM\ADAPTERS\ADAPTERMYSQL:
+ * - Modifica del namespace per l'integrazione nel SismaFramework.
+ * - Implementazione della forte tipizzazione per proprietà e parametri.
+ * - Utilizzo degli enum (PHP 8.1+) per le parole chiave e gli operatori SQL nella costruzione delle query.
+ * - Potenziale aggiunta di metodi specifici per funzionalità MySQL non presenti nell'adapter originale o necessarie al SismaFramework.
  */
 
 namespace SismaFramework\Orm\Adapters;
@@ -47,6 +59,7 @@ class AdapterMysql extends BaseAdapter
 
     protected string $backtick = "`";
 
+    #[\Override]
     public function connect(array $options = []): void
     {
         if (self::$connection === null) {
@@ -70,11 +83,13 @@ class AdapterMysql extends BaseAdapter
         }
     }
 
+    #[\Override]
     protected function setAdapterType(): AdapterType
     {
         return AdapterType::mysql;
     }
 
+    #[\Override]
     public function close(): void
     {
         if (self::$connection) {
@@ -164,6 +179,7 @@ class AdapterMysql extends BaseAdapter
         $bindTypes = $temporanyTypes;
     }
 
+    #[\Override]
     protected function selectToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): ?ResultSetMysql
     {
         if (!self::$connection) {
@@ -182,6 +198,7 @@ class AdapterMysql extends BaseAdapter
         return new ResultSetMysql($statement);
     }
 
+    #[\Override]
     protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool
     {
         if (!self::$connection) {
@@ -204,6 +221,7 @@ class AdapterMysql extends BaseAdapter
         }
     }
 
+    #[\Override]
     public function escapeIdentifier(string $name): string
     {
         if ($name == '*' || preg_match('#^([0-9]+)$#', $name) || preg_match('#^([0-9]+)\.([0-9]+)$#', $name)) {
@@ -217,6 +235,7 @@ class AdapterMysql extends BaseAdapter
         return $parsedName;
     }
 
+    #[\Override]
     public function escapeValue(mixed $value, ?ComparisonOperator $operator = null): string
     {
         $value = parent::escapeValue($value, $operator);
@@ -230,6 +249,7 @@ class AdapterMysql extends BaseAdapter
         return $value;
     }
 
+    #[\Override]
     public function lastInsertId(): int
     {
         if (!self::$connection) {
@@ -238,6 +258,7 @@ class AdapterMysql extends BaseAdapter
         return self::$connection->lastInsertId();
     }
 
+    #[\Override]
     public function beginTransaction(): bool
     {
         if (!self::$connection) {
@@ -246,6 +267,7 @@ class AdapterMysql extends BaseAdapter
         return self::$connection->beginTransaction();
     }
 
+    #[\Override]
     public function commitTransaction(): bool
     {
         if (!self::$connection) {
@@ -254,6 +276,7 @@ class AdapterMysql extends BaseAdapter
         return self::$connection->commit();
     }
 
+    #[\Override]
     public function rollbackTransaction(): bool
     {
         if (!self::$connection) {
@@ -262,6 +285,7 @@ class AdapterMysql extends BaseAdapter
         return self::$connection->rollBack();
     }
 
+    #[\Override]
     public function getLastErrorMsg(): string
     {
         if (!self::$connection) {
@@ -270,6 +294,7 @@ class AdapterMysql extends BaseAdapter
         return implode('; ', self::$connection->errorInfo());
     }
 
+    #[\Override]
     public function getLastErrorCode(): string
     {
         if (!self::$connection) {
@@ -278,11 +303,13 @@ class AdapterMysql extends BaseAdapter
         return self::$connection->errorCode();
     }
 
+    #[\Override]
     public function opFulltextIndex(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null): string
     {
         return $this->fulltextConditionSintax($columns, $value) . ' as ' . ($columnAlias ?? '_relevance');
     }
 
+    #[\Override]
     public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): string
     {
         foreach ($columns as &$column) {
@@ -293,6 +320,7 @@ class AdapterMysql extends BaseAdapter
         return $condition;
     }
 
+    #[\Override]
     public function opDecryptFunction(string $column, string $initializationVectorColumn): string
     {
         return 'AES_DECRYPT' . $this->openBlock() . $this->opBase64DecodeFunction($column) . ', ' . Placeholder::placeholder->getAdapterVersion($this->adapterType) . ', ' . $this->opConvertBlobToHex($initializationVectorColumn) . $this->closeBlock();

@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright (c) 2020-present Valentino de Lapa.
@@ -22,6 +28,15 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ * 
+ * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM:
+ * - Modifica del namespace per l'integrazione nel SismaFramework.
+ * - Introduzione della gestione della forte tipizzazione per proprietà, parametri e valori.
+ * - Sostituzione delle costanti di classe con enum (PHP 8.1+) per rappresentare parole chiave e operatori SQL.
+ * - Aggiunta di metodi e proprietà per supportare clausole SQL aggiuntive o specifiche del framework.
+ * - Potenziale rimozione o modifica di metodi non ritenuti necessari nel contesto del SismaFramework.
+ * - Aggiornamento della logica di costruzione delle query per riflettere le esigenze del DataMapper implementato.
+ * - Modifica alla gestione della clausola order by.
  */
 
 namespace SismaFramework\Orm\HelperClasses;
@@ -43,12 +58,15 @@ class Query
     protected string $table = '';
     protected bool $distinct = false;
     protected array $columns = [];
+    protected array $values = [];
     protected array $where = [];
     protected int $offset = 0;
     protected int $limit = 0;
     protected array $group = [];
     protected array $having = [];
     protected array $order = [];
+    protected string $variable;
+    protected string $value;
     protected bool $closed = false;
     protected string $command = '';
     static protected ?Query $instance = null;
@@ -62,7 +80,6 @@ class Query
         } else {
             $this->adapter = &$adapter;
         }
-        $this->setColumn();
     }
 
     public function &getAdapter(): BaseAdapter
@@ -105,6 +122,7 @@ class Query
     public function &setFulltextIndexColumn(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null, bool $append = false): self
     {
         if ($append) {
+            $this->initializeColumn();
             $this->columns[] = $this->adapter->opFulltextIndex($columns, $value, $columnAlias);
         } else {
             $this->columns = [$this->adapter->opFulltextIndex($columns, $value, $columnAlias)];
@@ -112,14 +130,35 @@ class Query
         return $this;
     }
 
+    private function initializeColumn()
+    {
+        if (count($this->columns) === 0) {
+            $this->columns = [$this->adapter->allColumns()];
+        }
+    }
+
     public function &setSubqueryColumn(Query $subquery, ?string $columnAlias = null, bool $append = false): self
     {
         if ($append) {
+            $this->initializeColumn();
             $this->columns[] = $this->adapter->opSubquery($subquery, $columnAlias);
         } else {
             $this->columns = [$this->adapter->opSubquery($subquery, $columnAlias)];
         }
         return $this;
+    }
+
+    public function &appendColumnValue(string $column, Placeholder|string $value = Placeholder::placeholder, bool $foreignKey = false): self
+    {
+        $this->columns[] = $this->adapter->escapeColumn($column, $foreignKey);
+        $this->values[] = $this->adapter->escapeValue($value);
+        return $this;
+    }
+
+    public function hasColumn(string $column, bool $foreignKey = false): bool
+    {
+        $parsedColumn = $this->adapter->escapeColumn($column, $foreignKey);
+        return in_array($parsedColumn, $this->columns);
     }
 
     public function &setTable(string $table, ?string $tableAlias = null): self
@@ -154,7 +193,17 @@ class Query
     {
         $parsedColumn = $this->adapter->escapeColumn($column);
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
-        $this->order[$parsedColumn] = $parsedIndexing;
+        $this->order[] = $parsedColumn . ' ' . $parsedIndexing;
+        return $this;
+    }
+
+    public function &appendOrderByCondition(string $column, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder, $Indexing = null, bool $foreignKey = false): self
+    {
+        $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
+        $escapedValue = $this->adapter->escapeValue($value, $operator);
+        $parsedCondiotion = $this->adapter->openBlock() . $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue . $this->adapter->closeBlock();
+        $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
+        $this->order[] = $parsedCondiotion . ' ' . $parsedIndexing;
         return $this;
     }
 
@@ -162,7 +211,7 @@ class Query
     {
         $parsedQuery = $this->adapter->openBlock() . $query->getCommandToExecute() . $this->adapter->closeBlock();
         $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
-        $this->order[$parsedQuery] = $parsedIndexing;
+        $this->order[] = $parsedQuery . ' ' . $parsedIndexing;
         return $this;
     }
 
@@ -208,7 +257,7 @@ class Query
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
         if ($this->currentCondition == Condition::where) {
-            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn). ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
+            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
         }
         if ($this->currentCondition == Condition::having) {
             $this->having[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
@@ -291,7 +340,15 @@ class Query
 
     public function close(): void
     {
+        $this->initializeColumn();
         $this->closed = true;
+    }
+
+    public function setVariable(string $variable, Placeholder|string $value = Placeholder::placeholder): self
+    {
+        $this->variable = $this->adapter->escapeColumn($variable);
+        $this->value = $this->adapter->escapeValue($value);
+        return $this;
     }
 
     public function &setCommand(string $cmd): self
@@ -301,31 +358,30 @@ class Query
         return $this;
     }
 
-    public function getCommandToExecute(Statement $cmdType = Statement::select, array $extra = []): ?string
+    public function getCommandToExecute(Statement $cmdType = Statement::select): ?string
     {
-        if (!$this->closed) {
+        if ($this->closed) {
+            switch ($cmdType) {
+                case Statement::insert:
+                    $this->command = $this->adapter->parseInsert($this->table, $this->columns, $this->values);
+                    break;
+                case Statement::update:
+                    $this->command = $this->adapter->parseUpdate($this->table, $this->columns, $this->values, $this->where);
+                    break;
+                case Statement::delete:
+                    $this->command = $this->adapter->parseDelete($this->table, $this->where);
+                    break;
+                case Statement::set:
+                    $this->command = $this->adapter->parseSet($this->variable, $this->value);
+                    break;
+                case Statement::select:
+                default:
+                    $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
+                    break;
+            }
+            return $this->command;
+        } else {
             return null;
         }
-        switch ($cmdType) {
-            case Statement::insert:
-                $this->command = $this->adapter->parseInsert($this->table, $extra['columns'], $extra['values']);
-                break;
-            case Statement::update:
-                $this->command = $this->adapter->parseUpdate($this->table, $extra['columns'], $extra['values'], $this->where);
-                break;
-            case Statement::delete:
-                $this->command = $this->adapter->parseDelete($this->table, $this->where);
-                break;
-            case Statement::set:
-                $this->command = $this->adapter->parseSet($extra['variable'], $extra['value']);
-                break;
-            case Statement::select:
-            default:
-                $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
-                break;
-        }
-        return $this->command;
     }
 }
-
-?>

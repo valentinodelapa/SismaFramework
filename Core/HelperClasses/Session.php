@@ -36,11 +36,12 @@ use SismaFramework\Core\HttpClasses\Request;
  */
 class Session
 {
+
     private \stdClass $sessionProperties;
 
     public function __construct()
     {
-        if (session_status() == PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE) {
             self::start();
         }
     }
@@ -88,7 +89,7 @@ class Session
             $currentPosition[$actualKey] = $value;
         }
     }
-    
+
     public static function appendItem(int|string $key, mixed $value, bool $serialize = false): void
     {
         preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
@@ -97,7 +98,7 @@ class Session
         } elseif (count($matches[1]) > 0) {
             preg_match("/^[^\\[]*/", $key, $match);
             self::appendItemRecursive($_SESSION[$match[0]], $matches[1], $value);
-        } elseif((isset($_SESSION[$key]) && is_array($_SESSION[$key]) && (in_array($value, $_SESSION[$key]) === false)) || (isset($_SESSION[$key]) === false)) {
+        } elseif ((isset($_SESSION[$key]) && is_array($_SESSION[$key]) && (in_array($value, $_SESSION[$key]) === false)) || (isset($_SESSION[$key]) === false)) {
             $_SESSION[$key][] = $value;
         }
     }
@@ -107,7 +108,7 @@ class Session
         $actualKey = array_shift($keys);
         if (count($keys) > 0) {
             self::setItemRecursive($currentPosition[$actualKey], $keys, $value);
-        } elseif(( isset($currentPosition[$actualKey]) && is_array($currentPosition[$actualKey]) && (in_array($value, $currentPosition[$actualKey]) === false)) || (isset($currentPosition[$actualKey]) === false)) {
+        } elseif ((isset($currentPosition[$actualKey]) && is_array($currentPosition[$actualKey]) && (in_array($value, $currentPosition[$actualKey]) === false)) || (isset($currentPosition[$actualKey]) === false)) {
             $currentPosition[$actualKey][] = $value;
         }
     }
@@ -200,14 +201,11 @@ class Session
         $value = hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']);
         return (self::getItem('token') === $value);
     }
-    
-    public function __destruct()
-    {
-        self::end();
-    }
 
     public static function end(): void
     {
-        session_destroy();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_destroy();
+        }
     }
 }

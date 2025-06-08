@@ -106,11 +106,6 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/config.html#constant_DEFAULT_CONTROLLER"
         },                {
-            "fqsen": "\\Config\\DEFAULT_LOCALE_TYPE",
-            "name": "DEFAULT_LOCALE_TYPE",
-            "summary": "",
-            "url": "namespaces/config.html#constant_DEFAULT_LOCALE_TYPE"
-        },                {
             "fqsen": "\\Config\\ENTITIES",
             "name": "ENTITIES",
             "summary": "",
@@ -961,6 +956,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AapplyFilter\u0028\u0029",
+            "name": "applyFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#method_applyFilter"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AnoFilter",
             "name": "noFilter",
             "summary": "",
@@ -971,20 +971,80 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isString"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMinLimitString",
+            "name": "isMinLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMinLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMaxLimitString",
+            "name": "isMaxLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMaxLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisLimitString",
+            "name": "isLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isLimitString"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisAlphabeticString",
             "name": "isAlphabeticString",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMinLimitAlphabeticString",
+            "name": "isMinLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMinLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMaxLimitAlphabeticString",
+            "name": "isMaxLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMaxLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisLimitAlphabeticString",
+            "name": "isLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisAlphanumericString",
+            "name": "isAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMinLimitAlphanumericString",
+            "name": "isMinLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMinLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMaxLimitAlphanumericString",
+            "name": "isMaxLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMaxLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisLimitAlphanumericString",
+            "name": "isLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isLimitAlphanumericString"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisStrictAlphanumericString",
             "name": "isStrictAlphanumericString",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isStrictAlphanumericString"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisAlphanumericString",
-            "name": "isAlphanumericString",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMinLimitStrictAlphanumericString",
+            "name": "isMinLimitStrictAlphanumericString",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isAlphanumericString"
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMinLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisMaxLimitStrictAlphanumericString",
+            "name": "isMaxLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isMaxLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisLimitStrictAlphanumericString",
+            "name": "isLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isLimitStrictAlphanumericString"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisSecurePassword",
             "name": "isSecurePassword",
@@ -1041,15 +1101,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isUploadedFile"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisEntity",
+            "name": "isEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isEntity"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisEnumeration",
             "name": "isEnumeration",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isEnumeration"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AisEntity",
-            "name": "isEntity",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\FilterType\u003A\u003AcustomFilter",
+            "name": "customFilter",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_isEntity"
+            "url": "classes/SismaFramework-Core-Enumerations-FilterType.html#enumcase_customFilter"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language",
             "name": "Language",
@@ -1066,25 +1131,210 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#method_getISO6391Label"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aitalian",
-            "name": "italian",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aarabic",
+            "name": "arabic",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_italian"
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_arabic"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AamericanEnglish",
-            "name": "americanEnglish",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Abengali",
+            "name": "bengali",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_americanEnglish"
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_bengali"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Abulgarian",
+            "name": "bulgarian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_bulgarian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Achinese",
+            "name": "chinese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_chinese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Acroatian",
+            "name": "croatian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_croatian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aczech",
+            "name": "czech",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_czech"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Adanish",
+            "name": "danish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_danish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Agerman",
+            "name": "german",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_german"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Agreek",
+            "name": "greek",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_greek"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AusEnglish",
+            "name": "usEnglish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_usEnglish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aenglish",
+            "name": "english",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_english"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aspanish",
             "name": "spanish",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_spanish"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Agerman",
-            "name": "german",
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aestonian",
+            "name": "estonian",
             "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_german"
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_estonian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Apersian",
+            "name": "persian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_persian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Afinnish",
+            "name": "finnish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_finnish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Afrench",
+            "name": "french",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_french"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ahebrew",
+            "name": "hebrew",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_hebrew"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ahindi",
+            "name": "hindi",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_hindi"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ahungarian",
+            "name": "hungarian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_hungarian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aindonesian",
+            "name": "indonesian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_indonesian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aitalian",
+            "name": "italian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_italian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ajapanese",
+            "name": "japanese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_japanese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Akazakh",
+            "name": "kazakh",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_kazakh"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Akorean",
+            "name": "korean",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_korean"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Alatvian",
+            "name": "latvian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_latvian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Alithuanian",
+            "name": "lithuanian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_lithuanian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Adutch",
+            "name": "dutch",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_dutch"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Anorwegian",
+            "name": "norwegian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_norwegian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Apolish",
+            "name": "polish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_polish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aportuguese",
+            "name": "portuguese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_portuguese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AbrazilianPortuguese",
+            "name": "brazilianPortuguese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_brazilianPortuguese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aromanian",
+            "name": "romanian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_romanian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Arussian",
+            "name": "russian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_russian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aserbian",
+            "name": "serbian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_serbian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aslovak",
+            "name": "slovak",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_slovak"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aslovenian",
+            "name": "slovenian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_slovenian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aswedish",
+            "name": "swedish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_swedish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Athai",
+            "name": "thai",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_thai"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aturkish",
+            "name": "turkish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_turkish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aukrainian",
+            "name": "ukrainian",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_ukrainian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Avietnamese",
+            "name": "vietnamese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_vietnamese"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\RequestType",
             "name": "RequestType",
@@ -1280,6 +1530,11 @@ Search.appendIndex(
             "name": "svg",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Resource.html#enumcase_svg"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Resource\u003A\u003Atpl",
+            "name": "tpl",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Resource.html#enumcase_tpl"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Resource\u003A\u003Attf",
             "name": "ttf",
@@ -2291,10 +2546,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setLogVerboseActive"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AsetDevelopementEnvironment\u0028\u0029",
-            "name": "setDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AsetDevelopmentEnvironment\u0028\u0029",
+            "name": "setDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setDevelopementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003AhandleNonThrowableError\u0028\u0029",
             "name": "handleNonThrowableError",
@@ -2336,10 +2591,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_logVerboseActive"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003A\u0024developementEnvironment",
-            "name": "developementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\ErrorHandler\u003A\u003A\u0024developmentEnvironment",
+            "name": "developmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_developementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_developmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter",
             "name": "Filter",
@@ -2511,6 +2766,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEnumeration"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003A__callStatic\u0028\u0029",
+            "name": "__callStatic",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method___callStatic"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager",
             "name": "FixturesManager",
             "summary": "",
@@ -2566,10 +2831,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_dataMapper"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024developementEnvironment",
-            "name": "developementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024developmentEnvironment",
+            "name": "developmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_developementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_developmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024fixtures",
             "name": "fixtures",
@@ -2656,11 +2921,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#property_customLanguage"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003A\u0024defaultLocaleType",
-            "name": "defaultLocaleType",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Localizator.html#property_defaultLocaleType"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Localizator\u003A\u003A\u0024localesPath",
             "name": "localesPath",
             "summary": "",
@@ -2685,6 +2945,21 @@ Search.appendIndex(
             "name": "folderIsLocked",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Locker.html#method_folderIsLocked"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Locker\u003A\u003AlockFile\u0028\u0029",
+            "name": "lockFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Locker.html#method_lockFile"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Locker\u003A\u003AunlockFile\u0028\u0029",
+            "name": "unlockFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Locker.html#method_unlockFile"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Locker\u003A\u003AfileIsLocked\u0028\u0029",
+            "name": "fileIsLocked",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Locker.html#method_fileIsLocked"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Logger",
             "name": "Logger",
@@ -3046,20 +3321,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_generateJson"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AsetDevelopementEnvironment\u0028\u0029",
-            "name": "setDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AsetDevelopmentEnvironment\u0028\u0029",
+            "name": "setDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_setDevelopementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_setDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003AsetStructural\u0028\u0029",
             "name": "setStructural",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Render.html#method_setStructural"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024developementEnvironment",
-            "name": "developementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024developmentEnvironment",
+            "name": "developmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_developementEnvironment"
+            "url": "classes/SismaFramework-Core-HelperClasses-Render.html#property_developmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Render\u003A\u003A\u0024isStructural",
             "name": "isStructural",
@@ -3361,25 +3636,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Templater.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AsetStructural\u0028\u0029",
-            "name": "setStructural",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_setStructural"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgenerateTemplate\u0028\u0029",
             "name": "generateTemplate",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateTemplate"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgetTemplatePath\u0028\u0029",
-            "name": "getTemplatePath",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AparseTemplate\u0028\u0029",
+            "name": "parseTemplate",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_getTemplatePath"
+            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_parseTemplate"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003A\u0024isStructural",
-            "name": "isStructural",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003AgenerateStructuralTemplate\u0028\u0029",
+            "name": "generateStructuralTemplate",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#property_isStructural"
+            "url": "classes/SismaFramework-Core-HelperClasses-Templater.html#method_generateStructuralTemplate"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Templater\u003A\u003A\u0024structuralTemplatesPath",
             "name": "structuralTemplatesPath",
@@ -3406,10 +3676,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HttpClasses-Comunication.html#property_httpsIsForced"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HttpClasses\\Comunication\u003A\u003A\u0024developementEnvironment",
-            "name": "developementEnvironment",
+            "fqsen": "\\SismaFramework\\Core\\HttpClasses\\Comunication\u003A\u003A\u0024developmentEnvironment",
+            "name": "developmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HttpClasses-Comunication.html#property_developementEnvironment"
+            "url": "classes/SismaFramework-Core-HttpClasses-Comunication.html#property_developmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HttpClasses\\Request",
             "name": "Request",
@@ -3996,6 +4266,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_forceForeignKeyPropertySet"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AsetPrimaryKeyAfterSave\u0028\u0029",
+            "name": "setPrimaryKeyAfterSave",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setPrimaryKeyAfterSave"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A__set\u0028\u0029",
             "name": "__set",
             "summary": "",
@@ -4091,6 +4366,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getForeignKeyIndexes"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AtoArray\u0028\u0029",
+            "name": "toArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_toArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AparsePropterty\u0028\u0029",
+            "name": "parsePropterty",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_parsePropterty"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024modified",
             "name": "modified",
             "summary": "",
@@ -4106,10 +4391,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024instance",
-            "name": "instance",
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024processedEntitesCollection",
+            "name": "processedEntitesCollection",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_instance"
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_processedEntitesCollection"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024primaryKey",
             "name": "primaryKey",
@@ -4281,10 +4566,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_valid"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AtransformResult\u0028\u0029",
-            "name": "transformResult",
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003Ahydrate\u0028\u0029",
+            "name": "hydrate",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_transformResult"
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrate"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AconvertToStandardEntity\u0028\u0029",
             "name": "convertToStandardEntity",
@@ -4976,6 +5261,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_countEntityCollection"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\ReferencedEntity\u003A\u003AtoArray\u0028\u0029",
+            "name": "toArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_toArray"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\ReferencedEntity\u003A\u003AFOREIGN_KEY_TYPE",
             "name": "FOREIGN_KEY_TYPE",
             "summary": "",
@@ -5131,6 +5421,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Cache.html#method_getEntityById"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Cache\u003A\u003AclearEntityCache\u0028\u0029",
+            "name": "clearEntityCache",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Cache.html#method_clearEntityCache"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Cache\u003A\u003AgetForeignKeyData\u0028\u0029",
             "name": "getForeignKeyData",
             "summary": "",
@@ -5175,6 +5470,11 @@ Search.appendIndex(
             "name": "clearForeighKeyDataCache",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Cache.html#method_clearForeighKeyDataCache"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Cache\u003A\u003A\u0024locker",
+            "name": "locker",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Cache.html#property_locker"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Cache\u003A\u003A\u0024entityCache",
             "name": "entityCache",
@@ -5331,15 +5631,45 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_adapter"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024processedEntitiesCollection",
+            "name": "processedEntitiesCollection",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_processedEntitiesCollection"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024isActiveTransaction",
             "name": "isActiveTransaction",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_isActiveTransaction"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024processedEntity",
-            "name": "processedEntity",
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\ProcessedEntitiesCollection",
+            "name": "ProcessedEntitiesCollection",
+            "summary": "Description\u0020of\u0020ProcessedEntityCollection",
+            "url": "classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\ProcessedEntitiesCollection\u003A\u003AgetInstance\u0028\u0029",
+            "name": "getInstance",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_processedEntity"
+            "url": "classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html#method_getInstance"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\ProcessedEntitiesCollection\u003A\u003Ahas\u0028\u0029",
+            "name": "has",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html#method_has"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\ProcessedEntitiesCollection\u003A\u003Aremove\u0028\u0029",
+            "name": "remove",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html#method_remove"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\ProcessedEntitiesCollection\u003A\u003Aclear\u0028\u0029",
+            "name": "clear",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html#method_clear"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\ProcessedEntitiesCollection\u003A\u003A\u0024instance",
+            "name": "instance",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html#property_instance"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query",
             "name": "Query",
@@ -6136,6 +6466,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_authenticableModelInterface"
         },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003A\u0024filter",
+            "name": "filter",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_filter"
+        },                {
             "fqsen": "\\SismaFramework\\Security\\Interfaces\\Entities\\AuthenticableInterface",
             "name": "AuthenticableInterface",
             "summary": "",
@@ -6246,10 +6581,10 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020BaseFixtureTest",
             "url": "classes/SismaFramework-Tests-Core-BaseClasses-BaseFixtureTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\BaseClasses\\BaseFixtureTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\BaseClasses\\BaseFixtureTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-BaseClasses-BaseFixtureTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Core-BaseClasses-BaseFixtureTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\BaseClasses\\BaseFixtureTest\u003A\u003AtestBaseSampleFixture\u0028\u0029",
             "name": "testBaseSampleFixture",
@@ -6271,10 +6606,10 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020BaseFormTest",
             "url": "classes/SismaFramework-Tests-Core-BaseClasses-BaseFormTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\BaseClasses\\BaseFormTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\BaseClasses\\BaseFormTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-BaseClasses-BaseFormTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Core-BaseClasses-BaseFormTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\BaseClasses\\BaseFormTest\u003A\u003AtestAddEntityFromFormWithException\u0028\u0029",
             "name": "testAddEntityFromFormWithException",
@@ -6426,15 +6761,185 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-CustomTypes-FormFilterErrorTest.html#method_testGetErrorsToArray"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest",
+            "name": "FilterTypeTest",
+            "summary": "Description\u0020of\u0020FilterTypeTest",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_setUp"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestNoFilter\u0028\u0029",
+            "name": "testNoFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testNoFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsString\u0028\u0029",
+            "name": "testIsString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMinLimitString\u0028\u0029",
+            "name": "testIsMinLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMinLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMaxLimitString\u0028\u0029",
+            "name": "testIsMaxLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMaxLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsLimitString\u0028\u0029",
+            "name": "testIsLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsAlphabeticString\u0028\u0029",
+            "name": "testIsAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMinLimitAlphabeticString\u0028\u0029",
+            "name": "testIsMinLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMinLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMaxLimitAlphabeticString\u0028\u0029",
+            "name": "testIsMaxLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMaxLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsLimitAlphabeticString\u0028\u0029",
+            "name": "testIsLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsAlphanumericString\u0028\u0029",
+            "name": "testIsAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMinLimitAlphanumericString\u0028\u0029",
+            "name": "testIsMinLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMinLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMaxLimitAlphanumericString\u0028\u0029",
+            "name": "testIsMaxLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMaxLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsLimitAlphanumericString\u0028\u0029",
+            "name": "testIsLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsStrictAlphanumericString\u0028\u0029",
+            "name": "testIsStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMinLimitStrictAlphanumericString\u0028\u0029",
+            "name": "testIsMinLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMinLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsMaxLimitStrictAlphanumericString\u0028\u0029",
+            "name": "testIsMaxLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsMaxLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsLimitStrictAlphanumericString\u0028\u0029",
+            "name": "testIsLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsSecurePassword\u0028\u0029",
+            "name": "testIsSecurePassword",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsSecurePassword"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsEmail\u0028\u0029",
+            "name": "testIsEmail",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsEmail"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsNumeric\u0028\u0029",
+            "name": "testIsNumeric",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsNumeric"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsInteger\u0028\u0029",
+            "name": "testIsInteger",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsInteger"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsFloat\u0028\u0029",
+            "name": "testIsFloat",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsFloat"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsBoolean\u0028\u0029",
+            "name": "testIsBoolean",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsBoolean"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsArray\u0028\u0029",
+            "name": "testIsArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsDate\u0028\u0029",
+            "name": "testIsDate",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsDate"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsDatetime\u0028\u0029",
+            "name": "testIsDatetime",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsDatetime"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsTime\u0028\u0029",
+            "name": "testIsTime",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsTime"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsUploadedFile\u0028\u0029",
+            "name": "testIsUploadedFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsUploadedFile"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsEntity\u0028\u0029",
+            "name": "testIsEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestIsEnumeration\u0028\u0029",
+            "name": "testIsEnumeration",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testIsEnumeration"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003AtestCustomFilter\u0028\u0029",
+            "name": "testCustomFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#method_testCustomFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\FilterTypeTest\u003A\u003A\u0024filterMock",
+            "name": "filterMock",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-FilterTypeTest.html#property_filterMock"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DebuggerTest",
             "name": "DebuggerTest",
             "summary": "Description\u0020of\u0020DebuggerTest",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-DebuggerTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DebuggerTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DebuggerTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DebuggerTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DebuggerTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DebuggerTest\u003A\u003AtestStartExecutionTimeCalculation\u0028\u0029",
             "name": "testStartExecutionTimeCalculation",
@@ -6491,10 +6996,10 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020DispatcherTest",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestRunWithReloadQueryString\u0028\u0029",
             "name": "testRunWithReloadQueryString",
@@ -6661,6 +7166,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FilterTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html#method_setUp"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FilterTest\u003A\u003AtestNoFilter\u0028\u0029",
             "name": "testNoFilter",
             "summary": "",
@@ -6821,6 +7331,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html#method_testIsEnumeration"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FilterTest\u003A\u003AtestCustomFilter\u0028\u0029",
+            "name": "testCustomFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html#method_testCustomFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FilterTest\u003A\u003A\u0024filter",
+            "name": "filter",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-FilterTest.html#property_filter"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\FixturesManagerTest",
             "name": "FixturesManagerTest",
             "summary": "Description\u0020of\u0020FixturesManagerTest",
@@ -6841,10 +7361,15 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020LockerTest",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-LockerTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\LockerTest\u003A\u003AtestLockerClass\u0028\u0029",
-            "name": "testLockerClass",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\LockerTest\u003A\u003AtestLockFolder\u0028\u0029",
+            "name": "testLockFolder",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-LockerTest.html#method_testLockerClass"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-LockerTest.html#method_testLockFolder"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\LockerTest\u003A\u003AtestLockFile\u0028\u0029",
+            "name": "testLockFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-LockerTest.html#method_testLockFile"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\LoggerTest",
             "name": "LoggerTest",
@@ -6986,10 +7511,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ParserTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ParserTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ParserTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ParserTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ParserTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ParserTest\u003A\u003AtestParseValueWithEmpty\u0028\u0029",
             "name": "testParseValueWithEmpty",
@@ -7086,35 +7611,35 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_setUp"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewInDevelopementEnvironment\u0028\u0029",
-            "name": "testGenerateViewInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewInDevelopmentEnvironment\u0028\u0029",
+            "name": "testGenerateViewInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewNotInDevelopementEnvironment\u0028\u0029",
-            "name": "testGenerateViewNotInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewNotInDevelopmentEnvironment\u0028\u0029",
+            "name": "testGenerateViewNotInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewNotInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewNotInDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateViewStructural\u0028\u0029",
             "name": "testGenerateViewStructural",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateViewStructural"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateDataInDevelopementEnvironment\u0028\u0029",
-            "name": "testGenerateDataInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateDataInDevelopmentEnvironment\u0028\u0029",
+            "name": "testGenerateDataInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateDataInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateDataInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateDataNotInDevelopementEnvironment\u0028\u0029",
-            "name": "testGenerateDataNotInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerateDataNotInDevelopmentEnvironment\u0028\u0029",
+            "name": "testGenerateDataNotInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateDataNotInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RenderTest.html#method_testGenerateDataNotInDevelopmentEnvironment"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RenderTest\u003A\u003AtestGenerareJson\u0028\u0029",
             "name": "testGenerareJson",
@@ -7125,6 +7650,11 @@ Search.appendIndex(
             "name": "ResourceMakerTest",
             "summary": "Description\u0020of\u0020ResourceMakerTest",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestIsAcceptedResourceFile\u0028\u0029",
             "name": "testIsAcceptedResourceFile",
@@ -7140,6 +7670,11 @@ Search.appendIndex(
             "name": "testMakeResourceNotDownloadable",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceNotDownloadable"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestMakeResourceWithFileNotAccessible\u0028\u0029",
+            "name": "testMakeResourceWithFileNotAccessible",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithFileNotAccessible"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003AtestMakeResourceWithFolderNotAccessible\u0028\u0029",
             "name": "testMakeResourceWithFolderNotAccessible",
@@ -7165,6 +7700,11 @@ Search.appendIndex(
             "name": "testFileWithStreamContent",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testFileWithStreamContent"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\ResourceMakerTest\u003A\u003A\u0024lockerMock",
+            "name": "lockerMock",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_lockerMock"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RouterTest",
             "name": "RouterTest",
@@ -7221,15 +7761,30 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-SessionTest.html#method_testSessionAppendNestedItem"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Traits\\SelectableEnumerationTest",
+            "name": "SelectableEnumerationTest",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Traits-SelectableEnumerationTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Traits\\SelectableEnumerationTest\u003A\u003AtestGetFriendlyLabel\u0028\u0029",
+            "name": "testGetFriendlyLabel",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Traits-SelectableEnumerationTest.html#method_testGetFriendlyLabel"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Traits\\SelectableEnumerationTest\u003A\u003AtestGetChoiceFromEnumerations\u0028\u0029",
+            "name": "testGetChoiceFromEnumerations",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Traits-SelectableEnumerationTest.html#method_testGetChoiceFromEnumerations"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest",
             "name": "AdapterMysqlTest",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003AtestAllColumns\u0028\u0029",
             "name": "testAllColumns",
@@ -7371,10 +7926,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003AtestUnsetPrimaryKey\u0028\u0029",
             "name": "testUnsetPrimaryKey",
@@ -7431,6 +7986,21 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#method_testEntityWithSismaTimeProperty"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003AtestToArrayGood\u0028\u0029",
+            "name": "testToArrayGood",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#method_testToArrayGood"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003AtestToArrayWithExceptionOne\u0028\u0029",
+            "name": "testToArrayWithExceptionOne",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#method_testToArrayWithExceptionOne"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003AtestToArrayWithExceptionTwo\u0028\u0029",
+            "name": "testToArrayWithExceptionTwo",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseEntityTest.html#method_testToArrayWithExceptionTwo"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseEntityTest\u003A\u003A\u0024dataMapperMock",
             "name": "dataMapperMock",
             "summary": "",
@@ -7441,10 +8011,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaCollectionTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\CustomTypes\\SismaCollectionTest\u003A\u003AtestRestrictiveType\u0028\u0029",
             "name": "testRestrictiveType",
@@ -7546,10 +8116,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003AtestGetCollectionNames\u0028\u0029",
             "name": "testGetCollectionNames",
@@ -7606,6 +8176,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-CacheTest.html"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\CacheTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-CacheTest.html#method_setUp"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\CacheTest\u003A\u003AtestSetCheckGetEntityInCache\u0028\u0029",
             "name": "testSetCheckGetEntityInCache",
             "summary": "",
@@ -7615,6 +8190,11 @@ Search.appendIndex(
             "name": "testCheckExceptionWithBaseEntity",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-CacheTest.html#method_testCheckExceptionWithBaseEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\CacheTest\u003A\u003AcheckUnsetEntity\u0028\u0029",
+            "name": "checkUnsetEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-CacheTest.html#method_checkUnsetEntity"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\CacheTest\u003A\u003AtestGetForeignKeyData\u0028\u0029",
             "name": "testGetForeignKeyData",
@@ -7701,6 +8281,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-DataMapperTest.html#method_testNotDuplicateSavingCollection"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\DataMapperTest\u003A\u003AtestDoubleSaveAfterModification\u0028\u0029",
+            "name": "testDoubleSaveAfterModification",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-DataMapperTest.html#method_testDoubleSaveAfterModification"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\DataMapperTest\u003A\u003AtestSaveModificationOnSubnidificateCollection\u0028\u0029",
             "name": "testSaveModificationOnSubnidificateCollection",
             "summary": "",
@@ -7746,25 +8331,55 @@ Search.appendIndex(
             "summary": "Description\u0020of\u0020ErrorHandlerTest",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleBaseExceptionInDevelopementEnvironment\u0028\u0029",
-            "name": "testHandleBaseExceptionInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleBaseExceptionInDevelopmentEnvironment\u0028\u0029",
+            "name": "testHandleBaseExceptionInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleBaseExceptionInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleBaseExceptionInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleBaseExceptionNotInDevelopementEnvironment\u0028\u0029",
-            "name": "testHandleBaseExceptionNotInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleBaseExceptionNotInDevelopmentEnvironment\u0028\u0029",
+            "name": "testHandleBaseExceptionNotInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleBaseExceptionNotInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleBaseExceptionNotInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleThrowableErrorInDevelopementEnvironment\u0028\u0029",
-            "name": "testHandleThrowableErrorInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleThrowableErrorInDevelopmentEnvironment\u0028\u0029",
+            "name": "testHandleThrowableErrorInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleThrowableErrorInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleThrowableErrorInDevelopmentEnvironment"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleThrowableErrorNotInDevelopementEnvironment\u0028\u0029",
-            "name": "testHandleThrowableErrorNotInDevelopementEnvironment",
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ErrorHandlerTest\u003A\u003AtestHandleThrowableErrorNotInDevelopmentEnvironment\u0028\u0029",
+            "name": "testHandleThrowableErrorNotInDevelopmentEnvironment",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleThrowableErrorNotInDevelopementEnvironment"
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ErrorHandlerTest.html#method_testHandleThrowableErrorNotInDevelopmentEnvironment"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ProcessedEntitiesCollectionTest",
+            "name": "ProcessedEntitiesCollectionTest",
+            "summary": "Description\u0020of\u0020ParsedEntitiesCollectionTest",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ProcessedEntitiesCollectionTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ProcessedEntitiesCollectionTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ProcessedEntitiesCollectionTest.html#method_setUp"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ProcessedEntitiesCollectionTest\u003A\u003AtestHas\u0028\u0029",
+            "name": "testHas",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ProcessedEntitiesCollectionTest.html#method_testHas"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ProcessedEntitiesCollectionTest\u003A\u003AtestRemove\u0028\u0029",
+            "name": "testRemove",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ProcessedEntitiesCollectionTest.html#method_testRemove"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ProcessedEntitiesCollectionTest\u003A\u003AtestClear\u0028\u0029",
+            "name": "testClear",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ProcessedEntitiesCollectionTest.html#method_testClear"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\ProcessedEntitiesCollectionTest\u003A\u003A\u0024dataMapperMock",
+            "name": "dataMapperMock",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-ProcessedEntitiesCollectionTest.html#property_dataMapperMock"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest",
             "name": "QueryTest",
@@ -7901,10 +8516,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Security-BaseClasses-BasePermissionTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Security\\BaseClasses\\BasePermissionTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Security\\BaseClasses\\BasePermissionTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Security-BaseClasses-BasePermissionTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Security-BaseClasses-BasePermissionTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Security\\BaseClasses\\BasePermissionTest\u003A\u003AtestIstanceNotPermitted\u0028\u0029",
             "name": "testIstanceNotPermitted",
@@ -7931,10 +8546,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Security-BaseClasses-BaseVoterTest.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Security\\BaseClasses\\BaseVoterTest\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
+            "fqsen": "\\SismaFramework\\Tests\\Security\\BaseClasses\\BaseVoterTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Security-BaseClasses-BaseVoterTest.html#method___construct"
+            "url": "classes/SismaFramework-Tests-Security-BaseClasses-BaseVoterTest.html#method_setUp"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Security\\BaseClasses\\BaseVoterTest\u003A\u003AtestIstanceNotPermitted\u0028\u0029",
             "name": "testIstanceNotPermitted",
@@ -8176,6 +8791,41 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityOne.html#property_entityWithTwoCollection"
         },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityThree",
+            "name": "DependentEntityThree",
+            "summary": "Description\u0020of\u0020DependentEntityThree",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityThree.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityThree\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityThree.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityThree\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityThree.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityThree\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityThree.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityThree\u003A\u003A\u0024string",
+            "name": "string",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityThree.html#property_string"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityThree\u003A\u003A\u0024entityWithOneCollectionOne",
+            "name": "entityWithOneCollectionOne",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityThree.html#property_entityWithOneCollectionOne"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityThree\u003A\u003A\u0024entityWithOneCollectionTwo",
+            "name": "entityWithOneCollectionTwo",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityThree.html#property_entityWithOneCollectionTwo"
+        },                {
             "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\DependentEntityTwo",
             "name": "DependentEntityTwo",
             "summary": "",
@@ -8200,6 +8850,56 @@ Search.appendIndex(
             "name": "entityWithTwoCollection",
             "summary": "",
             "url": "classes/SismaFramework-TestsApplication-Entities-DependentEntityTwo.html#property_entityWithTwoCollection"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionOne",
+            "name": "EntityWithOneCollectionOne",
+            "summary": "Description\u0020of\u0020EntityWithOneCollectionOne",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionOne.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionOne\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionOne.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionOne\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionOne.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionOne\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionOne.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionOne\u003A\u003A\u0024string",
+            "name": "string",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionOne.html#property_string"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionTwo",
+            "name": "EntityWithOneCollectionTwo",
+            "summary": "Description\u0020of\u0020EntityWithOneCollectionTwo",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionTwo.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionTwo\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionTwo.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionTwo\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionTwo.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionTwo\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionTwo.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithOneCollectionTwo\u003A\u003A\u0024string",
+            "name": "string",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-EntityWithOneCollectionTwo.html#property_string"
         },                {
             "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\EntityWithTwoCollection",
             "name": "EntityWithTwoCollection",
@@ -8390,6 +9090,31 @@ Search.appendIndex(
             "name": "text",
             "summary": "",
             "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#property_text"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SimpleEntity",
+            "name": "SimpleEntity",
+            "summary": "Description\u0020of\u0020SimpleEntity",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SimpleEntity.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SimpleEntity\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SimpleEntity.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SimpleEntity\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SimpleEntity.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SimpleEntity\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SimpleEntity.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SimpleEntity\u003A\u003A\u0024string",
+            "name": "string",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SimpleEntity.html#property_string"
         },                {
             "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SubdependentEntity",
             "name": "SubdependentEntity",
@@ -9121,11 +9846,6 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-orm-voters.html"
         },                {
-            "fqsen": "\\SismaFramework\\Public",
-            "name": "Public",
-            "summary": "",
-            "url": "namespaces/sismaframework-public.html"
-        },                {
             "fqsen": "\\SismaFramework\\Sample\\Controllers",
             "name": "Controllers",
             "summary": "",
@@ -9221,10 +9941,20 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-tests-core-customtypes.html"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations",
+            "name": "Enumerations",
+            "summary": "",
+            "url": "namespaces/sismaframework-tests-core-enumerations.html"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses",
             "name": "HelperClasses",
             "summary": "",
             "url": "namespaces/sismaframework-tests-core-helperclasses.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Traits",
+            "name": "Traits",
+            "summary": "",
+            "url": "namespaces/sismaframework-tests-core-traits.html"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters",
             "name": "Adapters",

@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\Traits;
 
 use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Core\HelperClasses\Localizator;
 
 /**
  *
@@ -34,7 +35,12 @@ use SismaFramework\Core\Enumerations\Language;
  */
 trait SelectableEnumeration
 {
-    abstract public function getFriendlyLabel(Language $language):string;
+
+    public function getFriendlyLabel(Language $language): string
+    {
+        $localizator = new Localizator($language);
+        return $localizator->getEnumerationLocaleArray($this);
+    }
 
     public static function getChoiceFromEnumerations(Language $language): array
     {
@@ -45,5 +51,4 @@ trait SelectableEnumeration
         }
         return $choice;
     }
-
 }

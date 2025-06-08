@@ -26,22 +26,8 @@
 
 namespace SismaFramework\Tests\Core\BaseClasses;
 
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
-use SismaFramework\TestsApplication\Entities\BaseSample;
-use SismaFramework\TestsApplication\Entities\FakeBaseSample;
-use SismaFramework\TestsApplication\Entities\FakeReferencedSample;
-use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
-use SismaFramework\TestsApplication\Entities\ReferencedSample;
-use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
-use SismaFramework\TestsApplication\Forms\BaseSampleForm;
-use SismaFramework\TestsApplication\Forms\BaseSampleFormWithFakeEntityFromForm;
-use SismaFramework\TestsApplication\Forms\EntityNotInitializedForm;
-use SismaFramework\TestsApplication\Forms\FakeBaseSampleForm;
-use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
-use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
-use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
-use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
@@ -50,6 +36,22 @@ use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
+use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\FakeBaseSample;
+use SismaFramework\TestsApplication\Entities\FakeReferencedSample;
+use SismaFramework\TestsApplication\Entities\OtherReferencedSample;
+use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
+use SismaFramework\TestsApplication\Entities\SimpleEntity;
+use SismaFramework\TestsApplication\Forms\BaseSampleForm;
+use SismaFramework\TestsApplication\Forms\BaseSampleFormWithFakeEntityFromForm;
+use SismaFramework\TestsApplication\Forms\EntityNotInitializedForm;
+use SismaFramework\TestsApplication\Forms\FakeBaseSampleForm;
+use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\IncompleteSimpleEntityFrom;
+use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
 
 /**
  * Description of BaseFormTest
@@ -59,26 +61,52 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
 class BaseFormTest extends TestCase
 {
 
+    private Config $configMock;
     private DataMapper $dataMapperMock;
 
-    public function __construct($name = null, $data = [], $dataName = '')
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', false],
+                    ['entityNamespace', 'TestsApplication\\Entities\\'],
+                    ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
+                    ['foreignKeySuffix', 'Collection'],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 100],
+                    ['logVerboseActive', true],
+                    ['moduleFolders', ['SismaFramework']],
+                    ['ormCache', true],
+                    ['parentPrefixPropertyName', 'parent'],
+                    ['primaryKeyPassAccepted', false],
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['referenceCacheDirectory', $referenceCacheDirectory],
+                    ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
+                    ['sonCollectionPropertyName', 'sonCollection'],
+        ]);
+        Config::setInstance($this->configMock);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
-    
+
     public function testAddEntityFromFormWithException()
     {
         $this->expectException(FormException::class);
-        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm();
+        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->configMock);
         $baseSampleFormWithFakeEntityFromForm->handleRequest(new Request());
     }
 
     public function testFormForBaseEntityNotSubmitted()
     {
-        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
+        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->configMock);
         $requestMock = $this->createMock(Request::class);
         $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
         $baseSampleForm->handleRequest($requestMock);
@@ -442,21 +470,18 @@ class BaseFormTest extends TestCase
         $this->assertEquals('self referenced sample three', $selfReferencedSampleResult->sonCollection[1]->text);
     }
 
-    #[RunInSeparateProcess]
     public function testFormWhithNotInitializedEntity()
     {
         $this->expectException(FormException::class);
         $entityNotInitializedForm = new EntityNotInitializedForm(null, $this->dataMapperMock);
     }
 
-    #[RunInSeparateProcess]
     public function testFormWithNotValidEntity()
     {
         $this->expectException(InvalidArgumentException::class);
         $baseSampleForm = new BaseSampleForm(new ReferencedSample($this->dataMapperMock), $this->dataMapperMock);
     }
 
-    #[RunInSeparateProcess]
     public function testFormUpdateWithNotValidReferencedEntityType()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -467,7 +492,6 @@ class BaseFormTest extends TestCase
         $fakeBaseSampleForm->handleRequest($requestMock);
     }
 
-    #[RunInSeparateProcess]
     public function testFormUpdateWithNotValidReferencedEntityTypeInCollection()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -477,5 +501,24 @@ class BaseFormTest extends TestCase
         $fakeReferencedSampleForm = new FakeReferencedSampleForm($fakeReferencedSample, $this->dataMapperMock);
         $requestMock = $this->createMock(Request::class);
         $fakeReferencedSampleForm->handleRequest($requestMock);
+    }
+
+    public function testNotFilteredSubmittedPropertyValue()
+    {
+        $this->expectException(\Error::class);
+        $this->expectExceptionMessage('Typed property SismaFramework\TestsApplication\Entities\SimpleEntity::$string must not be accessed before initialization');
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->query = $requestMock->request = $requestMock->cookie = $requestMock->files = $requestMock->server = $requestMock->headers = [];
+        $requestMock->request = [
+            'string' => 'sample-string',
+            'submitted' => 'on'
+        ];
+        $incompleteSimpleEntityForm = new IncompleteSimpleEntityFrom();
+        $incompleteSimpleEntityForm->handleRequest($requestMock);
+        $this->assertTrue($incompleteSimpleEntityForm->isSubmitted());
+        $this->assertTrue($incompleteSimpleEntityForm->isValid());
+        $simpleEntity = $incompleteSimpleEntityForm->resolveEntity();
+        $this->assertInstanceOf(SimpleEntity::class, $simpleEntity);
+        $simpleEntity->string;
     }
 }

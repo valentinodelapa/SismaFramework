@@ -27,13 +27,17 @@
 namespace SismaFramework\Tests\Orm\Adapters;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\Adapters\AdapterMysql;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\AdapterException;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
@@ -46,9 +50,33 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 class AdapterMysqlTest extends TestCase
 {
 
-    public function __construct(string $name)
+    private Config $configMock;
+    private DataMapper $dataMapperMock;
+
+    #[\Override]
+    public function setUp(): void
     {
-        parent::__construct($name);
+        $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['defaultAdapterType', AdapterType::mysql],
+                    ['developmentEnvironment', false],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+                    ['ormCache', true],
+        ]);
+        Config::setInstance($this->configMock);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+        $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+        $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configMock])
+                ->getMock();
         $connectionMock = $this->createMock(\PDO::class);
         AdapterMysql::setConnection($connectionMock);
     }
@@ -67,7 +95,7 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('1.1', $adapterMysql->escapeIdentifier("1.1"));
         $this->assertEquals('`Table`.`column_name`', $adapterMysql->escapeIdentifier("T-a#b@l4e.c#o8l(umn_name"));
     }
-    
+
     public function testEscapeTable()
     {
         $adapterMysql = new AdapterMysql();
@@ -192,7 +220,7 @@ class AdapterMysqlTest extends TestCase
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('SELECT * FROM `table_name` WHERE `table_name`.`id` = 1 ', $adapterMysql->parseSelect(false, ['*'], '`table_name`', ['`table_name`.`id` = 1'], [], [], [], 0, 0));
         $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP_BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
-                $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], '`table_name`', ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id`' => 'ASC'], 1, 10));
+                $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], '`table_name`', ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id` ASC'], 1, 10));
     }
 
     public function testParseInsert()
@@ -232,7 +260,7 @@ class AdapterMysqlTest extends TestCase
                             break;
                         default :
                             $this->assertEquals($key, $matcher->numberOfInvocations());
-                        break;
+                            break;
                     }
                     switch ($matcher->numberOfInvocations()) {
                         case 1 :
@@ -345,7 +373,7 @@ class AdapterMysqlTest extends TestCase
                             break;
                         default :
                             $this->assertEquals($key, $matcher->numberOfInvocations());
-                        break;
+                            break;
                     }
                     switch ($matcher->numberOfInvocations()) {
                         case 1 :
@@ -456,7 +484,7 @@ class AdapterMysqlTest extends TestCase
         $adapterMysql = new AdapterMysql();
         $adapterMysql->execute('');
     }
-    
+
     public function testLastInsertId()
     {
         $connectionMock = $this->createMock(\PDO::class);
@@ -469,7 +497,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection(null);
         $this->assertEquals(-1, $adapterMysql->lastInsertId(''));
     }
-    
+
     public function testBeginTransaction()
     {
         $connectionMock = $this->createMock(\PDO::class);
@@ -482,7 +510,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection(null);
         $this->assertfalse($adapterMysql->beginTransaction());
     }
-    
+
     public function testCommittTransaction()
     {
         $connectionMock = $this->createMock(\PDO::class);
@@ -495,7 +523,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection(null);
         $this->assertFalse($adapterMysql->commitTransaction());
     }
-    
+
     public function testRollbackTransaction()
     {
         $connectionMock = $this->createMock(\PDO::class);
@@ -508,7 +536,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection(null);
         $this->assertFalse($adapterMysql->rollbackTransaction());
     }
-    
+
     public function testGetLastErrorMsg()
     {
         $connectionMock = $this->createMock(\PDO::class);
@@ -521,7 +549,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection(null);
         $this->assertEquals('', $adapterMysql->getLastErrorMsg());
     }
-    
+
     public function testGetLastErrorCode()
     {
         $connectionMock = $this->createMock(\PDO::class);

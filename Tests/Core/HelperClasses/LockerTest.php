@@ -37,15 +37,33 @@ use SismaFramework\Core\HelperClasses\Locker;
 class LockerTest extends TestCase
 {
 
-    public function testLockerClass()
+    public function testLockFolder()
     {
-        $testDirectoryPath = \Config\SYSTEM_PATH . \Config\APPLICATION_PATH . 'TestDirectory';
+        $testDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('lock_', true) . DIRECTORY_SEPARATOR;
         mkdir($testDirectoryPath);
-        $this->assertFalse(Locker::folderIsLocked($testDirectoryPath));
-        Locker::lockFolder($testDirectoryPath);
-        $this->assertTrue(Locker::folderIsLocked($testDirectoryPath));
-        Locker::unlockFolder($testDirectoryPath);
-        $this->assertFalse(Locker::folderIsLocked($testDirectoryPath));
+        $locker = new Locker();
+        $this->assertFalse($locker->folderIsLocked($testDirectoryPath));
+        $locker->lockFolder($testDirectoryPath);
+        $this->assertTrue($locker->folderIsLocked($testDirectoryPath));
+        $locker->unlockFolder($testDirectoryPath);
+        $this->assertFalse($locker->folderIsLocked($testDirectoryPath));
+        rmdir($testDirectoryPath);
+    }
+
+    public function testLockFile()
+    {
+        $testDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('lock_', true) . DIRECTORY_SEPARATOR;
+        mkdir($testDirectoryPath);
+        $testFilePath = $testDirectoryPath . DIRECTORY_SEPARATOR . 'testFile.txt';
+        $file = fopen($testFilePath, 'w');
+        fclose($file);
+        $locker = new Locker();
+        $this->assertFalse($locker->fileIsLocked($testFilePath));
+        $locker->lockFile($testFilePath);
+        $this->assertTrue($locker->fileIsLocked($testFilePath));
+        $locker->unlockFile($testFilePath);
+        $this->assertFalse($locker->fileIsLocked($testFilePath));
+        unlink($testFilePath);
         rmdir($testDirectoryPath);
     }
 }

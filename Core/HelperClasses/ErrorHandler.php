@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Router;
@@ -45,31 +46,26 @@ use Throwable;
 class ErrorHandler
 {
 
-    private static bool $logVerboseActive = \Config\LOG_VERBOSE_ACTIVE;
-    private static bool $developementEnvironment = \Config\DEVELOPMENT_ENVIRONMENT;
-
-    public static function setLogVerboseActive(bool $logVerboseActive): void
+    public static function disabligErrorDisplay()
     {
-        self::$logVerboseActive = $logVerboseActive;
+        ini_set('display_errors', 0);
+        ini_set('display_startup_errors', 0);
+        error_reporting(0);
     }
 
-    public static function setDevelopementEnvironment(bool $developementEnvironment): void
+    public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController(), ?Config $customConfig = null): void
     {
-        self::$developementEnvironment = $developementEnvironment;
-    }
-
-    public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController()): void
-    {
-        register_shutdown_function(function () use ($controller) {
+        $config = $customConfig ?? Config::getInstance();
+        register_shutdown_function(function () use ($controller, $config) {
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error)) {
                 BufferManager::clear();
                 Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
-                if (self::$logVerboseActive) {
+                if ($config->logVerboseActive) {
                     Logger::saveTrace($backtrace);
                 }
-                if (self::$developementEnvironment) {
+                if ($config->developmentEnvironment) {
                     self::callNonThrowableErrorAction($controller, $error, $backtrace);
                 } else {
                     self::callInternalServerErrorAction($controller);
@@ -92,9 +88,11 @@ class ErrorHandler
 
     public static function handleBaseException(BaseException $exception,
             DefaultControllerInterface $defaultController = new SampleController(),
-            StructuralControllerInterface $structuralController = new FrameworkController()): Response
+            StructuralControllerInterface $structuralController = new FrameworkController(),
+            ?Config $customConfig = null): Response
     {
-        if (self::$developementEnvironment) {
+        $config = $customConfig ?? Config::getInstance();
+        if ($config->developmentEnvironment) {
             return self::callThrowableErrorAction($structuralController, $exception);
         } else {
             return self::callDefaultControllerError($defaultController, $exception);
@@ -116,25 +114,37 @@ class ErrorHandler
     }
 
     public static function handleThrowableError(Throwable $throwable,
-            StructuralControllerInterface $structuralController = new FrameworkController()): Response
+            StructuralControllerInterface $structuralController = new FrameworkController(),
+            ?Config $customConfig = null): Response
     {
+        $config = $customConfig ?? Config::getInstance();
         BufferManager::clear();
         Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
-        if (self::$logVerboseActive) {
+        if ($config->logVerboseActive) {
             Logger::saveTrace($throwable->getTrace());
         }
-        if (self::$developementEnvironment) {
+        if ($config->developmentEnvironment) {
             return self::callThrowableErrorAction($structuralController, $throwable);
         } else {
             return self::callInternalServerErrorAction($structuralController);
         }
     }
-
+		
+    public static function showErrorInDevelopementEnvironment(?Config $customConfig = null): void
+    {
+        $config = $customConfig ?? Config::getInstance();
+        if ($config->developmentEnvironment) {
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL & ~E_DEPRECATED);
+        }
+    }
+	
     public static function handleCommandLineInterfaceNonThrowableError(): void
     {
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             echo "Error ($errno): $errstr in $errfile on line $errline" . PHP_EOL;
             exit(1);
         });
-    }
+	}
 }

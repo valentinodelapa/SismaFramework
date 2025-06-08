@@ -37,7 +37,6 @@ const CORE = 'Core';
 const DEFAULT_PATH = 'sample';
 const DEFAULT_ACTION = 'index';
 const DEFAULT_CONTROLLER = 'SampleController';
-const DEFAULT_LOCALE_TYPE = 'json';
 const ENTITIES = 'Entities';
 const FIXTURES = 'Fixtures';
 const LOGS = 'Logs';
@@ -100,10 +99,14 @@ const DEFAULT_ADAPTER_TYPE = 'mysql';
 /* Entities Constant */
 const ENTITY_PATH = APPLICATION_PATH . ENTITIES . DIRECTORY_SEPARATOR;
 const ENTITY_NAMESPACE = APPLICATION_NAMESPACE . ENTITIES . '\\';
+const FOREIGN_KEY_SUFFIX = 'Collection';
+const PARENT_PREFIX_PROPERTY_NAME = 'parent';
+const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
 
 /* Models Constant */
 const MODEL_PATH = APPLICATION_PATH . MODELS . DIRECTORY_SEPARATOR;
 const MODEL_NAMESPACE = APPLICATION_NAMESPACE . MODELS . '\\';
+const SON_COLLECTION_GETTER_METHOD = 'getSonCollection';
 
 /* Forms Constant */
 const PRIMARY_KEY_PASS_ACCEPTED = false;

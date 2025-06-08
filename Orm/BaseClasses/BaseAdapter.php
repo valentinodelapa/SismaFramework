@@ -1,6 +1,12 @@
 <?php
 
 /*
+ * Questo file contiene codice derivato dalla libreria SimpleORM
+ * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
+ * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
+ *
+ * Copyright (c) 2015-present Davide Airaghi.
+ *
  * The MIT License
  *
  * Copyright (c) 2020-present Valentino de Lapa.
@@ -22,10 +28,19 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ * 
+ * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM:
+ * - Significativa riorganizzazione e rifattorizzazione per l'applicazione della tipizzazione forte.
+ * - Sostituzione delle costanti di classe con enum (PHP 8.1+).
+ * - Modifica del namespace per l'integrazione nel SismaFramework.
+ * - Miglioramento della nomenclatura di metodi, parametri e variabili per maggiore chiarezza.
+ * - Trasformazione della classe in astratta per definire un'interfaccia comune.
+ * - Definizione come astratti dei metodi precedentemente abbozzati, la cui implementazione è demandata alle classi derivate.
  */
 
 namespace SismaFramework\Orm\BaseClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HelperClasses\NotationManager;
@@ -68,16 +83,16 @@ abstract class BaseAdapter
         self::$connection = $connection;
     }
 
-    public static function &getDefault(): ?BaseAdapter
+    public static function &getDefault(?Config $customConfig = null): ?BaseAdapter
     {
+        $config = $customConfig ?? Config::getInstance();
         if (static::$adapter === null) {
-            $defaultAdapterType = AdapterType::from(\Config\DEFAULT_ADAPTER_TYPE);
-            $defaultAdapter = static::create($defaultAdapterType->getAdapterClass(), [
-                        'database' => \Config\DATABASE_NAME,
-                        'hostname' => \Config\DATABASE_HOST,
-                        'password' => \Config\DATABASE_PASSWORD,
-                        'port' => \Config\DATABASE_PORT,
-                        'username' => \Config\DATABASE_USERNAME,
+            $defaultAdapter = static::create($config->defaultAdapterType->getAdapterClass(), [
+                'database' => $config->databaseName,
+                'hostname' => $config->databaseHost,
+                'password' => $config->databasePassword,
+                'port' => $config->databasePort,
+                'username' => $config->databaseUsername,
             ]);
             static::setDefault($defaultAdapter);
         }
@@ -168,13 +183,13 @@ abstract class BaseAdapter
                 }
         }
     }
-    
-    public function getPlaceholder():string
+
+    public function getPlaceholder(): string
     {
         return Placeholder::placeholder->getAdapterVersion($this->adapterType);
     }
-    
-    public function parseComparisonOperator(ComparisonOperator $comparisonOperator):string
+
+    public function parseComparisonOperator(ComparisonOperator $comparisonOperator): string
     {
         return $comparisonOperator->getAdapterVersion($this->adapterType);
     }
@@ -231,9 +246,6 @@ abstract class BaseAdapter
 
     public function parseSelect(bool $distinct, array $select, string $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
     {
-        foreach ($orderby as $k => $v) {
-            $orderby[$k] = $k . ' ' . $v;
-        }
         $query = Statement::select->getAdapterVersion($this->adapterType) . ' ' .
                 ($distinct ? Keyword::distinct->getAdapterVersion($this->adapterType) . ' ' : '') .
                 implode(',', $select) . ' ' .
@@ -308,5 +320,3 @@ abstract class BaseAdapter
 
     abstract public function getLastErrorCode(): string;
 }
-
-?>

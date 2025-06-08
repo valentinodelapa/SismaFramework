@@ -27,15 +27,43 @@
 namespace SismaFramework\Tests\Orm\ResultSets;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
 
 /**
  * @author Valentino de Lapa
  */
 class ResultSetMysqlTest extends TestCase
 {
+
+    private Config $configMock;
+
+    public function setUp(): void
+    {
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', true],
+                    ['encryptionPassphrase', 'encryption-key'],
+                    ['encryptionAlgorithm', 'AES-256-CBC'],
+                    ['initializationVectorBytes', 16],
+                    ['ormCache', true],
+        ]);
+        $this->configMock->expects($this->any())
+                ->method('__isset')
+                ->willReturnMap([
+                    ['encryptionPassphrase', true],
+        ]);
+        Config::setInstance($this->configMock);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
+    }
 
     public function testNumRows()
     {
@@ -134,6 +162,42 @@ class ResultSetMysqlTest extends TestCase
         $this->assertNull($resultSetMysql->fetch());
     }
 
+    public function testFetchWithEntityWithEncryptedProperty()
+    {
+        $PDOStatementMock = $this->createMock(\PDOStatement::class);
+        $PDOStatementMock->expects($this->any())
+                ->method('rowCount')
+                ->willReturnCallback(function () {
+                    $rowsNum = 1;
+                    $actualRowsNum = $rowsNum;
+                    $rowsNum--;
+                    return $actualRowsNum;
+                });
+        $propertyValueOne = 'test-value-one';
+        $propertyValueTwo = 'test-value-two';
+        $initializationVector = Encryptor::createInizializationVector($this->configMock);
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->encrypted_property_one = Encryptor::encryptString($propertyValueOne, $initializationVector, $this->configMock);
+        $result->encrypted_property_two = Encryptor::encryptString($propertyValueTwo, $initializationVector, $this->configMock);
+        $result->initialization_vector = $initializationVector;
+        $PDOStatementMock->expects($this->once())
+                ->method('fetch')
+                ->willReturn($result);
+        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql->setReturnType(EntityWithEncryptedPropertyOne::class);
+        $this->assertTrue($resultSetMysql->valid());
+        $this->assertEquals(0, $resultSetMysql->key());
+        $entityWithEncryptedProperty = $resultSetMysql->fetch();
+        $this->assertInstanceOf(EntityWithEncryptedPropertyOne::class, $entityWithEncryptedProperty);
+        $this->assertEquals($propertyValueOne, $entityWithEncryptedProperty->encryptedPropertyOne);
+        $this->assertEquals($propertyValueTwo, $entityWithEncryptedProperty->encryptedPropertyTwo);
+        $this->assertEquals($initializationVector, $entityWithEncryptedProperty->initializationVector);
+        $this->assertFalse($resultSetMysql->valid());
+        $this->assertEquals(1, $resultSetMysql->key());
+        $this->assertNull($resultSetMysql->fetch());
+    }
+
     public function testFetchWithMultipleBaseEntity()
     {
         $PDOStatementMock = $this->createMock(\PDOStatement::class);
@@ -145,7 +209,7 @@ class ResultSetMysqlTest extends TestCase
                     $rowsNum--;
                     return $actualRowsNum;
                 });
-                $matcher = $this->exactly(4);
+        $matcher = $this->exactly(4);
         $PDOStatementMock->expects($matcher)
                 ->method('fetch')
                 ->willReturnCallback(function () use ($matcher) {
