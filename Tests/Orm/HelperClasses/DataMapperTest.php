@@ -75,6 +75,7 @@ class DataMapperTest extends TestCase
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
                     ['encryptionPassphrase', 'encryption-key'],
                     ['encryptionAlgorithm', 'AES-256-CBC'],

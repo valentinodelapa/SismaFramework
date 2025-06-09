@@ -49,6 +49,7 @@ class ResultSetMysqlTest extends TestCase
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', true],
                     ['encryptionPassphrase', 'encryption-key'],
                     ['encryptionAlgorithm', 'AES-256-CBC'],

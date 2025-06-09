@@ -104,6 +104,7 @@ class Config
     /* Entities Constant */
     protected readonly string $entityPath;
     protected readonly string $entityNamespace;
+    protected readonly string $defaultPrimaryKeyPropertyName;
     protected readonly string $foreignKeySuffix;
     protected readonly string $parentPrefixPropertyName;
     protected readonly string $sonCollectionPropertyName;

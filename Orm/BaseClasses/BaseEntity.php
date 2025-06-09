@@ -58,7 +58,7 @@ abstract class BaseEntity
     protected DataMapper $dataMapper;
     protected Config $config;
     protected ProcessedEntitiesCollection $processedEntitesCollection;
-    protected string $primaryKey = 'id';
+    protected string $primaryKeyPropertyName;
     protected string $initializationVectorPropertyName = 'initializationVector';
     protected bool $isActiveTransaction = false;
     private array $encryptedColumns = [];
@@ -68,6 +68,7 @@ abstract class BaseEntity
     {
         $this->dataMapper = $dataMapper;
         $this->config = $config ?? Config::getInstance();
+        $this->primaryKeyPropertyName = $this->config->defaultPrimaryKeyPropertyName;
         $this->processedEntitesCollection = $processedEntitesCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
@@ -81,7 +82,7 @@ abstract class BaseEntity
 
     public function unsetPrimaryKey(): void
     {
-        unset($this->{$this->primaryKey});
+        unset($this->{$this->primaryKeyPropertyName});
     }
 
     public function __get($name)
@@ -117,7 +118,7 @@ abstract class BaseEntity
 
     public function setPrimaryKeyAfterSave(int $value): void
     {
-        $this->{$this->primaryKey} = $value;
+        $this->{$this->primaryKeyPropertyName} = $value;
     }
 
     public function __set($name, $value)
@@ -246,17 +247,17 @@ abstract class BaseEntity
 
     public function isPrimaryKey(string $propertyName): bool
     {
-        return ($propertyName === $this->primaryKey);
+        return ($propertyName === $this->primaryKeyPropertyName);
     }
 
     public function setPrimaryKeyPropertyName(string $propertyName): void
     {
-        $this->primaryKey = $propertyName;
+        $this->primaryKeyPropertyName = $propertyName;
     }
 
     public function getPrimaryKeyPropertyName(): string
     {
-        return $this->primaryKey;
+        return $this->primaryKeyPropertyName;
     }
 
     public function getForeignKeyIndexes(): array

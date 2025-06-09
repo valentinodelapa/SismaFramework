@@ -52,6 +52,7 @@ class BasePermissionTest extends TestCase
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', true],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],

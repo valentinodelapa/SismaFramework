@@ -51,6 +51,7 @@ class SelfReferencedEntityTest extends TestCase
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
