@@ -27,9 +27,11 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
@@ -361,7 +363,15 @@ class FilterTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $dataMapperMock = $this->createMock(DataMapper::class);
-        $this->assertTrue($this->filter->isEntity(new BaseSample($dataMapperMock)));
+        $processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
+        ]);
+        Config::setInstance($configMock);
+        $this->assertTrue($this->filter->isEntity(new BaseSample($dataMapperMock, $processedEntitiesCollectionMock, $configMock)));
         $this->assertFalse($this->filter->isEntity(['array']));
         $this->assertFalse($this->filter->isEntity(1.1));
         $this->assertFalse($this->filter->isEntity(0.0));

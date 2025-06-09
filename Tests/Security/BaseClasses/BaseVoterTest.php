@@ -27,9 +27,11 @@
 namespace SismaFramework\Tests\Security\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Security\Enumerations\AccessControlEntry;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
+use SismaFramework\Security\Enumerations\AccessControlEntry;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Voters\SampleVoter;
@@ -41,6 +43,8 @@ class BaseVoterTest extends TestCase
 {
 
     private DataMapper $dataMapperMock;
+    private ProcessedEntitiesCollection $processedEntitiesCollectionMock;
+    private Config $configMock;
     
     #[\Override]
     public function setUp(): void
@@ -48,21 +52,29 @@ class BaseVoterTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
+        $this->processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+        $this->configMock = $this->createMock(Config::class);
+        $this->configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
+        ]);
+        Config::setInstance($this->configMock);
     }
 
     public function testIstanceNotPermitted()
     {
-        $this->assertFalse(SampleVoter::isAllowed(new ReferencedSample($this->dataMapperMock), AccessControlEntry::allow));
+        $this->assertFalse(SampleVoter::isAllowed(new ReferencedSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configMock), AccessControlEntry::allow));
     }
 
     public function testCheckVoterFalse()
     {
-        $this->assertFalse(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock), AccessControlEntry::allow));
+        $this->assertFalse(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configMock), AccessControlEntry::allow));
     }
 
     public function testCheckVoterTrue()
     {
-        $this->assertTrue(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock), AccessControlEntry::deny));
+        $this->assertTrue(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configMock), AccessControlEntry::deny));
     }
 
 }

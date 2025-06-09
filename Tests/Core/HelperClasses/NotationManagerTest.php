@@ -74,6 +74,7 @@ class NotationManagerTest extends TestCase
         $configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
                     ['ormCache', true],
         ]);
         Config::setInstance($configMock);
