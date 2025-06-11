@@ -143,45 +143,38 @@ The entity class should be defined as:
 ERROR);
         }
 
-        // Set common placeholders
-        $this->setPlaceholder('className', $entityName);
-        $this->setPlaceholder('classNameLower', lcfirst($entityName));
+        $this->setPlaceholder('entityName', $entityName);
+        $this->setPlaceholder('entityNameLower', lcfirst($entityName));
+        $this->setPlaceholder('entityNamespace', $entityNamespace);
+        $this->setPlaceholder('modelNamespace', $modelNamespace);
+        $this->setPlaceholder('controllerNamespace', $controllerNamespace);
+        $this->setPlaceholder('formNamespace', $formNamespace);
+        
         $controllerName = str_replace('Controller', '', $entityName . 'Controller');
         $this->setPlaceholder('controllerRoute', NotationManager::convertToKebabCase($controllerName));
 
-        // Generate Model
         $modelType = $this->customType ? ModelType::from($this->customType) : $this->determineModelType($entityClass);
         $this->setPlaceholder('modelType', $modelType->value);
         $this->setPlaceholder('modelTypeNamespace', $modelType->getNamespace());
-        $this->setPlaceholder('namespace', $modelNamespace);
         $success = $this->generate('Model', $modulePath . '/Application/Models/' . $entityName . 'Model.php');
 
-        // Generate Controller
-        $this->setPlaceholder('namespace', $controllerNamespace);
-        $success &= $this->generate('Controller', $modulePath . '/Application/Controllers/' . $entityName . 'Controller.php');
-
-        // Prima di generare il form, analizziamo le proprietà dell'entità
         $entityReflection = new \ReflectionClass($entityClass);
         $properties = $this->analyzeEntityProperties($entityReflection);
         $filtersCode = $this->generateFiltersCode($properties);
-
-        // Aggiungiamo il codice dei filtri ai placeholder
-        $this->setPlaceholder('namespace', $formNamespace);
         $this->setPlaceholder('filters', $filtersCode);
         $success &= $this->generate('Form', $modulePath . '/Application/Forms/' . $entityName . 'Form.php');
+        
+        $success &= $this->generate('Controller', $modulePath . '/Application/Controllers/' . $entityName . 'Controller.php');
 
-        // Generate Views
         $viewsPath = $applicationPath . '/Views/' . $entityName;
         if (!is_dir($viewsPath)) {
             if (!mkdir($viewsPath, 0777, true)) {
                 throw new \RuntimeException("Failed to create directory: {$viewsPath}");
             }
         }
-
         $success &= $this->generate('Views/index', $viewsPath . '/index.php');
         $success &= $this->generate('Views/create', $viewsPath . '/create.php');
         $success &= $this->generate('Views/update', $viewsPath . '/update.php');
-
         return $success;
     }
 
@@ -211,7 +204,6 @@ ERROR);
     private function determineModelType(string $entityClass): ModelType
     {
         $reflection = new \ReflectionClass($entityClass);
-
         if ($reflection->isSubclassOf(SelfReferencedEntity::class)) {
             return ModelType::selfReferencedModel;
         } elseif ($this->checkDependencies($reflection)) {
@@ -259,41 +251,21 @@ ERROR);
 
     private function generateFiltersCode(array $properties): string
     {
-        if (empty($properties)) {
-            return '';
-        }
-
-        $property = array_shift($properties);
-        $filterType = FilterType::fromPhpType($property['type'])->name;
-
-        $code = [sprintf(
-                    '        $this->addFilterFieldMode("%s", FilterType::%s%s)',
-                    $property['name'],
-                    $filterType,
-                    $property['type']->allowsNull() ? ', [], true' : ''
-            )];
-
+        $prefix = '$this';
         $lastProperty = end($properties);
         foreach ($properties as $property) {
-            $filterType = FilterType::fromPhpType($property['type'])->name;
-
-            if ($property['type']->allowsNull()) {
+            if ($this->config->defaultPrimaryKeyPropertyName !== $property['name']) {
+                $filterType = FilterType::fromPhpType($property['type'])->name;
                 $code[] = sprintf(
-                        '            ->addFilterFieldMode("%s", FilterType::%s, [], true)%s',
+                        '        ' . $prefix . '->addFilterFieldMode("%s", FilterType::%s%s)%s',
                         $property['name'],
                         $filterType,
+                        $property['type']->allowsNull() ? ', [], true' : '',
                         $property === $lastProperty ? ';' : ''
                 );
-            } else {
-                $code[] = sprintf(
-                        '            ->addFilterFieldMode("%s", FilterType::%s)%s',
-                        $property['name'],
-                        $filterType,
-                        $property === $lastProperty ? ';' : ''
-                );
+                $prefix = '    ';
             }
         }
-
         return implode("\n", $code);
     }
 }
