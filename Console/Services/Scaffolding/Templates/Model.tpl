@@ -4,17 +4,14 @@ namespace {{modelNamespace}};
 
 use {{modelTypeNamespace}}\{{modelType}};
 use SismaFramework\Orm\HelperClasses\Query;
-use {{entityNamespace}}\{{entityName}};
+use {{entityNamespace}}\{{entityShortName}};
 
-/**
- * {{entityName}} Model
- */
-class {{entityName}}Model extends {{modelType}}
+class {{entityShortName}}Model extends {{modelType}}
 {
     
     protected function getEntityName(): string
     {
-        return {{entityName}}::class;
+        return {{entityShortName}}::class;
     }
     
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void

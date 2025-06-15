@@ -4,14 +4,14 @@ namespace {{formNamespace}};
 
 use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Core\Enumerations\FilterType;
-use {{entityNamespace}}\{{entityName}};
+use {{entityNamespace}}\{{entityShortName}};
 
-class {{entityName}}Form extends BaseForm
+class {{entityShortName}}Form extends BaseForm
 {
     
     protected static function getEntityName(): string
     {
-        return {{entityName}}::class;
+        return {{entityShortName}}::class;
     }
     
     protected function injectRequest(): void

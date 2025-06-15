@@ -48,6 +48,7 @@ class Config
     protected readonly string $defaultController;
     protected readonly string $entities;
     protected readonly string $fixtures;
+    protected readonly string $forms;
     protected readonly string $logs;
     protected readonly string $locales;
     protected readonly string $models;

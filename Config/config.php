@@ -39,6 +39,7 @@ const DEFAULT_ACTION = 'index';
 const DEFAULT_CONTROLLER = 'SampleController';
 const ENTITIES = 'Entities';
 const FIXTURES = 'Fixtures';
+const FORMS = 'Forms';
 const LOGS = 'Logs';
 const LOCALES = 'Locales';
 const MODELS = 'Models';
