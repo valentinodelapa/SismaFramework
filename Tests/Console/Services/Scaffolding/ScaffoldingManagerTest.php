@@ -30,8 +30,10 @@ class ScaffoldingManagerTest extends TestCase
                     ['entities', 'Entities'],
                     ['forms', 'Forms'],
                     ['models', 'Models'],
+                    ['structuralTemplatesPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR],
                     ['rootPath', $this->tempDir],
         ]);
+        Config::setInstance($configMock);
         $this->scaffoldingManager = new ScaffoldingManager($configMock);
         mkdir($this->tempDir . 'TestModule/Application/Entities', 0777, true);
         mkdir($this->tempDir . 'TestModule/Application/Models', 0777, true);

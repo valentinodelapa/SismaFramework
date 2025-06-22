@@ -74,29 +74,21 @@ OUTPUT);
     {
         $entityName = $this->getArgument('entity');
         $module = $this->getArgument('module');
-
         if (!$entityName) {
             $this->output('Error: Entity name is required');
             return false;
         }
-
         if (!$module) {
             $this->output('Error: Module name is required');
             return false;
         }
-
-        // Handle options
         $force = $this->getOption('force') !== null;
         $type = $this->getOption('type');
         $templatePath = $this->getOption('template');
-
-        // Validate type if specified
         if ($type && !in_array($type, $this->validTypes)) {
             $this->output('Error: Invalid model type. Valid types are: ' . implode(', ', $this->validTypes));
             return false;
         }
-
-        // Validate template path if specified
         if ($templatePath && !is_dir($templatePath)) {
             $this->output('Error: Template path does not exist: ' . $templatePath);
             return false;

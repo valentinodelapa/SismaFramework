@@ -27,6 +27,9 @@
 namespace SismaFramework\Console\Services\Scaffolding;
 
 use SismaFramework\Console\Enumerations\ModelType;
+use SismaFramework\Console\Exceptions\ApplicationPathException;
+use SismaFramework\Console\Exceptions\EntityPathException;
+use SismaFramework\Console\Exceptions\ModulePathException;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\NotationManager;
@@ -96,7 +99,7 @@ class ScaffoldingManager
     {
         $modulePath = $this->config->rootPath . $this->module;
         if (!is_dir($modulePath)) {
-            throw new \RuntimeException(Templater::parseTemplate(__DIR__ . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'Errors' . DIRECTORY_SEPARATOR . 'modulePathError.tpl', ['module' => $this->module]));
+            throw new ModulePathException($this->module);
         }
         return $modulePath;
     }
@@ -105,7 +108,7 @@ class ScaffoldingManager
     {
         $applicationPath = $modulePath . DIRECTORY_SEPARATOR . $this->config->application;
         if (!is_dir($applicationPath)) {
-            throw new \RuntimeException(Templater::parseTemplate(__DIR__ . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'Errors' . DIRECTORY_SEPARATOR . 'applicationPathError.tpl', ['module' => $this->module]));
+            throw new ApplicationPathException($this->module);
         }
         return $applicationPath;
     }
@@ -145,12 +148,7 @@ class ScaffoldingManager
     {
         $entityClass = $this->entityNamespace . '\\' . $this->entityShortName;
         if (!class_exists($entityClass)) {
-            throw new \RuntimeException(Templater::parseTemplate(__DIR__ . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR . 'Errors' . DIRECTORY_SEPARATOR . 'entityPathError.tpl', [
-                                'entityClass' => $entityClass,
-                                'entityNamespace' => $this->entityNamespace,
-                                'entityShortName' => $this->entityShortName,
-                                'module' => $this->module
-            ]));
+            throw new EntityPathException($entityClass, $this->entityNamespace, $this->entityShortName, $this->module);
         }
         $this->entityReflection = new \ReflectionClass($entityClass);
     }
@@ -205,7 +203,7 @@ class ScaffoldingManager
     private function getTemplatePath(string $templateName): string
     {
         if ($this->customTemplatePath) {
-            $path = rtrim($this->customTemplatePath, '/'. DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            $path = rtrim($this->customTemplatePath, '/' . DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
             return $path . $templateName . '.tpl';
         }
         return $this->templatesPath . $templateName . '.tpl';
@@ -223,13 +221,12 @@ class ScaffoldingManager
     {
         $properties = [];
         foreach ($entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-            if (!BaseEntity::checkFinalClassReflectionProperty($property)) {
-                continue;
+            if (BaseEntity::checkFinalClassReflectionProperty($property) && ($this->config->defaultPrimaryKeyPropertyName !== $property->getName())) {
+                $properties[] = [
+                    'name' => $property->getName(),
+                    'type' => $property->getType(),
+                ];
             }
-            $properties[] = [
-                'name' => $property->getName(),
-                'type' => $property->getType(),
-            ];
         }
 
         return $properties;
@@ -237,22 +234,17 @@ class ScaffoldingManager
 
     private function generateFiltersCode(array $properties): string
     {
-        $prefix = '$this';
-        $lastProperty = end($properties);
-        foreach ($properties as $property) {
-            if ($this->config->defaultPrimaryKeyPropertyName !== $property['name']) {
-                $filterType = FilterType::fromPhpType($property['type'])->name;
-                $code[] = sprintf(
-                        '        ' . $prefix . '->addFilterFieldMode("%s", FilterType::%s%s)%s',
-                        $property['name'],
-                        $filterType,
-                        $property['type']->allowsNull() ? ', [], true' : '',
-                        $property === $lastProperty ? ';' : ''
-                );
-                $prefix = '    ';
-            }
+        $filters = '';
+        foreach ($properties as $key => $property) {
+            $filters .= Templater::parseTemplate($this->templatesPath . 'propertyFilter.tpl', [
+                'prefix' => ($key === array_key_first($properties)) ? '$this' : '    ',
+                'propertyName' => $property['name'],
+                'filterType' => FilterType::fromPhpType($property['type'])->name,
+                'additionalInformation' => $property['type']->allowsNull() ? ', [], true' : '',
+                'closeInstruction' => ($key === array_key_last($properties)) ? ';' : '',
+            ]);
         }
-        return implode("\n", $code);
+        return rtrim($filters, "\n");
     }
 
     private function generateController(string $applicationPath): bool
