@@ -26,6 +26,8 @@
 
 namespace SismaFramework\Core\HttpClasses;
 
+use SismaFramework\Core\Enumerations\RequestType;
+
 /**
  *
  * @author Valentino de Lapa
@@ -33,12 +35,16 @@ namespace SismaFramework\Core\HttpClasses;
 class Request
 {
 
-    public $query;
-    public $request;
-    public $cookie;
-    public $files;
-    public $server;
-    public $headers;
+    public array $query;
+    public array $request;
+    public array $cookie;
+    public array $files;
+    public array $server;
+    public array $headers = [];
+    public mixed $postBody = null;
+    public mixed $putData = null;
+    public mixed $patchData = null;
+    public mixed $deleteData = null;
 
     public function __construct()
     {
@@ -47,17 +53,77 @@ class Request
         $this->cookie = $_COOKIE;
         $this->files = $_FILES;
         $this->server = $_SERVER;
+        $this->initializeHeaders();
+        $this->parseRequestBody();
+    }
+    
+    private function initializeHeaders(): void
+    {
+        if (function_exists('getallheaders')) {
+            $this->headers = getallheaders();
+        } else {
+            foreach ($this->server as $name => $value) {
+                if (str_starts_with($name, 'HTTP_')) {
+                    $headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                    $this->headers[$headerName] = $value;
+                }
+            }
+        }
+    }
+    private function parseRequestBody(): void
+    {
+        $methodString = $this->server['REQUEST_METHOD'] ?? 'GET';
+        $method = RequestType::tryFrom($methodString);
+        $contentType = $this->headers['Content-Type'] ?? $this->headers['content-type'] ?? '';
+        if ($method && in_array($method, [RequestType::methodPost, RequestType::methodPut, RequestType::methodDelete, RequestType::methodPatch])) {
+            $rawBody = null;
+            $parsedBody = null;
+            $readPhpInput = true;
+            if ($method === RequestType::methodPost) {
+                if (str_starts_with(strtolower($contentType), 'application/x-www-form-urlencoded') ||
+                    str_starts_with(strtolower($contentType), 'multipart/form-data')) {
+                    $readPhpInput = false;
+                }
+            }
+            if ($readPhpInput) {
+                $rawBody = file_get_contents('php://input');
+                $parsedBody = $rawBody;
+                if (str_starts_with(strtolower($contentType), 'application/json')) {
+                    $decodedBody = json_decode($rawBody, true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        $parsedBody = $decodedBody;
+                    } else {
+                        error_log('Errore nella decodifica JSON: ' . json_last_error_msg());
+                    }
+                }
+            }
+            switch ($method) {
+                case RequestType::methodPost:
+                    if ($readPhpInput) {
+                        $this->postBody = $parsedBody;
+                    }
+                    break;
+                case RequestType::methodPut:
+                    $this->putData = $parsedBody;
+                    break;
+                case RequestType::methodPatch:
+                    $this->patchData = $parsedBody;
+                    break;
+                case RequestType::methodDelete:
+                    $this->deleteData = $parsedBody;
+                    break;
+            }
+        }
     }
 
     public function getStreamContentResource()
     {
         $opts = [
-            $this->server['SERVER_PROTOCOL'] => [
+            ($this->server['SERVER_PROTOCOL'] ?? 'HTTP/1.0') => [
                 'method' => 'GET',
                 'content' => $this->query
             ]
         ];
         return stream_context_create($opts);
     }
-
 }
