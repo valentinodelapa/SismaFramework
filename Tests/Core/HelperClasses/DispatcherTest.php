@@ -79,7 +79,9 @@ class DispatcherTest extends TestCase
                     ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
         ]);
         Config::setInstance($this->configMock);
-        $this->requestMock = $this->createMock(Request::class);
+        $this->requestMock = $this->getMockBuilder(Request::class)
+                ->disableOriginalConstructor()
+                ->getMock();
         $this->requestMock->server['REQUEST_URI'] = '/';
         $this->requestMock->server['QUERY_STRING'] = '';
         $this->resourceMakerMock = $this->createMock(ResourceMaker::class);

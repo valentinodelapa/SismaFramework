@@ -169,7 +169,7 @@ abstract class BaseForm extends Submittable
     private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed, array $currentRequestPart): BaseForm
     {
         $propertyForm = new $formPropertyClass($entityToEmbed, $this->dataMapper);
-        $currentRequest = new Request();
+        $currentRequest = clone $this->request;
         $currentRequest->request = $currentRequestPart;
         $propertyForm->handleRequest($currentRequest);
         return $propertyForm;

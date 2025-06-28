@@ -41,10 +41,6 @@ class Request
     public array $files;
     public array $server;
     public array $headers = [];
-    public mixed $postBody = null;
-    public mixed $putData = null;
-    public mixed $patchData = null;
-    public mixed $deleteData = null;
 
     public function __construct()
     {
@@ -56,7 +52,7 @@ class Request
         $this->initializeHeaders();
         $this->parseRequestBody();
     }
-    
+
     private function initializeHeaders(): void
     {
         if (function_exists('getallheaders')) {
@@ -66,10 +62,14 @@ class Request
                 if (str_starts_with($name, 'HTTP_')) {
                     $headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
                     $this->headers[$headerName] = $value;
+                } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH', 'CONTENT_MD5'])) {
+                    $headerName = str_replace('_', '-', ucwords(strtolower($name), '_'));
+                    $this->headers[$headerName] = $value;
                 }
             }
         }
     }
+
     private function parseRequestBody(): void
     {
         $methodString = $this->server['REQUEST_METHOD'] ?? 'GET';
@@ -81,13 +81,13 @@ class Request
             $readPhpInput = true;
             if ($method === RequestType::methodPost) {
                 if (str_starts_with(strtolower($contentType), 'application/x-www-form-urlencoded') ||
-                    str_starts_with(strtolower($contentType), 'multipart/form-data')) {
+                        str_starts_with(strtolower($contentType), 'multipart/form-data')) {
                     $readPhpInput = false;
                 }
             }
+            $parsedBody = [];
             if ($readPhpInput) {
                 $rawBody = file_get_contents('php://input');
-                $parsedBody = $rawBody;
                 if (str_starts_with(strtolower($contentType), 'application/json')) {
                     $decodedBody = json_decode($rawBody, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
@@ -97,21 +97,8 @@ class Request
                     }
                 }
             }
-            switch ($method) {
-                case RequestType::methodPost:
-                    if ($readPhpInput) {
-                        $this->postBody = $parsedBody;
-                    }
-                    break;
-                case RequestType::methodPut:
-                    $this->putData = $parsedBody;
-                    break;
-                case RequestType::methodPatch:
-                    $this->patchData = $parsedBody;
-                    break;
-                case RequestType::methodDelete:
-                    $this->deleteData = $parsedBody;
-                    break;
+            if ($readPhpInput) {
+                $this->request = $parsedBody;
             }
         }
     }
