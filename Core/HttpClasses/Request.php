@@ -76,8 +76,6 @@ class Request
         $method = RequestType::tryFrom($methodString);
         $contentType = $this->headers['Content-Type'] ?? $this->headers['content-type'] ?? '';
         if ($method && in_array($method, [RequestType::methodPost, RequestType::methodPut, RequestType::methodDelete, RequestType::methodPatch])) {
-            $rawBody = null;
-            $parsedBody = null;
             $readPhpInput = true;
             if ($method === RequestType::methodPost) {
                 if (str_starts_with(strtolower($contentType), 'application/x-www-form-urlencoded') ||
@@ -96,9 +94,9 @@ class Request
                         error_log('Errore nella decodifica JSON: ' . json_last_error_msg());
                     }
                 }
-            }
-            if ($readPhpInput) {
-                $this->request = $parsedBody;
+                if (is_array($parsedBody)) {
+                    $this->request = $parsedBody;
+                }
             }
         }
     }

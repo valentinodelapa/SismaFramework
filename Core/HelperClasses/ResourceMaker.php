@@ -86,7 +86,7 @@ class ResourceMaker
     {
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
-        header("Content-type: " . $resource->getMime());
+        header("Content-type: " . $resource->getContentType()->getMime());
         header('X-Content-Type-Options: nosniff');
         header("Content-Disposition: inline");
         header("Content-Length: " . filesize($filename));
@@ -110,7 +110,7 @@ class ResourceMaker
     {
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
-        header("Content-type: " . $resource->getMime());
+        header("Content-type: " . $resource->getContentType()->getMime());
         header('X-Content-Type-Options: nosniff');
         header("Content-Disposition: attachment; filename=\"" . basename($filename) . "\"");
         header("Content-Length: " . filesize($filename));

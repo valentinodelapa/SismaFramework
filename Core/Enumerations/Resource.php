@@ -66,72 +66,6 @@ enum Resource: string
     case xml = 'xml';
     case zip = 'zip';
 
-    public function getMime(): string
-    {
-        return match ($this) {
-            self::css => 'text/css',
-            self::doc => 'application/msword',
-            self::docx => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            self::geojson => 'application/geo+json',
-            self::htm, self::html => 'text/html',
-            self::ico => 'image/x-icon',
-            self::jpg, self::jpeg => 'image/jpeg',
-            self::js, self::jsm => 'application/javascript',
-            self::json, self::map => 'application/json',
-            self::mp3 => 'audio/mp3',
-            self::mp4 => 'video/mp4',
-            self::otf => 'font/otf',
-            self::pdf => 'application/pdf',
-            self::php => 'application/x-httpd-php',
-            self::png => 'image/png',
-            self::ppt => 'application/vnd.ms-powerpoint',
-            self::pptx => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            self::rar => 'application/x-rar-compressed',
-            self::svg => 'image/svg+xml',
-            self::tpl, self::txt => 'text/plain',
-            self::ttf => 'font/ttf',
-            self::woff => 'font/woff',
-            self::woff2 => 'font/woff2',
-            self::xls => 'application/vnd.ms-excel',
-            self::xlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            self::xml => 'application/xml',
-            self::zip => 'application/x-zip-compressed',
-        };
-    }
-
-    public static function getByMime(string $mime): self
-    {
-        return match ($mime) {
-            'text/css' => self::css,
-            'application/msword' => self::doc,
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => self::docx,
-            'application/geo+json' => self::geojson,
-            'text/html' => self::html,
-            'image/x-icon' => self::ico,
-            'image/jpeg' => self::jpg,
-            'application/javascript', 'text/javascript' => self::js,
-            'application/json' => self::json,
-            'audio/mp3' => self::mp3,
-            'video/mp4' => self::mp4,
-            'font/otf' => self::otf,
-            'application/pdf' => self::pdf,
-            'application/x-httpd-php' => self::php,
-            'image/png' => self::png,
-            'application/vnd.ms-powerpoint' => self::ppt,
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => self::pptx,
-            'application/x-rar-compressed' => self::rar,
-            'image/svg+xml' => self::svg,
-            'font/ttf' => self::ttf,
-            'text/plain' => self::txt,
-            'font/woff' => self::woff,
-            'font/woff2' => self::woff2,
-            'application/vnd.ms-excel' => self::xls,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => self::xlsx,
-            'application/xml' => self::xml,
-            'application/x-zip-compressed' => self::zip,
-        };
-    }
-
     public function isRenderable(): bool
     {
         return match ($this) {
@@ -153,6 +87,40 @@ enum Resource: string
             self::rar, self::svg, self::ttf, self::txt, self::woff, self::woff2, self::xls,
             self::xlsx, self::xml, self::zip => true,
             self::php, self::tpl => false,
+        };
+    }
+
+    public function getContentType(): ContentType
+    {
+        return match ($this) {
+            self::css => ContentType::textCss,
+            self::doc => ContentType::applicationMsword,
+            self::docx => ContentType::applicationDocx,
+            self::geojson => ContentType::applicationGeoJson,
+            self::htm, self::html => ContentType::textHtml,
+            self::ico => ContentType::imageIcon,
+            self::jpg, self::jpeg => ContentType::imageJpeg,
+            self::js, self::jsm => ContentType::applicationJavascript,
+            self::json, self::map => ContentType::applicationJson,
+            self::mp3 => ContentType::audioMp3,
+            self::mp4 => ContentType::videoMp4,
+            self::otf => ContentType::fontOtf,
+            self::pdf => ContentType::applicationPdf,
+            self::php => ContentType::applicationPhp,
+            self::png => ContentType::imagePng,
+            self::ppt => ContentType::applicationPpt,
+            self::pptx => ContentType::applicationPptx,
+            self::rar => ContentType::applicationRar,
+            self::svg => ContentType::imageSvgXml,
+            self::tpl => ContentType::textTpl,
+            self::ttf => ContentType::fontTtf,
+            self::txt => ContentType::textPlain,
+            self::woff => ContentType::fontWoff,
+            self::woff2 => ContentType::fontWoff2,
+            self::xls => ContentType::applicationXls,
+            self::xlsx => ContentType::applicationXlsx,
+            self::xml => ContentType::applicationXml,
+            self::zip => ContentType::applicationZip,
         };
     }
 }
