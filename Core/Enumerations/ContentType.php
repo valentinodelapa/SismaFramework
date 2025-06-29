@@ -33,105 +33,140 @@ namespace SismaFramework\Core\Enumerations;
 enum ContentType
 {
 
-    case textCss;
-    case applicationMsword;
     case applicationDocx;
     case applicationFormUrlencoded;
     case applicationGeoJson;
-    case textHtml;
-    case imageIcon;
-    case imageJpeg;
     case applicationJavascript;
     case applicationJsm;
     case applicationJson;
-    case audioMp3;
-    case videoMp4;
-    case multipartFormData;
-    case fontOtf;
     case applicationPdf;
     case applicationPhp;
-    case imagePng;
     case applicationPpt;
     case applicationPptx;
     case applicationRar;
-    case imageSvgXml;
-    case textTpl;
-    case fontTtf;
-    case textPlain;
-    case fontWoff;
-    case fontWoff2;
     case applicationXls;
     case applicationXlsx;
     case applicationXml;
     case applicationZip;
+    case audioMp3;
+    case fontOtf;
+    case fontTtf;
+    case fontWoff;
+    case fontWoff2;
+    case imageIcon;
+    case imageJpeg;
+    case imagePng;
+    case imageSvgXml;
+    case multipartFormData;
+    case textCss;
+    case textHtml;
+    case textPlain;
+    case textTpl;
+    case videoMp4;
 
     public function getMime(): string
     {
         return match ($this) {
-            self::textCss => 'text/css',
-            self::applicationMsword => 'application/msword',
             self::applicationDocx => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             self::applicationFormUrlencoded => 'application/x-www-form-urlencoded',
-            self::multipartFormData => 'multipart/form-data',
             self::applicationGeoJson => 'application/geo+json',
-            self::textHtml => 'text/html',
-            self::imageIcon => 'image/x-icon',
-            self::imageJpeg => 'image/jpeg',
             self::applicationJavascript, self::applicationJsm => 'application/javascript',
             self::applicationJson => 'application/json',
-            self::audioMp3 => 'audio/mp3',
-            self::videoMp4 => 'video/mp4',
-            self::fontOtf => 'font/otf',
             self::applicationPdf => 'application/pdf',
             self::applicationPhp => 'application/x-httpd-php',
-            self::imagePng => 'image/png',
             self::applicationPpt => 'application/vnd.ms-powerpoint',
             self::applicationPptx => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             self::applicationRar => 'application/x-rar-compressed',
-            self::imageSvgXml => 'image/svg+xml',
-            self::textTpl, self::textPlain => 'text/plain',
-            self::fontTtf => 'font/ttf',
-            self::fontWoff => 'font/woff',
-            self::fontWoff2 => 'font/woff2',
             self::applicationXls => 'application/vnd.ms-excel',
             self::applicationXlsx => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             self::applicationXml => 'application/xml',
             self::applicationZip => 'application/x-zip-compressed',
+            self::audioMp3 => 'audio/mp3',
+            self::fontOtf => 'font/otf',
+            self::fontTtf => 'font/ttf',
+            self::fontWoff => 'font/woff',
+            self::fontWoff2 => 'font/woff2',
+            self::imageIcon => 'image/x-icon',
+            self::imageJpeg => 'image/jpeg',
+            self::imagePng => 'image/png',
+            self::imageSvgXml => 'image/svg+xml',
+            self::multipartFormData => 'multipart/form-data',
+            self::textCss => 'text/css',
+            self::textHtml => 'text/html',
+            self::textPlain, self::textTpl => 'text/plain',
+            self::applicationMsword => 'application/msword',
+            self::videoMp4 => 'video/mp4',
         };
     }
 
     public static function getByMime(string $mime): self
     {
         return match ($mime) {
-            'text/css' => self::textCss,
             'application/msword' => self::applicationMsword,
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => self::applicationDocx,
             'application/x-www-form-urlencoded' => self::applicationFormUrlencoded,
-            'multipart/form-data' => self::multipartFormData,
             'application/geo+json' => self::applicationGeoJson,
-            'text/html' => self::textHtml,
-            'image/x-icon' => self::imageIcon,
-            'image/jpeg' => self::imageJpeg,
             'application/javascript', 'text/javascript' => self::applicationJavascript,
             'application/json' => self::applicationJson,
-            'audio/mp3' => self::audioMp3,
-            'video/mp4' => self::videoMp4,
-            'font/otf' => self::fontOtf,
             'application/pdf' => self::applicationPdf,
             'application/x-httpd-php' => self::applicationPhp,
-            'image/png' => self::imagePng,
             'application/vnd.ms-powerpoint' => self::applicationPpt,
             'application/vnd.openxmlformats-officedocument.presentationml.presentation' => self::applicationPptx,
             'application/x-rar-compressed' => self::applicationRar,
-            'image/svg+xml' => self::imageSvgXml,
-            'font/ttf' => self::fontTtf,
-            'text/plain' => self::textPlain,
-            'font/woff' => self::fontWoff,
-            'font/woff2' => self::fontWoff2,
             'application/vnd.ms-excel' => self::applicationXls,
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => self::applicationXlsx,
             'application/xml' => self::applicationXml,
             'application/x-zip-compressed' => self::applicationZip,
+            'audio/mp3' => self::audioMp3,
+            'font/otf' => self::fontOtf,
+            'font/ttf' => self::fontTtf,
+            'font/woff' => self::fontWoff,
+            'font/woff2' => self::fontWoff2,
+            'image/x-icon' => self::imageIcon,
+            'image/jpeg' => self::imageJpeg,
+            'image/png' => self::imagePng,
+            'image/svg+xml' => self::imageSvgXml,
+            'multipart/form-data' => self::multipartFormData,
+            'text/css' => self::textCss,
+            'text/html' => self::textHtml,
+            'text/plain' => self::textPlain,
+            'applicationMsword' => self::applicationMsword,
+            'video/mp4' => self::videoMp4,
+        };
+    }
+
+    public function toResource(): ?Resource
+    {
+        return match ($this) {
+            self::applicationDocx => Resource::docx,
+            self::applicationGeoJson => Resource::geojson,
+            self::applicationJavascript, self::applicationJsm => Resource::js,
+            self::applicationJson => Resource::json,
+            self::applicationMsword => Resource::doc,
+            self::applicationPdf => Resource::pdf,
+            self::applicationPhp => Resource::php,
+            self::applicationPpt => Resource::ppt,
+            self::applicationPptx => Resource::pptx,
+            self::applicationRar => Resource::rar,
+            self::applicationXls => Resource::xls,
+            self::applicationXlsx => Resource::xlsx,
+            self::applicationXml => Resource::xml,
+            self::applicationZip => Resource::zip,
+            self::audioMp3 => Resource::mp3,
+            self::fontOtf => Resource::otf,
+            self::fontTtf => Resource::ttf,
+            self::fontWoff => Resource::woff,
+            self::fontWoff2 => Resource::woff2,
+            self::imageIcon => Resource::ico,
+            self::imageJpeg => Resource::jpg,
+            self::imagePng => Resource::png,
+            self::imageSvgXml => Resource::svg,
+            self::multipartFormData => null,
+            self::textCss => Resource::css,
+            self::textHtml => Resource::html,
+            self::textPlain => Resource::txt,
+            self::textTpl => Resource::tpl,
+            self::videoMp4 => Resource::mp4,
         };
     }
 }
