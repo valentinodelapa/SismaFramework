@@ -195,7 +195,6 @@ class ResourceMakerTest extends TestCase
         $this->expectOutputString(file_get_contents($filePath));
         $_SERVER['QUERY_STRING'] = 'resource=resource';
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
-        $resourceMaker->setStreamContex();
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 }

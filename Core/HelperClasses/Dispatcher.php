@@ -98,12 +98,8 @@ class Dispatcher
     {
         $requestUriParts = explode('?', $this->request->server['REQUEST_URI'], 2);
         $this->originalPath = $this->path = $requestUriParts[0];
-        if (strlen($this->request->server['QUERY_STRING']) > 0) {
-            if ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
-                $this->resourceMaker->setStreamContex();
-            } else {
-                return $router->reloadWithParsedQueryString();
-            }
+        if ((strlen($this->request->server['QUERY_STRING']) > 0) && ($this->resourceMaker->isAcceptedResourceFile($this->path) === false)) {
+            return $router->reloadWithParsedQueryString();
         }
         $this->parsePath();
         return $this->handle();
