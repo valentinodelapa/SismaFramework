@@ -177,8 +177,6 @@ class DispatcherTest extends TestCase
     {
         $this->requestMock->server['REQUEST_URI'] = '/javascript/sample.js?resource=resource';
         $this->requestMock->server['QUERY_STRING'] = 'resource=resource';
-        $this->resourceMakerMock->expects($this->once())
-                ->method('setStreamContex');
         $this->resourceMakerMock->expects($this->exactly(3))
                 ->method('isAcceptedResourceFile')
                 ->willReturn(true);

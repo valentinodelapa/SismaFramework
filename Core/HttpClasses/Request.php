@@ -26,7 +26,9 @@
 
 namespace SismaFramework\Core\HttpClasses;
 
+use SismaFramework\Core\Enumerations\ContentType;
 use SismaFramework\Core\Enumerations\RequestType;
+use SismaFramework\Core\Exceptions\BadRequestException;
 
 /**
  *
@@ -58,14 +60,19 @@ class Request
         if (function_exists('getallheaders')) {
             $this->headers = getallheaders();
         } else {
-            foreach ($this->server as $name => $value) {
-                if (str_starts_with($name, 'HTTP_')) {
-                    $headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
-                    $this->headers[$headerName] = $value;
-                } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH', 'CONTENT_MD5'])) {
-                    $headerName = str_replace('_', '-', ucwords(strtolower($name), '_'));
-                    $this->headers[$headerName] = $value;
-                }
+            $this->getHeadersByServer();
+        }
+    }
+
+    private function getHeadersByServer(): void
+    {
+        foreach ($this->server as $name => $value) {
+            if (str_starts_with($name, 'HTTP_')) {
+                $headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                $this->headers[$headerName] = $value;
+            } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH', 'CONTENT_MD5'])) {
+                $headerName = str_replace('_', '-', ucwords(strtolower($name), '_'));
+                $this->headers[$headerName] = $value;
             }
         }
     }
@@ -73,42 +80,26 @@ class Request
     private function parseRequestBody(): void
     {
         $methodString = $this->server['REQUEST_METHOD'] ?? 'GET';
-        $method = RequestType::tryFrom($methodString);
-        $contentType = $this->headers['Content-Type'] ?? $this->headers['content-type'] ?? '';
-        if ($method && in_array($method, [RequestType::methodPost, RequestType::methodPut, RequestType::methodDelete, RequestType::methodPatch])) {
-            $readPhpInput = true;
-            if ($method === RequestType::methodPost) {
-                if (str_starts_with(strtolower($contentType), 'application/x-www-form-urlencoded') ||
-                        str_starts_with(strtolower($contentType), 'multipart/form-data')) {
-                    $readPhpInput = false;
-                }
-            }
-            $parsedBody = [];
-            if ($readPhpInput) {
-                $rawBody = file_get_contents('php://input');
-                if (str_starts_with(strtolower($contentType), 'application/json')) {
-                    $decodedBody = json_decode($rawBody, true);
-                    if (json_last_error() === JSON_ERROR_NONE) {
-                        $parsedBody = $decodedBody;
-                    } else {
-                        error_log('Errore nella decodifica JSON: ' . json_last_error_msg());
-                    }
-                }
-                if (is_array($parsedBody)) {
-                    $this->request = $parsedBody;
-                }
+        $method = RequestType::tryFrom($methodString) ?? [];
+        $contentTypeString = $this->headers['Content-Type'] ?? $this->headers['content-type'] ?? '';
+        $contentTypeParts = explode(';', $contentTypeString);
+        $contentType = ContentType::getByMime(trim($contentTypeParts[0]));
+        if (in_array($method, [RequestType::methodPost, RequestType::methodPut, RequestType::methodDelete, RequestType::methodPatch])) {
+            switch ($contentType) {
+                case ContentType::applicationJson:
+                    $this->parseJsonRequest();
             }
         }
     }
 
-    public function getStreamContentResource()
+    private function parseJsonRequest(): void
     {
-        $opts = [
-            ($this->server['SERVER_PROTOCOL'] ?? 'HTTP/1.0') => [
-                'method' => 'GET',
-                'content' => $this->query
-            ]
-        ];
-        return stream_context_create($opts);
+        $rawBody = file_get_contents('php://input');
+        $decodedBody = json_decode($rawBody, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decodedBody)) {
+            $this->request = $decodedBody;
+        } elseif (json_last_error() !== JSON_ERROR_NONE) {
+            throw  new BadRequestException(json_last_error_msg());
+        }
     }
 }

@@ -99,7 +99,7 @@ enum ContentType
         };
     }
 
-    public static function getByMime(string $mime): self
+    public static function getByMime(string $mime): ?self
     {
         return match ($mime) {
             'application/msword' => self::applicationMsword,
@@ -132,6 +132,7 @@ enum ContentType
             'text/plain' => self::textPlain,
             'applicationMsword' => self::applicationMsword,
             'video/mp4' => self::videoMp4,
+            default=> null,
         };
     }
 

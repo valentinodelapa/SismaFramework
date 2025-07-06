@@ -42,17 +42,11 @@ class ResourceMaker
 
     private Request $request;
     private Config $config;
-    private $streamContex = null;
 
     public function __construct(Request $request = new Request(), ?Config $customConfig = null)
     {
         $this->config = $customConfig ?? Config::getInstance();
         $this->request = $request;
-    }
-
-    public function setStreamContex(): void
-    {
-        $this->streamContex = $this->request->getStreamContentResource();
     }
 
     public function isAcceptedResourceFile(string $path): bool
@@ -97,11 +91,11 @@ class ResourceMaker
     private function getResourceData(string $filename): void
     {
         if (filesize($filename) < $this->config->fileGetContentMaxBytesLimit) {
-            echo file_get_contents($filename, false, $this->streamContex);
+            echo file_get_contents($filename);
         } elseif (filesize($filename) < $this->config->readfileMaxBytesLimit) {
-            readfile($filename, false, $this->streamContex);
+            readfile($filename);
         } else {
-            $stream = fopen($filename, 'rb', false, $this->streamContex);
+            $stream = fopen($filename, 'rb');
             fpassthru($stream);
         }
     }
