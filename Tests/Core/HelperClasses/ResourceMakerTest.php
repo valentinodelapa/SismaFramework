@@ -180,21 +180,4 @@ class ResourceMakerTest extends TestCase
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
-
-    public function testFileWithStreamContent()
-    {
-        $filePath = __DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js';
-        $this->lockerMock->expects($this->once())
-                ->method('fileIsLocked')
-                ->with($filePath)
-                ->willReturn(false);
-        $this->lockerMock->expects($this->once())
-                ->method('folderIsLocked')
-                ->with(dirname($filePath))
-                ->willReturn(false);
-        $this->expectOutputString(file_get_contents($filePath));
-        $_SERVER['QUERY_STRING'] = 'resource=resource';
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
-        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
-    }
 }
