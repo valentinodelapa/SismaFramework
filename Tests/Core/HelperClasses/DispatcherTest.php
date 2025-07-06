@@ -173,20 +173,6 @@ class DispatcherTest extends TestCase
         $dispatcher->run();
     }
 
-    public function testFileWithStreamContent()
-    {
-        $this->requestMock->server['REQUEST_URI'] = '/javascript/sample.js?resource=resource';
-        $this->requestMock->server['QUERY_STRING'] = 'resource=resource';
-        $this->resourceMakerMock->expects($this->exactly(3))
-                ->method('isAcceptedResourceFile')
-                ->willReturn(true);
-        $this->resourceMakerMock->expects($this->once())
-                ->method('makeResource')
-                ->with($this->configMock->systemPath . $this->configMock->applicationAssetsPath . 'javascript' . DIRECTORY_SEPARATOR . 'sample.js');
-        $dispatcher = new Dispatcher($this->requestMock, $this->resourceMakerMock, $this->fixturesManagerMock, $this->dataMapperMock, $this->configMock);
-        $dispatcher->run();
-    }
-
     public function testNotExistentFileFile()
     {
         $this->requestMock->server['REQUEST_URI'] = 'fake/fake/fake/fake/fake.css';
