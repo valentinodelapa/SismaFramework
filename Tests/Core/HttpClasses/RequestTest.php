@@ -118,7 +118,7 @@ class RequestTest extends TestCase
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['CONTENT_TYPE'] = 'application/json';
         $request = new Request();
-        $this->assertEquals($jsonData, $request->request);
+        $this->assertEquals($jsonData, $request->data);
         stream_wrapper_restore('php');
     }
 

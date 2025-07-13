@@ -100,7 +100,7 @@ class BaseFormTest extends TestCase
         $this->requestMock = $this->getMockBuilder(Request::class)
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->requestMock->query = $this->requestMock->request = $this->requestMock->cookie = $this->requestMock->files = $this->requestMock->server = $this->requestMock->headers = [];
+        $this->requestMock->query = $this->requestMock->input = $this->requestMock->cookie = $this->requestMock->files = $this->requestMock->server = $this->requestMock->headers = [];
     }
 
     public function testAddEntityFromFormWithException()
@@ -122,7 +122,7 @@ class BaseFormTest extends TestCase
     public function testFormForBaseEntitySubmittedNotValid()
     {
         $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'nullableSecureString' => 'is not secure',
             'submitted' => 'on'
         ];
@@ -138,7 +138,7 @@ class BaseFormTest extends TestCase
     public function testFormForBaseEntityWithForeignKeySubmittedNotValid()
     {
         $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'referencedEntityWithoutInitialization' => [
                 'text' => 'referenced sample',
             ],
@@ -159,7 +159,7 @@ class BaseFormTest extends TestCase
     public function testFormForBaseEntitySubmittedValid()
     {
         $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'stringWithoutInizialization' => 'base sample',
             'referencedEntityWithoutInitialization' => [
                 'text' => 'referenced sample',
@@ -184,7 +184,7 @@ class BaseFormTest extends TestCase
         $baseSample->referencedEntityWithoutInitialization = new ReferencedSample($this->dataMapperMock);
         $baseSample->referencedEntityWithoutInitialization->id = 2;
         $baseSampleForm = new BaseSampleForm($baseSample, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'stringWithoutInizialization' => 'base sample',
             'referencedEntityWithoutInitialization' => [
                 'text' => 'referenced sample',
@@ -216,7 +216,7 @@ class BaseFormTest extends TestCase
     public function testFormForReferencedEntityWithCollectionNotValid()
     {
         $referencedSampleForm = new ReferencedSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollectionReferencedEntityWithoutInitialization' => [
                 ['stringWithoutInizialization' => 'base sample one'],
@@ -239,7 +239,7 @@ class BaseFormTest extends TestCase
     public function testFormForReferencedEntityWithCollectionValid()
     {
         $referencedSampleForm = new ReferencedSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollectionReferencedEntityWithoutInitialization' => [
                 ['stringWithoutInizialization' => 'base sample one'],
@@ -270,7 +270,7 @@ class BaseFormTest extends TestCase
         $referencedSample->baseSampleCollectionReferencedEntityWithoutInitialization[1]->id = 3;
         $referencedSample->setBaseSampleCollectionReferencedEntityWithInitialization(new SismaCollection(BaseSample::class));
         $referencedSampleForm = new ReferencedSampleForm($referencedSample, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollectionReferencedEntityWithoutInitialization' => [
                 ['stringWithoutInizialization' => 'base sample one'],
@@ -295,7 +295,7 @@ class BaseFormTest extends TestCase
     public function testFormForOtherReferencedEntityWithCollectionNotValid()
     {
         $otherReferencedSampleForm = new OtherReferencedSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollection' => [[], []],
             'submitted' => 'on'
@@ -313,7 +313,7 @@ class BaseFormTest extends TestCase
     public function testFormForOtherReferencedEntityWithCollectionValid()
     {
         $otherReferencedSampleForm = new OtherReferencedSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollection' => [
                 ['stringWithoutInizialization' => 'base sample one'],
@@ -344,7 +344,7 @@ class BaseFormTest extends TestCase
         $otherReferencedSample->baseSampleCollection[0]->id = 2;
         $otherReferencedSample->baseSampleCollection[1]->id = 3;
         $otherReferencedSampleForm = new OtherReferencedSampleForm($otherReferencedSample, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollection' => [
                 ['stringWithoutInizialization' => 'base sample one'],
@@ -370,7 +370,7 @@ class BaseFormTest extends TestCase
     public function testFormForSelfReferencedEntityNotValid()
     {
         $selfReferencedSampleForm = new SelfReferencedSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'self referenced sample one',
             'sonCollection' => [[], []],
             'submitted' => 'on'
@@ -388,7 +388,7 @@ class BaseFormTest extends TestCase
     public function testFormForSelfReferencedEntityValid()
     {
         $selfReferencedSampleForm = new SelfReferencedSampleForm(null, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'self referenced sample one',
             'sonCollection' => [
                 ['text' => 'self referenced sample two'],
@@ -423,7 +423,7 @@ class BaseFormTest extends TestCase
         $selfReferencedSample->sonCollection[0]->id = 2;
         $selfReferencedSample->sonCollection[1]->id = 3;
         $selfReferencedSampleForm = new SelfReferencedSampleForm($selfReferencedSample, $this->dataMapperMock);
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'text' => 'self referenced sample one',
             'sonCollection' => [
                 ['text' => 'self referenced sample two'],
@@ -481,7 +481,7 @@ class BaseFormTest extends TestCase
     {
         $this->expectException(\Error::class);
         $this->expectExceptionMessage('Typed property SismaFramework\TestsApplication\Entities\SimpleEntity::$string must not be accessed before initialization');
-        $this->requestMock->request = [
+        $this->requestMock->input = [
             'string' => 'sample-string',
             'submitted' => 'on'
         ];
@@ -492,5 +492,26 @@ class BaseFormTest extends TestCase
         $simpleEntity = $incompleteSimpleEntityForm->resolveEntity();
         $this->assertInstanceOf(SimpleEntity::class, $simpleEntity);
         $simpleEntity->string;
+    }
+
+    public function testFormForBaseEntityWithJson()
+    {
+        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
+        $this->requestMock->input = [
+            'stringWithoutInizialization' => 'base sample',
+            'referencedEntityWithoutInitialization' => [
+                'text' => 'referenced sample',
+            ],
+            'submitted' => 'on'
+        ];
+        $baseSampleForm->handleRequest($this->requestMock);
+        $this->assertTrue($baseSampleForm->isSubmitted());
+        $this->assertTrue($baseSampleForm->isValid());
+        $this->assertEquals(ResponseType::httpOk, $baseSampleForm->getResponseType());
+        $baseSampleResult = $baseSampleForm->resolveEntity();
+        $this->assertInstanceOf(BaseSample::class, $baseSampleResult);
+        $this->assertEquals('base sample', $baseSampleResult->stringWithoutInizialization);
+        $this->assertInstanceOf(ReferencedSample::class, $baseSampleResult->referencedEntityWithoutInitialization);
+        $this->assertEquals('referenced sample', $baseSampleResult->referencedEntityWithoutInitialization->text);
     }
 }

@@ -84,6 +84,7 @@ class DispatcherTest extends TestCase
                 ->getMock();
         $this->requestMock->server['REQUEST_URI'] = '/';
         $this->requestMock->server['QUERY_STRING'] = '';
+        $this->requestMock->request = [];
         $this->resourceMakerMock = $this->createMock(ResourceMaker::class);
         $this->fixturesManagerMock = $this->createMock(FixturesManager::class);
         $baseAdapterMock = $this->createMock(BaseAdapter::class);

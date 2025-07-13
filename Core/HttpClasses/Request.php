@@ -42,6 +42,8 @@ class Request
     public array $cookie;
     public array $files;
     public array $server;
+    public array $data = [];
+    public array $input = [];
     public array $headers = [];
 
     public function __construct()
@@ -53,6 +55,7 @@ class Request
         $this->server = $_SERVER;
         $this->initializeHeaders();
         $this->parseRequestBody();
+        $this->input = !empty($this->data) ? $this->data : $this->request;
     }
 
     private function initializeHeaders(): void
@@ -88,6 +91,7 @@ class Request
             switch ($contentType) {
                 case ContentType::applicationJson:
                     $this->parseJsonRequest();
+                    break;
             }
         }
     }
@@ -97,7 +101,7 @@ class Request
         $rawBody = file_get_contents('php://input');
         $decodedBody = json_decode($rawBody, true);
         if (json_last_error() === JSON_ERROR_NONE && is_array($decodedBody)) {
-            $this->request = $decodedBody;
+            $this->data = $decodedBody;
         } elseif (json_last_error() !== JSON_ERROR_NONE) {
             throw  new BadRequestException(json_last_error_msg());
         }
