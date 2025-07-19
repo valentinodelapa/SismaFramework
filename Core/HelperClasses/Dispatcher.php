@@ -69,6 +69,7 @@ class Dispatcher
     private string $pathAction;
     private string $parsedAction;
     private array $actionArguments = [];
+    private array $associativeActionArguments = [];
     private \ReflectionClass $reflectionController;
     private \ReflectionMethod $reflectionConstructor;
     private array $reflectionConstructorArguments;
@@ -288,16 +289,14 @@ class Dispatcher
     private function checkActionPresenceInController(): bool
     {
         Router::setActualCleanUrl($this->pathController, $this->parsedAction);
-        $methodExsist = false;
         if (method_exists($this->controllerClassName, $this->parsedAction)) {
             $this->reflectionAction = $this->reflectionController->getMethod($this->parsedAction);
             ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
-            $methodExsist = true;
-        }
-        if ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains($this->config->rootPath, $this->pathAction) === false)) {
+            return true;
+        }elseif ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains($this->config->rootPath, $this->pathAction) === false)) {
             return is_callable([$this->instanceControllerClass(), $this->parsedAction]);
         } else {
-            return $methodExsist;
+            return false;
         }
     }
 
@@ -349,8 +348,7 @@ class Dispatcher
     private function callControllerMethodWithArguments(): Response
     {
         $this->setArrayOddToKeyEvenToValue();
-        $this->parseArgsAssociativeArray();
-        return call_user_func_array([$this->controllerInstance, $this->parsedAction], $this->actionArguments);
+        return call_user_func_array([$this->controllerInstance, $this->parsedAction], $this->parseArgsAssociativeArray());
     }
 
     private function setArrayOddToKeyEvenToValue(): void
@@ -360,8 +358,8 @@ class Dispatcher
             $odd[] = NotationManager::convertToCamelCase($this->cleanArrayShift($this->actionArguments));
             $even[] = urldecode(array_shift($this->actionArguments));
         }
-        $this->actionArguments = $this->combineArrayToAssociativeArray($odd, $even);
-        $this->request->query = $this->actionArguments;
+        $this->associativeActionArguments = $this->combineArrayToAssociativeArray($odd, $even);
+        $this->request->query = $this->associativeActionArguments;
     }
 
     private function combineArrayToAssociativeArray(array $keys, array $values): array
@@ -380,7 +378,7 @@ class Dispatcher
         return $result;
     }
 
-    private function parseArgsAssociativeArray(): void
+    private function parseArgsAssociativeArray(): array
     {
         $currentActionArguments = [];
         foreach ($this->reflectionActionArguments as $argument) {
@@ -388,15 +386,15 @@ class Dispatcher
                 $currentActionArguments[$argument->name] = $this->request;
             } elseif ($argument->getType()->getName() === Authentication::class) {
                 $currentActionArguments[$argument->name] = new Authentication($this->request);
-            } elseif (array_key_exists($argument->name, $this->actionArguments)) {
+            } elseif (array_key_exists($argument->name, $this->associativeActionArguments)) {
                 $reflectionType = $argument->getType();
-                $currentActionArguments[$argument->name] = Parser::parseValue($reflectionType, $this->actionArguments[$argument->name], true, $this->dataMapper);
+                $currentActionArguments[$argument->name] = Parser::parseValue($reflectionType, $this->associativeActionArguments[$argument->name], true, $this->dataMapper);
             } elseif ($argument->isDefaultValueAvailable()) {
                 $currentActionArguments[$argument->name] = $argument->getDefaultValue();
             } else {
                 throw new BadRequestException($argument->name);
             }
         }
-        $this->actionArguments = $currentActionArguments;
+        return $currentActionArguments;
     }
 }
