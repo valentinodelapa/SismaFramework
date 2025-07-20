@@ -124,6 +124,7 @@ class Config
     protected readonly string $defaultControllerNamespace;
     protected readonly int $fileGetContentMaxBytesLimit;
     protected readonly int $readfileMaxBytesLimit;
+    protected readonly array $customResourceTypes;
 
     /* Render Constant */
     protected readonly string $localesPath;

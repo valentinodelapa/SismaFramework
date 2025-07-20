@@ -51,7 +51,17 @@ class ResourceMaker
 
     public function isAcceptedResourceFile(string $path): bool
     {
-        return Resource::tryFrom($this->getExtension($path)) instanceof Resource;
+        $extension = $this->getExtension($path);
+        if (Resource::tryFrom($extension) instanceof Resource) {
+            return true;
+        } else {
+            return $this->isCustomResourceType($extension);
+        }
+    }
+
+    private function isCustomResourceType(string $extension): bool
+    {
+        return in_array($extension, array_keys($this->config->customResourceTypes));
     }
 
     private function getExtension(string $path): string
@@ -62,25 +72,35 @@ class ResourceMaker
 
     public function makeResource(string $filename, $forceDownload = false, Locker $locker = new Locker()): Response
     {
-        $resource = Resource::from($this->getExtension($filename));
         if ($locker->fileIsLocked($filename) || $locker->folderIsLocked(dirname($filename))) {
             throw new AccessDeniedException($filename);
         } else {
-            if ($resource->isRenderable() && ($forceDownload === false)) {
-                return $this->viewResource($filename, $resource);
-            } elseif ($resource->isDownloadable()) {
-                return $this->downloadResource($filename, $resource);
+            $resource = Resource::tryFrom($this->getExtension($filename));
+            if ($resource instanceof Resource) {
+                return $this->makeStandardResource($filename, $resource, $forceDownload);
             } else {
-                throw new AccessDeniedException($filename);
+                return $this->makeCustomResource($filename, $forceDownload);
             }
         }
     }
 
-    private function viewResource(string $filename, Resource $resource): Response
+    private function makeStandardResource(string $filename, Resource $resource, $forceDownload = false): Response
+    {
+        $mime = $resource->getContentType()->getMime();
+        if ($resource->isRenderable() && ($forceDownload === false)) {
+            return $this->viewResource($filename, $mime);
+        } elseif ($resource->isDownloadable()) {
+            return $this->downloadResource($filename, $mime);
+        } else {
+            throw new AccessDeniedException($filename);
+        }
+    }
+
+    private function viewResource(string $filename, string $mime): Response
     {
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
-        header("Content-type: " . $resource->getContentType()->getMime());
+        header("Content-type: " . $mime);
         header('X-Content-Type-Options: nosniff');
         header("Content-Disposition: inline");
         header("Content-Length: " . filesize($filename));
@@ -100,15 +120,25 @@ class ResourceMaker
         }
     }
 
-    public function downloadResource(string $filename, Resource $resource): Response
+    private function downloadResource(string $filename, string $mime): Response
     {
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
-        header("Content-type: " . $resource->getContentType()->getMime());
+        header("Content-type: " . $mime);
         header('X-Content-Type-Options: nosniff');
         header("Content-Disposition: attachment; filename=\"" . basename($filename) . "\"");
         header("Content-Length: " . filesize($filename));
         $this->getResourceData($filename);
         return new Response();
+    }
+
+    private function makeCustomResource(string $filename, $forceDownload = false): Response
+    {
+        $mime = $this->config->customResourceTypes[$this->getExtension($filename)];
+        if ($forceDownload) {
+            return $this->downloadResource($filename, $mime);
+        } else {
+            return $this->viewResource($filename, $mime);
+        }
     }
 }
