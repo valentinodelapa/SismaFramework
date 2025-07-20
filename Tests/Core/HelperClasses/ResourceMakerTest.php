@@ -62,7 +62,8 @@ class ResourceMakerTest extends TestCase
                     ['logProductionMaxRow', 2],
                     ['logVerboseActive', true],
                     ['readfileMaxBytesLimit', 1000],
-                    ['customResourceTypes', ['md' => 'text/markdown']],
+                    ['customRenderableResourceTypes', ['md' => 'text/markdown']],
+                    ['customDownloadableResourceTypes', []],
         ]);
         Config::setInstance($this->configMock);
         $this->lockerMock = $this->createMock(Locker::class);

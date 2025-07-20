@@ -54,14 +54,21 @@ class ResourceMaker
         $extension = $this->getExtension($path);
         if (Resource::tryFrom($extension) instanceof Resource) {
             return true;
+        } elseif ($this->isCustomRenderableResourceType($extension)) {
+            return true;
         } else {
-            return $this->isCustomResourceType($extension);
+            return $this->isCustomDownloadableResourceType($extension);
         }
     }
 
-    private function isCustomResourceType(string $extension): bool
+    private function isCustomRenderableResourceType(string $extension): bool
     {
-        return in_array($extension, array_keys($this->config->customResourceTypes));
+        return in_array($extension, array_keys($this->config->customRenderableResourceTypes));
+    }
+
+    private function isCustomDownloadableResourceType(string $extension): bool
+    {
+        return in_array($extension, array_keys($this->config->customDownloadableResourceTypes));
     }
 
     private function getExtension(string $path): string
@@ -134,11 +141,15 @@ class ResourceMaker
 
     private function makeCustomResource(string $filename, $forceDownload = false): Response
     {
-        $mime = $this->config->customResourceTypes[$this->getExtension($filename)];
-        if ($forceDownload) {
+        $extension = $this->getExtension($filename);
+        if ($this->isCustomRenderableResourceType($extension) && ($forceDownload === false)) {
+            $mime = $this->config->customRenderableResourceTypes[$this->getExtension($filename)];
+            return $this->viewResource($filename, $mime);
+        } elseif ($this->isCustomDownloadableResourceType($extension)) {
+            $mime = $this->config->customDownloadableResourceTypes[$this->getExtension($filename)];
             return $this->downloadResource($filename, $mime);
         } else {
-            return $this->viewResource($filename, $mime);
+            throw new AccessDeniedException($filename);
         }
     }
 }
