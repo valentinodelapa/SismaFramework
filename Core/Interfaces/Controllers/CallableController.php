@@ -33,5 +33,7 @@ namespace SismaFramework\Core\Interfaces\Controllers;
 interface CallableController
 {
 
-    public function checkCompatibility(...$arguments): bool;
+    public function __call(string $name, array $arguments);
+
+    public function checkCompatibility(array $arguments): bool;
 }

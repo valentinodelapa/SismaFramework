@@ -36,6 +36,7 @@ use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
+use SismaFramework\Core\Interfaces\Controllers\CallableController;
 use SismaFramework\Core\Interfaces\Services\CrawlComponentMakerInterface;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Security\HttpClasses\Authentication;
@@ -271,9 +272,11 @@ class Dispatcher
     private function resolveRouteCall(): Response
     {
         $this->getControllerConstructorArguments();
+        $this->controllerInstance = $this->instanceControllerClass();
         if ($this->checkActionPresenceInController()) {
-            $this->controllerInstance = $this->instanceControllerClass();
             return $this->callControllerMethod();
+        } elseif ($this->checkCallableController()) {
+            return $this->executeMagicCall();
         } else {
             return $this->switchNotFoundActions();
         }
@@ -284,20 +287,6 @@ class Dispatcher
         $this->reflectionController = new \ReflectionClass($this->controllerClassName);
         $this->reflectionConstructor = $this->reflectionController->getConstructor();
         $this->reflectionConstructorArguments = $this->reflectionConstructor->getParameters();
-    }
-
-    private function checkActionPresenceInController(): bool
-    {
-        Router::setActualCleanUrl($this->pathController, $this->parsedAction);
-        if (method_exists($this->controllerClassName, $this->parsedAction)) {
-            $this->reflectionAction = $this->reflectionController->getMethod($this->parsedAction);
-            ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
-            return true;
-        }elseif ($this->defaultControllerInjected && (count($this->pathParts) === 0) && (str_contains($this->config->rootPath, $this->pathAction) === false)) {
-            return is_callable([$this->instanceControllerClass(), $this->parsedAction]);
-        } else {
-            return false;
-        }
     }
 
     private function instanceControllerClass(): BaseController
@@ -325,6 +314,18 @@ class Dispatcher
         }
     }
 
+    private function checkActionPresenceInController(): bool
+    {
+        Router::setActualCleanUrl($this->pathController, $this->parsedAction);
+        if ($this->reflectionController->hasMethod($this->parsedAction) && ($this->reflectionController->getMethod($this->parsedAction)->getReturnType()->getName() === Response::class)) {
+            $this->reflectionAction = $this->reflectionController->getMethod($this->parsedAction);
+            ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function callControllerMethod(): Response
     {
         $this->getActionArguments();
@@ -338,11 +339,7 @@ class Dispatcher
 
     private function getActionArguments(): void
     {
-        if (method_exists($this->controllerInstance, $this->parsedAction)) {
-            $this->reflectionActionArguments = $this->reflectionAction->getParameters();
-        } else {
-            $this->reflectionActionArguments = [];
-        }
+        $this->reflectionActionArguments = $this->reflectionAction->getParameters();
     }
 
     private function callControllerMethodWithArguments(): Response
@@ -396,5 +393,21 @@ class Dispatcher
             }
         }
         return $currentActionArguments;
+    }
+
+    private function checkCallableController(): bool
+    {
+        if ($this->reflectionController->isSubclassOf(CallableController::class)) {
+            $fullCallableParts = [$this->pathAction, ...$this->actionArguments];
+            return $this->controllerInstance->checkCompatibility($fullCallableParts);
+        } else {
+            return false;
+        }
+    }
+
+    private function executeMagicCall(): Response
+    {
+        $currentAction = $this->parsedAction;
+        return $this->controllerInstance->$currentAction(...$this->actionArguments);
     }
 }
