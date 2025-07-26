@@ -5,6 +5,9 @@
 ![PHP Version Support](https://img.shields.io/badge/php-%3E%3D8.1-blue)
 [![license](https://img.shields.io/badge/license-MIT-yellowgreen)](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE)
 [![Documentation](https://img.shields.io/badge/documentation-phpDocumentor-blue)](https://github.com/valentinodelapa/SismaFramework/blob/master/docs-phpdoc/index.html)
+[![SLSA 3](https://img.shields.io/badge/SLSA-Level%203-blue)](https://slsa.dev/spec/v0.1/levels#level-3)
+
+# SismaFramework
 
 ## Descrizione
 
