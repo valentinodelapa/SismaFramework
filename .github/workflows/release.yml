@@ -13,6 +13,7 @@ jobs:
       digests: ${{ steps.hash.outputs.digests }}
       release_body: ${{ steps.extract_release_notes.outputs.release_body }}
       zip_archive_path: ${{ steps.create_archive.outputs.zip_file_name }}
+      attestation_file_name: slsa.intoto.jsonl
 
     permissions:
       contents: write
@@ -52,6 +53,13 @@ jobs:
             --exclude="FUNDING.yml"
           
           echo "zip_file_name=$ZIP_NAME" >> "${GITHUB_OUTPUT}"
+          echo "Uploading ${{ steps.create_archive.outputs.zip_file_name }} as artifact."
+      - name: Upload Release Archive as Artifact
+        uses: actions/upload-artifact@v4 # Usa v4, naturalmente
+        with:
+          name: ${{ steps.create_archive.outputs.zip_file_name }}
+          path: ${{ steps.create_archive.outputs.zip_file_name }}
+
 
       - name: Extract Release Notes
         id: extract_release_notes
@@ -77,7 +85,6 @@ jobs:
           ZIP_FILE=${{ steps.create_archive.outputs.zip_file_name }}
           echo "digests=$(sha256sum $ZIP_FILE | base64 -w0)" >> "${GITHUB_OUTPUT}"
 
-
   provenance:
     needs: [build]
     runs-on: ubuntu-latest
@@ -89,16 +96,26 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0
     with:
       base64-subjects: "${{ needs.build.outputs.digests }}"
-      upload-assets: true
-      ignored-cache-misses: "go.sum"
+      ignored-cache-misses: "go.sum" 
 
+  release:
+    needs: [build, provenance]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Build Artifacts
+      - name: Download Release Archive
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.zip_archive_path }}
+          path: .
+
+      - name: Download SLSA Attestation
+        uses: actions/download-artifact@v4
+        with:
+          name: slsa.intoto.jsonl
           path: .
 
       - name: Create GitHub Release
