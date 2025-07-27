@@ -136,8 +136,8 @@ abstract class BaseForm extends Submittable
             } else {
                 $entityCollectonToEmbed = null;
             }
-            if (isset($this->request->request[$propertyName])) {
-                $sismaCollectionPropertyKeys = array_keys($this->request->request[$propertyName]);
+            if (isset($this->request->input[$propertyName])) {
+                $sismaCollectionPropertyKeys = array_keys($this->request->input[$propertyName]);
             } else {
                 $sismaCollectionPropertyKeys = $this->getBaseCollectionFormKeys(count($this->entity->{$propertyName}));
             }
@@ -161,16 +161,16 @@ abstract class BaseForm extends Submittable
         $entityFromForm = [];
         foreach ($sismaCollectionPropertyKeys as $key) {
             $ntityToEmbed = $entityCollectonToEmbed[$key] ?? null;
-            $entityFromForm[$key] = $this->generateFormProperty($formPropertyClass, $ntityToEmbed, $this->request->request[$propertyName][$key] ?? []);
+            $entityFromForm[$key] = $this->generateFormProperty($formPropertyClass, $ntityToEmbed, $this->request->input[$propertyName][$key] ?? []);
         }
         return $entityFromForm;
     }
 
-    private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed, array $currentRequestPart): BaseForm
+    private function generateFormProperty(string $formPropertyClass, ?BaseEntity $entityToEmbed, array $currentInputPart): BaseForm
     {
         $propertyForm = new $formPropertyClass($entityToEmbed, $this->dataMapper);
-        $currentRequest = new Request();
-        $currentRequest->request = $currentRequestPart;
+        $currentRequest = clone $this->request;
+        $currentRequest->input = $currentInputPart;
         $propertyForm->handleRequest($currentRequest);
         return $propertyForm;
     }
@@ -186,7 +186,7 @@ abstract class BaseForm extends Submittable
         }
         if (BaseEntity::checkFinalClassReflectionProperty($reflectionEntityProperty)) {
             if ($reflectionEntityProperty->getType()->getName() === $formPropertyClass::getEntityName()) {
-                $this->entityFromForm[$propertyName] = $this->generateFormProperty($formPropertyClass, $entityToEmbedded, $this->request->request[$propertyName] ?? []);
+                $this->entityFromForm[$propertyName] = $this->generateFormProperty($formPropertyClass, $entityToEmbedded, $this->request->input[$propertyName] ?? []);
             } else {
                 throw new InvalidArgumentException($propertyName);
             }
@@ -211,7 +211,7 @@ abstract class BaseForm extends Submittable
     private function parseCollectionProperties(): void
     {
         foreach (Cache::getForeignKeyData(static::getEntityName()) as $propertyName => $propertyData) {
-            if (array_key_exists($propertyName . $this->config->foreignKeySuffix, $this->request->request)) {
+            if (array_key_exists($propertyName . $this->config->foreignKeySuffix, $this->request->input)) {
                 $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix);
             } elseif (count($propertyData) > 1) {
                 $this->parseCollectionWithMultipleReferencedForeignKey($propertyName, $propertyData);
@@ -237,9 +237,9 @@ abstract class BaseForm extends Submittable
     private function switchFormOfCollection(string $propertyName): void
     {
         $this->entityData->{$propertyName} = new SismaCollection(StandardEntity::class);
-        if (isset($this->request->request[$propertyName])) {
+        if (isset($this->request->input[$propertyName])) {
             $this->formFilterError->$propertyName = new FormFilterErrorCollection();
-            foreach (array_keys($this->request->request[$propertyName]) as $key) {
+            foreach (array_keys($this->request->input[$propertyName]) as $key) {
                 $currentForm = $this->entityFromForm[$propertyName][$key];
                 $this->entityData->{$propertyName}[$key] = $this->switchForm($currentForm);
                 $this->formFilterError->$propertyName[$key] = $currentForm->getFilterErrors();
@@ -260,7 +260,7 @@ abstract class BaseForm extends Submittable
     {
         foreach (array_keys($propertyData) as $foreignKeyPropertyName) {
             $parsedForeignKeyPropertyName = ucfirst($foreignKeyPropertyName);
-            if (array_key_exists($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName, $this->request->request)) {
+            if (array_key_exists($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName, $this->request->input)) {
                 $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName);
             }
         }
@@ -292,9 +292,9 @@ abstract class BaseForm extends Submittable
 
     private function parseSingleStandardProperty(\ReflectionProperty $property): void
     {
-        if (array_key_exists($property->name, $this->request->request) && ($this->request->request[$property->name] !== '')) {
+        if (array_key_exists($property->name, $this->request->input) && ($this->request->input[$property->name] !== '')) {
             $reflectionType = $property->getType();
-            $this->entityData->{$property->name} = Parser::parseValue($reflectionType, $this->request->request[$property->name], true, $this->dataMapper);
+            $this->entityData->{$property->name} = Parser::parseValue($reflectionType, $this->request->input[$property->name], true, $this->dataMapper);
         } elseif (array_key_exists($property->name, $this->request->files)) {
             $this->entityData->{$property->name} = $this->request->files[$property->name];
         } elseif (array_key_exists($property->name, $this->filterFiledsMode)) {

@@ -99,6 +99,7 @@ class AuthenticationTest extends TestCase
         $this->multiFactorWrapperInterfaceMock = $this->createMock(MultiFactorWrapperInterface::class);
         $this->requestMock = $this->createMock(Request::class);
         $this->requestMock->server['REQUEST_METHOD'] = 'POST';
+        $this->requestMock->input = [];
         $this->authentication = new Authentication($this->requestMock, $this->filterMock, $this->sessionMock);
         $this->authentication->setAuthenticableModelInterface($this->authenticableModelInterfaceMock);
         $this->authentication->setPasswordModelInterface($this->passwordModelInterfaceMock);
@@ -149,14 +150,14 @@ class AuthenticationTest extends TestCase
                 ->method('__get')
                 ->with('password')
                 ->willReturn(Encryptor::getBlowfishHash('password-test', $this->configMock));
-        $this->requestMock->request['csrfToken'] = 'csfr-token-test';
+        $this->requestMock->input['csrfToken'] = 'csfr-token-test';
         $this->assertFalse($this->authentication->checkAuthenticable(true));
         $this->assertFalse($this->authentication->checkAuthenticable(true));
-        $this->requestMock->request['identifier'] = 'identifier-test';
+        $this->requestMock->input['identifier'] = 'identifier-test';
         $this->assertFalse($this->authentication->checkAuthenticable(false));
         $this->assertFalse($this->authentication->checkAuthenticable(false));
         $this->assertFalse($this->authentication->checkAuthenticable(false));
-        $this->requestMock->request['password'] = 'password-test';
+        $this->requestMock->input['password'] = 'password-test';
         $this->assertTrue($this->authentication->checkAuthenticable(false));
     }
 
@@ -200,9 +201,9 @@ class AuthenticationTest extends TestCase
                     }
                 });
         $this->assertFalse($this->authentication->checkCsrfToken($this->sessionMock));
-        $this->requestMock->request = [];
+        $this->requestMock->input = [];
         $this->assertFalse($this->authentication->checkCsrfToken($this->sessionMock));
-        $this->requestMock->request['csrfToken'] = 'csfr-token-test';
+        $this->requestMock->input['csrfToken'] = 'csfr-token-test';
         $this->assertFalse($this->authentication->checkCsrfToken($this->sessionMock));
         $this->assertFalse($this->authentication->checkCsrfToken($this->sessionMock));
         $this->assertTrue($this->authentication->checkCsrfToken($this->sessionMock));
@@ -246,9 +247,9 @@ class AuthenticationTest extends TestCase
                             return Encryptor::getBlowfishHash('password-test', $this->configMock);
                     }
                 });
-        $this->requestMock->request = [];
+        $this->requestMock->input = [];
         $this->assertFalse($this->authentication->checkPassword($this->authenticableInterfaceMock));
-        $this->requestMock->request['password'] = 'password-test';
+        $this->requestMock->input['password'] = 'password-test';
         $this->assertFalse($this->authentication->checkPassword($this->authenticableInterfaceMock));
         $this->assertFalse($this->authentication->checkPassword($this->authenticableInterfaceMock));
         $this->assertFalse($this->authentication->checkPassword($this->authenticableInterfaceMock));
@@ -317,9 +318,9 @@ class AuthenticationTest extends TestCase
                 ->method('delete')
                 ->with($this->multiFactorRecoveryMock)
                 ->willReturn(true);
-        $this->requestMock->request = [];
+        $this->requestMock->input = [];
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
-        $this->requestMock->request['code'] = 'code-test';
+        $this->requestMock->input['code'] = 'code-test';
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
         $this->assertTrue($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
@@ -400,9 +401,9 @@ class AuthenticationTest extends TestCase
                 ->method('__get')
                 ->with('password')
                 ->willReturn(Encryptor::getBlowfishHash('password-test', $this->configMock));
-        $this->requestMock->request['csrfToken'] = 'csfr-token-test';
-        $this->requestMock->request['identifier'] = 'identifier-test';
-        $this->requestMock->request['password'] = 'password-test';
+        $this->requestMock->input['csrfToken'] = 'csfr-token-test';
+        $this->requestMock->input['identifier'] = 'identifier-test';
+        $this->requestMock->input['password'] = 'password-test';
         $this->assertTrue($this->authentication->checkAuthenticable(false));
         $this->assertEquals($this->authenticableInterfaceMock, $this->authentication->getAuthenticableInterface());
     }

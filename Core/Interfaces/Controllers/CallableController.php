@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2024-present Valentino de Lapa.
+ * Copyright 2025 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,33 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\AbstractClasses;
-
-use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Core\CustomTypes\FormFilterError;
+namespace SismaFramework\Core\Interfaces\Controllers;
 
 /**
- * Description of Submittable
  *
- * @author Valentino de Lapa
+ * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-abstract class Submittable
+interface CallableController
 {
-    protected Request $request;
-    protected FormFilterError $formFilterError;
-    
-    public function __construct()
-    {
-        $this->formFilterError = new FormFilterError();
-    }
-    
-    public function isSubmitted(): bool
-    {
-        return isset($this->request->input['submitted']);
-    }
-    
-    public function getFilterErrors(): FormFilterError
-    {
-        return $this->formFilterError;
-    }
+
+    public function __call(string $name, array $arguments);
+
+    public function checkCompatibility(array $arguments): bool;
 }

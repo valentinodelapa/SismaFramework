@@ -35,10 +35,9 @@ use SismaFramework\Core\Enumerations\ComunicationProtocol;
 class Comunication
 {
 
-    public static function getComunicationProtocol(?Config $customConfig = null): ComunicationProtocol
+    public static function getComunicationProtocol(Request $request = new Request(), ?Config $customConfig = null): ComunicationProtocol
     {
         $config = $customConfig ?? Config::getInstance();
-        $request = new Request();
         if ($config->httpsIsForced) {
             return ComunicationProtocol::https;
         } elseif (isset($request->server['HTTPS'])) {

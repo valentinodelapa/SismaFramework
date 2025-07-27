@@ -127,7 +127,7 @@ class Render
         $encodedJsonData = json_encode($jsonData);
         header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
         header("Accept-Ranges: bytes");
-        header("Content-type: " . Resource::json->getMime());
+        header("Content-type: " . Resource::json->getContentType()->getMime());
         header('X-Content-Type-Options: nosniff');
         header("Content-Disposition: inline");
         header("Content-Length: " . strlen($encodedJsonData));

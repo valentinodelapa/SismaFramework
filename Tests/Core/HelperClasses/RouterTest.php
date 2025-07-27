@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
@@ -42,12 +43,25 @@ class RouterTest extends TestCase
 
     public function setUp(): void
     {
-        $this->requestMock = $this->createMock(Request::class);
+        $configMock = $this->createMock(Config::class);
+        $configMock->expects($this->any())
+                ->method('__get')
+                ->willReturnMap([
+                    ['developmentEnvironment', true],
+                    ['httpsIsForced', false],
+        ]);
+        Config::setInstance($configMock);
+        $this->requestMock = $this->getMockBuilder(Request::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $this->requestMock->server = [
+            'HTTP_HOST' => 'http.host',
+        ];
     }
 
     public function testRedirect()
     {
-        $response = Router::redirect('sample/notify/message/notify/');
+        $response = Router::redirect('sample/notify/message/notify/', $this->requestMock);
         $this->assertInstanceOf(Response::class, $response);
         $this->assertEquals(ResponseType::httpFound->value, http_response_code());
     }

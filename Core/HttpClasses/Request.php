@@ -26,6 +26,10 @@
 
 namespace SismaFramework\Core\HttpClasses;
 
+use SismaFramework\Core\Enumerations\ContentType;
+use SismaFramework\Core\Enumerations\RequestType;
+use SismaFramework\Core\Exceptions\BadRequestException;
+
 /**
  *
  * @author Valentino de Lapa
@@ -33,12 +37,14 @@ namespace SismaFramework\Core\HttpClasses;
 class Request
 {
 
-    public $query;
-    public $request;
-    public $cookie;
-    public $files;
-    public $server;
-    public $headers;
+    public array $query;
+    public array $request;
+    public array $cookie;
+    public array $files;
+    public array $server;
+    public array $data = [];
+    public array $input = [];
+    public array $headers = [];
 
     public function __construct()
     {
@@ -47,17 +53,57 @@ class Request
         $this->cookie = $_COOKIE;
         $this->files = $_FILES;
         $this->server = $_SERVER;
+        $this->initializeHeaders();
+        $this->parseRequestBody();
+        $this->input = !empty($this->data) ? $this->data : $this->request;
     }
 
-    public function getStreamContentResource()
+    private function initializeHeaders(): void
     {
-        $opts = [
-            $this->server['SERVER_PROTOCOL'] => [
-                'method' => 'GET',
-                'content' => $this->query
-            ]
-        ];
-        return stream_context_create($opts);
+        if (function_exists('getallheaders')) {
+            $this->headers = getallheaders();
+        } else {
+            $this->getHeadersByServer();
+        }
     }
 
+    private function getHeadersByServer(): void
+    {
+        foreach ($this->server as $name => $value) {
+            if (str_starts_with($name, 'HTTP_')) {
+                $headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+                $this->headers[$headerName] = $value;
+            } elseif (in_array($name, ['CONTENT_TYPE', 'CONTENT_LENGTH', 'CONTENT_MD5'])) {
+                $headerName = str_replace('_', '-', ucwords(strtolower($name), '_'));
+                $this->headers[$headerName] = $value;
+            }
+        }
+    }
+
+    private function parseRequestBody(): void
+    {
+        $methodString = $this->server['REQUEST_METHOD'] ?? 'GET';
+        $method = RequestType::tryFrom($methodString) ?? [];
+        $contentTypeString = $this->headers['Content-Type'] ?? $this->headers['content-type'] ?? '';
+        $contentTypeParts = explode(';', $contentTypeString);
+        $contentType = ContentType::getByMime(trim($contentTypeParts[0]));
+        if (in_array($method, [RequestType::methodPost, RequestType::methodPut, RequestType::methodDelete, RequestType::methodPatch])) {
+            switch ($contentType) {
+                case ContentType::applicationJson:
+                    $this->parseJsonRequest();
+                    break;
+            }
+        }
+    }
+
+    private function parseJsonRequest(): void
+    {
+        $rawBody = file_get_contents('php://input');
+        $decodedBody = json_decode($rawBody, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decodedBody)) {
+            $this->data = $decodedBody;
+        } elseif (json_last_error() !== JSON_ERROR_NONE) {
+            throw  new BadRequestException(json_last_error_msg());
+        }
+    }
 }

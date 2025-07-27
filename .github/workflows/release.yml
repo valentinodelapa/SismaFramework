@@ -1,0 +1,131 @@
+name: SLSA generic generator - SismaFramework Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      digests: ${{ steps.hash.outputs.digests }}
+      release_body: ${{ steps.extract_release_notes.outputs.release_body }}
+      zip_archive_path: ${{ steps.create_archive.outputs.zip_file_name }}
+      attestation_file_name: slsa.intoto.jsonl
+
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pdo_mysql, mbstring, gd, exif, dom, xml
+
+      - name: Create release archive
+        id: create_archive
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          ZIP_NAME="${{ github.event.repository.name }}-${TAG_NAME}.zip"
+          
+          zip -r $ZIP_NAME . \
+            --exclude="*.git*" \
+            --exclude="*.github*" \
+            --exclude="Tests/*" \
+            --exclude="TestsApplication/*" \
+            --exclude=".editorconfig" \
+            --exclude=".gitattributes" \
+            --exclude=".gitignore" \
+            --exclude="phpunit.xml.dist" \
+            --exclude=".php-cs-fixer.dist.php" \
+            --exclude=".travis.yml" \
+            --exclude="CODE_OF_CONDUCT.md" \
+            --exclude="SECURITY.md" \
+            --exclude="ISSUE_TEMPLATE.md" \
+            --exclude="PULL_REQUEST_TEMPLATE.md" \
+            --exclude="FUNDING.yml"
+          
+          echo "zip_file_name=$ZIP_NAME" >> "${GITHUB_OUTPUT}"
+          echo "Uploading ${{ steps.create_archive.outputs.zip_file_name }} as artifact."
+      - name: Upload Release Archive as Artifact
+        uses: actions/upload-artifact@v4 # Usa v4, naturalmente
+        with:
+          name: ${{ steps.create_archive.outputs.zip_file_name }}
+          path: ${{ steps.create_archive.outputs.zip_file_name }}
+
+
+      - name: Extract Release Notes
+        id: extract_release_notes
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          RELEASE_VERSION="${TAG_NAME//v/}"
+
+          RELEASE_NOTES=$(awk "/^## \\[${RELEASE_VERSION}\\]/{flag=1;next}/^## \\[/{flag=0}flag" CHANGELOG.md)
+          
+          if [ -z "$RELEASE_NOTES" ]; then
+            echo "Nessuna nota di rilascio trovata per $TAG_NAME nel CHANGELOG.md."
+            RELEASE_NOTES="**Release ${TAG_NAME}**\n\nNessuna nota di rilascio dettagliata trovata nel CHANGELOG.md per questa versione. Per favore, consulta il repository GitHub per il file CHANGELOG.md completo."
+          fi
+          
+          echo "release_body<<EOF" >> "${GITHUB_OUTPUT}"
+          echo "$RELEASE_NOTES" >> "${GITHUB_OUTPUT}"
+          echo "EOF" >> "${GITHUB_OUTPUT}"
+
+      - name: Generate subject for provenance
+        id: hash
+        run: |
+          set -euo pipefail
+          ZIP_FILE=${{ steps.create_archive.outputs.zip_file_name }}
+          echo "digests=$(sha256sum $ZIP_FILE | base64 -w0)" >> "${GITHUB_OUTPUT}"
+
+  provenance:
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+      attestations: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2.1.0
+    with:
+      base64-subjects: "${{ needs.build.outputs.digests }}"
+      ignored-cache-misses: "go.sum" 
+
+  release:
+    needs: [build, provenance]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Release Archive
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.zip_archive_path }}
+          path: .
+
+      - name: Download SLSA Attestation
+        uses: actions/download-artifact@v4
+        with:
+          name: slsa.intoto.jsonl
+          path: .
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
+          body: ${{ needs.build.outputs.release_body }}
+          draft: false
+          prerelease: false
+          files: |
+            ${{ needs.build.outputs.zip_archive_path }}
+            ${{ needs.build.outputs.zip_archive_path }}.intoto.jsonl
