@@ -123,8 +123,6 @@ class Config
     protected readonly string $controllerNamespace;
     protected readonly string $defaultControllerPath;
     protected readonly string $defaultControllerNamespace;
-    protected readonly int $fileGetContentMaxBytesLimit;
-    protected readonly int $readfileMaxBytesLimit;
     protected readonly array $customRenderableResourceTypes;
     protected readonly array $customDownloadableResourceTypes;
 

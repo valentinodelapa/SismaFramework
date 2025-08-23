@@ -117,14 +117,15 @@ class ResourceMaker
 
     private function getResourceData(string $filename): void
     {
-        if (filesize($filename) < $this->config->fileGetContentMaxBytesLimit) {
-            echo file_get_contents($filename);
-        } elseif (filesize($filename) < $this->config->readfileMaxBytesLimit) {
-            readfile($filename);
-        } else {
-            $stream = fopen($filename, 'rb');
-            fpassthru($stream);
+        $handle = fopen($filename, 'rb');
+        if ($handle === false) {
+            throw new AccessDeniedException($filename);
         }
+        while (!feof($handle)) {
+            echo fread($handle, 8192);
+            flush();
+        }
+        fclose($handle);
     }
 
     private function downloadResource(string $filename, string $mime): Response
