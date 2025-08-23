@@ -36,6 +36,8 @@
   
   * [Authentications](security-component.md#authentications)
 
+* [Scaffolding](scaffolding.md
+
+* )
+
 * [Barra di debug](debug-bar.md)
-
-
