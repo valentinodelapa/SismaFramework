@@ -61,10 +61,6 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
-                <a href="namespaces/sismaframework-autoload.html" class="">Autoload</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -97,6 +93,16 @@
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="">Config</a>
 </h4>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
+                
+            </li>
+            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -196,25 +202,6 @@
 
 
 
-<h4 id="toc-constants">
-    Constants
-    <a href="classes/SismaFramework-Sample-Models-SampleSelfReferencedEntityModel.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
-
-</h4>
-<dl class="phpdocumentor-table-of-contents">
-            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
-    <a class="" href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#constant_SON_COLLECTION_PROPERTY_NAME">SON_COLLECTION_PROPERTY_NAME</a>
-    <span>
-        &nbsp;= &#039;sonCollection&#039;                            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
-    <a class="" href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#constant_SONS_GETTER_METHOD">SONS_GETTER_METHOD</a>
-    <span>
-        &nbsp;= &#039;getSonCollection&#039;                            </span>
-</dt>
-
-    </dl>
 
 
 <h4 id="toc-properties">
@@ -223,6 +210,12 @@
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_config">$config</a>
+    <span>
+                        &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>            </span>
+</dt>
+
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_dataMapper">$dataMapper</a>
     <span>
@@ -235,10 +228,10 @@
                         &nbsp;: string            </span>
 </dt>
 
-            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
-    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_ormCacheStatus">$ormCacheStatus</a>
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#property_parentForeignKey">$parentForeignKey</a>
     <span>
-                        &nbsp;: bool            </span>
+                        &nbsp;: string            </span>
 </dt>
 
     </dl>
@@ -256,7 +249,7 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method___construct">__construct()</a>
+    <a class="" href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method___construct">__construct()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
@@ -416,75 +409,6 @@
 
 
         
-    <section class="phpdocumentor-constants">
-        <h3 class="phpdocumentor-elements__header" id="constants">
-            Constants
-            <a href="classes/SismaFramework-Sample-Models-SampleSelfReferencedEntityModel.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h3>
-                    <article class="phpdocumentor-element -constant -private ">
-    <h4 class="phpdocumentor-element__name" id="constant_SON_COLLECTION_PROPERTY_NAME">
-        SON_COLLECTION_PROPERTY_NAME
-        <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#constant_SON_COLLECTION_PROPERTY_NAME" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">44</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-signature phpdocumentor-code ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type">mixed</span>
-    <span class="phpdocumentor-signature__name">SON_COLLECTION_PROPERTY_NAME</span>
-    = <span class="phpdocumentor-signature__default-value">&#039;sonCollection&#039;</span>
-</code>
-
-
-    
-    
-    
-
-    
-
-</article>
-                    <article class="phpdocumentor-element -constant -private ">
-    <h4 class="phpdocumentor-element__name" id="constant_SONS_GETTER_METHOD">
-        SONS_GETTER_METHOD
-        <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#constant_SONS_GETTER_METHOD" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">45</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-signature phpdocumentor-code ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type">mixed</span>
-    <span class="phpdocumentor-signature__name">SONS_GETTER_METHOD</span>
-    = <span class="phpdocumentor-signature__default-value">&#039;getSonCollection&#039;</span>
-</code>
-
-
-    
-    
-    
-
-    
-
-</article>
-            </section>
 
         
     <section class="phpdocumentor-properties">
@@ -493,6 +417,42 @@
             <a href="classes/SismaFramework-Sample-Models-SampleSelfReferencedEntityModel.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_config">
+        $config
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_config" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">53</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$config</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
                     <article
         class="
             phpdocumentor-element
@@ -510,7 +470,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">51</span>
+    <span class="phpdocumentor-element-found-in__line">52</span>
 
     </aside>
 
@@ -546,7 +506,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">52</span>
+    <span class="phpdocumentor-element-found-in__line">54</span>
 
     </aside>
 
@@ -569,30 +529,30 @@
         class="
             phpdocumentor-element
             -property
-            -protected
-            -static                                            "
+            -private
+                                                        "
 >
-    <h4 class="phpdocumentor-element__name" id="property_ormCacheStatus">
-        $ormCacheStatus
-        <a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_ormCacheStatus" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="property_parentForeignKey">
+        $parentForeignKey
+        <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#property_parentForeignKey" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                 </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">53</span>
+    <span class="phpdocumentor-element-found-in__line">46</span>
 
     </aside>
 
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">protected</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">bool</span>
-    <span class="phpdocumentor-signature__name">$ormCacheStatus</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\ORM_CACHE</span></code>
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$parentForeignKey</span>
+    </code>
 
     
     
@@ -623,7 +583,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">47</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -672,20 +632,20 @@
 >
     <h4 class="phpdocumentor-element__name" id="method___construct">
         __construct()
-        <a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">49</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -697,6 +657,13 @@
                 <span class="phpdocumentor-signature__argument__name">$dataMapper</span>
                 : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
                  = <span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$config</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -722,7 +689,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">125</span>
+    <span class="phpdocumentor-element-found-in__line">127</span>
 
     </aside>
 
@@ -770,7 +737,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">71</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
@@ -873,7 +840,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">72</span>
+    <span class="phpdocumentor-element-found-in__line">81</span>
 
     </aside>
 
@@ -928,7 +895,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">92</span>
+    <span class="phpdocumentor-element-found-in__line">101</span>
 
     </aside>
 
@@ -990,7 +957,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">152</span>
+    <span class="phpdocumentor-element-found-in__line">154</span>
 
     </aside>
 
@@ -1093,7 +1060,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">225</span>
+    <span class="phpdocumentor-element-found-in__line">234</span>
 
     </aside>
 
@@ -1148,7 +1115,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">245</span>
+    <span class="phpdocumentor-element-found-in__line">254</span>
 
     </aside>
 
@@ -1210,7 +1177,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">278</span>
+    <span class="phpdocumentor-element-found-in__line">287</span>
 
     </aside>
 
@@ -1254,7 +1221,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">165</span>
+    <span class="phpdocumentor-element-found-in__line">167</span>
 
     </aside>
 
@@ -1316,7 +1283,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">134</span>
+    <span class="phpdocumentor-element-found-in__line">136</span>
 
     </aside>
 
@@ -1364,7 +1331,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">89</span>
+    <span class="phpdocumentor-element-found-in__line">91</span>
 
     </aside>
 
@@ -1509,7 +1476,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">125</span>
+    <span class="phpdocumentor-element-found-in__line">134</span>
 
     </aside>
 
@@ -1585,7 +1552,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">152</span>
+    <span class="phpdocumentor-element-found-in__line">161</span>
 
     </aside>
 
@@ -1668,7 +1635,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">216</span>
+    <span class="phpdocumentor-element-found-in__line">225</span>
 
     </aside>
 
@@ -1723,7 +1690,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">110</span>
+    <span class="phpdocumentor-element-found-in__line">112</span>
 
     </aside>
 
@@ -1833,7 +1800,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/SelfReferencedModel.php"><a href="files/orm-extendedclasses-selfreferencedmodel.html"><abbr title="Orm/ExtendedClasses/SelfReferencedModel.php">SelfReferencedModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">192</span>
+    <span class="phpdocumentor-element-found-in__line">201</span>
 
     </aside>
 
@@ -2078,7 +2045,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">83</span>
+    <span class="phpdocumentor-element-found-in__line">85</span>
 
     </aside>
 
@@ -2116,7 +2083,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseModel.php"><a href="files/orm-baseclasses-basemodel.html"><abbr title="Orm/BaseClasses/BaseModel.php">BaseModel.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
@@ -2241,25 +2208,18 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                        <li><a href="classes/SismaFramework-Sample-Models-SampleSelfReferencedEntityModel.html#toc-constants">Constants</a></li>
                                                             <li><a href="classes/SismaFramework-Sample-Models-SampleSelfReferencedEntityModel.html#toc-properties">Properties</a></li>
                                                             <li><a href="classes/SismaFramework-Sample-Models-SampleSelfReferencedEntityModel.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
-                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
-                <li>
-                    <ul class="phpdocumentor-list -clean">
-                                                    <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#constant_SON_COLLECTION_PROPERTY_NAME">SON_COLLECTION_PROPERTY_NAME</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#constant_SONS_GETTER_METHOD">SONS_GETTER_METHOD</a></li>
-                                            </ul>
-                </li>
             
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_config">$config</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_dataMapper">$dataMapper</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_entityName">$entityName</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#property_ormCacheStatus">$ormCacheStatus</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#property_parentForeignKey">$parentForeignKey</a></li>
                                             </ul>
                 </li>
             
@@ -2267,7 +2227,7 @@
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method___call">__call()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method___construct">__construct()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_convertArrayIntoEntityCollection">convertArrayIntoEntityCollection()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_countEntityCollection">countEntityCollection()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_countEntityCollectionByEntity">countEntityCollectionByEntity()</a></li>

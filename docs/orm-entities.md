@@ -42,11 +42,16 @@ Le entità sono dotate di un meccanismo che intercetta le variazioni dei valori 
 
 È inoltre presente un meccanismo che permette di intercettare le modifiche delle entità referenziate in modo tale che il salvataggio di un’entità contente una chiave esterna effettui il salvataggio anche delle modifiche effettuate all’entità alla quale la chiave esterna fa riferimento.
 
-La particolarità del sistema di generazione automatica delle referenze è che la richiesta delle informazioni delle entità referenziate non viene effettuata contemporaneamente a quella dell’entità che contiene la chiave esterna: in un promo momento viene salvata in una sorta di cache solo l’id della chiave presente nella tabella originale. La richiesta concreta delle informazioni aggiuntive viene effettuata solo nel momento in cui tali informazioni vengono richiamate all’interno del codice.
+Il cuore di questo ORM implementa un pattern che potremmo definire **Lazy Loading con Gestione a Doppio Stato** (*Lazy Loading with Dual-State Management*). Questa è una caratteristica voluta che offre notevoli vantaggi in termini di performance e flessibilità.
 
-Questo comportamento è la motivazione per cui le proprietà dell’entità (che rappresentano, si è detto, le colonne della tabella di riferimento) devono essere dichiarate come protette e non pubbliche.
+Una proprietà che rappresenta una relazione (una chiave esterna) può esistere in due stati distinti all'interno di un'entità:
 
-In meccanismo illustrato serve ad alleggerire il sistema limitando le richieste al database allo stretto necessario ed evitare loop in caso di entità auto-referenziate annidate (un esempio di tale scenario potrebbe essere l’implementazione di una blockchain).
+1.  **Stato Non Risolto (ID Placeholder):** Dopo aver assegnato un ID a una proprietà (es. `$entity->user = 5;`), l'ORM non carica subito l'oggetto. Memorizza invece l'ID come un "promemoria" interno per il caricamento futuro. Questa operazione è estremamente rapida perché non richiede accessi al database.
+2.  **Stato Risolto (Oggetto):** La proprietà contiene l'istanza completa dell'entità correlata. La transizione dallo stato "Non Risolto" a "Risolto" avviene automaticamente (tramite **Lazy Loading**) solo la prima volta che si tenta di accedere a una qualsiasi proprietà dell'oggetto correlato (es. `echo $entity->user->name;`).
+
+È proprio per gestire questa logica interna che le proprietà delle entità devono essere dichiarate `protected` e l'accesso avviene tramite i metodi magici `__get` e `__set`.
+
+Questo meccanismo serve ad alleggerire il sistema limitando le richieste al database allo stretto necessario. È importante notare che questo stato interno (risolto/non risolto) influisce sull'output di metodi di servizio come `toArray()`. Se una relazione non è ancora stata "risolta" tramite accesso, `toArray()` restituirà il suo ID per massimizzare le performance ed evitare chiamate al database. Se invece è già stata "risolta", restituirà l'array completo dei dati dell'oggetto correlato. Questo è un comportamento voluto per garantire il massimo controllo sulle performance di serializzazione.
 
 Vedremo comunque le entità auto-referenziate nell’apposito paragrafo.
 Di seguito un esempio di un’entità base. 
