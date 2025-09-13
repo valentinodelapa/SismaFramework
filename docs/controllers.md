@@ -1,129 +1,144 @@
-# Controllori
+# # Controllori
 
-I controllori si occupano di elaborare i dati e le informazioni e fornirle all'interfaccia grafia dell'applicazione.
+I Controllori sono il cuore della gestione delle richieste nella tua applicazione. Il loro compito è ricevere una richiesta HTTP, interagire con il Model (se necessario) per recuperare o modificare dati, e infine restituire una risposta che verrà inviata al browser.
 
-Facendo riferimento alla stuttura standard illustrata nel capitolo [Struttura cartelle di progetto](project-folder-structure.md), la cartella `Controllers` è quella deputata a contenere le classi di questo tipo. Per modificare tale comportamento prodefinito bisogna agire sulle constanti di configurazione come segue:
+In SismaFramework, un controller è una classe PHP che estende `BaseController` e i suoi metodi pubblici sono chiamati **Actions**.
 
-* nel caso si intenda variare esclusivamente il nome della cartella contenitore è sufficiente modificare la seguente costante
-  
-  ```php
-  ...
-  const CONTROLLERS = 'segnapostoControllers';
-  ...
-  ```
+## Creare un Controllore
 
-* se, al contrario, si intende modificare l'intera struttura dell'albero delle cartelle si dovra intervenire anche sulle seguenti costanti
-  
-  ```php
-  ...
-  const CONTROLLERS_PATH = 'pathControllers';
-  const CONTROLLERS_NAMESPACE = 'namespaceControllers';
-  ...
-  ```
+Per creare un controllore, crea un nuovo file nella cartella `Controllers` del tuo modulo (es. `MyModule/App/Controllers/PageController.php`).
 
-La nuova classe controllore dovrà estendere la classe `BaseController`, che contiene alcune funzionalità ed informazioni predefinite che si riveleranno utili durante lo sviluppo della classe.
+Ogni action deve restituire un oggetto `Response`, che rappresenta la risposta HTTP da inviare.
+
+Ecco un esempio di un controllore di base con una singola action che renderizza una vista:
 
 ```php
-namespace SismaFramework\Sample\Controllers;
+namespace MyModule\App\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\HelperClasses\Render;
 
-class SampleController extends BaseController
+class PageController extends BaseController
 {
-	
+    /**
+     * Questa action risponde all'URL /page/index
+     */
+    public function index(): Response
+    {
+        // Prepara le variabili da passare alla vista
+        $this->vars['pageTitle'] = 'Pagina di Benvenuto';
+        $this->vars['content'] = 'Questo è il contenuto della nostra prima pagina.';
+
+        // Renderizza la vista 'page/index.php' e le passa le variabili
+        return Render::generateView('page/index', $this->vars);
+    }
+} Classe Render
+```
+
+Routing e Parametri delle Action
+--------------------------------
+
+Il `Dispatcher` di SismaFramework mappa automaticamente gli URL alle actions dei controller. La convenzione è: `/nome-controller/nome-action`. I nomi sono convertiti da `kebab-case` (nell'URL) a `CamelCase` (nel codice).
+
+* **URL:** `/user-profile/show-details`
+* **Controller:** `UserProfileController`
+* **Action:** `showDetails()`
+
+### Passare Parametri dall'URL
+
+Puoi passare parametri dall'URL direttamente come argomenti delle tue action. Il framework si occupa di mapparli e convertirli automaticamente, a patto che siano **tipizzati**.
+
+La sintassi nell'URL è `/nome-parametro/valore/`.
+
+php
+
+ Show full code block 
+
+`namespace MyModule\App\Controllers;  use SismaFramework\Core\BaseClasses\BaseController; use SismaFramework\Core\HttpClasses\Response; use SismaFramework\Core\HelperClasses\Render; use MyModule\App\Entities\Post; // Supponiamo esista un'entità Post  class PostController extends BaseController {     /**     * Questa action risponde a URL come:     * /post/show/id/42     * /post/show/post/42 (l'ORM usa il tipo per risolvere l'entità)     */     public function show(int $id, Post $post): Response     {         // $id conterrà il valore 42         // $post sarà l'oggetto Post con id=42, caricato automaticamente dall'ORM          $this->vars['post'] = $post;         return Render::generateView('post/show', $this->vars);     } }`
+
+I tipi di parametro supportati per il binding automatico sono:
+
+* Tipi nativi: `int`, `float`, `string`, `bool`, `array`.
+* Oggetti `SismaDatetime` (formato `Y-m-d H:i:s`).
+* `BackedEnum`: il valore viene usato per trovare il case corrispondente.
+* **Entità**: il framework carica automaticamente l'entità dal database usando l'ID fornito.
+
+### Autowiring di Servizi
+
+Alcuni oggetti di servizio possono essere "iniettati" automaticamente come parametri delle action, semplicemente dichiarandoli con il loro tipo.
+
+* `Request`: Contiene tutte le informazioni della richiesta HTTP (`$_GET`, `$_POST`, `$_FILES`, ecc.).
+* `Authentication`: Fornisce metodi per la gestione dell'autenticazione utente.
+
+php
+
+ Show full code block 
+
+```php
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Security\Authentication;
+public function updateUser(Request $request, Authentication $auth): Response
+{
+    if (!$auth->isLogged()) {
+        // ... gestisci utente non autenticato
+    } 
+
+    // Ottieni i dati dal form inviato via POST
+    $username = $request->request->get('username');
+
+    // ... logica di aggiornamento ...
 }
 ```
 
-I metodi della classi Controllore sono chiamati *action*: essi si occupano di implementare la logica della singola interfaccia dell'applicazione. Possono accettare alcuni parametri che devono essere necessariamente tipizzati per permettere alla classe `Dispatcher`, tramite la classe `Parser`, di processare gli argomenti. I tipi accettati dalle action di un controllore sono i seguenti:
+## Generare Risposte
 
-* tipi nativi (int, float, string, array), che vengono parsati forzandone il tipo in modo esplicito;
+Ogni action deve restituire un oggetto `Response`. Il framework fornisce delle classi helper per creare facilmente i tipi di risposta più comuni.
 
-* oggetti `DateTime`(nello specifico di tipo `SismaDatetime`), che accettano il formato `Y-d-m H:i:s`;
+### Classe `Render`: Viste e Dati
 
-* enumerazioni di tipo `\BackedEnum`, che vengono parsate mediante il valore dichiarato per il singolo case;
+La classe `Render` si usa per generare risposte HTML (viste) o dati (es. JSON per API).
 
-* entità, che vengono parsate in base al tipo ed all'id passato come parametro (si veda il capitolo [ORM](orm.md)).
+* `generateView(string $viewPath, array $vars)`: Carica un file di vista PHP, gli passa le variabili e restituisce una risposta HTML. Include automaticamente i file di localizzazione.
+* `generateData(array $vars)`: Converte un array in una risposta JSON. Non carica i file di localizzazione, rendendolo ideale per le API.
+* 
 
-Il meccanismo di passaggio dei parametri avviene mediante la sintassi `/nome-argomento/valore/` inserira nella barra degli indirizzi dopo il nome del *controller* e quello dell'*action*:
+### Classe `Router`: Redirect
 
-```
-https://nome-dominio.net/nome-controller/nome-action/nome-parametro/valore/
-```
-
-
-
-È inoltre presente un meccanismo di *autowiring* che inietta automaticamente determinati tipi di parametri qualora siano presenti nella dichiarazione del metodo: i tipi oggetto dell'*autowiring* sono i seguenti:
-
-* `Request`, che raccoglie in una struttura le variabili super-globali `$_GET`, `$_POST`, `$_COOKIE`, `$_FILES` e `$_SERVER`;
-
-* `Authentication`, che si occupa di rendere disponibili a livello generale i metodi per implementare un sistema di autenticazione.
-
-Come anticipato, nella presente libreria la classe `Dispathcer` di occupa di intercettare ed istanziare il *controllore *corretto e la relativa *action* elaborando, tramite la tecnica dell'*url rewrite*, la richiesta del browser.
-
-Alcune costanti presenti nel file di configurazione si occupano di indicare alla classe `Dispatcher` quale *controllore* istanziare e quale *action* richiamare nel caso in cui non siano presenti le informazioni necessarie all'interno dell'url.
+La classe `Router` si usa per reindirizzare l'utente a un'altra pagina.
 
 ```php
-...
-const DEFAULT_PATH = '';
-const DEFAULT_ACTION = '';
-const DEFAULT_CONTROLLER = '';
-...
+use SismaFramework\Core\HelperClasses\Router;
+
+public function create(): Response
+{
+    // ... logica per creare una nuova risorsa ...
+
+    // Reindirizza alla pagina di successo
+    return Router::redirect('post/success');
+}
 ```
 
-## Classe Render
+### Classe `Templater`: Stringhe da Template
 
-La classe `Render` è quella che si occupa, una volta eseguita tutta la logica di una singola `action` di richiamare la relativa View che si occuperà dell'esposizione dei dati all'utente od al servizio che li ha richiesti. 
+Simile a `Render`, ma invece di generare una risposta completa, restituisce una stringa processata da un template. È perfetta per creare il corpo di un'email o generare file di testo.
 
-Espone due metodi statici la cui sintatti viene di seguito illustrata:
+```php
+use SismaFramework\Core\HelperClasses\Templater;
 
-* `generateView()`;
+// ...
+$emailBody = Templater::generateTemplate('emails/welcome', ['username' => 'Mario']);
+// ... invia l'email con $emailBody ...
+```
 
-* `generateData()`.
+## Configurazione Avanzata (Opzionale)
 
-Entrambi i metodi richiedono due parametri:
+Normalmente non è necessario modificare queste impostazioni. Se hai bisogno di personalizzare la struttura delle cartelle, puoi modificare le seguenti costanti nel file `Config/config.php`:
 
-* `string $view`: indica il percorso del file *.php* (senza l'estensione) che contiene la vista a partire dalla cartella radice delle viste definita dalle seguenti costanti presente nel file di configurazione;
-  
-  ```php
-  ...
-  const VIEWS = '';
-  ...
-  const VIEWS_PATH = '';
-  ...
-  ```
-
-* `array $vars`: è l'array che contiene tutte le informazioni che vengono confivise dal controllore alla vista.
-
-La differenza tra i due metodi è che il primo è rivolto ad un utente umano e carica il file di localizzazione mentre il secondo, utile allo sviluppo di API's ne evita il caricamento.
-
-Restituisce un oggetto di tipo `Response` che rappresenta di codice di stato HTTP generato dalla richiesta.
-
-## Classe Templater
-
-La classe `Templater` ha un funzionamento simile alla classe precedente con la differenza che invece di stampare un risultato a schermo restituisce lo stesso sotto forma di stringa.
-
-Ha un unico metodo statico pubblico `generateTemplate()` che accetta due argomenti
-
-* `string $template`: ha la stessa funzione dell'argomento `$views` descritto in precedenza con l'unica differenza delle costanti che indicatìno la cartella radice dei templates;
-  
-  ```php
-  ...
-  const TEMPLATES = '';
-  ...
-  /* Templater Constant */
-  const TEMPLATES_PATH = '';
-  const STRUCTURAL_TEMPLATES_PATH = '';
-  ...
-  ```
-
-* `array $args`: anche qui si tratta di un parametro con le stesse funzioni del medesimo descritto in precedenza nell'ambito della classe `Render`.
-
-## Classe  Router
-
-La classe `Router` invece di occupa del reindirizzamento verso un altro coltroller/action nei casi in cui l'action corrente non abbia dati ta esporre all'utente in questione. Come la precedente anche questa classe restituisce un oggetto `Response`.
+* `DEFAULT_CONTROLLER`, `DEFAULT_ACTION`: Definiscono il controller e l'action da eseguire se l'URL è vuoto.
+* `CONTROLLERS`: Cambia il nome della cartella dei controller (default: `Controllers`).
+* `CONTROLLERS_PATH`, `CONTROLLERS_NAMESPACE`: Permettono di ridefinire completamente il percorso e il namespace dei controller.
 
 * * *
 
-[Indice](index.md) | Precedente: [Struttura cartelle di progetto](project-folder-structure.md) | Successivo: [Viste](views.md)
-
-
+[Indice](index.md) | Precedente: [Struttura delle Cartelle](project-folder-structure.md) | Successivo: [Viste e Template](views.md)

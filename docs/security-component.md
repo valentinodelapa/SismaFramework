@@ -1,60 +1,167 @@
-# Componente Sicurezza
+# Sicurezza: Autenticazione e Autorizzazione
 
-Tale modulo racchiude le funzionalità di sicurezza e di autenticazione, implementate a livello framework, di seguito descritte.
+Il componente di sicurezza di SismaFramework fornisce un sistema robusto per gestire due aspetti fondamentali di ogni applicazione:
 
-## Voters
+*   **Autenticazione**: Il processo di verifica dell'identità di un utente (es. tramite login con username e password).
+*   **Autorizzazione**: Il processo di verifica se un utente autenticato ha il permesso di eseguire una determinata azione (es. modificare un articolo).
 
-I voters sono classi specializzate nell'implementare un algoritomo che esprima una risposta di tipo booleano dati determinati parametri in ingresso.
+## Autenticazione
 
-Una classe Voters deve estendere la classe astratta `SismaFramework\Security\BaseClasses\BaseVoter`, implementandone i metodi astratti:
+Il cuore del sistema di autenticazione è la classe `SismaFramework\Security\HttpClasses\Authentication`. Questa classe, che può essere iniettata in un controller, fornisce i metodi necessari per gestire un processo di login in modo sicuro.
 
-* `isInstancePermitted()`: questo metodo serve filtrare la tipologia del parametro soggetto (i cui dettagli verranno analizzare nel momento in cui verra descritto il metodo pubblico esposto dalla classe) nel caso in cui esso debba rispettare determinati requisiti. Il suo valore di ritorno è di tipo booleano.
-- `checkVote()`: questo metodo dovrà racchiudere la logica vera e propria dell'algoritmo del voter ed ha anch'esso un valore di ritorno di tipo  booleano.
+### Esempio: Creare una Pagina di Login
 
-I voters espongono un metodo statico pubblico denominato `isAllowed()` che accetta tre parametri:
+Vediamo come implementare un'action del controller che gestisce sia la visualizzazione del form di login sia l'elaborazione dei dati inviati.
 
-- `$subject`: è il parametro il cui valore sarà testato nel metodo `checkVote()`.  DI default la tipologia di dato in ingresso è libera ma, nel caso fosse necessario che tale parametro sia di una determinata tipologia è possibile specificarne la logica di controllo all'interno del metodo `isInstancePermitted()`.
+```php
+namespace MyModule\App\Controllers;
 
-- `$accessControlEntry`: questo parametro viene utilizzato nell'ambito della logica dell'algoritmo (quindi all'interno del metodo `checkVote()`) per stabilire la tipologia di controllo da eseguire. Il parametro è di tipo `SismaFramework\Security\Enumerations\AccessControlEntry`.
+use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\HelperClasses\Render;
+use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Security\HttpClasses\Authentication;
+use MyModule\App\Models\UserModel; // Il tuo modello utente
+use MyModule\App\Models\PasswordModel; // Il tuo modello per le password
 
-- `$authenticable`: questo parametro, il cui valore può essere nullo o implementare l'interfaccia `SismaFramework\Security\Interfaces\Entities\AuthenticableInterface`, deve essere settato qualora la logica del dell'algoritmo del voter necessiti di tale informazione.
+class SecurityController extends BaseController
+{
+    public function login(Request $request, Authentication $auth): Response
+    {
+        // Se l'utente è già loggato, reindirizzalo alla dashboard
+        if ($auth->isLogged()) {
+            return Router::redirect('dashboard/index');
+        }
 
-## Permissions
+        // Se il form è stato inviato (metodo POST)
+        if ($request->server->get('REQUEST_METHOD') === 'POST') {
+            // 1. Inietta i modelli necessari per trovare utente e password
+            $auth->setAuthenticableModelInterface(new UserModel($this->dataMapper));
+            $auth->setPasswordModelInterface(new PasswordModel($this->dataMapper));
 
-I permissions utilizzano i voters per scatenare un'eccezione in caso di risposta negativa di questi ultimi. Essi devono estendere la classe `SismaFramework\Security\BaseClasses\BasePermission` ed implementarne i due metodi astratti:
+            // 2. Esegui i controlli in sequenza
+            if ($auth->checkAuthenticable() && $auth->checkPassword()) {
+                // 3. Se i controlli passano, recupera l'utente e loggalo
+                $user = $auth->getAuthenticableInterface();
+                $auth->login($user);
 
-- `callParentPermissions()`: questo metodo serve a richiamare un'altra classe permission prima di eseguire la classe permission corrente. Non ha alcun valore di ritorno.
+                return Router::redirect('dashboard/index');
+            } else {
+                // Se i controlli falliscono, imposta un messaggio di errore
+                $this->vars['error'] = 'Credenziali non valide.';
+            }
+        }
 
-- `getVoter()`: questo metodo serve ad implementare la classe voter che la classe permission corrente dovrà utilizzare per fare il controllo ed, eventualmente, scatenare l'eccezione.
+        // Mostra la vista del form di login
+        $this->vars['pageTitle'] = 'Login';
+        return Render::generateView('security/login', $this->vars);
+    }
+}
+```
 
-I permissions espongono il medesimo metodo statico `isAllowed()` descritto nel parametro riguardante i voters.
+> La classe `Authentication` si occupa anche di gestire la protezione da attacchi CSRF.
 
-## Authentications
+## Autorizzazione (Voters e Permissions)
 
-La classe `Authentication ` è una sorta di ibrido tra la funzionalità `Form` e la classe `Response` sviluppato appositamente per implementare i meccanismi di login in area riservata tramite username e password; supporta inoltre inplementazione dell'autenticazione a due fattori. Essa viene implementata direttamente dall'action che si occupa dell'autenticazione e richiama automaicamente al suo interno la classe `Request` dalla quale ottiene le informazioni necessarie per procedere.
+Il sistema di autorizzazione si basa su due concetti: **Voters** e **Permissions**.
 
-Espone i seguenti metodi pubblici:
+*   **Voter**: Una classe che contiene la logica per una singola decisione di sicurezza. Risponde a una domanda con "sì" o "no" (restituisce un booleano). Ad esempio: "Questo utente è l'autore di questo post?".
+*   **Permission**: Una classe che usa un Voter per proteggere un'azione. Se il Voter risponde "no", la Permission lancia un'eccezione (`AccessDeniedException`), bloccando l'esecuzione.
 
-* `setUserModel()`: questo metodo inietta all'interno dellìoggetto il modello che si occuperà di reperire le informazioni dell'account per il quale il processo di autenticazione è implementato. Accetta come argomento un oggetto di tipo `BaseModel` che implementa l'interfaccia `UserModelInterface`.
+Questo disaccoppia la logica di sicurezza (nel Voter) dal suo utilizzo (nella Permission e nel Controller).
 
-* `setPasswordModel()`: questo metodo inietta all'interno dell'oggetto il modello che si occuperà di reperire la password dell'account per il quale il processo di autenticazione è implementato. Accetta come argomento un oggetto di tipo `BaseModel` che implementa l'interfaccia `PasswordModelInterface`.
+### Esempio: Proteggere la Modifica di un Post
 
-* `setMultiFactorModel()`: questo metodo inietta all'interno dell'oggetto il modello che si occuperà di reperire, qualora sia implementato e settato l'accesso a più fattori, il token OPT collegato all'account per il quale il processo di autenticazione è implementato. Accetta come argomento un oggetto di tipo `BaseModel` che implementa l'interfaccia `MultiFactorModelInterface`.
+**Scenario**: Solo l'autore di un `Post` può modificarlo.
 
-* `setMultiFactorRecoveryModel()`: questo metodo inietta all'interno dell'oggetto il modello che si occuperà di reperire, qualora sia implementato e settato l'accesso a più fattori, i token di backup collegati all'account per il quale il processo di autenticazione è implementato, utili in caso di smarrimento e/o impossibilità di utilizzo del secondo fattore. Accetta come argomento un oggetto di tipo `BaseModel` che implementa l'interfaccia `MultiFactorRecoveryModelInterface`.
+#### 1. Creare il Voter
 
-* `setMultiFactorWrapper()`: questo metodo inetta il wrapper che si occuperà, nel caso di implementazione di un servizio di accesso multi-fattore esterno, di interfacciarsi con il suddetto servizio e fornire le sue funzionalità al sistema. L'oggetto che il metodo accetta come argomento deve implementare l'interfaccia `MultiFactorWrapperInterface`.
+Crea un `PostVoter` nella cartella `Voters` del tuo modulo.
 
-* `checkUser()`: questo metodo controlla che ci sia una corrispondenza tra l'username ricevuto dal form *html* e un qualche untente registrato a sistema. Restituisce un valore di tipo `bool` che rappresenta l'esito della ricerca.
+**`MyBlog/App/Voters/PostVoter.php`**
+```php
+namespace MyBlog\App\Voters;
 
-* `checkPassword()`: questo metodo, dato un oggetto di tipo `BaseEntity` che implementi l'interfaccia `UserInterface`, controlla la corrispondenza tra l'ultima password presente a sistema per l'utente il questione e quella inviata tramite form *html*. Restituisce un valore `bool` che rappresenta l'esito del confronto.
+use SismaFramework\Security\BaseClasses\BaseVoter;
+use MyBlog\App\Entities\Post;
+use MyModule\App\Entities\User; // La tua entità utente
 
-* `checkMultiFactor()`: questo metodo, dato un oggetto di tipo `BaseEntity` che implementi l'interfaccia `UserInterface`, in presenza dell'implementazione multi-fattore e dell'attivazione della stessa, controlla la che il token inserito framite form *html* corrisponda a quello fornito da sistema. Restituisce un valore `bool` che rappresenta l'esito del confronto.
+class PostVoter extends BaseVoter
+{
+    // Specifica che questo Voter agisce solo su oggetti di tipo Post
+    protected function isInstancePermitted(): bool
+    {
+        return $this->subject instanceof Post;
+    }
 
-* `checkMultiFactorRecovery()`: questo metodo, dato un oggetto di tipo `BaseEntity` che implementa l'interfaccia `MultiFactorInterface`, in presenza dell'implementazione multi-fattore e dell'attivazione della stessa, controlla la che il token inserito framite form *html* corrisponda ad uno dei codici di backup generati in fase si attivazione del secondo fattore di autenticazione, da utilizzare in caso di smarrimento e/o impossibilità di utilizzo dello stesso. Restituisce un valore `bool` che rappresenta l'esito del confronto.
+    // Contiene la logica di autorizzazione vera e propria
+    protected function checkVote(): bool
+    {
+        $post = $this->subject;
+        $user = $this->authenticable;
+
+        // Se l'utente non è loggato o non è un'istanza di User, nega l'accesso
+        if (!$user instanceof User) {
+            return false;
+        }
+
+        // L'utente è l'autore del post?
+        return $post->getAuthor()->getId() === $user->getId();
+    }
+}
+```
+
+#### 2. Creare la Permission
+
+Crea una `PostPermission` nella cartella `Permissions` che utilizzi il `PostVoter`.
+
+**`MyBlog/App/Permissions/PostPermission.php`**
+```php
+namespace MyBlog\App\Permissions;
+
+use SismaFramework\Security\BaseClasses\BasePermission;
+use MyBlog\App\Voters\PostVoter;
+
+class PostPermission extends BasePermission
+{
+    // Non ci sono altre permission da chiamare prima
+    protected function callParentPermissions(): void {}
+
+    // Specifica quale Voter deve essere usato
+    protected function getVoter(): string
+    {
+        return PostVoter::class;
+    }
+}
+```
+
+#### 3. Usare la Permission nel Controller
+
+Ora, all'inizio dell'action `edit` del tuo `PostController`, invoca la `Permission`.
+
+```php
+use MyBlog\App\Permissions\PostPermission;
+use SismaFramework\Security\Enumerations\AccessControlEntry;
+
+class PostController extends BaseController
+{
+    public function edit(Request $request, Post $post, Authentication $auth): Response
+    {
+        // 1. Controlla il permesso. Se fallisce, lancia un'eccezione 403.
+        PostPermission::isAllowed(
+            $post,                         // Il soggetto su cui decidere
+            AccessControlEntry::check,     // Il tipo di controllo
+            $auth->getAuthenticable()      // L'utente attualmente loggato
+        );
+
+        // 2. Se il controllo passa, prosegui con la logica del form...
+        $form = new PostForm($post);
+        // ...
+    }
+}
+```
 
 * * *
 
-[Indice](index.md) | Precedente: [Funzionalità aggiuntive](orm-additional-features.md) | Successivo: [Barra di Debug](debug-bar.md)
-
-
+[Indice](index.md) | Precedente: [Funzionalità Avanzate dell'ORM](orm-additional-features.md) | Successivo: [Barra di Debug](debug-bar.md)

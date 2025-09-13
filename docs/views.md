@@ -1,17 +1,109 @@
-# Viste e Template
+# # Viste e Template
 
 Le **Viste** sono responsabili della presentazione dei dati all'utente. In SismaFramework, una vista è un file `.php` che contiene principalmente codice HTML, ma può includere codice PHP per visualizzare le variabili passate dal Controller.
 
-Le variabili vengono passate a una vista tramite il metodo `Render::generateView()`, come descritto nella sezione Controllori.
+Le variabili vengono passate a una vista tramite il metodo `Render::generateView()`. È buona norma utilizzare `htmlspecialchars()` quando si stampano dati forniti dall'utente per prevenire attacchi XSS.
 
-SismaFramework non impone un sistema di templating engine (come Twig o Blade), lasciando allo sviluppatore la libertà di strutturare le viste come preferisce, ad esempio creando layout riutilizzabili con `include` o `require` di PHP.
+### Esempio di una Vista
 
-## Templates
+Se un controller passa `['pageTitle' => 'Dettaglio Articolo', 'post' => $postObject]` a una vista `blog/show.php`, il file della vista potrebbe essere così:
 
-I **Template** sono simili alle viste ma sono progettati per generare output sotto forma di stringa, anziché inviarlo direttamente al browser. Questo li rende ideali per scenari come la creazione del corpo di un'email o la generazione di file di testo.
+**`MyModule/App/Views/blog/show.php`**
 
-I template utilizzano una sintassi semplice con segnaposto (es. `{{nome_variabile}}`) che vengono sostituiti con i valori forniti. La generazione avviene tramite il metodo `Templater::generateTemplate()`, come spiegato nella documentazione dei Controllori.
+```php
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <title><?= htmlspecialchars($pageTitle) ?></title>
+</head>
+<body>
+    <h1><?= htmlspecialchars($post->getTitle()) ?></h1>
+    <article>
+        <?= $post->getContent() // Supponendo che il contenuto sia già sanificato ?>
+    </article>
+</body>
+</html>
+```
+
+### Creare Layout Riutilizzabili
+
+SismaFramework non impone un sistema di templating engine (come Twig o Blade), lasciando allo sviluppatore la libertà di strutturare le viste. Un pattern comune è creare un layout principale e includere al suo interno il contenuto specifico della pagina.
+
+1. **Crea i pezzi del layout:**
+   **`MyModule/App/Views/layout/header.php`**
+   
+   ```php
+   <!DOCTYPE html>
+   <html lang="it">
+       <head>
+           <title><?= htmlspecialchars($pageTitle ?? 'Il Mio Sito') ?></title>
+           <link rel="stylesheet" href="/assets/css/style.css">
+       </head>
+       <body>
+           <header>
+               <h1>Il Mio Fantastico Sito</h1>
+           </header>
+           <main>
+   ```
+
+2. **`MyModule/App/Views/layout/footer.php`**
+   
+   ```php
+           </main>
+           <footer>
+               <p>© <?= date('Y') ?> Il Mio Sito. Tutti i diritti riservati.</p>
+           </footer>
+       </body>
+   </html>
+   ```
+
+3. **Usa il layout nella vista specifica:**
+   **`MyModule/App/Views/page/about.php`**
+   
+   ```php
+   <?php require_once __DIR__ . '/../layout/header.php'; ?>
+   
+   <h2>Chi Siamo</h2>
+   <p>Questa è la pagina "Chi Siamo" del nostro sito.</p>
+       
+   <?php require_once __DIR__ . '/../layout/footer.php'; ?>
+   ```
+
+Templates
+---------
+
+I **Template** sono simili alle viste ma sono progettati per generare output sotto forma di stringa, anziché inviarlo direttamente al browser. Questo li rende ideali per scenari come la creazione del corpo di un'email o la generazione di file di testo.
+
+I template utilizzano una sintassi semplice con segnaposto (es. `{{nome_variabile}}`) che vengono sostituiti con i valori forniti.
+
+### Esempio di un Template
+
+1. **Crea il file del template:**
+   **`MyModule/App/Templates/emails/welcome.html`**
+   
+   ```html
+   <h1>Benvenuto, {{username}}!</h1>
+   <p>Grazie per esserti registrato al nostro sito.</p>
+   <p>Speriamo che la tua esperienza sia fantastica.</p>
+   ```
+
+2. **Usa `Templater` per generare la stringa:**
+   
+   ```php
+   use SismaFramework\Core\HelperClasses\Templater;
+   
+   // In un Controller o un Servizio...
+   $datiEmail = [
+       'username' => 'Mario Rossi'
+   ];
+   
+   $corpoEmail = Templater::generateTemplate('emails/welcome', $datiEmail);
+   
+   // Ora la variabile $corpoEmail contiene l'HTML completo
+   // e può essere usata per inviare un'email.
+   // mail('utente@example.com', 'Benvenuto!', $corpoEmail, $headers);
+   ```
 
 * * *
 
-Indice | Precedente: Controllori | Successivo: Gestione dei Form
+[Indice](index.md) | Precedente: [Controllori](controllers.md) | Successivo: [Gestione dei Form](forms.md)
