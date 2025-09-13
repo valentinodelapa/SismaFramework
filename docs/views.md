@@ -1,15 +1,17 @@
-# Viste
+# Viste e Template
 
-Le viste si occupano dell'esposizione dei dati verso l'utente. Esse sono file *.php* che generalmente includono una struttura html completa. Ereditano dai controllori tutte le informazioni che si è deciso di condividere tramite i metodi della classe `Render` citati nel precedente capitolo.
+Le **Viste** sono responsabili della presentazione dei dati all'utente. In SismaFramework, una vista è un file `.php` che contiene principalmente codice HTML, ma può includere codice PHP per visualizzare le variabili passate dal Controller.
 
-La libreria non implementa nativamente un sistema di "assemblaggio" delle viste ma lascia completa libertà allo sviluppatore di gestire tale aspetto: determinati progetti infatti potrebbero dover esporre esclusivamente dati grezzi e tale scelta progettuale supporta anche uno scenario di questo genere.
+Le variabili vengono passate a una vista tramite il metodo `Render::generateView()`, come descritto nella sezione Controllori.
+
+SismaFramework non impone un sistema di templating engine (come Twig o Blade), lasciando allo sviluppatore la libertà di strutturare le viste come preferisce, ad esempio creando layout riutilizzabili con `include` o `require` di PHP.
 
 ## Templates
 
-Nelle situazioni in cui è necessario che l'output di una chiamata non sia una pagina web (un caso esemplificativo potrebbe essere l'invio di un email) possono essere utilizzati i templates: essi tramite rivestono con un'interfaccia grafica le informazioni che vengono condivise dal controllore e restituiscono il tutto sotto forma di un  stringa.
+I **Template** sono simili alle viste ma sono progettati per generare output sotto forma di stringa, anziché inviarlo direttamente al browser. Questo li rende ideali per scenari come la creazione del corpo di un'email o la generazione di file di testo.
 
-Per la generazione di un template, come anticipato nel capitolo precedente, è possibile utilizzare il metodo statico `generateTemplate()` della classe `Templater`.
+I template utilizzano una sintassi semplice con segnaposto (es. `{{nome_variabile}}`) che vengono sostituiti con i valori forniti. La generazione avviene tramite il metodo `Templater::generateTemplate()`, come spiegato nella documentazione dei Controllori.
 
 * * *
 
-[Indice](index.md) | Precedente: [Controllori](controllers.md) | Successivo: [ORM](orm.md)
+Indice | Precedente: Controllori | Successivo: Gestione dei Form

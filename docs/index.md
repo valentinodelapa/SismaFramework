@@ -1,41 +1,37 @@
 # Indice
 
-* [Introduzione](overview.md)
-
-* [Installazione](installation.md)
-
-* [Struttura cartella di progetto](project-folder-structure.md)
-
-* [Controllori](controllers.md)
+* **Concetti Fondamentali**
   
-  * [Classe Render](controllers.md#classe-render)
-  
-  * [Classe Router](controllers.md#classe-router)
+  * [Introduzione al Framework](overview.md)
+  * [Installazione e Configurazione](installation.md)
+  * [Struttura delle Cartelle](project-folder-structure.md)
 
-* [Viste](views.md)
+* **Le Basi**
   
-  * [Templates](views.md#templates)
+  * [Controllori](controllers.md)
+    * [Classe Render](controllers.md#classe-render)
+    * [Classe Templater](controllers.md#classe-templater)
+    * [Classe Router](controllers.md#classe-router)
+  * [Viste e Template](views.md)
+  * [Gestione dei Form](forms.md)
+    * [L'oggetto Request](forms.md#request)
 
-* [Forms](forms.md)
+* **Database e ORM**
   
-  * [Request](forms.md#request)
-
-* [ORM](orm.md)
-  
+  * [Introduzione all'ORM (Data Mapper)](orm.md)
   * [Entità](orm-entities.md)
-  
   * [Modelli](orm-models.md)
-  
-  * [Funzionalità aggiuntive](orm-additional-features.md)
+  * [Funzionalità Avanzate dell'ORM](orm-additional-features.md)
 
-* [Sicurezza](security-component.md)
+* **Sicurezza**
   
-  * [Voters](security-component.md#voters)
-  
-  * [Permissions](security-component.md#permissions)
-  
-  * [Authentications](security-component.md#authentications)
+  * [Componente di Sicurezza](security-component.md)
+    * [Voters](security-component.md#voters)
+    * [Permissions](security-component.md#permissions)
+    * [Authentications](security-component.md#authentications)
 
-* [Barra di debug](debug-bar.md)
+* **Strumenti di Sviluppo**
+  
+  * [Barra di Debug](debug-bar.md)
 
 
