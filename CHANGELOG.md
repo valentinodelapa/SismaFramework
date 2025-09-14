@@ -1,7 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [9.0.2] - 2025-08-05 - Miglioramenti a ORM e Documentazione
+## [9.0.3] - 2025-09-14 - Correzioni e Miglioramenti alla Documentazione
+
+Questa release di tipo patch si concentra esclusivamente sul miglioramento della documentazione per renderla più completa, accurata e facile da navigare. Non sono state apportate modifiche al codice sorgente del framework.
+
+### 🚀 Miglioramenti
+
+*   **Aggiunta Guida "Best Practices"**: È stata aggiunta una nuova pagina (`best-practices.md`) con consigli su come utilizzare al meglio il framework.
+*   **Aggiunta Guida al "Deployment"**: È stata creata una nuova pagina (`deployment.md`) con una checklist per la messa in produzione delle applicazioni.
+*   **Aggiunta Guida "Troubleshooting"**: È stata aggiunta una nuova pagina (`troubleshooting.md`) per aiutare a risolvere i problemi più comuni.
+*   **Revisione Documentazione Fixtures**: La documentazione relativa alle `Data Fixtures` (`data-fixtures.md` e `getting-started.md`) è stata completamente riscritta per riflettere il corretto funzionamento basato su dipendenze (`setDependencies`) e sulla registrazione delle entità (`setEntity`).
+*   **Revisione Documentazione Form**: La documentazione sui `Form` (`forms.md`) è stata corretta per spiegare accuratamente il meccanismo di gestione degli errori, chiarendo che le proprietà `...Error` sono booleane e come utilizzare i messaggi personalizzati (`...CustomMessage`) e quelli standard dai file di lingua.
+
+### 🔧 Correzioni
+
+*   **Correzione Documentazione Internazionalizzazione**: Chiarito in `internationalization.md` che la scelta del tipo di file di lingua (`.php` o `.json`) è una configurazione e non una ricerca sequenziale.
+*   **Correzione Percorsi Cache**: Aggiornati i percorsi di cache errati in `orm-additional-features.md` e `deployment.md` per essere coerenti con la configurazione.
+*   **Miglioramento Guida all'Installazione**: La guida `installation.md` è stata aggiornata per suggerire un metodo più robusto per la definizione di `ROOT_PATH`.
+*   **Correzione Link di Navigazione**: Sono stati corretti e aggiunti numerosi link di navigazione mancanti in vari file (`overview.md`, `static-assets.md`, `troubleshooting.md`, ecc.) per migliorare l'esperienza utente.
+
+## [9.0.2] - 2025-08-24 - Miglioramenti a ORM e Documentazione
 
 Questa versione si concentra sul miglioramento della qualità del codice, sulla correzione di bug minori e sull'arricchimento della documentazione per rendere il framework più robusto e facile da usare.
 
@@ -16,7 +35,7 @@ Questa versione si concentra sul miglioramento della qualità del codice, sulla 
 *   **Correzione in `ContentType`**: È stata aggiunta una mappatura mancante nell'enumerazione `ContentType` per garantire una risoluzione dei MIME type più completa e affidabile.
 *   **Rigenerazione Documentazione PHPDoc**: La documentazione PHPDoc è stata rigenerata per essere allineata con le ultime modifiche al codice sorgente.
 
-## [9.0.1] - 2025-08-01 - Ottimizzazione Streaming Risorse
+## [9.0.1] - 2025-08-15 - Ottimizzazione Streaming Risorse
 
 Questa versione introduce un'importante ottimizzazione nel modo in cui le risorse (file statici come immagini, CSS, JS) vengono servite al client, migliorando performance e consumo di memoria.
 
