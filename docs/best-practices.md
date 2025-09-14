@@ -49,4 +49,4 @@ Il logging non serve solo per gli errori. Usa `Logger::saveLog()` per registrare
 
 * * *
 
-Indice | Precedente: Riepilogo delle Convenzioni
+[Indice](index.md) | Precedente: [Riepilogo delle Convenzioni](conventions.md) | Successivo: [Deployment in Produzione](deployment.md)

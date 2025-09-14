@@ -37,3 +37,5 @@
 * **Guide Avanzate**
 
   * [Best Practices](best-practices.md)
+  * [Deployment in Produzione](deployment.md)
+  * [Troubleshooting](troubleshooting.md)
