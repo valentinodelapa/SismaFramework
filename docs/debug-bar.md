@@ -28,4 +28,4 @@ La barra è divisa in diverse sezioni che forniscono informazioni specifiche.
 
 * * *
 
-[Indice](index.md) | Precedente: [Componente di Sicurezza](security-component.md)
+[Indice](index.md) | Precedente: [Componente di Sicurezza](security-component.md) | Successivo: [Data Fixtures](data-fixtures.md)

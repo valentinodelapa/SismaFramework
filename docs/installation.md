@@ -121,6 +121,4 @@ A questo punto, la tua applicazione dovrebbe essere configurata e funzionante. P
 
 ***
 
-[Indice](index.md) | Precedente: [Introduzione](overview.md) | Successivo: [Struttura progetto](project-folder-structure.md)
-
-
+[Indice](index.md) | Precedente: [Introduzione al Framework](overview.md) | Successivo: [Architettura a Moduli](module-architecture.md)

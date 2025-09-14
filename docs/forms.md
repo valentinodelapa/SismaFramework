@@ -14,14 +14,14 @@ Gestire un form in SismaFramework segue tre passi principali. Vediamoli con un e
 
 Per prima cosa, crea una classe Form nella cartella `Forms` del tuo modulo. Questa classe definisce a quale entità è associato il form e quali sono le regole di validazione per ogni campo.
 
-**`MyBlog/App/Forms/PostForm.php`**
+**`MyBlog/Application/Forms/PostForm.php`**
 
 ```php
-namespace MyBlog\App\Forms;
+namespace MyBlog\Application\Forms;
 
 use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Core\Enumerations\FilterType;
-use MyBlog\App\Entities\Post;
+use MyBlog\Application\Entities\Post;
 
 class PostForm extends BaseForm
 {
@@ -84,17 +84,18 @@ Nel controller, devi creare un'action per gestire la richiesta del form. Il flus
 4. Se è valido, ottieni l'entità popolata e salvata con `resolveEntity()` e reindirizza l'utente.
 5. Se non è valido (o non è stato inviato), renderizza la vista del form, passando i dati per il ripopolamento e gli errori.
 
-**`MyBlog/App/Controllers/PostController.php`**
+**`MyBlog/Application/Controllers/PostController.php`**
 
 ```php
-namespace MyBlog\App\Controllers;
+namespace MyBlog\Application\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
-use MyBlog\App\Entities\Post; use MyBlog\App\Forms\PostForm;
+use MyBlog\Application\Entities\Post;
+use MyBlog\Application\Forms\PostForm;
 
 class PostController extends BaseController
 {
@@ -123,7 +124,7 @@ class PostController extends BaseController
 
 Infine, crea il file della vista. I nomi dei campi (`name="..."`) nel form HTML devono corrispondere ai nomi delle proprietà dell'entità.
 
-**`MyBlog/App/Views/post/form.php`**
+**`MyBlog/Application/Views/post/form.php`**
 
 ```php
 <?php require_once __DIR__ . '/../layout/header.php'; ?>
@@ -170,4 +171,4 @@ Le sue proprietà pubbliche mappano le superglobali:
 
 * * *
 
-[Indice](index.md) | Precedente: [Viste e Template](views.md) | Successivo: [Introduzione all'ORM (Data Mapper)](orm.md)
+[Indice](index.md) | Precedente: [Viste e Template](views.md) | Successivo: [Internazionalizzazione (i18n)](internationalization.md)

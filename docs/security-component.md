@@ -14,7 +14,7 @@ Il cuore del sistema di autenticazione è la classe `SismaFramework\Security\Htt
 Vediamo come implementare un'action del controller che gestisce sia la visualizzazione del form di login sia l'elaborazione dei dati inviati.
 
 ```php
-namespace MyModule\App\Controllers;
+namespace MyModule\Application\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\HttpClasses\Request;
@@ -22,8 +22,8 @@ use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Security\HttpClasses\Authentication;
-use MyModule\App\Models\UserModel; // Il tuo modello utente
-use MyModule\App\Models\PasswordModel; // Il tuo modello per le password
+use MyModule\Application\Models\UserModel; // Il tuo modello utente
+use MyModule\Application\Models\PasswordModel; // Il tuo modello per le password
 
 class SecurityController extends BaseController
 {
@@ -79,13 +79,13 @@ Questo disaccoppia la logica di sicurezza (nel Voter) dal suo utilizzo (nella Pe
 
 Crea un `PostVoter` nella cartella `Voters` del tuo modulo.
 
-**`MyBlog/App/Voters/PostVoter.php`**
+**`MyBlog/Application/Voters/PostVoter.php`**
 ```php
-namespace MyBlog\App\Voters;
+namespace MyBlog\Application\Voters;
 
 use SismaFramework\Security\BaseClasses\BaseVoter;
-use MyBlog\App\Entities\Post;
-use MyModule\App\Entities\User; // La tua entità utente
+use MyBlog\Application\Entities\Post;
+use MyModule\Application\Entities\User; // La tua entità utente
 
 class PostVoter extends BaseVoter
 {
@@ -116,12 +116,12 @@ class PostVoter extends BaseVoter
 
 Crea una `PostPermission` nella cartella `Permissions` che utilizzi il `PostVoter`.
 
-**`MyBlog/App/Permissions/PostPermission.php`**
+**`MyBlog/Application/Permissions/PostPermission.php`**
 ```php
-namespace MyBlog\App\Permissions;
+namespace MyBlog\Application\Permissions;
 
 use SismaFramework\Security\BaseClasses\BasePermission;
-use MyBlog\App\Voters\PostVoter;
+use MyBlog\Application\Voters\PostVoter;
 
 class PostPermission extends BasePermission
 {
@@ -141,7 +141,7 @@ class PostPermission extends BasePermission
 Ora, all'inizio dell'action `edit` del tuo `PostController`, invoca la `Permission`.
 
 ```php
-use MyBlog\App\Permissions\PostPermission;
+use MyBlog\Application\Permissions\PostPermission;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 
 class PostController extends BaseController

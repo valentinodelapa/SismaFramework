@@ -207,4 +207,4 @@ class PostModel extends DependentModel
 
 ---
 
-[Indice](index.md) | Precedente: [Gestione dei Form](forms.md) | Successivo: [Funzionalità Avanzate dell'ORM](orm-additional-features.md)
+[Indice](index.md) | Precedente: [Gestione degli Asset Statici](static-assets.md) | Successivo: [Funzionalità Avanzate dell'ORM](orm-additional-features.md)
