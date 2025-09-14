@@ -8,11 +8,11 @@ L'ORM si basa sul pattern **Data Mapper**, che garantisce una netta separazione 
 
 L'interazione con l'ORM si basa su due tipi di classi principali:
 
-1.  **Entità (Entity):**
-    Le entità sono classi PHP che rappresentano una riga di una tabella del database. Contengono le proprietà (che corrispondono alle colonne della tabella) e i metodi che definiscono la logica di business.
+1. **Entità (Entity):**
+   Le entità sono classi PHP che rappresentano una riga di una tabella del database. Contengono le proprietà (che corrispondono alle colonne della tabella) e i metodi che definiscono la logica di business.
 
-2.  **Modelli (Model):**
-    I modelli sono le classi responsabili della comunicazione con il database. Forniscono metodi per eseguire operazioni CRUD e per costruire query. Un modello sa come recuperare i dati dal database e popolarli in un'entità.
+2. **Modelli (Model):**
+   I modelli sono le classi responsabili della comunicazione con il database. Forniscono metodi per eseguire operazioni CRUD e per costruire query. Un modello sa come recuperare i dati dal database e popolarli in un'entità.
 
 ## Le Entità in Dettaglio
 
@@ -21,8 +21,9 @@ Le entità sono il cuore del tuo modello di dominio. Devono estendere una delle 
 ### Proprietà e Tipi
 
 Le proprietà di un'entità devono essere dichiarate `protected` e la **tipizzazione è obbligatoria**. I tipi supportati sono:
+
 - Tipi nativi (`int`, `string`, `float`, `bool`).
-- `SismaDatetime` per le date.
+- `SismaDatetime`, `SismaDate`, `SismaTime` per date e orari.
 - `BackedEnum` per i vocabolari chiusi.
 - Altre classi `Entity` per le relazioni (chiavi esterne).
 
@@ -97,12 +98,13 @@ class PostModel extends BaseModel
 
 Ogni modello eredita un set di metodi standard:
 
--   `getEntityById(int $id)`: Trova un'entità tramite il suo ID.
--   `getEntityCollection(?string $searchKey, ?array $order, ?int $offset, ?int $limit)`: Recupera una collezione di entità, con opzioni di filtro, ordinamento e paginazione.
--   `countEntityCollection(?string $searchKey)`: Conta le entità, opzionalmente filtrate.
--   `deleteEntityById(int $id)`: Elimina un'entità dal suo ID.
+- `getEntityById(int $id)`: Trova un'entità tramite il suo ID.
+- `getEntityCollection(?string $searchKey, ?array $order, ?int $offset, ?int $limit)`: Recupera una collezione di entità, con opzioni di filtro, ordinamento e paginazione.
+- `countEntityCollection(?string $searchKey)`: Conta le entità, opzionalmente filtrate.
+- `deleteEntityById(int $id)`: Elimina un'entità dal suo ID.
 
 **Esempio di utilizzo in un Controller:**
+
 ```php
 use MyModule\App\Models\PostModel;
 
@@ -120,9 +122,10 @@ $posts = $postModel->getEntityCollection('SismaFramework', ['publicationDate' =>
 
 Se un modello estende `DependentModel`, ottiene metodi per interrogare il database basandosi sulle relazioni.
 
--   `getEntityCollectionByEntity(array $referencedEntities, ...)`: Trova entità che corrispondono a una o più entità referenziate.
+- `getEntityCollectionByEntity(array $referencedEntities, ...)`: Trova entità che corrispondono a una o più entità referenziate.
 
 **Esempio:** Trova tutti i post di un certo utente.
+
 ```php
 use MyModule\App\Models\PostModel; // Deve estendere DependentModel
 
@@ -161,6 +164,7 @@ Questo ti permette di costruire istruzioni SQL complesse in modo programmatico.
 Supponiamo di voler trovare tutti i post che contengono una certa parola nel titolo e che sono in uno stato specifico (es. `Published`).
 
 **`MyModule/App/Models/PostModel.php`**
+
 ```php
 namespace MyModule\App\Models;
 
@@ -179,7 +183,7 @@ class PostModel extends DependentModel
     {
         // 1. Inizializza la query usando il metodo del modello
         $query = $this->initQuery();
-        
+
         // 2. Costruisci la clausola WHERE
         $query->setWhere()
               ->appendOpenBlock()
@@ -197,7 +201,7 @@ class PostModel extends DependentModel
             PostStatus::Published
         ];
         $bindTypes = []; // Il DataMapper può inferire i tipi più comuni
-        
+
         // 5. Esegui la query e restituisci la collezione
         $query->close();
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);

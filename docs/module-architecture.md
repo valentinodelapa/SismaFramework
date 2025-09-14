@@ -7,9 +7,10 @@ Una delle caratteristiche più potenti di SismaFramework è la sua **architettur
 Un modulo è un'unità autocontenuta che raggruppa una specifica funzionalità dell'applicazione. Ogni modulo ha la sua struttura di cartelle, con i propri Controller, Modelli, Viste, Form, ecc.
 
 Ad esempio, in un'applicazione complessa potresti avere moduli separati per:
-*   **User**: Gestione degli utenti, profili, autenticazione.
-*   **Blog**: Gestione di articoli, categorie, commenti.
-*   **Shop**: Gestione di prodotti, ordini, pagamenti.
+
+* **User**: Gestione degli utenti, profili, autenticazione.
+* **Blog**: Gestione di articoli, categorie, commenti.
+* **Shop**: Gestione di prodotti, ordini, pagamenti.
 
 ## Struttura delle Cartelle di un Modulo
 
@@ -31,19 +32,19 @@ MyBlog/
     └── Voters/
 ```
 
-| Cartella | Scopo |
-|:---|:---|
-| **Assets** | Contiene file statici come CSS, JavaScript e immagini. |
-| **Controllers** | Contiene le classi Controller, che gestiscono le richieste HTTP. |
-| **Entities** | Contiene le classi Entity, che rappresentano gli oggetti del dominio. |
-| **Enumerations** | Contiene le `Enum` PHP per definire set di valori costanti. |
-| **Forms** | Contiene le classi Form per la validazione dei dati. |
-| **Locales** | Contiene i file di traduzione per l'internazionalizzazione (i18n). |
-| **Models** | Contiene le classi Model, che si occupano della persistenza dei dati. |
-| **Permissions** | Contiene le classi per la gestione delle autorizzazioni. |
-| **Templates** | Contiene i template usati per generare output come il corpo di un'email. |
-| **Views** | Contiene i file di vista (PHP/HTML) per la presentazione. |
-| **Voters** | Contiene le classi `Voter`, logica granulare per le decisioni di sicurezza. |
+| Cartella         | Scopo                                                                       |
+|:---------------- |:--------------------------------------------------------------------------- |
+| **Assets**       | Contiene file statici come CSS, JavaScript e immagini.                      |
+| **Controllers**  | Contiene le classi Controller, che gestiscono le richieste HTTP.            |
+| **Entities**     | Contiene le classi Entity, che rappresentano gli oggetti del dominio.       |
+| **Enumerations** | Contiene le `Enum` PHP per definire set di valori costanti.                 |
+| **Forms**        | Contiene le classi Form per la validazione dei dati.                        |
+| **Locales**      | Contiene i file di traduzione per l'internazionalizzazione (i18n).          |
+| **Models**       | Contiene le classi Model, che si occupano della persistenza dei dati.       |
+| **Permissions**  | Contiene le classi per la gestione delle autorizzazioni.                    |
+| **Templates**    | Contiene i template usati per generare output come il corpo di un'email.    |
+| **Views**        | Contiene i file di vista (PHP/HTML) per la presentazione.                   |
+| **Voters**       | Contiene le classi `Voter`, logica granulare per le decisioni di sicurezza. |
 
 ## Registrazione e Autoloading
 
@@ -52,8 +53,8 @@ Per far sì che il framework riconosca il tuo nuovo modulo, devi registrarlo nel
 ```php
 // in Config/config.php
 const MODULE_FOLDERS = [
-    'SismaFramework', // Modulo di sistema (non rimuovere)
     'MyBlog',         // Il tuo nuovo modulo
+    // il modulo di sistema SismaFramework non va indicato
 ];
 ```
 
@@ -74,6 +75,7 @@ L'ORM gestisce senza problemi le relazioni tra entità di moduli diversi. Quando
 **Esempio:** Un'entità `Post` nel modulo `Blog` che ha una relazione con un'entità `User` nel modulo `User`.
 
 **`Blog/Application/Entities/Post.php`**
+
 ```php
 namespace Blog\Application\Entities;
 

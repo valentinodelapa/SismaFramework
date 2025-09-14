@@ -37,4 +37,4 @@ Il `Dispatcher` troverà automaticamente il file `MyBlog/Application/Assets/css/
 
 * * *
 
-Indice | Precedente: Internazionalizzazione (i18n) | Successivo: Database e ORM
+[Indice](index.md) | Precedente: [Internazionalizzazione (i18n)](internationalization.md) | Successivo: [Database e ORM](orm.md)

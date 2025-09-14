@@ -22,14 +22,13 @@ Questa cache è fondamentale per:
 -   **Risolvere le relazioni inverse:** Permette all'ORM di sapere che `postCollection` su un'entità `User` deve cercare tutte le entità `Post` la cui proprietà `author` è l'utente corrente.
 -   **Proteggere l'integrità referenziale:** Viene usata dal componente di Sicurezza (in particolare dalla classe `ReferencedEntityDeletionPermission`) per impedire l'eliminazione di un'entità se è ancora referenziata da altre.
 
-Il percorso di questo file è definito nel file `Config/config.php`:
+Il percorso di questo file è definito nel file `Config/config.php` tramite le costanti `REFERENCE_CACHE_DIRECTORY` e `REFERENCE_CACHE_PATH`. Per impostazione predefinita, si trova in:
 
 ```php
-...
-const REFERENCE_CACHE_DIRECTORY = '';
-const REFERENCE_CACHE_PATH = '';
-...
+SismaFramework/Application/Cache/referenceCache.json
 ```
+
+Se questo file diventa obsoleto (ad esempio, dopo aver aggiunto una nuova relazione), puoi semplicemente eliminarlo. Il framework lo rigenererà automaticamente alla richiesta successiva.
 
 * * *
 

@@ -6,9 +6,9 @@ SismaFramework è progettato per supportare applicazioni multilingua fin da subi
 
 Il meccanismo è semplice e automatico. Quando si utilizza `Render::generateView()` per renderizzare una vista, il framework esegue i seguenti passaggi:
 
-1. Controlla la costante `LANGUAGE` nel file `Config/config.php` (es. `it_IT`).
-2. Cerca un file corrispondente nella cartella `Application/Locales/` di ogni modulo registrato. Cerca prima un file `.php` (es. `it_IT.php`) e, se non lo trova, cerca un file `.json` (es. `it_IT.json`).
-3. Se trova un file, lo carica. Questo rende le variabili definite nel file di lingua disponibili direttamente all'interno della vista.
+1.  Controlla la costante `LANGUAGE` nel file `Config/config.php` (es. `it_IT`).
+2.  Cerca un file di localizzazione corrispondente nella cartella `Application/Locales/` di ogni modulo registrato. Il framework supporta sia file `.php` che `.json`.
+3.  Se trova un file, lo carica. Questo rende le variabili definite nel file di lingua disponibili direttamente all'interno della vista.
 
 ## Configurazione
 
@@ -61,7 +61,7 @@ Poiché il file di lingua viene incluso automaticamente, puoi accedere alle trad
 
 <form method="post">
     <!-- ... campi del form ... -->
-    <button type="submit"><?= $form_save_button ?></button>
+    <button type="submit"><?= $formSaveButton ?></button>
 </form>
 ```
 

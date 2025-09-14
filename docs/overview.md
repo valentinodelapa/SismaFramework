@@ -30,9 +30,9 @@ Sfrutta appieno le funzionalità di PHP 8.1+ (come la tipizzazione forte e le `B
 
 Sei pronto a iniziare?
 
-1.  Segui la **Guida di Installazione** per configurare il tuo primo progetto.
-2.  Immergiti nella **Guida Introduttiva** per costruire un mini-blog da zero e vedere il framework in azione!
+1.  Segui la **[Guida di Installazione](installation.md)** per configurare il tuo primo progetto.
+2.  Immergiti nella **[Guida Introduttiva](getting-started.md)** per costruire un mini-blog da zero e vedere il framework in azione!
 
 ---
 
-Indice | Successivo: Installazione e Configurazione
+[Indice](index.md) | Successivo: [Installazione e Configurazione](installation.md)

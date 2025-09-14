@@ -51,11 +51,31 @@ Puoi passare parametri dall'URL direttamente come argomenti delle tue action. Il
 
 La sintassi nell'URL è `/nome-parametro/valore/`.
 
-php
+```php
+namespace MyModule\App\Controllers;
 
- Show full code block 
+use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\HelperClasses\Render;
+use MyModule\App\Entities\Post; 
 
-`namespace MyModule\App\Controllers;  use SismaFramework\Core\BaseClasses\BaseController; use SismaFramework\Core\HttpClasses\Response; use SismaFramework\Core\HelperClasses\Render; use MyModule\App\Entities\Post; // Supponiamo esista un'entità Post  class PostController extends BaseController {     /**     * Questa action risponde a URL come:     * /post/show/id/42     * /post/show/post/42 (l'ORM usa il tipo per risolvere l'entità)     */     public function show(int $id, Post $post): Response     {         // $id conterrà il valore 42         // $post sarà l'oggetto Post con id=42, caricato automaticamente dall'ORM          $this->vars['post'] = $post;         return Render::generateView('post/show', $this->vars);     } }`
+// Supponiamo esista un'entità Post 
+class PostController extends BaseController
+{     
+    /**
+    * Questa action risponde a URL come:     
+    * /post/show/id/42     
+    * /post/show/post/42 (l'ORM usa il tipo per risolvere l'entità)     
+    */
+    public function show(int $id, Post $post): Response
+    {
+        // $id conterrà il valore 42
+        // $post sarà l'oggetto Post con id=42, caricato automaticamente dall'ORM
+        $this->vars['post'] = $post;
+        return Render::generateView('post/show', $this->vars);
+    }
+}
+```
 
 I tipi di parametro supportati per il binding automatico sono:
 
@@ -70,10 +90,6 @@ Alcuni oggetti di servizio possono essere "iniettati" automaticamente come param
 
 * `Request`: Contiene tutte le informazioni della richiesta HTTP (`$_GET`, `$_POST`, `$_FILES`, ecc.).
 * `Authentication`: Fornisce metodi per la gestione dell'autenticazione utente.
-
-php
-
- Show full code block 
 
 ```php
 use SismaFramework\Core\HttpClasses\Request;
@@ -100,8 +116,8 @@ Ogni action deve restituire un oggetto `Response`. Il framework fornisce delle 
 La classe `Render` si usa per generare risposte HTML (viste) o dati (es. JSON per API).
 
 * `generateView(string $viewPath, array $vars)`: Carica un file di vista PHP, gli passa le variabili e restituisce una risposta HTML. Include automaticamente i file di localizzazione.
-* `generateData(array $vars)`: Converte un array in una risposta JSON. Non carica i file di localizzazione, rendendolo ideale per le API.
-* 
+* `generateData(string $viewPath, array $vars)`: Simile al precedente, non carica il file di localizzazione ne la barra di debug.
+* `generateJson(array $vars):` Converte un array in una risposta JSON. Non carica i file di localizzazione, rendendolo ideale per le API.
 
 ### Classe `Router`: Redirect
 

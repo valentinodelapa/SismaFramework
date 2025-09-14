@@ -2,11 +2,11 @@
 
 Questa guida ti accompagnerà nella creazione di una semplice applicazione di blog da zero utilizzando SismaFramework. Imparerai a:
 
-*   Configurare un nuovo progetto.
-*   Creare un modulo personalizzato.
-*   Definire entità e relazioni con l'ORM.
-*   Popolare il database con dati di prova (fixtures).
-*   Creare controller e viste per mostrare i contenuti.
+* Configurare un nuovo progetto.
+* Creare un modulo personalizzato.
+* Definire entità e relazioni con l'ORM.
+* Popolare il database con dati di prova (fixtures).
+* Creare controller e viste per mostrare i contenuti.
 
 Alla fine di questa guida, avrai una pagina che elenca tutti gli articoli del blog e una pagina per visualizzare ogni singolo articolo.
 
@@ -29,32 +29,34 @@ Assicurati di aver configurato correttamente il tuo web server (es. con il file 
 
 SismaFramework è modulare. Creiamo un modulo `Blog` per contenere tutta la logica della nostra applicazione.
 
-1.  **Crea la struttura delle cartelle**: All'interno della root del progetto (`mini-blog/`), crea le seguenti cartelle:
-    ```
-    Blog/
-    └── Application/
-        ├── Controllers/
-        ├── Entities/
-        ├── Fixtures/
-        ├── Models/
-        └── Views/
-            └── post/
-    ```
+1. **Crea la struttura delle cartelle**: All'interno della root del progetto (`mini-blog/`), crea le seguenti cartelle:
+   
+   ```
+   Blog/
+   └── Application/
+       ├── Controllers/
+       ├── Entities/
+       ├── Fixtures/
+       ├── Models/
+       └── Views/
+           └── post/
+   ```
 
-2.  **Registra il modulo**: Apri `Config/config.php` e aggiungi `Blog` all'array `MODULE_FOLDERS`.
-    ```php
-    // in Config/config.php
-    const MODULE_FOLDERS = [
-        'SismaFramework',
-        'Blog', // Aggiungi il tuo nuovo modulo
-    ];
-    ```
+2. **Registra il modulo**: Apri `Config/config.php` e aggiungi `Blog` all'array `MODULE_FOLDERS`.
+   
+   ```php
+   // in Config/config.php
+   const MODULE_FOLDERS = [
+       'Blog', // Aggiungi il tuo nuovo modulo
+   ];
+   ```
 
 ## 3. Creare le Entità
 
 Le entità rappresentano i dati della nostra applicazione. Creeremo due entità: `User` e `Post`.
 
 **`Blog/Application/Entities/User.php`**
+
 ```php
 <?php
 namespace Blog\Application\Entities;
@@ -73,6 +75,7 @@ class User extends BaseEntity
 ```
 
 **`Blog/Application/Entities/Post.php`**
+
 ```php
 <?php
 namespace Blog\Application\Entities;
@@ -98,11 +101,13 @@ class Post extends BaseEntity
 I modelli ci aiuteranno a interagire con il database per recuperare le entità.
 
 **`Blog/Application/Models/UserModel.php`**
+
 ```php
 <?php
 namespace Blog\Application\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
+use SismaFramework\Orm\HelperClasses\Query
 use Blog\Application\Entities\User;
 
 class UserModel extends BaseModel
@@ -111,16 +116,18 @@ class UserModel extends BaseModel
     {
         return User::class;
     }
-    protected function appendSearchCondition(\SismaFramework\Orm\HelperClasses\Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void {}
+    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void {}
 }
 ```
 
 **`Blog/Application/Models/PostModel.php`**
+
 ```php
 <?php
 namespace Blog\Application\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
+use SismaFramework\Orm\HelperClasses\Query
 use Blog\Application\Entities\Post;
 
 class PostModel extends BaseModel
@@ -129,7 +136,7 @@ class PostModel extends BaseModel
     {
         return Post::class;
     }
-    protected function appendSearchCondition(\SismaFramework\Orm\HelperClasses\Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void {}
+    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void {}
 }
 ```
 
@@ -159,26 +166,54 @@ CREATE TABLE `post` (
 
 ## 6. Popolare il Database con le Fixtures
 
-Creiamo una fixture per inserire dati di prova.
+Creiamo delle fixture per inserire un utente e alcuni articoli di prova. Questo sistema gestisce automaticamente l'ordine di creazione.
 
-**`Blog/Application/Fixtures/BlogFixtures.php`**
+#### Fixture per l'Utente
+
+**`Blog/Application/Fixtures/UserFixture.php`**
 ```php
 <?php
 namespace Blog\Application\Fixtures;
 
 use SismaFramework\Core\BaseClasses\BaseFixture;
 use Blog\Application\Entities\User;
-use Blog\Application\Entities\Post;
-use SismaFramework\Orm\HelperClasses\SismaDatetime;
 
-class BlogFixtures extends BaseFixture
+class UserFixture extends BaseFixture
 {
-    public function load(): void
+    protected function setDependencies(): void {}
+
+    public function setEntity(): void
     {
         $user = new User();
         $user->setUsername('Mario Rossi');
         $user->setEmail('mario.rossi@example.com');
-        $this->dataMapper->save($user);
+        $this->addEntity($user);
+    }
+}
+```
+
+#### Fixture per gli Articoli
+
+**`Blog/Application/Fixtures/PostFixture.php`**
+
+```php
+<?php
+namespace Blog\Application\Fixtures;
+
+use SismaFramework\Core\BaseClasses\BaseFixture;
+use Blog\Application\Entities\Post;
+use SismaFramework\Orm\HelperClasses\SismaDatetime;
+
+class PostFixture extends BaseFixture
+{
+    protected function setDependencies(): void
+    {
+        $this->addDependency(UserFixture::class);
+    }
+
+    public function setEntity(): void
+    {
+        $user = $this->getEntityByFixtureName(UserFixture::class);
 
         for ($i = 1; $i <= 3; $i++) {
             $post = new Post();
@@ -186,7 +221,7 @@ class BlogFixtures extends BaseFixture
             $post->setContent('Questo è il contenuto dell\'articolo di test...');
             $post->setPublicationDate(new SismaDatetime());
             $post->setAuthor($user);
-            $this->dataMapper->save($post);
+            $this->addEntity($post);
         }
     }
 }
@@ -194,11 +229,14 @@ class BlogFixtures extends BaseFixture
 
 Per eseguire la fixture, visita l'URL `/fixtures` nel tuo browser (assicurati che `DEVELOPMENT_ENVIRONMENT` sia `true` in `config.php`).
 
+Il framework eseguirà prima `UserFixture` e poi `PostFixture`, garantendo che l'utente esista prima di creare i post che lo referenziano.
+
 ## 7. Creare il Controller
 
 Il controller gestirà le richieste per visualizzare gli articoli.
 
 **`Blog/Application/Controllers/PostController.php`**
+
 ```php
 <?php
 namespace Blog\Application\Controllers;
@@ -235,6 +273,7 @@ class PostController extends BaseController
 Infine, creiamo i file HTML per visualizzare i dati.
 
 **`Blog/Application/Views/post/index.php`** (Elenco articoli)
+
 ```php
 <h1><?= htmlspecialchars($pageTitle) ?></h1>
 
@@ -251,6 +290,7 @@ Infine, creiamo i file HTML per visualizzare i dati.
 ```
 
 **`Blog/Application/Views/post/show.php`** (Dettaglio articolo)
+
 ```php
 <h1><?= htmlspecialchars($post->getTitle()) ?></h1>
 <p><em>Scritto da: <?= htmlspecialchars($post->getAuthor()->getUsername()) ?></em></p>
@@ -269,9 +309,10 @@ Congratulazioni! Hai appena creato la tua prima applicazione con SismaFramework.
 Visita `/post/index` nel tuo browser per vedere la lista degli articoli. Cliccando su un titolo, verrai reindirizzato alla pagina di dettaglio.
 
 Da qui, puoi esplorare funzionalità più avanzate come:
-*   Creare un form per aggiungere nuovi articoli (Gestione dei Form).
-*   Implementare un sistema di login per proteggere la creazione degli articoli (Componente di Sicurezza).
-*   Aggiungere stili CSS (Gestione degli Asset Statici).
+
+* Creare un form per aggiungere nuovi articoli (Gestione dei Form).
+* Implementare un sistema di login per proteggere la creazione degli articoli (Componente di Sicurezza).
+* Aggiungere stili CSS (Gestione degli Asset Statici).
 
 Buon divertimento con SismaFramework!
 

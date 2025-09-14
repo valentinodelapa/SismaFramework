@@ -79,8 +79,8 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
    * **Impostazioni del Progetto:**
      
      ```php
-     const PROJECT = 'Il Mio Progetto';
-     const ROOT_PATH = '/var/www/html/il-mio-progetto'; // Usa un percorso assoluto
+    // Non è necessario modificare PROJECT e ROOT_PATH se si segue la struttura standard.
+    // ROOT_PATH viene calcolato automaticamente.
      ```
    
    * **Impostazioni del Database:**
@@ -91,7 +91,7 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
      const DATABASE_NAME = 'nome_database';
      const DATABASE_USERNAME = 'utente_db';
      const DATABASE_PASSWORD = 'password_db';
-     const DATABASE_PORT = '3306';`
+     const DATABASE_PORT = '3306';
      ```
    
    * **Chiave di Cifratura:** Genera una chiave sicura e inseriscila qui. È fondamentale per la crittografia dei dati.

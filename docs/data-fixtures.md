@@ -4,56 +4,93 @@ Le Data Fixtures sono classi utilizzate per caricare un set di dati "falsi" o di
 
 ## A Cosa Servono?
 
-*   **Popolare un database vuoto:** Carica dati essenziali come un utente amministratore, categorie di default, ecc.
-*   **Creare dati per i test:** Assicura che i test automatici o manuali vengano eseguiti su un set di dati noto e prevedibile.
-*   **Fornire dati per lo sviluppo:** Permette di lavorare sull'interfaccia utente senza dover inserire manualmente i dati ogni volta.
+* **Popolare un database vuoto:** Carica dati essenziali come un utente amministratore, categorie di default, ecc.
+* **Creare dati per i test:** Assicura che i test automatici o manuali vengano eseguiti su un set di dati noto e prevedibile.
+* **Fornire dati per lo sviluppo:** Permette di lavorare sull'interfaccia utente senza dover inserire manualmente i dati ogni volta.
 
 ## Creare una Fixture
 
 Una fixture è una classe PHP che risiede nella cartella `Fixtures` del tuo modulo. Deve estendere la classe base `SismaFramework\Core\BaseClasses\BaseFixture` e implementare il metodo `load()`.
 
-Il `BaseFixture` fornisce accesso diretto all'oggetto `$this->dataMapper`, che puoi usare per salvare le entità.
+Il `BaseFixture` astrae la logica di salvataggio e l'ordine di esecuzione attraverso due metodi principali che devi implementare:
+
+* `setDependencies()`: Qui dichiari se la tua fixture dipende da altre. Il framework si assicurerà di eseguire prima le dipendenze.
+* `setEntity()`: Qui crei l'istanza della tua entità, imposti le sue proprietà e la registri per il salvataggio.
 
 ### Esempio: Creare Utenti e Post
 
-Vediamo come creare una fixture che popola il database con alcuni utenti e i loro post.
+Vediamo come creare una fixture per un `Post` che dipende da una fixture per un `User`.
 
-**`MyBlog/Application/Fixtures/BlogFixtures.php`**
+#### 1. Fixture dell'Utente (la dipendenza)
+
+**`MyBlog/Application/Fixtures/UserFixture.php`**
+
 ```php
 namespace MyBlog\Application\Fixtures;
 
 use SismaFramework\Core\BaseClasses\BaseFixture;
 use MyBlog\Application\Entities\User;
-use MyBlog\Application\Entities\Post;
 
-class BlogFixtures extends BaseFixture
+class UserFixture extends BaseFixture
 {
-    public function load(): void
+    protected function setDependencies(): void
     {
-        // Crea un utente
+        // Questa fixture non ha dipendenze
+    }
+
+    public function setEntity(): void
+    {
         $user = new User();
         $user->setUsername('Mario Rossi');
         $user->setEmail('mario.rossi@example.com');
-        // ... imposta altre proprietà
 
-        $this->dataMapper->save($user);
-
-        // Crea alcuni post per l'utente
-        for ($i = 1; $i <= 5; $i++) {
-            $post = new Post();
-            $post->setTitle('Articolo di test #' . $i);
-            $post->setContent('Questo è il contenuto dell\'articolo di test numero ' . $i);
-            $post->setAuthor($user); // Associa il post all'utente creato
-
-            $this->dataMapper->save($post);
-        }
+        // Aggiunge l'entità al gestore delle fixture.
+        // Verrà salvata automaticamente.
+        $this->addEntity($user);
     }
 }
 ```
 
+#### 2. Fixture del Post (che dipende dall'Utente)
+
+**`MyBlog/Application/Fixtures/PostFixture.php`**
+
+```php
+namespace MyBlog\Application\Fixtures;
+
+use SismaFramework\Core\BaseClasses\BaseFixture;
+use MyBlog\Application\Entities\Post;
+
+class PostFixture extends BaseFixture
+{
+
+    protected function setDependencies(): void
+    {
+        //Dichiara che questa fixture ha bisogno che UserFixture sia già stata eseguita
+        $this->addDependency(UserFixture::class);
+    }
+  
+    public function setEntity(): void
+    {
+        // Recupera l'entità User creata dalla sua fixture di dipendenza
+        $author = $this->getEntityByFixtureName(UserFixture::class);
+        $post = new Post();
+        $post->setTitle('Il mio primo articolo');  
+        $post->setContent('Contenuto dell\'articolo...');
+        $post->setAuthor($author); // Associa l'autore recuperato
+        $this->addEntity($post);
+    }
+} 
+```
+
 ## Eseguire le Fixtures
 
-Il metodo standard per eseguire le fixtures è tramite un'interfaccia a riga di comando (CLI). Sebbene il comando specifico non sia ancora documentato, è importante sapere che ogni classe fixture può essere istanziata ed eseguita programmaticamente se necessario, poiché il metodo `load()` contiene tutta la logica necessaria.
+Il modo più semplice per eseguire le fixtures durante lo sviluppo è tramite un URL dedicato.
+
+1. Assicurati che `DEVELOPMENT_ENVIRONMENT` sia impostato su `true` nel tuo file `Config/config.php`.
+2. Visita l'URL `/fixtures` nel tuo browser.
+
+Il framework troverà ed eseguirà automaticamente tutte le classi `Fixture` presenti nei moduli registrati.
 
 * * *
 

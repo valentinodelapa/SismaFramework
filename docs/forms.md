@@ -122,8 +122,13 @@ class PostController extends BaseController
 
 ### Passo 3: Visualizzare il Form nella Vista
 
-Infine, crea il file della vista. I nomi dei campi (`name="..."`) nel form HTML devono corrispondere ai nomi delle proprietà dell'entità.
+Infine, crea il file della vista. I nomi dei campi (`name="..."`) nel form HTML devono corrispondere ai nomi delle proprietà dell'entità. La gestione degli errori è particolarmente elegante.
 
+L'oggetto `$errors` (di tipo `FormFilterError`) restituito dal form utilizza i metodi magici di PHP. Questo significa che:
+*   Per verificare se un campo ha un errore, puoi semplicemente controllare il valore di una proprietà con il suffisso `Error` (es. `$errors->titleError`). Se l'errore esiste, restituirà il messaggio (una stringa, che valuta a `true`); altrimenti, restituirà `false`.
+*   Se hai definito un **messaggio di errore personalizzato** nella tua classe Form, puoi accedervi con il suffisso `CustomMessage` (es. `$errors->titleCustomMessage`). Questo conterrà la stringa del messaggio e ha la priorità su quello standard.
+*   Non è necessario usare `isset()` o metodi come `hasError()`, rendendo il codice della vista molto più pulito e leggibile.
+*   Il messaggio di errore standard deve essere definito nel file di lingua (es. `it_IT.php`) e richiamato nella vista.
 **`MyBlog/Application/Views/post/form.php`**
 
 ```php
@@ -135,17 +140,26 @@ Infine, crea il file della vista. I nomi dei campi (`name="..."`) nel form HTML 
     <div class="form-group">
         <label for="title">Titolo</label>
         <input type="text" id="title" name="title" value="<?= htmlspecialchars($formEntity->getTitle() ?? '') ?>">
-        <?php if ($errors->hasError('title')) : ?>
-            <div class="error"><?= $errors->getErrorMessage('title') ?></div>
+        
+        <?php // Controlla prima un messaggio personalizzato. Se non c'è, controlla se c'è un errore standard e mostra il messaggio dal file di lingua. ?>
+        <?php if ($errors->titleCustomMessage) : ?>
+            <div class="error"><?= $errors->titleCustomMessage ?></div>
+        <?php elseif ($errors->titleError) : ?>
+            <div class="error"><?= $defaulErrorMessage // Variabile dal file di lingua (es. 'it_IT.php') ?></div>
         <?php endif; ?>
     </div>
+    
     <div class="form-group">
         <label for="content">Contenuto</label>
         <textarea id="content" name="content"><?= htmlspecialchars($formEntity->getContent() ?? '') ?></textarea>
-        <?php if ($errors->hasError('content')) : ?>
-            <div class="error"><?= $errors->getErrorMessage('content') ?></div>
+        
+        <?php if ($errors->contentCustomMessage) : ?>
+            <div class="error"><?= $errors->contentCustomMessage ?></div>
+        <?php elseif ($errors->contentError) : ?>
+            <div class="error"><?= $defaulErrorMessage // Variabile dal file di lingua ?></div>
         <?php endif; ?>
     </div>
+    
     <div class="form-group">
         <label>
             <input type="checkbox" name="isPublished" value="1" <?= $formEntity->isPublished() ? 'checked' : '' ?>>
@@ -154,6 +168,7 @@ Infine, crea il file della vista. I nomi dei campi (`name="..."`) nel form HTML 
     </div>
     <button type="submit">Salva</button>
 </form>
+    
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>
 ```
 
