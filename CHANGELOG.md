@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [9.0.4] - 2025-09-28 - Correzione Bug ORM
+
+### 🔧 Correzioni
+
+*   **Correzione Bug `Query` per INSERT/UPDATE**: È stato corretto un bug critico nella classe `Query` che, in assenza di colonne specificate, inseriva erroneamente un asterisco (`*`) nelle query di tipo `INSERT` e `UPDATE`. Questo comportamento generava query SQL non valide e poteva causare fallimenti inaspettati nelle operazioni di scrittura. Ora la classe gestisce correttamente questi scenari, garantendo la generazione di query SQL corrette.
+
+
 ## [9.0.3] - 2025-09-14 - Correzioni e Miglioramenti alla Documentazione
 
 Questa release di tipo patch si concentra esclusivamente sul miglioramento della documentazione per renderla più completa, accurata e facile da navigare. Non sono state apportate modifiche al codice sorgente del framework.
