@@ -67,4 +67,4 @@ I messaggi registrati appariranno nel file di log (Logs/log.txt) e, se sei in am
 
 * * *
 
-[Indice](index.md) | Precedente: [Data Fixtures](data-fixtures.md)
+[Indice](index.md) | Precedente: [Data Fixtures](data-fixtures.md) | Successivo: [Best Practices](best-practices.md)

@@ -94,4 +94,4 @@ Il framework troverà ed eseguirà automaticamente tutte le classi `Fixture` pre
 
 * * *
 
-Indice | Precedente: [Barra di Debug](debug-bar.md) | Successivo: [Gestione Errori e Logging](error-handling-and-logging.md)
+[Indice](index.md) | Precedente: [Barra di Debug](debug-bar.md) | Successivo: [Gestione Errori e Logging](error-handling-and-logging.md)

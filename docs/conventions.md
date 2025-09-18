@@ -77,4 +77,4 @@ SismaFramework si basa su una serie di convenzioni per automatizzare molte attiv
 
 * * *
 
-[Indice](index.md) | Successivo: [Best Practices](best-practices.md)
+[Indice](index.md) | Precedente: [Architettura a Moduli](module-architecture.md) | Successivo: [Controllori](controllers.md)

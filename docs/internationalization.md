@@ -69,4 +69,4 @@ Cambiando il valore della costante `LANGUAGE` in `config.php` da `it_IT` a `en_U
 
 * * *
 
-Indice | Precedente: [Data Fixtures](data-fixtures.md) | Successivo: [Gestione degli Asset Statici](static-assets.md)
+[Indice](index.md) | Precedente: [Gestione dei Form](forms.md) | Successivo: [Gestione degli Asset Statici](static-assets.md)

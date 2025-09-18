@@ -99,14 +99,17 @@ use MyBlog\Application\Forms\PostForm;
 
 class PostController extends BaseController
 {
-    public function edit(Request $request, Post $post): Response
+    // L'action per creare un nuovo post
+    public function create(Request $request): Response
     {
-        $form = new PostForm($post); // Passiamo l'entità esistente per la modifica
+        $form = new PostForm(); // Creiamo un form per una nuova entità
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $postModificato = $form->resolveEntity();
-            $this->dataMapper->save($postModificato);
-            return Router::redirect('post/show/id/' . $postModificato->getId());
+            // Grazie a injectRequest(), non dobbiamo più gestire manualmente l'ID dell'autore.
+            $nuovoPost = $form->resolveEntity();
+            $this->dataMapper->save($nuovoPost);
+            return Router::redirect('post/show/id/' . $nuovoPost->getId());
         }
 
         // Se il form non è valido o è la prima visita, mostriamo il form
@@ -170,6 +173,36 @@ L'oggetto `$errors` (di tipo `FormFilterError`) restituito dal form utilizza i m
 </form>
     
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>
+```
+
+## Integrazione di Dati con `injectRequest()` e `addRequest()`
+
+Il metodo `injectRequest()` è un hook potente che viene eseguito dopo che il form ha ricevuto l'oggetto `Request`, ma **prima** che inizi il processo di validazione e mappatura dei dati sull'entità.
+
+All'interno di questo metodo, puoi usare il metodo helper `addRequest(string $propertyName, string|array $value)` per **aggiungere o sovrascrivere un singolo valore** nella richiesta del form.
+
+Questo approccio è estremamente utile per:
+
+*   **Popolare campi non presenti nel form HTML:** Il caso d'uso più comune è impostare l'ID dell'autore di un post con quello dell'utente attualmente loggato, senza doverlo inserire in un campo `<input type="hidden">`.
+*   **Pre-elaborare o modificare dati:** Puoi modificare i dati grezzi prima che vengano validati (es. convertire un formato data, pulire una stringa).
+*   **Impostare valori di default dinamici:** Fornire valori predefiniti che dipendono da logiche esterne al form.
+
+### Esempio Pratico
+
+Immaginiamo di voler associare automaticamente un post all'utente loggato, il cui ID è salvato in sessione.
+
+```php
+// In MyBlog/Application/Forms/PostForm.php
+
+protected function injectRequest(): void
+{
+    // La sessione è accessibile tramite $this->session nel form.
+    // Se l'utente è loggato, aggiungiamo il suo ID alla richiesta
+    // sotto la chiave 'authorId'.
+    if ($this->session->has('user_id')) {        
+        $this->addRequest('authorId', $this->session->get('user_id'));
+    }
+}
 ```
 
 ## L'Oggetto `Request`

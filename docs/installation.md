@@ -55,7 +55,7 @@ il-mio-progetto/
     └── ... (codice del framework)
 ```
 
-### ### Passo 3: Configura i file principali
+### Passo 3: Configura i file principali
 
 Ora devi modificare i file che hai appena copiato per farli puntare correttamente alla libreria nella sottocartella `SismaFramework`.
 
@@ -79,8 +79,8 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
    * **Impostazioni del Progetto:**
      
      ```php
-    // Non è necessario modificare PROJECT e ROOT_PATH se si segue la struttura standard.
-    // ROOT_PATH viene calcolato automaticamente.
+     // Non è necessario modificare PROJECT e ROOT_PATH se si segue la struttura standard.
+     // ROOT_PATH viene calcolato automaticamente.
      ```
    
    * **Impostazioni del Database:**

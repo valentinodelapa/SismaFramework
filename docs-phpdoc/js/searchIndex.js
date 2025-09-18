@@ -10986,6 +10986,36 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-TestsApplication-Forms-SelfReferencedSampleForm.html#method_setFilterFieldsMode"
         },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SimpleEntityWithInjectRequestForm",
+            "name": "SimpleEntityWithInjectRequestForm",
+            "summary": "Description\u0020of\u0020BaseSampleWithInjectRequestForm",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SimpleEntityWithInjectRequestForm.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SimpleEntityWithInjectRequestForm\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SimpleEntityWithInjectRequestForm.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SimpleEntityWithInjectRequestForm\u003A\u003AinjectRequest\u0028\u0029",
+            "name": "injectRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SimpleEntityWithInjectRequestForm.html#method_injectRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SimpleEntityWithInjectRequestForm\u003A\u003AsetEntityFromForm\u0028\u0029",
+            "name": "setEntityFromForm",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SimpleEntityWithInjectRequestForm.html#method_setEntityFromForm"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SimpleEntityWithInjectRequestForm\u003A\u003AsetFilterFieldsMode\u0028\u0029",
+            "name": "setFilterFieldsMode",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SimpleEntityWithInjectRequestForm.html#method_setFilterFieldsMode"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Forms\\SimpleEntityWithInjectRequestForm\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Forms-SimpleEntityWithInjectRequestForm.html#method_getEntityName"
+        },                {
             "fqsen": "\\SismaFramework\\TestsApplication\\Models\\BaseSampleModel",
             "name": "BaseSampleModel",
             "summary": "",

@@ -93,4 +93,4 @@ class Post extends BaseEntity
 
 * * *
 
-[Indice](index.md) | Precedente: [Installazione e Configurazione](installation.md) | Successivo: [Controllori](controllers.md)
+[Indice](index.md) | Precedente: [Installazione e Configurazione](installation.md) | Successivo: [Riepilogo delle Convenzioni](conventions.md)

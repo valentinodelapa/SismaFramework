@@ -157,4 +157,4 @@ Normalmente non è necessario modificare queste impostazioni. Se hai bisogno di 
 
 * * *
 
-[Indice](index.md) | Precedente: [Architettura a Moduli](module-architecture.md) | Successivo: [Viste e Template](views.md)
+[Indice](index.md) | Precedente: [Riepilogo delle Convenzioni](conventions.md) | Successivo: [Viste e Template](views.md)
