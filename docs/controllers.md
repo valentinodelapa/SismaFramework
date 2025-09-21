@@ -1,8 +1,8 @@
-# # Controllori
+# Controllori
 
-I Controllori sono il cuore della gestione delle richieste nella tua applicazione. Il loro compito è ricevere una richiesta HTTP, interagire con il Model (se necessario) per recuperare o modificare dati, e infine restituire una risposta che verrà inviata al browser.
+I controller sono il cuore della gestione delle richieste nella tua applicazione. Il loro compito è ricevere una richiesta HTTP, interagire con i [modelli](orm.md) (se necessario) per recuperare o modificare dati, e infine restituire una risposta che verrà inviata al browser.
 
-In SismaFramework, un controller è una classe PHP che estende `BaseController` e i suoi metodi pubblici sono chiamati **Actions**.
+In SismaFramework, un controller è una classe PHP che estende [`BaseController`](api-reference.md#basecontroller) e i suoi metodi pubblici sono chiamati **action**.
 
 ## Creare un Controllore
 

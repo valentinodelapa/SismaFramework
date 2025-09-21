@@ -12,13 +12,13 @@ Sfrutta appieno le funzionalità di PHP 8.1+ (come la tipizzazione forte e le `B
 
 ## Caratteristiche Principali
 
-*   **Architettura Modulare:** Organizza il tuo codice in moduli riutilizzabili per mantenere i progetti grandi puliti e gestibili.
-*   **ORM Potente (Data Mapper):** Interagisci con il database usando oggetti PHP. L'ORM gestisce relazioni, lazy loading e query complesse in modo intuitivo.
-*   **Componente di Sicurezza Completo:** Gestisci login, ruoli e permessi granulari con un sistema flessibile basato su Voters e Permissions.
-*   **Gestione dei Form Semplificata:** Automatizza la mappatura dei dati, la validazione e la gestione degli errori dei form.
-*   **Routing Automatico:** URL "parlanti" e user-friendly generati automaticamente dalla struttura dei tuoi controller, senza file di configurazione delle rotte.
-*   **Strumenti di Sviluppo Integrati:** Una barra di debug ti fornisce insight su query, log e performance. Le Data Fixtures ti aiutano a popolare il database per i test.
-*   **Internazionalizzazione (i18n) Pronta all'Uso:** Costruisci applicazioni multilingua con un sistema semplice basato su file PHP o JSON.
+*   **[Architettura Modulare](module-architecture.md):** Organizza il tuo codice in moduli riutilizzabili per mantenere i progetti grandi puliti e gestibili.
+*   **[ORM Potente (Data Mapper)](orm.md):** Interagisci con il database usando oggetti PHP con mappatura automatica e relazioni intelligenti.
+*   **[Componente di Sicurezza](security-component.md):** Sistema completo per autenticazione, autorizzazione e protezione con Voters e Permissions.
+*   **[Gestione Form Avanzata](forms.md):** Validazione automatica, mappatura dati e gestione errori con protezione CSRF integrata.
+*   **[Routing Automatico](controllers.md):** URL SEO-friendly generati automaticamente dalla struttura dei controller.
+*   **[Strumenti di Sviluppo](debug-bar.md):** Debug bar, [data fixtures](data-fixtures.md) e [sistema di testing](testing.md) integrati.
+*   **[Internazionalizzazione](internationalization.md):** Supporto multilingua con file di traduzione PHP o JSON.
 
 ## Per chi è SismaFramework?
 

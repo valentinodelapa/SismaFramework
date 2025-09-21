@@ -10,20 +10,11 @@ Questa guida ti accompagnerà nella creazione di una semplice applicazione di bl
 
 Alla fine di questa guida, avrai una pagina che elenca tutti gli articoli del blog e una pagina per visualizzare ogni singolo articolo.
 
-## 1. Installazione e Configurazione
+## 1. Prerequisiti
 
-Per prima cosa, segui la [guida di installazione](installation.md) per creare la struttura del tuo progetto e configurare il framework. Chiameremo il nostro progetto `mini-blog`.
+Prima di iniziare, assicurati di aver completato la [guida di installazione](installation.md) e la [configurazione base](installation.md#configurazione). Chiameremo il nostro progetto `mini-blog`.
 
-Una volta completata l'installazione, la tua struttura di cartelle dovrebbe essere:
-
-```
-mini-blog/
-├── Config/
-├── Public/
-└── SismaFramework/
-```
-
-Assicurati di aver configurato correttamente il tuo web server (es. con il file `.htaccess`) e di aver impostato le credenziali del database nel file `Config/config.php`.
+Se hai già un progetto SismaFramework configurato, puoi procedere direttamente al passo successivo. Altrimenti, [installa il framework](installation.md) prima di continuare.
 
 ## 2. Creare il Modulo `Blog`
 
