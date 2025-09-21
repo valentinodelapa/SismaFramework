@@ -6,7 +6,7 @@ In SismaFramework, un controller è una classe PHP che estende [`BaseController`
 
 ## Creare un Controllore
 
-Per creare un controllore, crea un nuovo file nella cartella `Controllers` del tuo modulo (es. `MyModule/App/Controllers/PageController.php`).
+Per creare un controllore, crea un nuovo file nella cartella `Controllers` del tuo [modulo](module-architecture.md) (es. `MyModule/Application/Controllers/PageController.php`).
 
 Ogni action deve restituire un oggetto `Response`, che rappresenta la risposta HTTP da inviare.
 
@@ -155,6 +155,6 @@ Normalmente non è necessario modificare queste impostazioni. Se hai bisogno di 
 * `CONTROLLERS`: Cambia il nome della cartella dei controller (default: `Controllers`).
 * `CONTROLLERS_PATH`, `CONTROLLERS_NAMESPACE`: Permettono di ridefinire completamente il percorso e il namespace dei controller.
 
-* * *
+---
 
 [Indice](index.md) | Precedente: [Riepilogo delle Convenzioni](conventions.md) | Successivo: [Viste e Template](views.md)

@@ -217,6 +217,6 @@ Le sue proprietà pubbliche mappano le superglobali:
 * `$request->cookies`: Corrisponde a `$_COOKIE`.
 * `$request->server`: Corrisponde a `$_SERVER`.
 
-* * *
+---
 
 [Indice](index.md) | Precedente: [Viste e Template](views.md) | Successivo: [Internazionalizzazione (i18n)](internationalization.md)

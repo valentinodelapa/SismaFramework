@@ -4,6 +4,8 @@ L'**Object-Relational Mapper (ORM)** di SismaFramework è un potente componente 
 
 L'ORM si basa sul pattern **Data Mapper**, che garantisce una netta separazione tra la logica di business (gli oggetti del tuo dominio) e la logica di persistenza dei dati (come vengono salvati e recuperati dal database).
 
+Per tecniche avanzate e patterns complessi, consulta la [guida ORM avanzata](advanced-orm.md). Per la documentazione API completa, vedi [API Reference](api-reference.md#orm-classes).
+
 ## I Componenti Chiave
 
 L'interazione con l'ORM si basa su due tipi di classi principali:

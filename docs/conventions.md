@@ -75,6 +75,6 @@ SismaFramework si basa su una serie di convenzioni per automatizzare molte attiv
 | **Templates** | `Application/Templates/` | Usati da `Templater` per generare stringhe. |
 | **Enumerations** | `Application/Enumerations/` | Contiene le `Enum` specifiche del modulo. |
 
-* * *
+---
 
 [Indice](index.md) | Precedente: [Architettura a Moduli](module-architecture.md) | Successivo: [Controllori](controllers.md)
