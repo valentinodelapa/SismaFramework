@@ -37,8 +37,8 @@ use SismaFramework\Core\Exceptions\LocalizatorException;
 class Localizator
 {
 
-    private static Language $injectedLanguage;
-    private ?Language $customLanguage;
+    private static ?Language $injectedLanguage = null;
+    private ?Language $customLanguage = null;
     private Config $config;
 
     public function __construct(?Language $customLanguage = null, ?Config $customConfig = null)
@@ -98,6 +98,6 @@ class Localizator
 
     public static function unsetLanguage(): void
     {
-        unset(self::$injectedLanguage);
+        self::$injectedLanguage = null;
     }
 }
