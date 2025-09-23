@@ -47,6 +47,6 @@ Per personalizzare il comportamento del framework:
 
 Il logging non serve solo per gli errori. Usa `Logger::saveLog()` per registrare eventi significativi dell'applicazione (es. un utente amministratore che esegue un'azione critica, un pagamento andato a buon fine). Questo crea una traccia di audit (audit trail) che può essere preziosa.
 
-* * *
+---
 
 [Indice](index.md) | Precedente: [Gestione Errori e Logging](error-handling-and-logging.md) | Successivo: [Deployment in Produzione](deployment.md)

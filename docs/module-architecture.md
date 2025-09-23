@@ -1,10 +1,10 @@
 # Architettura a Moduli
 
-Una delle caratteristiche più potenti di SismaFramework è la sua **architettura modulare**. Invece di costruire un'unica applicazione monolitica, il framework ti incoraggia a suddividere la tua applicazione in **Moduli** indipendenti e riutilizzabili. Questo approccio mantiene il codice organizzato, facile da navigare e da manutenere, specialmente in progetti di grandi dimensioni.
+Una delle caratteristiche più potenti di SismaFramework è la sua **architettura modulare**. Invece di costruire un'unica applicazione monolitica, il framework ti incoraggia a suddividere la tua applicazione in **moduli** indipendenti e riutilizzabili. Questo approccio mantiene il codice organizzato, facile da navigare e da manutenere, specialmente in progetti di grandi dimensioni.
 
-## Cos'è un Modulo?
+## Cos'è un modulo?
 
-Un modulo è un'unità autocontenuta che raggruppa una specifica funzionalità dell'applicazione. Ogni modulo ha la sua struttura di cartelle, con i propri Controller, Modelli, Viste, Form, ecc.
+Un modulo è un'unità autocontenuta che raggruppa una specifica funzionalità dell'applicazione. Ogni modulo ha la sua struttura di cartelle, con i propri [controller](controllers.md), [modelli](orm.md), [viste](views.md), [form](forms.md), ecc.
 
 Ad esempio, in un'applicazione complessa potresti avere moduli separati per:
 
@@ -91,6 +91,6 @@ class Post extends BaseEntity
 }
 ```
 
-* * *
+---
 
 [Indice](index.md) | Precedente: [Installazione e Configurazione](installation.md) | Successivo: [Riepilogo delle Convenzioni](conventions.md)

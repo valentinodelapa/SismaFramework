@@ -8,7 +8,7 @@ Le variabili vengono passate a una vista tramite il metodo `Render::generateView
 
 Se un controller passa `['pageTitle' => 'Dettaglio Articolo', 'post' => $postObject]` a una vista `blog/show.php`, il file della vista potrebbe essere così:
 
-**`MyModule/Application/Views/blog/show.php`**
+`MyModule/Application/Views/blog/show.php`
 
 ```php
 <!DOCTYPE html>
@@ -35,7 +35,7 @@ Il pattern più comune consiste nel dividere il layout in due parti: un `header.
 
 Crea una cartella `layout` all'interno delle tue viste: `MyModule/Application/Views/layout/`.
 
-**`MyModule/Application/Views/layout/header.php`**
+`MyModule/Application/Views/layout/header.php`
 ```php
 <!DOCTYPE html>
 <html lang="it">
@@ -56,7 +56,7 @@ Crea una cartella `layout` all'interno delle tue viste: `MyModule/Application/Vi
     <main>
 ```
 
-**`MyModule/Application/Views/layout/footer.php`**
+`MyModule/Application/Views/layout/footer.php`
 ```php
     </main>
     <footer>
@@ -70,7 +70,7 @@ Crea una cartella `layout` all'interno delle tue viste: `MyModule/Application/Vi
 
 Ora, in qualsiasi vista specifica (es. la pagina "Chi Siamo"), puoi includere questi due file per "avvolgere" il tuo contenuto.
 
-**`MyModule/Application/Views/page/about.php`**
+`MyModule/Application/Views/page/about.php`
 ```php
 <?php require_once __DIR__ . '/../layout/header.php'; ?>
 
@@ -90,7 +90,7 @@ I template utilizzano una sintassi semplice con segnaposto (es. `{{nome_variabi
 ### Esempio di un Template
 
 1.  **Crea il file del template:**
-    **`MyModule/Application/Templates/emails/welcome.html`**
+    `MyModule/Application/Templates/emails/welcome.html`
    
    ```html
    <h1>Benvenuto, {{username}}!</h1>
@@ -115,6 +115,6 @@ I template utilizzano una sintassi semplice con segnaposto (es. `{{nome_variabi
    // mail('utente@example.com', 'Benvenuto!', $corpoEmail, $headers);
    ```
 
-* * *
+---
 
 [Indice](index.md) | Precedente: [Controllori](controllers.md) | Successivo: [Gestione dei Form](forms.md)

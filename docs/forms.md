@@ -1,10 +1,10 @@
-# # Gestione dei Form
+# Gestione dei Form
 
 Il componente Form di SismaFramework è uno strumento potente che semplifica la gestione dei form HTML. Si occupa di tre compiti principali:
 
-1. **Mappatura dei Dati:** Trasferisce i dati inviati da un form (`$_POST`) a un'entità.
-2. **Validazione:** Controlla che i dati inviati rispettino le regole definite (es. un campo è obbligatorio, è un'email valida, ecc.).
-3. **Gestione degli Errori e Ripopolamento:** In caso di dati non validi, facilita la visualizzazione dei messaggi di errore e ripopola automaticamente il form con i dati già inseriti dall'utente.
+1. **Mappatura dei Dati:** Trasferisce i dati inviati da un form (`$_POST`) a un'[entità](orm.md#le-entità-in-dettaglio).
+2. **Validazione:** Controlla che i dati inviati rispettino le regole definite usando i [FilterType](enumerations.md#filtertype).
+3. **Gestione degli Errori:** Utilizza [`FormFilterError`](custom-types.md#formfiltererror) per gestire errori e ripopolamento automatico.
 
 ## Il Flusso di Lavoro Completo
 
@@ -217,6 +217,6 @@ Le sue proprietà pubbliche mappano le superglobali:
 * `$request->cookies`: Corrisponde a `$_COOKIE`.
 * `$request->server`: Corrisponde a `$_SERVER`.
 
-* * *
+---
 
 [Indice](index.md) | Precedente: [Viste e Template](views.md) | Successivo: [Internazionalizzazione (i18n)](internationalization.md)

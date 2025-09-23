@@ -79,7 +79,7 @@ Questo disaccoppia la logica di sicurezza (nel Voter) dal suo utilizzo (nella Pe
 
 Crea un `PostVoter` nella cartella `Voters` del tuo modulo.
 
-**`MyBlog/Application/Voters/PostVoter.php`**
+`MyBlog/Application/Voters/PostVoter.php`
 ```php
 namespace MyBlog\Application\Voters;
 
@@ -116,7 +116,7 @@ class PostVoter extends BaseVoter
 
 Crea una `PostPermission` nella cartella `Permissions` che utilizzi il `PostVoter`.
 
-**`MyBlog/Application/Permissions/PostPermission.php`**
+`MyBlog/Application/Permissions/PostPermission.php`
 ```php
 namespace MyBlog\Application\Permissions;
 
