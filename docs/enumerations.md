@@ -182,21 +182,56 @@ class PostApiController extends BaseController {
 
 **Namespace:** `SismaFramework\Core\Enumerations\Language`
 **Tipo:** `string` enum
+**Usa:** `SelectableEnumeration` trait
 
-Definisce i linguaggi supportati per l'internazionalizzazione, con metodi helper per ottenere etichette friendly.
+Definisce i linguaggi supportati per l'internazionalizzazione. Utilizza il sistema di localizzazione per ottenere nomi tradotti delle lingue.
 
 ```php
 enum Language: string
 {
+    use SelectableEnumeration;
+
     case italian = 'it_IT';
     case english = 'en_GB';
     case usEnglish = 'en_US';
+    case australianEnglish = 'en_AU';
+    case canadianEnglish = 'en_CA';
+    case indianEnglish = 'en_IN';
     case french = 'fr_FR';
+    case canadianFrench = 'fr_CA';
     case german = 'de_DE';
+    case austrianGerman = 'de_AT';
+    case swissGerman = 'de_CH';
     case spanish = 'es_ES';
-    // ... e molti altri
+    case mexicanSpanish = 'es_MX';
+    case argentinianSpanish = 'es_AR';
+    case colombianSpanish = 'es_CO';
+    case chinese = 'zh_CN';
+    case chineseTraditional = 'zh_TW';
+    case arabic = 'ar_SA';
+    case egyptianArabic = 'ar_EG';
+    case portuguese = 'pt_PT';
+    case brazilianPortuguese = 'pt_BR';
+    case angolanPortuguese = 'pt_AO';
+    case hindi = 'hi_IN';
+    case punjabi = 'pa_IN';
+    case marathi = 'mr_IN';
+    case gujarati = 'gu_IN';
+    case tamil = 'ta_IN';
+    case telugu = 'te_IN';
+    case kannada = 'kn_IN';
+    case catalan = 'ca_ES';
+    case basque = 'eu_ES';
+    case malay = 'ms_MY';
+    case swahili = 'sw_KE';
+    case hausa = 'ha_NG';
+    case amharic = 'am_ET';
+    case urdu = 'ur_PK';
+    case burmese = 'my_MM';
+    case quechua = 'qu_PE';
+    case icelandic = 'is_IS';
+    // ... e molte altre (60+ lingue e varianti supportate)
 
-    public function getFriendlyLabel(self $language): string;
     public function getISO6391Label(): string;
 }
 ```
@@ -206,37 +241,38 @@ enum Language: string
 ```php
 use SismaFramework\Core\Enumerations\Language;
 
-// Configurazione i18n
-class LocalizationService {
-    public function setApplicationLanguage(Language $language): void {
-        Config::set('LANGUAGE', $language->value);
+// Ottenere nomi localizzati delle lingue
+$currentLang = Language::english;
 
-        // Caricare file di traduzione
-        $translations = $this->loadTranslations($language);
-        $this->setTranslations($translations);
-    }
+$italianName = Language::italian->getFriendlyLabel($currentLang);  // "Italian"
+$frenchName = Language::french->getFriendlyLabel($currentLang);    // "French"
+$germanName = Language::german->getFriendlyLabel($currentLang);    // "German"
 
-    public function getAvailableLanguages(): array {
-        return [
-            Language::italian->getFriendlyLabel(Language::italian),    // "Italiano"
-            Language::english->getFriendlyLabel(Language::english),    // "English"
-            Language::french->getFriendlyLabel(Language::french),      // "Français"
-        ];
-    }
-}
+// Con lingua italiana
+$currentLang = Language::italian;
+$englishName = Language::english->getFriendlyLabel($currentLang);  // "Inglese"
+$frenchName = Language::french->getFriendlyLabel($currentLang);    // "Francese"
 
 // Language switcher per UI
 class LanguageSwitcherComponent {
-    public function render(): string {
+    public function render(Language $userLanguage): string {
         $options = '';
 
         foreach (Language::cases() as $language) {
-            $label = $language->getFriendlyLabel($language);
+            $label = $language->getFriendlyLabel($userLanguage);
             $value = $language->value;
             $options .= "<option value='{$value}'>{$label}</option>";
         }
 
         return "<select name='language'>{$options}</select>";
+    }
+}
+
+// Dropdown localizzato
+class LocalizationService {
+    public function getAvailableLanguages(Language $userLanguage): array {
+        return Language::getChoiceFromEnumerations($userLanguage);
+        // Restituisce ['Inglese' => 'en_GB', 'Francese' => 'fr_FR', ...]
     }
 }
 
