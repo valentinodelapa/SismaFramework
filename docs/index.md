@@ -26,7 +26,7 @@
 
 * **Sicurezza**
 
-  * [Componente di Sicurezza](security-component.md)
+  * [Sicurezza](security.md)
 
 * **Strumenti di Sviluppo**
 
@@ -49,3 +49,4 @@
   * [Enumerations](enumerations.md)
   * [Configuration Reference](configuration-reference.md)
   * [Advanced ORM](advanced-orm.md)
+  * [Performance Guide](performance.md)

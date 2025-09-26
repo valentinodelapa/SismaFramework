@@ -34,11 +34,28 @@ SismaFramework è modulare. Creiamo un modulo `Blog` per contenere tutta la logi
    ```
 
 2. **Registra il modulo**: Apri `Config/config.php` e aggiungi `Blog` all'array `MODULE_FOLDERS`.
-   
+
    ```php
    // in Config/config.php
    const MODULE_FOLDERS = [
-       'Blog', // Aggiungi il tuo nuovo modulo
+       'Blog',           // Il tuo nuovo modulo
+   ];
+   ```
+
+   📝 **Nota**: Il modulo `'SismaFramework'` (presente nel config di default) contiene l'applicazione di esempio del framework (cartella `Sample/`). Puoi scegliere di:
+   - **Mantenerlo** se vuoi accedere agli esempi durante lo sviluppo
+   - **Rimuoverlo** se preferisci un setup più pulito
+
+   ```php
+   // Opzione A: Con esempi del framework
+   const MODULE_FOLDERS = [
+       'SismaFramework', // Opzionale: per accedere agli esempi
+       'Blog',
+   ];
+
+   // Opzione B: Solo i tuoi moduli (setup pulito)
+   const MODULE_FOLDERS = [
+       'Blog',
    ];
    ```
 
@@ -52,9 +69,9 @@ Le entità rappresentano i dati della nostra applicazione. Creeremo due entità:
 <?php
 namespace Blog\Application\Entities;
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
-class User extends BaseEntity
+class User extends ReferencedEntity
 {
     protected int $id;
     protected string $username;
@@ -72,14 +89,14 @@ class User extends BaseEntity
 namespace Blog\Application\Entities;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\HelperClasses\SismaDatetime;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 
 class Post extends BaseEntity
 {
     protected int $id;
     protected string $title;
     protected string $content;
-    protected SismaDatetime $publicationDate;
+    protected SismaDateTime $publicationDate;
     protected User $author; // Relazione con l'entità User
 
     protected function setEncryptedProperties(): void {}
@@ -98,7 +115,7 @@ I modelli ci aiuteranno a interagire con il database per recuperare le entità.
 namespace Blog\Application\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
-use SismaFramework\Orm\HelperClasses\Query
+use SismaFramework\Orm\HelperClasses\Query;
 use Blog\Application\Entities\User;
 
 class UserModel extends BaseModel
@@ -117,11 +134,11 @@ class UserModel extends BaseModel
 <?php
 namespace Blog\Application\Models;
 
-use SismaFramework\Orm\BaseClasses\BaseModel;
-use SismaFramework\Orm\HelperClasses\Query
+use SismaFramework\Orm\ExtendedClasses\DependentModel;
+use SismaFramework\Orm\HelperClasses\Query;
 use Blog\Application\Entities\Post;
 
-class PostModel extends BaseModel
+class PostModel extends DependentModel
 {
     protected static function getEntityName(): string
     {
@@ -162,6 +179,7 @@ Creiamo delle fixture per inserire un utente e alcuni articoli di prova. Questo 
 #### Fixture per l'Utente
 
 **`Blog/Application/Fixtures/UserFixture.php`**
+
 ```php
 <?php
 namespace Blog\Application\Fixtures;
@@ -193,7 +211,7 @@ namespace Blog\Application\Fixtures;
 
 use SismaFramework\Core\BaseClasses\BaseFixture;
 use Blog\Application\Entities\Post;
-use SismaFramework\Orm\HelperClasses\SismaDatetime;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 
 class PostFixture extends BaseFixture
 {
@@ -210,7 +228,7 @@ class PostFixture extends BaseFixture
             $post = new Post();
             $post->setTitle('Il mio articolo di prova #' . $i);
             $post->setContent('Questo è il contenuto dell\'articolo di test...');
-            $post->setPublicationDate(new SismaDatetime());
+            $post->setPublicationDate(new SismaDateTime());
             $post->setAuthor($user);
             $this->addEntity($post);
         }

@@ -80,7 +80,7 @@ class PostController extends BaseController
 I tipi di parametro supportati per il binding automatico sono:
 
 * Tipi nativi: `int`, `float`, `string`, `bool`, `array`.
-* Oggetti `SismaDatetime` (formato `Y-m-d H:i:s`).
+* Oggetti `SismaDateTime` (formato `Y-m-d H:i:s`).
 * `BackedEnum`: il valore viene usato per trovare il case corrispondente.
 * **Entità**: il framework carica automaticamente l'entità dal database usando l'ID fornito.
 
