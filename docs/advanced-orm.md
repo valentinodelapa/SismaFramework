@@ -1,208 +1,209 @@
 # Advanced ORM
 
-Questa guida copre gli aspetti avanzati dell'ORM di SismaFramework, incluse tecniche per query complesse, ottimizzazione delle performance, relazioni avanzate e patterns architetturali per applicazioni enterprise.
+Questa guida copre gli aspetti avanzati dell'ORM di SismaFramework, incluse tecniche per query complesse, ottimizzazione delle performance, gestione delle relazioni e patterns architetturali per applicazioni enterprise.
 
 ## Panoramica
 
 L'ORM di SismaFramework implementa il pattern **Data Mapper**, offrendo:
-- **Mappatura implicita** tra oggetti e database
+- **Mappatura automatica** tra oggetti e database
 - **Lazy loading** automatico per le relazioni
-- **Query builder** fluido e type-safe
+- **Query builder** per condizioni complesse
 - **Cache intelligente** per performance ottimali
-- **Supporto per relazioni complesse** (1:1, 1:N, N:N, self-reference)
+- **Metodi magici** per query basate su relazioni
+- **Gestione transazioni** per operazioni atomiche
 
 ---
 
-## Query Builder Avanzato
+## Query Avanzate con Data Mapper
 
-### Query Complesse con Join
+### Query Builder con Condizioni Complesse
 
 ```php
-use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\LogicalOperator;
+use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\Enumerations\DataType;
 
-class AdvancedQueryService
+class AdvancedPostService
 {
+    private PostModel $postModel;
     private DataMapper $dataMapper;
 
-    public function findUsersWithPosts(): array
-    {
-        $query = $this->dataMapper->createQuery()
-            ->select(['u.*', 'p.title', 'p.published_at'])
-            ->from('users', 'u')
-            ->innerJoin('posts', 'p', 'u.id = p.author_id')
-            ->where('p.published_at', ComparisonOperator::isNotNull)
-            ->andWhere('u.active', ComparisonOperator::equal, true)
-            ->orderBy('p.published_at', 'DESC')
-            ->limit(50);
+    public function findPostsByComplexCriteria(
+        string $titlePattern,
+        \DateTime $fromDate,
+        array $authorIds,
+        bool $isPublished = true
+    ): SismaCollection {
+        $query = $this->postModel->initQuery();
+        $bindValues = [];
+        $bindTypes = [];
 
-        return $query->execute();
+        $query->setWhere()
+            // Titolo contiene pattern
+            ->appendCondition('title', ComparisonOperator::like, Placeholder::placeholder)
+            ->appendAnd()
+            // Data pubblicazione maggiore di
+            ->appendCondition('published_at', ComparisonOperator::greaterThan, Placeholder::placeholder)
+            ->appendAnd()
+            // Autore in lista
+            ->appendCondition('author_id', ComparisonOperator::in, Placeholder::placeholder)
+            ->appendAnd()
+            // Status pubblicato
+            ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+
+        $bindValues = [
+            "%{$titlePattern}%",
+            $fromDate->format('Y-m-d H:i:s'),
+            $authorIds,
+            $isPublished ? 'published' : 'draft'
+        ];
+
+        $bindTypes = [
+            DataType::typeString,
+            DataType::typeString,
+            DataType::typeArrayInteger,
+            DataType::typeString
+        ];
+
+        $query->setOrderBy(['published_at' => 'DESC']);
+        $query->close();
+
+        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
     }
 
-    public function findPostsWithStats(): array
+    public function findPostsWithLogicalGrouping(): SismaCollection
     {
-        return $this->dataMapper->createQuery()
-            ->select([
-                'p.*',
-                'COUNT(c.id) as comment_count',
-                'AVG(r.rating) as avg_rating'
-            ])
-            ->from('posts', 'p')
-            ->leftJoin('comments', 'c', 'p.id = c.post_id')
-            ->leftJoin('ratings', 'r', 'p.id = r.post_id')
-            ->groupBy(['p.id'])
-            ->having('comment_count', ComparisonOperator::greaterThan, 5)
-            ->execute();
+        $query = $this->postModel->initQuery();
+
+        // WHERE (status = 'published' OR status = 'featured')
+        //   AND (view_count > 100 OR comment_count > 10)
+        $query->setWhere()
+            ->appendOpenBlock()
+                ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder)
+                ->appendOr()
+                ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder)
+            ->appendCloseBlock()
+            ->appendAnd()
+            ->appendOpenBlock()
+                ->appendCondition('view_count', ComparisonOperator::greaterThan, Placeholder::placeholder)
+                ->appendOr()
+                ->appendCondition('comment_count', ComparisonOperator::greaterThan, Placeholder::placeholder)
+            ->appendCloseBlock();
+
+        $bindValues = ['published', 'featured', 100, 10];
+        $bindTypes = [
+            DataType::typeString,
+            DataType::typeString,
+            DataType::typeInteger,
+            DataType::typeInteger
+        ];
+
+        $query->close();
+        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
     }
 }
 ```
 
-### Subquery e CTE (Common Table Expressions)
+### Fulltext Search
 
 ```php
-class SubqueryService
+class PostSearchService
 {
-    public function findTopAuthors(): array
+    public function searchPosts(string $searchTerms): SismaCollection
     {
-        // Subquery per contare post per autore
-        $subquery = $this->dataMapper->createQuery()
-            ->select(['author_id', 'COUNT(*) as post_count'])
-            ->from('posts')
-            ->where('published_at', ComparisonOperator::greaterThan, '2023-01-01')
-            ->groupBy(['author_id']);
+        $query = $this->postModel->initQuery();
 
-        // Query principale
-        return $this->dataMapper->createQuery()
-            ->select(['u.*', 'stats.post_count'])
-            ->from('users', 'u')
-            ->innerJoin("({$subquery->toSql()})", 'stats', 'u.id = stats.author_id')
-            ->orderBy('stats.post_count', 'DESC')
-            ->limit(10)
-            ->execute();
+        // Usa fulltext search su colonne indicizzate
+        $query->setWhere()
+            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder);
+
+        $bindValues = [$searchTerms];
+        $bindTypes = [DataType::typeString];
+
+        $query->close();
+        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
     }
 
-    public function findPostsAboveAverage(): array
+    public function searchWithRelevanceScore(string $searchTerms): SismaCollection
     {
-        // CTE per calcolare media
-        $avgQuery = $this->dataMapper->createQuery()
-            ->select(['AVG(view_count) as avg_views'])
-            ->from('posts');
+        $query = $this->postModel->initQuery();
 
-        return $this->dataMapper->createQuery()
-            ->with('avg_stats', $avgQuery)
-            ->select(['p.*'])
-            ->from('posts', 'p')
-            ->crossJoin('avg_stats', 'avg')
-            ->where('p.view_count', ComparisonOperator::greaterThan, 'avg.avg_views')
-            ->execute();
+        // Aggiunge score di relevance come colonna
+        $query->setFulltextIndexColumn(['title', 'content'], Placeholder::placeholder, 'relevance_score', true)
+            ->setWhere()
+            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder);
+
+        $bindValues = [$searchTerms, $searchTerms];
+        $bindTypes = [DataType::typeString, DataType::typeString];
+
+        $query->setOrderBy(['relevance_score' => 'DESC']);
+        $query->close();
+
+        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
     }
 }
 ```
 
 ---
 
-## Relazioni Avanzate
+## Metodi Magici e Relazioni
 
-### Self-Referencing Hierarchies
+### Query Basate su Relazioni
 
 ```php
-// Entità per strutture gerarchiche
-class Category extends BaseEntity
+class RelationalQueryService
 {
-    protected ?int $id = null;
-    protected string $name;
-    protected ?int $parentId = null;
-    protected ?Category $parent = null;
-
-    // Lazy-loaded collection
-    protected ?Collection $childrenCollection = null;
-
-    public function getChildren(): Collection
+    public function getUserContent(User $user): array
     {
-        if ($this->childrenCollection === null) {
-            $this->childrenCollection = $this->dataMapper
-                ->getModel(Category::class)
-                ->findByParentId($this->id);
-        }
-        return $this->childrenCollection;
+        $postModel = new PostModel($this->dataMapper);
+        $commentModel = new CommentModel($this->dataMapper);
+
+        // Metodi magici per relazioni
+        $userPosts = $postModel->getByAuthor($user);
+        $userComments = $commentModel->getByAuthor($user);
+
+        $stats = [
+            'posts_count' => $postModel->countByAuthor($user),
+            'comments_count' => $commentModel->countByAuthor($user),
+            'posts' => $userPosts,
+            'comments' => $userComments
+        ];
+
+        return $stats;
     }
 
-    public function getAllDescendants(): Collection
+    public function getPostsByCategory(Category $category): SismaCollection
     {
-        $descendants = new Collection();
-        $this->collectDescendants($descendants);
-        return $descendants;
+        $postModel = new PostModel($this->dataMapper);
+
+        // Relazione con categoria
+        return $postModel->getByCategory($category);
     }
 
-    private function collectDescendants(Collection $collection): void
+    public function getCommentsByPost(Post $post): SismaCollection
     {
-        foreach ($this->getChildren() as $child) {
-            $collection->add($child);
-            $child->collectDescendants($collection);
-        }
+        $commentModel = new CommentModel($this->dataMapper);
+
+        return $commentModel->getByPost($post);
     }
 
-    public function getPath(): array
+    public function bulkDeleteUserContent(User $user): bool
     {
-        $path = [];
-        $current = $this;
+        $postModel = new PostModel($this->dataMapper);
+        $commentModel = new CommentModel($this->dataMapper);
 
-        while ($current !== null) {
-            array_unshift($path, $current);
-            $current = $current->getParent();
-        }
-
-        return $path;
-    }
-}
-
-// Model con query specializzate
-class CategoryModel extends BaseModel
-{
-    public function findRootCategories(): Collection
-    {
-        return $this->createQuery()
-            ->where('parent_id', ComparisonOperator::isNull)
-            ->orderBy('name')
-            ->execute();
-    }
-
-    public function findByLevel(int $level): Collection
-    {
-        // CTE ricorsiva per calcolare livelli
-        $cte = "
-            WITH RECURSIVE category_levels AS (
-                SELECT id, name, parent_id, 0 as level
-                FROM categories
-                WHERE parent_id IS NULL
-
-                UNION ALL
-
-                SELECT c.id, c.name, c.parent_id, cl.level + 1
-                FROM categories c
-                INNER JOIN category_levels cl ON c.parent_id = cl.id
-            )
-        ";
-
-        return $this->dataMapper->createRawQuery($cte . "
-            SELECT * FROM category_levels WHERE level = ?
-        ", [$level])->execute();
-    }
-
-    public function moveSubtree(Category $category, ?Category $newParent): void
-    {
         $this->dataMapper->beginTransaction();
 
         try {
-            // Aggiorna parent
-            $category->setParentId($newParent?->getId());
-            $this->dataMapper->save($category);
+            // Elimina tutti i post dell'utente
+            $postModel->deleteByAuthor($user);
 
-            // Aggiorna path cache se presente
-            $this->updatePathCache($category);
+            // Elimina tutti i commenti dell'utente
+            $commentModel->deleteByAuthor($user);
 
             $this->dataMapper->commit();
+            return true;
+
         } catch (\Exception $e) {
             $this->dataMapper->rollback();
             throw $e;
@@ -211,69 +212,59 @@ class CategoryModel extends BaseModel
 }
 ```
 
-### Many-to-Many con Attributi
+### Lazy Loading Avanzato
 
 ```php
-// Entità per relazione N:N con attributi
-class UserRole extends BaseEntity
+class LazyLoadingExample
 {
-    protected ?int $id = null;
-    protected int $userId;
-    protected int $roleId;
-    protected \DateTime $assignedAt;
-    protected ?\DateTime $expiresAt = null;
-    protected bool $isActive = true;
-
-    // Relazioni
-    protected ?User $user = null;
-    protected ?Role $role = null;
-}
-
-// Service per gestire ruoli utente
-class UserRoleService
-{
-    private DataMapper $dataMapper;
-
-    public function assignRole(User $user, Role $role, ?\DateTime $expiresAt = null): UserRole
+    public function demonstrateLazyLoading(): void
     {
-        // Verifica se esiste già
-        $existing = $this->findUserRole($user, $role);
-        if ($existing && $existing->isActive()) {
-            throw new \InvalidArgumentException('Role already assigned');
+        $postModel = new PostModel($this->dataMapper);
+
+        // Carica solo il post
+        $post = $postModel->getEntityById(1);
+
+        // Lazy loading automatico dell'autore
+        $authorName = $post->getAuthor()->getName(); // Query automatica
+
+        // Lazy loading della collezione commenti
+        $comments = $post->getCommentCollection(); // Query automatica
+
+        // ⚠️ ATTENZIONE: Problema N+1 nel loop
+        $posts = $postModel->getEntityCollection();
+        foreach ($posts as $post) {
+            echo $post->getAuthor()->getName(); // Query per ogni post!
+        }
+    }
+
+    public function optimizedBatchLoading(): void
+    {
+        $postModel = new PostModel($this->dataMapper);
+        $userModel = new UserModel($this->dataMapper);
+
+        // Carica tutti i post
+        $posts = $postModel->getEntityCollection();
+
+        // Estrae IDs degli autori
+        $authorIds = [];
+        foreach ($posts as $post) {
+            $authorIds[] = $post->getAuthorId();
+        }
+        $authorIds = array_unique($authorIds);
+
+        // Carica tutti gli autori in una query
+        $authors = $userModel->getEntityCollectionByIds($authorIds);
+
+        // Crea mappa per lookup veloce
+        $authorMap = [];
+        foreach ($authors as $author) {
+            $authorMap[$author->getId()] = $author;
         }
 
-        $userRole = new UserRole();
-        $userRole->setUserId($user->getId());
-        $userRole->setRoleId($role->getId());
-        $userRole->setAssignedAt(new \DateTime());
-        $userRole->setExpiresAt($expiresAt);
-
-        $this->dataMapper->save($userRole);
-
-        return $userRole;
-    }
-
-    public function findActiveRoles(User $user): Collection
-    {
-        return $this->dataMapper->createQuery()
-            ->select(['r.*', 'ur.assigned_at', 'ur.expires_at'])
-            ->from('user_roles', 'ur')
-            ->innerJoin('roles', 'r', 'ur.role_id = r.id')
-            ->where('ur.user_id', ComparisonOperator::equal, $user->getId())
-            ->andWhere('ur.is_active', ComparisonOperator::equal, true)
-            ->andWhere(function($query) {
-                $query->where('ur.expires_at', ComparisonOperator::isNull)
-                      ->orWhere('ur.expires_at', ComparisonOperator::greaterThan, new \DateTime());
-            })
-            ->execute();
-    }
-
-    public function revokeRole(User $user, Role $role): void
-    {
-        $userRole = $this->findUserRole($user, $role);
-        if ($userRole) {
-            $userRole->setIsActive(false);
-            $this->dataMapper->save($userRole);
+        // Usa i dati pre-caricati
+        foreach ($posts as $post) {
+            $author = $authorMap[$post->getAuthorId()];
+            echo $author->getName(); // Nessuna query aggiuntiva
         }
     }
 }
@@ -281,118 +272,155 @@ class UserRoleService
 
 ---
 
-## Performance Optimization
+## Performance e Ottimizzazioni
 
-### Query Optimization
-
-```php
-class OptimizedQueryService
-{
-    // N+1 Problem Solution: Eager Loading
-    public function findPostsWithAuthors(): Collection
-    {
-        // ❌ Problema N+1: una query per i post + N query per gli autori
-        $posts = $this->postModel->findAll();
-        foreach ($posts as $post) {
-            $author = $post->getAuthor(); // Query aggiuntiva per ogni post
-        }
-
-        // ✅ Soluzione: Single query con JOIN
-        return $this->dataMapper->createQuery()
-            ->select(['p.*', 'u.name as author_name', 'u.email as author_email'])
-            ->from('posts', 'p')
-            ->innerJoin('users', 'u', 'p.author_id = u.id')
-            ->execute();
-    }
-
-    // Batch Operations
-    public function updateViewCounts(array $postIds): void
-    {
-        // ❌ Query multiple
-        foreach ($postIds as $id) {
-            $this->dataMapper->execute(
-                "UPDATE posts SET view_count = view_count + 1 WHERE id = ?",
-                [$id]
-            );
-        }
-
-        // ✅ Single query
-        $placeholders = str_repeat('?,', count($postIds) - 1) . '?';
-        $this->dataMapper->execute(
-            "UPDATE posts SET view_count = view_count + 1 WHERE id IN ({$placeholders})",
-            $postIds
-        );
-    }
-
-    // Query con Index Hints
-    public function findRecentPostsOptimized(): Collection
-    {
-        return $this->dataMapper->createQuery()
-            ->select(['*'])
-            ->from('posts USE INDEX (idx_published_at)')
-            ->where('published_at', ComparisonOperator::greaterThan, '-30 days')
-            ->orderBy('published_at', 'DESC')
-            ->limit(100)
-            ->execute();
-    }
-}
-```
-
-### Caching Strategies
+### Caching Intelligente
 
 ```php
-class CachedQueryService
+class CachedPostService
 {
+    private PostModel $postModel;
     private CacheInterface $cache;
-    private DataMapper $dataMapper;
 
-    public function findPopularPosts(int $limit = 10): Collection
+    public function getPopularPosts(int $limit = 10): SismaCollection
     {
         $cacheKey = "popular_posts_{$limit}";
 
-        return $this->cache->remember($cacheKey, 3600, function() use ($limit) {
-            return $this->dataMapper->createQuery()
-                ->select(['*'])
-                ->from('posts')
-                ->orderBy('view_count', 'DESC')
-                ->limit($limit)
-                ->execute();
-        });
+        $cachedPosts = $this->cache->get($cacheKey);
+        if ($cachedPosts !== null) {
+            return $cachedPosts;
+        }
+
+        $query = $this->postModel->initQuery();
+        $query->setOrderBy(['view_count' => 'DESC'])
+              ->setLimit($limit);
+        $query->close();
+
+        $posts = $this->dataMapper->find('Post', $query);
+
+        $this->cache->set($cacheKey, $posts, 3600); // Cache 1 ora
+        return $posts;
     }
 
-    // Cache invalidation smart
-    public function updatePost(Post $post): void
+    public function invalidatePostCache(Post $post): void
     {
-        $this->dataMapper->save($post);
-
         // Invalida cache correlate
-        $this->cache->forget("popular_posts_*");
-        $this->cache->forget("post_{$post->getId()}");
-        $this->cache->forget("author_posts_{$post->getAuthorId()}");
+        $this->cache->delete("post_{$post->getId()}");
+        $this->cache->delete("popular_posts_*");
+        $this->cache->delete("author_posts_{$post->getAuthorId()}");
+    }
+}
+```
+
+### Batch Operations
+
+```php
+class BatchOperationService
+{
+    public function bulkUpdateViewCounts(array $postIds): bool
+    {
+        // ❌ INEFFICIENTE: Query singole
+        foreach ($postIds as $id) {
+            $post = $this->postModel->getEntityById($id);
+            $post->incrementViewCount();
+            $this->dataMapper->save($post);
+        }
+
+        // ✅ EFFICIENTE: Query batch
+        $query = $this->postModel->initQuery();
+        $query->setWhere()
+              ->appendCondition('id', ComparisonOperator::in, Placeholder::placeholder);
+
+        // Per operazioni batch personalizzate, usa deleteBatch o SQL raw tramite l'adapter
+        $query->close();
+        $bindValues = [$postIds];
+        $bindTypes = [DataType::typeArrayInteger];
+
+        // Esempio: usa l'adapter direttamente per SQL personalizzato
+        $sql = "UPDATE post SET view_count = view_count + 1 WHERE id IN (?)";
+        return $this->dataMapper->getAdapter()->execute($sql, $bindValues, $bindTypes);
     }
 
-    // Query result caching con hash
-    public function complexSearch(array $criteria): Collection
+    public function createMultiplePosts(array $postsData): SismaCollection
     {
-        $cacheKey = 'search_' . md5(serialize($criteria));
+        $posts = new SismaCollection('Post');
 
-        return $this->cache->remember($cacheKey, 1800, function() use ($criteria) {
-            $query = $this->dataMapper->createQuery()
-                ->from('posts', 'p');
+        $this->dataMapper->beginTransaction();
 
-            foreach ($criteria as $field => $value) {
-                $query->andWhere("p.{$field}", ComparisonOperator::like, "%{$value}%");
+        try {
+            foreach ($postsData as $data) {
+                $post = new Post();
+                $post->setTitle($data['title']);
+                $post->setContent($data['content']);
+                $post->setAuthorId($data['author_id']);
+
+                $this->dataMapper->save($post);
+                $posts->append($post);
             }
 
-            return $query->execute();
-        });
+            $this->dataMapper->commit();
+            return $posts;
+
+        } catch (\Exception $e) {
+            $this->dataMapper->rollback();
+            throw $e;
+        }
+    }
+}
+```
+
+### Query Count e Aggregazioni
+
+```php
+class StatisticsService
+{
+    public function getContentStatistics(): array
+    {
+        $postModel = new PostModel($this->dataMapper);
+        $userModel = new UserModel($this->dataMapper);
+        $commentModel = new CommentModel($this->dataMapper);
+
+        return [
+            'total_posts' => $postModel->countEntityCollection(),
+            'published_posts' => $this->countPublishedPosts(),
+            'total_users' => $userModel->countEntityCollection(),
+            'total_comments' => $commentModel->countEntityCollection(),
+            'posts_per_author' => $this->getPostsPerAuthor()
+        ];
+    }
+
+    private function countPublishedPosts(): int
+    {
+        $query = $this->postModel->initQuery();
+        $query->setWhere()
+              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+
+        $bindValues = ['published'];
+        $bindTypes = [DataType::typeString];
+
+        $query->close();
+        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
+    }
+
+    private function getPostsPerAuthor(): SismaCollection
+    {
+        // Per aggregazioni, crea un'entità specifica per i risultati
+        $query = $this->postModel->initQuery();
+        $query->setColumns(['author_id', 'COUNT(*) as post_count'])
+              ->setGroupBy(['author_id'])
+              ->setOrderBy(['post_count' => 'DESC']);
+
+        $query->close();
+
+        // Restituisce sempre una SismaCollection di entità tipizzate
+        return $this->dataMapper->find(AuthorPostStats::class, $query);
     }
 }
 ```
 
 ---
 
-## Advanced Patterns
+## Architetture Enterprise
 
 ### Repository Pattern
 
@@ -400,16 +428,17 @@ class CachedQueryService
 interface PostRepositoryInterface
 {
     public function findById(int $id): ?Post;
-    public function findByAuthor(User $author): Collection;
-    public function findPublished(): Collection;
-    public function findByTag(Tag $tag): Collection;
-    public function search(PostSearchCriteria $criteria): Collection;
+    public function findByAuthor(User $author): SismaCollection;
+    public function findPublished(): SismaCollection;
+    public function findByDateRange(\DateTime $from, \DateTime $to): SismaCollection;
+    public function save(Post $post): bool;
+    public function delete(Post $post): bool;
 }
 
 class PostRepository implements PostRepositoryInterface
 {
-    private DataMapper $dataMapper;
     private PostModel $model;
+    private DataMapper $dataMapper;
 
     public function __construct(DataMapper $dataMapper)
     {
@@ -419,452 +448,300 @@ class PostRepository implements PostRepositoryInterface
 
     public function findById(int $id): ?Post
     {
-        return $this->model->find($id);
+        return $this->model->getEntityById($id);
     }
 
-    public function findByAuthor(User $author): Collection
+    public function findByAuthor(User $author): SismaCollection
     {
-        return $this->model->findByAuthorId($author->getId());
+        return $this->model->getByAuthor($author);
     }
 
-    public function findPublished(): Collection
+    public function findPublished(): SismaCollection
     {
-        return $this->dataMapper->createQuery()
-            ->from('posts')
-            ->where('status', ComparisonOperator::equal, 'published')
-            ->where('published_at', ComparisonOperator::lessThanOrEqual, new \DateTime())
-            ->orderBy('published_at', 'DESC')
-            ->execute();
+        $query = $this->model->initQuery();
+        $query->setWhere()
+              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder)
+              ->appendAnd()
+              ->appendCondition('published_at', ComparisonOperator::lessThanOrEqual, Placeholder::placeholder);
+
+        $bindValues = ['published', new \DateTime()];
+        $bindTypes = [DataType::typeString, DataType::typeDateTime];
+
+        $query->setOrderBy(['published_at' => 'DESC']);
+        $query->close();
+
+        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
     }
 
-    public function search(PostSearchCriteria $criteria): Collection
+    public function findByDateRange(\DateTime $from, \DateTime $to): SismaCollection
     {
-        $query = $this->dataMapper->createQuery()->from('posts', 'p');
+        $query = $this->model->initQuery();
+        $query->setWhere()
+              ->appendCondition('published_at', ComparisonOperator::greaterThanOrEqual, Placeholder::placeholder)
+              ->appendAnd()
+              ->appendCondition('published_at', ComparisonOperator::lessThanOrEqual, Placeholder::placeholder);
 
-        if ($criteria->getTitle()) {
-            $query->andWhere('p.title', ComparisonOperator::like, "%{$criteria->getTitle()}%");
-        }
+        $bindValues = [$from, $to];
+        $bindTypes = [DataType::typeDateTime, DataType::typeDateTime];
 
-        if ($criteria->getAuthorId()) {
-            $query->andWhere('p.author_id', ComparisonOperator::equal, $criteria->getAuthorId());
-        }
-
-        if ($criteria->getTags()) {
-            $query->innerJoin('post_tags', 'pt', 'p.id = pt.post_id')
-                  ->innerJoin('tags', 't', 'pt.tag_id = t.id')
-                  ->whereIn('t.name', $criteria->getTags());
-        }
-
-        return $query->execute();
-    }
-}
-
-// Value Object per criteri di ricerca
-class PostSearchCriteria
-{
-    private ?string $title = null;
-    private ?int $authorId = null;
-    private array $tags = [];
-    private ?\DateTime $fromDate = null;
-    private ?\DateTime $toDate = null;
-
-    // Getters e setters...
-
-    public static function create(): self
-    {
-        return new self();
+        $query->close();
+        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
     }
 
-    public function withTitle(string $title): self
+    public function save(Post $post): bool
     {
-        $clone = clone $this;
-        $clone->title = $title;
-        return $clone;
+        return $this->dataMapper->save($post);
     }
 
-    public function withAuthor(int $authorId): self
+    public function delete(Post $post): bool
     {
-        $clone = clone $this;
-        $clone->authorId = $authorId;
-        return $clone;
-    }
-
-    public function withTags(array $tags): self
-    {
-        $clone = clone $this;
-        $clone->tags = $tags;
-        return $clone;
+        return $this->dataMapper->delete($post);
     }
 }
 ```
 
-### Unit of Work Pattern
+### Service Layer con Domain Logic
 
 ```php
-class UnitOfWork
+class BlogService
 {
-    private array $newEntities = [];
-    private array $dirtyEntities = [];
-    private array $deletedEntities = [];
+    private PostRepository $postRepository;
+    private UserRepository $userRepository;
+    private NotificationService $notificationService;
+
+    public function publishPost(int $postId, int $authorId): bool
+    {
+        $post = $this->postRepository->findById($postId);
+        $author = $this->userRepository->findById($authorId);
+
+        if (!$post || !$author) {
+            throw new \InvalidArgumentException('Post or Author not found');
+        }
+
+        if ($post->getAuthorId() !== $authorId) {
+            throw new \UnauthorizedAccessException('Author mismatch');
+        }
+
+        // Domain logic
+        $post->publish();
+
+        $success = $this->postRepository->save($post);
+
+        if ($success) {
+            // Side effects
+            $this->notificationService->notifySubscribers($post);
+        }
+
+        return $success;
+    }
+
+    public function getAuthorStatistics(User $author): array
+    {
+        $posts = $this->postRepository->findByAuthor($author);
+
+        $stats = [
+            'total_posts' => $posts->count(),
+            'published_posts' => 0,
+            'draft_posts' => 0,
+            'total_views' => 0
+        ];
+
+        foreach ($posts as $post) {
+            if ($post->isPublished()) {
+                $stats['published_posts']++;
+            } else {
+                $stats['draft_posts']++;
+            }
+            $stats['total_views'] += $post->getViewCount();
+        }
+
+        return $stats;
+    }
+}
+```
+
+---
+
+## Transazioni e Consistenza
+
+### Gestione Transazioni
+
+```php
+class TransactionalService
+{
     private DataMapper $dataMapper;
 
-    public function registerNew(BaseEntity $entity): void
-    {
-        $this->newEntities[spl_object_hash($entity)] = $entity;
-    }
-
-    public function registerDirty(BaseEntity $entity): void
-    {
-        $this->dirtyEntities[spl_object_hash($entity)] = $entity;
-    }
-
-    public function registerDeleted(BaseEntity $entity): void
-    {
-        $this->deletedEntities[spl_object_hash($entity)] = $entity;
-    }
-
-    public function commit(): void
+    public function transferPostOwnership(Post $post, User $newOwner): bool
     {
         $this->dataMapper->beginTransaction();
 
         try {
-            // Insert new entities
-            foreach ($this->newEntities as $entity) {
-                $this->dataMapper->save($entity);
-            }
+            // Aggiorna il post
+            $post->setAuthorId($newOwner->getId());
+            $this->dataMapper->save($post);
 
-            // Update dirty entities
-            foreach ($this->dirtyEntities as $entity) {
-                $this->dataMapper->save($entity);
-            }
+            // Log del trasferimento
+            $transferLog = new OwnershipTransfer();
+            $transferLog->setPostId($post->getId());
+            $transferLog->setOldOwnerId($post->getAuthorId());
+            $transferLog->setNewOwnerId($newOwner->getId());
+            $transferLog->setTransferDate(new \DateTime());
 
-            // Delete entities
-            foreach ($this->deletedEntities as $entity) {
-                $this->dataMapper->delete($entity);
-            }
+            $this->dataMapper->save($transferLog);
+
+            // Aggiorna statistiche
+            $this->updateAuthorStatistics($post->getAuthorId(), -1);
+            $this->updateAuthorStatistics($newOwner->getId(), +1);
 
             $this->dataMapper->commit();
-            $this->clear();
+            return true;
 
         } catch (\Exception $e) {
             $this->dataMapper->rollback();
-            throw $e;
+            error_log("Transfer failed: " . $e->getMessage());
+            return false;
         }
     }
 
-    private function clear(): void
+    private function updateAuthorStatistics(int $userId, int $delta): void
     {
-        $this->newEntities = [];
-        $this->dirtyEntities = [];
-        $this->deletedEntities = [];
+        $userStats = $this->getUserStats($userId);
+        $userStats->setPostCount($userStats->getPostCount() + $delta);
+        $this->dataMapper->save($userStats);
     }
 }
+```
 
-// Utilizzo con Service Layer
-class BlogService
+### Data Validation e Business Rules
+
+```php
+class PostValidationService
 {
-    private UnitOfWork $unitOfWork;
-    private PostRepository $postRepository;
-    private CommentRepository $commentRepository;
-
-    public function publishPostWithComments(Post $post, array $comments): void
+    public function validatePost(Post $post): array
     {
-        // Preparare entità
-        $post->setStatus('published');
-        $post->setPublishedAt(new \DateTime());
-        $this->unitOfWork->registerDirty($post);
+        $errors = [];
 
-        foreach ($comments as $commentData) {
-            $comment = new Comment();
-            $comment->setPostId($post->getId());
-            $comment->setContent($commentData['content']);
-            $comment->setAuthorId($commentData['author_id']);
-            $this->unitOfWork->registerNew($comment);
+        // Validazione base
+        if (empty($post->getTitle())) {
+            $errors[] = 'Title is required';
         }
 
-        // Atomic commit
-        $this->unitOfWork->commit();
+        if (strlen($post->getTitle()) > 255) {
+            $errors[] = 'Title too long';
+        }
+
+        // Validazione business rules
+        if ($post->isPublished() && empty($post->getContent())) {
+            $errors[] = 'Content required for published posts';
+        }
+
+        // Validazione relazioni
+        if (!$this->isValidAuthor($post->getAuthorId())) {
+            $errors[] = 'Invalid author';
+        }
+
+        return $errors;
+    }
+
+    private function isValidAuthor(int $authorId): bool
+    {
+        $userModel = new UserModel($this->dataMapper);
+        $author = $userModel->getEntityById($authorId);
+
+        return $author !== null && $author->isActive();
     }
 }
 ```
 
 ---
 
-## Event System Integration
+## Considerazioni sui JOIN
 
-### Domain Events
+### Limitazioni e Alternative
 
-```php
-interface DomainEventInterface
-{
-    public function getOccurredOn(): \DateTime;
-    public function getEventName(): string;
-}
+L'ORM di SismaFramework **non supporta JOIN espliciti** nel query builder. Questo è una scelta architetturale del pattern Data Mapper che ha sia vantaggi che svantaggi:
 
-class PostPublishedEvent implements DomainEventInterface
-{
-    private Post $post;
-    private \DateTime $occurredOn;
+**✅ Vantaggi:**
+- **Semplicità**: API più semplice e meno prone ad errori
+- **Purezza del Domain**: Le entità rappresentano sempre record singoli
+- **Lazy Loading**: Relazioni caricate solo quando necessarie
+- **Cache Friendly**: Entità cachiate individualmente
 
-    public function __construct(Post $post)
-    {
-        $this->post = $post;
-        $this->occurredOn = new \DateTime();
-    }
+**⚠️ Limitazioni:**
+- **Performance**: Possibile problema N+1
+- **Query Complesse**: Aggregazioni multi-tabella più difficili
+- **Reporting**: Query di reporting richiedono SQL raw
 
-    public function getPost(): Post
-    {
-        return $this->post;
-    }
-
-    public function getOccurredOn(): \DateTime
-    {
-        return $this->occurredOn;
-    }
-
-    public function getEventName(): string
-    {
-        return 'post.published';
-    }
-}
-
-// Entity con eventi
-class Post extends BaseEntity
-{
-    private array $domainEvents = [];
-
-    public function publish(): void
-    {
-        if ($this->status !== 'published') {
-            $this->status = 'published';
-            $this->publishedAt = new \DateTime();
-
-            $this->recordEvent(new PostPublishedEvent($this));
-        }
-    }
-
-    private function recordEvent(DomainEventInterface $event): void
-    {
-        $this->domainEvents[] = $event;
-    }
-
-    public function popEvents(): array
-    {
-        $events = $this->domainEvents;
-        $this->domainEvents = [];
-        return $events;
-    }
-}
-
-// Event Dispatcher
-class EventDispatcher
-{
-    private array $listeners = [];
-
-    public function addListener(string $eventName, callable $listener): void
-    {
-        $this->listeners[$eventName][] = $listener;
-    }
-
-    public function dispatch(DomainEventInterface $event): void
-    {
-        $eventName = $event->getEventName();
-
-        if (isset($this->listeners[$eventName])) {
-            foreach ($this->listeners[$eventName] as $listener) {
-                $listener($event);
-            }
-        }
-    }
-}
-
-// Service con event handling
-class PostService
-{
-    private DataMapper $dataMapper;
-    private EventDispatcher $eventDispatcher;
-
-    public function publishPost(Post $post): void
-    {
-        $post->publish();
-        $this->dataMapper->save($post);
-
-        // Dispatch eventi
-        foreach ($post->popEvents() as $event) {
-            $this->eventDispatcher->dispatch($event);
-        }
-    }
-}
-```
-
----
-
-## Database Migrations
-
-### Migration System
+**💡 Alternative e Workaround:**
 
 ```php
-abstract class Migration
+class ReportingService
 {
-    protected DataMapper $dataMapper;
-
-    public function __construct(DataMapper $dataMapper)
-    {
-        $this->dataMapper = $dataMapper;
-    }
-
-    abstract public function up(): void;
-    abstract public function down(): void;
-    abstract public function getVersion(): string;
-}
-
-class CreatePostsTableMigration extends Migration
-{
-    public function up(): void
+    // 1. SQL Raw per query complesse - usa l'adapter direttamente
+    public function getPostsWithAuthorNames(): array
     {
         $sql = "
-            CREATE TABLE posts (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                title VARCHAR(255) NOT NULL,
-                content TEXT,
-                author_id INT NOT NULL,
-                status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
-                published_at DATETIME NULL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-                INDEX idx_author_id (author_id),
-                INDEX idx_status_published (status, published_at),
-                FULLTEXT idx_content (title, content)
-            )
+            SELECT p.*, u.name as author_name
+            FROM post p
+            INNER JOIN user u ON p.author_id = u.id
+            WHERE p.status = 'published'
+            ORDER BY p.published_at DESC
         ";
 
-        $this->dataMapper->execute($sql);
+        $adapter = BaseAdapter::getDefault();
+        $result = $adapter->select($sql);
+        return $result ? $result->fetchAll() : [];
     }
 
-    public function down(): void
+    // 2. Caricamento batch per evitare N+1
+    public function getPostsWithAuthorsOptimized(): array
     {
-        $this->dataMapper->execute("DROP TABLE posts");
-    }
+        $postModel = new PostModel($this->dataMapper);
+        $userModel = new UserModel($this->dataMapper);
 
-    public function getVersion(): string
-    {
-        return '2024_01_15_create_posts_table';
-    }
-}
+        // Carica post
+        $posts = $postModel->getEntityCollection();
 
-class MigrationRunner
-{
-    private DataMapper $dataMapper;
-    private array $migrations = [];
+        // Estrae author IDs
+        $authorIds = array_unique(
+            array_map(fn($post) => $post->getAuthorId(), $posts->toArray())
+        );
 
-    public function addMigration(Migration $migration): void
-    {
-        $this->migrations[$migration->getVersion()] = $migration;
-    }
+        // Carica autori in batch
+        $authors = $userModel->getEntityCollectionByIds($authorIds);
+        $authorMap = $authors->indexBy('id');
 
-    public function migrate(): void
-    {
-        $this->createMigrationsTable();
-        $executed = $this->getExecutedMigrations();
-
-        foreach ($this->migrations as $version => $migration) {
-            if (!in_array($version, $executed)) {
-                echo "Running migration: {$version}\n";
-                $migration->up();
-                $this->recordMigration($version);
-            }
+        // Combina risultati
+        $result = [];
+        foreach ($posts as $post) {
+            $result[] = [
+                'post' => $post,
+                'author' => $authorMap[$post->getAuthorId()]
+            ];
         }
+
+        return $result;
     }
 
-    private function createMigrationsTable(): void
+    // 3. View materializzate per reporting
+    public function getPostStatistics(): array
     {
-        $sql = "
-            CREATE TABLE IF NOT EXISTS migrations (
-                version VARCHAR(255) PRIMARY KEY,
-                executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        ";
-        $this->dataMapper->execute($sql);
+        // Usa una view pre-calcolata tramite l'adapter
+        $sql = "SELECT * FROM post_statistics_view";
+        $adapter = BaseAdapter::getDefault();
+        $result = $adapter->select($sql);
+        return $result ? $result->fetchAll() : [];
     }
 }
 ```
 
----
+### Quando Usare SQL Raw
 
-## Performance Monitoring
-
-### Query Profiling
-
-```php
-class QueryProfiler
-{
-    private array $queries = [];
-    private float $totalTime = 0;
-
-    public function startQuery(string $sql, array $params = []): string
-    {
-        $queryId = uniqid();
-        $this->queries[$queryId] = [
-            'sql' => $sql,
-            'params' => $params,
-            'start_time' => microtime(true),
-            'memory_start' => memory_get_usage(),
-        ];
-
-        return $queryId;
-    }
-
-    public function endQuery(string $queryId): void
-    {
-        if (isset($this->queries[$queryId])) {
-            $query = &$this->queries[$queryId];
-            $query['end_time'] = microtime(true);
-            $query['duration'] = $query['end_time'] - $query['start_time'];
-            $query['memory_end'] = memory_get_usage();
-            $query['memory_used'] = $query['memory_end'] - $query['memory_start'];
-
-            $this->totalTime += $query['duration'];
-        }
-    }
-
-    public function getSlowQueries(float $threshold = 0.1): array
-    {
-        return array_filter($this->queries, function($query) use ($threshold) {
-            return isset($query['duration']) && $query['duration'] > $threshold;
-        });
-    }
-
-    public function generateReport(): array
-    {
-        return [
-            'total_queries' => count($this->queries),
-            'total_time' => $this->totalTime,
-            'average_time' => $this->totalTime / count($this->queries),
-            'slow_queries' => $this->getSlowQueries(),
-            'memory_peak' => memory_get_peak_usage(),
-        ];
-    }
-}
-
-// Integration con DataMapper
-class ProfiledDataMapper extends DataMapper
-{
-    private QueryProfiler $profiler;
-
-    public function execute(string $sql, array $params = []): mixed
-    {
-        $queryId = $this->profiler->startQuery($sql, $params);
-
-        try {
-            $result = parent::execute($sql, $params);
-            return $result;
-        } finally {
-            $this->profiler->endQuery($queryId);
-        }
-    }
-}
-```
+È appropriato usare SQL raw quando:
+- Query di **reporting complesse** con aggregazioni
+- **Performance critiche** dove JOIN è necessario
+- **Bulk operations** su grandi dataset
+- **Stored procedures** esistenti
 
 ---
 

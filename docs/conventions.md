@@ -11,6 +11,21 @@ SismaFramework si basa su una serie di convenzioni per automatizzare molte attiv
     *   **Action:** `showDetails()`
 *   **Controller di Default:** Se l'URL è vuoto, viene eseguita l'action `index()` del `SampleController` (configurabile in `config.php`).
 
+## Moduli e Configurazione
+
+*   **Registrazione Moduli:** I moduli devono essere dichiarati nell'array `MODULE_FOLDERS` in `Config/config.php`.
+*   **Modulo Framework:** `'SismaFramework'` contiene l'applicazione di esempio (cartella `Sample/`).
+    *   **Opzionale:** Puoi mantenerlo se vuoi accedere agli esempi del framework
+    *   **Setup pulito:** Rimuovilo e usa solo i tuoi moduli personalizzati
+
+```php
+// Opzione A: Con esempi del framework (opzionale)
+const MODULE_FOLDERS = ['SismaFramework', 'Blog', 'UserModule'];
+
+// Opzione B: Solo moduli personalizzati (setup pulito)
+const MODULE_FOLDERS = ['Blog', 'UserModule', 'ApiModule'];
+```
+
 ## Controller
 
 *   **Posizione:** `NomeModulo/Application/Controllers/`
@@ -29,8 +44,12 @@ SismaFramework si basa su una serie di convenzioni per automatizzare molte attiv
 ### Entità
 
 *   **Posizione:** `NomeModulo/Application/Entities/`
-*   **Nome Tabella:** Viene inferito dal nome della classe, convertito in `snake_case`.
-    *   `PostComment` -> tabella `post_comment`.
+*   **Nome Tabella:** Viene inferito dal nome della classe, convertito in `snake_case` **al singolare**.
+    *   `Post` -> tabella `post`
+    *   `User` -> tabella `user`
+    *   `PostComment` -> tabella `post_comment`
+    *
+    **⚠️ Importante:** SismaFramework utilizza nomi di tabelle al **singolare**, non al plurale come altri framework.
 *   **Chiave Primaria:** Si assume che la colonna della chiave primaria si chiami `id`.
 *   **Chiavi Esterne:** Vengono inferite dal nome della proprietà e dal suo tipo.
     *   `protected User $author;` -> colonna `author_id`.

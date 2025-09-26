@@ -25,7 +25,7 @@ Le entità sono il cuore del tuo modello di dominio. Devono estendere una delle 
 Le proprietà di un'entità devono essere dichiarate `protected` e la **tipizzazione è obbligatoria**. I tipi supportati sono:
 
 - Tipi nativi (`int`, `string`, `float`, `bool`).
-- `SismaDatetime`, `SismaDate`, `SismaTime` per date e orari.
+- `SismaDateTime`, `SismaDate`, `SismaTime` per date e orari.
 - `BackedEnum` per i vocabolari chiusi.
 - Altre classi `Entity` per le relazioni (chiavi esterne).
 
@@ -33,19 +33,22 @@ Le proprietà di un'entità devono essere dichiarate `protected` e la **tipizzaz
 namespace MyModule\App\Entities;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\HelperClasses\SismaDatetime;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 
 class Post extends BaseEntity
 {
     protected int $id;
     protected string $title;
     protected ?string $content = null;
-    protected SismaDatetime $publicationDate;
+    protected SismaDateTime $publicationDate;
     protected User $author; // Relazione con l'entità User
 
     protected function setEncryptedProperties(): void { }
     protected function setPropertyDefaultValue(): void { }
 }
+
+// Questa entità mappa automaticamente alla tabella 'post' (singolare)
+// SismaFramework utilizza convenzioni con nomi di tabelle al singolare
 ```
 
 ### Lazy Loading (Caricamento Pigro)
@@ -202,12 +205,87 @@ class PostModel extends DependentModel
             '%' . $titleKeyword . '%',
             PostStatus::Published
         ];
-        $bindTypes = []; // Il DataMapper può inferire i tipi più comuni
+
+        // I bindTypes sono opzionali - il sistema parsa automaticamente i valori
+        $bindTypes = [];
 
         // 5. Esegui la query e restituisci la collezione
         $query->close();
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
+}
+```
+
+### Subquery (Sottoquery)
+
+L'ORM supporta l'uso di subquery sia come colonne che come condizioni nella clausola WHERE. Le subquery sono query annidate che possono essere utilizzate per creare query complesse.
+
+#### Subquery come Colonna
+
+Puoi utilizzare una subquery come colonna nel SELECT:
+
+```php
+public function getPostsWithCommentCount(): SismaCollection
+{
+    $query = $this->initQuery();
+
+    // Crea la subquery per contare i commenti
+    $commentCountQuery = (new CommentModel($this->dataMapper))->initQuery();
+    $commentCountQuery->setColumns(['COUNT(*)'])
+                     ->setWhere()
+                     ->appendCondition('post_id', ComparisonOperator::equal, 'post.id');
+    $commentCountQuery->close();
+
+    // Usa la subquery come colonna
+    $query->setSubqueryColumn($commentCountQuery, 'comment_count', true);
+
+    $query->close();
+    return $this->dataMapper->find($this->entityName, $query);
+}
+```
+
+#### Subquery nelle Condizioni WHERE
+
+Puoi utilizzare subquery nelle condizioni WHERE per filtri complessi:
+
+```php
+public function getPopularPosts(): SismaCollection
+{
+    $query = $this->initQuery();
+
+    // Subquery per trovare la media dei view_count
+    $avgViewsQuery = $this->initQuery();
+    $avgViewsQuery->setColumns(['AVG(view_count)']);
+    $avgViewsQuery->close();
+
+    // Condizione con subquery
+    $query->setWhere()
+          ->appendSubqueryCondition($avgViewsQuery, ComparisonOperator::greaterThan);
+
+    $query->close();
+    return $this->dataMapper->find($this->entityName, $query);
+}
+```
+
+#### Subquery con EXISTS
+
+```php
+public function getPostsWithComments(): SismaCollection
+{
+    $query = $this->initQuery();
+
+    // Subquery per verificare esistenza commenti
+    $existsQuery = (new CommentModel($this->dataMapper))->initQuery();
+    $existsQuery->setColumns(['1'])
+               ->setWhere()
+               ->appendCondition('post_id', ComparisonOperator::equal, 'post.id');
+    $existsQuery->close();
+
+    $query->setWhere()
+          ->appendSubqueryCondition($existsQuery, ComparisonOperator::exists);
+
+    $query->close();
+    return $this->dataMapper->find($this->entityName, $query);
 }
 ```
 

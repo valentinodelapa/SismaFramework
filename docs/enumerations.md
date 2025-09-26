@@ -373,7 +373,7 @@ class QueryBuilder {
 
 // Utilizzo
 $users = $queryBuilder
-    ->from('users')
+    ->from('user')
     ->where('age', ComparisonOperator::greaterThanOrEqual, 18)
     ->where('status', ComparisonOperator::in, ['active', 'premium'])
     ->where('deleted_at', ComparisonOperator::isNull)

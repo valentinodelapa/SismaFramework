@@ -66,7 +66,7 @@ class PostFixture extends BaseFixture
 
     protected function setDependencies(): void
     {
-        //Dichiara che questa fixture ha bisogno che UserFixture sia già stata eseguita
+        // Dichiara che questa fixture ha bisogno che UserFixture sia già stata eseguita
         $this->addDependency(UserFixture::class);
     }
   
