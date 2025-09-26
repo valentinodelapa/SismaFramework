@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.1.1] - 2025-09-20 - Correzione Localizator e Ampliamento Test
+
+### 🔧 Correzioni
+
+* **Correzione `unsetLanguage()` in `Localizator`**: È stato corretto un bug critico nella classe `Localizator` dove il metodo `unsetLanguage()` tentava di eseguire un'operazione di `unset` su una proprietà statica. Tale operazione non è permessa in PHP e causava un `Fatal error`. La logica è stata modificata per impostare la proprietà a `null`, ripristinandone correttamente lo stato iniziale e garantendo il corretto funzionamento del reset della lingua.
+* **Correzione Nomenclatura in `BaseFixture`**: È stato corretto un errore di battitura nel metodo `setDependecies()`, rinominandolo in `setDependencies()`. Questo allinea il metodo alla documentazione e alle convenzioni del framework. Le classi fixture personalizzate che estendono `BaseFixture` devono essere aggiornate per utilizzare il nome corretto del metodo. **Nota sul versioning**: Sebbene questa sia tecnicamente una *breaking change*, è stata classificata come `PATCH` perché le classi `Fixture` sono considerate strumenti di sviluppo e non fanno parte dell'API pubblica consumata da un'applicazione in produzione.
+
+### 🧪 Test
+
+* **Ampliamento Copertura Test**: È stata significativamente aumentata la copertura dei test unitari per diversi componenti chiave del framework, incluso `Localizator`, migliorando la robustezza del codice e aiutando a prevenire future regressioni.
+
+### 📝 Documentazione
+
+* **Aggiornamento Documentazione `Data Fixtures`**: La documentazione relativa alle `Data Fixtures` (`data-fixtures.md`) è stata aggiornata per riflettere la correzione del nome del metodo in `setDependencies()`, garantendo coerenza con il codice.
+* **Miglioramenti Vari**: Sono state apportate diverse correzioni minori e miglioramenti alla leggibilità in vari file della documentazione per aumentare la chiarezza e l'accuratezza generale.
+
 ## [9.1.0] - 2025-09-18 - Miglioramento Iniezione Dati nel Form
 
 ### 🚀 Miglioramenti

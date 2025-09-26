@@ -273,6 +273,3 @@
 .phpdocumentor-tag-link {
     margin-right: var(--spacing-sm);
 }
-.phpdocumentor-uml-diagram svg {
-    cursor: zoom-in;
-}
