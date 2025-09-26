@@ -311,6 +311,81 @@ BufferManager::end();
 
 ---
 
+## ORM Classes
+
+### DataMapper
+
+**Namespace:** `SismaFramework\Orm\DataMapper`
+
+Classe principale per la gestione della mappatura tra oggetti PHP e database.
+
+#### Metodi Principali
+
+```php
+// Trova un'entità per ID
+public function find(string $entityClass, int|string $id): ?StandardEntity
+
+// Trova più entità con criteri
+public function findBy(string $entityClass, array $criteria = []): array
+
+// Salva un'entità
+public function save(StandardEntity $entity): StandardEntity
+
+// Elimina un'entità
+public function delete(StandardEntity $entity): bool
+
+// Esegue query personalizzate
+public function query(string $sql, array $parameters = []): array
+```
+
+### BaseModel
+
+**Namespace:** `SismaFramework\Orm\BaseClasses\BaseModel`
+
+Classe base per tutti i modeli che utilizzano l'ORM.
+
+#### Metodi Principali
+
+```php
+// Crea una nuova istanza del modello
+public function create(array $data): StandardEntity
+
+// Trova per ID
+public function find(int|string $id): ?StandardEntity
+
+// Trova con criteri
+public function findBy(array $criteria): array
+
+// Aggiorna un'entità esistente
+public function update(StandardEntity $entity, array $data): StandardEntity
+```
+
+### StandardEntity
+
+**Namespace:** `SismaFramework\Orm\BaseClasses\StandardEntity`
+
+Classe base per tutte le entità del sistema.
+
+#### Proprietà e Metodi
+
+```php
+// Proprietà standard
+protected ?int $id;
+protected ?\DateTime $createdAt;
+protected ?\DateTime $updatedAt;
+
+// Serializzazione
+public function toArray(): array
+
+// Aggiornamento automatico timestamp
+public function updateTimestamps(): void
+
+// Validazione
+public function validate(): array
+```
+
+---
+
 ## Note Generali
 
 - **Tipizzazione Forte**: Tutte le API utilizzano la tipizzazione forte di PHP 8.1+

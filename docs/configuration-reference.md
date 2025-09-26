@@ -573,4 +573,4 @@ const SYSTEM = 'SismaFramework';       // Nome cartella framework
 
 ---
 
-[Indice](index.md) | Precedente: [Testing](testing.md) | Successivo: [Advanced ORM](advanced-orm.md)
+[Indice](index.md) | Precedente: [Traits per Enumerazioni](traits.md) | Successivo: [Advanced ORM](advanced-orm.md)

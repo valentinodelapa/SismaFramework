@@ -229,4 +229,4 @@ return [
 
 ---
 
-[Indice](index.md) | Precedente: [Enumerazioni](enumerations.md) | Successivo: [Sicurezza](security.md)
+[Indice](index.md) | Precedente: [Enumerazioni](enumerations.md) | Successivo: [Configuration Reference](configuration-reference.md)

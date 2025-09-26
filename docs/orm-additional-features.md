@@ -32,4 +32,4 @@ Se questo file diventa obsoleto (ad esempio, dopo aver aggiunto una nuova relazi
 
 * * *
 
-[Indice](index.md) | Precedente: [Introduzione all'ORM](orm.md) | Successivo: [Sicurezza: Autenticazione e Autorizzazione](security-component.md)
+[Indice](index.md) | Precedente: [Introduzione all'ORM](orm.md) | Successivo: [Sicurezza](security.md)

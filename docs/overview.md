@@ -14,7 +14,7 @@ Sfrutta appieno le funzionalità di PHP 8.1+ (come la tipizzazione forte e le `B
 
 *   **[Architettura Modulare](module-architecture.md):** Organizza il tuo codice in moduli riutilizzabili per mantenere i progetti grandi puliti e gestibili.
 *   **[ORM Potente (Data Mapper)](orm.md):** Interagisci con il database usando oggetti PHP con mappatura automatica e relazioni intelligenti.
-*   **[Componente di Sicurezza](security-component.md):** Sistema completo per autenticazione, autorizzazione e protezione con Voters e Permissions.
+*   **[Componente di Sicurezza](security.md):** Sistema completo per autenticazione, autorizzazione e protezione con Voters e Permissions.
 *   **[Gestione Form Avanzata](forms.md):** Validazione automatica, mappatura dati e gestione errori con protezione CSRF integrata.
 *   **[Routing Automatico](controllers.md):** URL SEO-friendly generati automaticamente dalla struttura dei controller.
 *   **[Strumenti di Sviluppo](debug-bar.md):** Debug bar, [data fixtures](data-fixtures.md) e [sistema di testing](testing.md) integrati.

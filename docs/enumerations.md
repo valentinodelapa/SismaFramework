@@ -258,6 +258,72 @@ class ContentNegotiator {
 
 ---
 
+### FilterType
+
+**Namespace:** `SismaFramework\Core\Enumerations\FilterType`
+**Tipo:** `string` enum
+
+Definisce i tipi di filtri disponibili per la validazione dei form e dei dati input.
+
+```php
+enum FilterType: string
+{
+    case text = 'text';
+    case email = 'email';
+    case integer = 'integer';
+    case float = 'float';
+    case boolean = 'boolean';
+    case date = 'date';
+    case url = 'url';
+    case required = 'required';
+    case minLength = 'min_length';
+    case maxLength = 'max_length';
+    case regex = 'regex';
+}
+```
+
+#### Utilizzi Comuni
+
+```php
+use SismaFramework\Core\Enumerations\FilterType;
+
+// Configurazione validazione form
+class UserRegistrationForm extends BaseForm {
+    protected function configureFilters(): array {
+        return [
+            'email' => [
+                FilterType::required,
+                FilterType::email,
+                FilterType::maxLength->withValue(255)
+            ],
+            'password' => [
+                FilterType::required,
+                FilterType::minLength->withValue(8)
+            ],
+            'age' => [
+                FilterType::integer,
+                FilterType::required
+            ]
+        ];
+    }
+}
+
+// Validazione manuale
+class DataValidator {
+    public function validateField(string $value, FilterType $filter): bool {
+        return match ($filter) {
+            FilterType::email => filter_var($value, FILTER_VALIDATE_EMAIL) !== false,
+            FilterType::integer => filter_var($value, FILTER_VALIDATE_INT) !== false,
+            FilterType::url => filter_var($value, FILTER_VALIDATE_URL) !== false,
+            FilterType::required => !empty(trim($value)),
+            default => true
+        };
+    }
+}
+```
+
+---
+
 ## ORM Enumerations
 
 ### DataType
@@ -693,4 +759,4 @@ class UserForm extends BaseForm {
 
 ---
 
-[Indice](index.md) | Precedente: [Custom Types](custom-types.md) | Successivo: [Testing](testing.md)
+[Indice](index.md) | Precedente: [Custom Types](custom-types.md) | Successivo: [Traits per Enumerazioni](traits.md)

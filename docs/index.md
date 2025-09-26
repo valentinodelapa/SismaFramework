@@ -47,6 +47,7 @@
   * [Helper Classes](helper-classes.md)
   * [Custom Types](custom-types.md)
   * [Enumerations](enumerations.md)
+  * [Traits per Enumerazioni](traits.md)
   * [Configuration Reference](configuration-reference.md)
   * [Advanced ORM](advanced-orm.md)
   * [Performance Guide](performance.md)

@@ -968,4 +968,4 @@ class DebugTest extends TestCase
 
 ---
 
-[Indice](index.md) | Precedente: [Enumerations](enumerations.md) | Successivo: [Configuration Reference](configuration-reference.md)
+[Indice](index.md) | Precedente: [Gestione Errori e Logging](error-handling-and-logging.md) | Successivo: [Best Practices](best-practices.md)

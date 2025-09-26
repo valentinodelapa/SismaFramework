@@ -28,4 +28,4 @@ La barra è divisa in diverse sezioni che forniscono informazioni specifiche.
 
 * * *
 
-[Indice](index.md) | Precedente: [Sicurezza: Autenticazione e Autorizzazione](security-component.md) | Successivo: [Data Fixtures](data-fixtures.md)
+[Indice](index.md) | Precedente: [Sicurezza](security.md) | Successivo: [Data Fixtures](data-fixtures.md)

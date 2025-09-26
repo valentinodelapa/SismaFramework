@@ -12,7 +12,7 @@ Alla fine di questa guida, avrai una pagina che elenca tutti gli articoli del bl
 
 ## 1. Prerequisiti
 
-Prima di iniziare, assicurati di aver completato la [guida di installazione](installation.md) e la [configurazione base](installation.md#configurazione). Chiameremo il nostro progetto `mini-blog`.
+Prima di iniziare, assicurati di aver completato la [guida di installazione](installation.md) e la [configurazione base](installation.md#passo-3-configura-i-file-principali). Chiameremo il nostro progetto `mini-blog`.
 
 Se hai già un progetto SismaFramework configurato, puoi procedere direttamente al passo successivo. Altrimenti, [installa il framework](installation.md) prima di continuare.
 
