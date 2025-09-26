@@ -2,7 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [9.1.1] - 2025-09-20 - Correzione Localizator e Ampliamento Test
+## [9.1.2] - 2025-09-26 - Correzione Link Trasversali Documentazione
+
+### 🔧 Correzioni
+
+* **Correzione Link Trasversali Documentazione**: Risolti 4 link rotti nella documentazione:
+  - `overview.md`: `security-component.md` → `security.md`
+  - `getting-started.md`: `installation.md#configurazione` → `installation.md#passo-3-configura-i-file-principali`
+  - `enumerations.md`: Aggiunta sezione mancante `FilterType` con documentazione completa
+  - `api-reference.md`: Aggiunta sezione mancante `ORM Classes` con `DataMapper`, `BaseModel`, `StandardEntity`
+
+### 📝 Documentazione
+
+* **Miglioramento Architettura Cross-References**: Tutti i link trasversali nella documentazione sono ora corretti e funzionanti, migliorando la navigazione tra le sezioni correlate.
+
+## [9.1.1] - 2025-09-26 - Correzione Localizator e Ampliamento Test
 
 ### 🔧 Correzioni
 
