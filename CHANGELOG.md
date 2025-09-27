@@ -93,7 +93,7 @@ Con questa versione, ci impegniamo a mantenere la stabilità dell'API e a seguir
 Questa versione consolida tutte le funzionalità sviluppate durante la fase beta, tra cui:
 
 * **Architettura MVC Robusta:** Un'implementazione pulita del pattern Model-View-Controller che separa la logica di business dalla presentazione, promuovendo un codice organizzato e manutenibile.
-* **ORM Potente (Data Mapper):** Un ORM integrato basato sul pattern Data Mapper a mappatura implicita. Gestisce Entità, Modelli, relazioni (incluse quelle auto-referenziate) e query complesse in modo intuitivo, con un sistema di lazy loading per ottimizzare le performance.
+* **ORM Potente (Data Mapper):** Un ORM integrato basato sul pattern Data Mapper a mappatura automatica. Gestisce Entità, Modelli, relazioni (incluse quelle auto-referenziate) e query complesse in modo intuitivo, con un sistema di lazy loading per ottimizzare le performance.
 * **URL Rewriting Automatico:** Supporto nativo per URL "parlanti" (user-friendly) in notazione kebab-case, migliorando la SEO e l'esperienza utente.
 * **Gestione Avanzata dei Form:** Un sistema di gestione dei form che automatizza la validazione dei dati, la gestione degli errori e il ripopolamento automatico, assicurando l'integrità dei dati.
 * **Componente di Sicurezza Integrato:** Include Voters, Permissions e un sistema di Autenticazione per proteggere le applicazioni, con supporto per l'autenticazione a due fattori (MFA).
