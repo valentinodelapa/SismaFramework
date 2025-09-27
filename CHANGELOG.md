@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [10.0.0] - YYYY-MM-DD - Rilascio Major API
+## [10.0.0] - 2025-09-27 - Refactoring Sistema Localizzazione e Correzioni Terminologiche
 
 Questa è una major release che introduce modifiche non retrocompatibili all'API del framework. L'aggiornamento è consigliato, ma richiede attenzione alle breaking changes elencate di seguito.
 
@@ -13,6 +13,48 @@ Questa è una major release che introduce modifiche non retrocompatibili all'API
     *   **Perché**: L'interfaccia definiva firme di metodi (es. `view()`, `delete()`) che erano in conflitto diretto con il meccanismo del `Dispatcher`. Il `Dispatcher` è progettato per passare parametri dall'URL (come l'ID di un'entità) agli argomenti dei metodi del controller, una funzionalità che l'interfaccia rendeva impossibile da utilizzare. Di conseguenza, l'interfaccia era superflua e controproducente.
     *   **Come migrare**: Se un tuo controller implementava `CrudInterface`, è sufficiente rimuovere `implements CrudInterface` dalla definizione della classe. Le action del controller (es. `public function show(Post $post)`) funzioneranno come previsto dal `Dispatcher` senza bisogno di un contratto d'interfaccia.
     *   Questa rimozione semplifica il framework e promuove l'uso corretto del sistema di routing e di risoluzione dei parametri.
+	
+* **Refactoring `Language::getFriendlyLabel()`**: La enum `Language` ora utilizza correttamente il trait `SelectableEnumeration` invece di avere un'implementazione hardcoded di `getFriendlyLabel()`. Questo significa che i nomi delle lingue vengono ora cercati nei file di localizzazione usando il pattern `Language.{case}` anziché essere restituiti come nomi nativi predefiniti.
+
+  **Prima (v9.x)**:
+  ```php
+  Language::italian->getFriendlyLabel(Language::english); // "Italiano" (hardcoded)
+  Language::french->getFriendlyLabel(Language::italian);  // "Français" (hardcoded)
+  ```
+
+  **Dopo (v10.0)**:
+  ```php
+  Language::italian->getFriendlyLabel(Language::english); // Cerca "Language.italian" nei file en_GB
+  Language::french->getFriendlyLabel(Language::italian);  // Cerca "Language.french" nei file it_IT
+  ```
+
+  **Migrazione richiesta**: I moduli devono aggiungere le traduzioni dei nomi delle lingue nei loro file di localizzazione. Esempio per `it_IT.json`:
+  ```json
+  {
+    "Language": {
+      "english": "Inglese",
+      "french": "Francese",
+      "german": "Tedesco",
+      "spanish": "Spagnolo"
+    }
+  }
+  ```
+
+### 🚀 Miglioramenti
+
+* **Supporto Linguistico Esteso**: Aggiunto supporto per 17 nuove lingue e varianti regionali importanti, portando il totale a 60+ lingue supportate:
+  - **Varianti Inglese**: Australiano (`en_AU`), Canadese (`en_CA`), Indiano (`en_IN`)
+  - **Varianti Tedesco**: Austriaco (`de_AT`), Svizzero (`de_CH`)
+  - **Varianti Spagnolo**: Colombiano (`es_CO`)
+  - **Varianti Arabo**: Egiziano (`ar_EG`)
+  - **Varianti Portoghese**: Angolano (`pt_AO`)
+  - **Lingue dell'India**: Punjabi (`pa_IN`), Marathi (`mr_IN`), Gujarati (`gu_IN`), Kannada (`kn_IN`)
+  - **Lingue Africane**: Hausa (`ha_NG`), Amharic (`am_ET`)
+  - **Altre**: Basco (`eu_ES`), Islandese (`is_IS`), Birmano (`my_MM`), Quechua (`qu_PE`)
+
+### 📝 Documentazione
+
+* **Aggiornamento Documentazione Language**: La documentazione di `Language` enum è stata completamente riscritta per riflettere il nuovo comportamento basato su localizzazione e il supporto linguistico esteso.
 
 ## [9.1.2] - 2025-09-26 - Correzione Link Trasversali Documentazione
 
