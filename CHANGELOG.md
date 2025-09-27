@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.0] - YYYY-MM-DD - Rilascio Major API
+
+Questa è una major release che introduce modifiche non retrocompatibili all'API del framework. L'aggiornamento è consigliato, ma richiede attenzione alle breaking changes elencate di seguito.
+
+### ⚠️ BREAKING CHANGES
+
+*   **Refactoring dell'interfaccia `CrudInterface`**:
+    *   **Cosa**: L'interfaccia `SismaFramework\Core\Interfaces\Controllers\CrudInterface` è stata **rimossa** dal framework.
+    *   **Perché**: L'interfaccia definiva firme di metodi (es. `view()`, `delete()`) che erano in conflitto diretto con il meccanismo del `Dispatcher`. Il `Dispatcher` è progettato per passare parametri dall'URL (come l'ID di un'entità) agli argomenti dei metodi del controller, una funzionalità che l'interfaccia rendeva impossibile da utilizzare. Di conseguenza, l'interfaccia era superflua e controproducente.
+    *   **Come migrare**: Se un tuo controller implementava `CrudInterface`, è sufficiente rimuovere `implements CrudInterface` dalla definizione della classe. Le action del controller (es. `public function show(Post $post)`) funzioneranno come previsto dal `Dispatcher` senza bisogno di un contratto d'interfaccia.
+    *   Questa rimozione semplifica il framework e promuove l'uso corretto del sistema di routing e di risoluzione dei parametri.
+
 ## [9.1.2] - 2025-09-26 - Correzione Link Trasversali Documentazione
 
 ### 🔧 Correzioni
