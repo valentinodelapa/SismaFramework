@@ -27,25 +27,25 @@
 namespace SismaFramework\Core\HttpClasses;
 
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\Enumerations\ComunicationProtocol;
+use SismaFramework\Core\Enumerations\CommunicationProtocol;
 
 /**
  * @author Valentino de Lapa
  */
-class Comunication
+class Communication
 {
 
-    public static function getComunicationProtocol(Request $request = new Request(), ?Config $customConfig = null): ComunicationProtocol
+    public static function getCommunicationProtocol(Request $request = new Request(), ?Config $customConfig = null): CommunicationProtocol
     {
         $config = $customConfig ?? Config::getInstance();
         if ($config->httpsIsForced) {
-            return ComunicationProtocol::https;
+            return CommunicationProtocol::https;
         } elseif (isset($request->server['HTTPS'])) {
-            return ($request->server['HTTPS'] === 'on') ? ComunicationProtocol::https : ComunicationProtocol::http;
+            return ($request->server['HTTPS'] === 'on') ? CommunicationProtocol::https : CommunicationProtocol::http;
         } elseif (isset($request->server['SERVER_PORT'])) {
-            return (intval($request->server['SERVER_PORT']) === 443) ? ComunicationProtocol::https : ComunicationProtocol::http;
+            return (intval($request->server['SERVER_PORT']) === 443) ? CommunicationProtocol::https : CommunicationProtocol::http;
         } else {
-            return $config->developmentEnvironment ? ComunicationProtocol::http : ComunicationProtocol::https;
+            return $config->developmentEnvironment ? CommunicationProtocol::http : CommunicationProtocol::https;
         }
     }
 }

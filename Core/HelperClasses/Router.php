@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\HttpClasses\Comunication;
+use SismaFramework\Core\HttpClasses\Communication;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 
@@ -83,7 +83,7 @@ class Router
     public static function getRootUrl($request = new Request()): string
     {
         $httpHost = $request->server['HTTP_HOST'];
-        return Comunication::getComunicationProtocol()->value . $httpHost . self::$metaUrl;
+        return Communication::getCommunicationProtocol()->value . $httpHost . self::$metaUrl;
     }
 
     public static function getActualUrl($request = new Request()): string

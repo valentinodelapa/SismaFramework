@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\Enumerations\ComunicationProtocol;
-use SismaFramework\Core\HttpClasses\Comunication;
+use SismaFramework\Core\Enumerations\CommunicationProtocol;
+use SismaFramework\Core\HttpClasses\Communication;
 use SismaFramework\Core\HttpClasses\Request;
 
 /**
@@ -52,7 +52,7 @@ class Session
             'lifetime' => 3600,
             'path' => '/',
             'domain' => $request->server['HTTP_HOST'],
-            'secure' => (Comunication::getComunicationProtocol($request) === ComunicationProtocol::https),
+            'secure' => (Communication::getCommunicationProtocol($request) === CommunicationProtocol::https),
             'httponly' => true,
             'samesite' => 'Lax'
         ]);
