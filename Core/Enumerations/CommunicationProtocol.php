@@ -30,7 +30,7 @@ namespace SismaFramework\Core\Enumerations;
  *
  * @author Valentino de Lapa
  */
-enum ComunicationProtocol: string
+enum CommunicationProtocol: string
 {
     case http = "http://";
     case https = "https://";

@@ -1,7 +1,7 @@
 # SismaFramework
 
 ![PHPUnit tests status](https://img.shields.io/badge/tests-passing-green)
-![Code coverage status](https://img.shields.io/badge/coverage-%3E75%25-yellow) 
+![Code coverage status](https://img.shields.io/badge/coverage-%3E85%25-green) 
 ![PHP Version Support](https://img.shields.io/badge/php-%3E%3D8.1-blue)
 [![license](https://img.shields.io/badge/license-MIT-yellowgreen)](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE)
 [![Documentation](https://img.shields.io/badge/documentation-leggi-blue)](docs/index.md)
@@ -12,7 +12,7 @@ SismaFramework è un framework PHP moderno, basato sul pattern MVC, progettato p
 ## Caratteristiche Principali
 
 *   **Architettura MVC Robusta:** Separazione netta tra logica di business, dati e presentazione.
-*   **ORM Potente (Data Mapper):** Un ORM a mappatura implicita con supporto per relazioni, lazy loading e crittografia a livello di proprietà.
+*   **ORM Potente (Data Mapper):** Un ORM a mappatura automatica con supporto per relazioni, lazy loading e crittografia a livello di proprietà.
 *   **Componente di Sicurezza:** Gestione di autenticazione (con supporto MFA), permessi e ruoli tramite Voters.
 *   **Gestione Avanzata dei Form:** Validazione, ripopolamento automatico e gestione degli errori integrati.
 *   **URL Rewriting Automatico:** Supporto nativo per URL "parlanti" in notazione kebab-case per una migliore SEO.
