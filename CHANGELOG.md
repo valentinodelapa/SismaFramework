@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [9.1.3] - 2025-09-28 - Ampliamento Copertura Test e Correzioni Interne
+
+### 🔧 Correzioni
+
+* **Correzione Nomenclatura Classe `Communication`**: È stata corretta la denominazione della classe da `Comunication` a `Communication` e del relativo enum da `ComunicationProtocol` a `CommunicationProtocol` per allinearli alla nomenclatura inglese standard. Inoltre, il metodo `getComunicationProtocol()` è stato rinominato in `getCommunicationProtocol()`. **Nota**: Non si tratta di una *breaking change* poiché queste classi sono utilizzate esclusivamente internamente dal framework (nelle classi `Session` e `Router`) e non fanno parte dell'API pubblica esposta agli sviluppatori.
+
+### 🧪 Test
+
+* **Significativo Ampliamento Copertura Test**: È stata aggiunta una copertura di test completa per componenti critici del framework:
+  - **Enumerazioni Core**: `ResponseType`, `RequestType`, `Language`, `ContentType`, `CommunicationProtocol`
+  - **Enumerazioni ORM**: `DataType`, `ComparisonOperator`, `LogicalOperator`
+  - **Classi HTTP**: `Communication` con test completi per la logica di rilevamento protocollo HTTPS/HTTP
+  - **Classi ORM**: `BaseResultSet` con test per l'implementazione Iterator pattern, `BaseModel`, `DependentModel`, `SelfReferencedModel` con test per metodi magic, gestione collezioni e operazioni CRUD
+  - I test coprono funzionalità avanzate come i metodi `getFriendlyLabel()` e `getISO6391Label()` di `Language`, le conversioni MIME in `ContentType`, gli adapter SQL per gli operatori ORM, e la logica complessa di gestione delle relazioni nelle classi Model.
+
+### 📝 Documentazione
+
+* **Correzioni Minori**: Aggiornati riferimenti interni e migliorata la coerenza terminologica nella documentazione.
+
 ## [9.1.2] - 2025-09-26 - Correzione Link Trasversali Documentazione
 
 ### 🔧 Correzioni
