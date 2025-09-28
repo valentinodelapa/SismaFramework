@@ -1,7 +1,7 @@
 # SismaFramework
 
 ![PHPUnit tests status](https://img.shields.io/badge/tests-passing-green)
-![Code coverage status](https://img.shields.io/badge/coverage-%3E75%25-yellow) 
+![Code coverage status](https://img.shields.io/badge/coverage-%3E85%25-green) 
 ![PHP Version Support](https://img.shields.io/badge/php-%3E%3D8.1-blue)
 [![license](https://img.shields.io/badge/license-MIT-yellowgreen)](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE)
 [![Documentation](https://img.shields.io/badge/documentation-leggi-blue)](docs/index.md)

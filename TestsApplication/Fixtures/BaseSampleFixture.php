@@ -39,8 +39,8 @@ class BaseSampleFixture extends BaseFixture
 
     protected function setDependencies(): void
     {
-        $this->addDipendency(ReferencedSampleFixture::class)
-                ->addDipendency(OtherReferencedSampleFixture::class);
+        $this->addDependency(ReferencedSampleFixture::class)
+                ->addDependency(OtherReferencedSampleFixture::class);
     }
 
     public function setEntity(): void
