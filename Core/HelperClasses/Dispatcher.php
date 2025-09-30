@@ -272,7 +272,6 @@ class Dispatcher
     private function resolveRouteCall(): Response
     {
         $this->getControllerConstructorArguments();
-        $this->controllerInstance = $this->instanceControllerClass();
         if ($this->checkActionPresenceInController()) {
             return $this->callControllerMethod();
         } elseif ($this->checkCallableController()) {
@@ -328,6 +327,7 @@ class Dispatcher
 
     private function callControllerMethod(): Response
     {
+        $this->controllerInstance = $this->instanceControllerClass();
         $this->getActionArguments();
         if (count($this->reflectionActionArguments) > 0) {
             return $this->callControllerMethodWithArguments();
@@ -399,7 +399,7 @@ class Dispatcher
     {
         if ($this->reflectionController->isSubclassOf(CallableController::class)) {
             $fullCallableParts = [$this->pathAction, ...$this->actionArguments];
-            return $this->controllerInstance->checkCompatibility($fullCallableParts);
+            return $this->controllerClassName::checkCompatibility($fullCallableParts);
         } else {
             return false;
         }
@@ -407,6 +407,7 @@ class Dispatcher
 
     private function executeMagicCall(): Response
     {
+        $this->controllerInstance = $this->instanceControllerClass();
         $currentAction = $this->parsedAction;
         return $this->controllerInstance->$currentAction(...$this->actionArguments);
     }

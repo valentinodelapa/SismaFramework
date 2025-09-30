@@ -54,7 +54,7 @@ class SlugController extends BaseController implements CallableController
     }
 
     #[\Override]
-    public function checkCompatibility(array $arguments): bool
+    public static function checkCompatibility(array $arguments): bool
     {
         if ((count($arguments) === 1) && ($arguments[0] === 'single-page-slug')) {
             return true;
