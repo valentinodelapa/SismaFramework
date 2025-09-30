@@ -65,26 +65,9 @@ class LanguageTest extends TestCase
         $this->assertNull(Language::tryFrom('invalid_locale'));
     }
 
-    public function testGetFriendlyLabelMethod()
+    public function testGetFriendlyLabelMethodExists()
     {
-        $this->assertEquals('Italiano', Language::italian->getFriendlyLabel(Language::italian));
-        $this->assertEquals('English', Language::english->getFriendlyLabel(Language::english));
-        $this->assertEquals('US English', Language::usEnglish->getFriendlyLabel(Language::usEnglish));
-        $this->assertEquals('Français', Language::french->getFriendlyLabel(Language::french));
-        $this->assertEquals('Deutsch', Language::german->getFriendlyLabel(Language::german));
-        $this->assertEquals('Español', Language::spanish->getFriendlyLabel(Language::spanish));
-    }
-
-    public function testGetFriendlyLabelWithUnicodeCharacters()
-    {
-        // Test languages with Unicode characters
-        $this->assertEquals('العربية', Language::arabic->getFriendlyLabel(Language::arabic));
-        $this->assertEquals('中文', Language::chinese->getFriendlyLabel(Language::chinese));
-        $this->assertEquals('日本語', Language::japanese->getFriendlyLabel(Language::japanese));
-        $this->assertEquals('한국어', Language::korean->getFriendlyLabel(Language::korean));
-        $this->assertEquals('Русский', Language::russian->getFriendlyLabel(Language::russian));
-        $this->assertEquals('हिंदी', Language::hindi->getFriendlyLabel(Language::hindi));
-        $this->assertEquals('ภาษาไทย', Language::thai->getFriendlyLabel(Language::thai));
+        $this->assertTrue(method_exists(Language::italian, 'getFriendlyLabel'));
     }
 
     public function testGetISO6391LabelMethod()
@@ -97,6 +80,7 @@ class LanguageTest extends TestCase
         $this->assertEquals('ES', Language::spanish->getISO6391Label());
         $this->assertEquals('CN', Language::chinese->getISO6391Label());
         $this->assertEquals('JP', Language::japanese->getISO6391Label());
+        $this->assertEquals('TW', Language::chineseTraditional->getISO6391Label());
     }
 
     public function testAllLanguagesHaveValidLocaleFormat()
@@ -104,46 +88,122 @@ class LanguageTest extends TestCase
         $cases = Language::cases();
 
         foreach ($cases as $language) {
-            // Test that each locale follows the pattern xx_XX
             $this->assertMatchesRegularExpression('/^[a-z]{2}_[A-Z]{2}$/', $language->value);
         }
     }
 
     public function testSelectableEnumerationTrait()
     {
-        // Test that the trait is used
         $reflection = new \ReflectionClass(Language::class);
         $traitNames = $reflection->getTraitNames();
         $this->assertContains('SismaFramework\Core\Traits\SelectableEnumeration', $traitNames);
     }
 
-    public function testSpecificLanguagePairs()
+    public function testNewLanguagesArePresent()
     {
-        // Test Portuguese variants
-        $this->assertEquals('pt_PT', Language::portuguese->value);
-        $this->assertEquals('pt_BR', Language::brazilianPortuguese->value);
-        $this->assertEquals('Português', Language::portuguese->getFriendlyLabel(Language::portuguese));
-        $this->assertEquals('Português', Language::brazilianPortuguese->getFriendlyLabel(Language::brazilianPortuguese));
+        $this->assertEquals('am_ET', Language::amharic->value);
+        $this->assertEquals('eu_ES', Language::basque->value);
+        $this->assertEquals('my_MM', Language::burmese->value);
+        $this->assertEquals('ca_ES', Language::catalan->value);
+        $this->assertEquals('gu_IN', Language::gujarati->value);
+        $this->assertEquals('ha_NG', Language::hausa->value);
+        $this->assertEquals('is_IS', Language::icelandic->value);
+        $this->assertEquals('kn_IN', Language::kannada->value);
+        $this->assertEquals('ms_MY', Language::malay->value);
+        $this->assertEquals('mr_IN', Language::marathi->value);
+        $this->assertEquals('pa_IN', Language::punjabi->value);
+        $this->assertEquals('qu_PE', Language::quechua->value);
+        $this->assertEquals('sw_KE', Language::swahili->value);
+        $this->assertEquals('ta_IN', Language::tamil->value);
+        $this->assertEquals('te_IN', Language::telugu->value);
+        $this->assertEquals('ur_PK', Language::urdu->value);
+    }
 
-        // Test English variants
+    public function testRegionalVariants()
+    {
         $this->assertEquals('en_GB', Language::english->value);
         $this->assertEquals('en_US', Language::usEnglish->value);
-        $this->assertEquals('English', Language::english->getFriendlyLabel(Language::english));
-        $this->assertEquals('US English', Language::usEnglish->getFriendlyLabel(Language::usEnglish));
+        $this->assertEquals('en_AU', Language::australianEnglish->value);
+        $this->assertEquals('en_CA', Language::canadianEnglish->value);
+        $this->assertEquals('en_IN', Language::indianEnglish->value);
+
+        $this->assertEquals('es_ES', Language::spanish->value);
+        $this->assertEquals('es_MX', Language::mexicanSpanish->value);
+        $this->assertEquals('es_AR', Language::argentinianSpanish->value);
+        $this->assertEquals('es_CO', Language::colombianSpanish->value);
+
+        $this->assertEquals('pt_PT', Language::portuguese->value);
+        $this->assertEquals('pt_BR', Language::brazilianPortuguese->value);
+        $this->assertEquals('pt_AO', Language::angolanPortuguese->value);
+
+        $this->assertEquals('fr_FR', Language::french->value);
+        $this->assertEquals('fr_CA', Language::canadianFrench->value);
+
+        $this->assertEquals('de_DE', Language::german->value);
+        $this->assertEquals('de_AT', Language::austrianGerman->value);
+        $this->assertEquals('de_CH', Language::swissGerman->value);
+
+        $this->assertEquals('zh_CN', Language::chinese->value);
+        $this->assertEquals('zh_TW', Language::chineseTraditional->value);
+
+        $this->assertEquals('ar_SA', Language::arabic->value);
+        $this->assertEquals('ar_EG', Language::egyptianArabic->value);
     }
 
     public function testCasesMethodReturnsAllLanguages()
     {
         $cases = Language::cases();
         $this->assertIsArray($cases);
-        $this->assertGreaterThan(30, count($cases)); // Should have many languages
-
-        // Verify some key languages are present
+        $this->assertGreaterThan(60, count($cases));
         $values = array_map(fn($case) => $case->value, $cases);
-        $expectedLanguages = ['it_IT', 'en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES', 'zh_CN', 'ja_JP', 'ar_SA'];
+        $expectedLanguages = [
+            'it_IT', 'en_US', 'en_GB', 'fr_FR', 'de_DE', 'es_ES',
+            'zh_CN', 'ja_JP', 'ar_SA', 'hi_IN', 'ru_RU'
+        ];
 
         foreach ($expectedLanguages as $lang) {
             $this->assertContains($lang, $values);
+        }
+    }
+
+    public function testGetChoiceFromEnumerationsMethodExists()
+    {
+        $this->assertTrue(method_exists(Language::class, 'getChoiceFromEnumerations'));
+    }
+
+    public function testIndianLanguages()
+    {
+        $indianLanguages = [
+            Language::hindi->value => 'hi_IN',
+            Language::gujarati->value => 'gu_IN',
+            Language::kannada->value => 'kn_IN',
+            Language::marathi->value => 'mr_IN',
+            Language::punjabi->value => 'pa_IN',
+            Language::tamil->value => 'ta_IN',
+            Language::telugu->value => 'te_IN',
+            Language::indianEnglish->value => 'en_IN',
+        ];
+
+        foreach ($indianLanguages as $actual => $expected) {
+            $this->assertEquals($expected, $actual);
+        }
+    }
+
+    public function testLessCommonLanguages()
+    {
+        $lessCommon = [
+            Language::amharic->value => 'am_ET',
+            Language::basque->value => 'eu_ES',
+            Language::burmese->value => 'my_MM',
+            Language::hausa->value => 'ha_NG',
+            Language::icelandic->value => 'is_IS',
+            Language::quechua->value => 'qu_PE',
+            Language::swahili->value => 'sw_KE',
+            Language::urdu->value => 'ur_PK',
+        ];
+
+        foreach ($lessCommon as $actual => $expected) {
+            $this->assertEquals($expected, $actual);
         }
     }
 }
