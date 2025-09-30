@@ -8,6 +8,29 @@ Questa è una major release che introduce modifiche non retrocompatibili all'API
 
 ### ⚠️ BREAKING CHANGES
 
+*   **Refactoring dell'interfaccia `CallableController`**:
+    *   **Cosa**: Il metodo `checkCompatibility(array $arguments): bool` dell'interfaccia `SismaFramework\Core\Interfaces\Controllers\CallableController` è ora **statico**: `public static function checkCompatibility(array $arguments): bool`.
+    *   **Perché**: Questa modifica permette al `Dispatcher` di verificare la compatibilità di un controller senza doverlo istanziare, migliorando significativamente le performance evitando la creazione di istanze non necessarie quando la route non è valida.
+    *   **Come migrare**: Se hai implementato l'interfaccia `CallableController` in un tuo controller personalizzato, devi aggiornare la firma del metodo `checkCompatibility` rendendolo statico. Inoltre, il metodo non potrà più accedere a proprietà d'istanza (dato che è statico), ma questo non dovrebbe essere un problema dato che il metodo riceve tutti i parametri necessari via argomento.
+
+    **Prima (v9.x)**:
+    ```php
+    class MyController extends BaseController implements CallableController {
+        public function checkCompatibility(array $arguments): bool {
+            // implementazione
+        }
+    }
+    ```
+
+    **Dopo (v10.0)**:
+    ```php
+    class MyController extends BaseController implements CallableController {
+        public static function checkCompatibility(array $arguments): bool {
+            // implementazione (non può più usare $this)
+        }
+    }
+    ```
+
 *   **Refactoring dell'interfaccia `CrudInterface`**:
     *   **Cosa**: L'interfaccia `SismaFramework\Core\Interfaces\Controllers\CrudInterface` è stata **rimossa** dal framework.
     *   **Perché**: L'interfaccia definiva firme di metodi (es. `view()`, `delete()`) che erano in conflitto diretto con il meccanismo del `Dispatcher`. Il `Dispatcher` è progettato per passare parametri dall'URL (come l'ID di un'entità) agli argomenti dei metodi del controller, una funzionalità che l'interfaccia rendeva impossibile da utilizzare. Di conseguenza, l'interfaccia era superflua e controproducente.
@@ -42,6 +65,7 @@ Questa è una major release che introduce modifiche non retrocompatibili all'API
 
 ### 🚀 Miglioramenti
 
+* **Ottimizzazione Istanziazione Controller nel Dispatcher**: Modificato il flusso di esecuzione del `Dispatcher` per istanziare i controller solo quando effettivamente necessario. Il controller viene ora creato solo dopo aver verificato con successo la presenza dell'action (`checkActionPresenceInController()`) o la compatibilità con l'interfaccia callable (`checkCallableController()`), anziché essere istanziato preventivamente. Questo riduce l'overhead in caso di route non valide e ottimizza l'uso delle risorse, specialmente quando il controller ha dipendenze pesanti nel costruttore.
 * **Supporto Linguistico Esteso**: Aggiunto supporto per 17 nuove lingue e varianti regionali importanti, portando il totale a 60+ lingue supportate:
   - **Varianti Inglese**: Australiano (`en_AU`), Canadese (`en_CA`), Indiano (`en_IN`)
   - **Varianti Tedesco**: Austriaco (`de_AT`), Svizzero (`de_CH`)
