@@ -1266,20 +1266,30 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AgetFriendlyLabel\u0028\u0029",
-            "name": "getFriendlyLabel",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-Enumerations-Language.html#method_getFriendlyLabel"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AgetISO6391Label\u0028\u0029",
             "name": "getISO6391Label",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#method_getISO6391Label"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aamharic",
+            "name": "amharic",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_amharic"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aarabic",
             "name": "arabic",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_arabic"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AegyptianArabic",
+            "name": "egyptianArabic",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_egyptianArabic"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Abasque",
+            "name": "basque",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_basque"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Abengali",
             "name": "bengali",
@@ -1291,10 +1301,25 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_bulgarian"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aburmese",
+            "name": "burmese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_burmese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Acatalan",
+            "name": "catalan",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_catalan"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Achinese",
             "name": "chinese",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_chinese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AchineseTraditional",
+            "name": "chineseTraditional",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_chineseTraditional"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Acroatian",
             "name": "croatian",
@@ -1316,6 +1341,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_german"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AaustrianGerman",
+            "name": "austrianGerman",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_austrianGerman"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AswissGerman",
+            "name": "swissGerman",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_swissGerman"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Agreek",
             "name": "greek",
             "summary": "",
@@ -1331,10 +1366,40 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_english"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AaustralianEnglish",
+            "name": "australianEnglish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_australianEnglish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AcanadianEnglish",
+            "name": "canadianEnglish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_canadianEnglish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AindianEnglish",
+            "name": "indianEnglish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_indianEnglish"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aspanish",
             "name": "spanish",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_spanish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AmexicanSpanish",
+            "name": "mexicanSpanish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_mexicanSpanish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AargentinianSpanish",
+            "name": "argentinianSpanish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_argentinianSpanish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AcolombianSpanish",
+            "name": "colombianSpanish",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_colombianSpanish"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aestonian",
             "name": "estonian",
@@ -1356,6 +1421,21 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_french"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AcanadianFrench",
+            "name": "canadianFrench",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_canadianFrench"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Agujarati",
+            "name": "gujarati",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_gujarati"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ahausa",
+            "name": "hausa",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_hausa"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Ahebrew",
             "name": "hebrew",
             "summary": "",
@@ -1371,6 +1451,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_hungarian"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aicelandic",
+            "name": "icelandic",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_icelandic"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aindonesian",
             "name": "indonesian",
             "summary": "",
@@ -1385,6 +1470,11 @@ Search.appendIndex(
             "name": "japanese",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_japanese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Akannada",
+            "name": "kannada",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_kannada"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Akazakh",
             "name": "kazakh",
@@ -1406,6 +1496,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_lithuanian"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Amalay",
+            "name": "malay",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_malay"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Amarathi",
+            "name": "marathi",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_marathi"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Adutch",
             "name": "dutch",
             "summary": "",
@@ -1415,6 +1515,11 @@ Search.appendIndex(
             "name": "norwegian",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_norwegian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Apunjabi",
+            "name": "punjabi",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_punjabi"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Apolish",
             "name": "polish",
@@ -1430,6 +1535,16 @@ Search.appendIndex(
             "name": "brazilianPortuguese",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_brazilianPortuguese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003AangolanPortuguese",
+            "name": "angolanPortuguese",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_angolanPortuguese"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aquechua",
+            "name": "quechua",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_quechua"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aromanian",
             "name": "romanian",
@@ -1456,10 +1571,25 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_slovenian"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aswahili",
+            "name": "swahili",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_swahili"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aswedish",
             "name": "swedish",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_swedish"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Atamil",
+            "name": "tamil",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_tamil"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Atelugu",
+            "name": "telugu",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_telugu"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Athai",
             "name": "thai",
@@ -1475,6 +1605,11 @@ Search.appendIndex(
             "name": "ukrainian",
             "summary": "",
             "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_ukrainian"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Aurdu",
+            "name": "urdu",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Enumerations-Language.html#enumcase_urdu"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Enumerations\\Language\u003A\u003Avietnamese",
             "name": "vietnamese",
@@ -4345,31 +4480,6 @@ Search.appendIndex(
             "name": "checkCompatibility",
             "summary": "",
             "url": "classes/SismaFramework-Core-Interfaces-Controllers-CallableController.html#method_checkCompatibility"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Controllers\\CrudInterface",
-            "name": "CrudInterface",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-Interfaces-Controllers-CrudInterface.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Controllers\\CrudInterface\u003A\u003Acreate\u0028\u0029",
-            "name": "create",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-Interfaces-Controllers-CrudInterface.html#method_create"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Controllers\\CrudInterface\u003A\u003Aview\u0028\u0029",
-            "name": "view",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-Interfaces-Controllers-CrudInterface.html#method_view"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Controllers\\CrudInterface\u003A\u003Aupdate\u0028\u0029",
-            "name": "update",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-Interfaces-Controllers-CrudInterface.html#method_update"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\Interfaces\\Controllers\\CrudInterface\u003A\u003Adelete\u0028\u0029",
-            "name": "delete",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-Interfaces-Controllers-CrudInterface.html#method_delete"
         },                {
             "fqsen": "\\SismaFramework\\Core\\Interfaces\\Controllers\\DefaultControllerInterface",
             "name": "DefaultControllerInterface",
@@ -7871,15 +7981,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testTryFromMethodWorks"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestGetFriendlyLabelMethod\u0028\u0029",
-            "name": "testGetFriendlyLabelMethod",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestGetFriendlyLabelMethodExists\u0028\u0029",
+            "name": "testGetFriendlyLabelMethodExists",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testGetFriendlyLabelMethod"
-        },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestGetFriendlyLabelWithUnicodeCharacters\u0028\u0029",
-            "name": "testGetFriendlyLabelWithUnicodeCharacters",
-            "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testGetFriendlyLabelWithUnicodeCharacters"
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testGetFriendlyLabelMethodExists"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestGetISO6391LabelMethod\u0028\u0029",
             "name": "testGetISO6391LabelMethod",
@@ -7896,15 +8001,35 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testSelectableEnumerationTrait"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestSpecificLanguagePairs\u0028\u0029",
-            "name": "testSpecificLanguagePairs",
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestNewLanguagesArePresent\u0028\u0029",
+            "name": "testNewLanguagesArePresent",
             "summary": "",
-            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testSpecificLanguagePairs"
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testNewLanguagesArePresent"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestRegionalVariants\u0028\u0029",
+            "name": "testRegionalVariants",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testRegionalVariants"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestCasesMethodReturnsAllLanguages\u0028\u0029",
             "name": "testCasesMethodReturnsAllLanguages",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testCasesMethodReturnsAllLanguages"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestGetChoiceFromEnumerationsMethodExists\u0028\u0029",
+            "name": "testGetChoiceFromEnumerationsMethodExists",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testGetChoiceFromEnumerationsMethodExists"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestIndianLanguages\u0028\u0029",
+            "name": "testIndianLanguages",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testIndianLanguages"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\LanguageTest\u003A\u003AtestLessCommonLanguages\u0028\u0029",
+            "name": "testLessCommonLanguages",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-Enumerations-LanguageTest.html#method_testLessCommonLanguages"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\Enumerations\\RequestTypeTest",
             "name": "RequestTypeTest",

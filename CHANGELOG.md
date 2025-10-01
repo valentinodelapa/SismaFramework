@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [10.0.0] - 2025-09-27 - Refactoring Sistema Localizzazione e Correzioni Terminologiche
+## [10.0.0] - 2025-10-01 - Refactoring Sistema Localizzazione e Correzioni Terminologiche
 
 Questa è una major release che introduce modifiche non retrocompatibili all'API del framework. L'aggiornamento è consigliato, ma richiede attenzione alle breaking changes elencate di seguito.
 
