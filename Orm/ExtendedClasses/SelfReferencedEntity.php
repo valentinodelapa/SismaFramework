@@ -44,13 +44,13 @@ abstract class SelfReferencedEntity extends ReferencedEntity
             $this->forceForeignKeyPropertySet($name);
             return $this->$name;
         } elseif ($name === $this->config->sonCollectionPropertyName) {
-            $calledClassNamePartes = explode("\\", static::class);
-            $collectionName = lcfirst(end($calledClassNamePartes)) . $this->config->foreignKeySuffix . ucfirst($this->config->parentPrefixPropertyName) . end($calledClassNamePartes);
+            $entityName = $this->getShortClassName();
+            $collectionName = lcfirst($entityName) . $this->config->foreignKeySuffix . ucfirst($this->config->parentPrefixPropertyName) . $entityName;
             $this->forceCollectionPropertySet($collectionName);
-            return $this->collections[lcfirst(end($calledClassNamePartes))][$this->config->parentPrefixPropertyName . end($calledClassNamePartes)];
+            return $this->collections[lcfirst($entityName)][$this->config->parentPrefixPropertyName . $entityName];
         } elseif ($this->checkCollectionExists($name)) {
             $this->forceCollectionPropertySet($name);
-            return $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)];
+            return $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)];
         } else {
             throw new InvalidPropertyException($name);
         }
@@ -62,11 +62,11 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         if (property_exists($this, $name) && $this->checkFinalClassProperty($name)) {
             $this->switchSettingType($name, $value);
         } elseif ($name === $this->config->sonCollectionPropertyName) {
-            $calledClassNamePartes = explode("\\", static::class);
-            $this->collections[lcfirst(end($calledClassNamePartes))][$this->config->parentPrefixPropertyName . end($calledClassNamePartes)] = $value;
+            $entityName = $this->getShortClassName();
+            $this->collections[lcfirst($entityName)][$this->config->parentPrefixPropertyName . $entityName] = $value;
         } elseif ($this->checkCollectionExists($name)) {
             $this->checkCollectionTypeConsistency($name, $value);
-            $this->collections[$this->getForeignKeyReference($name)][static::getForeignKeyName($name)] = $value;
+            $this->collections[$this->getForeignKeyReference($name)][$this->getForeignKeyName($name)] = $value;
         } else {
             throw new InvalidPropertyException($name);
         }
@@ -76,8 +76,7 @@ abstract class SelfReferencedEntity extends ReferencedEntity
     protected function getForeignKeyReference(string $collectionName): string
     {
         if ($collectionName === $this->config->sonCollectionPropertyName) {
-            $calledClassNamePartes = explode("\\", static::class);
-            return lcfirst(end($calledClassNamePartes));
+            return lcfirst($this->getShortClassName());
         } else {
             return parent::getForeignKeyReference($collectionName);
         }
@@ -88,8 +87,8 @@ abstract class SelfReferencedEntity extends ReferencedEntity
     {
         $collectionNameParts = array_diff(explode($this->config->foreignKeySuffix, $collectionName), ['']);
         if ($collectionName === $this->config->sonCollectionPropertyName) {
-            $calledClassNameParts = explode("\\", static::class);
-            return $this->config->parentPrefixPropertyName . end($calledClassNameParts);
+            $entityName = $this->getShortClassName();
+            return $this->config->parentPrefixPropertyName . $entityName;
         } elseif (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])) === 1) {
             return array_key_first(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0]));
         } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
@@ -97,6 +96,12 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         } else {
             return null;
         }
+    }
+
+    private function getShortClassName(): string
+    {
+        $calledClassNameParts = explode("\\", static::class);
+        return end($calledClassNameParts);
     }
 
 }

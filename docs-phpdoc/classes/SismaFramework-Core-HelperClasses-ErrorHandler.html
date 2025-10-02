@@ -61,10 +61,6 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
-                <a href="namespaces/sismaframework-autoload.html" class="">Autoload</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -97,6 +93,16 @@
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="">Config</a>
 </h4>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
+                
+            </li>
+            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -151,7 +157,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">45</span>
+    <span class="phpdocumentor-element-found-in__line">46</span>
 
     </aside>
 
@@ -195,25 +201,6 @@
 
 
 
-<h4 id="toc-properties">
-    Properties
-    <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
-
-</h4>
-<dl class="phpdocumentor-table-of-contents">
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_developmentEnvironment">$developmentEnvironment</a>
-    <span>
-                        &nbsp;: bool            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_logVerboseActive">$logVerboseActive</a>
-    <span>
-                        &nbsp;: bool            </span>
-</dt>
-
-    </dl>
 
 <h4 id="toc-methods">
     Methods
@@ -221,6 +208,12 @@
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_disabligErrorDisplay">disabligErrorDisplay()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_handleBaseException">handleBaseException()</a>
     <span>
@@ -240,13 +233,7 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setDevelopmentEnvironment">setDevelopmentEnvironment()</a>
-    <span>
-                                &nbsp;: void    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setLogVerboseActive">setLogVerboseActive()</a>
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_showErrorInDevelopementEnvironment">showErrorInDevelopementEnvironment()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
@@ -282,25 +269,23 @@
         
 
         
-    <section class="phpdocumentor-properties">
-        <h3 class="phpdocumentor-elements__header" id="properties">
-            Properties
-            <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
+
+            <section class="phpdocumentor-methods">
+        <h3 class="phpdocumentor-elements__header" id="methods">
+            Methods
+            <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
 >
-    <h4 class="phpdocumentor-element__name" id="property_developmentEnvironment">
-        $developmentEnvironment
-        <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_developmentEnvironment" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_disabligErrorDisplay">
+        disabligErrorDisplay()
+        <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_disabligErrorDisplay" class="headerlink"><i class="fas fa-link"></i></a>
 
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
@@ -310,64 +295,21 @@
     </aside>
 
     
-    
     <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">bool</span>
-    <span class="phpdocumentor-signature__name">$developmentEnvironment</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\DEVELOPMENT_ENVIRONMENT</span></code>
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">disabligErrorDisplay</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
 
     
-    
-    
 
     
-
 </article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_logVerboseActive">
-        $logVerboseActive
-        <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_logVerboseActive" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">48</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">bool</span>
-    <span class="phpdocumentor-signature__name">$logVerboseActive</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\LOG_VERBOSE_ACTIVE</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-            </section>
-
-            <section class="phpdocumentor-methods">
-        <h3 class="phpdocumentor-elements__header" id="methods">
-            Methods
-            <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h3>
                     <article
         class="phpdocumentor-element
             -method
@@ -382,14 +324,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">93</span>
+    <span class="phpdocumentor-element-found-in__line">89</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">handleBaseException</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Security-BaseClasses-BaseException.html"><abbr title="\SismaFramework\Security\BaseClasses\BaseException">BaseException</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exception</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-DefaultControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface">DefaultControllerInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$defaultController</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new SampleController()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-StructuralControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface">StructuralControllerInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$structuralController</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FrameworkController()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">handleBaseException</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Security-BaseClasses-BaseException.html"><abbr title="\SismaFramework\Security\BaseClasses\BaseException">BaseException</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$exception</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-DefaultControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface">DefaultControllerInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$defaultController</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new SampleController()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-StructuralControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface">StructuralControllerInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$structuralController</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FrameworkController()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customConfig</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -415,6 +357,13 @@
                 <span class="phpdocumentor-signature__argument__name">$structuralController</span>
                 : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-StructuralControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface">StructuralControllerInterface</abbr></a></span>
                  = <span class="phpdocumentor-signature__argument__default-value">new FrameworkController()</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$customConfig</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -444,14 +393,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">61</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">handleNonThrowableError</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-StructuralControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface">StructuralControllerInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$controller</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FrameworkController()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">handleNonThrowableError</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-StructuralControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface">StructuralControllerInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$controller</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FrameworkController()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customConfig</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -463,6 +412,13 @@
                 <span class="phpdocumentor-signature__argument__name">$controller</span>
                 : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-StructuralControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface">StructuralControllerInterface</abbr></a></span>
                  = <span class="phpdocumentor-signature__argument__default-value">new FrameworkController()</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$customConfig</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -488,14 +444,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">118</span>
+    <span class="phpdocumentor-element-found-in__line">116</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">handleThrowableError</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\Throwable">Throwable</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$throwable</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-StructuralControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface">StructuralControllerInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$structuralController</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FrameworkController()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">handleThrowableError</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\Throwable">Throwable</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$throwable</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Interfaces-Controllers-StructuralControllerInterface.html"><abbr title="\SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface">StructuralControllerInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$structuralController</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FrameworkController()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customConfig</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -517,6 +473,13 @@
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$customConfig</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
             </dl>
 
     
@@ -535,22 +498,22 @@
             -public
                                     -static                    "
 >
-    <h4 class="phpdocumentor-element__name" id="method_setDevelopmentEnvironment">
-        setDevelopmentEnvironment()
-        <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setDevelopmentEnvironment" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_showErrorInDevelopementEnvironment">
+        showErrorInDevelopementEnvironment()
+        <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_showErrorInDevelopementEnvironment" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">56</span>
+    <span class="phpdocumentor-element-found-in__line">133</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">setDevelopmentEnvironment</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$developmentEnvironment</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">showErrorInDevelopementEnvironment</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customConfig</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -559,53 +522,9 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$developmentEnvironment</span>
-                : <span class="phpdocumentor-signature__argument__return-type">bool</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-    
-
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                    -static                    "
->
-    <h4 class="phpdocumentor-element__name" id="method_setLogVerboseActive">
-        setLogVerboseActive()
-        <a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setLogVerboseActive" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">51</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">setLogVerboseActive</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$logVerboseActive</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$logVerboseActive</span>
-                : <span class="phpdocumentor-signature__argument__return-type">bool</span>
-                            </dt>
+                <span class="phpdocumentor-signature__argument__name">$customConfig</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -631,7 +550,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">110</span>
+    <span class="phpdocumentor-element-found-in__line">108</span>
 
     </aside>
 
@@ -686,7 +605,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">87</span>
+    <span class="phpdocumentor-element-found-in__line">83</span>
 
     </aside>
 
@@ -734,7 +653,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">81</span>
+    <span class="phpdocumentor-element-found-in__line">77</span>
 
     </aside>
 
@@ -796,7 +715,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/ErrorHandler.php"><a href="files/core-helperclasses-errorhandler.html"><abbr title="Core/HelperClasses/ErrorHandler.php">ErrorHandler.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">104</span>
+    <span class="phpdocumentor-element-found-in__line">102</span>
 
     </aside>
 
@@ -942,27 +861,19 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                                            <li><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#toc-properties">Properties</a></li>
-                                                            <li><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#toc-methods">Methods</a></li>
+                                                                                <li><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
             
-                            <li class="phpdocumentor-on-this-page-section__title">Properties</li>
-                <li>
-                    <ul class="phpdocumentor-list -clean">
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_developmentEnvironment">$developmentEnvironment</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#property_logVerboseActive">$logVerboseActive</a></li>
-                                            </ul>
-                </li>
             
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_disabligErrorDisplay">disabligErrorDisplay()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_handleBaseException">handleBaseException()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_handleNonThrowableError">handleNonThrowableError()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_handleThrowableError">handleThrowableError()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setDevelopmentEnvironment">setDevelopmentEnvironment()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_setLogVerboseActive">setLogVerboseActive()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_showErrorInDevelopementEnvironment">showErrorInDevelopementEnvironment()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callDefaultControllerError">callDefaultControllerError()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callInternalServerErrorAction">callInternalServerErrorAction()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-ErrorHandler.html#method_callNonThrowableErrorAction">callNonThrowableErrorAction()</a></li>

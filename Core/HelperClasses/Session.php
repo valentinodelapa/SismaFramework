@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\Enumerations\ComunicationProtocol;
-use SismaFramework\Core\HttpClasses\Comunication;
+use SismaFramework\Core\Enumerations\CommunicationProtocol;
+use SismaFramework\Core\HttpClasses\Communication;
 use SismaFramework\Core\HttpClasses\Request;
 
 /**
@@ -39,21 +39,20 @@ class Session
 
     private \stdClass $sessionProperties;
 
-    public function __construct()
+    public function __construct(Request $request = new Request())
     {
         if (session_status() === PHP_SESSION_NONE) {
-            self::start();
+            self::start($request);
         }
     }
 
-    public static function start(): void
+    public static function start(Request $request = new Request()): void
     {
-        $request = new Request();
         session_set_cookie_params([
             'lifetime' => 3600,
             'path' => '/',
             'domain' => $request->server['HTTP_HOST'],
-            'secure' => (Comunication::getComunicationProtocol() === ComunicationProtocol::https),
+            'secure' => (Communication::getCommunicationProtocol($request) === CommunicationProtocol::https),
             'httponly' => true,
             'samesite' => 'Lax'
         ]);
@@ -195,9 +194,8 @@ class Session
         }
     }
 
-    public static function isValidSession(): bool
+    public static function isValidSession(Request $request = new Request()): bool
     {
-        $request = new Request();
         $value = hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']);
         return (self::getItem('token') === $value);
     }

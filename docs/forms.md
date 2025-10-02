@@ -1,162 +1,222 @@
-# Forms
+# Gestione dei Form
 
-Le classi forms  si occupano della validazione dei dati di input inseriti nei forms presenti nel progetto. Ogni classe form deve fare riferimento ad un'entità, della quale può gestire tutte o solo alcune proprietà: in alcuni scenari infatti diversi form possono interfacciarsi con la medesima entità e gestirne aspetti differenti. I campi dei form *html* che si interfaceranno con la funzionalità in questione dovranno avere gli stessi nomi delle proprietà delle entità alle quali fanno riferimento.
+Il componente Form di SismaFramework è uno strumento potente che semplifica la gestione dei form HTML. Si occupa di tre compiti principali:
 
-È possibile gestire con un unico form *html* diverse entità, a patto che le stesse siano collegate con un qualche tipo di relazione.I form infatti possono essere concatenati smistando proprietà di entità referenziate o collezioni agli appositi form: sarà poi il form di partenza ad assemblare il tutto in un albero di entità che la componente *ORM* è in grado di salvare in un unica operazione, mantenendo l'integrità referenziale.
+1. **Mappatura dei Dati:** Trasferisce i dati inviati da un form (`$_POST`) a un'[entità](orm.md#le-entità-in-dettaglio).
+2. **Validazione:** Controlla che i dati inviati rispettino le regole definite usando i [FilterType](enumerations.md#filtertype).
+3. **Gestione degli Errori:** Utilizza [`FormFilterError`](custom-types.md#formfiltererror) per gestire errori e ripopolamento automatico.
 
-Altra funzionalità gestita dalle classi di tipo forms è il ripololamento: qualora qualcosa non dovesse andare a buon fine nella fase di *submit* del fomr *html* , lo stesso verrà ripresentato con le informazioni già compilate e le segnalazioni di errore negli eventuali campi non corretti.
+## Il Flusso di Lavoro Completo
 
-La singola classe Form estende la classe `BaseForm` che gli fornisce tutte le funzionalità della quale necessita e che verranno esposte in seguito.
+Gestire un form in SismaFramework segue tre passi principali. Vediamoli con un esempio pratico: la creazione e modifica di un articolo di un blog (`Post`).
 
-```php
-namespace SismaFramework\Sample\Forms;
+### Passo 1: Creare la Classe Form
 
-use SismaFramework\Orm\BaseClasses\BaseEntity;
+Per prima cosa, crea una classe Form nella cartella `Forms` del tuo modulo. Questa classe definisce a quale entità è associato il form e quali sono le regole di validazione per ogni campo.
 
-class BaseSampleForm extends BaseForm
-{
-    ...
-}
-
-
-```
-
-Eredita dalla medesima classe base alcuni metodi astratti che deve implementare:
-
-* `getEntityName()`: questo metodo serve ad embeddare l'entità (o meglio il suo nome) a cui la classe form fa riferimento all'interno suo interno. Deve restituire una stringa, che rappresenta appunto il nome dell'entità.
-  
-  ```php
-  protected static function getEntityName(): string
-  {
-      return BaseSample::class;
-  }
-  ```
-
-* `setFilterFieldsMode()`: questo metodo si occupa di settare i filtri da applicare ai singoli campi dell'entità gestiti dal form.
-  
-  ```php
-  protected function setFilterFieldsMode(): void
-  {
-      ...
-  }
-  ```
-  
-  A tale scopo utilizza un altro metodo della classe `BaseForm`, ovvero `addFilterFieldMode()` che ha la seguente sintassi e può essere richiamato in modo ridondate in quanto restituisce lo stesso oggetti di tipo `BaseForm`.
-  
-  ```php
-  
-  protected function addFilterFieldMode(string $propertyName, FilterType $filterType, array $parameters = [], bool $allowNull = false): self
-  {
-      ...
-  }
-  ```
-  
-  Gli argomenti che quest'ultimo accetta sono i seguenti:
-  
-  * `$propertyName`: argomento di tipo `string` rappresenta il nome della proprietà dell'entità per la quale la classe deve gestire la validazione. 
-  
-  * `$filterType`: argomento di tipo `FilterType` (`BackedEnum` che utilizzato per interfacciare la classe di tipo `BaseForm` con la classe `Filter`) rappresenta il tipo di filtro da applicare per validare la proprietà.
-  
-  * `$parameters`: argomento opzionale di tipo `array` rappresenta parametri opzionali utili in alcuni casi alla validazione della proprietà
-  
-  * `$allowNull`: argomento opzionale di tipo `bool` imposta la possibilità della proprietà di accettare valori nulli.
-
-* `customFilter()`: questo metodo è utile ad implementare utlteriori filtri di validazione che esulano dagli standard implementati nella classe `Filter`.
-  
-  ```php
-  protected function customFilter(): void
-  {
-      ....
-  }
-  ```
-
-* `setEntityFromForm()`: questo metodo si occupa di implementare la funzionalità descritta in precedenza di concatenamento dei form che gestiscono entità collegate.
-  
-  ```php
-  protected function setEntityFromForm(): void
-  {
-      ....
-  }
-  ```
-  
-  Viene utilizzata per questo scopo un altro metodo di servizio della classe `BaseForm`, `addEntityFromForm()`, la cui sintassi è la seguente:
-  
-  ```php
-  protected function addEntityFromForm(string $propertyName, string $formPropertyClass, int $baseCollectionFormFromNumber = 0): self
-  {
-      ...
-  }
-  ```
-  
-  Gli argomenti del metodo di servizio sono i seguenti:
-  
-  * `$propertyName`: argomento di tipo `string` specifica il campo (più precisamente l'array presente nella variabile superglobale `$_POST`) che verrà passato al form collegato e quindi processato da quest'ultimo.
-  
-  * `$formPropertyClass`: arcomento di tipo `string` rappresenta il nome della classe form, che dovrà prendere in carico quella determinata serie di infromazioni.
-  
-  * `$baseCollectionFormFromNumer`: argomento di tipo `int` rappresenta il numero di eventuali collezioni di gestite dal meccanismo sono presenti di default nel form `html` prima che l'utente interagisca con esso.
-
-* `injectRequest()`: questo metodo serve ad includere in un form informazioni provenenti da altre fonti (ad esempio la sessione).
-  
-  ```php
-  protected function injectRequest(): void
-  {
-      ...
-  }
-  ```
-
-Ogni classe di tipo `BaseForm` espone una serie di metodi utili a far interagire la stessa con un controllore che riceve le informazioni inviategli da un  form *html*. Inoltre il costruttore accetta come argomento opzionale un'entità del tipo gestito dal form: tale meccaniscmo è utile per le operazioni di modifica di entità materializzate.
-
-I metodi esposti dalla classe `BaseForm` sono i seguenti:
-
-* `handleRequest(Request $request)`: questo metodo, accettando un parametro di tipo Request (di cui si discuterà nell'apposito paragrafo), incorpora le informazioni inviate da un form *html* nell'oggetto di tipo `BaseForm` che lo sta richiamando.
-
-* `isSubmitted()`: questo metodo restituisce un valore di tipo `bool` che rappresenta l'invio o meno dei dati da parte del form.
-
-* `isValid()`: questo metodo restuisce un valore di tipo `bool` che rappresenta l'esito della validazione di tutti i campi da parte dell'oggetto.
-
-* `resolveEntity()`: questo metodo, da richiamare nel caso in cui i due prcedenti restituiscano entrambi `true`, restituisce l'entità risultante dalla processazione dei dai ricevuti tramite form *html*.
-
-* `getEntityDataToStandardEntity()`: questo metodo, da richiamare nel caso in cui almeno uno dei due metodi `isSubmitted()` o `isValid()` restituisca `false`, restituisce un oggetto di tipo `StandardEntity` (un'entità non specializzata e non tipizzata) che, data la sua essenza, può accettare anche proprietà errate. Questa funzionalità è utile al ripopolamento automatico del form *html* in caso di errore.
-
-* `returnFilterErrors()`: questo metodo, anch'esso da richiamare nel caso in cui almeno uno dei due metodi `isSubmitted()` o `isValid()` restituisca `false`, restituisce un oggetto FormFilterErrorManager che contiene l'esito della validazione di ogni singola proprietà processata dall'oggetto di tipo `BaseForm`.
-
-Di seguito l'impementazione completa dell'interazione tra un controllore ed un oggetto di tipo `BaseForm`.
+**`MyBlog/Application/Forms/PostForm.php`**
 
 ```php
-public function sampleAction(Request $request, BaseSample $baseSample): Response
+namespace MyBlog\Application\Forms;
+
+use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Core\Enumerations\FilterType;
+use MyBlog\Application\Entities\Post;
+
+class PostForm extends BaseForm
 {
-    $baseSampleForm = new BaseSampleForm($baseSample);
-    $baseSampleForm->handleRequest($request);
-    if($baseSampleForm->isSubmitted() && $baseSampleFrom->isValid()){
-        $baseSampleModified = $baseSampleForm->resolveEntity();
-        ...
-        return Router::redirect(...);
+    /**
+     * Specifica la classe dell'entità gestita da questo form.
+     */
+    protected static function getEntityName(): string
+    {
+        return Post::class;
     }
-    ...
-    $this->vars['baseSampleForForm'] = $baseSampleForm->isSubmitted() ? $baseSampleForm->getEntityDataToStandardEntity() : $baseSample;
-    $this->vars['errors'] = $baseSampleForm->returnFilterErrors();
-    ...
-    return Render::generateView(..., $this->vars);
+
+    /**
+     * Definisce le regole di validazione per ogni campo del form.
+     */
+    protected function setFilterFieldsMode(): void
+    {
+        $this->addFilterFieldMode('title', FilterType::string, ['minLength' => 3, 'maxLength' => 255]);
+        $this->addFilterFieldMode('content', FilterType::string, ['minLength' => 10]);
+        $this->addFilterFieldMode('publicationDate', FilterType::datetime, [], true); // Il campo può essere nullo
+        $this->addFilterFieldMode('isPublished', FilterType::boolean);
+    }
+
+    /**
+     * Usato per validazioni personalizzate più complesse.
+     * In questo esempio non è necessario.
+     */
+    protected function customFilter(): void
+    {
+        // Esempio: se il titolo contiene una parola specifica, aggiungi un errore.
+        // if (str_contains($this->entity->getTitle(), 'spam')) {
+        //     $this->formFilterErrorManager->addErrorMessage('title', 'Il titolo non può contenere la parola "spam".');
+        // }
+    }
+
+    /**
+     * Usato per gestire form annidati (entità correlate).
+     * In questo esempio non è necessario.
+     */
+    protected function setEntityFromForm(): void
+    {
+    }
+
+    /**
+     * Usato per iniettare dati nel form da fonti esterne (es. sessione).
+     * In questo esempio non è necessario.
+     */
+    protected function injectRequest(): void
+    {
+    }
+} 
+```
+
+### Passo 2: Gestire il Form nel Controller
+
+Nel controller, devi creare un'action per gestire la richiesta del form. Il flusso è sempre lo stesso:
+
+1. Crea un'istanza del form, passando opzionalmente un'entità esistente (per la modifica).
+2. Passa la `Request` al metodo `handleRequest()`.
+3. Controlla se il form è stato inviato (`isSubmitted()`) e se è valido (`isValid()`).
+4. Se è valido, ottieni l'entità popolata e salvata con `resolveEntity()` e reindirizza l'utente.
+5. Se non è valido (o non è stato inviato), renderizza la vista del form, passando i dati per il ripopolamento e gli errori.
+
+**`MyBlog/Application/Controllers/PostController.php`**
+
+```php
+namespace MyBlog\Application\Controllers;
+
+use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\HelperClasses\Render;
+use SismaFramework\Core\HelperClasses\Router;
+use MyBlog\Application\Entities\Post;
+use MyBlog\Application\Forms\PostForm;
+
+class PostController extends BaseController
+{
+    // L'action per creare un nuovo post
+    public function create(Request $request): Response
+    {
+        $form = new PostForm(); // Creiamo un form per una nuova entità
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Grazie a injectRequest(), non dobbiamo più gestire manualmente l'ID dell'autore.
+            $nuovoPost = $form->resolveEntity();
+            $this->dataMapper->save($nuovoPost);
+            return Router::redirect('post/show/id/' . $nuovoPost->getId());
+        }
+
+        // Se il form non è valido o è la prima visita, mostriamo il form
+        $this->vars['pageTitle'] = 'Modifica Articolo';
+        // Passiamo l'entità per il ripopolamento e gli errori alla vista
+        $this->vars['formEntity'] = $form->isSubmitted() ? $form->getEntityDataToStandardEntity() : $post;
+        $this->vars['errors'] = $form->returnFilterErrors();
+
+        return Render::generateView('post/form', $this->vars);
+    }
 }
 ```
 
-## Request
+### Passo 3: Visualizzare il Form nella Vista
 
-La classe `Request` consiste nella rappresentazione sotto forma di struttura di dati del complesso delle variabili super-globali di `php` `$_GET`, `$_POST`, `$_COOKIE`, `$_FILES` e `$_SERVER`. Esse vengono fornite dalla classe tramite le sue proprietà pubbliche e, nello specifico:
+Infine, crea il file della vista. I nomi dei campi (`name="..."`) nel form HTML devono corrispondere ai nomi delle proprietà dell'entità. La gestione degli errori è particolarmente elegante.
 
-* `$this->query`: fornisce la variabile super-globale `$_GET`
+L'oggetto `$errors` (di tipo `FormFilterError`) restituito dal form utilizza i metodi magici di PHP. Questo significa che:
+*   Per verificare se un campo ha un errore, puoi semplicemente controllare il valore di una proprietà con il suffisso `Error` (es. `$errors->titleError`). Se l'errore esiste, restituirà il messaggio (una stringa, che valuta a `true`); altrimenti, restituirà `false`.
+*   Se hai definito un **messaggio di errore personalizzato** nella tua classe Form, puoi accedervi con il suffisso `CustomMessage` (es. `$errors->titleCustomMessage`). Questo conterrà la stringa del messaggio e ha la priorità su quello standard.
+*   Non è necessario usare `isset()` o metodi come `hasError()`, rendendo il codice della vista molto più pulito e leggibile.
+*   Il messaggio di errore standard deve essere definito nel file di lingua (es. `it_IT.php`) e richiamato nella vista.
+**`MyBlog/Application/Views/post/form.php`**
 
-* `$this->request`: fornisce la variabile super-globale `$_POST`
+```php
+<?php require_once __DIR__ . '/../layout/header.php'; ?>
+    
+<h2><?= htmlspecialchars($pageTitle) ?></h2>
+    
+<form method="post">
+    <div class="form-group">
+        <label for="title">Titolo</label>
+        <input type="text" id="title" name="title" value="<?= htmlspecialchars($formEntity->getTitle() ?? '') ?>">
+        
+        <?php // Controlla prima un messaggio personalizzato. Se non c'è, controlla se c'è un errore standard e mostra il messaggio dal file di lingua. ?>
+        <?php if ($errors->titleCustomMessage) : ?>
+            <div class="error"><?= $errors->titleCustomMessage ?></div>
+        <?php elseif ($errors->titleError) : ?>
+            <div class="error"><?= $defaulErrorMessage // Variabile dal file di lingua (es. 'it_IT.php') ?></div>
+        <?php endif; ?>
+    </div>
+    
+    <div class="form-group">
+        <label for="content">Contenuto</label>
+        <textarea id="content" name="content"><?= htmlspecialchars($formEntity->getContent() ?? '') ?></textarea>
+        
+        <?php if ($errors->contentCustomMessage) : ?>
+            <div class="error"><?= $errors->contentCustomMessage ?></div>
+        <?php elseif ($errors->contentError) : ?>
+            <div class="error"><?= $defaulErrorMessage // Variabile dal file di lingua ?></div>
+        <?php endif; ?>
+    </div>
+    
+    <div class="form-group">
+        <label>
+            <input type="checkbox" name="isPublished" value="1" <?= $formEntity->isPublished() ? 'checked' : '' ?>>
+            Pubblicato
+        </label>
+    </div>
+    <button type="submit">Salva</button>
+</form>
+    
+<?php require_once __DIR__ . '/../layout/footer.php'; ?>
+```
 
-* `$this->cookie`: fornisce la variabile super-globale `$_COOKIE`
+## Integrazione di Dati con `injectRequest()` e `addRequest()`
 
-* `$this->files`: fornisce la variabile super-globale `$_FILES`
+Il metodo `injectRequest()` è un hook potente che viene eseguito dopo che il form ha ricevuto l'oggetto `Request`, ma **prima** che inizi il processo di validazione e mappatura dei dati sull'entità.
 
-* `$this->server`: fornisce la variabile super-globale `$_SERVER`
+All'interno di questo metodo, puoi usare il metodo helper `addRequest(string $propertyName, string|array $value)` per **aggiungere o sovrascrivere un singolo valore** nella richiesta del form.
 
-# 
+Questo approccio è estremamente utile per:
 
-* * *
+*   **Popolare campi non presenti nel form HTML:** Il caso d'uso più comune è impostare l'ID dell'autore di un post con quello dell'utente attualmente loggato, senza doverlo inserire in un campo `<input type="hidden">`.
+*   **Pre-elaborare o modificare dati:** Puoi modificare i dati grezzi prima che vengano validati (es. convertire un formato data, pulire una stringa).
+*   **Impostare valori di default dinamici:** Fornire valori predefiniti che dipendono da logiche esterne al form.
 
-[Indice](index.md) | Precedente: [Viste](views.md) | Successivo: [ORM](orm.md)
+### Esempio Pratico
+
+Immaginiamo di voler associare automaticamente un post all'utente loggato, il cui ID è salvato in sessione.
+
+```php
+// In MyBlog/Application/Forms/PostForm.php
+
+protected function injectRequest(): void
+{
+    // La sessione è accessibile tramite $this->session nel form.
+    // Se l'utente è loggato, aggiungiamo il suo ID alla richiesta
+    // sotto la chiave 'authorId'.
+    if ($this->session->has('user_id')) {        
+        $this->addRequest('authorId', $this->session->get('user_id'));
+    }
+}
+```
+
+## L'Oggetto `Request`
+
+La classe `Request` è un wrapper orientato agli oggetti per le variabili superglobali di PHP. Viene iniettata automaticamente nelle action dei controller quando la si dichiara come argomento.
+
+Le sue proprietà pubbliche mappano le superglobali:
+
+* `$request->query`: Corrisponde a `$_GET`.
+* `$request->request`: Corrisponde a `$_POST`.
+* `$request->files`: Corrisponde a `$_FILES`.
+* `$request->cookies`: Corrisponde a `$_COOKIE`.
+* `$request->server`: Corrisponde a `$_SERVER`.
+
+---
+
+[Indice](index.md) | Precedente: [Viste e Template](views.md) | Successivo: [Internazionalizzazione (i18n)](internationalization.md)

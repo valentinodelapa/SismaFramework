@@ -51,6 +51,7 @@ class FixturesManagerTest extends TestCase
         $this->configMock->expects($this->any())
                 ->method('__get')
                 ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', true],
                     ['fixtures', $fixtures],
                     ['fixtureNamespace', 'TestsApplication\\' . $fixtures . '\\'],

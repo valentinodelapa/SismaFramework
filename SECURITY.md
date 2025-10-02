@@ -1,14 +1,14 @@
-# Security Policy
+# Politica di Sicurezza
 
-## Stato attuale: Beta
+## Il nostro impegno per la sicurezza
 
-Questo framework è attualmente in fase di sviluppo beta. Ciò significa che non ci sono ancora versioni stabili rilasciate e l'API potrebbe subire modifiche. Di conseguenza, la nostra attenzione alla sicurezza è massima, ma potrebbero esserci ancora aree da affinare.
+La sicurezza è una priorità assoluta per il progetto SismaFramework. Ci impegniamo a identificare e risolvere tempestivamente le vulnerabilità di sicurezza per proteggere gli sviluppatori e gli utenti che si affidano al nostro framework.
 
-Apprezziamo molto il tuo aiuto nell'identificare potenziali problemi di sicurezza in questa fase iniziale.
+Apprezziamo il contributo della comunità di sicurezza e incoraggiamo la segnalazione responsabile di qualsiasi potenziale problema.
 
 ## Segnalazione di una vulnerabilità
 
-Prendiamo molto seriamente la sicurezza del nostro framework, anche durante la fase beta. Se dovessi riscontrare una vulnerabilità di sicurezza, ti preghiamo di segnalarcela immediatamente.
+Prendiamo molto seriamente la sicurezza del nostro framework. Se dovessi riscontrare una vulnerabilità di sicurezza, ti preghiamo di segnalarcela immediatamente in modo responsabile.
 
 Puoi segnalare una vulnerabilità inviando un'email crittografata con la nostra chiave GPG a **[security@sisma-framework.dev](mailto:security@sisma-framework.dev)**.
 
@@ -74,12 +74,12 @@ Nella tua segnalazione, ti preghiamo di includere i seguenti dettagli per aiutar
 
 * **Descrizione dettagliata della vulnerabilità:** Spiega chiaramente la natura del problema di sicurezza.
 * **Passaggi per riprodurre la vulnerabilità:** Fornisci istruzioni chiare e dettagliate su come è possibile riprodurre la vulnerabilità. Includi eventuali payload o configurazioni specifiche necessarie.
-* **Commit o data dell'ultima versione che hai testato:** Indica il commit specifico della repository o la data dell'ultima versione del codice che hai testato. Questo ci aiuterà a identificare la parte di codice interessata.
+* **Versioni interessate:** Specifica le versioni del framework che ritieni siano affette dalla vulnerabilità.
 * **Potenziale impatto della vulnerabilità:** Descrivi le possibili conseguenze dell'exploit della vulnerabilità (ad esempio, esecuzione di codice arbitrario, divulgazione di informazioni sensibili, denial of service, ecc.).
 * **Eventuali prove di concetto (PoC):** Se possibile, includi un semplice script o una serie di passaggi che dimostrino la vulnerabilità.
 * **Le tue informazioni di contatto:** Se desideri essere aggiornato sullo stato della risoluzione, includi il tuo nome e indirizzo email.
 
-Ti chiediamo di non divulgare pubblicamente la vulnerabilità fino a quando non avremo avuto la possibilità di analizzarla e rilasciare una correzione.
+Ti chiediamo di non divulgare pubblicamente la vulnerabilità fino a quando non avremo avuto la possibilità di analizzarla e rilasciare una correzione (politica di divulgazione coordinata).
 
 ## Quali vulnerabilità sono coperte
 
@@ -94,6 +94,20 @@ Consideriamo vulnerabilità di sicurezza qualsiasi problema che possa compromett
 * **Vulnerabilità nell'ORM integrato** (ad esempio, problemi di escaping delle query, vulnerabilità di iniezione)
 * **Qualsiasi altro problema che possa essere sfruttato per compromettere la sicurezza di un'applicazione basata sul framework.**
 
+## Versioni Supportate
+
+La nostra politica è di fornire aggiornamenti di sicurezza per la versione stabile più recente del framework e supporto limitato alle patch di sicurezza critiche per la major precedente.
+
+| Versione | Supportata | Note |
+|---|---|---|
+| **10.x** | ✅ Supporto completo | Versione stabile corrente |
+| **9.x** | ⚠️ Solo patch di sicurezza critiche | Supporto fino al 2026-01-01 |
+| < 9.0.0 (Beta) | ❌ | Versioni di sviluppo non supportate |
+
+**Nota sulla versione 9.x:** Dopo il rilascio della versione 10.0.0, la serie 9.x riceverà solo patch di sicurezza per vulnerabilità critiche fino al 1° gennaio 2026. Si raccomanda fortemente di pianificare la migrazione alla versione 10.x per beneficiare di tutte le correzioni di sicurezza, i miglioramenti e le nuove funzionalità.
+
+Tutte le versioni precedenti alla 9.0.0 sono considerate versioni di sviluppo (beta) e non sono supportate. Incoraggiamo tutti gli utenti ad aggiornare all'ultima versione stabile per ricevere le patch di sicurezza.
+
 ## Cosa aspettarsi dopo la segnalazione
 
 Una volta ricevuta la tua segnalazione, il nostro team di sviluppo si impegnerà a:
@@ -105,11 +119,13 @@ Una volta ricevuta la tua segnalazione, il nostro team di sviluppo si impegnerà
 
 ## Politica di divulgazione
 
-Durante la fase beta, il nostro approccio alla divulgazione potrebbe essere più flessibile. Potremmo rilasciare correzioni rapidamente senza un annuncio pubblico formale in ogni caso. Tuttavia, per le vulnerabilità più significative, ci impegneremo a comunicare la correzione agli utenti che hanno segnalato il problema e, se appropriato, alla community.
+Seguiamo una politica di divulgazione coordinata. Una volta che una vulnerabilità ci viene segnalata in modo responsabile, lavoreremo con il segnalatore per assicurarci di aver compreso e convalidato il problema. Successivamente, determineremo un lasso di tempo ragionevole per rilasciare una patch.
+
+Il nostro obiettivo è rilasciare una correzione il più rapidamente possibile. Una volta che la patch è disponibile, pubblicheremo un avviso di sicurezza che includerà i dettagli della vulnerabilità e le istruzioni per l'aggiornamento. Daremo credito al ricercatore che ha segnalato il problema, a meno che non desideri rimanere anonimo.
 
 ## Incoraggiamento
 
-Apprezziamo enormemente il tuo aiuto nel rendere questo framework più sicuro durante la sua fase di sviluppo. Il tuo feedback è prezioso!
+Il tuo contributo è fondamentale per mantenere SismaFramework sicuro. Apprezziamo enormemente il tuo aiuto nel rendere questo framework più sicuro per tutta la community. Il tuo feedback è prezioso!
 
 ---
 

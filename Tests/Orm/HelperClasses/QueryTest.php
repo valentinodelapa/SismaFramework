@@ -33,6 +33,7 @@ use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\Enumerations\Statement;
 
 /**
  * Description of QueryTest
@@ -230,7 +231,7 @@ class QueryTest extends TestCase
     public function testSelectSetSubqueryColumn()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        $baseAdapterMock->expects($this->exactly(2))
+        $baseAdapterMock->expects($this->exactly(1))
                 ->method('allColumns')
                 ->willReturn('*');
         $subquery = new Query($baseAdapterMock);
@@ -664,5 +665,20 @@ class QueryTest extends TestCase
                 ->setGroupBy(['columnNameOne', 'columnNameTwo'])
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testInsertIntoEntityWithOnlyId()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->never())
+                ->method('allColumns');
+        $baseAdapterMock->expects($this->never())
+                ->method('escapeColumns');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseInsert')
+                ->with('', [], []);
+        $query = new Query($baseAdapterMock);
+        $query->close();
+        $this->assertEquals('', $query->getCommandToExecute(Statement::insert));
     }
 }

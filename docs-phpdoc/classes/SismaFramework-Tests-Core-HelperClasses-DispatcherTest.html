@@ -61,10 +61,6 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
-                <a href="namespaces/sismaframework-autoload.html" class="">Autoload</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -97,6 +93,16 @@
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="">Config</a>
 </h4>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
+                
+            </li>
+            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -155,7 +161,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">48</span>
+    <span class="phpdocumentor-element-found-in__line">50</span>
 
     </aside>
 
@@ -206,6 +212,12 @@
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_configMock">$configMock</a>
+    <span>
+                        &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_dataMapperMock">$dataMapperMock</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>            </span>
@@ -223,6 +235,12 @@
                         &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a>            </span>
 </dt>
 
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_resourceMakerMock">$resourceMakerMock</a>
+    <span>
+                        &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-ResourceMaker.html"><abbr title="\SismaFramework\Core\HelperClasses\ResourceMaker">ResourceMaker</abbr></a>            </span>
+</dt>
+
     </dl>
 
 <h4 id="toc-methods">
@@ -233,6 +251,12 @@
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_setUp">setUp()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_tearDown">tearDown()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
@@ -262,7 +286,7 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testFileWithStreamContent">testFileWithStreamContent()</a>
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testGerarchicSlug">testGerarchicSlug()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
@@ -293,6 +317,12 @@
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testModuleFileInSubfolder">testModuleFileInSubfolder()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testMultipleGerarchicSlug">testMultipleGerarchicSlug()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
@@ -376,6 +406,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testSimpleSlug">testSimpleSlug()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testStructuralFileFopen">testStructuralFileFopen()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -401,6 +437,42 @@
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="property_configMock">
+        $configMock
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_configMock" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">53</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$configMock</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_dataMapperMock">
         $dataMapperMock
         <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_dataMapperMock" class="headerlink"><i class="fas fa-link"></i></a>
@@ -411,7 +483,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">53</span>
+    <span class="phpdocumentor-element-found-in__line">57</span>
 
     </aside>
 
@@ -447,7 +519,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">52</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -483,7 +555,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">51</span>
+    <span class="phpdocumentor-element-found-in__line">54</span>
 
     </aside>
 
@@ -493,6 +565,42 @@
     <span class="phpdocumentor-signature__visibility">private</span>
         <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a></span>
     <span class="phpdocumentor-signature__name">$requestMock</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_resourceMakerMock">
+        $resourceMakerMock
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_resourceMakerMock" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">55</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-ResourceMaker.html"><abbr title="\SismaFramework\Core\HelperClasses\ResourceMaker">ResourceMaker</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$resourceMakerMock</span>
     </code>
 
     
@@ -524,7 +632,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">59</span>
 
     </aside>
 
@@ -561,6 +669,40 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_tearDown">
+        tearDown()
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_tearDown" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">385</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">tearDown</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_testCrawlComponentMaker">
         testCrawlComponentMaker()
         <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testCrawlComponentMaker" class="headerlink"><i class="fas fa-link"></i></a>
@@ -569,7 +711,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">213</span>
+    <span class="phpdocumentor-element-found-in__line">214</span>
 
     </aside>
 
@@ -603,7 +745,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">130</span>
+    <span class="phpdocumentor-element-found-in__line">150</span>
 
     </aside>
 
@@ -620,17 +762,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testDirectAccessToFile#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -648,7 +779,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">146</span>
+    <span class="phpdocumentor-element-found-in__line">164</span>
 
     </aside>
 
@@ -665,17 +796,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testDirectAccessToFileInRoot#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -693,7 +813,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">372</span>
+    <span class="phpdocumentor-element-found-in__line">350</span>
 
     </aside>
 
@@ -710,17 +830,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testFakePath#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -730,22 +839,22 @@
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_testFileWithStreamContent">
-        testFileWithStreamContent()
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testFileWithStreamContent" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_testGerarchicSlug">
+        testGerarchicSlug()
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testGerarchicSlug" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">162</span>
+    <span class="phpdocumentor-element-found-in__line">367</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testFileWithStreamContent</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">testGerarchicSlug</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -755,17 +864,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testFileWithStreamContent#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -783,7 +881,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">238</span>
+    <span class="phpdocumentor-element-found-in__line">237</span>
 
     </aside>
 
@@ -800,17 +898,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testIndexPath#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -828,7 +915,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">262</span>
+    <span class="phpdocumentor-element-found-in__line">257</span>
 
     </aside>
 
@@ -845,17 +932,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testIndexPathThree#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -873,7 +949,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">250</span>
+    <span class="phpdocumentor-element-found-in__line">247</span>
 
     </aside>
 
@@ -890,17 +966,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testIndexPathTwo#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -918,7 +983,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">98</span>
+    <span class="phpdocumentor-element-found-in__line">124</span>
 
     </aside>
 
@@ -935,17 +1000,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testModuleFile#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -963,7 +1017,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">114</span>
+    <span class="phpdocumentor-element-found-in__line">137</span>
 
     </aside>
 
@@ -980,17 +1034,40 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testModuleFileInSubfolder#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_testMultipleGerarchicSlug">
+        testMultipleGerarchicSlug()
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testMultipleGerarchicSlug" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">376</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">testMultipleGerarchicSlug</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
 
     
 </article>
@@ -1008,7 +1085,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">180</span>
+    <span class="phpdocumentor-element-found-in__line">178</span>
 
     </aside>
 
@@ -1025,17 +1102,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testNotExistentFileFile#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1070,17 +1136,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testNotExistentFileFileInRoot#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1098,7 +1153,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">274</span>
+    <span class="phpdocumentor-element-found-in__line">267</span>
 
     </aside>
 
@@ -1115,17 +1170,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testNotifyPath#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1143,7 +1187,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">286</span>
+    <span class="phpdocumentor-element-found-in__line">277</span>
 
     </aside>
 
@@ -1160,17 +1204,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testOtherIndexPath#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1188,7 +1221,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">349</span>
+    <span class="phpdocumentor-element-found-in__line">330</span>
 
     </aside>
 
@@ -1205,17 +1238,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testPathWithArrayParameter#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1233,7 +1255,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">323</span>
+    <span class="phpdocumentor-element-found-in__line">308</span>
 
     </aside>
 
@@ -1250,17 +1272,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testPathWithAuthenticationParameter#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1278,7 +1289,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">337</span>
+    <span class="phpdocumentor-element-found-in__line">320</span>
 
     </aside>
 
@@ -1295,17 +1306,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testPathWithDefaultValueParameter#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1323,7 +1323,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">363</span>
+    <span class="phpdocumentor-element-found-in__line">342</span>
 
     </aside>
 
@@ -1340,17 +1340,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testPathWithInvalidParameter#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1368,7 +1357,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">298</span>
+    <span class="phpdocumentor-element-found-in__line">287</span>
 
     </aside>
 
@@ -1385,17 +1374,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testPathWithReload#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1413,7 +1391,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">310</span>
+    <span class="phpdocumentor-element-found-in__line">297</span>
 
     </aside>
 
@@ -1430,17 +1408,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testPathWithRequestParameter#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1458,7 +1425,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">226</span>
+    <span class="phpdocumentor-element-found-in__line">227</span>
 
     </aside>
 
@@ -1475,17 +1442,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testRootPath#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1503,7 +1459,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">200</span>
+    <span class="phpdocumentor-element-found-in__line">202</span>
 
     </aside>
 
@@ -1520,17 +1476,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testRunFixture#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1548,7 +1493,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">67</span>
+    <span class="phpdocumentor-element-found-in__line">97</span>
 
     </aside>
 
@@ -1565,17 +1510,40 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testRunWithReloadQueryString#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_testSimpleSlug">
+        testSimpleSlug()
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testSimpleSlug" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">358</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">testSimpleSlug</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
 
     
 </article>
@@ -1593,7 +1561,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/DispatcherTest.php"><a href="files/tests-core-helperclasses-dispatchertest.html"><abbr title="Tests/Core/HelperClasses/DispatcherTest.php">DispatcherTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">83</span>
+    <span class="phpdocumentor-element-found-in__line">111</span>
 
     </aside>
 
@@ -1610,17 +1578,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testStructuralFileFopen#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -1737,9 +1694,11 @@
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_configMock">$configMock</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_dataMapperMock">$dataMapperMock</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_fixturesManagerMock">$fixturesManagerMock</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_requestMock">$requestMock</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_resourceMakerMock">$resourceMakerMock</a></li>
                                             </ul>
                 </li>
             
@@ -1747,16 +1706,18 @@
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_setUp">setUp()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_tearDown">tearDown()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testCrawlComponentMaker">testCrawlComponentMaker()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testDirectAccessToFile">testDirectAccessToFile()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testDirectAccessToFileInRoot">testDirectAccessToFileInRoot()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testFakePath">testFakePath()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testFileWithStreamContent">testFileWithStreamContent()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testGerarchicSlug">testGerarchicSlug()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testIndexPath">testIndexPath()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testIndexPathThree">testIndexPathThree()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testIndexPathTwo">testIndexPathTwo()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testModuleFile">testModuleFile()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testModuleFileInSubfolder">testModuleFileInSubfolder()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testMultipleGerarchicSlug">testMultipleGerarchicSlug()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testNotExistentFileFile">testNotExistentFileFile()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testNotExistentFileFileInRoot">testNotExistentFileFileInRoot()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testNotifyPath">testNotifyPath()</a></li>
@@ -1770,6 +1731,7 @@
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testRootPath">testRootPath()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testRunFixture">testRunFixture()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testRunWithReloadQueryString">testRunWithReloadQueryString()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testSimpleSlug">testSimpleSlug()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_testStructuralFileFopen">testStructuralFileFopen()</a></li>
                                     </ul>
             </li>

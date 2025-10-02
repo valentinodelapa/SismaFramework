@@ -29,12 +29,14 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Session;
+use SismaFramework\Core\HttpClasses\Request;
 
 /**
  * @author Valentino de Lapa
  */
 class SessionTest extends TestCase
 {
+    private Request $requestMock;
 
     public function setUp(): void
     {
@@ -47,16 +49,24 @@ class SessionTest extends TestCase
         ]);
         Config::setInstance($configMock);
         Session::end();
+        $this->requestMock = $this->getMockBuilder(Request::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+        $this->requestMock->server = [
+            'HTTP_HOST' => '',
+            'HTTP_USER_AGENT' => '',
+            'REMOTE_ADDR' => '',
+        ];
     }
 
     public function testSessionStart()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-        Session::start();
+        Session::start($this->requestMock);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
         Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-        $session = new Session();
+        $session = new Session($this->requestMock);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
         unset($session);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
@@ -65,7 +75,7 @@ class SessionTest extends TestCase
     public function testSessionSetUnsetSampleItemStatic()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-        Session::start();
+        Session::start($this->requestMock);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
         $this->assertArrayNotHasKey('test', $_SESSION);
         Session::setItem('test', 'value');
@@ -82,7 +92,7 @@ class SessionTest extends TestCase
 
     public function testSessionSetUnsetSampleItemObject()
     {
-        $session = new Session();
+        $session = new Session($this->requestMock);
         $this->assertArrayNotHasKey('test', $_SESSION);
         $session->test = 'value';
         $this->assertArrayHasKey('test', $_SESSION);
@@ -100,7 +110,7 @@ class SessionTest extends TestCase
     {
         Session::end();
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-        Session::start();
+        Session::start($this->requestMock);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
         $this->assertArrayNotHasKey('test', $_SESSION);
         Session::setItem('test[one][two]', 'valueOne');
@@ -138,7 +148,7 @@ class SessionTest extends TestCase
     public function testSessionAppendSimpleItem()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-        Session::start();
+        Session::start($this->requestMock);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
         $this->assertArrayNotHasKey('test', $_SESSION);
         Session::setItem('test[0]', 'valueOne');
@@ -161,7 +171,7 @@ class SessionTest extends TestCase
     public function testSessionAppendNestedItem()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
-        Session::start();
+        Session::start($this->requestMock);
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
         $this->assertArrayNotHasKey('test', $_SESSION);
         Session::setItem('test[one][0]', 'valueOne');

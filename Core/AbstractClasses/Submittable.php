@@ -43,10 +43,10 @@ abstract class Submittable
     {
         $this->formFilterError = new FormFilterError();
     }
-
+    
     public function isSubmitted(): bool
     {
-        return isset($this->request->request['submitted']);
+        return isset($this->request->input['submitted']);
     }
     
     public function getFilterErrors(): FormFilterError

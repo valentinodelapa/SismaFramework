@@ -32,6 +32,7 @@ use SismaFramework\Core\Exceptions\AccessDeniedException;
 use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
 
 /**
  * Description of ResourceMakerTest
@@ -54,13 +55,13 @@ class ResourceMakerTest extends TestCase
                 ->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', false],
-                    ['fileGetContentMaxBytesLimit', 10],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
                     ['logPath', $logDirectoryPath . 'log.txt'],
                     ['logProductionMaxRow', 2],
                     ['logVerboseActive', true],
-                    ['readfileMaxBytesLimit', 1000],
+                    ['customRenderableResourceTypes', ['md' => 'text/markdown']],
+                    ['customDownloadableResourceTypes', []],
         ]);
         Config::setInstance($this->configMock);
         $this->lockerMock = $this->createMock(Locker::class);
@@ -86,7 +87,7 @@ class ResourceMakerTest extends TestCase
                 ->willReturn(false);
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+        $this->assertInstanceOf(Response::class, $resourceMaker->makeResource($filePath, false, $this->lockerMock));
     }
 
     public function testMakeResourceNotDownloadable()
@@ -102,7 +103,7 @@ class ResourceMakerTest extends TestCase
                 ->willReturn(false);
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource($filePath, true, $this->lockerMock);
+        $this->assertInstanceOf(Response::class, $resourceMaker->makeResource($filePath, true, $this->lockerMock));
     }
 
     public function testMakeResourceWithFileNotAccessible()
@@ -114,7 +115,7 @@ class ResourceMakerTest extends TestCase
                 ->willReturn(true);
         $resourceMaker = new ResourceMaker();
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+        $this->assertInstanceOf(Response::class, $resourceMaker->makeResource($filePath, false, $this->lockerMock));
     }
 
     public function testMakeResourceWithFolderNotAccessible()
@@ -130,10 +131,10 @@ class ResourceMakerTest extends TestCase
                 ->willReturn(true);
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $this->expectException(AccessDeniedException::class);
-        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+        $this->assertInstanceOf(Response::class, $resourceMaker->makeResource($filePath, false, $this->lockerMock));
     }
 
-    public function testMakeResourceViaFileGetContent()
+    public function testMakeResource()
     {
         $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/sample.css';
         $this->lockerMock->expects($this->once())
@@ -146,12 +147,12 @@ class ResourceMakerTest extends TestCase
                 ->willReturn(false);
         $this->expectOutputString(file_get_contents($filePath));
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
-        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+        $this->assertInstanceOf(Response::class, $resourceMaker->makeResource($filePath, false, $this->lockerMock));
     }
-
-    public function testMakeResourceViaReadFile()
+    
+    public function testMakeResourceWithCustomResourceType()
     {
-        $filePath = __DIR__ . '/../../../TestsApplication/Assets/vendor/sample-vendor/sample-vendor.css';
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/markdown/sample.md';
         $this->lockerMock->expects($this->once())
                 ->method('fileIsLocked')
                 ->with($filePath)
@@ -162,40 +163,6 @@ class ResourceMakerTest extends TestCase
                 ->willReturn(false);
         $this->expectOutputString(file_get_contents($filePath));
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
-        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
-    }
-
-    public function testMakeResourceViaFopen()
-    {
-        $filePath = __DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js';
-        $this->lockerMock->expects($this->once())
-                ->method('fileIsLocked')
-                ->with($filePath)
-                ->willReturn(false);
-        $this->lockerMock->expects($this->once())
-                ->method('folderIsLocked')
-                ->with(dirname($filePath))
-                ->willReturn(false);
-        $this->expectOutputString(file_get_contents($filePath));
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
-        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
-    }
-
-    public function testFileWithStreamContent()
-    {
-        $filePath = __DIR__ . '/../../../TestsApplication/Assets/javascript/sample.js';
-        $this->lockerMock->expects($this->once())
-                ->method('fileIsLocked')
-                ->with($filePath)
-                ->willReturn(false);
-        $this->lockerMock->expects($this->once())
-                ->method('folderIsLocked')
-                ->with(dirname($filePath))
-                ->willReturn(false);
-        $this->expectOutputString(file_get_contents($filePath));
-        $_SERVER['QUERY_STRING'] = 'resource=resource';
-        $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
-        $resourceMaker->setStreamContex();
-        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+        $this->assertInstanceOf(Response::class, $resourceMaker->makeResource($filePath, false, $this->lockerMock));
     }
 }

@@ -104,6 +104,7 @@ class Config
     /* Entities Constant */
     protected readonly string $entityPath;
     protected readonly string $entityNamespace;
+    protected readonly string $defaultPrimaryKeyPropertyName;
     protected readonly string $foreignKeySuffix;
     protected readonly string $parentPrefixPropertyName;
     protected readonly string $sonCollectionPropertyName;
@@ -121,8 +122,8 @@ class Config
     protected readonly string $controllerNamespace;
     protected readonly string $defaultControllerPath;
     protected readonly string $defaultControllerNamespace;
-    protected readonly int $fileGetContentMaxBytesLimit;
-    protected readonly int $readfileMaxBytesLimit;
+    protected readonly array $customRenderableResourceTypes;
+    protected readonly array $customDownloadableResourceTypes;
 
     /* Render Constant */
     protected readonly string $localesPath;

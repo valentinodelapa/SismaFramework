@@ -1,41 +1,53 @@
 # Indice
 
-* [Introduzione](overview.md)
+* **Tutorial**
 
-* [Installazione](installation.md)
+  * [**Guida Introduttiva: Creare un Mini-Blog**](getting-started.md)
 
-* [Struttura cartella di progetto](project-folder-structure.md)
+* **Concetti Fondamentali**
 
-* [Controllori](controllers.md)
-  
-  * [Classe Render](controllers.md#classe-render)
-  
-  * [Classe Router](controllers.md#classe-router)
+  * [Introduzione al Framework](overview.md)
+  * [Installazione e Configurazione](installation.md)
+  * [Architettura a Moduli](module-architecture.md)
+  * [Riepilogo delle Convenzioni](conventions.md)
 
-* [Viste](views.md)
-  
-  * [Templates](views.md#templates)
+* **Le Basi**
 
-* [Forms](forms.md)
-  
-  * [Request](forms.md#request)
+  * [Controllori](controllers.md)
+  * [Viste e Template](views.md)
+  * [Gestione dei Form](forms.md)
+  * [Internazionalizzazione (i18n)](internationalization.md)
+  * [Gestione degli Asset Statici](static-assets.md)
 
-* [ORM](orm.md)
-  
-  * [Entità](orm-entities.md)
-  
-  * [Modelli](orm-models.md)
-  
-  * [Funzionalità aggiuntive](orm-additional-features.md)
+* **Database e ORM**
 
-* [Sicurezza](security-component.md)
-  
-  * [Voters](security-component.md#voters)
-  
-  * [Permissions](security-component.md#permissions)
-  
-  * [Authentications](security-component.md#authentications)
+  * [Introduzione all'ORM (Data Mapper)](orm.md)
+  * [Funzionalità Avanzate dell'ORM](orm-additional-features.md)
 
-* [Barra di debug](debug-bar.md)
+* **Sicurezza**
 
+  * [Sicurezza](security.md)
 
+* **Strumenti di Sviluppo**
+
+  * [Barra di Debug](debug-bar.md)
+  * [Data Fixtures](data-fixtures.md)
+  * [Gestione Errori e Logging](error-handling-and-logging.md)
+  * [Testing](testing.md)
+
+* **Guide Avanzate**
+
+  * [Best Practices](best-practices.md)
+  * [Deployment in Produzione](deployment.md)
+  * [Troubleshooting](troubleshooting.md)
+
+* **API e Riferimenti Tecnici**
+
+  * [API Reference](api-reference.md)
+  * [Helper Classes](helper-classes.md)
+  * [Custom Types](custom-types.md)
+  * [Enumerations](enumerations.md)
+  * [Traits per Enumerazioni](traits.md)
+  * [Configuration Reference](configuration-reference.md)
+  * [Advanced ORM](advanced-orm.md)
+  * [Performance Guide](performance.md)

@@ -62,6 +62,7 @@ class AdapterMysqlTest extends TestCase
                 ->method('__get')
                 ->willReturnMap([
                     ['defaultAdapterType', AdapterType::mysql],
+                    ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
