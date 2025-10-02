@@ -61,10 +61,6 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
-                <a href="namespaces/sismaframework-autoload.html" class="">Autoload</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -97,6 +93,16 @@
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="">Config</a>
 </h4>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
+                
+            </li>
+            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -217,6 +223,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_config">$config</a>
+    <span>
+                        &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper">$dataMapper</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>            </span>
@@ -241,7 +253,7 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
-    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKey">$primaryKey</a>
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKeyPropertyName">$primaryKeyPropertyName</a>
     <span>
                         &nbsp;: string            </span>
 </dt>
@@ -262,12 +274,6 @@
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns">$encryptedColumns</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptionPassphrase">$encryptionPassphrase</a>
-    <span>
-                        &nbsp;: string            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
@@ -334,6 +340,12 @@
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isEncryptedProperty">isEncryptedProperty()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isInitializationVector">isInitializationVector()</a>
     <span>
                                 &nbsp;: bool    </span>
 </dt>
@@ -482,7 +494,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">56</span>
+    <span class="phpdocumentor-element-found-in__line">57</span>
 
     </aside>
 
@@ -518,7 +530,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -544,6 +556,42 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="property_config">
+        $config
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_config" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">59</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$config</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_dataMapper">
         $dataMapper
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper" class="headerlink"><i class="fas fa-link"></i></a>
@@ -554,7 +602,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">57</span>
+    <span class="phpdocumentor-element-found-in__line">58</span>
 
     </aside>
 
@@ -626,7 +674,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">60</span>
+    <span class="phpdocumentor-element-found-in__line">62</span>
 
     </aside>
 
@@ -662,7 +710,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">61</span>
+    <span class="phpdocumentor-element-found-in__line">63</span>
 
     </aside>
 
@@ -688,9 +736,9 @@
             -protected
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="property_primaryKey">
-        $primaryKey
-        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKey" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="property_primaryKeyPropertyName">
+        $primaryKeyPropertyName
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKeyPropertyName" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                 </span>
@@ -698,7 +746,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">59</span>
+    <span class="phpdocumentor-element-found-in__line">61</span>
 
     </aside>
 
@@ -707,8 +755,8 @@
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
         <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$primaryKey</span>
-     = <span class="phpdocumentor-signature__default-value">&#039;id&#039;</span></code>
+    <span class="phpdocumentor-signature__name">$primaryKeyPropertyName</span>
+    </code>
 
     
     
@@ -734,7 +782,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">58</span>
+    <span class="phpdocumentor-element-found-in__line">60</span>
 
     </aside>
 
@@ -806,7 +854,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
@@ -817,42 +865,6 @@
         <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
     <span class="phpdocumentor-signature__name">$encryptedColumns</span>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_encryptionPassphrase">
-        $encryptionPassphrase
-        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptionPassphrase" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">64</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$encryptionPassphrase</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\ENCRYPTION_PASSPHRASE</span></code>
 
     
     
@@ -878,7 +890,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">63</span>
+    <span class="phpdocumentor-element-found-in__line">65</span>
 
     </aside>
 
@@ -919,14 +931,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">66</span>
+    <span class="phpdocumentor-element-found-in__line">67</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$processedEntitesCollection</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$processedEntitesCollection</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -944,6 +956,13 @@
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-signature__argument__name">$processedEntitesCollection</span>
                 : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$config</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
                  = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -970,7 +989,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">85</span>
+    <span class="phpdocumentor-element-found-in__line">88</span>
 
     </aside>
 
@@ -1014,7 +1033,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">212</span>
+    <span class="phpdocumentor-element-found-in__line">215</span>
 
     </aside>
 
@@ -1058,7 +1077,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">121</span>
+    <span class="phpdocumentor-element-found-in__line">124</span>
 
     </aside>
 
@@ -1109,7 +1128,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">101</span>
+    <span class="phpdocumentor-element-found-in__line">104</span>
 
     </aside>
 
@@ -1157,7 +1176,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">255</span>
+    <span class="phpdocumentor-element-found-in__line">263</span>
 
     </aside>
 
@@ -1195,7 +1214,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">233</span>
+    <span class="phpdocumentor-element-found-in__line">241</span>
 
     </aside>
 
@@ -1233,7 +1252,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">250</span>
+    <span class="phpdocumentor-element-found-in__line">258</span>
 
     </aside>
 
@@ -1271,7 +1290,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">228</span>
+    <span class="phpdocumentor-element-found-in__line">231</span>
 
     </aside>
 
@@ -1311,6 +1330,54 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_isInitializationVector">
+        isInitializationVector()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isInitializationVector" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">236</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">isInitializationVector</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_isPrimaryKey">
         isPrimaryKey()
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isPrimaryKey" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1319,7 +1386,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">240</span>
+    <span class="phpdocumentor-element-found-in__line">248</span>
 
     </aside>
 
@@ -1367,7 +1434,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">116</span>
+    <span class="phpdocumentor-element-found-in__line">119</span>
 
     </aside>
 
@@ -1411,7 +1478,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">245</span>
+    <span class="phpdocumentor-element-found-in__line">253</span>
 
     </aside>
 
@@ -1455,7 +1522,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">260</span>
+    <span class="phpdocumentor-element-found-in__line">268</span>
 
     </aside>
 
@@ -1493,7 +1560,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">80</span>
+    <span class="phpdocumentor-element-found-in__line">83</span>
 
     </aside>
 
@@ -1527,7 +1594,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">222</span>
+    <span class="phpdocumentor-element-found-in__line">225</span>
 
     </aside>
 
@@ -1575,7 +1642,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">95</span>
+    <span class="phpdocumentor-element-found-in__line">98</span>
 
     </aside>
 
@@ -1623,7 +1690,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">106</span>
+    <span class="phpdocumentor-element-found-in__line">109</span>
 
     </aside>
 
@@ -1667,7 +1734,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">272</span>
+    <span class="phpdocumentor-element-found-in__line">280</span>
 
     </aside>
 
@@ -1801,7 +1868,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">130</span>
+    <span class="phpdocumentor-element-found-in__line">133</span>
 
     </aside>
 
@@ -1852,7 +1919,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">198</span>
+    <span class="phpdocumentor-element-found-in__line">201</span>
 
     </aside>
 
@@ -1914,7 +1981,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">205</span>
+    <span class="phpdocumentor-element-found-in__line">208</span>
 
     </aside>
 
@@ -1976,7 +2043,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">165</span>
+    <span class="phpdocumentor-element-found-in__line">168</span>
 
     </aside>
 
@@ -2027,7 +2094,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">172</span>
+    <span class="phpdocumentor-element-found-in__line">175</span>
 
     </aside>
 
@@ -2078,7 +2145,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">156</span>
+    <span class="phpdocumentor-element-found-in__line">159</span>
 
     </aside>
 
@@ -2129,7 +2196,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">181</span>
+    <span class="phpdocumentor-element-found-in__line">184</span>
 
     </aside>
 
@@ -2173,7 +2240,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">189</span>
+    <span class="phpdocumentor-element-found-in__line">192</span>
 
     </aside>
 
@@ -2332,15 +2399,15 @@
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeys">$foreignKeys</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_modified">$modified</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_config">$config</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper">$dataMapper</a></li>
                                                     <li class=""><a href="classes/SismaFramework-TestsApplication-Entities-SimpleEntity.html#property_id">$id</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_initializationVectorPropertyName">$initializationVectorPropertyName</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_isActiveTransaction">$isActiveTransaction</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKey">$primaryKey</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKeyPropertyName">$primaryKeyPropertyName</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_processedEntitesCollection">$processedEntitesCollection</a></li>
                                                     <li class=""><a href="classes/SismaFramework-TestsApplication-Entities-SimpleEntity.html#property_string">$string</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns">$encryptedColumns</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptionPassphrase">$encryptionPassphrase</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyIndexes">$foreignKeyIndexes</a></li>
                                             </ul>
                 </li>
@@ -2357,6 +2424,7 @@
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getInitializationVectorPropertyName">getInitializationVectorPropertyName()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getPrimaryKeyPropertyName">getPrimaryKeyPropertyName()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isEncryptedProperty">isEncryptedProperty()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isInitializationVector">isInitializationVector()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isPrimaryKey">isPrimaryKey()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setPrimaryKeyAfterSave">setPrimaryKeyAfterSave()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setPrimaryKeyPropertyName">setPrimaryKeyPropertyName()</a></li>

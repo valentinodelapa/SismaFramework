@@ -61,10 +61,6 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
-                <a href="namespaces/sismaframework-autoload.html" class="">Autoload</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -97,6 +93,16 @@
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="">Config</a>
 </h4>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
+                
+            </li>
+            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -151,7 +157,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">40</span>
+    <span class="phpdocumentor-element-found-in__line">41</span>
 
     </aside>
 
@@ -194,25 +200,6 @@
 
 
 
-<h4 id="toc-properties">
-    Properties
-    <a href="classes/SismaFramework-Core-HelperClasses-Parser.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
-
-</h4>
-<dl class="phpdocumentor-table-of-contents">
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Parser.html#property_entityNamespace">$entityNamespace</a>
-    <span>
-                        &nbsp;: string            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Parser.html#property_modelNamespace">$modelNamespace</a>
-    <span>
-                        &nbsp;: string            </span>
-</dt>
-
-    </dl>
 
 <h4 id="toc-methods">
     Methods
@@ -239,6 +226,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_simpleParseValue">simpleParseValue()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_unparseValue">unparseValue()</a>
     <span>
                                 &nbsp;: null|int|float|string    </span>
@@ -257,85 +250,6 @@
         
 
         
-    <section class="phpdocumentor-properties">
-        <h3 class="phpdocumentor-elements__header" id="properties">
-            Properties
-            <a href="classes/SismaFramework-Core-HelperClasses-Parser.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h3>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_entityNamespace">
-        $entityNamespace
-        <a href="classes/SismaFramework-Core-HelperClasses-Parser.html#property_entityNamespace" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">42</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$entityNamespace</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\ENTITY_NAMESPACE</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_modelNamespace">
-        $modelNamespace
-        <a href="classes/SismaFramework-Core-HelperClasses-Parser.html#property_modelNamespace" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">43</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$modelNamespace</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\MODEL_NAMESPACE</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-            </section>
 
             <section class="phpdocumentor-methods">
         <h3 class="phpdocumentor-elements__header" id="methods">
@@ -357,14 +271,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">73</span>
+    <span class="phpdocumentor-element-found-in__line">77</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">parseEntity</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entityName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">parseEntity</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entityName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customConfig</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -390,6 +304,13 @@
                 <span class="phpdocumentor-signature__argument__name">$dataMapper</span>
                 : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
                  = <span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$customConfig</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -419,7 +340,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">85</span>
+    <span class="phpdocumentor-element-found-in__line">90</span>
 
     </aside>
 
@@ -474,14 +395,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">45</span>
+    <span class="phpdocumentor-element-found-in__line">44</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">parseValue</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">null|string|array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$parseEntity</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">true</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">parseValue</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">null|string|array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$parseEntity</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">true</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customConfig</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -517,6 +438,64 @@
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$customConfig</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
+    <h4 class="phpdocumentor-element__name" id="method_simpleParseValue">
+        simpleParseValue()
+        <a href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_simpleParseValue" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">124</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">simpleParseValue</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">null|string|array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">null|string|array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
             </dl>
 
     
@@ -539,7 +518,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">102</span>
+    <span class="phpdocumentor-element-found-in__line">107</span>
 
     </aside>
 
@@ -587,7 +566,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Parser.php"><a href="files/core-helperclasses-parser.html"><abbr title="Core/HelperClasses/Parser.php">Parser.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">95</span>
+    <span class="phpdocumentor-element-found-in__line">100</span>
 
     </aside>
 
@@ -722,18 +701,10 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                                            <li><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#toc-properties">Properties</a></li>
-                                                            <li><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#toc-methods">Methods</a></li>
+                                                                                <li><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
             
-                            <li class="phpdocumentor-on-this-page-section__title">Properties</li>
-                <li>
-                    <ul class="phpdocumentor-list -clean">
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#property_entityNamespace">$entityNamespace</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#property_modelNamespace">$modelNamespace</a></li>
-                                            </ul>
-                </li>
             
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
@@ -741,6 +712,7 @@
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_parseEntity">parseEntity()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_parseEnumeration">parseEnumeration()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_parseValue">parseValue()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_simpleParseValue">simpleParseValue()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_unparseValue">unparseValue()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Parser.html#method_unparseValues">unparseValues()</a></li>
                                     </ul>

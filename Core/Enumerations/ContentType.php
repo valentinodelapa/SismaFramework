@@ -39,6 +39,7 @@ enum ContentType
     case applicationJavascript;
     case applicationJsm;
     case applicationJson;
+    case applicationMsword;
     case applicationPdf;
     case applicationPhp;
     case applicationPpt;

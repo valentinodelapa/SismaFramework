@@ -1,28 +1,35 @@
-# Funzionalità aggiuntive
+# Funzionalità Avanzate dell'ORM
 
-Sono presenti alcune funzionalità aggiuntive che supportano il funzionamento della componente ORM fornendo alcuni utili meccanismi di semplifazione e/o automazione 
+Oltre alle operazioni CRUD di base, l'ORM di SismaFramework offre diverse funzionalità avanzate che migliorano le performance, la sicurezza e l'integrità dei dati.
 
-## Caching delle entità
+## Identity Map (Cache per Richiesta)
 
-Ogni volta che un ringolo record viene richiamato da una tabella del database e trasformata in entità essa viene depositata in una cache virtuale che sfrutta il meccanismo per mezzo del quale nel linguaggio PHP ogni oggetto passato come parametro viene passato per riferimento.
+L'ORM implementa il pattern **Identity Map**. Questo significa che mantiene una cache interna di tutte le entità caricate durante il ciclo di vita di una singola richiesta HTTP.
 
-Tale meccanismo permette di diminuire le chiamate al database ponendo tale cache come livello intermedio tra il database l'ORM: la query verrà eseguita solo se, in quel determinato ciclo del programma, non vi è in cache l'entità corrispondente al record richiesto.
+I vantaggi sono due:
+1.  **Performance:** Se richiedi la stessa entità più volte (es. `find(42)` in punti diversi del codice), la query al database verrà eseguita solo la prima volta. Le richieste successive restituiranno l'oggetto già presente in memoria, riducendo drasticamente le query duplicate.
+2.  **Coerenza:** Garantisce che esista una sola istanza di un'entità specifica per richiesta. Se modifichi un'entità in una parte del codice, la modifica sarà visibile in qualsiasi altro punto che fa riferimento a quella stessa entità, prevenendo dati inconsistenti.
 
-## Auto-determinazione delle relazioni inverse delle entità
+Questa cache è automatica e non richiede configurazione.
 
-È presente un meccanismo che, scorrendo le entità presenti nei vari moduli del progetto (ed a tal scopo utilizza le costanti `ROOT_PATH`, `ENTITY_PATH `ed `ENTITY_NAMESPACE `presenti nel file di configurazione), è in grado di generare un file json che rappresenta la rete di relazioni inverse delle entità. Questa funzionalità permette la generazione automatica delle collezioni di oggetti (meccanismo descritto nel paragrafo Entità referenziate) e permette di implementare un meccanismo di blocco in fase di cancellazione utile a garantire l'integrità referenziale a livello di applicazione (è possibile utilizzare a tal scopo la classe `ReferencedEntityDeletionPermission`, il cui funzionamento viene analizzato nel capitolo Permissions).
+## Generazione Cache delle Relazioni
 
-La costante che indica il percorso nel quale la libreria salverà il file json è indicato da due costanti presenti nel file di configurazione:
+Le funzionalità "magiche" dell'ORM, come le collezioni inverse (es. `$user->postCollection`), sono possibili grazie a un file di cache, `referenceCache.json`.
+
+Questo file contiene una mappa di tutte le relazioni tra le entità del tuo progetto. Viene generato automaticamente dal framework analizzando le proprietà tipizzate delle tue classi `Entity`.
+
+Questa cache è fondamentale per:
+-   **Risolvere le relazioni inverse:** Permette all'ORM di sapere che `postCollection` su un'entità `User` deve cercare tutte le entità `Post` la cui proprietà `author` è l'utente corrente.
+-   **Proteggere l'integrità referenziale:** Viene usata dal componente di Sicurezza (in particolare dalla classe `ReferencedEntityDeletionPermission`) per impedire l'eliminazione di un'entità se è ancora referenziata da altre.
+
+Il percorso di questo file è definito nel file `Config/config.php` tramite le costanti `REFERENCE_CACHE_DIRECTORY` e `REFERENCE_CACHE_PATH`. Per impostazione predefinita, si trova in:
 
 ```php
-...
-const REFERENCE_CACHE_DIRECTORY = '';
-const REFERENCE_CACHE_PATH = '';
-...
+SismaFramework/Application/Cache/referenceCache.json
 ```
+
+Se questo file diventa obsoleto (ad esempio, dopo aver aggiunto una nuova relazione), puoi semplicemente eliminarlo. Il framework lo rigenererà automaticamente alla richiesta successiva.
 
 * * *
 
-[Indice](index.md) | Precedente: [Modelli](orm-models.md) | Successivo: [Sicurezza](security-component.md)
-
-
+[Indice](index.md) | Precedente: [Introduzione all'ORM](orm.md) | Successivo: [Sicurezza](security.md)

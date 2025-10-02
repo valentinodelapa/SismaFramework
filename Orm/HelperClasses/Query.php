@@ -111,9 +111,7 @@ class Query
 
     public function &setColumn(?string $column = null): self
     {
-        if ($column === null) {
-            $this->columns = [$this->adapter->allColumns()];
-        } else {
+        if ($column !== null) {
             $this->columns = [$this->adapter->escapeColumn($column)];
         }
         return $this;
@@ -340,7 +338,6 @@ class Query
 
     public function close(): void
     {
-        $this->initializeColumn();
         $this->closed = true;
     }
 
@@ -376,7 +373,7 @@ class Query
                     break;
                 case Statement::select:
                 default:
-                    $this->command = $this->adapter->parseSelect($this->distinct, $this->columns, $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
+                    $this->command = $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns()], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
                     break;
             }
             return $this->command;

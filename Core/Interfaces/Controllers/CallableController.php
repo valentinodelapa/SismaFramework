@@ -35,5 +35,5 @@ interface CallableController
 
     public function __call(string $name, array $arguments);
 
-    public function checkCompatibility(array $arguments): bool;
+    public static function checkCompatibility(array $arguments): bool;
 }

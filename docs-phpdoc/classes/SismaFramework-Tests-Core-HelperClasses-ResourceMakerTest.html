@@ -61,10 +61,6 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
-                <a href="namespaces/sismaframework-autoload.html" class="">Autoload</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -97,6 +93,16 @@
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="">Config</a>
 </h4>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
+                
+            </li>
+            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -155,7 +161,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">40</span>
+    <span class="phpdocumentor-element-found-in__line">42</span>
 
     </aside>
 
@@ -206,9 +212,21 @@
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_configMock">$configMock</a>
+    <span>
+                        &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_lockerMock">$lockerMock</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-Locker.html"><abbr title="\SismaFramework\Core\HelperClasses\Locker">Locker</abbr></a>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_requestMock">$requestMock</a>
+    <span>
+                        &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a>            </span>
 </dt>
 
     </dl>
@@ -226,13 +244,13 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testFileWithStreamContent">testFileWithStreamContent()</a>
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testIsAcceptedResourceFile">testIsAcceptedResourceFile()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testIsAcceptedResourceFile">testIsAcceptedResourceFile()</a>
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResource">testMakeResource()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
@@ -250,19 +268,7 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaFileGetContent">testMakeResourceViaFileGetContent()</a>
-    <span>
-                                &nbsp;: mixed    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaFopen">testMakeResourceViaFopen()</a>
-    <span>
-                                &nbsp;: mixed    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaReadFile">testMakeResourceViaReadFile()</a>
+    <a class="" href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithCustomResourceType">testMakeResourceWithCustomResourceType()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
@@ -299,6 +305,42 @@
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="property_configMock">
+        $configMock
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_configMock" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">47</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$configMock</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_lockerMock">
         $lockerMock
         <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_lockerMock" class="headerlink"><i class="fas fa-link"></i></a>
@@ -309,7 +351,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">43</span>
+    <span class="phpdocumentor-element-found-in__line">45</span>
 
     </aside>
 
@@ -319,6 +361,42 @@
     <span class="phpdocumentor-signature__visibility">private</span>
         <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-Locker.html"><abbr title="\SismaFramework\Core\HelperClasses\Locker">Locker</abbr></a></span>
     <span class="phpdocumentor-signature__name">$lockerMock</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_requestMock">
+        $requestMock
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_requestMock" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">46</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$requestMock</span>
     </code>
 
     
@@ -350,7 +428,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">45</span>
+    <span class="phpdocumentor-element-found-in__line">49</span>
 
     </aside>
 
@@ -376,51 +454,6 @@
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_testFileWithStreamContent">
-        testFileWithStreamContent()
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testFileWithStreamContent" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">176</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testFileWithStreamContent</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-    
-    
-
-    
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testFileWithStreamContent#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
-
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
     <h4 class="phpdocumentor-element__name" id="method_testIsAcceptedResourceFile">
         testIsAcceptedResourceFile()
         <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testIsAcceptedResourceFile" class="headerlink"><i class="fas fa-link"></i></a>
@@ -429,7 +462,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">50</span>
+    <span class="phpdocumentor-element-found-in__line">70</span>
 
     </aside>
 
@@ -446,17 +479,40 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testIsAcceptedResourceFile#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_testMakeResource">
+        testMakeResource()
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResource" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">137</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">testMakeResource</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
 
     
 </article>
@@ -474,7 +530,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">75</span>
+    <span class="phpdocumentor-element-found-in__line">93</span>
 
     </aside>
 
@@ -491,17 +547,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceNotDownloadable#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -519,7 +564,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">58</span>
+    <span class="phpdocumentor-element-found-in__line">77</span>
 
     </aside>
 
@@ -536,17 +581,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceNotRenderable#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -556,22 +590,22 @@
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_testMakeResourceViaFileGetContent">
-        testMakeResourceViaFileGetContent()
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaFileGetContent" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_testMakeResourceWithCustomResourceType">
+        testMakeResourceWithCustomResourceType()
+        <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithCustomResourceType" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">122</span>
+    <span class="phpdocumentor-element-found-in__line">153</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testMakeResourceViaFileGetContent</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">testMakeResourceWithCustomResourceType</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -581,107 +615,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaFileGetContent#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
-
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_testMakeResourceViaFopen">
-        testMakeResourceViaFopen()
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaFopen" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">157</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testMakeResourceViaFopen</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-    
-    
-
-    
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaFopen#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
-
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_testMakeResourceViaReadFile">
-        testMakeResourceViaReadFile()
-        <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaReadFile" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">139</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testMakeResourceViaReadFile</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-    
-    
-
-    
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaReadFile#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -699,7 +632,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">92</span>
+    <span class="phpdocumentor-element-found-in__line">109</span>
 
     </aside>
 
@@ -716,17 +649,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithFileNotAccessible#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -744,7 +666,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Tests/Core/HelperClasses/ResourceMakerTest.php"><a href="files/tests-core-helperclasses-resourcemakertest.html"><abbr title="Tests/Core/HelperClasses/ResourceMakerTest.php">ResourceMakerTest.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">105</span>
+    <span class="phpdocumentor-element-found-in__line">121</span>
 
     </aside>
 
@@ -761,17 +683,6 @@
     
 
     
-    <section class="phpdocumentor-attributes">
-        <h5 class="phpdocumentor-elements__header" id="attributes">
-            Attributes <a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithFolderNotAccessible#attributes" class="headerlink"><i class="fas fa-link"></i></a>
-
-        </h5>
-                    <dl class="phpdocumentor-argument-list">
-    <dt class="phpdocumentor-argument-list__entry">
-        #[<abbr title="\PHPUnit\Framework\Attributes\RunInSeparateProcess">RunInSeparateProcess</abbr>]
-    </dt>
-    </dl>
-            </section>
 
     
 </article>
@@ -888,7 +799,9 @@
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_configMock">$configMock</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_lockerMock">$lockerMock</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#property_requestMock">$requestMock</a></li>
                                             </ul>
                 </li>
             
@@ -896,13 +809,11 @@
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_setUp">setUp()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testFileWithStreamContent">testFileWithStreamContent()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testIsAcceptedResourceFile">testIsAcceptedResourceFile()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResource">testMakeResource()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceNotDownloadable">testMakeResourceNotDownloadable()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceNotRenderable">testMakeResourceNotRenderable()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaFileGetContent">testMakeResourceViaFileGetContent()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaFopen">testMakeResourceViaFopen()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceViaReadFile">testMakeResourceViaReadFile()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithCustomResourceType">testMakeResourceWithCustomResourceType()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithFileNotAccessible">testMakeResourceWithFileNotAccessible()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Tests-Core-HelperClasses-ResourceMakerTest.html#method_testMakeResourceWithFolderNotAccessible">testMakeResourceWithFolderNotAccessible()</a></li>
                                     </ul>

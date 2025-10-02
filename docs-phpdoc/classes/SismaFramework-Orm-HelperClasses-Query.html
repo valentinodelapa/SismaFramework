@@ -61,10 +61,6 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
-                <a href="namespaces/sismaframework-autoload.html" class="">Autoload</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -97,6 +93,16 @@
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="">Config</a>
 </h4>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
+                
+            </li>
+            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -151,7 +157,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">54</span>
+    <span class="phpdocumentor-element-found-in__line">55</span>
 
     </aside>
 
@@ -273,6 +279,24 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_value">$value</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_values">$values</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_variable">$variable</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_where">$where</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;            </span>
@@ -306,6 +330,12 @@
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendCloseBlock">appendCloseBlock()</a>
+    <span>
+                                &nbsp;: self    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendColumnValue">appendColumnValue()</a>
     <span>
                                 &nbsp;: self    </span>
 </dt>
@@ -347,6 +377,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderByCondition">appendOrderByCondition()</a>
+    <span>
+                                &nbsp;: self    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderByOption">appendOrderByOption()</a>
     <span>
                                 &nbsp;: self    </span>
@@ -380,6 +416,12 @@
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_getCommandToExecute">getCommandToExecute()</a>
     <span>
                                 &nbsp;: string|null    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_hasColumn">hasColumn()</a>
+    <span>
+                                &nbsp;: bool    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
@@ -461,9 +503,21 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setVariable">setVariable()</a>
+    <span>
+                                &nbsp;: self    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setWhere">setWhere()</a>
     <span>
                                 &nbsp;: self    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_initializeColumn">initializeColumn()</a>
+    <span>
+                                &nbsp;: mixed    </span>
 </dt>
 
     </dl>
@@ -496,7 +550,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">69</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
@@ -532,7 +586,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">66</span>
+    <span class="phpdocumentor-element-found-in__line">70</span>
 
     </aside>
 
@@ -568,7 +622,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">59</span>
+    <span class="phpdocumentor-element-found-in__line">60</span>
 
     </aside>
 
@@ -604,7 +658,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">67</span>
+    <span class="phpdocumentor-element-found-in__line">71</span>
 
     </aside>
 
@@ -640,7 +694,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">58</span>
+    <span class="phpdocumentor-element-found-in__line">59</span>
 
     </aside>
 
@@ -676,7 +730,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">63</span>
+    <span class="phpdocumentor-element-found-in__line">65</span>
 
     </aside>
 
@@ -712,7 +766,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">64</span>
+    <span class="phpdocumentor-element-found-in__line">66</span>
 
     </aside>
 
@@ -748,7 +802,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">68</span>
+    <span class="phpdocumentor-element-found-in__line">72</span>
 
     </aside>
 
@@ -784,7 +838,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
@@ -820,7 +874,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">61</span>
+    <span class="phpdocumentor-element-found-in__line">63</span>
 
     </aside>
 
@@ -856,7 +910,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">65</span>
+    <span class="phpdocumentor-element-found-in__line">67</span>
 
     </aside>
 
@@ -892,7 +946,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">57</span>
+    <span class="phpdocumentor-element-found-in__line">58</span>
 
     </aside>
 
@@ -918,6 +972,114 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="property_value">
+        $value
+        <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_value" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">69</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$value</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_values">
+        $values
+        <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_values" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">61</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$values</span>
+     = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_variable">
+        $variable
+        <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_variable" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">68</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$variable</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_where">
         $where
         <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_where" class="headerlink"><i class="fas fa-link"></i></a>
@@ -928,7 +1090,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">60</span>
+    <span class="phpdocumentor-element-found-in__line">62</span>
 
     </aside>
 
@@ -964,7 +1126,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">70</span>
+    <span class="phpdocumentor-element-found-in__line">74</span>
 
     </aside>
 
@@ -1005,7 +1167,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">72</span>
+    <span class="phpdocumentor-element-found-in__line">76</span>
 
     </aside>
 
@@ -1049,7 +1211,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">273</span>
+    <span class="phpdocumentor-element-found-in__line">306</span>
 
     </aside>
 
@@ -1087,7 +1249,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">262</span>
+    <span class="phpdocumentor-element-found-in__line">295</span>
 
     </aside>
 
@@ -1117,6 +1279,68 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_appendColumnValue">
+        appendColumnValue()
+        <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendColumnValue" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">149</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__reference-operator">&amp;</span>    <span class="phpdocumentor-signature__name">appendColumnValue</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$column</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Placeholder.html"><abbr title="\SismaFramework\Orm\Enumerations\Placeholder">Placeholder</abbr></a>|string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">Placeholder::placeholder</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$foreignKey</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">false</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$column</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Placeholder.html"><abbr title="\SismaFramework\Orm\Enumerations\Placeholder">Placeholder</abbr></a>|string</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">Placeholder::placeholder</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$foreignKey</span>
+                : <span class="phpdocumentor-signature__argument__return-type">bool</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">false</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">self</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_appendCondition">
         appendCondition()
         <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendCondition" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1125,7 +1349,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">208</span>
+    <span class="phpdocumentor-element-found-in__line">241</span>
 
     </aside>
 
@@ -1194,7 +1418,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">221</span>
+    <span class="phpdocumentor-element-found-in__line">254</span>
 
     </aside>
 
@@ -1263,7 +1487,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">233</span>
+    <span class="phpdocumentor-element-found-in__line">266</span>
 
     </aside>
 
@@ -1325,7 +1549,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">295</span>
+    <span class="phpdocumentor-element-found-in__line">328</span>
 
     </aside>
 
@@ -1363,7 +1587,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">251</span>
+    <span class="phpdocumentor-element-found-in__line">284</span>
 
     </aside>
 
@@ -1401,7 +1625,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">284</span>
+    <span class="phpdocumentor-element-found-in__line">317</span>
 
     </aside>
 
@@ -1431,6 +1655,82 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_appendOrderByCondition">
+        appendOrderByCondition()
+        <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderByCondition" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">198</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                <span class="phpdocumentor-signature__reference-operator">&amp;</span>    <span class="phpdocumentor-signature__name">appendOrderByCondition</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$column</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-ComparisonOperator.html"><abbr title="\SismaFramework\Orm\Enumerations\ComparisonOperator">ComparisonOperator</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$operator</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Placeholder.html"><abbr title="\SismaFramework\Orm\Enumerations\Placeholder">Placeholder</abbr></a>|string|array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">Placeholder::placeholder</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$Indexing</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$foreignKey</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">false</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$column</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$operator</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-ComparisonOperator.html"><abbr title="\SismaFramework\Orm\Enumerations\ComparisonOperator">ComparisonOperator</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Placeholder.html"><abbr title="\SismaFramework\Orm\Enumerations\Placeholder">Placeholder</abbr></a>|string|array&lt;string|int, mixed&gt;</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">Placeholder::placeholder</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$Indexing</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$foreignKey</span>
+                : <span class="phpdocumentor-signature__argument__return-type">bool</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">false</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">self</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_appendOrderByOption">
         appendOrderByOption()
         <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderByOption" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1439,7 +1739,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">167</span>
+    <span class="phpdocumentor-element-found-in__line">190</span>
 
     </aside>
 
@@ -1494,7 +1794,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">175</span>
+    <span class="phpdocumentor-element-found-in__line">208</span>
 
     </aside>
 
@@ -1549,7 +1849,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">239</span>
+    <span class="phpdocumentor-element-found-in__line">272</span>
 
     </aside>
 
@@ -1611,7 +1911,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">306</span>
+    <span class="phpdocumentor-element-found-in__line">339</span>
 
     </aside>
 
@@ -1645,7 +1945,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">82</span>
+    <span class="phpdocumentor-element-found-in__line">85</span>
 
     </aside>
 
@@ -1683,14 +1983,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">318</span>
+    <span class="phpdocumentor-element-found-in__line">358</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">getCommandToExecute</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Statement.html"><abbr title="\SismaFramework\Orm\Enumerations\Statement">Statement</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$cmdType</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">Statement::select</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$extra</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|null</span></code>
+                    <span class="phpdocumentor-signature__name">getCommandToExecute</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Statement.html"><abbr title="\SismaFramework\Orm\Enumerations\Statement">Statement</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$cmdType</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">Statement::select</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|null</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1702,13 +2002,6 @@
                 <span class="phpdocumentor-signature__argument__name">$cmdType</span>
                 : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Statement.html"><abbr title="\SismaFramework\Orm\Enumerations\Statement">Statement</abbr></a></span>
                  = <span class="phpdocumentor-signature__argument__default-value">Statement::select</span>            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$extra</span>
-                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
-                 = <span class="phpdocumentor-signature__argument__default-value">[]</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -1730,6 +2023,61 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_hasColumn">
+        hasColumn()
+        <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_hasColumn" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">156</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">hasColumn</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$column</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$foreignKey</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">false</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$column</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$foreignKey</span>
+                : <span class="phpdocumentor-signature__argument__return-type">bool</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">false</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_setColumn">
         setColumn()
         <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setColumn" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1738,7 +2086,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">109</span>
+    <span class="phpdocumentor-element-found-in__line">112</span>
 
     </aside>
 
@@ -1786,7 +2134,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">99</span>
+    <span class="phpdocumentor-element-found-in__line">102</span>
 
     </aside>
 
@@ -1834,7 +2182,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">311</span>
+    <span class="phpdocumentor-element-found-in__line">351</span>
 
     </aside>
 
@@ -1882,7 +2230,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">87</span>
+    <span class="phpdocumentor-element-found-in__line">90</span>
 
     </aside>
 
@@ -1937,7 +2285,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">93</span>
+    <span class="phpdocumentor-element-found-in__line">96</span>
 
     </aside>
 
@@ -1985,7 +2333,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">119</span>
+    <span class="phpdocumentor-element-found-in__line">120</span>
 
     </aside>
 
@@ -2054,7 +2402,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">183</span>
+    <span class="phpdocumentor-element-found-in__line">216</span>
 
     </aside>
 
@@ -2102,7 +2450,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">191</span>
+    <span class="phpdocumentor-element-found-in__line">224</span>
 
     </aside>
 
@@ -2140,7 +2488,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">151</span>
+    <span class="phpdocumentor-element-found-in__line">174</span>
 
     </aside>
 
@@ -2188,7 +2536,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">145</span>
+    <span class="phpdocumentor-element-found-in__line">168</span>
 
     </aside>
 
@@ -2236,7 +2584,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">157</span>
+    <span class="phpdocumentor-element-found-in__line">180</span>
 
     </aside>
 
@@ -2284,7 +2632,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">129</span>
+    <span class="phpdocumentor-element-found-in__line">138</span>
 
     </aside>
 
@@ -2346,7 +2694,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">139</span>
+    <span class="phpdocumentor-element-found-in__line">162</span>
 
     </aside>
 
@@ -2393,6 +2741,61 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_setVariable">
+        setVariable()
+        <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setVariable" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">344</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setVariable</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$variable</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Placeholder.html"><abbr title="\SismaFramework\Orm\Enumerations\Placeholder">Placeholder</abbr></a>|string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">Placeholder::placeholder</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$variable</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-Enumerations-Placeholder.html"><abbr title="\SismaFramework\Orm\Enumerations\Placeholder">Placeholder</abbr></a>|string</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">Placeholder::placeholder</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">self</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_setWhere">
         setWhere()
         <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setWhere" class="headerlink"><i class="fas fa-link"></i></a>
@@ -2401,7 +2804,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">198</span>
+    <span class="phpdocumentor-element-found-in__line">231</span>
 
     </aside>
 
@@ -2434,6 +2837,40 @@
         <span class="phpdocumentor-signature__response_type">self</span>
             </section>
 
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_initializeColumn">
+        initializeColumn()
+        <a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_initializeColumn" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/Query.php"><a href="files/orm-helperclasses-query.html"><abbr title="Orm/HelperClasses/Query.php">Query.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">131</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">initializeColumn</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+    
 </article>
             </section>
 
@@ -2560,6 +2997,9 @@
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_offset">$offset</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_order">$order</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_table">$table</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_value">$value</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_values">$values</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_variable">$variable</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_where">$where</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#property_currentCondition">$currentCondition</a></li>
                                             </ul>
@@ -2571,18 +3011,21 @@
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendAnd">appendAnd()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendCloseBlock">appendCloseBlock()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendColumnValue">appendColumnValue()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendCondition">appendCondition()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendConditionOnEncryptedColumn">appendConditionOnEncryptedColumn()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendFulltextCondition">appendFulltextCondition()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendNot">appendNot()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOpenBlock">appendOpenBlock()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOr">appendOr()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderByCondition">appendOrderByCondition()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderByOption">appendOrderByOption()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderBySubquery">appendOrderBySubquery()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendSubqueryCondition">appendSubqueryCondition()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_close">close()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_getAdapter">getAdapter()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_getCommandToExecute">getCommandToExecute()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_hasColumn">hasColumn()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setColumn">setColumn()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setColumns">setColumns()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setCommand">setCommand()</a></li>
@@ -2596,7 +3039,9 @@
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setOrderBy">setOrderBy()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setSubqueryColumn">setSubqueryColumn()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setTable">setTable()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setVariable">setVariable()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_setWhere">setWhere()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-Query.html#method_initializeColumn">initializeColumn()</a></li>
                                     </ul>
             </li>
                     </ul>

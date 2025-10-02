@@ -74,7 +74,7 @@ abstract class BaseFixture
 
     abstract protected function setDependencies(): void;
 
-    protected function addDipendency(string $dependencyClassName): self
+    protected function addDependency(string $dependencyClassName): self
     {
         $this->dependenciesArray[] = $dependencyClassName;
         return $this;

@@ -1,31 +1,31 @@
 # Barra di Debug
 
-La libreria fornisce nativamente uno strumento di analisi utile per un rapido debug in caso di problematiche ricontrate in fase di sviluppo. Per attivare lo strumento è sufficiente attivare la modalità di sviluppo tramite l'apposita costante presente nel file di configurazione.
+SismaFramework include una barra di debug integrata, uno strumento indispensabile durante lo sviluppo. Appare in fondo alla pagina e fornisce informazioni in tempo reale sulla richiesta corrente, aiutandoti a identificare rapidamente problemi di performance, errori e a ispezionare i dati.
+
+## Attivazione
+
+Per visualizzare la barra di debug, è sufficiente abilitare l'ambiente di sviluppo nel file `Config/config.php`:
 
 ```php
-...
-const DEVELOPEMENT_ENVIRONMENT = true;
-...
+// in Config/config.php
+const DEVELOPMENT_ENVIRONMENT = true;
+
 ```
 
-La **Barra di Debug** si compone presenta alcune sezioni a destra ed altre a sinistra. Le sezioni di sinistra sono le seguenti:
+Sezioni della Barra
+-------------------
 
-* Database: questa sezione contiene l'elenco delle query eseguite durante l'esecuzione della richiesta
+La barra è divisa in diverse sezioni che forniscono informazioni specifiche.
 
-* Log: questa sezione riporta il contenuto del file di log.
-
-* Form: questa sezione, nel caso in cui l'ultima richiesta rappresenti l'invio di un form, riporta l'esito della validazione dei campi dello stesso.
-
-* Variables: questa sezione contiene l'elenco delle variabile che il controllore ha inviato alla vista.
-
-A destra della **Barra di Debug** sono invece presenti le seguenti sezioni:
-
-* Sezione Peso: questa sezione riporta il peso della pagina espresso in MB.
-
-* Sezione Tempo: questa sezione riporta il tempo di esecuzione della pagina.
+| Sezione              | Descrizione                                                                                                                                                            |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Database**         | Mostra un elenco dettagliato di tutte le query SQL eseguite durante la richiesta, inclusi i tempi di esecuzione. Fondamentale per individuare query lente o duplicate. |
+| **Log**              | Visualizza le ultime voci del file di log (`Logs/log.txt`), permettendoti di controllare errori e messaggi di debug senza dover aprire il file manualmente.            |
+| **Form**             | Se la richiesta corrente è l'invio di un form, questa sezione mostra l'esito della validazione per ogni campo, evidenziando eventuali errori.                          |
+| **Variables**        | Elenca tutte le variabili che il controller ha passato alla vista. Utile per verificare che i dati corretti vengano inviati al template.                               |
+| **Peso Pagina**      | Indica il consumo di memoria (in MB) richiesto per generare la pagina. Aiuta a monitorare l'efficienza dell'applicazione.                                              |
+| **Tempo Esecuzione** | Misura il tempo totale (in secondi) impiegato dal server per processare la richiesta e generare la risposta.                                                           |
 
 * * *
 
-[Indice](index.md) | Precedente: [Funzionalita Aggiuntive](orm-additional-features.md)
-
-
+[Indice](index.md) | Precedente: [Sicurezza](security.md) | Successivo: [Data Fixtures](data-fixtures.md)

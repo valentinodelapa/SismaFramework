@@ -61,10 +61,6 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
-                <a href="namespaces/sismaframework-autoload.html" class="">Autoload</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -97,6 +93,16 @@
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="">Config</a>
 </h4>
+
+                                    <h4 class="phpdocumentor-sidebar__root-namespace">
+    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
+</h4>
+    <ul class="phpdocumentor-list">
+                    <li>
+                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
+                
+            </li>
+            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -151,7 +157,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">46</span>
+    <span class="phpdocumentor-element-found-in__line">48</span>
 
     </aside>
 
@@ -207,15 +213,21 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_applicationAssetsPath">$applicationAssetsPath</a>
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_associativeActionArguments">$associativeActionArguments</a>
     <span>
-                        &nbsp;: string            </span>
+                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_cleanPathParts">$cleanPathParts</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_config">$config</a>
+    <span>
+                        &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
@@ -237,12 +249,6 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_controllerNamespace">$controllerNamespace</a>
-    <span>
-                        &nbsp;: string            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_crawlComponentMakerList">$crawlComponentMakerList</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;            </span>
@@ -258,12 +264,6 @@
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_dataMapper">$dataMapper</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultAction">$defaultAction</a>
-    <span>
-                        &nbsp;: string            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
@@ -291,21 +291,9 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultPath">$defaultPath</a>
-    <span>
-                        &nbsp;: string            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_fixturesManager">$fixturesManager</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-FixturesManager.html"><abbr title="\SismaFramework\Core\HelperClasses\FixturesManager">FixturesManager</abbr></a>            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_maxReoladAttempts">$maxReoladAttempts</a>
-    <span>
-                        &nbsp;: int            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
@@ -392,18 +380,6 @@
                         &nbsp;: <a href="classes/SismaFramework-Core-HelperClasses-ResourceMaker.html"><abbr title="\SismaFramework\Core\HelperClasses\ResourceMaker">ResourceMaker</abbr></a>            </span>
 </dt>
 
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_rootPath">$rootPath</a>
-    <span>
-                        &nbsp;: string            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_structuralAssetsPath">$structuralAssetsPath</a>
-    <span>
-                        &nbsp;: string            </span>
-</dt>
-
     </dl>
 
 <h4 id="toc-methods">
@@ -431,12 +407,6 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_setCustomRootPath">setCustomRootPath()</a>
-    <span>
-                                &nbsp;: void    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_slicePathElement">slicePathElement()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -456,6 +426,12 @@
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_checkActionPresenceInController">checkActionPresenceInController()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_checkCallableController">checkCallableController()</a>
     <span>
                                 &nbsp;: bool    </span>
 </dt>
@@ -482,6 +458,12 @@
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_combineArrayToAssociativeArray">combineArrayToAssociativeArray()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_executeMagicCall">executeMagicCall()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
@@ -541,7 +523,7 @@
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_parseArgsAssociativeArray">parseArgsAssociativeArray()</a>
     <span>
-                                &nbsp;: void    </span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
@@ -622,7 +604,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">70</span>
+    <span class="phpdocumentor-element-found-in__line">72</span>
 
     </aside>
 
@@ -646,11 +628,11 @@
             phpdocumentor-element
             -property
             -private
-            -static                                            "
+                                                        "
 >
-    <h4 class="phpdocumentor-element__name" id="property_applicationAssetsPath">
-        $applicationAssetsPath
-        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_applicationAssetsPath" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="property_associativeActionArguments">
+        $associativeActionArguments
+        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_associativeActionArguments" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                 </span>
@@ -658,7 +640,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">76</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
@@ -666,9 +648,9 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$applicationAssetsPath</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\APPLICATION_ASSETS_PATH</span></code>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$associativeActionArguments</span>
+     = <span class="phpdocumentor-signature__default-value">[]</span></code>
 
     
     
@@ -694,7 +676,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">59</span>
+    <span class="phpdocumentor-element-found-in__line">61</span>
 
     </aside>
 
@@ -704,6 +686,42 @@
     <span class="phpdocumentor-signature__visibility">private</span>
         <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
     <span class="phpdocumentor-signature__name">$cleanPathParts</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_config">
+        $config
+        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_config" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">79</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$config</span>
     </code>
 
     
@@ -730,7 +748,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">67</span>
+    <span class="phpdocumentor-element-found-in__line">69</span>
 
     </aside>
 
@@ -766,7 +784,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">66</span>
+    <span class="phpdocumentor-element-found-in__line">68</span>
 
     </aside>
 
@@ -802,7 +820,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
@@ -813,42 +831,6 @@
         <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-BaseClasses-BaseController.html"><abbr title="\SismaFramework\Core\BaseClasses\BaseController">BaseController</abbr></a>|null</span>
     <span class="phpdocumentor-signature__name">$controllerInstance</span>
      = <span class="phpdocumentor-signature__default-value">null</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_controllerNamespace">
-        $controllerNamespace
-        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_controllerNamespace" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">77</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$controllerNamespace</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\CONTROLLER_NAMESPACE</span></code>
 
     
     
@@ -874,7 +856,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">52</span>
+    <span class="phpdocumentor-element-found-in__line">54</span>
 
     </aside>
 
@@ -910,7 +892,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">53</span>
+    <span class="phpdocumentor-element-found-in__line">55</span>
 
     </aside>
 
@@ -946,7 +928,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">51</span>
+    <span class="phpdocumentor-element-found-in__line">53</span>
 
     </aside>
 
@@ -957,42 +939,6 @@
         <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
     <span class="phpdocumentor-signature__name">$dataMapper</span>
     </code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_defaultAction">
-        $defaultAction
-        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultAction" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">78</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$defaultAction</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\DEFAULT_ACTION</span></code>
 
     
     
@@ -1018,7 +964,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">64</span>
+    <span class="phpdocumentor-element-found-in__line">66</span>
 
     </aside>
 
@@ -1054,7 +1000,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">61</span>
+    <span class="phpdocumentor-element-found-in__line">63</span>
 
     </aside>
 
@@ -1090,7 +1036,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">63</span>
+    <span class="phpdocumentor-element-found-in__line">65</span>
 
     </aside>
 
@@ -1126,7 +1072,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">60</span>
+    <span class="phpdocumentor-element-found-in__line">62</span>
 
     </aside>
 
@@ -1137,42 +1083,6 @@
         <span class="phpdocumentor-signature__type">bool</span>
     <span class="phpdocumentor-signature__name">$defaultControllerInjected</span>
      = <span class="phpdocumentor-signature__default-value">false</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_defaultPath">
-        $defaultPath
-        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultPath" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">79</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$defaultPath</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\DEFAULT_PATH</span></code>
 
     
     
@@ -1198,7 +1108,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">50</span>
+    <span class="phpdocumentor-element-found-in__line">52</span>
 
     </aside>
 
@@ -1209,42 +1119,6 @@
         <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-FixturesManager.html"><abbr title="\SismaFramework\Core\HelperClasses\FixturesManager">FixturesManager</abbr></a></span>
     <span class="phpdocumentor-signature__name">$fixturesManager</span>
     </code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_maxReoladAttempts">
-        $maxReoladAttempts
-        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_maxReoladAttempts" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">80</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">int</span>
-    <span class="phpdocumentor-signature__name">$maxReoladAttempts</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\MAX_RELOAD_ATTEMPTS</span></code>
 
     
     
@@ -1270,7 +1144,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">56</span>
+    <span class="phpdocumentor-element-found-in__line">58</span>
 
     </aside>
 
@@ -1306,7 +1180,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">69</span>
+    <span class="phpdocumentor-element-found-in__line">71</span>
 
     </aside>
 
@@ -1342,7 +1216,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">57</span>
+    <span class="phpdocumentor-element-found-in__line">59</span>
 
     </aside>
 
@@ -1378,7 +1252,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">68</span>
+    <span class="phpdocumentor-element-found-in__line">70</span>
 
     </aside>
 
@@ -1414,7 +1288,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">65</span>
+    <span class="phpdocumentor-element-found-in__line">67</span>
 
     </aside>
 
@@ -1450,7 +1324,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">58</span>
+    <span class="phpdocumentor-element-found-in__line">60</span>
 
     </aside>
 
@@ -1486,7 +1360,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">74</span>
+    <span class="phpdocumentor-element-found-in__line">77</span>
 
     </aside>
 
@@ -1522,7 +1396,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">75</span>
+    <span class="phpdocumentor-element-found-in__line">78</span>
 
     </aside>
 
@@ -1558,7 +1432,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">72</span>
+    <span class="phpdocumentor-element-found-in__line">75</span>
 
     </aside>
 
@@ -1594,7 +1468,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">73</span>
+    <span class="phpdocumentor-element-found-in__line">76</span>
 
     </aside>
 
@@ -1630,7 +1504,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">71</span>
+    <span class="phpdocumentor-element-found-in__line">74</span>
 
     </aside>
 
@@ -1666,7 +1540,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">54</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -1702,7 +1576,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">57</span>
 
     </aside>
 
@@ -1738,7 +1612,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">49</span>
+    <span class="phpdocumentor-element-found-in__line">51</span>
 
     </aside>
 
@@ -1749,78 +1623,6 @@
         <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-HelperClasses-ResourceMaker.html"><abbr title="\SismaFramework\Core\HelperClasses\ResourceMaker">ResourceMaker</abbr></a></span>
     <span class="phpdocumentor-signature__name">$resourceMaker</span>
     </code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_rootPath">
-        $rootPath
-        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_rootPath" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">81</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$rootPath</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\ROOT_PATH</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_structuralAssetsPath">
-        $structuralAssetsPath
-        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_structuralAssetsPath" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">82</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">string</span>
-    <span class="phpdocumentor-signature__name">$structuralAssetsPath</span>
-     = <span class="phpdocumentor-signature__default-value">\Config\STRUCTURAL_ASSETS_PATH</span></code>
 
     
     
@@ -1851,14 +1653,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">84</span>
+    <span class="phpdocumentor-element-found-in__line">81</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$request</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new Request()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-ResourceMaker.html"><abbr title="\SismaFramework\Core\HelperClasses\ResourceMaker">ResourceMaker</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$resourceMaker</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new ResourceMaker()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-FixturesManager.html"><abbr title="\SismaFramework\Core\HelperClasses\FixturesManager">FixturesManager</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fixtureManager</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FixturesManager()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$request</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new Request()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-ResourceMaker.html"><abbr title="\SismaFramework\Core\HelperClasses\ResourceMaker">ResourceMaker</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$resourceMaker</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new ResourceMaker()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-FixturesManager.html"><abbr title="\SismaFramework\Core\HelperClasses\FixturesManager">FixturesManager</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fixtureManager</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FixturesManager()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1894,6 +1696,13 @@
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$config</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HelperClasses-Config.html"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
             </dl>
 
     
@@ -1916,7 +1725,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">100</span>
+    <span class="phpdocumentor-element-found-in__line">94</span>
 
     </aside>
 
@@ -1960,7 +1769,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">105</span>
+    <span class="phpdocumentor-element-found-in__line">99</span>
 
     </aside>
 
@@ -1998,50 +1807,6 @@
         class="phpdocumentor-element
             -method
             -public
-                                    -static                    "
->
-    <h4 class="phpdocumentor-element__name" id="method_setCustomRootPath">
-        setCustomRootPath()
-        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_setCustomRootPath" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">95</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">setCustomRootPath</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customRootPath</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$customRootPath</span>
-                : <span class="phpdocumentor-signature__argument__return-type">string</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-    
-
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -public
                                                         "
 >
     <h4 class="phpdocumentor-element__name" id="method_slicePathElement">
@@ -2052,7 +1817,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">250</span>
+    <span class="phpdocumentor-element-found-in__line">240</span>
 
     </aside>
 
@@ -2086,7 +1851,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">341</span>
+    <span class="phpdocumentor-element-found-in__line">328</span>
 
     </aside>
 
@@ -2124,7 +1889,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">361</span>
+    <span class="phpdocumentor-element-found-in__line">345</span>
 
     </aside>
 
@@ -2162,7 +1927,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">300</span>
+    <span class="phpdocumentor-element-found-in__line">316</span>
 
     </aside>
 
@@ -2170,6 +1935,44 @@
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
                     <span class="phpdocumentor-signature__name">checkActionPresenceInController</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_checkCallableController">
+        checkCallableController()
+        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_checkCallableController" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">398</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">checkCallableController</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2200,7 +2003,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">174</span>
+    <span class="phpdocumentor-element-found-in__line">164</span>
 
     </aside>
 
@@ -2238,7 +2041,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">179</span>
+    <span class="phpdocumentor-element-found-in__line">169</span>
 
     </aside>
 
@@ -2286,7 +2089,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">165</span>
+    <span class="phpdocumentor-element-found-in__line">143</span>
 
     </aside>
 
@@ -2334,7 +2137,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">379</span>
+    <span class="phpdocumentor-element-found-in__line">362</span>
 
     </aside>
 
@@ -2381,6 +2184,44 @@
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_executeMagicCall">
+        executeMagicCall()
+        <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_executeMagicCall" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">408</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">executeMagicCall</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_getActionArguments">
         getActionArguments()
         <a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_getActionArguments" class="headerlink"><i class="fas fa-link"></i></a>
@@ -2389,7 +2230,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">352</span>
+    <span class="phpdocumentor-element-found-in__line">340</span>
 
     </aside>
 
@@ -2423,7 +2264,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">326</span>
+    <span class="phpdocumentor-element-found-in__line">301</span>
 
     </aside>
 
@@ -2457,7 +2298,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">293</span>
+    <span class="phpdocumentor-element-found-in__line">284</span>
 
     </aside>
 
@@ -2491,7 +2332,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">184</span>
+    <span class="phpdocumentor-element-found-in__line">174</span>
 
     </aside>
 
@@ -2529,7 +2370,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">210</span>
+    <span class="phpdocumentor-element-found-in__line">200</span>
 
     </aside>
 
@@ -2567,7 +2408,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">274</span>
+    <span class="phpdocumentor-element-found-in__line">264</span>
 
     </aside>
 
@@ -2601,7 +2442,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">262</span>
+    <span class="phpdocumentor-element-found-in__line">252</span>
 
     </aside>
 
@@ -2635,7 +2476,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">316</span>
+    <span class="phpdocumentor-element-found-in__line">291</span>
 
     </aside>
 
@@ -2673,7 +2514,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">199</span>
+    <span class="phpdocumentor-element-found-in__line">189</span>
 
     </aside>
 
@@ -2711,14 +2552,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">395</span>
+    <span class="phpdocumentor-element-found-in__line">378</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">parseArgsAssociativeArray</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">parseArgsAssociativeArray</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2729,7 +2570,11 @@
 
     
 
-    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -2745,7 +2590,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">120</span>
+    <span class="phpdocumentor-element-found-in__line">110</span>
 
     </aside>
 
@@ -2779,7 +2624,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">136</span>
+    <span class="phpdocumentor-element-found-in__line">126</span>
 
     </aside>
 
@@ -2823,7 +2668,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">232</span>
+    <span class="phpdocumentor-element-found-in__line">222</span>
 
     </aside>
 
@@ -2861,7 +2706,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">282</span>
+    <span class="phpdocumentor-element-found-in__line">272</span>
 
     </aside>
 
@@ -2899,7 +2744,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">153</span>
+    <span class="phpdocumentor-element-found-in__line">152</span>
 
     </aside>
 
@@ -2933,7 +2778,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">368</span>
+    <span class="phpdocumentor-element-found-in__line">351</span>
 
     </aside>
 
@@ -2967,7 +2812,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">223</span>
+    <span class="phpdocumentor-element-found-in__line">213</span>
 
     </aside>
 
@@ -3005,7 +2850,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Dispatcher.php"><a href="files/core-helperclasses-dispatcher.html"><abbr title="Core/HelperClasses/Dispatcher.php">Dispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">239</span>
+    <span class="phpdocumentor-element-found-in__line">229</span>
 
     </aside>
 
@@ -3139,23 +2984,20 @@
                 <li>
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_actionArguments">$actionArguments</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_applicationAssetsPath">$applicationAssetsPath</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_associativeActionArguments">$associativeActionArguments</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_cleanPathParts">$cleanPathParts</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_config">$config</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_constructorArguments">$constructorArguments</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_controllerClassName">$controllerClassName</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_controllerInstance">$controllerInstance</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_controllerNamespace">$controllerNamespace</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_crawlComponentMakerList">$crawlComponentMakerList</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_currentCrawlComponentMaker">$currentCrawlComponentMaker</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_dataMapper">$dataMapper</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultAction">$defaultAction</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultActionChecked">$defaultActionChecked</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultActionInjected">$defaultActionInjected</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultControllerChecked">$defaultControllerChecked</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultControllerInjected">$defaultControllerInjected</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_defaultPath">$defaultPath</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_fixturesManager">$fixturesManager</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_maxReoladAttempts">$maxReoladAttempts</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_originalPath">$originalPath</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_parsedAction">$parsedAction</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_path">$path</a></li>
@@ -3170,8 +3012,6 @@
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_reloadAttempts">$reloadAttempts</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_request">$request</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_resourceMaker">$resourceMaker</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_rootPath">$rootPath</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#property_structuralAssetsPath">$structuralAssetsPath</a></li>
                                             </ul>
                 </li>
             
@@ -3181,15 +3021,16 @@
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_addCrawlComponentMaker">addCrawlComponentMaker()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_run">run()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_setCustomRootPath">setCustomRootPath()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_slicePathElement">slicePathElement()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_callControllerMethod">callControllerMethod()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_callControllerMethodWithArguments">callControllerMethodWithArguments()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_checkActionPresenceInController">checkActionPresenceInController()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_checkCallableController">checkCallableController()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_checkControllerPresence">checkControllerPresence()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_checkFilePresence">checkFilePresence()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_cleanArrayShift">cleanArrayShift()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_combineArrayToAssociativeArray">combineArrayToAssociativeArray()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_executeMagicCall">executeMagicCall()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_getActionArguments">getActionArguments()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_getAutoDependecyInjectionClass">getAutoDependecyInjectionClass()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Dispatcher.html#method_getControllerConstructorArguments">getControllerConstructorArguments()</a></li>

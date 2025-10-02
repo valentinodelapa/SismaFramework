@@ -52,6 +52,7 @@ use SismaFramework\TestsApplication\Forms\IncompleteSimpleEntityFrom;
 use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\SimpleEntityWithInjectRequestForm;
 
 /**
  * Description of BaseFormTest
@@ -108,6 +109,15 @@ class BaseFormTest extends TestCase
         $this->expectException(FormException::class);
         $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->configMock);
         $baseSampleFormWithFakeEntityFromForm->handleRequest($this->requestMock);
+    }
+    
+    public function testAddRequest()
+    {
+        $simpleEntityWithInjectRequestForm = new SimpleEntityWithInjectRequestForm();
+        $simpleEntityWithInjectRequestForm->handleRequest($this->requestMock);
+        $this->assertTrue($simpleEntityWithInjectRequestForm->isSubmitted());
+        $this->assertTrue($simpleEntityWithInjectRequestForm->isValid());
+        $this->assertEquals('test string', $this->requestMock->input['string']);
     }
 
     public function testFormForBaseEntityNotSubmitted()

@@ -102,6 +102,12 @@ abstract class BaseForm extends Submittable
 
     abstract protected function injectRequest(): void;
 
+    protected function addRequest(string $propertyName, string|array $value): self
+    {
+        $this->request->input[$propertyName] = $value;
+        return $this;
+    }
+
     abstract protected function setFilterFieldsMode(): void;
 
     protected function addFilterFieldMode(string $propertyName, FilterType $filterType, array $parameters = [], bool $allowNull = false): self

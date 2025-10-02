@@ -96,12 +96,15 @@ Consideriamo vulnerabilità di sicurezza qualsiasi problema che possa compromett
 
 ## Versioni Supportate
 
-La nostra politica è di fornire aggiornamenti di sicurezza solo per la versione stabile più recente del framework.
+La nostra politica è di fornire aggiornamenti di sicurezza per la versione stabile più recente del framework e supporto limitato alle patch di sicurezza critiche per la major precedente.
 
-| Versione | Supportata |
-|---|---|
-| **9.x** | ✅ |
-| < 9.0.0 (Beta) | ❌ |
+| Versione | Supportata | Note |
+|---|---|---|
+| **10.x** | ✅ Supporto completo | Versione stabile corrente |
+| **9.x** | ⚠️ Solo patch di sicurezza critiche | Supporto fino al 2026-01-01 |
+| < 9.0.0 (Beta) | ❌ | Versioni di sviluppo non supportate |
+
+**Nota sulla versione 9.x:** Dopo il rilascio della versione 10.0.0, la serie 9.x riceverà solo patch di sicurezza per vulnerabilità critiche fino al 1° gennaio 2026. Si raccomanda fortemente di pianificare la migrazione alla versione 10.x per beneficiare di tutte le correzioni di sicurezza, i miglioramenti e le nuove funzionalità.
 
 Tutte le versioni precedenti alla 9.0.0 sono considerate versioni di sviluppo (beta) e non sono supportate. Incoraggiamo tutti gli utenti ad aggiornare all'ultima versione stabile per ricevere le patch di sicurezza.
 
