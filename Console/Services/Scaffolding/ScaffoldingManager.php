@@ -27,6 +27,9 @@
 namespace SismaFramework\Console\Services\Scaffolding;
 
 use SismaFramework\Console\Enumerations\ModelType;
+use SismaFramework\Console\Exceptions\ApplicationPathException;
+use SismaFramework\Console\Exceptions\EntityPathException;
+use SismaFramework\Console\Exceptions\ModulePathException;
 use SismaFramework\Core\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\NotationManager;
@@ -43,6 +46,10 @@ class ScaffoldingManager
     private string $templatesPath;
     private array $placeholders;
     private bool $force = false;
+    private string $module;
+    private string $entityShortName;
+    private string $entityNamespace;
+    private \ReflectionClass $entityReflection;
     private ?string $customType = null;
     private ?string $customTemplatePath = null;
     private Config $config;
@@ -72,117 +79,63 @@ class ScaffoldingManager
         return $this;
     }
 
-    public function generateScaffolding(string $entityName, string $module): bool
+    public function generateScaffolding(string $entityShortName, string $module): bool
     {
-        // Check if module exists in project root
-        $modulePath = $this->config->rootPath . $module;
+        $this->module = $module;
+        $this->entityShortName = $entityShortName;
+        $modulePath = $this->getModulePath();
+        $applicationPath = $this->getApplicationPath($modulePath);
+        $this->checkRequiredDirectoriesExists($applicationPath);
+        $this->setCommonPlaceholders();
+        $this->initializeEntityReflection();
+        $success = $this->generateModel($applicationPath);
+        $success &= $this->generateForm($applicationPath);
+        $success &= $this->generateController($applicationPath);
+        $success &= $this->generateViews($applicationPath);
+        return $success;
+    }
+
+    private function getModulePath(): string
+    {
+        $modulePath = $this->config->rootPath . $this->module;
         if (!is_dir($modulePath)) {
-            throw new \RuntimeException(<<<ERROR
-Module directory not found: {$module} .
-Expected project structure:
-  YourProject/
-  ├── SismaFramework/  (git submodule)
-  ├── {$module}/       (your module)\
-  │   └── Application/
-  │       ├── Controllers/
-  │       ├── Models/
-  │       ├── Forms/
-  │       └── Entities/
-  └── OtherModules/
-
-Make sure your module is in the project root directory.
-ERROR);
+            throw new ModulePathException($this->module);
         }
+        return $modulePath;
+    }
 
-        // Check if Application directory exists
-        $applicationPath = $modulePath . '/Application';
+    private function getApplicationPath(string $modulePath): string
+    {
+        $applicationPath = $modulePath . DIRECTORY_SEPARATOR . $this->config->application;
         if (!is_dir($applicationPath)) {
-            throw new \RuntimeException(<<<ERROR
-Application directory not found in module: {$module}
-Each module in the project root must have this structure:
-  {$module}/
-  └── Application/
-      ├── Controllers/
-      ├── Models/
-      ├── Forms/
-      └── Entities/
-  
-Create this structure or use --force to create it automatically.
-ERROR);
+            throw new ApplicationPathException($this->module);
         }
+        return $applicationPath;
+    }
 
-        // Ensure required directories exist
-        $requiredDirs = ['Controllers', 'Models', 'Forms', 'Entities', 'Views'];
+    private function checkRequiredDirectoriesExists(string $applicationPath): void
+    {
+        $requiredDirs = [$this->config->controllers, $this->config->models, $this->config->forms, $this->config->entities, $this->config->views];
         foreach ($requiredDirs as $dir) {
             $dirPath = $applicationPath . '/' . $dir;
             if (!is_dir($dirPath)) {
                 if (!mkdir($dirPath, 0777, true)) {
-                    throw new \RuntimeException("Failed to create directory: {$dirPath}");
+                    throw new \RuntimeException("Failed to create directory: " . $dirPath);
                 }
             }
         }
+    }
 
-        // Build namespaces
-        $moduleNamespace = str_replace('/', '\\', $module);
-        $entityNamespace = $moduleNamespace . '\\Application\\Entities';
-        $modelNamespace = $moduleNamespace . '\\Application\\Models';
-        $controllerNamespace = $moduleNamespace . '\\Application\\Controllers';
-        $formNamespace = $moduleNamespace . '\\Application\\Forms';
-
-        // Check if entity exists
-        $entityClass = $entityNamespace . '\\' . $entityName;
-        if (!class_exists($entityClass)) {
-            throw new \RuntimeException(<<<ERROR
-Entity class not found: {$entityClass}
-Make sure the entity exists in:
-  {$module}/Application/Entities/{$entityName}.php
-
-The entity class should be defined as:
-  namespace {$entityNamespace};
-  class {$entityName} extends \\SismaFramework\\Orm\\BaseClasses\\BaseEntity { ... }
-ERROR);
-        }
-
-        // Set common placeholders
-        $this->setPlaceholder('className', $entityName);
-        $this->setPlaceholder('classNameLower', lcfirst($entityName));
-        $controllerName = str_replace('Controller', '', $entityName . 'Controller');
-        $this->setPlaceholder('controllerRoute', NotationManager::convertToKebabCase($controllerName));
-
-        // Generate Model
-        $modelType = $this->customType ? ModelType::from($this->customType) : $this->determineModelType($entityClass);
-        $this->setPlaceholder('modelType', $modelType->value);
-        $this->setPlaceholder('modelTypeNamespace', $modelType->getNamespace());
-        $this->setPlaceholder('namespace', $modelNamespace);
-        $success = $this->generate('Model', $modulePath . '/Application/Models/' . $entityName . 'Model.php');
-
-        // Generate Controller
-        $this->setPlaceholder('namespace', $controllerNamespace);
-        $success &= $this->generate('Controller', $modulePath . '/Application/Controllers/' . $entityName . 'Controller.php');
-
-        // Prima di generare il form, analizziamo le proprietà dell'entità
-        $entityReflection = new \ReflectionClass($entityClass);
-        $properties = $this->analyzeEntityProperties($entityReflection);
-        $filtersCode = $this->generateFiltersCode($properties);
-
-        // Aggiungiamo il codice dei filtri ai placeholder
-        $this->setPlaceholder('namespace', $formNamespace);
-        $this->setPlaceholder('filters', $filtersCode);
-        $success &= $this->generate('Form', $modulePath . '/Application/Forms/' . $entityName . 'Form.php');
-
-        // Generate Views
-        $viewsPath = $applicationPath . '/Views/' . $entityName;
-        if (!is_dir($viewsPath)) {
-            if (!mkdir($viewsPath, 0777, true)) {
-                throw new \RuntimeException("Failed to create directory: {$viewsPath}");
-            }
-        }
-
-        $success &= $this->generate('Views/index', $viewsPath . '/index.php');
-        $success &= $this->generate('Views/create', $viewsPath . '/create.php');
-        $success &= $this->generate('Views/update', $viewsPath . '/update.php');
-
-        return $success;
+    private function setCommonPlaceholders(): void
+    {
+        $applicationNamespace = $this->module . '\\' . $this->config->application;
+        $this->entityNamespace = $applicationNamespace . '\\' . $this->config->entities;
+        $this->setPlaceholder('entityShortName', $this->entityShortName);
+        $this->setPlaceholder('entityShortNameLower', lcfirst($this->entityShortName));
+        $this->setPlaceholder('entityNamespace', $this->entityNamespace);
+        $this->setPlaceholder('modelNamespace', $applicationNamespace . '\\' . $this->config->models);
+        $this->setPlaceholder('controllerNamespace', $applicationNamespace . '\\' . $this->config->controllers);
+        $this->setPlaceholder('formNamespace', $applicationNamespace . '\\' . $this->config->forms);
     }
 
     private function setPlaceholder(string $key, string $value): self
@@ -191,13 +144,52 @@ ERROR);
         return $this;
     }
 
+    private function initializeEntityReflection(): void
+    {
+        $entityClass = $this->entityNamespace . '\\' . $this->entityShortName;
+        if (!class_exists($entityClass)) {
+            throw new EntityPathException($entityClass, $this->entityNamespace, $this->entityShortName, $this->module);
+        }
+        $this->entityReflection = new \ReflectionClass($entityClass);
+    }
+
+    private function generateModel(string $applicationPath): bool
+    {
+        $modelType = $this->customType ? ModelType::from($this->customType) : $this->determineModelType();
+        $this->setPlaceholder('modelType', $modelType->value);
+        $this->setPlaceholder('modelTypeNamespace', $modelType->getNamespace());
+        return $this->generate('Model', $applicationPath . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . $this->entityShortName . 'Model.php');
+    }
+
+    private function determineModelType(): ModelType
+    {
+        if ($this->entityReflection->isSubclassOf(SelfReferencedEntity::class)) {
+            return ModelType::selfReferencedModel;
+        } elseif ($this->checkDependencies($this->entityReflection)) {
+            return ModelType::dependentModel;
+        } else {
+            return ModelType::baseModel;
+        }
+    }
+
+    public function checkDependencies(): bool
+    {
+        foreach ($this->entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+            if (BaseEntity::checkFinalClassReflectionProperty($property) &&
+                    is_subclass_of($property->getType()->getName(), BaseEntity::class)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private function generate(string $templateName, string $outputPath): bool
     {
         $templateFile = $this->getTemplatePath($templateName);
         if (!file_exists($templateFile)) {
             throw new \RuntimeException("Template file not found: {$templateFile}");
         }
-        if (file_exists($outputPath) && !$this->force) {
+        if (file_exists($outputPath) && ($this->force === false)) {
             throw new \RuntimeException("File already exists: {$outputPath}. Use --force to overwrite.");
         }
         $content = Templater::parseTemplate($templateFile, $this->placeholders);
@@ -208,50 +200,33 @@ ERROR);
         return file_put_contents($outputPath, $content) !== false;
     }
 
-    private function determineModelType(string $entityClass): ModelType
-    {
-        $reflection = new \ReflectionClass($entityClass);
-
-        if ($reflection->isSubclassOf(SelfReferencedEntity::class)) {
-            return ModelType::selfReferencedModel;
-        } elseif ($this->checkDependencies($reflection)) {
-            return ModelType::dependentModel;
-        } else {
-            return ModelType::baseModel;
-        }
-    }
-
-    public function checkDependencies(\ReflectionClass $entityReflection): bool
-    {
-        foreach ($entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-            if (BaseEntity::checkFinalClassReflectionProperty($property) &&
-                    is_subclass_of($property->getType()->getName(), BaseEntity::class)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private function getTemplatePath(string $templateName): string
     {
         if ($this->customTemplatePath) {
-            $path = rtrim($this->customTemplatePath, '/') . '/';
+            $path = rtrim($this->customTemplatePath, '/' . DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
             return $path . $templateName . '.tpl';
         }
         return $this->templatesPath . $templateName . '.tpl';
+    }
+
+    private function generateForm(string $applicationPath): bool
+    {
+        $properties = $this->analyzeEntityProperties($this->entityReflection);
+        $filtersCode = $this->generateFiltersCode($properties);
+        $this->setPlaceholder('filters', $filtersCode);
+        return $this->generate('Form', $applicationPath . DIRECTORY_SEPARATOR . 'Forms' . DIRECTORY_SEPARATOR . $this->entityShortName . 'Form.php');
     }
 
     private function analyzeEntityProperties(\ReflectionClass $entityReflection): array
     {
         $properties = [];
         foreach ($entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-            if (!BaseEntity::checkFinalClassReflectionProperty($property)) {
-                continue;
+            if (BaseEntity::checkFinalClassReflectionProperty($property) && ($this->config->defaultPrimaryKeyPropertyName !== $property->getName())) {
+                $properties[] = [
+                    'name' => $property->getName(),
+                    'type' => $property->getType(),
+                ];
             }
-            $properties[] = [
-                'name' => $property->getName(),
-                'type' => $property->getType(),
-            ];
         }
 
         return $properties;
@@ -259,41 +234,37 @@ ERROR);
 
     private function generateFiltersCode(array $properties): string
     {
-        if (empty($properties)) {
-            return '';
+        $filters = '';
+        foreach ($properties as $key => $property) {
+            $filters .= Templater::parseTemplate($this->templatesPath . 'propertyFilter.tpl', [
+                'prefix' => ($key === array_key_first($properties)) ? '$this' : '    ',
+                'propertyName' => $property['name'],
+                'filterType' => FilterType::fromPhpType($property['type'])->name,
+                'additionalInformation' => $property['type']->allowsNull() ? ', [], true' : '',
+                'closeInstruction' => ($key === array_key_last($properties)) ? ';' : '',
+            ]);
         }
+        return rtrim($filters, "\n");
+    }
 
-        $property = array_shift($properties);
-        $filterType = FilterType::fromPhpType($property['type'])->name;
+    private function generateController(string $applicationPath): bool
+    {
+        $controllerName = str_replace('Controller', '', $this->entityShortName . 'Controller');
+        $this->setPlaceholder('controllerRoute', NotationManager::convertToKebabCase($controllerName));
+        return $this->generate('Controller', $applicationPath . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR . $this->entityShortName . 'Controller.php');
+    }
 
-        $code = [sprintf(
-                    '        $this->addFilterFieldMode("%s", FilterType::%s%s)',
-                    $property['name'],
-                    $filterType,
-                    $property['type']->allowsNull() ? ', [], true' : ''
-            )];
-
-        $lastProperty = end($properties);
-        foreach ($properties as $property) {
-            $filterType = FilterType::fromPhpType($property['type'])->name;
-
-            if ($property['type']->allowsNull()) {
-                $code[] = sprintf(
-                        '            ->addFilterFieldMode("%s", FilterType::%s, [], true)%s',
-                        $property['name'],
-                        $filterType,
-                        $property === $lastProperty ? ';' : ''
-                );
-            } else {
-                $code[] = sprintf(
-                        '            ->addFilterFieldMode("%s", FilterType::%s)%s',
-                        $property['name'],
-                        $filterType,
-                        $property === $lastProperty ? ';' : ''
-                );
+    private function generateViews(string $applicationPath): bool
+    {
+        $viewsPath = $applicationPath . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . $this->entityShortName . DIRECTORY_SEPARATOR;
+        if (!is_dir($viewsPath)) {
+            if (!mkdir($viewsPath, 0777, true)) {
+                throw new \RuntimeException("Failed to create directory: {$viewsPath}");
             }
         }
-
-        return implode("\n", $code);
+        $success = $this->generate('Views' . DIRECTORY_SEPARATOR . 'index', $viewsPath . 'index.php');
+        $success &= $this->generate('Views' . DIRECTORY_SEPARATOR . 'create', $viewsPath . 'create.php');
+        $success &= $this->generate('Views' . DIRECTORY_SEPARATOR . 'update', $viewsPath . 'update.php');
+        return $success;
     }
 }

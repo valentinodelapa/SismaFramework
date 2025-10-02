@@ -1,56 +1,56 @@
 <?php
 
-namespace {{namespace}};
+namespace {{controllerNamespace}};
 
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
-use {{namespace}}\Forms\{{className}}Form;
-use {{namespace}}\{{className}};
-use {{namespace}}\Models\{{className}}Model;
+use {{entityNamespace}}\{{entityShortName}};
+use {{formNamespace}}\{{entityShortName}}Form;
+use {{modelNamespace}}\Models\{{entityShortName}}Model;
 
-class {{className}}Controller extends BaseController
+class {{entityShortName}}Controller extends BaseController
 {
     
     public function index(): Response
     {
-        $model = new {{className}}Model();
-        ${{classNameLower}}Collection = $model->getEntityCollection();
-        $this->vars['{{classNameLower}}Collection'] = ${{classNameLower}}Collection;
-        return Render::generateView('{{classNameLower}}/index', $this->vars);
+        $model = new {{entityShortName}}Model();
+        ${{entityShortNameLower}}Collection = $model->getEntityCollection();
+        $this->vars['{{entityShortNameLower}}Collection'] = ${{entityShortNameLower}}Collection;
+        return Render::generateView('{{entityShortNameLower}}/index', $this->vars);
     }
     
     public function create(Request $request): Response
     {
-        ${{classNameLower}}Form = new {{className}}Form();
-        ${{classNameLower}}Form->handleRequest($request);
-        if (${{classNameLower}}Form->isSubmitted() && ${{classNameLower}}Form->isValid()) {
-            $this->dataMapper->save(${{classNameLower}}Form->getEntity());
+        ${{entityShortNameLower}}Form = new {{entityShortName}}Form();
+        ${{entityShortNameLower}}Form->handleRequest($request);
+        if (${{entityShortNameLower}}Form->isSubmitted() && ${{entityShortNameLower}}Form->isValid()) {
+            $this->dataMapper->save(${{entityShortNameLower}}Form->getEntity());
             return Router::redirect('{{controllerRoute}}/index');
         }
-        $this->vars['{{classNameLower}}'] = ${{classNameLower}}Form->getEntityDataToStandardEntity();
-        $this->vars['filterErrors'] = ${{classNameLower}}Form->getFilterErrors();
-        return Render::generateView('{{classNameLower}}/create', $this->vars, ${{classNameLower}}Form->getResponseType());
+        $this->vars['{{entityShortNameLower}}'] = ${{entityShortNameLower}}Form->getEntityDataToStandardEntity();
+        $this->vars['filterErrors'] = ${{entityShortNameLower}}Form->getFilterErrors();
+        return Render::generateView('{{entityShortNameLower}}/create', $this->vars, ${{entityShortNameLower}}Form->getResponseType());
     }
     
-    public function update(Request $request, {{className}} ${{classNameLower}}): Response
+    public function update(Request $request, {{entityShortName}} ${{entityShortNameLower}}): Response
     {
-        ${{classNameLower}}Form = new {{className}}Form(${{classNameLower}});
-        ${{classNameLower}}Form->handleRequest($request);
-        if (${{classNameLower}}Form->isSubmitted() && ${{classNameLower}}Form->isValid()) {
-            $this->dataMapper->save(${{classNameLower}}Form->getEntity());
+        ${{entityShortNameLower}}Form = new {{entityShortName}}Form(${{entityShortNameLower}});
+        ${{entityShortNameLower}}Form->handleRequest($request);
+        if (${{entityShortNameLower}}Form->isSubmitted() && ${{entityShortNameLower}}Form->isValid()) {
+            $this->dataMapper->save(${{entityShortNameLower}}Form->getEntity());
             return Router::redirect('{{controllerRoute}}/index');
         }
-        $this->vars['{{classNameLower}}'] = ${{classNameLower}}Form->isSubmitted() ? ${{classNameLower}}Form->getEntityDataToStandardEntity() : ${{classNameLower}};
-        $this->vars['filterErrors'] = ${{classNameLower}}Form->getFilterErrors();
-        return Render::generateView('{{classNameLower}}/update', $this->vars, ${{classNameLower}}Form->getResponseType());
+        $this->vars['{{entityShortNameLower}}'] = ${{entityShortNameLower}}Form->isSubmitted() ? ${{entityShortNameLower}}Form->getEntityDataToStandardEntity() : ${{entityShortNameLower}};
+        $this->vars['filterErrors'] = ${{entityShortNameLower}}Form->getFilterErrors();
+        return Render::generateView('{{entityShortNameLower}}/update', $this->vars, ${{entityShortNameLower}}Form->getResponseType());
     }
     
-    public function delete({{className}} ${{classNameLower}}): Response
+    public function delete({{entityShortName}} ${{entityShortNameLower}}): Response
     {
-        $this->dataMapper->delete(${{classNameLower}});
+        $this->dataMapper->delete(${{entityShortNameLower}});
         return Router::redirect('{{controllerRoute}}/index');
     }
 }

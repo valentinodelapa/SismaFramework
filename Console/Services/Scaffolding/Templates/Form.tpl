@@ -1,17 +1,17 @@
 <?php
 
-namespace {{namespace}};
+namespace {{formNamespace}};
 
 use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Core\Enumerations\FilterType;
-use {{namespace}}\{{className}};
+use {{entityNamespace}}\{{entityShortName}};
 
-class {{className}}Form extends BaseForm
+class {{entityShortName}}Form extends BaseForm
 {
     
     protected static function getEntityName(): string
     {
-        return {{className}}::class;
+        return {{entityShortName}}::class;
     }
     
     protected function injectRequest(): void
