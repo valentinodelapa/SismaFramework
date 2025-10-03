@@ -2,6 +2,7 @@
 
 namespace SismaFramework\Console;
 
+use SismaFramework\Console\Commands\InstallationCommand;
 use SismaFramework\Console\Commands\ScaffoldCommand;
 use SismaFramework\Console\HelperClasses\CommandDispatcher;
 use SismaFramework\Console\HelperClasses\CommandLineInterfaceSettingsChecker;
@@ -20,6 +21,7 @@ try {
     CommandLineInterfaceSettingsChecker::checkIsCommandLineInterfaceMode(php_sapi_name());
     CommandLineInterfaceSettingsChecker::checkIsProjectDirectory(\Config\SYSTEM_PATH);
     $commandDispatcher = new CommandDispatcher(array_slice($argv, 1));
+    $commandDispatcher->addCommandStrategy(new InstallationCommand());
     $commandDispatcher->addCommandStrategy(new ScaffoldCommand());
     $commandDispatcher->run();
 } catch (\Throwable $e) {
