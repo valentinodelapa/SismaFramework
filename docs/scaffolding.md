@@ -1,16 +1,16 @@
 # Scaffolding
 
-La libreria è dotata di un meccanismo di scaffolding che, data un'entità, ne genenera i seguenti relativi componenti con le implementazioni di base descritte:
+La libreria è dotata di un meccanismo di scaffolding che, data un'entità, ne genera i seguenti relativi componenti con le implementazioni di base descritte:
 
-- `Controller`: viene generato implementando il pattend CRUD con i metodi `index`, `create`, `update `e `delete`
+- `Controller`: viene generato implementando il pattern CRUD con i metodi `index`, `create`, `update` e `delete`
 
-- `Model`: nel comando può essere indicata la tipologia la classe astratta che lo stesso dovrà estendere (`BaseModel`, `DependentModel` o `SelfReferencedModel`). Qualora la scenta non venga esplicitata, il sistema effettuerà un controllo tramikte il quale stabilirà il autonomia la classe astratta da estendere.
+- `Model`: nel comando può essere indicata la tipologia della classe astratta che lo stesso dovrà estendere (`BaseModel`, `DependentModel` o `SelfReferencedModel`). Qualora la scelta non venga esplicitata, il sistema effettuerà un controllo tramite il quale stabilirà in autonomia la classe astratta da estendere.
 
 - `Form`: nell'implementazione base, verranno implementati i filtri standard per tutte le proprietà dell'entità.
 
 - `Views`: nella cartella Views del modulo, verrà creata la cartella che si riferisce al controller ed, al suo interno, verranno creati (vuoti) i files relativi alle view `index`, `create` e `update`
 
-Tale comando prosuppone che l'entità di riferimento sia stata precedentemente creata manualmente dallo sviluppatore.
+Tale comando presuppone che l'entità di riferimento sia stata precedentemente creata manualmente dallo sviluppatore.
 
 ## Funzionamento
 
@@ -28,7 +28,7 @@ php SismaFramework/Console/sisma scaffold <entity> <module> [options]
 
 Il comando richiede due argomenti obbligatori:
 
-- `<entity>`: Il nome della classe dell'entità per la quale generare i file (es. `ProductEntity`).
+- `<entity>`: Il nome della classe dell'entità per la quale generare i file (es. `Product`).
 - `<module>`: Il nome del modulo in cui si trova l'entità e dove verranno creati i nuovi file (es. `Catalog`).
 
 ### Opzioni
@@ -81,5 +81,17 @@ Questo comando creerà i seguenti file:
 Se i file esistono già e si desidera sovrascriverli, si può usare:
 
 ```bash
-php SismaFramework/Console/sisma scaffold ProductEntity Catalog --force
+php SismaFramework/Console/sisma scaffold Product Catalog --force
+```
+
+Per forzare un tipo di modello specifico:
+
+```bash
+php SismaFramework/Console/sisma scaffold Product Catalog --type=DependentModel
+```
+
+Per utilizzare template personalizzati:
+
+```bash
+php SismaFramework/Console/sisma scaffold Product Catalog --template=/path/to/custom/templates
 ```
