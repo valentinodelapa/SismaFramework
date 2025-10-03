@@ -30,10 +30,24 @@ class InstallationCommandTest extends TestCase
         $this->command->run();
         $output = ob_get_clean();
 
-        $this->assertStringContainsString('projectName', $output);
-        $this->assertStringContainsString('--force', $output);
-        $this->assertStringContainsString('--db-host', $output);
-        $this->assertStringContainsString('--db-name', $output);
+        $expectedStrings = [
+            'Usage: php SismaFramework/Console/sisma install <projectName> [options]',
+            'Arguments:',
+            'projectName    The name of the project to install',
+            'Options:',
+            '--force        Force overwrite existing files',
+            '--db-host=HOST      Database host (default: 127.0.0.1)',
+            '--db-name=NAME      Database name',
+            '--db-user=USER      Database username',
+            '--db-pass=PASS      Database password',
+            '--db-port=PORT      Database port (default: 3306)',
+            'Example:',
+            'php SismaFramework/Console/sisma install MyProject --db-name=mydb --db-user=root'
+        ];
+
+        foreach ($expectedStrings as $string) {
+            $this->assertStringContainsString($string, $output);
+        }
     }
 
     public function testExecuteWithMissingProjectName(): void
@@ -46,6 +60,7 @@ class InstallationCommandTest extends TestCase
         $output = ob_get_clean();
 
         $this->assertFalse($result);
+        $this->assertStringContainsString('Usage: php SismaFramework/Console/sisma install', $output);
         $this->assertStringContainsString('Error: Project name is required', $output);
     }
 
@@ -132,12 +147,16 @@ class InstallationCommandTest extends TestCase
             ->method('install')
             ->willThrowException(new \RuntimeException('Installation failed'));
 
-        ob_start();
-        $result = $this->command->run();
-        $output = ob_get_clean();
+        // L'eccezione viene propagata e catturata dal dispatcher a monte
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Installation failed');
 
-        $this->assertFalse($result);
-        $this->assertStringContainsString('Error: Installation failed', $output);
+        ob_start();
+        try {
+            $this->command->run();
+        } finally {
+            ob_end_clean();
+        }
     }
 
     public function testCheckCompatibilityReturnsTrueForInstallCommand(): void

@@ -99,33 +99,28 @@ OUTPUT);
             $config['DATABASE_PORT'] = $dbPort;
         }
 
-        try {
-            $this->installationManager->setForce($force);
+        $this->installationManager->setForce($force);
 
-            $this->output("Installing SismaFramework project: {$projectName}");
-            $this->output('Creating project structure...');
+        $this->output("Installing SismaFramework project: {$projectName}");
+        $this->output('Creating project structure...');
 
-            $this->installationManager->install($projectName, $config);
+        $this->installationManager->install($projectName, $config);
 
-            $this->output('');
-            $this->output('Installation completed successfully!');
-            $this->output('');
-            $this->output('Project structure created:');
-            $this->output('  - Config/configFramework.php');
-            $this->output('  - Public/index.php');
-            $this->output('  - Cache/');
-            $this->output('  - Logs/');
-            $this->output('  - filesystemMedia/');
-            $this->output('');
-            $this->output('Next steps:');
-            $this->output('  1. Review and update Config/configFramework.php with your settings');
-            $this->output('  2. Configure your web server to point to the Public directory');
-            $this->output('  3. Start building your application!');
+        $this->output('');
+        $this->output('Installation completed successfully!');
+        $this->output('');
+        $this->output('Project structure created:');
+        $this->output('  - Config/configFramework.php');
+        $this->output('  - Public/index.php');
+        $this->output('  - Cache/');
+        $this->output('  - Logs/');
+        $this->output('  - filesystemMedia/');
+        $this->output('');
+        $this->output('Next steps:');
+        $this->output('  1. Review and update Config/configFramework.php with your settings');
+        $this->output('  2. Configure your web server to point to the Public directory');
+        $this->output('  3. Start building your application!');
 
-            return true;
-        } catch (\Exception $e) {
-            $this->output('Error: ' . $e->getMessage());
-            return false;
-        }
+        return true;
     }
 }
