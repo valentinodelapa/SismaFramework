@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2024 Valentino de Lapa.
+ * Copyright (c) 2020-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
