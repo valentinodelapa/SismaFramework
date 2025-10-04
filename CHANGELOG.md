@@ -2,6 +2,96 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.1] - 2025-10-04 - Miglioramenti Documentazione e Licenze
+
+Questa patch release migliora la qualità e la precisione della documentazione delle licenze e delle modifiche nei file derivati da librerie terze parti, uniforma le notifiche di copyright e introduce il tag `@internal` per le API interne del framework.
+
+### 📝 Documentazione
+
+#### Miglioramento Documentazione File Derivati da SimpleORM
+
+Migliorata la precisione e la specificità della documentazione delle modifiche nei file derivati dalla libreria SimpleORM (Apache License 2.0):
+
+*   **BaseModel.php**: Aggiunto header completo che documenta l'ispirazione concettuale dalla classe `Model` di SimpleORM, con sezione dettagliata sui cambiamenti architetturali (Active Record → Data Mapper pattern).
+
+*   **ResultSetMysql.php**: Corretta la descrizione dell'implementazione dei metodi Iterator per maggiore accuratezza tecnica.
+
+*   **BaseAdapter.php**: Aggiunte 4 modifiche specifiche non documentate in precedenza:
+    - Pattern di delegazione con `selectToDelegateAdapter()` e `executeToDelegateAdapter()`
+    - Metodi astratti specifici: `opFulltextIndex()`, `opDecryptFunction()`, `fulltextConditionSintax()`
+    - Proprietà `AdapterType`
+    - Modifica della proprietà `$connection` per gestione singleton
+
+*   **AdapterMysql.php**: Sostituita documentazione generica con 6 implementazioni specifiche dettagliate:
+    - `translateDataType()`, `parseBind()`, `parseGenericBindType()`
+    - Supporto fulltext search
+    - Supporto decrittazione AES
+    - Uso dell'attributo `#[\Override]`
+
+*   **Query.php**: Sostituite descrizioni generiche con 8 modifiche strutturali specifiche:
+    - Cambio da array `$tables` a string `$table`
+    - Proprietà `$currentCondition` (Condition enum)
+    - Supporto fulltext search, subquery, colonne crittografate
+    - Metodi order by estesi
+    - Rimozione metodo `reset()`
+    - Logica `setOrderBy()` modificata
+
+*   **BaseResultSet.php**: Corretta formattazione minore (doppio asterisco rimosso).
+
+**Nota**: Tutte le modifiche riguardano esclusivamente la qualità della documentazione. Il codice era già legalmente compliant con la licenza Apache 2.0 di SimpleORM. Questi miglioramenti rendono la documentazione più precisa, specifica e professionale.
+
+#### Uniformazione Copyright
+
+Uniformato il formato del copyright in tutti i file PHP del progetto (totale **101 file modificati** in 3 fasi):
+
+*   **Prima**: Vari formati inconsistenti:
+    - `Copyright 2022 valen.`, `Copyright 2024-present`
+    - `Copyright 2025 Valentino de Lapa <email@...>.` (con indirizzo email)
+    - `Copyright (c) 2023-present Valentino de Lapa.` (anno errato)
+*   **Dopo**: Formato uniforme in tutti i file: `Copyright (c) 2020-present Valentino de Lapa.`
+
+**Modifiche effettuate**:
+- **Prima fase**: 84 file (uniformazione anno e formato)
+- **Seconda fase**: 12 file (rimozione email da tests e CallableController)
+- **Terza fase**: 5 file (ultimi file con formati inconsistenti)
+
+**File modificati per directory**:
+- Core/: 15 file (interfaces e helper classes)
+- Orm/: 13 file
+- Security/: 1 file
+- Sample/: 9 file (incluse views)
+- TestsApplication/: 63 file (inclusi tutti i test)
+
+#### Aggiunta Tag @internal per API Interne
+
+Aggiunto il tag PHPDoc `@internal` alle classi e enum che fanno parte dell'implementazione interna del framework e non dovrebbero essere utilizzate direttamente dagli sviluppatori:
+
+**Enumerations (2)**:
+- `ContentType`
+- `Resource`
+
+**HelperClasses (11)**:
+- `Autoloader`
+- `Config`
+- `Debugger`
+- `Dispatcher`
+- `ErrorHandler`
+- `Localizator`
+- `Locker`
+- `Parser`
+- `PhpVersionChecker`
+- `ResourceMaker`
+
+**Benefici**:
+- Gli IDE moderni (PHPStorm, VSCode) mostreranno warning quando si utilizzano classi marcate `@internal`
+- I generatori di documentazione possono escludere automaticamente gli elementi interni
+- Maggiore chiarezza su quali sono le API pubbliche del framework
+
+**API pubbliche confermate** (11 HelperClasses):
+- `BufferManager`, `Encryptor`, `Filter`, `FixturesManager`, `Logger`, `ModuleManager`, `NotationManager`, `Render`, `Router`, `Session`, `Templater`
+
+---
+
 ## [10.0.0] - 2025-10-01 - Refactoring Sistema Localizzazione e Correzioni Terminologiche
 
 Questa è una major release che introduce modifiche non retrocompatibili all'API del framework. L'aggiornamento è consigliato, ma richiede attenzione alle breaking changes elencate di seguito.
