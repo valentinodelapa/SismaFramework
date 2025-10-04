@@ -46,6 +46,7 @@ enum Resource: string
     case jsm = 'jsm';
     case json = 'json';
     case map = 'map';
+    case mjs = 'mjs';
     case mp3 = 'mp3';
     case mp4 = 'mp4';
     case otf = 'otf';
@@ -100,7 +101,8 @@ enum Resource: string
             self::htm, self::html => ContentType::textHtml,
             self::ico => ContentType::imageIcon,
             self::jpg, self::jpeg => ContentType::imageJpeg,
-            self::js, self::jsm => ContentType::applicationJavascript,
+            self::js => ContentType::applicationJavascript,
+            self::jsm, self::mjs => ContentType::textJavascript,
             self::json, self::map => ContentType::applicationJson,
             self::mp3 => ContentType::audioMp3,
             self::mp4 => ContentType::videoMp4,
@@ -112,7 +114,7 @@ enum Resource: string
             self::pptx => ContentType::applicationPptx,
             self::rar => ContentType::applicationRar,
             self::svg => ContentType::imageSvgXml,
-            self::tpl => ContentType::textTpl,
+            self::tpl => ContentType::textPlain,
             self::ttf => ContentType::fontTtf,
             self::txt => ContentType::textPlain,
             self::woff => ContentType::fontWoff,

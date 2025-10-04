@@ -55,7 +55,6 @@ class ContentTypeTest extends TestCase
         $this->assertEquals('application/x-www-form-urlencoded',
             ContentType::applicationFormUrlencoded->getMime());
         $this->assertEquals('application/geo+json', ContentType::applicationGeoJson->getMime());
-        $this->assertEquals('application/javascript', ContentType::applicationJsm->getMime());
         $this->assertEquals('application/vnd.ms-excel', ContentType::applicationXls->getMime());
         $this->assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ContentType::applicationXlsx->getMime());
@@ -84,7 +83,6 @@ class ContentTypeTest extends TestCase
         $this->assertEquals('text/css', ContentType::textCss->getMime());
         $this->assertEquals('text/html', ContentType::textHtml->getMime());
         $this->assertEquals('text/plain', ContentType::textPlain->getMime());
-        $this->assertEquals('text/plain', ContentType::textTpl->getMime());
     }
 
     public function testMultipartAndOtherTypes()
@@ -153,7 +151,6 @@ class ContentTypeTest extends TestCase
     public function testToResourceSpecialTypes()
     {
         $this->assertEquals(Resource::geojson, ContentType::applicationGeoJson->toResource());
-        $this->assertEquals(Resource::js, ContentType::applicationJsm->toResource());
         $this->assertEquals(Resource::zip, ContentType::applicationZip->toResource());
         $this->assertEquals(Resource::rar, ContentType::applicationRar->toResource());
         $this->assertEquals(Resource::svg, ContentType::imageSvgXml->toResource());

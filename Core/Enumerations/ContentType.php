@@ -61,8 +61,8 @@ enum ContentType
     case multipartFormData;
     case textCss;
     case textHtml;
+    case textJavascript;
     case textPlain;
-    case textTpl;
     case videoMp4;
 
     public function getMime(): string
@@ -71,7 +71,7 @@ enum ContentType
             self::applicationDocx => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             self::applicationFormUrlencoded => 'application/x-www-form-urlencoded',
             self::applicationGeoJson => 'application/geo+json',
-            self::applicationJavascript, self::applicationJsm => 'application/javascript',
+            self::applicationJavascript => 'application/javascript',
             self::applicationJson => 'application/json',
             self::applicationPdf => 'application/pdf',
             self::applicationPhp => 'application/x-httpd-php',
@@ -94,7 +94,8 @@ enum ContentType
             self::multipartFormData => 'multipart/form-data',
             self::textCss => 'text/css',
             self::textHtml => 'text/html',
-            self::textPlain, self::textTpl => 'text/plain',
+            self::textJavascript => 'text/javascript',
+            self::textPlain => 'text/plain',
             self::applicationMsword => 'application/msword',
             self::videoMp4 => 'video/mp4',
         };
@@ -130,6 +131,7 @@ enum ContentType
             'multipart/form-data' => self::multipartFormData,
             'text/css' => self::textCss,
             'text/html' => self::textHtml,
+            'text/javascript' => self::textJavascript,
             'text/plain' => self::textPlain,
             'applicationMsword' => self::applicationMsword,
             'video/mp4' => self::videoMp4,
@@ -142,7 +144,7 @@ enum ContentType
         return match ($this) {
             self::applicationDocx => Resource::docx,
             self::applicationGeoJson => Resource::geojson,
-            self::applicationJavascript, self::applicationJsm => Resource::js,
+            self::applicationJavascript => Resource::js,
             self::applicationJson => Resource::json,
             self::applicationMsword => Resource::doc,
             self::applicationPdf => Resource::pdf,
@@ -166,8 +168,8 @@ enum ContentType
             self::multipartFormData => null,
             self::textCss => Resource::css,
             self::textHtml => Resource::html,
+            self::textJavascript => Resource::mjs,
             self::textPlain => Resource::txt,
-            self::textTpl => Resource::tpl,
             self::videoMp4 => Resource::mp4,
         };
     }
