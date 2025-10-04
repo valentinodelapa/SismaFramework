@@ -33,7 +33,12 @@
  * - Modifica del namespace per l'integrazione nel SismaFramework.
  * - Implementazione della forte tipizzazione per proprietà e parametri.
  * - Utilizzo degli enum (PHP 8.1+) per le parole chiave e gli operatori SQL nella costruzione delle query.
- * - Potenziale aggiunta di metodi specifici per funzionalità MySQL non presenti nell'adapter originale o necessarie al SismaFramework.
+ * - Implementazione del metodo translateDataType() per mappatura tra DataType enum e tipi PDO.
+ * - Implementazione del metodo parseBind() per elaborazione automatica dei parametri di binding.
+ * - Implementazione del metodo parseGenericBindType() per rilevamento automatico del tipo di dato.
+ * - Aggiunta del supporto fulltext search con opFulltextIndex() e fulltextConditionSintax().
+ * - Aggiunta del supporto per decrittazione AES con opDecryptFunction(), opBase64DecodeFunction(), opConvertBlobToHex().
+ * - Utilizzo dell'attributo #[\Override] per esplicitare i metodi sovrascritti (PHP 8.3+).
  */
 
 namespace SismaFramework\Orm\Adapters;

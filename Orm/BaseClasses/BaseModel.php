@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Questo file contiene codice derivato dalla libreria SimpleORM
+ * Questo file è ispirato concettualmente alla classe Model della libreria SimpleORM
  * (https://github.com/davideairaghi/php) rilasciata sotto licenza Apache License 2.0
  * (fare riferimento alla licenza in third-party-licenses/SimpleOrm/LICENSE).
  *
@@ -28,6 +28,18 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * CAMBIAMENTI ARCHITETTURALI RISPETTO ALLA CLASSE `MODEL` DI SIMPLEORM:
+ * - Completa riscrittura seguendo il pattern Data Mapper invece di Active Record.
+ * - La classe Model di SimpleORM combinava rappresentazione dati e logica di persistenza (Active Record).
+ * - BaseModel è ora un repository/service layer separato che delega la persistenza a DataMapper.
+ * - I metodi find(), findFirst(), save(), insert(), delete() di SimpleORM Model sono stati completamente ridisegnati.
+ * - Introduzione di getEntityCollection(), getEntityById(), deleteEntityById() come astrazione su DataMapper.
+ * - Rimozione completa della logica di persistenza diretta: ora delegata a DataMapper.
+ * - Introduzione di dependency injection per DataMapper e Config invece di singleton.
+ * - Aggiunta di metodo astratto appendSearchCondition() per logica di ricerca specifica per entità.
+ * - Integrazione con sistema di cache ORM del framework.
+ * - Supporto per SismaCollection tipizzata invece di array.
  */
 
 namespace SismaFramework\Orm\BaseClasses;

@@ -30,10 +30,11 @@
  * THE SOFTWARE.
  * 
  * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM\RESULTSETS\RESULTSETMYSQL:
- * - Modifica del namespace per l'integrazione nel SismaFramework.
- * - Estensione della classe astratta `BaseResultSet` implementata nel framework.
- * - Implementazione dei metodi astratti `next()`, `key()`, `valid()` e `rewind()` definiti in `BaseResultSet` per la gestione specifica dei risultati MySQL.
- * - Potenziale adattamento o estensione della logica di idratazione per gestire specificità di MySQL o delle tue Entities.
+ * - Modifica del namespace da `Airaghi\DB\SimpleORM\ResultSets` a `SismaFramework\Orm\ResultSets`.
+ * - Estensione della classe `BaseResultSet` del framework invece di `\Airaghi\DB\SimpleORM\ResultSet`.
+ * - I metodi Iterator (`next()`, `key()`, `valid()`, `rewind()`) sono ereditati da `BaseResultSet` dove sono implementati.
+ * - Tipizzazione forte dei parametri e dei tipi di ritorno (PHP 8.1+).
+ * - Adattamento della logica di idratazione tramite il metodo `hydrate()` in `BaseResultSet`.
  */
 
 namespace SismaFramework\Orm\ResultSets;

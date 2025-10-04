@@ -28,8 +28,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
- * * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM:
+ *
+ * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM:
  * - Significativa riorganizzazione e rifattorizzazione per l'applicazione della tipizzazione forte.
  * - Sostituzione delle costanti di classe con enum (PHP 8.1+).
  * - Modifica del namespace per l'integrazione nel SismaFramework.

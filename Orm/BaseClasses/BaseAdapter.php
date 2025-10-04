@@ -36,6 +36,10 @@
  * - Miglioramento della nomenclatura di metodi, parametri e variabili per maggiore chiarezza.
  * - Trasformazione della classe in astratta per definire un'interfaccia comune.
  * - Definizione come astratti dei metodi precedentemente abbozzati, la cui implementazione è demandata alle classi derivate.
+ * - Introduzione del pattern di delegazione con metodi selectToDelegateAdapter() e executeToDelegateAdapter().
+ * - Aggiunta di metodi astratti specifici: opFulltextIndex(), opDecryptFunction(), fulltextConditionSintax().
+ * - Introduzione della proprietà AdapterType per identificare il tipo di adapter.
+ * - Modifica della proprietà $connection da protected a static protected per gestione singleton della connessione.
  */
 
 namespace SismaFramework\Orm\BaseClasses;
