@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\HelperClasses;
 
 /**
+ * @internal
  *
  * @author Valentino de Lapa
  */

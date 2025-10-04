@@ -42,6 +42,7 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Security\HttpClasses\Authentication;
 
 /**
+ * @internal
  *
  * @author Valentino de Lapa
  */

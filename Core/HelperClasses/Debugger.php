@@ -32,6 +32,7 @@ use SismaFramework\Core\HelperClasses\Templater;
 use SismaFramework\Core\HelperClasses\Parser;
 
 /**
+ * @internal
  *
  * @author Valentino de Lapa
  */

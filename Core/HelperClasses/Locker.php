@@ -31,6 +31,8 @@ use SismaFramework\Core\Exceptions\FilesystemPermissionException;
 /**
  * Description of Locker
  *
+ * @internal
+ *
  * @author Valentino de Lapa
  */
 class Locker

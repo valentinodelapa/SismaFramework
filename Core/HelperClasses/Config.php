@@ -32,6 +32,8 @@ use SismaFramework\Orm\Enumerations\AdapterType;
 /**
  * Description of Config
  *
+ * @internal
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 class Config

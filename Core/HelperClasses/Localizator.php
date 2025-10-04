@@ -32,6 +32,8 @@ use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\LocalizatorException;
 
 /**
+ * @internal
+ *
  * @author Valentino de Lapa
  */
 class Localizator

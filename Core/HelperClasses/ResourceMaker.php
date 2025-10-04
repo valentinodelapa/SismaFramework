@@ -35,6 +35,8 @@ use SismaFramework\Core\Exceptions\AccessDeniedException;
 /**
  * Description of ResourceMaker
  *
+ * @internal
+ *
  * @author Valentino de Lapa
  */
 class ResourceMaker
