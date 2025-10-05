@@ -1,0 +1,88 @@
+{
+  "pages": {
+    "common": {
+      "siteName": "SismaFramework",
+      "status": "Stato",
+      "rating": "Rating",
+      "published": "Pubblicato",
+      "views": "Visualizzazioni",
+      "author": "Autore",
+      "writtenBy": "Scritto da",
+      "search": "Cerca",
+      "backToList": "Torna alla lista",
+      "backToIndex": "Torna all'indice"
+    },
+    "home": {
+      "common": {},
+      "index": {
+        "title": "SismaFramework",
+        "tagline": "Framework PHP MVC moderno, robusto e manutenibile",
+        "description": "Sfrutta le potenzialità di PHP 8.1+ con tipizzazione forte, ORM potente e sicurezza integrata.",
+        "quickStart": "Quick Start",
+        "installation": "Installazione",
+        "firstExample": "Primo Esempio",
+        "helloWorld": "Hello World Controller",
+        "features": "Caratteristiche Principali",
+        "whyChoose": "Perché SismaFramework?",
+        "readyToStart": "Pronto a Iniziare?",
+        "btnGettingStarted": "Getting Started",
+        "btnDocumentation": "Documentazione",
+        "btnViewExamples": "Vedi Esempi Live",
+        "seeFullTutorial": "Vedi tutorial completo",
+        "orClone": "Oppure clona il repository",
+        "stepsToStart": "5 passi per iniziare"
+      }
+    },
+    "docs": {
+      "common": {},
+      "index": {
+        "title": "Documentazione SismaFramework",
+        "subtitle": "Guida completa all'utilizzo del framework, dalle basi ai concetti avanzati.",
+        "quickStartTitle": "Inizio Rapido",
+        "quickStartDesc": "Inizia subito a sviluppare con SismaFramework",
+        "ormTitle": "ORM Guide",
+        "ormDesc": "Scopri come usare il potente ORM del framework",
+        "apiTitle": "API Reference",
+        "apiDesc": "Consulta la documentazione completa delle API",
+        "helpTitle": "Hai bisogno di aiuto?",
+        "helpText": "Se non trovi quello che cerchi nella documentazione, puoi:"
+      },
+      "viewer": {
+        "pageUseful": "Questa pagina ti è stata utile?",
+        "pageFeedback": "Se hai trovato errori o vuoi suggerire miglioramenti, apri una issue su GitHub.",
+        "reportIssue": "Report Issue",
+        "editGithub": "Edit on GitHub"
+      }
+    },
+    "sample": {
+      "common": {},
+      "index": {
+        "title": "Esempi di SismaFramework",
+        "subtitle": "Questa pagina dimostra le principali funzionalità del framework",
+        "allArticles": "Tutti gli Articoli",
+        "publishedArticles": "Ultimi 5 Articoli Pubblicati",
+        "featuredArticles": "Articoli in Evidenza",
+        "otherFeatures": "Altre Funzionalità",
+        "noArticles": "Nessun articolo disponibile. Esegui le fixtures per popolare il database.",
+        "noPublished": "Nessun articolo pubblicato.",
+        "noFeatured": "Nessun articolo in evidenza.",
+        "forDevelopers": "Per sviluppatori",
+        "examplesShow": "Questi esempi mostrano:"
+      },
+      "search": {
+        "title": "Ricerca Articoli",
+        "placeholder": "Cerca negli articoli...",
+        "resultsFor": "Risultati per",
+        "noResults": "Nessun articolo trovato per la tua ricerca."
+      }
+    }
+  },
+  "templates": {},
+  "enumerations": {
+    "articleStatus": {
+      "DRAFT": "Bozza",
+      "PUBLISHED": "Pubblicato",
+      "ARCHIVED": "Archiviato"
+    }
+  }
+}
