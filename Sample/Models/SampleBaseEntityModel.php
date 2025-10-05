@@ -27,26 +27,107 @@
 namespace SismaFramework\Sample\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
+use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Sample\Entities\SampleBaseEntity;
+use SismaFramework\Sample\Enumerations\ArticleStatus;
 
 /**
- * Description of SampleBaseEntityModel
+ * Model per SampleBaseEntity - Gestione Articoli
+ *
+ * Questo model mostra:
+ * - Come implementare la ricerca testuale
+ * - Come creare metodi custom per query specifiche
+ * - Come utilizzare il Query Builder
+ * - Come gestire filtri per enum
  *
  * @author Valentino de Lapa
  */
 class SampleBaseEntityModel extends BaseModel
 {
-    
+    /**
+     * Implementa la logica di ricerca testuale
+     *
+     * Questo metodo viene chiamato automaticamente quando usi getEntityCollection() con un searchKey.
+     * La ricerca viene eseguita su titolo e contenuto.
+     */
     #[\Override]
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
-        
+        // Cerca nel titolo O nel contenuto
+        $query->where('title LIKE :searchKey OR content LIKE :searchKey');
+        $bindValues[':searchKey'] = '%' . $searchKey . '%';
+        $bindTypes[':searchKey'] = DataType::str;
     }
 
     #[\Override]
     protected function getEntityName(): string
     {
         return SampleBaseEntity::class;
+    }
+
+    /**
+     * Esempio di metodo custom: recupera solo articoli pubblicati
+     *
+     * @return SampleBaseEntity[]
+     */
+    public function getPublishedArticles(?int $limit = null): array
+    {
+        $query = new Query();
+        $query->select('*')
+              ->from($this->getTableName())
+              ->where('status = :status')
+              ->orderBy(['published_at' => 'DESC']);
+
+        if ($limit !== null) {
+            $query->limit($limit);
+        }
+
+        $bindValues = [':status' => ArticleStatus::PUBLISHED->value];
+        $bindTypes = [':status' => DataType::str];
+
+        return $this->getEntityCollectionByQuery($query, $bindValues, $bindTypes);
+    }
+
+    /**
+     * Esempio: recupera articoli in evidenza
+     *
+     * @return SampleBaseEntity[]
+     */
+    public function getFeaturedArticles(): array
+    {
+        $query = new Query();
+        $query->select('*')
+              ->from($this->getTableName())
+              ->where('featured = :featured AND status = :status')
+              ->orderBy(['rating' => 'DESC']);
+
+        $bindValues = [
+            ':featured' => 1,
+            ':status' => ArticleStatus::PUBLISHED->value
+        ];
+        $bindTypes = [
+            ':featured' => DataType::int,
+            ':status' => DataType::str
+        ];
+
+        return $this->getEntityCollectionByQuery($query, $bindValues, $bindTypes);
+    }
+
+    /**
+     * Esempio: conta articoli per stato
+     */
+    public function countByStatus(ArticleStatus $status): int
+    {
+        $query = new Query();
+        $query->select('COUNT(*) as total')
+              ->from($this->getTableName())
+              ->where('status = :status');
+
+        $bindValues = [':status' => $status->value];
+        $bindTypes = [':status' => DataType::str];
+
+        $result = $this->getEntityCollectionByQuery($query, $bindValues, $bindTypes);
+        return $result[0]['total'] ?? 0;
     }
 }

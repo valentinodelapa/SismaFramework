@@ -29,21 +29,60 @@ namespace SismaFramework\Sample\Entities;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 
 /**
+ * Esempio di ReferencedEntity - Autore
+ *
+ * Una ReferencedEntity è un'entità che può essere referenziata da altre entità.
+ * In questo caso, l'Autore può essere referenziato da più articoli.
+ *
+ * Benefici di ReferencedEntity:
+ * - Cache automatica delle entità referenziate per ottimizzare le performance
+ * - Accesso alle collezioni inverse (es. $author->sampleDependentEntityCollection per ottenere tutti gli articoli)
+ * - Metodi magici per gestire le relazioni inverse
+ *
  * @author Valentino de Lapa
  */
 class SampleReferencedEntity extends ReferencedEntity
 {
     protected int $id;
-    
+
+    /** Nome completo dell'autore */
+    protected string $fullName;
+
+    /** Email dell'autore (crittografata per privacy) */
+    protected string $email;
+
+    /** Biografia dell'autore */
+    protected ?string $bio = null;
+
+    /** Flag per autore verificato */
+    protected bool $verified = false;
+
+    /**
+     * Definisce le proprietà da crittografare
+     */
     #[\Override]
     protected function setEncryptedProperties(): void
     {
-        
+        // L'email è un dato personale sensibile, quindi la crittografiamo
+        $this->addEncryptedProperty('email');
     }
 
+    /**
+     * Definisce i valori di default
+     */
     #[\Override]
     protected function setPropertyDefaultValue(): void
     {
-        
+        // I nuovi autori non sono verificati di default
+        $this->verified = false;
     }
+
+    /**
+     * Esempio di property magica per accedere agli articoli di questo autore
+     *
+     * Grazie a ReferencedEntity, puoi accedere a:
+     * - $author->sampleDependentEntityCollection : array di tutti gli articoli
+     * - $author->countSampleDependentEntityCollection() : conteggio articoli
+     * - $author->addSampleDependentEntity($article) : aggiungi articolo
+     */
 }

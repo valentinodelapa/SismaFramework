@@ -27,26 +27,74 @@
 namespace SismaFramework\Sample\Entities;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Sample\Enumerations\ArticleStatus;
 
 /**
- * Description of SampleDependentEntity
+ * Esempio di Entity con Relazioni - Articolo con Autore
+ *
+ * Questa entity mostra:
+ * - Relazione Many-to-One: più articoli possono avere lo stesso autore
+ * - Lazy Loading: l'autore viene caricato solo quando accedi a $article->getSampleReferencedEntity()
+ * - Come l'ORM gestisce automaticamente le foreign key
+ *
+ * Naming Convention:
+ * - La proprietà 'sampleReferencedEntity' si mappa automaticamente alla colonna 'sample_referenced_entity_id'
+ * - L'ORM riconosce il tipo (SampleReferencedEntity) e carica l'entità correlata
  *
  * @author Valentino de Lapa
  */
 class SampleDependentEntity extends BaseEntity
 {
     protected int $id;
+
+    /** Titolo dell'articolo */
+    protected string $title;
+
+    /** Contenuto dell'articolo */
+    protected string $content;
+
+    /** Data di creazione */
+    protected SismaDateTime $createdAt;
+
+    /** Stato dell'articolo */
+    protected ArticleStatus $status;
+
+    /** Numero di visualizzazioni */
+    protected int $views = 0;
+
+    /**
+     * Relazione Many-to-One con l'Autore
+     *
+     * Questa proprietà rappresenta una foreign key.
+     * L'ORM caricherà automaticamente l'oggetto SampleReferencedEntity quando necessario (Lazy Loading).
+     *
+     * Nel database, questa proprietà si mappa alla colonna 'sample_referenced_entity_id'
+     */
     protected SampleReferencedEntity $sampleReferencedEntity;
 
     #[\Override]
     protected function setEncryptedProperties(): void
     {
-        
+        // Nessuna proprietà crittografata in questo esempio
     }
 
     #[\Override]
     protected function setPropertyDefaultValue(): void
     {
-        
+        // Imposta valori di default
+        $this->status = ArticleStatus::DRAFT;
+        $this->createdAt = new SismaDateTime();
+        $this->views = 0;
     }
+
+    /**
+     * Esempio di utilizzo del Lazy Loading:
+     *
+     * $article = $articleModel->getEntityById(1);
+     * // A questo punto l'autore NON è ancora caricato dal database
+     *
+     * $authorName = $article->getSampleReferencedEntity()->getFullName();
+     * // SOLO ORA l'ORM esegue la query per caricare l'autore
+     */
 }
