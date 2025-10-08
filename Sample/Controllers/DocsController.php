@@ -42,6 +42,36 @@ class DocsController extends BaseController
     }
 
     /**
+     * Debug temporaneo per testare il regex
+     */
+    public function debugRegex(): Response
+    {
+        $markdown = file_get_contents($this->docsPath . 'forms.md');
+
+        // Chiama il vero parseMarkdown
+        $html = $this->parseMarkdown($markdown);
+
+        $output = "=== RISULTATO PARSEMARKDOWN ===\n";
+        $output .= "Numero di <pre>: " . substr_count($html, '<pre>') . "\n";
+        $output .= "Numero di 'language-': " . substr_count($html, 'language-') . "\n";
+        $output .= "Numero di <code>: " . substr_count($html, '<code>') . "\n\n";
+
+        // Trova tutti i tag <pre> e mostra i primi 200 char di ognuno
+        preg_match_all('/<pre>(.*?)<\/pre>/s', $html, $matches);
+        $output .= "=== BLOCCHI <PRE> TROVATI ===\n";
+        $output .= "Totale: " . count($matches[0]) . "\n\n";
+
+        for ($i = 0; $i < count($matches[0]); $i++) {
+            $output .= "Blocco $i:\n";
+            $output .= substr($matches[0][$i], 0, 200) . "...\n\n";
+        }
+
+        header('Content-Type: text/plain');
+        echo $output;
+        exit;
+    }
+
+    /**
      * Visualizza un file di documentazione
      *
      * URL: /docs/view/file/getting-started
