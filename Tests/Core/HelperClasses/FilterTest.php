@@ -360,6 +360,8 @@ class FilterTest extends TestCase
 
     public function testIsEntity()
     {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
         $dataMapperMock = $this->createMock(DataMapper::class);
         $processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
         $configMock = $this->createMock(Config::class);

@@ -2,7 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
-## [10.0.2] - 2025-10-08 - Ottimizzazione Connessione Database
+## [10.0.3] - 2025-10-08 - Hotfix Test Suite
+
+Questa hotfix release corregge i test rotti nella versione 10.0.2.
+
+### 🐛 Bug Fixes
+
+#### Ripristino Mock BaseAdapter nei Test con DataMapper Reale
+
+Ripristinati i mock di `BaseAdapter` nei test che istanziano `DataMapper` con costruttore reale:
+
+*   **Test Core**:
+    - `DispatcherTest.php`, `ParserTest.php`, `NotationManagerTest.php`, `FixturesManagerTest.php`, `FilterTest.php`
+    - `BaseFormTest.php`, `BaseFixtureTest.php`
+
+**Causa del problema**: Questi test creano istanze di `DataMapper` con costruttore (non completamente mockato), che a sua volta istanzia `Query`, il cui costruttore chiama `BaseAdapter::getDefault()`. Senza il mock, `getDefault()` ritorna `null` causando errori `Call to a member function getAdapterClass() on null`.
+
+**Soluzione**: Ripristinato `BaseAdapter::setDefault($baseAdapterMock)` in questi test specifici.
+
+### ✅ Test Suite Finale
+
+**Mock rimossi con successo (14 test)**:
+- Test ORM: `ProcessedEntitiesCollectionTest.php`, `CacheTest.php`, `ResultSetMysqlTest.php`, `SelfReferencedEntityTest.php`, `ReferencedEntityTest.php`, `SelfReferencedModelTest.php`, `DependentModelTest.php`, `BaseEntityTest.php`, `BaseModelTest.php`, `SismaCollectionTest.php`
+- Test Security: `AuthenticationTest.php`, `BaseVoterTest.php`, `BasePermissionTest.php`
+- Test Core: `RenderTest.php`
+
+**Mock mantenuti (7 test + 3 specifici ORM)**:
+- Test Core con DataMapper reale: `DispatcherTest.php`, `ParserTest.php`, `NotationManagerTest.php`, `FixturesManagerTest.php`, `FilterTest.php`, `BaseFormTest.php`, `BaseFixtureTest.php`
+- Test ORM specifici: `DataMapperTest.php`, `QueryTest.php`, `AdapterMysqlTest.php`
+
+## [10.0.2] - 2025-10-08 - Ottimizzazione Connessione Database [RITIRATA]
+
+**⚠️ NOTA**: Questa versione è stata ritirata a causa di test rotti. Utilizzare la versione 10.0.3 invece.
 
 Questa patch release ottimizza significativamente le performance eliminando connessioni al database non necessarie attraverso l'implementazione del lazy loading in BaseAdapter.
 

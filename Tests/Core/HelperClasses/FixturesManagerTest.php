@@ -61,9 +61,11 @@ class FixturesManagerTest extends TestCase
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
         Config::setInstance($this->configMock);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
         $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([null, $processedEntitesCollectionMock, $this->configMock])
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configMock])
                 ->getMock();
     }
 

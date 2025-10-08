@@ -78,9 +78,11 @@ class NotationManagerTest extends TestCase
                     ['ormCache', true],
         ]);
         Config::setInstance($configMock);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
         $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([null, $processedEntitesCollectionMock, $configMock])
+                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $configMock])
                 ->getMock();
         $baseSample = new BaseSample($dataMapperMock, $processedEntitesCollectionMock, $configMock);
         $result = NotationManager::convertEntityToTableName($baseSample);

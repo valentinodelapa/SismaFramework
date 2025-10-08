@@ -88,6 +88,8 @@ class DispatcherTest extends TestCase
         $this->requestMock->request = [];
         $this->resourceMakerMock = $this->createMock(ResourceMaker::class);
         $this->fixturesManagerMock = $this->createMock(FixturesManager::class);
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
         Debugger::startExecutionTimeCalculation();
     }
