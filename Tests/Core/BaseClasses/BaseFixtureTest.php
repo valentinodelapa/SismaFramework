@@ -68,8 +68,6 @@ class BaseFixtureTest extends TestCase
                     ['logVerboseActive', true],
         ]);
         Config::setInstance($configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
 

@@ -80,8 +80,6 @@ class AuthenticationTest extends TestCase
                 ->willReturnMap([
                     ['blowfishHashWorkload', 10],
         ]);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
                 ->disableOriginalConstructor()
                 ->getMock();

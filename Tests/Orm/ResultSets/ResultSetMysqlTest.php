@@ -62,8 +62,6 @@ class ResultSetMysqlTest extends TestCase
                     ['encryptionPassphrase', true],
         ]);
         Config::setInstance($this->configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
     }
 
     public function testNumRows()

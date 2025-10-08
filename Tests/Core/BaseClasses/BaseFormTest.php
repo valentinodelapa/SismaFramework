@@ -95,8 +95,6 @@ class BaseFormTest extends TestCase
                     ['sonCollectionPropertyName', 'sonCollection'],
         ]);
         Config::setInstance($this->configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->requestMock = $this->getMockBuilder(Request::class)
                 ->disableOriginalConstructor()

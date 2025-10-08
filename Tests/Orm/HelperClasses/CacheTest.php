@@ -69,8 +69,6 @@ class CacheTest extends TestCase
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
         Config::setInstance($this->configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->lockerMock = $this->createMock(Locker::class);
     }
 

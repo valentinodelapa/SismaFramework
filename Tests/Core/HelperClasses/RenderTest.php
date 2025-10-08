@@ -69,8 +69,6 @@ class RenderTest extends TestCase
                     ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
         ]);
         Config::setInstance($this->configMockDevelop);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->localizatorMock = $this->createMock(Localizator::class);
         $this->debuggerMock = $this->createMock(Debugger::class);
         ModuleManager::setApplicationModule('SismaFramework');

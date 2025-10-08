@@ -49,8 +49,6 @@ class BaseVoterTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
         $this->configMock = $this->createMock(Config::class);
