@@ -38,9 +38,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-download"></i> Installazione</h5>
-                    <pre><code class="language-bash">composer require sisma/framework</code></pre>
-
-                    <h6 class="mt-4">Oppure clona il repository:</h6>
+                    <h6>Clona il repository:</h6>
                     <pre><code class="language-bash">git clone https://github.com/valentinodelapa/SismaFramework.git</code></pre>
 
                     <h6 class="mt-4">5 passi per iniziare:</h6>

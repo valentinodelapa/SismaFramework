@@ -84,11 +84,11 @@ class HomeController extends BaseController
 
         // Quick start steps
         $this->vars['quickStartSteps'] = [
-            '1. Installa tramite Composer o download diretto',
-            '2. Configura database in Config/config.php',
-            '3. Crea il tuo primo modulo',
-            '4. Definisci Entity e Model',
-            '5. Crea Controller e Views'
+            'Clona o scarica il framework dal repository',
+            'Configura database in Config/config.php',
+            'Crea il tuo primo modulo',
+            'Definisci Entity e Model',
+            'Crea Controller e Views'
         ];
 
         return Render::generateView('home/index', $this->vars);

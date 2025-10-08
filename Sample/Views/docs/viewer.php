@@ -38,38 +38,7 @@
                 <?= $htmlContent ?>
             </div>
 
-            <!-- Navigation buttons -->
-            <hr class="my-5">
-            <div class="d-flex justify-content-between">
-                <?php
-                // Trova il documento precedente e successivo
-                $allDocs = [];
-                foreach ($docsSections as $docs) {
-                    $allDocs = array_merge($allDocs, $docs);
-                }
-                $currentIndex = array_search($currentFile, array_column($allDocs, 'file'));
-                $prevDoc = $currentIndex > 0 ? $allDocs[$currentIndex - 1] : null;
-                $nextDoc = $currentIndex < count($allDocs) - 1 ? $allDocs[$currentIndex + 1] : null;
-                ?>
-
-                <div>
-                    <?php if ($prevDoc): ?>
-                        <a href="/docs/view/file/<?= urlencode($prevDoc['file']) ?>"
-                           class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> <?= htmlspecialchars($prevDoc['title']) ?>
-                        </a>
-                    <?php endif; ?>
-                </div>
-
-                <div>
-                    <?php if ($nextDoc): ?>
-                        <a href="/docs/view/file/<?= urlencode($nextDoc['file']) ?>"
-                           class="btn btn-outline-primary">
-                            <?= htmlspecialchars($nextDoc['title']) ?> <i class="bi bi-arrow-right"></i>
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </div>
+            <hr class="my-4">
 
             <!-- Feedback Section -->
             <div class="card border-info mt-4">
