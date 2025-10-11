@@ -46,8 +46,6 @@ class ProcessedEntitiesCollectionTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
         $configMock = $this->createMock(Config::class);
         $configMock->expects($this->any())

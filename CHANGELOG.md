@@ -2,6 +2,97 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.3] - 2025-10-08 - Hotfix Test Suite
+
+Questa hotfix release corregge i test rotti nella versione 10.0.2.
+
+### 🐛 Bug Fixes
+
+#### Ripristino Mock BaseAdapter nei Test con DataMapper Reale
+
+Ripristinati i mock di `BaseAdapter` nei test che istanziano `DataMapper` con costruttore reale:
+
+*   **Test Core**:
+    - `DispatcherTest.php`, `ParserTest.php`, `NotationManagerTest.php`, `FixturesManagerTest.php`, `FilterTest.php`
+    - `BaseFormTest.php`, `BaseFixtureTest.php`
+
+**Causa del problema**: Questi test creano istanze di `DataMapper` con costruttore (non completamente mockato), che a sua volta istanzia `Query`, il cui costruttore chiama `BaseAdapter::getDefault()`. Senza il mock, `getDefault()` ritorna `null` causando errori `Call to a member function getAdapterClass() on null`.
+
+**Soluzione**: Ripristinato `BaseAdapter::setDefault($baseAdapterMock)` in questi test specifici.
+
+### ✅ Test Suite Finale
+
+**Mock rimossi con successo (14 test)**:
+- Test ORM: `ProcessedEntitiesCollectionTest.php`, `CacheTest.php`, `ResultSetMysqlTest.php`, `SelfReferencedEntityTest.php`, `ReferencedEntityTest.php`, `SelfReferencedModelTest.php`, `DependentModelTest.php`, `BaseEntityTest.php`, `BaseModelTest.php`, `SismaCollectionTest.php`
+- Test Security: `AuthenticationTest.php`, `BaseVoterTest.php`, `BasePermissionTest.php`
+- Test Core: `RenderTest.php`
+
+**Mock mantenuti (7 test + 3 specifici ORM)**:
+- Test Core con DataMapper reale: `DispatcherTest.php`, `ParserTest.php`, `NotationManagerTest.php`, `FixturesManagerTest.php`, `FilterTest.php`, `BaseFormTest.php`, `BaseFixtureTest.php`
+- Test ORM specifici: `DataMapperTest.php`, `QueryTest.php`, `AdapterMysqlTest.php`
+
+## [10.0.2] - 2025-10-08 - Ottimizzazione Connessione Database [RITIRATA]
+
+**⚠️ NOTA**: Questa versione è stata ritirata a causa di test rotti. Utilizzare la versione 10.0.3 invece.
+
+Questa patch release ottimizza significativamente le performance eliminando connessioni al database non necessarie attraverso l'implementazione del lazy loading in BaseAdapter.
+
+### 🚀 Performance
+
+#### Lazy Loading della Connessione Database
+
+Implementato lazy loading della connessione al database in `BaseAdapter` per evitare connessioni inutili:
+
+*   **BaseAdapter.php**:
+    - ❌ **Prima**: La connessione veniva aperta nel costruttore, sempre e per qualsiasi richiesta
+    - ✅ **Dopo**: La connessione viene aperta solo al primo utilizzo effettivo (primo `select()`, `execute()`, `beginTransaction()`, etc.)
+    - Aggiunta proprietà `$isConnected` (bool) e `$connectionOptions` (array)
+    - Aggiunto metodo `ensureConnected()` per apertura on-demand
+    - Metodi wrappati con lazy loading: `select()`, `execute()`, `beginTransaction()`, `commitTransaction()`, `rollbackTransaction()`, `lastInsertId()`
+    - Pattern di delegazione esteso con nuovi metodi: `beginTransactionToDelegateAdapter()`, `commitTransactionToDelegateAdapter()`, `rollbackTransactionToDelegateAdapter()`, `lastInsertIdToDelegateAdapter()`
+
+*   **AdapterMysql.php**:
+    - Aggiornate signature dei metodi per il pattern di delegazione
+    - Rinominati: `beginTransaction()` → `beginTransactionToDelegateAdapter()`, `commitTransaction()` → `commitTransactionToDelegateAdapter()`, `rollbackTransaction()` → `rollbackTransactionToDelegateAdapter()`, `lastInsertId()` → `lastInsertIdToDelegateAdapter()`
+
+**Impatto sulle performance**:
+- **0 connessioni DB** per file statici (CSS, JS, immagini, fonts)
+- **0 connessioni DB** per crawl components (robots.txt, sitemap.xml)
+- **0 connessioni DB** per richieste 404 immediate
+- **1 connessione DB** solo quando effettivamente necessaria per query/transazioni
+- Riduzione significativa del carico sul database server
+- Miglioramento dei tempi di risposta per richieste non-database
+
+### 🧪 Testing
+
+#### Semplificazione Test Suite
+
+Rimossi 21 mock di `BaseAdapter` non più necessari grazie al lazy loading:
+
+*   **Test Core**:
+    - `DispatcherTest.php`, `ParserTest.php`, `NotationManagerTest.php`, `FixturesManagerTest.php`, `FilterTest.php`, `RenderTest.php`
+    - `BaseFormTest.php`, `BaseFixtureTest.php`
+
+*   **Test ORM**:
+    - `ProcessedEntitiesCollectionTest.php`, `CacheTest.php`, `ResultSetMysqlTest.php`
+    - `SelfReferencedEntityTest.php`, `ReferencedEntityTest.php`, `SelfReferencedModelTest.php`, `DependentModelTest.php`
+    - `BaseEntityTest.php`, `BaseModelTest.php`, `SismaCollectionTest.php`
+
+*   **Test Security**:
+    - `AuthenticationTest.php`, `BaseVoterTest.php`, `BasePermissionTest.php`
+
+**Nota**: I test `DataMapperTest.php`, `QueryTest.php` e `AdapterMysqlTest.php` mantengono i loro mock perché necessari per verificare le interazioni specifiche con BaseAdapter.
+
+**Benefici**:
+- Codice di test più pulito e leggibile
+- Riduzione della complessità dei test
+- Maggiore velocità di esecuzione della test suite
+- Meno dipendenze nei test unitari
+
+### 🔧 Compatibilità
+
+**Backward compatible al 100%**: Nessuna modifica alle API pubbliche. I metodi pubblici hanno la stessa signature e comportamento. Le uniche modifiche sono ai metodi `protected abstract`, interni all'architettura ORM.
+
 ## [10.0.1] - 2025-10-04 - Miglioramenti Documentazione e Licenze
 
 Questa patch release migliora la qualità e la precisione della documentazione delle licenze e delle modifiche nei file derivati da librerie terze parti, uniforma le notifiche di copyright e introduce il tag `@internal` per le API interne del framework.

@@ -61,8 +61,6 @@ class SismaCollectionTest extends TestCase
                     ['ormCache', true],
         ]);
         Config::setInstance($configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
 

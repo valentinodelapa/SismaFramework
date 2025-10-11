@@ -3031,25 +3031,25 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_escapeValue"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003AlastInsertId\u0028\u0029",
-            "name": "lastInsertId",
+            "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003AlastInsertIdToDelegateAdapter\u0028\u0029",
+            "name": "lastInsertIdToDelegateAdapter",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_lastInsertId"
+            "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_lastInsertIdToDelegateAdapter"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003AbeginTransaction\u0028\u0029",
-            "name": "beginTransaction",
+            "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003AbeginTransactionToDelegateAdapter\u0028\u0029",
+            "name": "beginTransactionToDelegateAdapter",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_beginTransaction"
+            "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_beginTransactionToDelegateAdapter"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003AcommitTransaction\u0028\u0029",
-            "name": "commitTransaction",
+            "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003AcommitTransactionToDelegateAdapter\u0028\u0029",
+            "name": "commitTransactionToDelegateAdapter",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_commitTransaction"
+            "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_commitTransactionToDelegateAdapter"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003ArollbackTransaction\u0028\u0029",
-            "name": "rollbackTransaction",
+            "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003ArollbackTransactionToDelegateAdapter\u0028\u0029",
+            "name": "rollbackTransactionToDelegateAdapter",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_rollbackTransaction"
+            "url": "classes/SismaFramework-Orm-Adapters-AdapterMysql.html#method_rollbackTransactionToDelegateAdapter"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\Adapters\\AdapterMysql\u003A\u003AgetLastErrorMsg\u0028\u0029",
             "name": "getLastErrorMsg",
@@ -3100,6 +3100,11 @@ Search.appendIndex(
             "name": "__construct",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AensureConnected\u0028\u0029",
+            "name": "ensureConnected",
+            "summary": "Assicura\u0020che\u0020la\u0020connessione\u0020al\u0020database\u0020sia\u0020stabilita.",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_ensureConnected"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003Aconnect\u0028\u0029",
             "name": "connect",
@@ -3281,20 +3286,40 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_lastInsertId"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AlastInsertIdToDelegateAdapter\u0028\u0029",
+            "name": "lastInsertIdToDelegateAdapter",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_lastInsertIdToDelegateAdapter"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AbeginTransaction\u0028\u0029",
             "name": "beginTransaction",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_beginTransaction"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AbeginTransactionToDelegateAdapter\u0028\u0029",
+            "name": "beginTransactionToDelegateAdapter",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_beginTransactionToDelegateAdapter"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AcommitTransaction\u0028\u0029",
             "name": "commitTransaction",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_commitTransaction"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AcommitTransactionToDelegateAdapter\u0028\u0029",
+            "name": "commitTransactionToDelegateAdapter",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_commitTransactionToDelegateAdapter"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003ArollbackTransaction\u0028\u0029",
             "name": "rollbackTransaction",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_rollbackTransaction"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003ArollbackTransactionToDelegateAdapter\u0028\u0029",
+            "name": "rollbackTransactionToDelegateAdapter",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_rollbackTransactionToDelegateAdapter"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AgetLastErrorMsg\u0028\u0029",
             "name": "getLastErrorMsg",
@@ -3320,6 +3345,16 @@ Search.appendIndex(
             "name": "connection",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#property_connection"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003A\u0024isConnected",
+            "name": "isConnected",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#property_isConnected"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003A\u0024connectionOptions",
+            "name": "connectionOptions",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#property_connectionOptions"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity",
             "name": "BaseEntity",

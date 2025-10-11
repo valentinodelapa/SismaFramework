@@ -70,8 +70,6 @@ class SelfReferencedEntityTest extends TestCase
                     ['sonCollectionPropertyName', 'sonCollection'],
         ]);
         Config::setInstance($configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
 

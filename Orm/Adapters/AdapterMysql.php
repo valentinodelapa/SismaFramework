@@ -255,7 +255,7 @@ class AdapterMysql extends BaseAdapter
     }
 
     #[\Override]
-    public function lastInsertId(): int
+    protected function lastInsertIdToDelegateAdapter(): int
     {
         if (!self::$connection) {
             return -1;
@@ -264,7 +264,7 @@ class AdapterMysql extends BaseAdapter
     }
 
     #[\Override]
-    public function beginTransaction(): bool
+    protected function beginTransactionToDelegateAdapter(): bool
     {
         if (!self::$connection) {
             return false;
@@ -273,7 +273,7 @@ class AdapterMysql extends BaseAdapter
     }
 
     #[\Override]
-    public function commitTransaction(): bool
+    protected function commitTransactionToDelegateAdapter(): bool
     {
         if (!self::$connection) {
             return false;
@@ -282,7 +282,7 @@ class AdapterMysql extends BaseAdapter
     }
 
     #[\Override]
-    public function rollbackTransaction(): bool
+    protected function rollbackTransactionToDelegateAdapter(): bool
     {
         if (!self::$connection) {
             return false;
