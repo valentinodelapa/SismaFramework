@@ -24,17 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses\Dispatcher;
 
-use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Resource;
+use SismaFramework\Core\Exceptions\AccessDeniedException;
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
-use SismaFramework\Core\Exceptions\AccessDeniedException;
 
 /**
- * Description of ResourceMaker
- *
  * @internal
  *
  * @author Valentino de Lapa

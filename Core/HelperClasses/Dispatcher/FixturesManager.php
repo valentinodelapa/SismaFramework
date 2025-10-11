@@ -24,13 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HelperClasses;
+namespace SismaFramework\Core\HelperClasses\Dispatcher;
 
 use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
+ * @internal
+ *
  * @author Valentino de Lapa
  */
 class FixturesManager

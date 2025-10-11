@@ -26,20 +26,17 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\BaseClasses\BaseController;
-use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
-use SismaFramework\Core\HelperClasses\NotationManager;
-use SismaFramework\Core\HelperClasses\Parser;
-use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HelperClasses\Dispatcher\ActionArgumentsParser;
+use SismaFramework\Core\HelperClasses\Dispatcher\ControllerFactory;
+use SismaFramework\Core\HelperClasses\Dispatcher\ResourceHandler;
+use SismaFramework\Core\HelperClasses\Dispatcher\RouteInfo;
+use SismaFramework\Core\HelperClasses\Dispatcher\RouteResolver;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
-use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\Interfaces\Controllers\CallableController;
 use SismaFramework\Core\Interfaces\Services\CrawlComponentMakerInterface;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Security\HttpClasses\Authentication;
 
 /**
  * @internal
@@ -49,47 +46,28 @@ use SismaFramework\Security\HttpClasses\Authentication;
 class Dispatcher
 {
 
-    private ResourceMaker $resourceMaker;
-    private FixturesManager $fixturesManager;
+    private Request $request;
+    private RouteResolver $routeResolver;
+    private ControllerFactory $controllerFactory;
+    private ActionArgumentsParser $actionArgumentsParser;
+    private ResourceHandler $resourceHandler;
     private DataMapper $dataMapper;
     private array $crawlComponentMakerList = [];
     private CrawlComponentMakerInterface $currentCrawlComponentMaker;
-    private int $reloadAttempts = 0;
-    private Request $request;
-    private string $originalPath;
-    private string $path;
-    private array $pathParts;
-    private array $cleanPathParts;
-    private bool $defaultControllerInjected = false;
-    private bool $defaultActionInjected = false;
-    private ?BaseController $controllerInstance = null;
-    private bool $defaultControllerChecked = false;
-    private bool $defaultActionChecked = false;
-    private string $pathController;
-    private string $controllerClassName;
-    private array $constructorArguments;
-    private string $pathAction;
-    private string $parsedAction;
-    private array $actionArguments = [];
-    private array $associativeActionArguments = [];
-    private \ReflectionClass $reflectionController;
-    private \ReflectionMethod $reflectionConstructor;
-    private array $reflectionConstructorArguments;
-    private \ReflectionMethod $reflectionAction;
-    private array $reflectionActionArguments;
-    private Config $config;
 
     public function __construct(Request $request = new Request(),
-            ResourceMaker $resourceMaker = new ResourceMaker(),
-            FixturesManager $fixtureManager = new FixturesManager(),
             DataMapper $dataMapper = new DataMapper(),
-            ?Config $config = null)
+            RouteResolver $routeResolver = new RouteResolver(),
+            ?ControllerFactory $controllerFactory = null,
+            ?ActionArgumentsParser $actionArgumentsParser = null,
+            ResourceHandler $resourceHandler = new ResourceHandler())
     {
         $this->request = $request;
-        $this->resourceMaker = $resourceMaker;
-        $this->fixturesManager = $fixtureManager;
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? Config::getInstance();
+        $this->routeResolver = $routeResolver;
+        $this->controllerFactory = $controllerFactory ?? new ControllerFactory($this->dataMapper);
+        $this->actionArgumentsParser = $actionArgumentsParser ?? new ActionArgumentsParser($this->request, $this->dataMapper);
+        $this->resourceHandler = $resourceHandler;
     }
 
     public function addCrawlComponentMaker(CrawlComponentMakerInterface $crawlComponentMaker): void
@@ -99,317 +77,134 @@ class Dispatcher
 
     public function run($router = new Router()): Response
     {
-        $requestUriParts = explode('?', $this->request->server['REQUEST_URI'], 2);
-        $this->originalPath = $this->path = $requestUriParts[0];
-        if ((strlen($this->request->server['QUERY_STRING']) > 0) && ($this->resourceMaker->isAcceptedResourceFile($this->path) === false)) {
+        $requestUri = $this->request->server['REQUEST_URI'];
+
+        if ((strlen($this->request->server['QUERY_STRING']) > 0) &&
+                ($this->resourceHandler->isResourceFile(explode('?', $requestUri, 2)[0]) === false)) {
             return $router->reloadWithParsedQueryString();
         }
-        $this->parsePath();
+
+        $this->routeResolver->initialize($requestUri);
         return $this->handle();
     }
 
-    private function parsePath(): void
+    public function slicePathElement(): void
     {
-        $this->pathParts = explode('/', rtrim($this->path, '/'));
-        $this->cleanPathParts = array_values(array_filter($this->pathParts, function ($var) {
-                    return $var !== "";
-                }));
-        $cleanPathPartsNumber = count($this->cleanPathParts);
-        if ($cleanPathPartsNumber === 0) {
-            $this->pathController = $this->config->defaultPath;
-            $this->parsedAction = $this->pathAction = $this->config->defaultAction;
-        } else {
-            $this->parsePathWithMultipleCleanParts($cleanPathPartsNumber);
-        }
-        $this->selectModule();
-    }
-
-    private function parsePathWithMultipleCleanParts(int $cleanPathPartsNumber)
-    {
-        $this->pathController = $this->cleanArrayShift($this->pathParts);
-        if ($cleanPathPartsNumber === 1) {
-            $this->pathAction = $this->config->defaultAction;
-            if (($this->resourceMaker->isAcceptedResourceFile($this->path) === false) &&
-                    ($this->fixturesManager->isFixtures($this->pathParts) === false)) {
-                $this->defaultActionInjected = true;
-                $this->parsedAction = NotationManager::convertToCamelCase($this->config->defaultAction);
-            }
-        } else {
-            $this->pathAction = $this->cleanArrayShift($this->pathParts);
-            $this->parsedAction = NotationManager::convertToCamelCase($this->pathAction);
-            $this->actionArguments = $this->pathParts;
-        }
-    }
-
-    private function cleanArrayShift(array &$array): ?string
-    {
-        $element = '';
-        while ($element === '') {
-            $element = array_shift($array);
-        }
-        return $element;
-    }
-
-    private function selectModule(): void
-    {
-        ModuleManager::initializeApplicationModule();
-        foreach (ModuleManager::getModuleList() as $module) {
-            $this->controllerClassName = $module . '\\' . $this->config->controllerNamespace . NotationManager::convertToStudlyCaps($this->pathController . 'Controller');
-            if ($this->checkControllerPresence() || $this->checkFilePresence($module)) {
-                ModuleManager::setApplicationModule($module);
-                break;
-            }
-        }
-    }
-
-    private function checkControllerPresence(): bool
-    {
-        return class_exists($this->controllerClassName);
-    }
-
-    private function checkFilePresence(string $module): bool
-    {
-        return ($this->resourceMaker->isAcceptedResourceFile($this->path) && (file_exists($this->config->rootPath . $module . DIRECTORY_SEPARATOR . $this->config->applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))));
+        $this->routeResolver->slicePathElement();
     }
 
     private function handle(): Response
     {
-        if ($this->isCrawlComponent()) {
+        $routeInfo = $this->routeResolver->getRouteInfo();
+
+        if ($this->isCrawlComponent($routeInfo->cleanPathParts)) {
             return $this->currentCrawlComponentMaker->generate();
-        } elseif ($this->resourceMaker->isAcceptedResourceFile($this->path)) {
-            return $this->handleFile();
-        } elseif ($this->checkControllerPresence() === true) {
-            return $this->resolveRouteCall();
-        } elseif ($this->fixturesManager->isFixtures($this->cleanPathParts)) {
-            return $this->fixturesManager->run();
-        } else {
-            return $this->switchNotFoundActions();
         }
+
+        if ($this->resourceHandler->isResourceFile($this->routeResolver->getOriginalPath())) {
+            $response = $this->resourceHandler->handleResourceFile($routeInfo->cleanPathParts);
+            if ($response !== null) {
+                return $response;
+            }
+            return $this->handleNotFound();
+        }
+
+        if (class_exists($routeInfo->controllerClassName)) {
+            return $this->dispatchToController($routeInfo);
+        }
+
+        if ($this->routeResolver->isFixturesRequest($routeInfo->cleanPathParts)) {
+            return $this->routeResolver->runFixtures();
+        }
+
+        return $this->handleNotFound();
     }
 
-    private function isCrawlComponent(): bool
+    private function dispatchToController(RouteInfo $routeInfo): Response
+    {
+        $reflectionController = new \ReflectionClass($routeInfo->controllerClassName);
+
+        if ($this->hasValidAction($reflectionController, $routeInfo->parsedAction)) {
+            return $this->callControllerAction($reflectionController, $routeInfo);
+        }
+
+        if ($this->isCallableController($reflectionController, $routeInfo)) {
+            return $this->executeCallableController($routeInfo);
+        }
+
+        return $this->handleNotFound();
+    }
+
+    private function hasValidAction(\ReflectionClass $reflectionController, string $actionName): bool
+    {
+        Router::setActualCleanUrl(
+                $this->routeResolver->getRouteInfo()->pathController,
+                $actionName
+        );
+
+        if ($reflectionController->hasMethod($actionName)) {
+            $method = $reflectionController->getMethod($actionName);
+            if ($method->getReturnType()?->getName() === Response::class) {
+                ModuleManager::setApplicationModuleByClassName($method->getDeclaringClass()->getName());
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function callControllerAction(\ReflectionClass $reflectionController, RouteInfo $routeInfo): Response
+    {
+        $controller = $this->controllerFactory->createController($routeInfo->controllerClassName);
+        $reflectionAction = $reflectionController->getMethod($routeInfo->parsedAction);
+        $reflectionParameters = $reflectionAction->getParameters();
+
+        if (count($reflectionParameters) === 0) {
+            return $controller->{$routeInfo->parsedAction}();
+        }
+
+        $arguments = $this->actionArgumentsParser->parseActionArguments(
+                $routeInfo->actionArguments,
+                $reflectionParameters
+        );
+
+        return call_user_func_array([$controller, $routeInfo->parsedAction], $arguments);
+    }
+
+    private function isCallableController(\ReflectionClass $reflectionController, RouteInfo $routeInfo): bool
+    {
+        if (!$reflectionController->isSubclassOf(CallableController::class)) {
+            return false;
+        }
+
+        $fullCallableParts = [$routeInfo->pathAction, ...$routeInfo->actionArguments];
+        return $routeInfo->controllerClassName::checkCompatibility($fullCallableParts);
+    }
+
+    private function executeCallableController(RouteInfo $routeInfo): Response
+    {
+        $controller = $this->controllerFactory->createController($routeInfo->controllerClassName);
+        return $controller->{$routeInfo->parsedAction}(...$routeInfo->actionArguments);
+    }
+
+    private function handleNotFound(): Response
+    {
+        if ($this->routeResolver->canRetry()) {
+            $this->routeResolver->retryWithNextStrategy();
+            return $this->handle();
+        }
+
+        throw new PageNotFoundException($this->routeResolver->getOriginalPath());
+    }
+
+    private function isCrawlComponent(array $cleanPathParts): bool
     {
         foreach ($this->crawlComponentMakerList as $crawlComponentMaker) {
-            if ($crawlComponentMaker->isCrawlComponent($this->cleanPathParts)) {
+            if ($crawlComponentMaker->isCrawlComponent($cleanPathParts)) {
                 $this->currentCrawlComponentMaker = $crawlComponentMaker;
                 return true;
             }
         }
         return false;
-    }
-
-    private function handleFile(): Response
-    {
-        if (file_exists($this->config->rootPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
-            return $this->resourceMaker->makeResource($this->config->rootPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
-        } elseif (file_exists($this->config->structuralAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
-            return $this->resourceMaker->makeResource($this->config->structuralAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
-        } elseif (file_exists($this->config->rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . $this->config->applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts))) {
-            return $this->resourceMaker->makeResource($this->config->rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . $this->config->applicationAssetsPath . implode(DIRECTORY_SEPARATOR, $this->cleanPathParts));
-        } else {
-            return $this->switchNotFoundActions();
-        }
-    }
-
-    private function switchNotFoundActions(): Response
-    {
-        if ($this->reloadAttempts < $this->config->maxReloadAttempts) {
-            return $this->reloadDispatcher();
-        } else {
-            throw new PageNotFoundException($this->originalPath);
-        }
-    }
-
-    private function reloadDispatcher(): Response
-    {
-        $this->switchPath();
-        $this->parsePath();
-        return $this->handle();
-    }
-
-    private function switchPath(): void
-    {
-        if ($this->defaultControllerChecked && $this->defaultActionChecked) {
-            $this->slicePathElement();
-        } elseif ($this->defaultControllerChecked === false) {
-            $this->injectDefaultController();
-        } elseif ($this->defaultActionChecked === false) {
-            $this->injectDefaultAction();
-        }
-    }
-
-    public function slicePathElement(): void
-    {
-        if ($this->resourceMaker->isAcceptedResourceFile($this->pathController)) {
-            throw new PageNotFoundException($this->originalPath);
-        } else {
-            Router::concatenateMetaUrl('/' . $this->pathController);
-            $this->path = '/' . implode('/', $this->pathParts);
-            $this->defaultControllerChecked = $this->defaultActionChecked = false;
-            $this->reloadAttempts++;
-        }
-    }
-
-    private function injectDefaultController(): void
-    {
-        array_unshift($this->pathParts, $this->config->defaultPath, $this->pathController, $this->pathAction);
-        $this->defaultControllerInjected = true;
-        if ($this->defaultActionInjected) {
-            $this->defaultActionInjected = false;
-            array_pop($this->pathParts);
-        }
-        $this->path = '/' . implode('/', $this->pathParts);
-        $this->defaultControllerChecked = true;
-    }
-
-    private function injectDefaultAction(): void
-    {
-        $this->defaultControllerInjected = false;
-        $this->pathParts = [$this->pathAction, $this->config->defaultAction, ...$this->pathParts];
-        $this->path = '/' . implode('/', $this->pathParts);
-        $this->defaultActionChecked = true;
-    }
-
-    private function resolveRouteCall(): Response
-    {
-        $this->getControllerConstructorArguments();
-        if ($this->checkActionPresenceInController()) {
-            return $this->callControllerMethod();
-        } elseif ($this->checkCallableController()) {
-            return $this->executeMagicCall();
-        } else {
-            return $this->switchNotFoundActions();
-        }
-    }
-
-    private function getControllerConstructorArguments(): void
-    {
-        $this->reflectionController = new \ReflectionClass($this->controllerClassName);
-        $this->reflectionConstructor = $this->reflectionController->getConstructor();
-        $this->reflectionConstructorArguments = $this->reflectionConstructor->getParameters();
-    }
-
-    private function instanceControllerClass(): BaseController
-    {
-        if ((count($this->reflectionConstructorArguments) == 0) || (is_a($this->reflectionConstructorArguments[0]->getType()->getName(), DataMapper::class, true))) {
-            return new $this->controllerClassName($this->dataMapper);
-        } else {
-            $this->getAutoDependecyInjectionClass();
-            return $this->reflectionController->newInstanceArgs($this->constructorArguments);
-        }
-    }
-
-    private function getAutoDependecyInjectionClass(): void
-    {
-        foreach ($this->reflectionConstructorArguments as $argument) {
-            $argumentType = $argument->getType();
-            if (is_a($argumentType->getName(), DataMapper::class, true)) {
-                $this->constructorArguments[] = $this->dataMapper;
-            } elseif ($argumentType->isBuiltin() === false) {
-                $className = $argumentType->getName();
-                $this->constructorArguments[] = new $className();
-            } else {
-                throw new BadRequestException($argumentType->getName());
-            }
-        }
-    }
-
-    private function checkActionPresenceInController(): bool
-    {
-        Router::setActualCleanUrl($this->pathController, $this->parsedAction);
-        if ($this->reflectionController->hasMethod($this->parsedAction) && ($this->reflectionController->getMethod($this->parsedAction)->getReturnType()->getName() === Response::class)) {
-            $this->reflectionAction = $this->reflectionController->getMethod($this->parsedAction);
-            ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private function callControllerMethod(): Response
-    {
-        $this->controllerInstance = $this->instanceControllerClass();
-        $this->getActionArguments();
-        if (count($this->reflectionActionArguments) > 0) {
-            return $this->callControllerMethodWithArguments();
-        } else {
-            $currentAction = $this->parsedAction;
-            return $this->controllerInstance->$currentAction();
-        }
-    }
-
-    private function getActionArguments(): void
-    {
-        $this->reflectionActionArguments = $this->reflectionAction->getParameters();
-    }
-
-    private function callControllerMethodWithArguments(): Response
-    {
-        $this->setArrayOddToKeyEvenToValue();
-        return call_user_func_array([$this->controllerInstance, $this->parsedAction], $this->parseArgsAssociativeArray());
-    }
-
-    private function setArrayOddToKeyEvenToValue(): void
-    {
-        $odd = $even = [];
-        while (count($this->actionArguments) > 1) {
-            $odd[] = NotationManager::convertToCamelCase($this->cleanArrayShift($this->actionArguments));
-            $even[] = urldecode(array_shift($this->actionArguments));
-        }
-        $this->associativeActionArguments = $this->combineArrayToAssociativeArray($odd, $even);
-        $this->request->query = $this->associativeActionArguments;
-    }
-
-    private function combineArrayToAssociativeArray(array $keys, array $values): array
-    {
-        $result = [];
-        foreach ($keys as $index => $key) {
-            if (array_key_exists($key, $result)) {
-                if (!is_array($result[$key])) {
-                    $result[$key] = [$result[$key]];
-                }
-                $result[$key][] = $values[$index];
-            } else {
-                $result[$key] = $values[$index];
-            }
-        }
-        return $result;
-    }
-
-    private function parseArgsAssociativeArray(): array
-    {
-        $currentActionArguments = [];
-        foreach ($this->reflectionActionArguments as $argument) {
-            if ($argument->getType()->getName() === Request::class) {
-                $currentActionArguments[$argument->name] = $this->request;
-            } elseif ($argument->getType()->getName() === Authentication::class) {
-                $currentActionArguments[$argument->name] = new Authentication($this->request);
-            } elseif (array_key_exists($argument->name, $this->associativeActionArguments)) {
-                $reflectionType = $argument->getType();
-                $currentActionArguments[$argument->name] = Parser::parseValue($reflectionType, $this->associativeActionArguments[$argument->name], true, $this->dataMapper);
-            } elseif ($argument->isDefaultValueAvailable()) {
-                $currentActionArguments[$argument->name] = $argument->getDefaultValue();
-            } else {
-                throw new BadRequestException($argument->name);
-            }
-        }
-        return $currentActionArguments;
-    }
-
-    private function checkCallableController(): bool
-    {
-        if ($this->reflectionController->isSubclassOf(CallableController::class)) {
-            $fullCallableParts = [$this->pathAction, ...$this->actionArguments];
-            return $this->controllerClassName::checkCompatibility($fullCallableParts);
-        } else {
-            return false;
-        }
-    }
-
-    private function executeMagicCall(): Response
-    {
-        $this->controllerInstance = $this->instanceControllerClass();
-        $currentAction = $this->parsedAction;
-        return $this->controllerInstance->$currentAction(...$this->actionArguments);
     }
 }
