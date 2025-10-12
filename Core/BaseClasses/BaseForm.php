@@ -26,21 +26,20 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\AbstractClasses\Submittable;
-use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
-use SismaFramework\Core\Enumerations\ResponseType;
+use SismaFramework\Core\BaseClasses\BaseForm\EntityResolver;
+use SismaFramework\Core\BaseClasses\BaseForm\FilterManager;
+use SismaFramework\Core\BaseClasses\BaseForm\FormValidator;
 use SismaFramework\Core\Enumerations\FilterType;
-use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\HelperClasses\Parser;
-use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Orm\CustomTypes\SismaCollection;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Orm\ExtendedClasses\StandardEntity;
+use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
-use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
@@ -50,22 +49,28 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 abstract class BaseForm extends Submittable
 {
 
-    protected bool $filterResult = true;
     protected BaseEntity $entity;
     protected StandardEntity $entityData;
     protected array $entityFromForm = [];
-    protected array $filterFiledsMode = [];
     private DataMapper $dataMapper;
-    private Config $config;
+    private FilterManager $filterManager;
+    private FormValidator $formValidator;
+    private EntityResolver $entityResolver;
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
     private ResponseType $responseType = ResponseType::httpOk;
 
-    public function __construct(?BaseEntity $baseEntity = null, DataMapper $dataMapper = new DataMapper(), ?Config $config = null)
+    public function __construct(?BaseEntity $baseEntity = null,
+            DataMapper $dataMapper = new DataMapper(),
+            FilterManager $filterManager = new FilterManager(),
+            ?FormValidator $formValidator = null,
+            EntityResolver $entityResolver = new EntityResolver())
     {
         parent::__construct();
         $this->dataMapper = $dataMapper;
-        $this->config = $config ?? Config::getInstance();
+        $this->filterManager = $filterManager;
+        $this->formValidator = $formValidator ?? new FormValidator($dataMapper, $filterManager);
+        $this->entityResolver = $entityResolver;
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
     }
@@ -112,11 +117,7 @@ abstract class BaseForm extends Submittable
 
     protected function addFilterFieldMode(string $propertyName, FilterType $filterType, array $parameters = [], bool $allowNull = false): self
     {
-        $this->filterFiledsMode[$propertyName] = [
-            'filterType' => $filterType,
-            'parameters' => $parameters,
-            'allowNull' => $allowNull,
-        ];
+        $this->filterManager->addFilterFieldMode($propertyName, $filterType, $parameters, $allowNull);
         return $this;
     }
 
@@ -201,194 +202,37 @@ abstract class BaseForm extends Submittable
 
     public function isValid(): bool
     {
-        $this->entityData = new StandardEntity();
-        if (is_a($this->entity, ReferencedEntity::class)) {
-            $this->parseCollectionProperties();
-        }
-        $this->parseStandardProperties();
+        $result = $this->formValidator->validate(
+            $this->entity,
+            $this->request,
+            $this->entityFromForm,
+            $this->formFilterError,
+            $this->entityToResolve,
+            $this->sismaCollectionToResolve
+        );
+
+        $this->entityData = $result['entityData'];
+        $filterResult = $result['filterResult'];
+
         $this->customFilter();
         Debugger::setFormFilter($this->formFilterError);
-        if ($this->filterResult === false) {
+        if ($filterResult === false) {
             $this->responseType = ResponseType::httpBadRequest;
         }
-        return $this->filterResult;
-    }
-
-    private function parseCollectionProperties(): void
-    {
-        foreach (Cache::getForeignKeyData(static::getEntityName()) as $propertyName => $propertyData) {
-            if (array_key_exists($propertyName . $this->config->foreignKeySuffix, $this->request->input)) {
-                $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix);
-            } elseif (count($propertyData) > 1) {
-                $this->parseCollectionWithMultipleReferencedForeignKey($propertyName, $propertyData);
-            } elseif ($this->isSelfReferencedProperty($propertyData)) {
-                $this->switchFormPropertyType($this->config->sonCollectionPropertyName);
-            }
-        }
-    }
-
-    private function switchFormPropertyType(string $propertyName): void
-    {
-        $this->entityData->{$propertyName} = new StandardEntity();
-        if (($this->entity instanceof ReferencedEntity) && ($this->entity->checkCollectionExists($propertyName))) {
-            $this->switchFormOfCollection($propertyName);
-        } else {
-            $currentForm = $this->entityFromForm[$propertyName];
-            $this->entityData->{$propertyName} = $this->switchForm($currentForm);
-            $this->formFilterError->$propertyName = $currentForm->getFilterErrors();
-            array_push($this->entityToResolve, $propertyName);
-        }
-    }
-
-    private function switchFormOfCollection(string $propertyName): void
-    {
-        $this->entityData->{$propertyName} = new SismaCollection(StandardEntity::class);
-        if (isset($this->request->input[$propertyName])) {
-            $this->formFilterError->$propertyName = new FormFilterErrorCollection();
-            foreach (array_keys($this->request->input[$propertyName]) as $key) {
-                $currentForm = $this->entityFromForm[$propertyName][$key];
-                $this->entityData->{$propertyName}[$key] = $this->switchForm($currentForm);
-                $this->formFilterError->$propertyName[$key] = $currentForm->getFilterErrors();
-                array_push($this->sismaCollectionToResolve, $propertyName);
-            }
-        }
-    }
-
-    private function switchForm(self $entityFromForm): StandardEntity
-    {
-        if ($entityFromForm->isValid() === false) {
-            $this->filterResult = false;
-        }
-        return $entityFromForm->getEntityDataToStandardEntity();
-    }
-
-    private function parseCollectionWithMultipleReferencedForeignKey(string $propertyName, array $propertyData): void
-    {
-        foreach (array_keys($propertyData) as $foreignKeyPropertyName) {
-            $parsedForeignKeyPropertyName = ucfirst($foreignKeyPropertyName);
-            if (array_key_exists($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName, $this->request->input)) {
-                $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix . $parsedForeignKeyPropertyName);
-            }
-        }
-    }
-
-    private function parseStandardProperties(): void
-    {
-        $reflectionEntity = new \ReflectionClass($this->entity);
-        $reflectionProperties = $reflectionEntity->getProperties();
-        foreach ($reflectionProperties as $property) {
-            if (array_key_exists($property->name, $this->entityFromForm)) {
-                $this->switchFormPropertyType($property->name);
-            } elseif (BaseEntity::checkFinalClassReflectionProperty($property) && $this->isNotPrimaryKeyOrPassIsActive($property) && $this->isFiltered($property)) {
-                $this->parseSingleStandardProperty($property);
-                $this->switchFilter($property->name);
-            }
-        }
-    }
-
-    private function isNotPrimaryKeyOrPassIsActive(\ReflectionProperty $property): bool
-    {
-        return (($this->entity->isPrimaryKey($property->name) === false) || ($this->config->primaryKeyPassAccepted));
-    }
-
-    private function isFiltered(\ReflectionProperty $property): bool
-    {
-        return in_array($property->name, array_keys($this->filterFiledsMode));
-    }
-
-    private function parseSingleStandardProperty(\ReflectionProperty $property): void
-    {
-        if (array_key_exists($property->name, $this->request->input) && ($this->request->input[$property->name] !== '')) {
-            $reflectionType = $property->getType();
-            $this->entityData->{$property->name} = Parser::parseValue($reflectionType, $this->request->input[$property->name], true, $this->dataMapper);
-        } elseif (array_key_exists($property->name, $this->request->files)) {
-            $this->entityData->{$property->name} = $this->request->files[$property->name];
-        } elseif (array_key_exists($property->name, $this->filterFiledsMode)) {
-            if (($property->getType()->getName() === 'bool') && ($property->getType()->allowsNull()) === false) {
-                $this->entityData->{$property->name} = false;
-            } elseif ($property->hasDefaultValue()) {
-                $this->entityData->{$property->name} = $property->getDefaultValue();
-            } else {
-                $this->entityData->{$property->name} = null;
-            }
-        }
-    }
-
-    private function parseFile()
-    {
-        
-    }
-
-    private function switchFilter(string $propertyName): void
-    {
-        if (array_key_exists($propertyName, $this->filterFiledsMode) && property_exists($this->entityData, $propertyName)) {
-            $customMessagePropertyName = $propertyName . "CustomMessage";
-            $this->formFilterError->$customMessagePropertyName = false;
-            $errorPropertyName = $propertyName . "Error";
-            if ($this->filterHasFailed($propertyName) && ($this->isNullButNotNullable($propertyName))) {
-                $this->filterResult = false;
-                $this->formFilterError->$errorPropertyName = true;
-            } else {
-                $this->formFilterError->$errorPropertyName = false;
-            }
-        }
-    }
-
-    private function filterHasFailed(string $propertyName): bool
-    {
-        return !$this->filterFiledsMode[$propertyName]['filterType']->applyFilter($this->entityData->$propertyName, $this->filterFiledsMode[$propertyName]['parameters']);
-    }
-
-    private function isNullButNotNullable(string $propertyName): bool
-    {
-        if ($this->entityData->$propertyName === null) {
-            return !$this->filterFiledsMode[$propertyName]['allowNull'];
-        } else {
-            return true;
-        }
-    }
-
-    private function isSelfReferencedProperty(array $propertyData): bool
-    {
-        $foreignKeyPropertyName = array_key_first($propertyData);
-        $referentEntity = $propertyData[$foreignKeyPropertyName];
-        if (str_contains($foreignKeyPropertyName, $this->config->parentPrefixPropertyName) && ($referentEntity === get_class($this->entity))) {
-            return true;
-        } else {
-            return false;
-        }
+        return $filterResult;
     }
 
     abstract protected function customFilter(): void;
 
     public function resolveEntity(): BaseEntity
     {
-        foreach ($this->entityData as $propertyName => $value) {
-            if (in_array($propertyName, $this->sismaCollectionToResolve)) {
-                $this->resolveSismaCollection($propertyName);
-            } elseif (in_array($propertyName, $this->entityToResolve)) {
-                $this->resolveEntityByForm($propertyName);
-            } else {
-                $this->entity->$propertyName = $value;
-            }
-        }
-        return $this->entity;
-    }
-
-    private function resolveEntityByForm(string $propertyName): void
-    {
-        if (isset($this->entityFromForm[$propertyName]->entityData)) {
-            $this->entity->$propertyName = $this->entityFromForm[$propertyName]->resolveEntity();
-        }
-    }
-
-    private function resolveSismaCollection(string $propertyName): void
-    {
-        foreach ($this->entityFromForm[$propertyName] as $form) {
-            if (isset($form->entityData)) {
-                $this->entity->addEntityToEntityCollection($propertyName, $form->resolveEntity());
-            }
-        }
+        return $this->entityResolver->resolveEntity(
+            $this->entity,
+            $this->entityData,
+            $this->entityFromForm,
+            $this->entityToResolve,
+            $this->sismaCollectionToResolve
+        );
     }
 
     public function getEntityDataToStandardEntity(): StandardEntity
