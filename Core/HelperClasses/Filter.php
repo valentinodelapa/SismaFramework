@@ -72,26 +72,17 @@ class Filter
 
     public function isMinLimitString($value, int $minLimit): bool
     {
-        $result = true;
-        $result = ($this->isString($value)) ? $result : false;
-        $result = (strlen($value) >= $minLimit) ? $result : false;
-        return $result;
+        return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isString($v));
     }
 
     public function isMaxLimitString($value, int $maxLimit): bool
     {
-        $result = true;
-        $result = ($this->isString($value)) ? $result : false;
-        $result = (strlen($value) <= $maxLimit) ? $result : false;
-        return $result;
+        return $this->isMaxLengthForValidator($value, $maxLimit, fn($v) => $this->isString($v));
     }
 
     public function isLimitString($value, int $minLimit, int $maxLimit): bool
     {
-        $result = true;
-        $result = ($this->isMinLimitString($value, $minLimit)) ? $result : false;
-        $result = ($this->isMaxLimitString($value, $maxLimit)) ? $result : false;
-        return $result;
+        return $this->isLengthRangeForValidator($value, $minLimit, $maxLimit, fn($v) => $this->isString($v));
     }
 
     public function isAlphabeticString($value): bool
@@ -104,26 +95,17 @@ class Filter
 
     public function isMinLimitAlphabeticString($value, int $minLimit): bool
     {
-        $result = true;
-        $result = ($this->isAlphabeticString($value)) ? $result : false;
-        $result = (strlen($value) >= $minLimit) ? $result : false;
-        return $result;
+        return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isAlphabeticString($v));
     }
 
     public function isMaxLimitAlphabeticString($value, int $maxLimit): bool
     {
-        $result = true;
-        $result = ($this->isAlphabeticString($value)) ? $result : false;
-        $result = (strlen($value) <= $maxLimit) ? $result : false;
-        return $result;
+        return $this->isMaxLengthForValidator($value, $maxLimit, fn($v) => $this->isAlphabeticString($v));
     }
 
     public function isLimitAlphabeticString($value, int $minLimit, int $maxLimit): bool
     {
-        $result = true;
-        $result = ($this->isMinLimitAlphabeticString($value, $minLimit)) ? $result : false;
-        $result = ($this->isMaxLimitAlphabeticString($value, $maxLimit)) ? $result : false;
-        return $result;
+        return $this->isLengthRangeForValidator($value, $minLimit, $maxLimit, fn($v) => $this->isAlphabeticString($v));
     }
 
     public function isAlphanumericString($value): bool
@@ -136,26 +118,17 @@ class Filter
 
     public function isMinLimitAlphanumericString($value, int $minLimit): bool
     {
-        $result = true;
-        $result = ($this->isAlphanumericString($value)) ? $result : false;
-        $result = (strlen($value) >= $minLimit) ? $result : false;
-        return $result;
+        return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isAlphanumericString($v));
     }
 
     public function isMaxLimitAlphanumericString($value, int $maxLimit): bool
     {
-        $result = true;
-        $result = ($this->isAlphanumericString($value)) ? $result : false;
-        $result = (strlen($value) <= $maxLimit) ? $result : false;
-        return $result;
+        return $this->isMaxLengthForValidator($value, $maxLimit, fn($v) => $this->isAlphanumericString($v));
     }
 
     public function isLimitAlphanumericString($value, int $minLimit, int $maxLimit): bool
     {
-        $result = true;
-        $result = ($this->isMinLimitAlphanumericString($value, $minLimit)) ? $result : false;
-        $result = ($this->isMaxLimitAlphanumericString($value, $maxLimit)) ? $result : false;
-        return $result;
+        return $this->isLengthRangeForValidator($value, $minLimit, $maxLimit, fn($v) => $this->isAlphanumericString($v));
     }
 
     public function isStrictAlphanumericString($value): bool
@@ -169,26 +142,17 @@ class Filter
 
     public function isMinLimitStrictAlphanumericString($value, int $minLimit): bool
     {
-        $result = true;
-        $result = ($this->isStrictAlphanumericString($value)) ? $result : false;
-        $result = (strlen($value) >= $minLimit) ? $result : false;
-        return $result;
+        return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isStrictAlphanumericString($v));
     }
 
     public function isMaxLimitStrictAlphanumericString($value, int $maxLimit): bool
     {
-        $result = true;
-        $result = ($this->isStrictAlphanumericString($value)) ? $result : false;
-        $result = (strlen($value) <= $maxLimit) ? $result : false;
-        return $result;
+        return $this->isMaxLengthForValidator($value, $maxLimit, fn($v) => $this->isStrictAlphanumericString($v));
     }
 
     public function isLimitStrictAlphanumericString($value, int $minLimit, int $maxLimit): bool
     {
-        $result = true;
-        $result = ($this->isMinLimitStrictAlphanumericString($value, $minLimit)) ? $result : false;
-        $result = ($this->isMaxLimitStrictAlphanumericString($value, $maxLimit)) ? $result : false;
-        return $result;
+        return $this->isLengthRangeForValidator($value, $minLimit, $maxLimit, fn($v) => $this->isStrictAlphanumericString($v));
     }
 
     public function isSecurePassword($value): bool
@@ -310,5 +274,21 @@ class Filter
     public function customFilter(mixed $value, string $regularExpression): bool
     {
         return preg_match($regularExpression, $value);
+    }
+    
+    private function isMinLengthForValidator(mixed $value, int $minLimit, callable $validator): bool
+    {
+        return $validator($value) && strlen($value) >= $minLimit;
+    }
+    
+    private function isMaxLengthForValidator(mixed $value, int $maxLimit, callable $validator): bool
+    {
+        return $validator($value) && strlen($value) <= $maxLimit;
+    }
+    
+    private function isLengthRangeForValidator(mixed $value, int $minLimit, int $maxLimit, callable $validator): bool
+    {
+        return $this->isMinLengthForValidator($value, $minLimit, $validator)
+            && $this->isMaxLengthForValidator($value, $maxLimit, $validator);
     }
 }
