@@ -78,7 +78,7 @@ abstract class BaseForm extends Submittable
     private function checkEntityName()
     {
         if (is_subclass_of(static::getEntityName(), BaseEntity::class) === false) {
-            throw new FormException();
+            throw new FormException('Entity name returned by getEntityName() must be a subclass of BaseEntity');
         }
     }
 
@@ -92,7 +92,7 @@ abstract class BaseForm extends Submittable
         } elseif ($baseEntity === null) {
             $this->entity = new $entityClassName($this->dataMapper);
         } else {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException('BaseEntity parameter must be an instance of ' . $entityClassName . ' or null');
         }
     }
 
