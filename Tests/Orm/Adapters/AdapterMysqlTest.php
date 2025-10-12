@@ -37,6 +37,9 @@ use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager;
+use SismaFramework\Orm\HelperClasses\DataMapper\EntityPersister;
+use SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
@@ -75,8 +78,19 @@ class AdapterMysqlTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+
+        $transactionManager = new TransactionManager($baseAdapterMock, $processedEntitesCollectionMock);
+        $entityPersister = new EntityPersister($baseAdapterMock, fn() => $this->configMock->ormCache);
+        $queryExecutor = new QueryExecutor($baseAdapterMock, fn() => $this->configMock->ormCache);
+
         $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configMock])
+                ->setConstructorArgs([
+                    $processedEntitesCollectionMock,
+                    $this->configMock,
+                    $transactionManager,
+                    $entityPersister,
+                    $queryExecutor
+                ])
                 ->getMock();
         $connectionMock = $this->createMock(\PDO::class);
         AdapterMysql::setConnection($connectionMock);

@@ -41,6 +41,9 @@ use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager;
+use SismaFramework\Orm\HelperClasses\DataMapper\EntityPersister;
+use SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaDate;
@@ -105,6 +108,24 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($this->baseAdapterMock);
         $this->queryMock = $this->createMock(Query::class);
+    }
+
+    /**
+     * Helper method to create a DataMapper with mocked dependencies
+     */
+    private function createDataMapperWithMockedAdapter(?ProcessedEntitiesCollection $processedEntitiesCollection = null): DataMapper
+    {
+        $transactionManager = new TransactionManager($this->baseAdapterMock, $processedEntitiesCollection);
+        $entityPersister = new EntityPersister($this->baseAdapterMock, fn() => $this->configMock->ormCache);
+        $queryExecutor = new QueryExecutor($this->baseAdapterMock, fn() => $this->configMock->ormCache);
+
+        return new DataMapper(
+            $processedEntitiesCollection,
+            $this->configMock,
+            $transactionManager,
+            $entityPersister,
+            $queryExecutor
+        );
     }
 
     public function testSaveNewBaseEntityWithInsertInsertInsert()
@@ -173,7 +194,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -246,7 +267,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -316,7 +337,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -390,7 +411,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -465,7 +486,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -532,7 +553,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -577,7 +598,7 @@ class DataMapperTest extends TestCase
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -625,7 +646,7 @@ class DataMapperTest extends TestCase
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -660,7 +681,7 @@ class DataMapperTest extends TestCase
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -760,7 +781,7 @@ class DataMapperTest extends TestCase
         $entityWithEncryptedPropertyOne = new EntityWithEncryptedPropertyOne();
         $entityWithEncryptedPropertyOne->encryptedPropertyOne = $propertyValueOne;
         $entityWithEncryptedPropertyOne->encryptedPropertyTwo = $propertyValueTwo;
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($entityWithEncryptedPropertyOne, $this->queryMock);
         $entityWithEncryptedPropertyOne->encryptedPropertyTwo = $propertyValueThree;
         $dataMapper->save($entityWithEncryptedPropertyOne, $this->queryMock);
@@ -862,7 +883,7 @@ class DataMapperTest extends TestCase
         $entityWithEncryptedPropertyTwo = new EntityWithEncryptedPropertyTwo();
         $entityWithEncryptedPropertyTwo->encryptedPropertyOne = $propertyValueOne;
         $entityWithEncryptedPropertyTwo->encryptedPropertyTwo = $propertyValueTwo;
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($entityWithEncryptedPropertyTwo, $this->queryMock);
         $entityWithEncryptedPropertyTwo->encryptedPropertyTwo = $propertyValueThree;
         $dataMapper->save($entityWithEncryptedPropertyTwo, $this->queryMock);
@@ -881,7 +902,7 @@ class DataMapperTest extends TestCase
                 });
         $dependentEntityOne = new DependentEntityOne();
         $dependentEntityOne->entityWithTwoCollection = 2;
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($dependentEntityOne);
     }
 
@@ -955,7 +976,7 @@ class DataMapperTest extends TestCase
         $baseSampleCollection->append($baseSample);
         $referencedSample->setBaseSampleCollectionReferencedEntityWithoutInitialization($baseSampleCollection);
         $referencedSample->setBaseSampleCollectionReferencedEntityWithInitialization($baseSampleCollection);
-        $dataMapper = new DataMapper();
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($referencedSample);
     }
 
@@ -964,7 +985,7 @@ class DataMapperTest extends TestCase
         $this->queryMock->expects($this->any())
                 ->method('setTable')
                 ->with('entity_name');
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $this->assertInstanceOf(Query::class, $dataMapper->initQuery(BaseSample::class));
     }
 
@@ -996,7 +1017,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -1041,7 +1062,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->startTransaction();
         $dataMapper->save($baseSample);
         $dataMapper->commitTransaction();
@@ -1086,7 +1107,7 @@ class DataMapperTest extends TestCase
         $entityWithTwoCollection = new EntityWithTwoCollection();
         $entityWithTwoCollection->addDependentEntityOne(new DependentEntityOne());
         $entityWithTwoCollection->addDependentEntityTwo(new DependentEntityTwo());
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($entityWithTwoCollection);
         $this->assertEquals(['beginTransaction', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'execute', 'lastInsertId', 'commitTransaction'], $adapterMethodCallOrder);
     }
@@ -1097,7 +1118,7 @@ class DataMapperTest extends TestCase
                 ->method('execute')
                 ->willReturn(true);
         $processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
-        $dataMapper = new DataMapper($this->baseAdapterMock, $processedEntitiesCollectionMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter($processedEntitiesCollectionMock);
         $simpleEntity = new SimpleEntity($dataMapper, $processedEntitiesCollectionMock);
         $processedEntitiesCollectionMock->expects($this->exactly(2))
                 ->method('append')
@@ -1206,7 +1227,7 @@ class DataMapperTest extends TestCase
         $subdependentEntity->string = 'test';
         $dependentEntityTwo->addSubdependentEntity($subdependentEntity);
         $entityWithTwoCollection->addDependentEntityTwo($dependentEntityTwo);
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($entityWithTwoCollection);
         $subdependentEntity->string = 'testTwo';
         $dataMapper->save($entityWithTwoCollection);
@@ -1327,7 +1348,7 @@ class DataMapperTest extends TestCase
         $subdependentEntity->string = 'test';
         $dependentEntityTwo->addSubdependentEntity($subdependentEntity);
         $dependentEntityOne->entityWithTwoCollection->addDependentEntityTwo($dependentEntityTwo);
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($dependentEntityOne);
         $subdependentEntity->string = 'testTwo';
         $dataMapper->save($dependentEntityOne);
@@ -1382,7 +1403,7 @@ class DataMapperTest extends TestCase
         $baseSample->enumWithoutInitialization = SampleType::two;
         $baseSample->stringWithoutInizialization = 'base sample';
         $baseSample->boolean = true;
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
     }
 
@@ -1394,7 +1415,7 @@ class DataMapperTest extends TestCase
         $this->queryMock->expects($this->exactly(2))
                 ->method('getCommandToExecute')
                 ->willReturn('');
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $baseSampleOne = new BaseSample();
         $baseSampleOne->id = 1;
         $baseSampleOne->setPrimaryKeyPropertyName('');
@@ -1418,7 +1439,7 @@ class DataMapperTest extends TestCase
         $this->queryMock->expects($this->exactly(2))
                 ->method('getCommandToExecute')
                 ->willReturn('');
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $baseSample = new BaseSample();
         $baseSample->id = 1;
         Cache::setEntity($baseSample);
@@ -1475,7 +1496,7 @@ class DataMapperTest extends TestCase
         $this->queryMock->expects($this->exactly(3))
                 ->method('getCommandToExecute')
                 ->willReturn('');
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $firstEntityCollection = $dataMapper->find(BaseSample::class, $this->queryMock);
         $this->assertInstanceOf(SismaCollection::class, $firstEntityCollection);
         $this->assertCount(0, $firstEntityCollection);
@@ -1500,7 +1521,7 @@ class DataMapperTest extends TestCase
         $this->queryMock->expects($this->exactly(3))
                 ->method('getCommandToExecute')
                 ->willReturn('');
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $this->assertEquals(0, $dataMapper->getCount($this->queryMock));
         $this->assertEquals(0, $dataMapper->getCount($this->queryMock));
         $this->assertEquals(5, $dataMapper->getCount($this->queryMock));
@@ -1531,7 +1552,7 @@ class DataMapperTest extends TestCase
         $this->queryMock->expects($this->exactly(4))
                 ->method('getCommandToExecute')
                 ->willReturn('');
-        $dataMapper = new DataMapper($this->baseAdapterMock);
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
         $this->assertNull($dataMapper->findFirst(BaseSample::class, $this->queryMock));
         $this->assertNull($dataMapper->findFirst(BaseSample::class, $this->queryMock));
         $this->assertInstanceOf(BaseSample::class, $dataMapper->findFirst(BaseSample::class, $this->queryMock));

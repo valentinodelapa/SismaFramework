@@ -31,6 +31,9 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager;
+use SismaFramework\Orm\HelperClasses\DataMapper\EntityPersister;
+use SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 
@@ -81,8 +84,19 @@ class NotationManagerTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+
+        $transactionManager = new TransactionManager($baseAdapterMock, $processedEntitesCollectionMock);
+        $entityPersister = new EntityPersister($baseAdapterMock, fn() => $configMock->ormCache);
+        $queryExecutor = new QueryExecutor($baseAdapterMock, fn() => $configMock->ormCache);
+
         $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $configMock])
+                ->setConstructorArgs([
+                    $processedEntitesCollectionMock,
+                    $configMock,
+                    $transactionManager,
+                    $entityPersister,
+                    $queryExecutor
+                ])
                 ->getMock();
         $baseSample = new BaseSample($dataMapperMock, $processedEntitesCollectionMock, $configMock);
         $result = NotationManager::convertEntityToTableName($baseSample);

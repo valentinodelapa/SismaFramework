@@ -109,7 +109,7 @@ class QueryExecutor
                 case 1:
                     return $this->selectLastModifiedEntity($entityName, $result->fetch());
                 default:
-                    throw new DataMapperException();
+                    throw new DataMapperException('findFirst() returned more than one row for entity: ' . $entityName);
             }
         }
     }

@@ -69,12 +69,13 @@ class DataMapper
     private QueryExecutor $queryExecutor;
     private bool $ormCacheStatus;
 
-    public function __construct($adapterOrProcessedEntityCollection = null, ?ProcessedEntitiesCollection $processedEntityCollection = null, ?Config $config = null, ?TransactionManager $transactionManager = null, ?EntityPersister $entityPersister = null, ?QueryExecutor $queryExecutor = null)
+    public function __construct(
+            ?ProcessedEntitiesCollection $processedEntityCollection = null,
+            ?Config $config = null,
+            ?TransactionManager $transactionManager = null,
+            ?EntityPersister $entityPersister = null,
+            ?QueryExecutor $queryExecutor = null)
     {
-        if ($adapterOrProcessedEntityCollection instanceof ProcessedEntitiesCollection) {
-            $processedEntityCollection = $adapterOrProcessedEntityCollection;
-        }
-
         $this->config = $config ?? Config::getInstance();
         $this->processedEntitiesCollection = $processedEntityCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->ormCacheStatus = $this->config->ormCache;
@@ -122,7 +123,7 @@ class DataMapper
                 return true;
             } else {
                 $this->transactionManager->rollback();
-                throw new DataMapperException();
+                throw new DataMapperException('Failed to save entity: ' . get_class($entity));
             }
         }
     }

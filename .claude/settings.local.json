@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/valen/OneDrive/wampdata/www/sisma-module-system/**)",
+      "Bash(c:/wamp64/bin/php/php8.1.31/php.exe c:/Users/valen/OneDrive/wampdata/www/sisma-module-system/vendor/bin/phpunit c:/Users/valen/OneDrive/wampdata/www/sisma-module-system/SismaFramework/Tests/Orm/HelperClasses/DataMapperTest.php)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
