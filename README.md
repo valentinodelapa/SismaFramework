@@ -1,13 +1,16 @@
 # SismaFramework
 
 ![PHPUnit tests status](https://img.shields.io/badge/tests-passing-green)
-![Code coverage status](https://img.shields.io/badge/coverage-%3E85%25-green) 
+![Code coverage status](https://img.shields.io/badge/coverage-%3E85%25-green)
 ![PHP Version Support](https://img.shields.io/badge/php-%3E%3D8.1-blue)
 [![license](https://img.shields.io/badge/license-MIT-yellowgreen)](https://github.com/valentinodelapa/SismaFramework/blob/master/LICENSE)
 [![Documentation](https://img.shields.io/badge/documentation-leggi-blue)](docs/index.md)
 [![SLSA 3](https://img.shields.io/badge/SLSA-Level%203-blue)](https://slsa.dev/spec/v0.1/levels#level-3)
+[![Website](https://img.shields.io/badge/website-sisma--framework.dev-blue)](https://www.sisma-framework.dev/)
 
 SismaFramework è un framework PHP moderno, basato sul pattern MVC, progettato per la creazione di applicazioni web robuste e manutenibili. Sfrutta le funzionalità di PHP 8.1+ come la tipizzazione forte e le `BackedEnum` per garantire la qualità e la coerenza del codice.
+
+🌐 **[Visita il sito ufficiale](https://www.sisma-framework.dev/)** per documentazione completa, esempi e guide.
 
 ## Caratteristiche Principali
 

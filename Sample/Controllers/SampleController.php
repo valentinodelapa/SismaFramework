@@ -12,11 +12,11 @@ use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Sample\Entities\SampleBaseEntity;
-use SismaFramework\Sample\Entities\SampleDependentEntity;
 use SismaFramework\Sample\Entities\SampleReferencedEntity;
 use SismaFramework\Sample\Enumerations\ArticleStatus;
 use SismaFramework\Sample\Models\SampleBaseEntityModel;
 use SismaFramework\Sample\Models\SampleDependentEntityModel;
+use SismaFramework\Sample\Models\SampleReferencedEntityModel;
 use SismaFramework\Security\Authentication;
 
 /**
@@ -64,15 +64,17 @@ class SampleController extends BaseController implements DefaultControllerInterf
     /**
      * Mostra un singolo articolo - Esempio di ENTITY INJECTION
      *
-     * URL: /sample/show-article/id/1
-     * URL alternativo: /sample/show-article/sampleBaseEntity/1
+     * URL: /sample/show-article/article/1
      *
-     * Il framework carica automaticamente l'entity dal database usando l'ID
+     * Il framework carica automaticamente l'entity dal database:
+     * - Il nome del parametro nell'URL ('article') deve corrispondere al nome del parametro del metodo
+     * - Il valore (1) viene usato per chiamare SampleBaseEntityModel::getEntityById(1)
+     * - Il Model viene derivato automaticamente dall'Entity (Entities -> Models + 'Model')
      */
     public function showArticle(SampleBaseEntity $article): Response
     {
         $this->vars['article'] = $article;
-        $this->vars['pageTitle'] = $article->getTitle();
+        $this->vars['pageTitle'] = $article->title;
 
         return Render::generateView('sample/showArticle', $this->vars);
     }
@@ -104,9 +106,10 @@ class SampleController extends BaseController implements DefaultControllerInterf
     public function articlesByAuthor(int $authorId): Response
     {
         $articleModel = new SampleDependentEntityModel($this->dataMapper);
+        $authorModel = new SampleReferencedEntityModel($this->dataMapper);
 
-        // Carica l'autore (esempio di entity injection manuale)
-        $author = $this->dataMapper->getEntityById(SampleReferencedEntity::class, $authorId);
+        // Carica l'autore usando il Model
+        $author = $authorModel->getEntityById($authorId);
 
         // Recupera gli articoli dell'autore usando il model
         $this->vars['author'] = $author;
@@ -127,7 +130,7 @@ class SampleController extends BaseController implements DefaultControllerInterf
      */
     public function search(Request $request): Response
     {
-        $searchKey = $request->getQuery('q', '');
+        $searchKey = $request->query['q'] ?? '';
         $model = new SampleBaseEntityModel($this->dataMapper);
 
         $this->vars['searchKey'] = $searchKey;

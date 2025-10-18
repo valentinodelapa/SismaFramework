@@ -26,8 +26,11 @@
 
 namespace SismaFramework\Sample\Models;
 
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\ExtendedClasses\DependentModel;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Sample\Entities\SampleDependentEntity;
 use SismaFramework\Sample\Entities\SampleReferencedEntity;
@@ -52,9 +55,15 @@ class SampleDependentEntityModel extends DependentModel
     #[\Override]
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
-        $query->where('title LIKE :searchKey OR content LIKE :searchKey');
-        $bindValues[':searchKey'] = '%' . $searchKey . '%';
-        $bindTypes[':searchKey'] = DataType::str;
+        $query->appendOpenBlock()
+              ->appendCondition('title', ComparisonOperator::like, Placeholder::placeholder)
+              ->appendOr()
+              ->appendCondition('content', ComparisonOperator::like, Placeholder::placeholder)
+              ->appendCloseBlock();
+        $bindValues[] = '%' . $searchKey . '%';
+        $bindTypes[] = DataType::typeString;
+        $bindValues[] = '%' . $searchKey . '%';
+        $bindTypes[] = DataType::typeString;
     }
 
     #[\Override]
@@ -70,9 +79,9 @@ class SampleDependentEntityModel extends DependentModel
      * $articles = $model->getBySampleReferencedEntity($author);
      *
      * @param SampleReferencedEntity $author
-     * @return SampleDependentEntity[]
+     * @return SismaCollection<SampleDependentEntity>
      */
-    public function getArticlesByAuthor(SampleReferencedEntity $author): array
+    public function getArticlesByAuthor(SampleReferencedEntity $author): SismaCollection
     {
         // Modo 1: Usando getEntityCollectionByEntity (metodo ereditato da DependentModel)
         return $this->getEntityCollectionByEntity(['sampleReferencedEntity' => $author]);
@@ -82,29 +91,31 @@ class SampleDependentEntityModel extends DependentModel
     }
 
     /**
-     * Esempio avanzato: recupera articoli pubblicati di un autore con JOIN
+     * Esempio avanzato: recupera articoli pubblicati di un autore
      *
-     * Questo evita il problema N+1 caricando anche i dati dell'autore
+     * Nota: Il framework gestisce automaticamente il JOIN attraverso il lazy loading.
+     * Per query complesse con JOIN espliciti, usa direttamente il DataMapper.
      */
-    public function getPublishedArticlesByAuthorWithJoin(SampleReferencedEntity $author): array
+    public function getPublishedArticlesByAuthor(SampleReferencedEntity $author): SismaCollection
     {
-        $query = new Query();
-        $query->select('a.*')  // Solo colonne della tabella articoli
-              ->from($this->getTableName() . ' a')
-              ->join('sample_referenced_entity are', 'a.sample_referenced_entity_id = are.id')
-              ->where('a.sample_referenced_entity_id = :authorId AND a.status = :status')
-              ->orderBy(['a.created_at' => 'DESC']);
+        $query = $this->initQuery();
+        $query->setWhere()
+              ->appendCondition('sampleReferencedEntity', ComparisonOperator::equal, Placeholder::placeholder, true)
+              ->appendAnd()
+              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        $query->setOrderBy(['createdAt' => 'DESC']);
 
         $bindValues = [
-            ':authorId' => $author->getId(),
-            ':status' => ArticleStatus::PUBLISHED->value
+            $author->getId(),
+            ArticleStatus::PUBLISHED->value
         ];
         $bindTypes = [
-            ':authorId' => DataType::int,
-            ':status' => DataType::str
+            DataType::typeInteger,
+            DataType::typeString
         ];
 
-        return $this->getEntityCollectionByQuery($query, $bindValues, $bindTypes);
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     /**
@@ -122,18 +133,18 @@ class SampleDependentEntityModel extends DependentModel
     /**
      * Esempio: recupera gli articoli più visti
      */
-    public function getMostViewedArticles(int $limit = 10): array
+    public function getMostViewedArticles(int $limit = 10): SismaCollection
     {
-        $query = new Query();
-        $query->select('*')
-              ->from($this->getTableName())
-              ->where('status = :status')
-              ->orderBy(['views' => 'DESC'])
-              ->limit($limit);
+        $query = $this->initQuery();
+        $query->setWhere()
+              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        $query->setOrderBy(['views' => 'DESC']);
+        $query->setLimit($limit);
 
-        $bindValues = [':status' => ArticleStatus::PUBLISHED->value];
-        $bindTypes = [':status' => DataType::str];
+        $bindValues = [ArticleStatus::PUBLISHED->value];
+        $bindTypes = [DataType::typeString];
 
-        return $this->getEntityCollectionByQuery($query, $bindValues, $bindTypes);
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 }

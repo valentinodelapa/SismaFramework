@@ -4,6 +4,7 @@
     "description": "PHP MVC framework with ORM",
     "type": "library",
     "license": "MIT",
+    "homepage": "https://www.sisma-framework.dev",
     "authors": [
         {
             "name": "Valentino de Lapa",

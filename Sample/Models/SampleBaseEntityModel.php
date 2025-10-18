@@ -27,7 +27,10 @@
 namespace SismaFramework\Sample\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Sample\Entities\SampleBaseEntity;
 use SismaFramework\Sample\Enumerations\ArticleStatus;
@@ -55,9 +58,15 @@ class SampleBaseEntityModel extends BaseModel
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
         // Cerca nel titolo O nel contenuto
-        $query->where('title LIKE :searchKey OR content LIKE :searchKey');
-        $bindValues[':searchKey'] = '%' . $searchKey . '%';
-        $bindTypes[':searchKey'] = DataType::str;
+        $query->appendOpenBlock()
+              ->appendCondition('title', ComparisonOperator::like, Placeholder::placeholder)
+              ->appendOr()
+              ->appendCondition('content', ComparisonOperator::like, Placeholder::placeholder)
+              ->appendCloseBlock();
+        $bindValues[] = '%' . $searchKey . '%';
+        $bindTypes[] = DataType::typeString;
+        $bindValues[] = '%' . $searchKey . '%';
+        $bindTypes[] = DataType::typeString;
     }
 
     #[\Override]
@@ -69,49 +78,51 @@ class SampleBaseEntityModel extends BaseModel
     /**
      * Esempio di metodo custom: recupera solo articoli pubblicati
      *
-     * @return SampleBaseEntity[]
+     * @return SismaCollection<SampleBaseEntity>
      */
-    public function getPublishedArticles(?int $limit = null): array
+    public function getPublishedArticles(?int $limit = null): SismaCollection
     {
-        $query = new Query();
-        $query->select('*')
-              ->from($this->getTableName())
-              ->where('status = :status')
-              ->orderBy(['published_at' => 'DESC']);
+        $query = $this->initQuery();
+        $query->setWhere()
+              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        $query->setOrderBy(['publishedAt' => 'DESC']);
 
         if ($limit !== null) {
-            $query->limit($limit);
+            $query->setLimit($limit);
         }
 
-        $bindValues = [':status' => ArticleStatus::PUBLISHED->value];
-        $bindTypes = [':status' => DataType::str];
+        $bindValues = [ArticleStatus::PUBLISHED->value];
+        $bindTypes = [DataType::typeString];
 
-        return $this->getEntityCollectionByQuery($query, $bindValues, $bindTypes);
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     /**
      * Esempio: recupera articoli in evidenza
      *
-     * @return SampleBaseEntity[]
+     * @return SismaCollection<SampleBaseEntity>
      */
-    public function getFeaturedArticles(): array
+    public function getFeaturedArticles(): SismaCollection
     {
-        $query = new Query();
-        $query->select('*')
-              ->from($this->getTableName())
-              ->where('featured = :featured AND status = :status')
-              ->orderBy(['rating' => 'DESC']);
+        $query = $this->initQuery();
+        $query->setWhere()
+              ->appendCondition('featured', ComparisonOperator::equal, Placeholder::placeholder)
+              ->appendAnd()
+              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        $query->setOrderBy(['rating' => 'DESC']);
 
         $bindValues = [
-            ':featured' => 1,
-            ':status' => ArticleStatus::PUBLISHED->value
+            1,
+            ArticleStatus::PUBLISHED->value
         ];
         $bindTypes = [
-            ':featured' => DataType::int,
-            ':status' => DataType::str
+            DataType::typeInteger,
+            DataType::typeString
         ];
 
-        return $this->getEntityCollectionByQuery($query, $bindValues, $bindTypes);
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     /**
@@ -119,15 +130,14 @@ class SampleBaseEntityModel extends BaseModel
      */
     public function countByStatus(ArticleStatus $status): int
     {
-        $query = new Query();
-        $query->select('COUNT(*) as total')
-              ->from($this->getTableName())
-              ->where('status = :status');
+        $query = $this->initQuery();
+        $query->setWhere()
+              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
 
-        $bindValues = [':status' => $status->value];
-        $bindTypes = [':status' => DataType::str];
+        $bindValues = [$status->value];
+        $bindTypes = [DataType::typeString];
 
-        $result = $this->getEntityCollectionByQuery($query, $bindValues, $bindTypes);
-        return $result[0]['total'] ?? 0;
+        $query->close();
+        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
     }
 }

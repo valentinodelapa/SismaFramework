@@ -207,20 +207,23 @@
     <footer class="py-4">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <h5 class="gradient-text">SismaFramework</h5>
-                    <p class="text-muted">Framework PHP MVC moderno per applicazioni web robuste e manutenibili.</p>
+                    <p style="color: rgba(255,255,255,0.7)">Framework PHP MVC moderno per applicazioni web robuste e manutenibili.</p>
+                    <p style="color: rgba(255,255,255,0.7)">
+                        <i class="bi bi-globe"></i> <a href="https://www.sisma-framework.dev/" target="_blank">www.sisma-framework.dev</a>
+                    </p>
                 </div>
-                <div class="col-md-3">
-                    <h6 class="text-uppercase">Link Utili</h6>
+                <div class="col-md-4">
+                    <h6 class="text-uppercase" style="color: rgba(255,255,255,0.9)">Link Utili</h6>
                     <ul class="list-unstyled">
                         <li><a href="/docs/view/file/getting-started">Getting Started</a></li>
                         <li><a href="/docs/view/file/api-reference">API Reference</a></li>
                         <li><a href="/sample/index">Esempi</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3">
-                    <h6 class="text-uppercase">Community</h6>
+                <div class="col-md-4">
+                    <h6 class="text-uppercase" style="color: rgba(255,255,255,0.9)">Community</h6>
                     <ul class="list-unstyled">
                         <li><a href="https://github.com/valentinodelapa/SismaFramework" target="_blank">GitHub</a></li>
                         <li><a href="https://github.com/valentinodelapa/SismaFramework/issues" target="_blank">Issues</a></li>
@@ -228,8 +231,8 @@
                 </div>
             </div>
             <hr class="my-4" style="border-color: rgba(255,255,255,0.1)">
-            <div class="text-center text-muted">
-                <small>&copy; <?= date('Y') ?> SismaFramework. Licensed under MIT.</small>
+            <div class="text-center" style="color: rgba(255,255,255,0.7)">
+                <small>&copy; 2020-present Valentino de Lapa. Licensed under <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a>.</small>
             </div>
         </div>
     </footer>
