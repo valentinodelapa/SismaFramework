@@ -205,6 +205,13 @@
             opacity: 0.9;
             color: white;
         }
+
+        /* Docs sidebar responsive fix */
+        @media (min-width: 992px) {
+            #docsSidebarCollapse {
+                display: block !important;
+            }
+        }
     </style>
 
     <!-- Structured Data / JSON-LD -->
@@ -261,7 +268,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/home/index"><i class="bi bi-house"></i> Home</a>
+                        <a class="nav-link" href="/"><i class="bi bi-house"></i> Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/docs/index"><i class="bi bi-book"></i> Documentazione</a>

@@ -5,7 +5,7 @@
         <div class="col-lg-10 mx-auto">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/home/index">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Cookie Policy</li>
                 </ol>
             </nav>
@@ -317,7 +317,7 @@
             </div>
 
             <div class="text-center mt-5">
-                <a href="/home/index" class="btn btn-outline-primary">
+                <a href="/" class="btn btn-outline-primary">
                     <i class="bi bi-arrow-left"></i> Torna alla Home
                 </a>
             </div>

@@ -2,33 +2,38 @@
 
 <div class="container-fluid my-4">
     <div class="row">
-        <!-- Sidebar -->
-        <div class="col-lg-3">
-            <div class="docs-sidebar">
-                <nav class="nav flex-column">
-                    <a href="/docs/index" class="nav-link">
-                        <i class="bi bi-arrow-left"></i> Torna all'indice
-                    </a>
-                    <hr>
+        <!-- Content First (mobile-first approach) -->
+        <div class="col-lg-9 order-1 order-lg-2">
+            <!-- Mobile Toggle Button for Sidebar -->
+            <button class="btn btn-outline-primary d-lg-none mb-3 w-100" type="button" data-bs-toggle="collapse" data-bs-target="#docsSidebarCollapse" aria-expanded="false" aria-controls="docsSidebarCollapse">
+                <i class="bi bi-list"></i> Indice Documentazione
+            </button>
 
-                    <?php foreach ($docsSections as $sectionName => $docs): ?>
-                        <h6><?= htmlspecialchars($sectionName) ?></h6>
-                        <?php foreach ($docs as $doc): ?>
-                            <a href="/docs/view/file/<?= urlencode($doc['file']) ?>"
-                               class="nav-link <?= ($currentFile === $doc['file']) ? 'active' : '' ?>">
-                                <?= htmlspecialchars($doc['title']) ?>
-                            </a>
+            <!-- Mobile: Collapsible sidebar (immediatamente dopo il button) -->
+            <div class="collapse d-lg-none mb-4" id="docsSidebarCollapse">
+                <div class="docs-sidebar">
+                    <nav class="nav flex-column">
+                        <a href="/docs/index" class="nav-link">
+                            <i class="bi bi-arrow-left"></i> Torna all'indice
+                        </a>
+                        <hr>
+
+                        <?php foreach ($docsSections as $sectionName => $docs): ?>
+                            <h6><?= htmlspecialchars($sectionName) ?></h6>
+                            <?php foreach ($docs as $doc): ?>
+                                <a href="/docs/view/file/<?= urlencode($doc['file']) ?>"
+                                   class="nav-link <?= ($currentFile === $doc['file']) ? 'active' : '' ?>">
+                                    <?= htmlspecialchars($doc['title']) ?>
+                                </a>
+                            <?php endforeach; ?>
                         <?php endforeach; ?>
-                    <?php endforeach; ?>
-                </nav>
+                    </nav>
+                </div>
             </div>
-        </div>
 
-        <!-- Content -->
-        <div class="col-lg-9">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/home/index">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
                     <li class="breadcrumb-item"><a href="/docs/index">Documentazione</a></li>
                     <li class="breadcrumb-item active"><?= htmlspecialchars($pageTitle) ?></li>
                 </ol>
@@ -59,6 +64,30 @@
                        class="btn btn-outline-info">
                         <i class="bi bi-pencil"></i> Edit on GitHub
                     </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Desktop (sempre visibile) -->
+        <div class="col-lg-3 order-2 order-lg-1">
+            <div class="d-none d-lg-block">
+                <div class="docs-sidebar mb-4">
+                    <nav class="nav flex-column">
+                        <a href="/docs/index" class="nav-link">
+                            <i class="bi bi-arrow-left"></i> Torna all'indice
+                        </a>
+                        <hr>
+
+                        <?php foreach ($docsSections as $sectionName => $docs): ?>
+                            <h6><?= htmlspecialchars($sectionName) ?></h6>
+                            <?php foreach ($docs as $doc): ?>
+                                <a href="/docs/view/file/<?= urlencode($doc['file']) ?>"
+                                   class="nav-link <?= ($currentFile === $doc['file']) ? 'active' : '' ?>">
+                                    <?= htmlspecialchars($doc['title']) ?>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    </nav>
                 </div>
             </div>
         </div>

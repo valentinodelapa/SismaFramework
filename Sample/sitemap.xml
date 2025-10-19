@@ -12,14 +12,6 @@
         <priority>1.0</priority>
     </url>
 
-    <!-- Home -->
-    <url>
-        <loc>https://www.sisma-framework.dev/home/index</loc>
-        <lastmod>2025-01-15</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.0</priority>
-    </url>
-
     <!-- Documentazione -->
     <url>
         <loc>https://www.sisma-framework.dev/docs/index</loc>
