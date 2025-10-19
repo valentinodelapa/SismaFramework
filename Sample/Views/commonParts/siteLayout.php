@@ -3,7 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle ?? 'SismaFramework') ?></title>
+    <title><?= htmlspecialchars($pageTitle ?? 'SismaFramework - Framework PHP MVC moderno') ?></title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="<?= htmlspecialchars($pageDescription ?? 'SismaFramework è un framework PHP moderno basato su MVC con ORM potente, sicurezza integrata, gestione form avanzata e supporto completo per PHP 8.1+') ?>">
+    <meta name="keywords" content="php framework, mvc, orm, data mapper, php 8.1, framework php italiano, sismaframework">
+    <meta name="author" content="Valentino de Lapa">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.sisma-framework.dev<?= $_SERVER['REQUEST_URI'] ?? '' ?>">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.sisma-framework.dev<?= $_SERVER['REQUEST_URI'] ?? '' ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($pageTitle ?? 'SismaFramework - Framework PHP MVC moderno') ?>">
+    <meta property="og:description" content="<?= htmlspecialchars($pageDescription ?? 'Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.1+') ?>">
+    <meta property="og:image" content="https://www.sisma-framework.dev/Sample/Assets/images/sisma-og-image.png">
+    <meta property="og:locale" content="it_IT">
+    <meta property="og:site_name" content="SismaFramework">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.sisma-framework.dev<?= $_SERVER['REQUEST_URI'] ?? '' ?>">
+    <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle ?? 'SismaFramework - Framework PHP MVC moderno') ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars($pageDescription ?? 'Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.1+') ?>">
+    <meta name="twitter:image" content="https://www.sisma-framework.dev/Sample/Assets/images/sisma-twitter-card.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/Sample/Assets/images/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/Sample/Assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/Sample/Assets/images/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Sample/Assets/images/apple-touch-icon.png">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,6 +61,15 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand svg {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
         }
 
         /* Hero Section */
@@ -168,13 +206,54 @@
             color: white;
         }
     </style>
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "SismaFramework",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Cross-platform",
+        "description": "Framework PHP moderno basato su MVC con ORM potente, sicurezza integrata e supporto completo per PHP 8.1+",
+        "url": "https://www.sisma-framework.dev",
+        "author": {
+            "@type": "Person",
+            "name": "Valentino de Lapa"
+        },
+        "license": "https://opensource.org/licenses/MIT",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+        },
+        "programmingLanguage": {
+            "@type": "ComputerLanguage",
+            "name": "PHP",
+            "version": "8.1"
+        },
+        "softwareVersion": "10.0.3",
+        "datePublished": "2020",
+        "codeRepository": "https://github.com/valentinodelapa/SismaFramework"
+    }
+    </script>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/home/index">
-                <i class="bi bi-hexagon-fill"></i> SismaFramework
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#7b68ee;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M 50 5 L 80 23 Q 87 27 87 35 L 87 65 Q 87 73 80 77 L 50 95 L 20 77 Q 13 73 13 65 L 13 35 Q 13 27 20 23 Z" fill="url(#logoGrad)" />
+                    <path d="M 45 42 Q 40 38 45 34 L 55 34 Q 60 38 55 42 L 48 48 Q 45 50 48 52 L 55 58 Q 60 62 55 66 L 45 66 Q 40 62 45 58" fill="none" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>SismaFramework</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -220,6 +299,8 @@
                         <li><a href="/docs/view/file/getting-started">Getting Started</a></li>
                         <li><a href="/docs/view/file/api-reference">API Reference</a></li>
                         <li><a href="/sample/index">Esempi</a></li>
+                        <li><a href="/home/privacy">Privacy Policy</a></li>
+                        <li><a href="/home/cookies">Cookie Policy</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4">

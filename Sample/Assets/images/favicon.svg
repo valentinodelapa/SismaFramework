@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7b68ee;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Hexagon background with rounded corners (like Bootstrap hexagon-fill) -->
+  <path d="M 50 5 L 80 23 Q 87 27 87 35 L 87 65 Q 87 73 80 77 L 50 95 L 20 77 Q 13 73 13 65 L 13 35 Q 13 27 20 23 Z"
+        fill="url(#grad1)" />
+
+  <!-- Letter S centered with uniform padding -->
+  <path d="M 45 42 Q 40 38 45 34 L 55 34 Q 60 38 55 42 L 48 48 Q 45 50 48 52 L 55 58 Q 60 62 55 66 L 45 66 Q 40 62 45 58"
+        fill="none"
+        stroke="white"
+        stroke-width="4.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>

@@ -115,4 +115,28 @@ class HomeController extends BaseController
     {
         return Router::redirect('/home/index');
     }
+
+    /**
+     * Privacy Policy
+     *
+     * URL: /home/privacy
+     */
+    public function privacy(): Response
+    {
+        $this->vars['pageTitle'] = 'Privacy Policy - SismaFramework';
+
+        return Render::generateView('home/privacy', $this->vars);
+    }
+
+    /**
+     * Cookie Policy
+     *
+     * URL: /home/cookies
+     */
+    public function cookies(): Response
+    {
+        $this->vars['pageTitle'] = 'Cookie Policy - SismaFramework';
+
+        return Render::generateView('home/cookies', $this->vars);
+    }
 }

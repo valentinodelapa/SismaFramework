@@ -1,4 +1,8 @@
-<?php ob_start(); ?>
+<?php
+$pageTitle = 'Esempi SismaFramework - Funzionalità ORM, MVC e Security';
+$pageDescription = 'Esempi pratici di SismaFramework: ORM con Data Mapper, Entity Injection, Enum Binding, relazioni tra entità, lazy loading e gestione sicura dei form.';
+ob_start();
+?>
 
 <!-- Hero Section -->
 <div class="bg-gradient bg-opacity-10" style="background: linear-gradient(135deg, #4a90e2 0%, #7b68ee 100%); padding: 3rem 0;">
