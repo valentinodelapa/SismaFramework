@@ -9,25 +9,27 @@
                 <i class="bi bi-list"></i> Indice Documentazione
             </button>
 
-            <!-- Mobile: Collapsible sidebar (immediatamente dopo il button) -->
-            <div class="collapse d-lg-none mb-4" id="docsSidebarCollapse">
-                <div class="docs-sidebar">
-                    <nav class="nav flex-column">
-                        <a href="/docs/index" class="nav-link">
-                            <i class="bi bi-arrow-left"></i> Torna all'indice
-                        </a>
-                        <hr>
+            <!-- Mobile: Collapsible sidebar (solo su mobile) -->
+            <div class="d-lg-none mb-4">
+                <div class="collapse" id="docsSidebarCollapse">
+                    <div class="docs-sidebar">
+                        <nav class="nav flex-column">
+                            <a href="/docs/index" class="nav-link">
+                                <i class="bi bi-arrow-left"></i> Torna all'indice
+                            </a>
+                            <hr>
 
-                        <?php foreach ($docsSections as $sectionName => $docs): ?>
-                            <h6><?= htmlspecialchars($sectionName) ?></h6>
-                            <?php foreach ($docs as $doc): ?>
-                                <a href="/docs/view/file/<?= urlencode($doc['file']) ?>"
-                                   class="nav-link <?= ($currentFile === $doc['file']) ? 'active' : '' ?>">
-                                    <?= htmlspecialchars($doc['title']) ?>
-                                </a>
+                            <?php foreach ($docsSections as $sectionName => $docs): ?>
+                                <h6><?= htmlspecialchars($sectionName) ?></h6>
+                                <?php foreach ($docs as $doc): ?>
+                                    <a href="/docs/view/file/<?= urlencode($doc['file']) ?>"
+                                       class="nav-link <?= ($currentFile === $doc['file']) ? 'active' : '' ?>">
+                                        <?= htmlspecialchars($doc['title']) ?>
+                                    </a>
+                                <?php endforeach; ?>
                             <?php endforeach; ?>
-                        <?php endforeach; ?>
-                    </nav>
+                        </nav>
+                    </div>
                 </div>
             </div>
 
