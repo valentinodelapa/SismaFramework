@@ -81,20 +81,6 @@
         <priority>0.6</priority>
     </url>
 
-    <!-- Privacy Policy -->
-    <url>
-        <loc>https://www.sisma-framework.dev/home/privacy</loc>
-        <lastmod>2025-01-15</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.5</priority>
-    </url>
-
-    <!-- Cookie Policy -->
-    <url>
-        <loc>https://www.sisma-framework.dev/home/cookies</loc>
-        <lastmod>2025-01-15</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.5</priority>
-    </url>
+    <!-- Privacy Policy e Cookie Policy sono escluse dalla sitemap (noindex) -->
 
 </urlset>

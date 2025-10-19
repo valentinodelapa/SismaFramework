@@ -124,6 +124,8 @@ class HomeController extends BaseController
     public function privacy(): Response
     {
         $this->vars['pageTitle'] = 'Privacy Policy - SismaFramework';
+        $this->vars['pageDescription'] = 'Informativa sulla privacy e trattamento dei dati personali di SismaFramework.';
+        $this->vars['robotsDirective'] = 'noindex, follow';
 
         return Render::generateView('home/privacy', $this->vars);
     }
@@ -136,6 +138,8 @@ class HomeController extends BaseController
     public function cookies(): Response
     {
         $this->vars['pageTitle'] = 'Cookie Policy - SismaFramework';
+        $this->vars['pageDescription'] = 'Informativa sull\'utilizzo dei cookie su SismaFramework.';
+        $this->vars['robotsDirective'] = 'noindex, follow';
 
         return Render::generateView('home/cookies', $this->vars);
     }

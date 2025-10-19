@@ -7,9 +7,9 @@
 
     <!-- SEO Meta Tags -->
     <meta name="description" content="<?= htmlspecialchars($pageDescription ?? 'SismaFramework è un framework PHP moderno basato su MVC con ORM potente, sicurezza integrata, gestione form avanzata e supporto completo per PHP 8.1+') ?>">
-    <meta name="keywords" content="php framework, mvc, orm, data mapper, php 8.1, framework php italiano, sismaframework">
+    <meta name="keywords" content="<?= htmlspecialchars($pageKeywords ?? 'php framework, mvc, orm, php 8.1, dependency injection, routing, sicurezza php, form validation, lazy loading, framework italiano, modern php, sismaframework') ?>">
     <meta name="author" content="Valentino de Lapa">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="<?= htmlspecialchars($robotsDirective ?? 'index, follow') ?>">
     <link rel="canonical" href="https://www.sisma-framework.dev<?= $_SERVER['REQUEST_URI'] ?? '' ?>">
 
     <!-- Open Graph / Facebook -->
