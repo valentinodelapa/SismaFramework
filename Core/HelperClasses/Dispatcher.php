@@ -137,14 +137,13 @@ class Dispatcher
 
     private function hasValidAction(\ReflectionClass $reflectionController, string $actionName): bool
     {
-        Router::setActualCleanUrl(
-                $this->routeResolver->getRouteInfo()->pathController,
-                $actionName
-        );
-
         if ($reflectionController->hasMethod($actionName)) {
             $method = $reflectionController->getMethod($actionName);
             if ($method->getReturnType()?->getName() === Response::class) {
+                Router::setActualCleanUrl(
+                        $this->routeResolver->getRouteInfo()->pathController,
+                        $this->routeResolver->getRouteInfo()->pathAction
+                );
                 ModuleManager::setApplicationModuleByClassName($method->getDeclaringClass()->getName());
                 return true;
             }
@@ -176,7 +175,10 @@ class Dispatcher
         if (!$reflectionController->isSubclassOf(CallableController::class)) {
             return false;
         }
-
+        Router::setActualCleanUrl(
+                $this->routeResolver->getRouteInfo()->pathController,
+                $this->routeResolver->getRouteInfo()->pathAction
+        );
         $fullCallableParts = [$routeInfo->pathAction, ...$routeInfo->actionArguments];
         return $routeInfo->controllerClassName::checkCompatibility($fullCallableParts);
     }
