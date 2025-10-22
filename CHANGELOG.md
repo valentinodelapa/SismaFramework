@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [10.0.4] - 2025-10-22 - Miglioramenti Qualità Codice e Correzione Dispatcher
 
-Questa patch release migliora la qualità e la leggibilità del codice del Dispatcher e corregge un bug importante nella gestione del routing.
+Questa patch release corregge un bug importante nella gestione del routing.
 
 ### 🐛 Bug Fixes
 
