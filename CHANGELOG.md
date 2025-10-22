@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.4] - 2025-10-22 - Miglioramenti Qualità Codice e Correzione Dispatcher
+
+Questa patch release migliora la qualità e la leggibilità del codice del Dispatcher e corregge un bug importante nella gestione del routing.
+
+### 🐛 Bug Fixes
+
+#### Correzione Impostazione URL nel Router
+
+Corretto il momento in cui viene impostato l'URL attuale nel Router all'interno del Dispatcher:
+
+*   **Dispatcher.php**:
+    - ❌ **Prima**: `Router::setActualCleanUrl()` veniva chiamato prima del controllo dell'esistenza dell'action, impostando l'URL anche per azioni inesistenti
+    - ✅ **Dopo**: `Router::setActualCleanUrl()` viene chiamato solo dopo aver verificato che l'action esista ed è valida (dentro il blocco `if`)
+    - Corretto il secondo parametro da `$this->parsedAction` a `$this->pathAction` per maggiore coerenza con la nomenclatura
+
+**Impatto**: Previene l'impostazione di URL per azioni non valide, migliorando la precisione del routing e la gestione degli errori 404.
+
 ## [10.0.3] - 2025-10-08 - Hotfix Test Suite
 
 Questa hotfix release corregge i test rotti nella versione 10.0.2.
@@ -217,7 +234,7 @@ Questa è una major release che introduce modifiche non retrocompatibili all'API
     *   **Perché**: L'interfaccia definiva firme di metodi (es. `view()`, `delete()`) che erano in conflitto diretto con il meccanismo del `Dispatcher`. Il `Dispatcher` è progettato per passare parametri dall'URL (come l'ID di un'entità) agli argomenti dei metodi del controller, una funzionalità che l'interfaccia rendeva impossibile da utilizzare. Di conseguenza, l'interfaccia era superflua e controproducente.
     *   **Come migrare**: Se un tuo controller implementava `CrudInterface`, è sufficiente rimuovere `implements CrudInterface` dalla definizione della classe. Le action del controller (es. `public function show(Post $post)`) funzioneranno come previsto dal `Dispatcher` senza bisogno di un contratto d'interfaccia.
     *   Questa rimozione semplifica il framework e promuove l'uso corretto del sistema di routing e di risoluzione dei parametri.
-	
+
 * **Refactoring `Language::getFriendlyLabel()`**: La enum `Language` ora utilizza correttamente il trait `SelectableEnumeration` invece di avere un'implementazione hardcoded di `getFriendlyLabel()`. Questo significa che i nomi delle lingue vengono ora cercati nei file di localizzazione usando il pattern `Language.{case}` anziché essere restituiti come nomi nativi predefiniti.
 
   **Prima (v9.x)**:
