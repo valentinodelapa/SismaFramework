@@ -54,25 +54,19 @@ class ResourceHandler
 
     public function handleResourceFile(array $cleanPathParts): ?Response
     {
-        $rootFilePath = $this->config->rootPath . implode(DIRECTORY_SEPARATOR, $cleanPathParts);
+        $pathSuffix = implode(DIRECTORY_SEPARATOR, $cleanPathParts);
+        $rootFilePath = $this->config->rootPath . $pathSuffix;
         if (file_exists($rootFilePath)) {
             return $this->resourceMaker->makeResource($rootFilePath);
         }
-
-        $structuralPath = $this->config->structuralAssetsPath . implode(DIRECTORY_SEPARATOR, $cleanPathParts);
+        $structuralPath = $this->config->structuralAssetsPath . $pathSuffix;
         if (file_exists($structuralPath)) {
             return $this->resourceMaker->makeResource($structuralPath);
         }
-
-        $modulePath = $this->config->rootPath
-                . ModuleManager::getApplicationModule()
-                . DIRECTORY_SEPARATOR
-                . $this->config->applicationAssetsPath
-                . implode(DIRECTORY_SEPARATOR, $cleanPathParts);
+        $modulePath = $this->config->rootPath . ModuleManager::getApplicationModule() . DIRECTORY_SEPARATOR . $this->config->applicationAssetsPath . $pathSuffix;
         if (file_exists($modulePath)) {
             return $this->resourceMaker->makeResource($modulePath);
         }
-
         return null;
     }
 }

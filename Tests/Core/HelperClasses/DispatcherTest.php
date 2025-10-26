@@ -104,7 +104,7 @@ class DispatcherTest extends TestCase
 
     private function createDispatcher(): Dispatcher
     {
-        return new Dispatcher($this->requestMock, $this->dataMapperMock, $this->routeResolverMock, null, null, $this->resourceHandlerMock);
+        return new Dispatcher($this->requestMock, $this->dataMapperMock, $this->routeResolverMock, $this->resourceHandlerMock, null, null);
     }
 
     public function testRunWithReloadQueryString()

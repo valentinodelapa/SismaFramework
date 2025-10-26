@@ -50,7 +50,6 @@ class ControllerFactory
         $reflectionController = new \ReflectionClass($controllerClassName);
         $reflectionConstructor = $reflectionController->getConstructor();
         $reflectionConstructorArguments = $reflectionConstructor->getParameters();
-
         if ((count($reflectionConstructorArguments) == 0) ||
                 (is_a($reflectionConstructorArguments[0]->getType()->getName(), DataMapper::class, true))) {
             return new $controllerClassName($this->dataMapper);
@@ -65,7 +64,6 @@ class ControllerFactory
         $arguments = [];
         foreach ($reflectionArguments as $argument) {
             $argumentType = $argument->getType();
-
             if (is_a($argumentType->getName(), DataMapper::class, true)) {
                 $arguments[] = $this->dataMapper;
             } elseif ($argumentType->isBuiltin() === false) {

@@ -58,9 +58,9 @@ class Dispatcher
     public function __construct(Request $request = new Request(),
             DataMapper $dataMapper = new DataMapper(),
             RouteResolver $routeResolver = new RouteResolver(),
+            ResourceHandler $resourceHandler = new ResourceHandler(),
             ?ControllerFactory $controllerFactory = null,
-            ?ActionArgumentsParser $actionArgumentsParser = null,
-            ResourceHandler $resourceHandler = new ResourceHandler())
+            ?ActionArgumentsParser $actionArgumentsParser = null)
     {
         $this->request = $request;
         $this->dataMapper = $dataMapper;
@@ -78,125 +78,27 @@ class Dispatcher
     public function run($router = new Router()): Response
     {
         $requestUri = $this->request->server['REQUEST_URI'];
-
         if ((strlen($this->request->server['QUERY_STRING']) > 0) &&
                 ($this->resourceHandler->isResourceFile(explode('?', $requestUri, 2)[0]) === false)) {
             return $router->reloadWithParsedQueryString();
         }
-
         $this->routeResolver->initialize($requestUri);
         return $this->handle();
     }
 
-    public function slicePathElement(): void
-    {
-        $this->routeResolver->slicePathElement();
-    }
-
     private function handle(): Response
     {
-        $routeInfo = $this->routeResolver->getRouteInfo();
-
-        if ($this->isCrawlComponent($routeInfo->cleanPathParts)) {
+        if ($this->isCrawlComponent($this->routeResolver->getRouteInfo()->cleanPathParts)) {
             return $this->currentCrawlComponentMaker->generate();
-        }
-
-        if ($this->resourceHandler->isResourceFile($this->routeResolver->getOriginalPath())) {
-            $response = $this->resourceHandler->handleResourceFile($routeInfo->cleanPathParts);
-            if ($response !== null) {
-                return $response;
-            }
+        } elseif ($this->resourceHandler->isResourceFile($this->routeResolver->getOriginalPath())) {
+            return $this->resourceHandler->handleResourceFile($this->routeResolver->getRouteInfo()->cleanPathParts) ?? $this->handleNotFound();
+        } elseif (class_exists($this->routeResolver->getRouteInfo()->controllerClassName)) {
+            return $this->dispatchToController();
+        } elseif ($this->routeResolver->isFixturesRequest($this->routeResolver->getRouteInfo()->cleanPathParts)) {
+            return $this->routeResolver->runFixtures();
+        } else {
             return $this->handleNotFound();
         }
-
-        if (class_exists($routeInfo->controllerClassName)) {
-            return $this->dispatchToController($routeInfo);
-        }
-
-        if ($this->routeResolver->isFixturesRequest($routeInfo->cleanPathParts)) {
-            return $this->routeResolver->runFixtures();
-        }
-
-        return $this->handleNotFound();
-    }
-
-    private function dispatchToController(RouteInfo $routeInfo): Response
-    {
-        $reflectionController = new \ReflectionClass($routeInfo->controllerClassName);
-
-        if ($this->hasValidAction($reflectionController, $routeInfo->parsedAction)) {
-            return $this->callControllerAction($reflectionController, $routeInfo);
-        }
-
-        if ($this->isCallableController($reflectionController, $routeInfo)) {
-            return $this->executeCallableController($routeInfo);
-        }
-
-        return $this->handleNotFound();
-    }
-
-    private function hasValidAction(\ReflectionClass $reflectionController, string $actionName): bool
-    {
-        if ($reflectionController->hasMethod($actionName)) {
-            $method = $reflectionController->getMethod($actionName);
-            if ($method->getReturnType()?->getName() === Response::class) {
-                Router::setActualCleanUrl(
-                        $this->routeResolver->getRouteInfo()->pathController,
-                        $this->routeResolver->getRouteInfo()->pathAction
-                );
-                ModuleManager::setApplicationModuleByClassName($method->getDeclaringClass()->getName());
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function callControllerAction(\ReflectionClass $reflectionController, RouteInfo $routeInfo): Response
-    {
-        $controller = $this->controllerFactory->createController($routeInfo->controllerClassName);
-        $reflectionAction = $reflectionController->getMethod($routeInfo->parsedAction);
-        $reflectionParameters = $reflectionAction->getParameters();
-
-        if (count($reflectionParameters) === 0) {
-            return $controller->{$routeInfo->parsedAction}();
-        }
-
-        $arguments = $this->actionArgumentsParser->parseActionArguments(
-                $routeInfo->actionArguments,
-                $reflectionParameters
-        );
-
-        return call_user_func_array([$controller, $routeInfo->parsedAction], $arguments);
-    }
-
-    private function isCallableController(\ReflectionClass $reflectionController, RouteInfo $routeInfo): bool
-    {
-        if (!$reflectionController->isSubclassOf(CallableController::class)) {
-            return false;
-        }
-        Router::setActualCleanUrl(
-                $this->routeResolver->getRouteInfo()->pathController,
-                $this->routeResolver->getRouteInfo()->pathAction
-        );
-        $fullCallableParts = [$routeInfo->pathAction, ...$routeInfo->actionArguments];
-        return $routeInfo->controllerClassName::checkCompatibility($fullCallableParts);
-    }
-
-    private function executeCallableController(RouteInfo $routeInfo): Response
-    {
-        $controller = $this->controllerFactory->createController($routeInfo->controllerClassName);
-        return $controller->{$routeInfo->parsedAction}(...$routeInfo->actionArguments);
-    }
-
-    private function handleNotFound(): Response
-    {
-        if ($this->routeResolver->canRetry()) {
-            $this->routeResolver->retryWithNextStrategy();
-            return $this->handle();
-        }
-
-        throw new PageNotFoundException($this->routeResolver->getOriginalPath());
     }
 
     private function isCrawlComponent(array $cleanPathParts): bool
@@ -208,5 +110,74 @@ class Dispatcher
             }
         }
         return false;
+    }
+
+    private function dispatchToController(): Response
+    {
+        $reflectionController = new \ReflectionClass($this->routeResolver->getRouteInfo()->controllerClassName);
+        if ($this->hasValidAction($reflectionController, $this->routeResolver->getRouteInfo()->parsedAction)) {
+            return $this->callControllerAction($reflectionController);
+        } elseif ($this->isCallableController($reflectionController)) {
+            return $this->executeCallableController();
+        } else {
+            return $this->handleNotFound();
+        }
+    }
+
+    private function hasValidAction(\ReflectionClass $reflectionController, string $actionName): bool
+    {
+        if ($reflectionController->hasMethod($actionName)) {
+            $method = $reflectionController->getMethod($actionName);
+            if ($method->getReturnType()?->getName() === Response::class) {
+                Router::setActualCleanUrl($this->routeResolver->getRouteInfo()->pathController, $this->routeResolver->getRouteInfo()->pathAction);
+                ModuleManager::setApplicationModuleByClassName($method->getDeclaringClass()->getName());
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function callControllerAction(\ReflectionClass $reflectionController): Response
+    {
+        $controller = $this->controllerFactory->createController($this->routeResolver->getRouteInfo()->controllerClassName);
+        $reflectionAction = $reflectionController->getMethod($this->routeResolver->getRouteInfo()->parsedAction);
+        $reflectionParameters = $reflectionAction->getParameters();
+        if (count($reflectionParameters) === 0) {
+            return $controller->{$this->routeResolver->getRouteInfo()->parsedAction}();
+        } else {
+            $arguments = $this->actionArgumentsParser->parseActionArguments($this->routeResolver->getRouteInfo()->actionArguments, $reflectionParameters);
+            return call_user_func_array([$controller, $this->routeResolver->getRouteInfo()->parsedAction], $arguments);
+        }
+    }
+
+    private function isCallableController(\ReflectionClass $reflectionController): bool
+    {
+        if ($reflectionController->isSubclassOf(CallableController::class) === false) {
+            return false;
+        } else {
+            Router::setActualCleanUrl(
+                    $this->routeResolver->getRouteInfo()->pathController,
+                    $this->routeResolver->getRouteInfo()->pathAction
+            );
+            $fullCallableParts = [$this->routeResolver->getRouteInfo()->pathAction, ...$this->routeResolver->getRouteInfo()->actionArguments];
+            return $this->routeResolver->getRouteInfo()->controllerClassName::checkCompatibility($fullCallableParts);
+        }
+    }
+
+    private function executeCallableController(): Response
+    {
+        $controller = $this->controllerFactory->createController($this->routeResolver->getRouteInfo()->controllerClassName);
+        return $controller->{$this->routeResolver->getRouteInfo()->parsedAction}(...$this->routeResolver->getRouteInfo()->actionArguments);
+    }
+
+    private function handleNotFound(): Response
+    {
+        if ($this->routeResolver->canRetry()) {
+            $this->routeResolver->retryWithNextStrategy();
+            return $this->handle();
+        } else {
+            throw new PageNotFoundException($this->routeResolver->getOriginalPath());
+        }
     }
 }

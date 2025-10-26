@@ -58,7 +58,6 @@ class ActionArgumentsParser
 
         $associativeArguments = $this->convertUrlArgumentsToAssociative($urlArguments);
         $this->request->query = $associativeArguments;
-
         return $this->mapArgumentsToParameters($associativeArguments, $reflectionParameters);
     }
 
@@ -66,42 +65,11 @@ class ActionArgumentsParser
     {
         $keys = [];
         $values = [];
-
         while (count($urlArguments) > 1) {
             $keys[] = NotationManager::convertToCamelCase($this->cleanArrayShift($urlArguments));
             $values[] = urldecode(array_shift($urlArguments));
         }
-
         return $this->combineArrayToAssociativeArray($keys, $values);
-    }
-
-    private function mapArgumentsToParameters(array $associativeArguments, array $reflectionParameters): array
-    {
-        $result = [];
-
-        foreach ($reflectionParameters as $parameter) {
-            $paramType = $parameter->getType()->getName();
-            $paramName = $parameter->name;
-
-            if ($paramType === Request::class) {
-                $result[$paramName] = $this->request;
-            } elseif ($paramType === Authentication::class) {
-                $result[$paramName] = new Authentication($this->request);
-            } elseif (array_key_exists($paramName, $associativeArguments)) {
-                $result[$paramName] = Parser::parseValue(
-                                $parameter->getType(),
-                                $associativeArguments[$paramName],
-                                true,
-                                $this->dataMapper
-                );
-            } elseif ($parameter->isDefaultValueAvailable()) {
-                $result[$paramName] = $parameter->getDefaultValue();
-            } else {
-                throw new BadRequestException("Missing required parameter: " . $paramName);
-            }
-        }
-
-        return $result;
     }
 
     private function cleanArrayShift(array &$array): string
@@ -124,6 +92,27 @@ class ActionArgumentsParser
                 $result[$key][] = $values[$index];
             } else {
                 $result[$key] = $values[$index];
+            }
+        }
+        return $result;
+    }
+
+    private function mapArgumentsToParameters(array $associativeArguments, array $reflectionParameters): array
+    {
+        $result = [];
+        foreach ($reflectionParameters as $parameter) {
+            $paramType = $parameter->getType()->getName();
+            $paramName = $parameter->name;
+            if ($paramType === Request::class) {
+                $result[$paramName] = $this->request;
+            } elseif ($paramType === Authentication::class) {
+                $result[$paramName] = new Authentication($this->request);
+            } elseif (array_key_exists($paramName, $associativeArguments)) {
+                $result[$paramName] = Parser::parseValue($parameter->getType(), $associativeArguments[$paramName], true, $this->dataMapper);
+            } elseif ($parameter->isDefaultValueAvailable()) {
+                $result[$paramName] = $parameter->getDefaultValue();
+            } else {
+                throw new BadRequestException("Missing required parameter: " . $paramName);
             }
         }
         return $result;
