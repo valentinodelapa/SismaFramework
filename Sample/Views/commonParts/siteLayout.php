@@ -249,16 +249,55 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="/home/index">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <a class="navbar-brand" href="/">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 40px; height: 40px;">
                     <defs>
-                        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#7b68ee;stop-opacity:1" />
+                        <!-- Vibrant gradient with multiple stops -->
+                        <linearGradient id="logoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
                         </linearGradient>
+                        <!-- Secondary gradient for depth -->
+                        <linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.9" />
+                            <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.9" />
+                        </linearGradient>
+                        <!-- Soft shadow -->
+                        <filter id="softShadow">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                            <feOffset dx="0" dy="3" result="offsetblur"/>
+                            <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.4"/>
+                            </feComponentTransfer>
+                            <feMerge>
+                                <feMergeNode/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
                     </defs>
-                    <path d="M 50 5 L 80 23 Q 87 27 87 35 L 87 65 Q 87 73 80 77 L 50 95 L 20 77 Q 13 73 13 65 L 13 35 Q 13 27 20 23 Z" fill="url(#logoGrad)" />
-                    <path d="M 45 42 Q 40 38 45 34 L 55 34 Q 60 38 55 42 L 48 48 Q 45 50 48 52 L 55 58 Q 60 62 55 66 L 45 66 Q 40 62 45 58" fill="none" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+                    <!-- Hexagon background con angoli arrotondati -->
+                    <path d="M 50 5 L 80 23 Q 87 27 87 35 L 87 65 Q 87 73 80 77 L 50 95 L 20 77 Q 13 73 13 65 L 13 35 Q 13 27 20 23 Z"
+                          fill="url(#logoGrad1)"
+                          filter="url(#softShadow)"/>
+
+                    <!-- Overlapping shapes for depth - triangolo interno -->
+                    <path d="M 50 25 L 70 50 L 50 75 L 30 50 Z"
+                          fill="url(#logoGrad2)"
+                          opacity="0.3"/>
+
+                    <!-- "S" elegante e fluida (centrata verticalmente) -->
+                    <path d="M 38 33 Q 35 33 35 36 Q 35 39 38 39 L 55 39 Q 62 39 62 46 Q 62 53 55 53 L 45 53 Q 38 53 38 60 Q 38 67 45 67 L 62 67 Q 65 67 65 64 Q 65 61 62 61"
+                          fill="none"
+                          stroke="white"
+                          stroke-width="5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          opacity="0.95"/>
+
+                    <!-- Accent line per dinamismo -->
+                    <circle cx="72" cy="30" r="3" fill="white" opacity="0.6"/>
                 </svg>
                 <span>SismaFramework</span>
             </a>
