@@ -3,9 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 
-## [10.1.0] - 2025-12-02 - Strumenti CLI per Scaffolding e Installazione Progetti
+## [10.1.0] - 2025-12-02 - Strumenti CLI per Scaffolding, Installazione e Rifatorizzazione Dispatcher
 
-Questa release introduce potenti strumenti da riga di comando per semplificare lo sviluppo e l'installazione di nuovi progetti basati su SismaFramework.
+Build unificato, operazioni native: comandi ottimizzati migliorano profondamente lo sviluppo, estendendo automazione, nuove funzionalità native nelle operazioni. Framework rifatorizzato: architettura notevolmente consolidata, esecuzione snella, core avanzato.
 
 ### ✨ Nuove Funzionalità
 
@@ -37,7 +37,22 @@ Questa release introduce potenti strumenti da riga di comando per semplificare l
 
 ### 🏗️ Architettura
 
-* **Pattern Command/Manager**: Entrambi i comandi seguono il pattern consolidato di separazione tra Command (interfaccia CLI) e Manager (logica di business):
+* **Rifatorizzazione Completa del Dispatcher**: Il `Dispatcher` è stato completamente rifatorizzato seguendo i principi SOLID, con separazione delle responsabilità in classi dedicate:
+  - **`RouteResolver`**: Gestisce il parsing e la risoluzione delle route dall'URL, determinando modulo, controller e action
+  - **`ControllerFactory`**: Responsabile della creazione e istanziazione dei controller con dependency injection automatica
+  - **`ActionArgumentsParser`**: Analizza e prepara gli argomenti per i metodi action, gestendo type-hinting e auto-wiring delle entità
+  - **`ResourceHandler`**: Gestisce il serving dei file statici (CSS, JS, immagini) separando questa logica dal flusso principale
+  - **`RouteInfo`**: Value object immutabile che contiene tutte le informazioni sulla route corrente
+  - **`FixturesManager`**: Estratta la logica di gestione delle fixtures in una classe dedicata
+  - **`ResourceMaker`**: Gestisce la creazione e lo streaming ottimizzato delle risorse statiche
+  
+  **Vantaggi della rifatorizzazione**:
+  - Codice più testabile con responsabilità chiaramente separate
+  - Migliore manutenibilità e leggibilità
+  - Facilita l'estensione futura con nuove funzionalità di routing
+  - Riduce la complessità ciclomatica del Dispatcher principale da oltre 400 linee a meno di 200
+
+* **Pattern Command/Manager**: Entrambi i comandi CLI seguono il pattern consolidato di separazione tra Command (interfaccia CLI) e Manager (logica di business):
   - `ScaffoldCommand` + `ScaffoldingManager`
   - `InstallationCommand` + `InstallationManager`
 * **Dependency Injection**: I Command accettano i Manager via costruttore, facilitando il testing con mock
