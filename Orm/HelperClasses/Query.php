@@ -33,10 +33,14 @@
  * - Modifica del namespace per l'integrazione nel SismaFramework.
  * - Introduzione della gestione della forte tipizzazione per proprietà, parametri e valori.
  * - Sostituzione delle costanti di classe con enum (PHP 8.1+) per rappresentare parole chiave e operatori SQL.
- * - Aggiunta di metodi e proprietà per supportare clausole SQL aggiuntive o specifiche del framework.
- * - Potenziale rimozione o modifica di metodi non ritenuti necessari nel contesto del SismaFramework.
- * - Aggiornamento della logica di costruzione delle query per riflettere le esigenze del DataMapper implementato.
- * - Modifica alla gestione della clausola order by.
+ * - Modifica strutturale: da array $tables a stringa singola $table.
+ * - Introduzione della proprietà $currentCondition (Condition enum) per tracciare il contesto delle condizioni.
+ * - Aggiunta del supporto fulltext search: setFulltextIndexColumn(), appendFulltextCondition().
+ * - Aggiunta del supporto per subquery: setSubqueryColumn(), appendSubqueryCondition(), appendOrderBySubquery().
+ * - Aggiunta del supporto per colonne crittografate: appendConditionOnEncryptedColumn().
+ * - Estensione dei metodi order by: appendOrderByCondition(), appendOrderBySubquery().
+ * - Rimozione del metodo reset() presente nell'originale.
+ * - Modifica della logica di setOrderBy() per supportare array associativi con Indexing enum.
  */
 
 namespace SismaFramework\Orm\HelperClasses;

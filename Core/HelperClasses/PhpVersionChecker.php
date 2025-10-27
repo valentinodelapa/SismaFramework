@@ -30,6 +30,8 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 
 /**
+ * @internal
+ *
  * @author Valentino de Lapa
  */
 class PhpVersionChecker

@@ -36,6 +36,10 @@
  * - Miglioramento della nomenclatura di metodi, parametri e variabili per maggiore chiarezza.
  * - Trasformazione della classe in astratta per definire un'interfaccia comune.
  * - Definizione come astratti dei metodi precedentemente abbozzati, la cui implementazione è demandata alle classi derivate.
+ * - Introduzione del pattern di delegazione con metodi selectToDelegateAdapter() e executeToDelegateAdapter().
+ * - Aggiunta di metodi astratti specifici: opFulltextIndex(), opDecryptFunction(), fulltextConditionSintax().
+ * - Introduzione della proprietà AdapterType per identificare il tipo di adapter.
+ * - Modifica della proprietà $connection da protected a static protected per gestione singleton della connessione.
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -67,11 +71,25 @@ abstract class BaseAdapter
     protected AdapterType $adapterType;
     protected static ?BaseAdapter $adapter = null;
     protected static mixed $connection = null;
+    protected bool $isConnected = false;
+    protected array $connectionOptions = [];
 
     public function __construct(array $options = [])
     {
-        $this->connect($options);
+        $this->connectionOptions = $options;
         $this->adapterType = $this->setAdapterType();
+    }
+
+    /**
+     * Assicura che la connessione al database sia stabilita.
+     * Utilizza lazy loading per aprire la connessione solo quando necessario.
+     */
+    protected function ensureConnected(): void
+    {
+        if (!$this->isConnected) {
+            $this->connect($this->connectionOptions);
+            $this->isConnected = true;
+        }
     }
 
     abstract protected function connect(array $options = []): void;
@@ -288,6 +306,7 @@ abstract class BaseAdapter
 
     public function select(string $cmd, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
     {
+        $this->ensureConnected();
         Debugger::addQueryExecuted($cmd);
         return $this->selectToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
@@ -296,6 +315,7 @@ abstract class BaseAdapter
 
     public function execute(string $cmd, array $bindValues = [], array $bindTypes = []): bool
     {
+        $this->ensureConnected();
         Debugger::addQueryExecuted($cmd);
         return $this->executeToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
@@ -308,13 +328,37 @@ abstract class BaseAdapter
 
     abstract public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): string;
 
-    abstract public function lastInsertId(): int;
+    public function lastInsertId(): int
+    {
+        $this->ensureConnected();
+        return $this->lastInsertIdToDelegateAdapter();
+    }
 
-    abstract public function beginTransaction(): bool;
+    abstract protected function lastInsertIdToDelegateAdapter(): int;
 
-    abstract public function commitTransaction(): bool;
+    public function beginTransaction(): bool
+    {
+        $this->ensureConnected();
+        return $this->beginTransactionToDelegateAdapter();
+    }
 
-    abstract public function rollbackTransaction(): bool;
+    abstract protected function beginTransactionToDelegateAdapter(): bool;
+
+    public function commitTransaction(): bool
+    {
+        $this->ensureConnected();
+        return $this->commitTransactionToDelegateAdapter();
+    }
+
+    abstract protected function commitTransactionToDelegateAdapter(): bool;
+
+    public function rollbackTransaction(): bool
+    {
+        $this->ensureConnected();
+        return $this->rollbackTransactionToDelegateAdapter();
+    }
+
+    abstract protected function rollbackTransactionToDelegateAdapter(): bool;
 
     abstract public function getLastErrorMsg(): string;
 

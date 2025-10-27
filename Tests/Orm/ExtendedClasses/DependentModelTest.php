@@ -88,9 +88,6 @@ class DependentModelTest extends TestCase
 
         Config::setInstance($this->configMock);
 
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
-
         $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->queryMock = $this->createMock(Query::class);
         $this->processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);

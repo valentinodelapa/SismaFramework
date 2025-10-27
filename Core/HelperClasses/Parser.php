@@ -35,6 +35,7 @@ use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 /**
+ * @internal
  *
  * @author Valentino de Lapa
  */

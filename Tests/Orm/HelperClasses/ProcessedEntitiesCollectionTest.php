@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2025 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright (c) 2020-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,6 @@ class ProcessedEntitiesCollectionTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
         $configMock = $this->createMock(Config::class);
         $configMock->expects($this->any())

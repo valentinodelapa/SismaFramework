@@ -31,7 +31,6 @@ use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
- *
  * @author Valentino de Lapa
  */
 class FixturesManager

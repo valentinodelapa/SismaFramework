@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\Enumerations;
 
 /**
+ * @internal
  *
  * @author Valentino de Lapa
  */

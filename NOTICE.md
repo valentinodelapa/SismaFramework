@@ -4,31 +4,31 @@ Parte della struttura concettuale e organizzativa di questo software è ispirata
 
 Ringraziamo gli autori del progetto **MVC_todo** per aver condiviso il loro lavoro con la comunità open source.
 
-La repository non risulta essere soggetta ad alcuna licenza e non riporta alcuna notifica di copyright. Si sottolinea che, in conformità all'assenza di licenza che sottintende la presenza di diritto d'autore, il codice sorgente di MVC_todo non è stato integrato né copiato in alcun modo in questo progetto."
+La repository non risulta essere soggetta ad alcuna licenza e non riporta alcuna notifica di copyright. Si sottolinea che, in conformità all'assenza di licenza che sottintende la presenza di diritto d'autore, il codice sorgente di MVC_todo non è stato integrato né copiato in alcun modo in questo progetto.
 
 ---
 
 Parte di questo software è ispirata alle lezioni riguardanti il pattern MVC presenti nella guida [**Creare un e-commerce con PHP**](https://www.html.it/guide/creare-un-e-commerce-con-php/) del sito HTML.it, a cura di Gabriele Romanato.
 
-Ringraziamo gli autori della guida.
+Ringraziamo l'autore della guida per aver condiviso il suo lavoro con la comunità.
 
 ---
 
-Parte di questo software è ispirata alla repository [**Symfony**](https://github.com/symfony/symfony), rilasciato sotto licenza MIT.
+Parte di questo software è ispirata alla repository [**Symfony**](https://github.com/symfony/symfony), rilasciata sotto licenza MIT.
 
 Ringraziamo gli autori del progetto **Symfony** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](https://github.com/symfony/symfony/blob/6.4/LICENSE) è inclusa nella cartella third-party-licenses/Symfony/ con indicata la notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](https://github.com/symfony/symfony/blob/6.4/LICENSE) è inclusa nella cartella third-party-licenses/Symfony/ con la notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2004-present Fabien Potencier
 
 ---
 
-La componente *ORM* è stata sviluppata basandosi su codice originale presente nella repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze: data l'entità delle stesse ci limiteremo ed elencare esclusivamente quelle che conivolgolo in codice originale, limitandoci a citare, ove necessario per motivi di contesto, le funzionalità aggiunte per lo scopo del corrente progetto.
+La componente *ORM* è stata sviluppata basandosi su codice originale presente nella repository [**SimpleORM**](https://github.com/davideairaghi/php), rilasciata sotto licenza Apache 2.0. Abbiamo apportato modifiche significative al codice originale per adattarlo alle nostre esigenze: data l'entità delle stesse ci limiteremo ad elencare esclusivamente quelle che coinvolgono codice originale, limitandoci a citare, ove necessario per motivi di contesto, le funzionalità aggiunte per lo scopo del corrente progetto.
 
 - Tutto il codice è stato rifattorizzato per aderire agli standard di forte tipizzazione che caratterizzano il progetto nel quale è stato integrato. Inoltre, trattandosi di codice risalente al 2015, sono state apportate (e saranno apportate in futuro) le modifiche necessarie per adeguarlo alle best practices correnti e per renderlo compatibile alla versione più recente del linguaggio di programmazione.
 
-- In determinate circostanze, le costanti di classe utili a gestire parole chiave sono state sostituire da enum, introdotti con la versione di php 8.1. Questa scelta strategica, affiancata alla forte tipizzazione che caratterizza l'intero framework, è stata adottata per garantire la coerenza delle informazioni che lo sviluppatore andrà ad inviare all'architettura che si occuperà di interagire con il database ed a migliorare la user exprerience.
+- In determinate circostanze, le costanti di classe utili a gestire parole chiave sono state sostituite da enum, introdotti con la versione di PHP 8.1. Questa scelta strategica, affiancata alla forte tipizzazione che caratterizza l'intero framework, è stata adottata per garantire la coerenza delle informazioni che lo sviluppatore andrà ad inviare all'architettura che si occuperà di interagire con il database ed a migliorare la user experience.
 
 - I namespace sono stati modificati per essere integrati in modo coerente nell'ambito di progetto.
 
@@ -48,36 +48,28 @@ La componente *ORM* è stata sviluppata basandosi su codice originale presente n
 
 Ringraziamo gli autori del progetto **SimpleORM** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](https://github.com/davideairaghi/php/blob/master/LICENSE) è inclusa nella cartella third-party-licenses/SimpleOrm/ con indicata notifica di copyright, incompleta nell'originale (Copyright {yyyy} {name of copyright owner}) e redatta seguendo il formato standard. 
+Copia della [licenza della repository originale](https://github.com/davideairaghi/php/blob/master/LICENSE) è inclusa nella cartella third-party-licenses/SimpleOrm/ con la notifica di copyright che riportiamo anche di seguito.
 
-Non essendo riusciti a contattare lo sviluppatore della repository originale, abbiamo agito autonomamente. Siamo partiti, infatti,  dal presupposto che, avendo rilasciato codice open source con licenza Apache 2.0 lo abbia fatto con le migliori intenzioni e comprenda la nostra buona fede (anche in caso di eventuali errori) nel compilare autonomamente quanto, per una svista, lui ha dimenticato di compilare. Il nome dello sviluppatore è presente all'interno della repository e quindi è stato semplice dedurlo. 
-
-Riguardo l'anno abbiamo indicato come partenza quello di prima release (risalente al 6 ottobre 2015); nonostante l'ultima release risalga a pochi giorni dopo la prima (13 ottobre 2015) abbiamo ugualmente deciso di optare per il formato 2015-present, per tutelare al massimo i diritti dello sviluppatore originale. 
-
-Anche nei files sorgente originali non era presente alcuna notifica di copyright e, non appena ci siamo accorti della cosa, abbiamo provveduto ad includerla in ogni singolo file derivato, in testa alla licenza del progetto corrente, indicando anche le modifiche effettuate.
-
-Invitiamo lo sviluppatore della repository originale stesso a contattaci qualora decida di editare tale informazione nella repository originale in formato diverso rispetto a quello da noi utilizzato e voglia che venga fatto altrettando anche nei riferimenti presenti nel corrente progetto. Riportiamo la suddetta notifica di copyright anche di seguito.
+La notifica di copyright nella repository originale era incompleta (Copyright {yyyy} {name of copyright owner}). Abbiamo provveduto a compilarla seguendo il formato standard della licenza Apache 2.0, utilizzando il nome dello sviluppatore presente nella repository e l'anno della prima release (6 ottobre 2015). Abbiamo optato per il formato 2015-present anziché limitarci all'anno dell'ultima release (13 ottobre 2015) per tutelare al massimo i diritti dello sviluppatore originale. La notifica di copyright è stata aggiunta anche in ogni singolo file derivato, in testa alla licenza del progetto corrente, con l'indicazione delle modifiche effettuate come richiesto dalla licenza Apache 2.0.
 
 Copyright (c) 2015-present Davide Airaghi
 
 ---
 
-Parte della rifattorizzazione della componente ORM è ispirata alla repository [Doctrine Object Relational Mapper (ORM)](https://github.com/doctrine/orm), rilasciato sotto licenza MIT.
+Parte della rifattorizzazione della componente ORM è ispirata alla repository [**Doctrine Object Relational Mapper (ORM)**](https://github.com/doctrine/orm), rilasciata sotto licenza MIT.
 
 Ringraziamo gli autori del progetto **Doctrine Object Relational Mapper (ORM)** per aver condiviso il loro lavoro con la comunità open source.
 
-Copia della [licenza della repository originale](https://github.com/symfony/symfony/blob/6.4/LICENSE) è inclusa nella cartella third-party-licenses/DoctrineORM/ con indicata la notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza della repository originale](https://github.com/doctrine/orm/blob/3.3.x/LICENSE) è inclusa nella cartella third-party-licenses/DoctrineORM/ con la notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) Doctrine Project
 
 ---
 
-Il template predefinito di errore 500 utilizzato dal framework è individuabile nella libreria presente al [seguente indirizzo](https://codepen.io/gaiaian/details/QVVxaR), rilasciata sotto licenza MIT. Non è stato possibile individuare il nome di suddetta libreria in quanto, nella pagina indicata, è presente esclusivamente una descrizione, che, per complettezza, riportiamo di seguito: *Page that users will see when a web site throws a 500 error*.
+Il template predefinito di errore 500 utilizzato dal framework è presente al [seguente indirizzo](https://codepen.io/gaiaian/details/QVVxaR), rilasciato sotto licenza MIT. Non è stato possibile individuare il nome della libreria in quanto, nella pagina indicata, è presente esclusivamente la descrizione: *Page that users will see when a web site throws a 500 error*.
 
-Specifichiamo che, seppure il testo della licenza sia riconducibile alla licenza MIT, essa non è citata nello stesso e, pertanto, neppure nella copia inserita nella presente libreria.
+Ringraziamo l'autore del template per aver condiviso il suo lavoro con la comunità open source.
 
-Ringraziamo gli autori della suddetta libreria per aver condiviso il loro lavoro con la comunità open source.
-
-Copia della [licenza della repository originale](https://codepen.io/gaiaian/details/QVVxaR) è inclusa nella cartella third-party-licenses/ErrorTemplate/ con indicata notifica di copyright che riportiamo anche di seguito.
+Copia della [licenza originale](https://codepen.io/gaiaian/details/QVVxaR) è inclusa nella cartella third-party-licenses/ErrorTemplate/ con la notifica di copyright che riportiamo anche di seguito.
 
 Copyright (c) 2024 by Gayané (https://codepen.io/gaiaian/pen/QVVxaR)

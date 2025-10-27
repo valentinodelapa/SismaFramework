@@ -2,6 +2,204 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.0.4] - 2025-10-22 - Miglioramenti Qualità Codice e Correzione Dispatcher
+
+Questa patch release corregge un bug importante nella gestione del routing.
+
+### 🐛 Bug Fixes
+
+#### Correzione Impostazione URL nel Router
+
+Corretto il momento in cui viene impostato l'URL attuale nel Router all'interno del Dispatcher:
+
+*   **Dispatcher.php**:
+    - ❌ **Prima**: `Router::setActualCleanUrl()` veniva chiamato prima del controllo dell'esistenza dell'action, impostando l'URL anche per azioni inesistenti
+    - ✅ **Dopo**: `Router::setActualCleanUrl()` viene chiamato solo dopo aver verificato che l'action esista ed è valida (dentro il blocco `if`)
+    - Corretto il secondo parametro da `$this->parsedAction` a `$this->pathAction` per maggiore coerenza con la nomenclatura
+
+**Impatto**: Previene l'impostazione di URL per azioni non valide, migliorando la precisione del routing e la gestione degli errori 404.
+
+## [10.0.3] - 2025-10-08 - Hotfix Test Suite
+
+Questa hotfix release corregge i test rotti nella versione 10.0.2.
+
+### 🐛 Bug Fixes
+
+#### Ripristino Mock BaseAdapter nei Test con DataMapper Reale
+
+Ripristinati i mock di `BaseAdapter` nei test che istanziano `DataMapper` con costruttore reale:
+
+*   **Test Core**:
+    - `DispatcherTest.php`, `ParserTest.php`, `NotationManagerTest.php`, `FixturesManagerTest.php`, `FilterTest.php`
+    - `BaseFormTest.php`, `BaseFixtureTest.php`
+
+**Causa del problema**: Questi test creano istanze di `DataMapper` con costruttore (non completamente mockato), che a sua volta istanzia `Query`, il cui costruttore chiama `BaseAdapter::getDefault()`. Senza il mock, `getDefault()` ritorna `null` causando errori `Call to a member function getAdapterClass() on null`.
+
+**Soluzione**: Ripristinato `BaseAdapter::setDefault($baseAdapterMock)` in questi test specifici.
+
+### ✅ Test Suite Finale
+
+**Mock rimossi con successo (14 test)**:
+- Test ORM: `ProcessedEntitiesCollectionTest.php`, `CacheTest.php`, `ResultSetMysqlTest.php`, `SelfReferencedEntityTest.php`, `ReferencedEntityTest.php`, `SelfReferencedModelTest.php`, `DependentModelTest.php`, `BaseEntityTest.php`, `BaseModelTest.php`, `SismaCollectionTest.php`
+- Test Security: `AuthenticationTest.php`, `BaseVoterTest.php`, `BasePermissionTest.php`
+- Test Core: `RenderTest.php`
+
+**Mock mantenuti (7 test + 3 specifici ORM)**:
+- Test Core con DataMapper reale: `DispatcherTest.php`, `ParserTest.php`, `NotationManagerTest.php`, `FixturesManagerTest.php`, `FilterTest.php`, `BaseFormTest.php`, `BaseFixtureTest.php`
+- Test ORM specifici: `DataMapperTest.php`, `QueryTest.php`, `AdapterMysqlTest.php`
+
+## [10.0.2] - 2025-10-08 - Ottimizzazione Connessione Database [RITIRATA]
+
+**⚠️ NOTA**: Questa versione è stata ritirata a causa di test rotti. Utilizzare la versione 10.0.3 invece.
+
+Questa patch release ottimizza significativamente le performance eliminando connessioni al database non necessarie attraverso l'implementazione del lazy loading in BaseAdapter.
+
+### 🚀 Performance
+
+#### Lazy Loading della Connessione Database
+
+Implementato lazy loading della connessione al database in `BaseAdapter` per evitare connessioni inutili:
+
+*   **BaseAdapter.php**:
+    - ❌ **Prima**: La connessione veniva aperta nel costruttore, sempre e per qualsiasi richiesta
+    - ✅ **Dopo**: La connessione viene aperta solo al primo utilizzo effettivo (primo `select()`, `execute()`, `beginTransaction()`, etc.)
+    - Aggiunta proprietà `$isConnected` (bool) e `$connectionOptions` (array)
+    - Aggiunto metodo `ensureConnected()` per apertura on-demand
+    - Metodi wrappati con lazy loading: `select()`, `execute()`, `beginTransaction()`, `commitTransaction()`, `rollbackTransaction()`, `lastInsertId()`
+    - Pattern di delegazione esteso con nuovi metodi: `beginTransactionToDelegateAdapter()`, `commitTransactionToDelegateAdapter()`, `rollbackTransactionToDelegateAdapter()`, `lastInsertIdToDelegateAdapter()`
+
+*   **AdapterMysql.php**:
+    - Aggiornate signature dei metodi per il pattern di delegazione
+    - Rinominati: `beginTransaction()` → `beginTransactionToDelegateAdapter()`, `commitTransaction()` → `commitTransactionToDelegateAdapter()`, `rollbackTransaction()` → `rollbackTransactionToDelegateAdapter()`, `lastInsertId()` → `lastInsertIdToDelegateAdapter()`
+
+**Impatto sulle performance**:
+- **0 connessioni DB** per file statici (CSS, JS, immagini, fonts)
+- **0 connessioni DB** per crawl components (robots.txt, sitemap.xml)
+- **0 connessioni DB** per richieste 404 immediate
+- **1 connessione DB** solo quando effettivamente necessaria per query/transazioni
+- Riduzione significativa del carico sul database server
+- Miglioramento dei tempi di risposta per richieste non-database
+
+### 🧪 Testing
+
+#### Semplificazione Test Suite
+
+Rimossi 21 mock di `BaseAdapter` non più necessari grazie al lazy loading:
+
+*   **Test Core**:
+    - `DispatcherTest.php`, `ParserTest.php`, `NotationManagerTest.php`, `FixturesManagerTest.php`, `FilterTest.php`, `RenderTest.php`
+    - `BaseFormTest.php`, `BaseFixtureTest.php`
+
+*   **Test ORM**:
+    - `ProcessedEntitiesCollectionTest.php`, `CacheTest.php`, `ResultSetMysqlTest.php`
+    - `SelfReferencedEntityTest.php`, `ReferencedEntityTest.php`, `SelfReferencedModelTest.php`, `DependentModelTest.php`
+    - `BaseEntityTest.php`, `BaseModelTest.php`, `SismaCollectionTest.php`
+
+*   **Test Security**:
+    - `AuthenticationTest.php`, `BaseVoterTest.php`, `BasePermissionTest.php`
+
+**Nota**: I test `DataMapperTest.php`, `QueryTest.php` e `AdapterMysqlTest.php` mantengono i loro mock perché necessari per verificare le interazioni specifiche con BaseAdapter.
+
+**Benefici**:
+- Codice di test più pulito e leggibile
+- Riduzione della complessità dei test
+- Maggiore velocità di esecuzione della test suite
+- Meno dipendenze nei test unitari
+
+### 🔧 Compatibilità
+
+**Backward compatible al 100%**: Nessuna modifica alle API pubbliche. I metodi pubblici hanno la stessa signature e comportamento. Le uniche modifiche sono ai metodi `protected abstract`, interni all'architettura ORM.
+
+## [10.0.1] - 2025-10-04 - Miglioramenti Documentazione e Licenze
+
+Questa patch release migliora la qualità e la precisione della documentazione delle licenze e delle modifiche nei file derivati da librerie terze parti, uniforma le notifiche di copyright e introduce il tag `@internal` per le API interne del framework.
+
+### 📝 Documentazione
+
+#### Miglioramento Documentazione File Derivati da SimpleORM
+
+Migliorata la precisione e la specificità della documentazione delle modifiche nei file derivati dalla libreria SimpleORM (Apache License 2.0):
+
+*   **BaseModel.php**: Aggiunto header completo che documenta l'ispirazione concettuale dalla classe `Model` di SimpleORM, con sezione dettagliata sui cambiamenti architetturali (Active Record → Data Mapper pattern).
+
+*   **ResultSetMysql.php**: Corretta la descrizione dell'implementazione dei metodi Iterator per maggiore accuratezza tecnica.
+
+*   **BaseAdapter.php**: Aggiunte 4 modifiche specifiche non documentate in precedenza:
+    - Pattern di delegazione con `selectToDelegateAdapter()` e `executeToDelegateAdapter()`
+    - Metodi astratti specifici: `opFulltextIndex()`, `opDecryptFunction()`, `fulltextConditionSintax()`
+    - Proprietà `AdapterType`
+    - Modifica della proprietà `$connection` per gestione singleton
+
+*   **AdapterMysql.php**: Sostituita documentazione generica con 6 implementazioni specifiche dettagliate:
+    - `translateDataType()`, `parseBind()`, `parseGenericBindType()`
+    - Supporto fulltext search
+    - Supporto decrittazione AES
+    - Uso dell'attributo `#[\Override]`
+
+*   **Query.php**: Sostituite descrizioni generiche con 8 modifiche strutturali specifiche:
+    - Cambio da array `$tables` a string `$table`
+    - Proprietà `$currentCondition` (Condition enum)
+    - Supporto fulltext search, subquery, colonne crittografate
+    - Metodi order by estesi
+    - Rimozione metodo `reset()`
+    - Logica `setOrderBy()` modificata
+
+*   **BaseResultSet.php**: Corretta formattazione minore (doppio asterisco rimosso).
+
+**Nota**: Tutte le modifiche riguardano esclusivamente la qualità della documentazione. Il codice era già legalmente compliant con la licenza Apache 2.0 di SimpleORM. Questi miglioramenti rendono la documentazione più precisa, specifica e professionale.
+
+#### Uniformazione Copyright
+
+Uniformato il formato del copyright in tutti i file PHP del progetto (totale **101 file modificati** in 3 fasi):
+
+*   **Prima**: Vari formati inconsistenti:
+    - `Copyright 2022 valen.`, `Copyright 2024-present`
+    - `Copyright 2025 Valentino de Lapa <email@...>.` (con indirizzo email)
+    - `Copyright (c) 2023-present Valentino de Lapa.` (anno errato)
+*   **Dopo**: Formato uniforme in tutti i file: `Copyright (c) 2020-present Valentino de Lapa.`
+
+**Modifiche effettuate**:
+- **Prima fase**: 84 file (uniformazione anno e formato)
+- **Seconda fase**: 12 file (rimozione email da tests e CallableController)
+- **Terza fase**: 5 file (ultimi file con formati inconsistenti)
+
+**File modificati per directory**:
+- Core/: 15 file (interfaces e helper classes)
+- Orm/: 13 file
+- Security/: 1 file
+- Sample/: 9 file (incluse views)
+- TestsApplication/: 63 file (inclusi tutti i test)
+
+#### Aggiunta Tag @internal per API Interne
+
+Aggiunto il tag PHPDoc `@internal` alle classi e enum che fanno parte dell'implementazione interna del framework e non dovrebbero essere utilizzate direttamente dagli sviluppatori:
+
+**Enumerations (2)**:
+- `ContentType`
+- `Resource`
+
+**HelperClasses (11)**:
+- `Autoloader`
+- `Config`
+- `Debugger`
+- `Dispatcher`
+- `ErrorHandler`
+- `Localizator`
+- `Locker`
+- `Parser`
+- `PhpVersionChecker`
+- `ResourceMaker`
+
+**Benefici**:
+- Gli IDE moderni (PHPStorm, VSCode) mostreranno warning quando si utilizzano classi marcate `@internal`
+- I generatori di documentazione possono escludere automaticamente gli elementi interni
+- Maggiore chiarezza su quali sono le API pubbliche del framework
+
+**API pubbliche confermate** (11 HelperClasses):
+- `BufferManager`, `Encryptor`, `Filter`, `FixturesManager`, `Logger`, `ModuleManager`, `NotationManager`, `Render`, `Router`, `Session`, `Templater`
+
+---
+
 ## [10.0.0] - 2025-10-01 - Refactoring Sistema Localizzazione e Correzioni Terminologiche
 
 Questa è una major release che introduce modifiche non retrocompatibili all'API del framework. L'aggiornamento è consigliato, ma richiede attenzione alle breaking changes elencate di seguito.
@@ -36,7 +234,7 @@ Questa è una major release che introduce modifiche non retrocompatibili all'API
     *   **Perché**: L'interfaccia definiva firme di metodi (es. `view()`, `delete()`) che erano in conflitto diretto con il meccanismo del `Dispatcher`. Il `Dispatcher` è progettato per passare parametri dall'URL (come l'ID di un'entità) agli argomenti dei metodi del controller, una funzionalità che l'interfaccia rendeva impossibile da utilizzare. Di conseguenza, l'interfaccia era superflua e controproducente.
     *   **Come migrare**: Se un tuo controller implementava `CrudInterface`, è sufficiente rimuovere `implements CrudInterface` dalla definizione della classe. Le action del controller (es. `public function show(Post $post)`) funzioneranno come previsto dal `Dispatcher` senza bisogno di un contratto d'interfaccia.
     *   Questa rimozione semplifica il framework e promuove l'uso corretto del sistema di routing e di risoluzione dei parametri.
-	
+
 * **Refactoring `Language::getFriendlyLabel()`**: La enum `Language` ora utilizza correttamente il trait `SelectableEnumeration` invece di avere un'implementazione hardcoded di `getFriendlyLabel()`. Questo significa che i nomi delle lingue vengono ora cercati nei file di localizzazione usando il pattern `Language.{case}` anziché essere restituiti come nomi nativi predefiniti.
 
   **Prima (v9.x)**:

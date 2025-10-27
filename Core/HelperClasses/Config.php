@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2025 Valentino de Lapa <valentino.delapa@gmail.com>.
+ * Copyright (c) 2020-present Valentino de Lapa.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,8 @@ use SismaFramework\Orm\Enumerations\AdapterType;
 
 /**
  * Description of Config
+ *
+ * @internal
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */

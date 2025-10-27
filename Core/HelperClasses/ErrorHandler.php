@@ -41,6 +41,8 @@ use Throwable;
 /**
  * Description of ErrorHandler
  *
+ * @internal
+ *
  * @author Valentino de Lapa
  */
 class ErrorHandler
