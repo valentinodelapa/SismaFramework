@@ -2,6 +2,76 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [10.1.0] - 2025-12-02 - Strumenti CLI per Scaffolding e Installazione Progetti
+
+Questa release introduce potenti strumenti da riga di comando per semplificare lo sviluppo e l'installazione di nuovi progetti basati su SismaFramework.
+
+### ✨ Nuove Funzionalità
+
+* **Sistema di Scaffolding Automatico**: Introdotto il comando CLI `scaffold` che genera automaticamente Controller, Model, Form e Views a partire da un'Entity esistente.
+  - **Generazione CRUD Completa**: Il comando crea controller con implementazione base del pattern CRUD (metodi `index`, `create`, `update`, `delete`)
+  - **Auto-Detection del Tipo Model**: Il sistema analizza automaticamente l'Entity e determina il tipo di Model più appropriato (`BaseModel`, `DependentModel`, o `SelfReferencedModel`)
+  - **Form con Filtri Pre-configurati**: Genera Form con filtri standard per tutte le proprietà dell'Entity
+  - **Template Personalizzabili**: Supporto per template custom tramite l'opzione `--template=PATH`
+  - **Gestione Collisioni**: Protezione contro la sovrascrittura accidentale di file esistenti con l'opzione `--force`
+
+  **Esempio di utilizzo**:
+  ```bash
+  php SismaFramework/Console/sisma scaffold Product Catalog
+  php SismaFramework/Console/sisma scaffold User Blog --type=DependentModel --force
+  ```
+
+* **Sistema di Installazione Automatica Progetti**: Introdotto il comando CLI `install` per configurare rapidamente nuovi progetti.
+  - **Setup Struttura Automatico**: Crea automaticamente le cartelle essenziali (`Config/`, `Public/`, `Cache/`, `Logs/`, `filesystemMedia/`)
+  - **Configurazione Framework**: Copia e configura `configFramework.php` con il nome del progetto
+  - **Setup Database da CLI**: Permette di configurare i parametri database direttamente da riga di comando tramite opzioni dedicate
+  - **Path Autoloader Aggiornati**: Aggiorna automaticamente i percorsi in `Public/index.php` per puntare alla sottocartella `SismaFramework/`
+  - **Permessi Corretti**: Imposta automaticamente i permessi corretti (777) per le cartelle Cache, Logs e filesystemMedia
+
+  **Esempio di utilizzo**:
+  ```bash
+  php SismaFramework/Console/sisma install MyProject
+  php SismaFramework/Console/sisma install BlogPersonale --db-host=localhost --db-name=blog_db --db-user=root --db-pass=secret
+  ```
+
+### 🏗️ Architettura
+
+* **Pattern Command/Manager**: Entrambi i comandi seguono il pattern consolidato di separazione tra Command (interfaccia CLI) e Manager (logica di business):
+  - `ScaffoldCommand` + `ScaffoldingManager`
+  - `InstallationCommand` + `InstallationManager`
+* **Dependency Injection**: I Command accettano i Manager via costruttore, facilitando il testing con mock
+* **Gestione Eccezioni Centralizzata**: Le eccezioni vengono propagate e gestite centralmente dal dispatcher CLI nel file `sisma`
+
+### 🧪 Testing
+
+* **Copertura Test Completa**: Aggiunti test completi per tutti i nuovi componenti:
+  - **ScaffoldCommandTest**: 4 test con mock del ScaffoldingManager
+  - **ScaffoldingManagerTest**: 10 test che verificano generazione per BaseEntity, SelfReferencedEntity, DependentEntity, custom types, custom templates, e gestione errori
+  - **InstallationCommandTest**: 8 test con mock dell'InstallationManager, inclusi test per opzioni database e gestione eccezioni
+  - **InstallationManagerTest**: 8 test con filesystem temporaneo per verificare creazione struttura, copia file, aggiornamento config, e gestione flag `--force`
+* **Output Buffer Corretto**: Tutti i test catturano correttamente l'output dei comandi senza "sporcare" la console di PHPUnit
+
+### 📝 Documentazione
+
+* **Nuova Documentazione Scaffolding** (`docs/scaffolding.md`):
+  - Spiegazione dettagliata del funzionamento del meccanismo
+  - Descrizione completa di tutti gli argomenti e opzioni
+  - Esempi pratici per ogni caso d'uso
+  - Prerequisiti e struttura cartelle richiesta
+
+* **Documentazione Installazione Aggiornata** (`docs/installation.md`):
+  - Suddivisa in due metodi: **Automatico (CLI)** e **Manuale**
+  - Il metodo CLI è ora consigliato come approccio principale
+  - Esempi completi con tutte le opzioni disponibili
+  - Guida passo-passo per entrambi i metodi
+  - Istruzioni chiare sui "Prossimi Passi" post-installazione
+
+### 🔧 Miglioramenti Interni
+
+* **Convenzione Naming Config**: Il file di configurazione del framework viene ora copiato come `configFramework.php` invece di `config.php`, permettendo ad ogni modulo di avere il proprio `config.php` senza conflitti
+* **Correzioni Documentazione**: Corretti vari typo nella documentazione esistente dello scaffolding (es. "pattend" → "pattern", "tramikte" → "tramite", "prosuppone" → "presuppone")
+
 ## [10.0.4] - 2025-10-22 - Miglioramenti Qualità Codice e Correzione Dispatcher
 
 Questa patch release corregge un bug importante nella gestione del routing.
