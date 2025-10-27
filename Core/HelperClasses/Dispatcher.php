@@ -172,7 +172,7 @@ class Dispatcher
     }
 
     private function handleNotFound(): Response
-    
+    {
         if ($this->routeResolver->canRetry()) {
             $this->routeResolver->retryWithNextStrategy();
             return $this->handle();
