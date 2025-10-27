@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\HelperClasses\FixturesManager;
+use SismaFramework\Core\HelperClasses\Dispatcher\FixturesManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
