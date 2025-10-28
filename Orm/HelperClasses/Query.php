@@ -46,6 +46,7 @@
 namespace SismaFramework\Orm\HelperClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
@@ -95,6 +96,37 @@ class Query
     {
         $this->columns = array($this->adapter->opCount($column, $distinct));
         return $this;
+    }
+
+    public function &setAVG(string|Query $columnOrSubquery, ?string $columnAlias = null, bool $distinct = false, bool $append = false): self
+    {
+        return $this->setAggregationFunction(AggregationFunction::avg, $columnOrSubquery, $columnAlias, $distinct, $append);
+    }
+
+    private function &setAggregationFunction(AggregationFunction $aggregationFunction, string|Query $columnOrSubquery, ?string $columnAlias = null, bool $distinct = false, bool $append = false): self
+    {
+        if ($append) {
+            $this->initializeColumn();
+            $this->columns[] = $this->adapter->opAggregationFunction($aggregationFunction, $columnOrSubquery, $columnAlias, $distinct);
+        } else {
+            $this->columns = [$this->adapter->opAggregationFunction($aggregationFunction, $columnOrSubquery, $columnAlias, $distinct)];
+        }
+        return $this;
+    }
+
+    public function &setMax(string|Query $columnOrSubquery, ?string $columnAlias = null, bool $distinct = false, bool $append = false): self
+    {
+        return $this->setAggregationFunction(AggregationFunction::max, $columnOrSubquery, $columnAlias, $distinct, $append);
+    }
+
+    public function &setMin(string|Query $columnOrSubquery, ?string $columnAlias = null, bool $distinct = false, bool $append = false): self
+    {
+        return $this->setAggregationFunction(AggregationFunction::min, $columnOrSubquery, $columnAlias, $distinct, $append);
+    }
+
+    public function &setSum(string|Query $columnOrSubquery, ?string $columnAlias = null, bool $distinct = false, bool $append = false): self
+    {
+        return $this->setAggregationFunction(AggregationFunction::sum, $columnOrSubquery, $columnAlias, $distinct, $append);
     }
 
     public function &setDistinct(bool $distinct = true): self
