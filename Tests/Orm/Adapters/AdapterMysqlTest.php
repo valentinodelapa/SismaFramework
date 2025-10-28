@@ -31,6 +31,7 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\Adapters\AdapterMysql;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\AdapterType;
+use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
@@ -203,6 +204,62 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('COUNT(`table_name`.`column_name`) as _numrows', $adapterMysql->opCOUNT('table-Name.column#Name', false));
         $this->assertEquals('COUNT(DISTINCT `column_name`) as _numrows', $adapterMysql->opCOUNT('column#Name', true));
         $this->assertEquals('COUNT(DISTINCT `table_name`.`column_name`) as _numrows', $adapterMysql->opCOUNT('table-Name.column#Name', true));
+    }
+
+    public function testOpAggregationFunctionAVG()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('AVG(`price`)', $adapterMysql->opAggregationFunction(AggregationFunction::avg, 'price', null, false));
+        $this->assertEquals('AVG(`price`) as `avg_price`', $adapterMysql->opAggregationFunction(AggregationFunction::avg, 'price', 'avgPrice', false));
+        $this->assertEquals('AVG(DISTINCT `price`) as `avg_price`', $adapterMysql->opAggregationFunction(AggregationFunction::avg, 'price', 'avgPrice', true));
+        $this->assertEquals('AVG(`table_name`.`column_name`) as `avg_column`', $adapterMysql->opAggregationFunction(AggregationFunction::avg, 'tableName.columnName', 'avgColumn', false));
+    }
+
+    public function testOpAggregationFunctionSUM()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('SUM(`amount`)', $adapterMysql->opAggregationFunction(AggregationFunction::sum, 'amount', null, false));
+        $this->assertEquals('SUM(`amount`) as `total`', $adapterMysql->opAggregationFunction(AggregationFunction::sum, 'amount', 'total', false));
+        $this->assertEquals('SUM(DISTINCT `amount`) as `total`', $adapterMysql->opAggregationFunction(AggregationFunction::sum, 'amount', 'total', true));
+        $this->assertEquals('SUM(`table_name`.`column_name`) as `sum_column`', $adapterMysql->opAggregationFunction(AggregationFunction::sum, 'tableName.columnName', 'sumColumn', false));
+    }
+
+    public function testOpAggregationFunctionMAX()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('MAX(`score`)', $adapterMysql->opAggregationFunction(AggregationFunction::max, 'score', null, false));
+        $this->assertEquals('MAX(`score`) as `max_score`', $adapterMysql->opAggregationFunction(AggregationFunction::max, 'score', 'maxScore', false));
+        $this->assertEquals('MAX(DISTINCT `score`) as `max_score`', $adapterMysql->opAggregationFunction(AggregationFunction::max, 'score', 'maxScore', true));
+        $this->assertEquals('MAX(`table_name`.`column_name`) as `max_column`', $adapterMysql->opAggregationFunction(AggregationFunction::max, 'tableName.columnName', 'maxColumn', false));
+    }
+
+    public function testOpAggregationFunctionMIN()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('MIN(`score`)', $adapterMysql->opAggregationFunction(AggregationFunction::min, 'score', null, false));
+        $this->assertEquals('MIN(`score`) as `min_score`', $adapterMysql->opAggregationFunction(AggregationFunction::min, 'score', 'minScore', false));
+        $this->assertEquals('MIN(DISTINCT `score`) as `min_score`', $adapterMysql->opAggregationFunction(AggregationFunction::min, 'score', 'minScore', true));
+        $this->assertEquals('MIN(`table_name`.`column_name`) as `min_column`', $adapterMysql->opAggregationFunction(AggregationFunction::min, 'tableName.columnName', 'minColumn', false));
+    }
+
+    public function testOpAggregationFunctionWithSubquery()
+    {
+        $queryMockOne = $this->createMock(Query::class);
+        $queryMockOne->expects($this->once())
+                ->method('getCommandToExecute')
+                ->willReturn('SELECT amount FROM orders');
+        $queryMockTwo = $this->createMock(Query::class);
+        $queryMockTwo->expects($this->once())
+                ->method('getCommandToExecute')
+                ->willReturn('SELECT amount FROM orders');
+        $queryMockThree = $this->createMock(Query::class);
+        $queryMockThree->expects($this->once())
+                ->method('getCommandToExecute')
+                ->willReturn('SELECT score FROM users');
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('AVG((SELECT amount FROM orders))', $adapterMysql->opAggregationFunction(AggregationFunction::avg, $queryMockOne, null, false));
+        $this->assertEquals('SUM((SELECT amount FROM orders)) as `total`', $adapterMysql->opAggregationFunction(AggregationFunction::sum, $queryMockTwo, 'total', false));
+        $this->assertEquals('MAX(DISTINCT (SELECT score FROM users)) as `max_score`', $adapterMysql->opAggregationFunction(AggregationFunction::max, $queryMockThree, 'maxScore', true));
     }
 
     public function testOpSubquery()

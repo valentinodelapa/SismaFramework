@@ -79,6 +79,155 @@ class QueryTest extends TestCase
         $this->assertEquals('', $query->getCommandToExecute());
     }
 
+    public function testSelectAVG()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('opAggregationFunction')
+                ->with($this->callback(function ($aggregationFunction) {
+                    return $aggregationFunction->name === 'avg';
+                }), 'price', 'avg_price', false)
+                ->willReturn('AVG(price) as avg_price');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['AVG(price) as avg_price'], '', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setAVG('price', 'avg_price')
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectAVGWithDistinct()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('opAggregationFunction')
+                ->with($this->callback(function ($aggregationFunction) {
+                    return $aggregationFunction->name === 'avg';
+                }), 'price', null, true)
+                ->willReturn('AVG(DISTINCT price)');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['AVG(DISTINCT price)'], '', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setAVG('price', null, true)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectAVGWithAppend()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturn('*');
+        $baseAdapterMock->expects($this->once())
+                ->method('opAggregationFunction')
+                ->with($this->callback(function ($aggregationFunction) {
+                    return $aggregationFunction->name === 'avg';
+                }), 'price', 'avg_price', false)
+                ->willReturn('AVG(price) as avg_price');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*', 'AVG(price) as avg_price'], '', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setAVG('price', 'avg_price', false, true)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectSUM()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('opAggregationFunction')
+                ->with($this->callback(function ($aggregationFunction) {
+                    return $aggregationFunction->name === 'sum';
+                }), 'amount', 'total', false)
+                ->willReturn('SUM(amount) as total');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['SUM(amount) as total'], '', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setSum('amount', 'total')
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectSUMWithDistinct()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('opAggregationFunction')
+                ->with($this->callback(function ($aggregationFunction) {
+                    return $aggregationFunction->name === 'sum';
+                }), 'amount', null, true)
+                ->willReturn('SUM(DISTINCT amount)');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['SUM(DISTINCT amount)'], '', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setSum('amount', null, true)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectMAX()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('opAggregationFunction')
+                ->with($this->callback(function ($aggregationFunction) {
+                    return $aggregationFunction->name === 'max';
+                }), 'score', 'max_score', false)
+                ->willReturn('MAX(score) as max_score');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['MAX(score) as max_score'], '', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setMax('score', 'max_score')
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectMIN()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('opAggregationFunction')
+                ->with($this->callback(function ($aggregationFunction) {
+                    return $aggregationFunction->name === 'min';
+                }), 'score', 'min_score', false)
+                ->willReturn('MIN(score) as min_score');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['MIN(score) as min_score'], '', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setMin('score', 'min_score')
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectAggregationFunctionWithSubquery()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $subquery = new Query($baseAdapterMock);
+        $subquery->close();
+        $baseAdapterMock->expects($this->once())
+                ->method('opAggregationFunction')
+                ->with($this->callback(function ($aggregationFunction) {
+                    return $aggregationFunction->name === 'avg';
+                }), $subquery, 'avg_sub', false)
+                ->willReturn('AVG((subquery)) as avg_sub');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['AVG((subquery)) as avg_sub'], '', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setAVG($subquery, 'avg_sub')
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
     public function testSelectAllColumns()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
