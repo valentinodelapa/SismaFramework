@@ -38,6 +38,7 @@
  * - Definizione come astratti dei metodi precedentemente abbozzati, la cui implementazione è demandata alle classi derivate.
  * - Introduzione del pattern di delegazione con metodi selectToDelegateAdapter() e executeToDelegateAdapter().
  * - Aggiunta di metodi astratti specifici: opFulltextIndex(), opDecryptFunction(), fulltextConditionSintax().
+ * - Aggiunta gestione delle funzioni di aggregazione delle colonne delle query tramite il metodo opAggregationFunction().
  * - Introduzione della proprietà AdapterType per identificare il tipo di adapter.
  * - Modifica della proprietà $connection da protected a static protected per gestione singleton della connessione.
  */

@@ -30,6 +30,7 @@
  * THE SOFTWARE.
  * 
  * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM:
+ * - Aggiunta gestione delle funzioni di aggregazione delle colonne delle query tramite i metodi setAVG(), setMax(), setMin(), setSum() e setAggregationFunction().
  * - Modifica del namespace per l'integrazione nel SismaFramework.
  * - Introduzione della gestione della forte tipizzazione per proprietà, parametri e valori.
  * - Sostituzione delle costanti di classe con enum (PHP 8.1+) per rappresentare parole chiave e operatori SQL.

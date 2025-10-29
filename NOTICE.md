@@ -45,6 +45,7 @@ La componente *ORM* è stata sviluppata basandosi su codice originale presente n
 - Le classi `ResulSet` sono state rifattorizzate in modo da restituire come risultato oggetti di tipo `Entity` (nel caso in cui la query restituisca una sola riga di risultato) o `SismaCollection` (qualora il risultato rappresenti molteplici record). Queste ultime sono un'estensione della classe nativa di PHP `ArrayObject` e sono state implementate in modo tale da mantenere la coerenza di tipo all'interno di ogni collezione. Come in precedenza, per ulteriori dettagli sulla funzionalità rappresentata dalla classe `SismaCollection`, facciamo riferimento all'apposita sezione della documentazione.
 
 - La classe Query è stata oggetto di attenta revisione che ha comportato l'aggiunta di alcuni comportamenti e la rimozione di altri non reputati necessari nell'ambito del corrente progetto.
+  - Introduzione di un nuovo enum `AggregationFunction` per gestire le funzioni di aggregazione SQL (AVG, MAX, MIN, SUM). Tale enum è stato integrato nelle classi `BaseAdapter` e `Query` per consentire l'utilizzo delle funzioni di aggregazione nelle query, migliorando la type safety e la leggibilità del codice.
 
 Ringraziamo gli autori del progetto **SimpleORM** per aver condiviso il loro lavoro con la comunità open source.
 
