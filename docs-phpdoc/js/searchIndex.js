@@ -2731,66 +2731,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_customFilter"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager",
-            "name": "FixturesManager",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#method___construct"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003AisFixtures\u0028\u0029",
-            "name": "isFixtures",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#method_isFixtures"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003Arun\u0028\u0029",
-            "name": "run",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#method_run"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003Aextecuted\u0028\u0029",
-            "name": "extecuted",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#method_extecuted"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003AgetFixturesArray\u0028\u0029",
-            "name": "getFixturesArray",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#method_getFixturesArray"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003AexecuteFixturesArray\u0028\u0029",
-            "name": "executeFixturesArray",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#method_executeFixturesArray"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003AexecuteFixture\u0028\u0029",
-            "name": "executeFixture",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#method_executeFixture"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024config",
-            "name": "config",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_config"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024fixturesArray",
-            "name": "fixturesArray",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_fixturesArray"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024entitiesArray",
-            "name": "entitiesArray",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_entitiesArray"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager\u003A\u003A\u0024dataMapper",
-            "name": "dataMapper",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-FixturesManager.html#property_dataMapper"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Logger",
             "name": "Logger",
             "summary": "",
@@ -3706,6 +3646,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_opCOUNT"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AopAggregationFunction\u0028\u0029",
+            "name": "opAggregationFunction",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_opAggregationFunction"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AopSubquery\u0028\u0029",
             "name": "opSubquery",
             "summary": "",
@@ -4356,15 +4301,25 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-Enumerations-AggregationFunction.html#method_getAdapterVersion"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AggregationFunction\u003A\u003Aavg",
+            "name": "avg",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-AggregationFunction.html#enumcase_avg"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AggregationFunction\u003A\u003Acount",
             "name": "count",
             "summary": "",
             "url": "classes/SismaFramework-Orm-Enumerations-AggregationFunction.html#enumcase_count"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AggregationFunction\u003A\u003Aavg",
-            "name": "avg",
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AggregationFunction\u003A\u003Amax",
+            "name": "max",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-Enumerations-AggregationFunction.html#enumcase_avg"
+            "url": "classes/SismaFramework-Orm-Enumerations-AggregationFunction.html#enumcase_max"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AggregationFunction\u003A\u003Amin",
+            "name": "min",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-AggregationFunction.html#enumcase_min"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\AggregationFunction\u003A\u003Asum",
             "name": "sum",
@@ -5315,6 +5270,31 @@ Search.appendIndex(
             "name": "setCount",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setCount"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetAVG\u0028\u0029",
+            "name": "setAVG",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setAVG"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetAggregationFunction\u0028\u0029",
+            "name": "setAggregationFunction",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setAggregationFunction"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetMax\u0028\u0029",
+            "name": "setMax",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setMax"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetMin\u0028\u0029",
+            "name": "setMin",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setMin"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetSum\u0028\u0029",
+            "name": "setSum",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setSum"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetDistinct\u0028\u0029",
             "name": "setDistinct",
@@ -7581,6 +7561,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_setUp"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AcreateDispatcher\u0028\u0029",
+            "name": "createDispatcher",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#method_createDispatcher"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003AtestRunWithReloadQueryString\u0028\u0029",
             "name": "testRunWithReloadQueryString",
             "summary": "",
@@ -7740,6 +7725,16 @@ Search.appendIndex(
             "name": "dataMapperMock",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_dataMapperMock"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003A\u0024routeResolverMock",
+            "name": "routeResolverMock",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_routeResolverMock"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\DispatcherTest\u003A\u003A\u0024resourceHandlerMock",
+            "name": "resourceHandlerMock",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-DispatcherTest.html#property_resourceHandlerMock"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\EncryptorTest",
             "name": "EncryptorTest",
@@ -9021,6 +9016,31 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html#method_testOpCount"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003AtestOpAggregationFunctionAVG\u0028\u0029",
+            "name": "testOpAggregationFunctionAVG",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html#method_testOpAggregationFunctionAVG"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003AtestOpAggregationFunctionSUM\u0028\u0029",
+            "name": "testOpAggregationFunctionSUM",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html#method_testOpAggregationFunctionSUM"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003AtestOpAggregationFunctionMAX\u0028\u0029",
+            "name": "testOpAggregationFunctionMAX",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html#method_testOpAggregationFunctionMAX"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003AtestOpAggregationFunctionMIN\u0028\u0029",
+            "name": "testOpAggregationFunctionMIN",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html#method_testOpAggregationFunctionMIN"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003AtestOpAggregationFunctionWithSubquery\u0028\u0029",
+            "name": "testOpAggregationFunctionWithSubquery",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Adapters-AdapterMysqlTest.html#method_testOpAggregationFunctionWithSubquery"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\Adapters\\AdapterMysqlTest\u003A\u003AtestOpSubquery\u0028\u0029",
             "name": "testOpSubquery",
             "summary": "",
@@ -9530,6 +9550,81 @@ Search.appendIndex(
             "name": "testEquals",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-CustomTypes-SismaTimeTest.html#method_testEquals"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest",
+            "name": "AggregationFunctionTest",
+            "summary": "Test\u0020for\u0020AggregationFunction\u0020enumeration",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestEnumExists\u0028\u0029",
+            "name": "testEnumExists",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testEnumExists"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestAllAggregationFunctionCasesExist\u0028\u0029",
+            "name": "testAllAggregationFunctionCasesExist",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testAllAggregationFunctionCasesExist"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestCasesMethodReturnsAllFunctions\u0028\u0029",
+            "name": "testCasesMethodReturnsAllFunctions",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testCasesMethodReturnsAllFunctions"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestOrmKeywordTraitIsUsed\u0028\u0029",
+            "name": "testOrmKeywordTraitIsUsed",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testOrmKeywordTraitIsUsed"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestGetAdapterVersionForMysqlAVG\u0028\u0029",
+            "name": "testGetAdapterVersionForMysqlAVG",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testGetAdapterVersionForMysqlAVG"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestGetAdapterVersionForMysqlCOUNT\u0028\u0029",
+            "name": "testGetAdapterVersionForMysqlCOUNT",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testGetAdapterVersionForMysqlCOUNT"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestGetAdapterVersionForMysqlMAX\u0028\u0029",
+            "name": "testGetAdapterVersionForMysqlMAX",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testGetAdapterVersionForMysqlMAX"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestGetAdapterVersionForMysqlMIN\u0028\u0029",
+            "name": "testGetAdapterVersionForMysqlMIN",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testGetAdapterVersionForMysqlMIN"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestGetAdapterVersionForMysqlSUM\u0028\u0029",
+            "name": "testGetAdapterVersionForMysqlSUM",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testGetAdapterVersionForMysqlSUM"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestAllFunctionsHaveMysqlImplementation\u0028\u0029",
+            "name": "testAllFunctionsHaveMysqlImplementation",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testAllFunctionsHaveMysqlImplementation"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestAggregationFunctionTypes\u0028\u0029",
+            "name": "testAggregationFunctionTypes",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testAggregationFunctionTypes"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestFunctionNaming\u0028\u0029",
+            "name": "testFunctionNaming",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testFunctionNaming"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestSwitchStatementCompatibility\u0028\u0029",
+            "name": "testSwitchStatementCompatibility",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testSwitchStatementCompatibility"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\AggregationFunctionTest\u003A\u003AtestGetAdapterVersionReturnsUppercase\u0028\u0029",
+            "name": "testGetAdapterVersionReturnsUppercase",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-Enumerations-AggregationFunctionTest.html#method_testGetAdapterVersionReturnsUppercase"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\Enumerations\\ComparisonOperatorTest",
             "name": "ComparisonOperatorTest",
@@ -10335,6 +10430,46 @@ Search.appendIndex(
             "name": "testSelectCount",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectCount"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectAVG\u0028\u0029",
+            "name": "testSelectAVG",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectAVG"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectAVGWithDistinct\u0028\u0029",
+            "name": "testSelectAVGWithDistinct",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectAVGWithDistinct"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectAVGWithAppend\u0028\u0029",
+            "name": "testSelectAVGWithAppend",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectAVGWithAppend"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectSUM\u0028\u0029",
+            "name": "testSelectSUM",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectSUM"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectSUMWithDistinct\u0028\u0029",
+            "name": "testSelectSUMWithDistinct",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectSUMWithDistinct"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectMAX\u0028\u0029",
+            "name": "testSelectMAX",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectMAX"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectMIN\u0028\u0029",
+            "name": "testSelectMIN",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectMIN"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectAggregationFunctionWithSubquery\u0028\u0029",
+            "name": "testSelectAggregationFunctionWithSubquery",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testSelectAggregationFunctionWithSubquery"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\QueryTest\u003A\u003AtestSelectAllColumns\u0028\u0029",
             "name": "testSelectAllColumns",
@@ -11981,6 +12116,11 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/default.html"
         },                {
+            "fqsen": "\\SismaFramework\\Autoload",
+            "name": "Autoload",
+            "summary": "",
+            "url": "namespaces/sismaframework-autoload.html"
+        },                {
             "fqsen": "\\SismaFramework",
             "name": "SismaFramework",
             "summary": "",
@@ -12071,6 +12211,11 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-core-helperclasses.html"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher",
+            "name": "Dispatcher",
+            "summary": "",
+            "url": "namespaces/sismaframework-core-helperclasses-dispatcher.html"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HttpClasses",
             "name": "HttpClasses",
             "summary": "",
@@ -12160,6 +12305,11 @@ Search.appendIndex(
             "name": "Voters",
             "summary": "",
             "url": "namespaces/sismaframework-orm-voters.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Public",
+            "name": "Public",
+            "summary": "",
+            "url": "namespaces/sismaframework-public.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Controllers",
             "name": "Controllers",
