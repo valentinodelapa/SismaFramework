@@ -319,6 +319,7 @@ class Dispatcher
         Router::setActualCleanUrl($this->pathController, $this->parsedAction);
         if ($this->reflectionController->hasMethod($this->parsedAction) && ($this->reflectionController->getMethod($this->parsedAction)->getReturnType()->getName() === Response::class)) {
             $this->reflectionAction = $this->reflectionController->getMethod($this->parsedAction);
+            Router::setActualCleanUrl($this->pathController, $this->pathAction);
             ModuleManager::setApplicationModuleByClassName($this->reflectionAction->getDeclaringClass()->getName());
             return true;
         } else {
@@ -399,6 +400,7 @@ class Dispatcher
     private function checkCallableController(): bool
     {
         if ($this->reflectionController->isSubclassOf(CallableController::class)) {
+            Router::setActualCleanUrl($this->pathController, $this->pathAction);
             $fullCallableParts = [$this->pathAction, ...$this->actionArguments];
             return $this->controllerClassName::checkCompatibility($fullCallableParts);
         } else {
