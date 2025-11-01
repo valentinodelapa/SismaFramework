@@ -73,23 +73,19 @@ class DataMapper
     private Config $config;
     private BaseAdapter $adapter;
     private ProcessedEntitiesCollection $processedEntitiesCollection;
-    private TransactionManager $transactionManager;
-    private QueryExecutor $queryExecutor;
     private bool $ormCacheStatus;
 
     public function __construct(
             ?BaseAdapter $adapter = null,
             ?ProcessedEntitiesCollection $processedEntityCollection = null,
             ?Config $config = null,
-            ?TransactionManager $transactionManager = null,
-            ?QueryExecutor $queryExecutor = null)
+            private TransactionManager $transactionManager = new TransactionManager(),
+            private QueryExecutor $queryExecutor = new QueryExecutor())
     {
         $this->config = $config ?? Config::getInstance();
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
         $this->processedEntitiesCollection = $processedEntityCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->ormCacheStatus = $this->config->ormCache;
-        $this->transactionManager = $transactionManager ?? new TransactionManager();
-        $this->queryExecutor = $queryExecutor ?? new QueryExecutor(null, fn() => $this->ormCacheStatus);
     }
 
     public function setOrmCacheStatus(bool $ormCacheStatus = true): void
@@ -320,7 +316,7 @@ class DataMapper
 
     public function find(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
     {
-        return $this->queryExecutor->find($entityName, $query, $bindValues, $bindTypes);
+        return $this->queryExecutor->find($entityName, $query, $bindValues, $bindTypes, $this->ormCacheStatus);
     }
 
     public function getCount(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): int
@@ -330,6 +326,6 @@ class DataMapper
 
     public function findFirst(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseEntity
     {
-        return $this->queryExecutor->findFirst($entityName, $query, $bindValues, $bindTypes);
+        return $this->queryExecutor->findFirst($entityName, $query, $bindValues, $bindTypes, $this->ormCacheStatus);
     }
 }

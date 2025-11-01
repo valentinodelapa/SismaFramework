@@ -115,7 +115,7 @@ class DataMapperTest extends TestCase
     private function createDataMapperWithMockedAdapter(?ProcessedEntitiesCollection $processedEntitiesCollection = null): DataMapper
     {
         $transactionManager = new TransactionManager($this->baseAdapterMock, $processedEntitiesCollection);
-        $queryExecutor = new QueryExecutor($this->baseAdapterMock, fn() => $this->configMock->ormCache);
+        $queryExecutor = new QueryExecutor($this->baseAdapterMock);
 
         return new DataMapper(
             $this->baseAdapterMock,

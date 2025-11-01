@@ -34,7 +34,7 @@
  * - Estrazione (2025): Responsabilità di esecuzione query estratta da DataMapper in classe @internal separata
  * - Applicazione tipizzazione forte PHP 8.1+
  * - BaseAdapter reso parametro opzionale del costruttore con utilizzo del singleton come default
- * - Cache dinamica: Utilizzo di callable per ormCacheStatus per supportare modifiche runtime
+ * - Gestione cache tramite parametro esplicito nei metodi find/findFirst per semplicità e chiarezza
  * - Integrazione con Cache::getEntityById() per restituzione dell'ultima versione modificata dell'entità
  */
 
@@ -60,17 +60,10 @@ class QueryExecutor
 {
 
     private BaseAdapter $adapter;
-    private mixed $ormCacheStatusGetter;
 
-    public function __construct(?BaseAdapter $adapter, callable $ormCacheStatusGetter)
+    public function __construct(?BaseAdapter $adapter = null)
     {
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
-        $this->ormCacheStatusGetter = $ormCacheStatusGetter;
-    }
-
-    private function isOrmCacheEnabled(): bool
-    {
-        return ($this->ormCacheStatusGetter)();
     }
 
     public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()): bool
@@ -83,19 +76,19 @@ class QueryExecutor
         return $result;
     }
 
-    public function find(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
+    public function find(string $entityName, Query $query, array $bindValues = [], array $bindTypes = [], bool $ormCacheEnabled = true): SismaCollection
     {
         $result = $this->getResultSet($entityName, $query, $bindValues, $bindTypes);
         $collection = new SismaCollection($entityName);
         if ($result instanceof BaseResultSet) {
             foreach ($result as $entity) {
-                $collection->append($this->selectLastModifiedEntity($entityName, $entity));
+                $collection->append($this->selectLastModifiedEntity($entityName, $entity, $ormCacheEnabled));
             }
         }
         return $collection;
     }
 
-    public function findFirst(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseEntity
+    public function findFirst(string $entityName, Query $query, array $bindValues = [], array $bindTypes = [], bool $ormCacheEnabled = true): ?BaseEntity
     {
         $query->setOffset(0);
         $query->setLimit(1);
@@ -107,7 +100,7 @@ class QueryExecutor
                 case 0:
                     return null;
                 case 1:
-                    return $this->selectLastModifiedEntity($entityName, $result->fetch());
+                    return $this->selectLastModifiedEntity($entityName, $result->fetch(), $ormCacheEnabled);
                 default:
                     throw new DataMapperException('findFirst() returned more than one row for entity: ' . $entityName);
             }
@@ -146,11 +139,11 @@ class QueryExecutor
         return $result;
     }
 
-    private function selectLastModifiedEntity(string $entityName, BaseEntity $entity): BaseEntity
+    private function selectLastModifiedEntity(string $entityName, BaseEntity $entity, bool $ormCacheEnabled): BaseEntity
     {
-        if ($this->isOrmCacheEnabled() && Cache::checkEntityPresenceInCache($entityName, $entity->id)) {
+        if ($ormCacheEnabled && Cache::checkEntityPresenceInCache($entityName, $entity->id)) {
             return Cache::getEntityById($entityName, $entity->id);
-        } elseif ($this->isOrmCacheEnabled()) {
+        } elseif ($ormCacheEnabled) {
             Cache::setEntity($entity);
         }
         return $entity;

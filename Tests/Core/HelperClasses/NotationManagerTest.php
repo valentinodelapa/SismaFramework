@@ -85,7 +85,7 @@ class NotationManagerTest extends TestCase
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
 
         $transactionManager = new TransactionManager($baseAdapterMock, $processedEntitesCollectionMock);
-        $queryExecutor = new QueryExecutor($baseAdapterMock, fn() => $configMock->ormCache);
+        $queryExecutor = new QueryExecutor($baseAdapterMock);
 
         $dataMapperMock = $this->getMockBuilder(DataMapper::class)
                 ->setConstructorArgs([

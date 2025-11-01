@@ -68,7 +68,7 @@ class FixturesManagerTest extends TestCase
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
 
         $transactionManager = new TransactionManager($baseAdapterMock, $processedEntitesCollectionMock);
-        $queryExecutor = new QueryExecutor($baseAdapterMock, fn() => $this->configMock->ormCache);
+        $queryExecutor = new QueryExecutor($baseAdapterMock);
 
         $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
                 ->setConstructorArgs([
