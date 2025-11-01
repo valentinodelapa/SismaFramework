@@ -2,6 +2,57 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [10.0.5] - 2025-11-01 - Refactoring Architetturale DataMapper
+
+Questa patch release risolve problemi architetturali nel DataMapper introducendo una separazione più pulita delle responsabilità, eliminando accoppiamenti circolari e adottando le moderne feature di PHP 8.1 per un codice più conciso e manutenibile.
+
+### 🏗️ Architettura
+
+#### Refactoring DataMapper con Separazione Responsabilità
+
+Riorganizzato il DataMapper seguendo i principi SOLID e Clean Code:
+
+*   **Eliminato Accoppiamento Circolare**:
+    - ❌ **Prima**: EntityPersister creava dipendenza bidirezionale con DataMapper tramite callable `fn($e) => $this->save($e)`
+    - ✅ **Dopo**: Logica di persistenza (insert, update, delete, parseValues) riportata come metodi privati in DataMapper, eliminando callback circolari
+
+*   **Classi @internal Separate (Mantenute)**:
+    - `TransactionManager` (89 righe): Gestione transazioni database isolata e testabile
+    - `QueryExecutor` (151 righe): Query di lettura (find, findFirst, getCount) con integrazione cache
+
+*   **Semplificazione QueryExecutor**:
+    - ❌ **Prima**: Cache status passato tramite callable `fn() => $this->ormCacheStatus` con dereferenziazione nascosta
+    - ✅ **Dopo**: Parametro esplicito `bool $ormCacheEnabled` passato direttamente ai metodi find/findFirst per maggiore chiarezza
+
+*   **PHP 8.1 Constructor Property Promotion**:
+    - Adottato Constructor Property Promotion con `new` in initializers per TransactionManager e QueryExecutor
+    - Ridotto boilerplate eliminando dichiarazioni di proprietà ridondanti
+    - Sintassi più concisa: `private TransactionManager $tm = new TransactionManager()`
+
+*   **Stepdown Rule (Clean Code)**:
+    - Metodi riorganizzati in ordine di chiamata top-down per migliorare leggibilità
+    - Flusso naturale: `save()` → `insert()`/`update()` → `parseValues()` → metodi helper
+
+### 🔧 Miglioramenti Interni
+
+*   **Ridotta Complessità Cognitiva**: Logica di persistenza in unico contesto invece che frammentata tra file
+*   **Stack Trace Più Puliti**: Eliminati callable anonimi che complicavano il debugging
+*   **DataType::fromReflection()**: Binding automatico dei tipi nelle query senza duplicazione logica
+
+### ✅ Backward Compatibility
+
+*   **API Pubblica Invariata**: Tutti i metodi pubblici mantengono firma identica
+*   **Costruttore Backward Compatible**: Parametri aggiunti alla fine con valori di default
+*   **Nessun Breaking Change**: Codice esistente continua a funzionare senza modifiche
+
+### 📊 Metriche
+
+*   **File Totali**: 3 (DataMapper.php + TransactionManager + QueryExecutor)
+*   **DataMapper.php**: 331 righe (vs 420 originali)
+*   **Callable Problematici**: 0 (eliminati completamente)
+*   **Accoppiamento Circolare**: Eliminato
+
 ## [10.0.4] - 2025-10-22 - Miglioramenti Qualità Codice e Correzione Dispatcher
 
 Questa patch release corregge un bug importante nella gestione del routing.

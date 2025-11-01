@@ -3981,6 +3981,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-Enumerations-DataType.html"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\DataType\u003A\u003AfromReflection\u0028\u0029",
+            "name": "fromReflection",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-DataType.html#method_fromReflection"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\DataType\u003A\u003AresolveStringType\u0028\u0029",
+            "name": "resolveStringType",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-DataType.html#method_resolveStringType"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\DataType\u003A\u003AtypeBoolean",
             "name": "typeBoolean",
             "summary": "",
@@ -4661,6 +4671,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_insert"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003Aupdate\u0028\u0029",
+            "name": "update",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_update"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AparseValues\u0028\u0029",
             "name": "parseValues",
             "summary": "",
@@ -4676,20 +4691,15 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_parseSingleProperty"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AgetType\u0028\u0029",
-            "name": "getType",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_getType"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AparseForeignKeyIndexes\u0028\u0029",
             "name": "parseForeignKeyIndexes",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_parseForeignKeyIndexes"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AstartTransaction\u0028\u0029",
-            "name": "startTransaction",
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AsaveForeignKeys\u0028\u0029",
+            "name": "saveForeignKeys",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_startTransaction"
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_saveForeignKeys"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AcheckIsReferencedEntity\u0028\u0029",
             "name": "checkIsReferencedEntity",
@@ -4701,20 +4711,15 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_saveEntityCollection"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AstartTransaction\u0028\u0029",
+            "name": "startTransaction",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_startTransaction"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AcommitTransaction\u0028\u0029",
             "name": "commitTransaction",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_commitTransaction"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003Aupdate\u0028\u0029",
-            "name": "update",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_update"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AsaveForeignKeys\u0028\u0029",
-            "name": "saveForeignKeys",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_saveForeignKeys"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003Adelete\u0028\u0029",
             "name": "delete",
@@ -4731,16 +4736,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_find"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AselectLastModifiedEntity\u0028\u0029",
-            "name": "selectLastModifiedEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_selectLastModifiedEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AgetResultSet\u0028\u0029",
-            "name": "getResultSet",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_getResultSet"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AgetCount\u0028\u0029",
             "name": "getCount",
             "summary": "",
@@ -4751,30 +4746,35 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_findFirst"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024ormCacheStatus",
-            "name": "ormCacheStatus",
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024config",
+            "name": "config",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_ormCacheStatus"
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_config"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024adapter",
             "name": "adapter",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_adapter"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024config",
-            "name": "config",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_config"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024processedEntitiesCollection",
             "name": "processedEntitiesCollection",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_processedEntitiesCollection"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024isActiveTransaction",
-            "name": "isActiveTransaction",
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024ormCacheStatus",
+            "name": "ormCacheStatus",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_isActiveTransaction"
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_ormCacheStatus"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024transactionManager",
+            "name": "transactionManager",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_transactionManager"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003A\u0024queryExecutor",
+            "name": "queryExecutor",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_queryExecutor"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\ProcessedEntitiesCollection",
             "name": "ProcessedEntitiesCollection",
@@ -9275,6 +9275,11 @@ Search.appendIndex(
             "name": "setUp",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-DataMapperTest.html#method_setUp"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\DataMapperTest\u003A\u003AcreateDataMapperWithMockedAdapter\u0028\u0029",
+            "name": "createDataMapperWithMockedAdapter",
+            "summary": "Helper\u0020method\u0020to\u0020create\u0020a\u0020DataMapper\u0020with\u0020mocked\u0020dependencies",
+            "url": "classes/SismaFramework-Tests-Orm-HelperClasses-DataMapperTest.html#method_createDataMapperWithMockedAdapter"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\HelperClasses\\DataMapperTest\u003A\u003AtestSaveNewBaseEntityWithInsertInsertInsert\u0028\u0029",
             "name": "testSaveNewBaseEntityWithInsertInsertInsert",
