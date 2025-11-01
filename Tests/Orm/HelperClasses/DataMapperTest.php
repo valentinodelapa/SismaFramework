@@ -42,7 +42,6 @@ use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager;
-use SismaFramework\Orm\HelperClasses\DataMapper\EntityPersister;
 use SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
@@ -116,14 +115,13 @@ class DataMapperTest extends TestCase
     private function createDataMapperWithMockedAdapter(?ProcessedEntitiesCollection $processedEntitiesCollection = null): DataMapper
     {
         $transactionManager = new TransactionManager($this->baseAdapterMock, $processedEntitiesCollection);
-        $entityPersister = new EntityPersister($this->baseAdapterMock, fn() => $this->configMock->ormCache);
         $queryExecutor = new QueryExecutor($this->baseAdapterMock, fn() => $this->configMock->ormCache);
 
         return new DataMapper(
+            $this->baseAdapterMock,
             $processedEntitiesCollection,
             $this->configMock,
             $transactionManager,
-            $entityPersister,
             $queryExecutor
         );
     }
