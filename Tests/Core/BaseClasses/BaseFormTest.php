@@ -27,6 +27,8 @@
 namespace SismaFramework\Tests\Core\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseForm\FilterManager;
+use SismaFramework\Core\BaseClasses\BaseForm\FormValidator;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;
@@ -65,6 +67,8 @@ class BaseFormTest extends TestCase
     private Config $configMock;
     private DataMapper $dataMapperMock;
     private Request $requestMock;
+    private FilterManager $filterManager;
+    private FormValidator $formValidator;
 
     #[\Override]
     public function setUp(): void
@@ -98,6 +102,8 @@ class BaseFormTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
+        $this->filterManager = new FilterManager();
+        $this->formValidator = new FormValidator($this->dataMapperMock, $this->filterManager, $this->configMock);
         $this->requestMock = $this->getMockBuilder(Request::class)
                 ->disableOriginalConstructor()
                 ->getMock();
@@ -107,7 +113,7 @@ class BaseFormTest extends TestCase
     public function testAddEntityFromFormWithException()
     {
         $this->expectException(FormException::class);
-        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->configMock);
+        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->filterManager, $this->formValidator);
         $baseSampleFormWithFakeEntityFromForm->handleRequest($this->requestMock);
     }
     
@@ -122,7 +128,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForBaseEntityNotSubmitted()
     {
-        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->configMock);
+        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->filterManager, $this->formValidator);
         $baseSampleForm->handleRequest($this->requestMock);
         $this->assertFalse($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());

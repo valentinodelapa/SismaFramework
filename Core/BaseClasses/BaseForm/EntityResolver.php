@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Core\BaseClasses\BaseForm;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 
@@ -38,40 +37,50 @@ use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 class EntityResolver
 {
 
-    public function resolveEntity(BaseEntity $entity, StandardEntity $entityData, array $entityFromForm, array $entityToResolve, array $sismaCollectionToResolve): BaseEntity
-    {
-        // First, resolve all standard properties from entityData
-        foreach ($entityData as $propertyName => $value) {
-            if (!in_array($propertyName, $sismaCollectionToResolve) && !in_array($propertyName, $entityToResolve)) {
-                $entity->$propertyName = $value;
+    private BaseEntity $entity;
+    private StandardEntity $entityData;
+    private array $entityFromForm;
+    private array $entityToResolve;
+    private array $sismaCollectionToResolve;
+
+    public function resolveEntity(
+        BaseEntity $entity,
+        StandardEntity $entityData,
+        array $entityFromForm,
+        array $entityToResolve,
+        array $sismaCollectionToResolve
+    ): BaseEntity {
+        $this->entity = $entity;
+        $this->entityData = $entityData;
+        $this->entityFromForm = $entityFromForm;
+        $this->entityToResolve = $entityToResolve;
+        $this->sismaCollectionToResolve = $sismaCollectionToResolve;
+        
+        foreach ($this->entityData as $propertyName => $value) {
+            if (in_array($propertyName, $this->sismaCollectionToResolve)) {
+                $this->resolveSismaCollection($propertyName);
+            } elseif (in_array($propertyName, $this->entityToResolve)) {
+                $this->resolveEntityByForm($propertyName);
+            } else {
+                $this->entity->$propertyName = $value;
             }
         }
 
-        // Then resolve all entity references
-        foreach ($entityToResolve as $propertyName) {
-            $this->resolveEntityByForm($entity, $propertyName, $entityFromForm);
-        }
-
-        // Finally resolve all collections
-        foreach (array_unique($sismaCollectionToResolve) as $propertyName) {
-            $this->resolveSismaCollection($entity, $propertyName, $entityFromForm);
-        }
-
-        return $entity;
+        return $this->entity;
     }
 
-    private function resolveEntityByForm(BaseEntity $entity, string $propertyName, array $entityFromForm): void
+    private function resolveEntityByForm(string $propertyName): void
     {
-        if (isset($entityFromForm[$propertyName])) {
-            $entity->$propertyName = $entityFromForm[$propertyName]->resolveEntity();
+        if (isset($this->entityFromForm[$propertyName])) {
+            $this->entity->$propertyName = $this->entityFromForm[$propertyName]->resolveEntity();
         }
     }
 
-    private function resolveSismaCollection(BaseEntity $entity, string $propertyName, array $entityFromForm): void
+    private function resolveSismaCollection(string $propertyName): void
     {
-        if (isset($entityFromForm[$propertyName])) {
-            foreach ($entityFromForm[$propertyName] as $form) {
-                $entity->addEntityToEntityCollection($propertyName, $form->resolveEntity());
+        if (isset($this->entityFromForm[$propertyName])) {
+            foreach ($this->entityFromForm[$propertyName] as $form) {
+                $this->entity->addEntityToEntityCollection($propertyName, $form->resolveEntity());
             }
         }
     }
