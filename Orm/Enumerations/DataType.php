@@ -26,6 +26,8 @@
 
 namespace SismaFramework\Orm\Enumerations;
 
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+
 /**
  *
  * @author Valentino de Lapa
@@ -45,4 +47,33 @@ enum DataType
     case typeEnumeration;
     case typeGeneric;
 
+    public static function fromReflection(\ReflectionNamedType $reflectionNamedType, mixed $value): self
+    {
+        if ($reflectionNamedType->getName() === 'bool') {
+            return self::typeBoolean;
+        } elseif ($reflectionNamedType->getName() === 'int') {
+            return self::typeInteger;
+        } elseif ($reflectionNamedType->getName() === 'float') {
+            return self::typeDecimal;
+        } elseif ($reflectionNamedType->getName() === 'string') {
+            return self::resolveStringType($value);
+        } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
+            return self::typeEntity;
+        } elseif (enum_exists($reflectionNamedType->getName())) {
+            return self::typeEnumeration;
+        } elseif (is_subclass_of($reflectionNamedType->getName(), \DateTimeInterface::class)) {
+            return self::typeDate;
+        } else {
+            return self::typeGeneric;
+        }
+    }
+
+    private static function resolveStringType(mixed $value): self
+    {
+        if (mb_detect_encoding($value ?? '', 'UTF-8', true)) {
+            return self::typeString;
+        } else {
+            return self::typeBinary;
+        }
+    }
 }

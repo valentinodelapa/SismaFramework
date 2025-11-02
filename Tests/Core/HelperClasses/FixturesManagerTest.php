@@ -31,6 +31,8 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\FixturesManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager;
+use SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 
 /**
@@ -64,8 +66,18 @@ class FixturesManagerTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
+
+        $transactionManager = new TransactionManager($baseAdapterMock, $processedEntitesCollectionMock);
+        $queryExecutor = new QueryExecutor($baseAdapterMock);
+
         $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([$baseAdapterMock, $processedEntitesCollectionMock, $this->configMock])
+                ->setConstructorArgs([
+                    $baseAdapterMock,
+                    $processedEntitesCollectionMock,
+                    $this->configMock,
+                    $transactionManager,
+                    $queryExecutor
+                ])
                 ->getMock();
     }
 

@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [10.0.5] - 2025-11-01 - Refactoring Architetturale DataMapper
+
+Questa patch release risolve problemi architetturali nel DataMapper introducendo una separazione più pulita delle responsabilità, eliminando accoppiamenti circolari e adottando le moderne feature di PHP 8.1 per un codice più conciso e manutenibile.
+
+### 🏗️ Architettura
+
+#### Refactoring DataMapper con Separazione Responsabilità
+
+Riorganizzato il DataMapper seguendo i principi SOLID e Clean Code:
+
+*   **Eliminato Accoppiamento Circolare**:
+    - ❌ **Prima**: EntityPersister creava dipendenza bidirezionale con DataMapper tramite callable `fn($e) => $this->save($e)`
+    - ✅ **Dopo**: Logica di persistenza (insert, update, delete, parseValues) riportata come metodi privati in DataMapper, eliminando callback circolari
+
+*   **Classi @internal Separate (Mantenute)**:
+    - `TransactionManager` (89 righe): Gestione transazioni database isolata e testabile
+    - `QueryExecutor` (151 righe): Query di lettura (find, findFirst, getCount) con integrazione cache
+
+*   **Semplificazione QueryExecutor**:
+    - ❌ **Prima**: Cache status passato tramite callable `fn() => $this->ormCacheStatus` con dereferenziazione nascosta
+    - ✅ **Dopo**: Parametro esplicito `bool $ormCacheEnabled` passato direttamente ai metodi find/findFirst per maggiore chiarezza
+
+*   **PHP 8.1 Constructor Property Promotion**:
+    - Adottato Constructor Property Promotion con `new` in initializers per TransactionManager e QueryExecutor
+    - Ridotto boilerplate eliminando dichiarazioni di proprietà ridondanti
+    - Sintassi più concisa: `private TransactionManager $tm = new TransactionManager()`
+
+*   **Stepdown Rule (Clean Code)**:
+    - Metodi riorganizzati in ordine di chiamata top-down per migliorare leggibilità
+    - Flusso naturale: `save()` → `insert()`/`update()` → `parseValues()` → metodi helper
+
+### 🔧 Miglioramenti Interni
+
+*   **Ridotta Complessità Cognitiva**: Logica di persistenza in unico contesto invece che frammentata tra file
+*   **Stack Trace Più Puliti**: Eliminati callable anonimi che complicavano il debugging
+*   **DataType::fromReflection()**: Binding automatico dei tipi nelle query senza duplicazione logica
+
+### ✅ Backward Compatibility
+
+*   **API Pubblica Invariata**: Tutti i metodi pubblici mantengono firma identica
+*   **Costruttore Backward Compatible**: Parametri aggiunti alla fine con valori di default
+*   **Nessun Breaking Change**: Codice esistente continua a funzionare senza modifiche
+
+### 📊 Metriche
+
+*   **File Totali**: 3 (DataMapper.php + TransactionManager + QueryExecutor)
+*   **DataMapper.php**: 331 righe (vs 420 originali)
+*   **Callable Problematici**: 0 (eliminati completamente)
+*   **Accoppiamento Circolare**: Eliminato
+
+## [10.0.4] - 2025-10-22 - Miglioramenti Qualità Codice e Correzione Dispatcher
+
+Questa patch release corregge un bug importante nella gestione del routing.
+
+### 🐛 Bug Fixes
+
+#### Correzione Impostazione URL nel Router
+
+Corretto il momento in cui viene impostato l'URL attuale nel Router all'interno del Dispatcher:
+
+*   **Dispatcher.php**:
+    - ❌ **Prima**: `Router::setActualCleanUrl()` veniva chiamato prima del controllo dell'esistenza dell'action, impostando l'URL anche per azioni inesistenti
+    - ✅ **Dopo**: `Router::setActualCleanUrl()` viene chiamato solo dopo aver verificato che l'action esista ed è valida (dentro il blocco `if`)
+    - Corretto il secondo parametro da `$this->parsedAction` a `$this->pathAction` per maggiore coerenza con la nomenclatura
+
+**Impatto**: Previene l'impostazione di URL per azioni non valide, migliorando la precisione del routing e la gestione degli errori 404.
+
 ## [10.0.3] - 2025-10-08 - Hotfix Test Suite
 
 Questa hotfix release corregge i test rotti nella versione 10.0.2.
@@ -217,7 +285,7 @@ Questa è una major release che introduce modifiche non retrocompatibili all'API
     *   **Perché**: L'interfaccia definiva firme di metodi (es. `view()`, `delete()`) che erano in conflitto diretto con il meccanismo del `Dispatcher`. Il `Dispatcher` è progettato per passare parametri dall'URL (come l'ID di un'entità) agli argomenti dei metodi del controller, una funzionalità che l'interfaccia rendeva impossibile da utilizzare. Di conseguenza, l'interfaccia era superflua e controproducente.
     *   **Come migrare**: Se un tuo controller implementava `CrudInterface`, è sufficiente rimuovere `implements CrudInterface` dalla definizione della classe. Le action del controller (es. `public function show(Post $post)`) funzioneranno come previsto dal `Dispatcher` senza bisogno di un contratto d'interfaccia.
     *   Questa rimozione semplifica il framework e promuove l'uso corretto del sistema di routing e di risoluzione dei parametri.
-	
+
 * **Refactoring `Language::getFriendlyLabel()`**: La enum `Language` ora utilizza correttamente il trait `SelectableEnumeration` invece di avere un'implementazione hardcoded di `getFriendlyLabel()`. Questo significa che i nomi delle lingue vengono ora cercati nei file di localizzazione usando il pattern `Language.{case}` anziché essere restituiti come nomi nativi predefiniti.
 
   **Prima (v9.x)**:
