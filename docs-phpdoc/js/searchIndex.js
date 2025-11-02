@@ -12121,11 +12121,6 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/default.html"
         },                {
-            "fqsen": "\\SismaFramework\\Autoload",
-            "name": "Autoload",
-            "summary": "",
-            "url": "namespaces/sismaframework-autoload.html"
-        },                {
             "fqsen": "\\SismaFramework",
             "name": "SismaFramework",
             "summary": "",
@@ -12216,11 +12211,6 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-core-helperclasses.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Dispatcher",
-            "name": "Dispatcher",
-            "summary": "",
-            "url": "namespaces/sismaframework-core-helperclasses-dispatcher.html"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HttpClasses",
             "name": "HttpClasses",
             "summary": "",
@@ -12310,11 +12300,6 @@ Search.appendIndex(
             "name": "Voters",
             "summary": "",
             "url": "namespaces/sismaframework-orm-voters.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Public",
-            "name": "Public",
-            "summary": "",
-            "url": "namespaces/sismaframework-public.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Controllers",
             "name": "Controllers",
