@@ -43,6 +43,11 @@ class Filter
         return true;
     }
 
+    public function customFilter(mixed $value, string $regularExpression): bool
+    {
+        return preg_match($regularExpression, $value);
+    }
+
     public function isNotNull($value): bool
     {
         return is_null($value) ? false : true;
@@ -271,21 +276,16 @@ class Filter
         return $result;
     }
 
-    public function customFilter(mixed $value, string $regularExpression): bool
-    {
-        return preg_match($regularExpression, $value);
-    }
-    
     private function isMinLengthForValidator(mixed $value, int $minLimit, callable $validator): bool
     {
         return $validator($value) && strlen($value) >= $minLimit;
     }
-    
+
     private function isMaxLengthForValidator(mixed $value, int $maxLimit, callable $validator): bool
     {
         return $validator($value) && strlen($value) <= $maxLimit;
     }
-    
+
     private function isLengthRangeForValidator(mixed $value, int $minLimit, int $maxLimit, callable $validator): bool
     {
         return $this->isMinLengthForValidator($value, $minLimit, $validator)
