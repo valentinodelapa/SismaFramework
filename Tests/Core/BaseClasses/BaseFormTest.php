@@ -50,6 +50,7 @@ use SismaFramework\TestsApplication\Forms\BaseSampleFormWithFakeEntityFromForm;
 use SismaFramework\TestsApplication\Forms\EntityNotInitializedForm;
 use SismaFramework\TestsApplication\Forms\FakeBaseSampleForm;
 use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\FormWithCustomFilterFalse;
 use SismaFramework\TestsApplication\Forms\IncompleteSimpleEntityFrom;
 use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
@@ -116,7 +117,7 @@ class BaseFormTest extends TestCase
         $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->filterManager, $this->formValidator);
         $baseSampleFormWithFakeEntityFromForm->handleRequest($this->requestMock);
     }
-    
+
     public function testAddRequest()
     {
         $simpleEntityWithInjectRequestForm = new SimpleEntityWithInjectRequestForm();
@@ -529,5 +530,20 @@ class BaseFormTest extends TestCase
         $this->assertEquals('base sample', $baseSampleResult->stringWithoutInizialization);
         $this->assertInstanceOf(ReferencedSample::class, $baseSampleResult->referencedEntityWithoutInitialization);
         $this->assertEquals('referenced sample', $baseSampleResult->referencedEntityWithoutInitialization->text);
+    }
+
+    public function testWithCustomFilterFalse()
+    {
+        $formWithCustomFilterFalse = new FormWithCustomFilterFalse();
+        $this->requestMock->input = [
+            'stringWithoutInizialization' => 'base sample',
+            'referencedEntityWithoutInitialization' => [
+                'text' => 'referenced sample',
+            ],
+            'submitted' => 'on'
+        ];
+        $formWithCustomFilterFalse->handleRequest($this->requestMock);
+        $this->assertTrue($formWithCustomFilterFalse->isSubmitted());
+        $this->assertFalse($formWithCustomFilterFalse->isValid());
     }
 }

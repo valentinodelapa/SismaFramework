@@ -42,8 +42,9 @@ class FakeReferencedSampleForm extends BaseForm
         return FakeReferencedSample::class;
     }
 
-    protected function customFilter(): void
+    protected function customFilter(): bool
     {
+        return true;
         
     }
 

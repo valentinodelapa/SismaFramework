@@ -38,8 +38,9 @@ class IncompleteSimpleEntityFrom extends BaseForm
 {
     
     #[\Override]
-    protected function customFilter(): void
+    protected function customFilter(): bool
     {
+        return true;
         
     }
 

@@ -210,19 +210,18 @@ abstract class BaseForm extends Submittable
             $this->entityToResolve,
             $this->sismaCollectionToResolve
         );
-
         $this->entityData = $result['entityData'];
         $filterResult = $result['filterResult'];
-
-        $this->customFilter();
+        $customFilterResult = $this->customFilter();
         Debugger::setFormFilter($this->formFilterError);
-        if ($filterResult === false) {
+        $isValid = $filterResult && $customFilterResult;
+        if ($isValid === false) {
             $this->responseType = ResponseType::httpBadRequest;
         }
-        return $filterResult;
+        return $isValid;
     }
 
-    abstract protected function customFilter(): void;
+    abstract protected function customFilter(): bool;
 
     public function resolveEntity(): BaseEntity
     {

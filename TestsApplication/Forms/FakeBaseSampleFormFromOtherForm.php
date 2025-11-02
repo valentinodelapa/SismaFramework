@@ -42,8 +42,9 @@ class FakeBaseSampleFormFromOtherForm extends BaseForm
         return WrongEntity::class;
     }
     
-    protected function customFilter(): void
+    protected function customFilter(): bool
     {
+        return true;
         
     }
 

@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright (c) 2020-present Valentino de Lapa.
+ * Copyright 2025 Valentino de Lapa <valentino.delapa@gmail.com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,42 +26,44 @@
 
 namespace SismaFramework\TestsApplication\Forms;
 
+use SismaFramework\TestsApplication\Entities\SimpleEntity;
 use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\TestsApplication\Entities\ReferencedSample;
-use SismaFramework\Core\Enumerations\FilterType;
 
 /**
- * @author Valentino de Lapa
+ * Description of FormWithCustomFilterFalse
+ *
+ * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class ReferencedSampleForm extends BaseForm
+class FormWithCustomFilterFalse extends BaseForm
 {
-
-    protected static function getEntityName(): string
-    {
-        return ReferencedSample::class;
-    }
-
+    
+    #[\Override]
     protected function customFilter(): bool
     {
-        return true;
-        
+        return false;
     }
 
+    #[\Override]
     protected function injectRequest(): void
     {
         
     }
 
+    #[\Override]
     protected function setEntityFromForm(): void
     {
-        $this->addEntityFromForm('baseSampleCollectionReferencedEntityWithoutInitialization', BaseSampleFormFromOtherForm::class)
-                ->addEntityFromForm('baseSampleCollectionReferencedEntityWithInitialization', BaseSampleFormFromOtherForm::class, 1);
+        
     }
 
+    #[\Override]
     protected function setFilterFieldsMode(): void
     {
-        $this->addFilterFieldMode('text', FilterType::isString)
-                ->addFilterFieldMode('nullableInteger', FilterType::isInteger, [], true);
+        
     }
 
+    #[\Override]
+    protected static function getEntityName(): string
+    {
+        return SimpleEntity::class;
+    }
 }
