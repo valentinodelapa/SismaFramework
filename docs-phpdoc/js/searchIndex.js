@@ -2076,6 +2076,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_noFilter"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_customFilter"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNotNull\u0028\u0029",
             "name": "isNotNull",
             "summary": "",
@@ -2236,10 +2241,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEnumeration"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLengthForValidator\u0028\u0029",
+            "name": "isMinLengthForValidator",
             "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_customFilter"
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLengthForValidator"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLengthForValidator\u0028\u0029",
+            "name": "isMaxLengthForValidator",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLengthForValidator"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLengthRangeForValidator\u0028\u0029",
+            "name": "isLengthRangeForValidator",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLengthRangeForValidator"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\FixturesManager",
             "name": "FixturesManager",
