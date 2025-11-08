@@ -38,7 +38,6 @@ use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\DependentEntityThree;
 use SismaFramework\TestsApplication\Entities\EntityWithOneCollectionOne;
-use SismaFramework\TestsApplication\Entities\EntityWithOneCollectionTwo;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
