@@ -22,8 +22,12 @@ class DocsController extends BaseController
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
         parent::__construct($dataMapper);
-        $this->vars['metaUrl'] = Router::getMetaUrl();
-        $this->docsPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'docs' . DIRECTORY_SEPARATOR;
+        $this->vars["metaUrl"] = Router::getMetaUrl();
+        $this->docsPath =
+            dirname(__DIR__, 2) .
+            DIRECTORY_SEPARATOR .
+            "docs" .
+            DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -33,12 +37,12 @@ class DocsController extends BaseController
      */
     public function index(): Response
     {
-        $this->vars['pageTitle'] = 'Documentazione - SismaFramework';
+        $this->vars["pageTitle"] = "Documentazione - SismaFramework";
 
         // Leggi la struttura della documentazione
-        $this->vars['docsSections'] = $this->getDocsStructure();
+        $this->vars["docsSections"] = $this->getDocsStructure();
 
-        return Render::generateView('docs/index', $this->vars);
+        return Render::generateView("docs/index", $this->vars);
     }
 
     /**
@@ -46,18 +50,20 @@ class DocsController extends BaseController
      */
     public function debugRegex(): Response
     {
-        $markdown = file_get_contents($this->docsPath . 'forms.md');
+        $markdown = file_get_contents($this->docsPath . "forms.md");
 
         // Chiama il vero parseMarkdown
         $html = $this->parseMarkdown($markdown);
 
         $output = "=== RISULTATO PARSEMARKDOWN ===\n";
-        $output .= "Numero di <pre>: " . substr_count($html, '<pre>') . "\n";
-        $output .= "Numero di 'language-': " . substr_count($html, 'language-') . "\n";
-        $output .= "Numero di <code>: " . substr_count($html, '<code>') . "\n\n";
+        $output .= "Numero di <pre>: " . substr_count($html, "<pre>") . "\n";
+        $output .=
+            "Numero di 'language-': " . substr_count($html, "language-") . "\n";
+        $output .=
+            "Numero di <code>: " . substr_count($html, "<code>") . "\n\n";
 
         // Trova tutti i tag <pre> e mostra i primi 200 char di ognuno
-        preg_match_all('/<pre>(.*?)<\/pre>/s', $html, $matches);
+        preg_match_all("/<pre>(.*?)<\/pre>/s", $html, $matches);
         $output .= "=== BLOCCHI <PRE> TROVATI ===\n";
         $output .= "Totale: " . count($matches[0]) . "\n\n";
 
@@ -66,9 +72,9 @@ class DocsController extends BaseController
             $output .= substr($matches[0][$i], 0, 200) . "...\n\n";
         }
 
-        header('Content-Type: text/plain');
+        header("Content-Type: text/plain");
         echo $output;
-        exit;
+        exit();
     }
 
     /**
@@ -79,25 +85,25 @@ class DocsController extends BaseController
      */
     public function view(string $file): Response
     {
-        $filePath = $this->docsPath . $file . '.md';
+        $filePath = $this->docsPath . $file . ".md";
 
         // Verifica che il file esista
         if (!file_exists($filePath)) {
-            return Router::redirect('/docs/index');
+            return Router::redirect("/docs/index");
         }
 
         // Leggi il contenuto Markdown
         $markdownContent = file_get_contents($filePath);
 
         // Converti Markdown in HTML
-        $this->vars['htmlContent'] = $this->parseMarkdown($markdownContent);
-        $this->vars['currentFile'] = $file;
-        $this->vars['pageTitle'] = $this->extractTitle($markdownContent);
+        $this->vars["htmlContent"] = $this->parseMarkdown($markdownContent);
+        $this->vars["currentFile"] = $file;
+        $this->vars["pageTitle"] = $this->extractTitle($markdownContent);
 
         // Sidebar con navigazione
-        $this->vars['docsSections'] = $this->getDocsStructure();
+        $this->vars["docsSections"] = $this->getDocsStructure();
 
-        return Render::generateView('docs/viewer', $this->vars);
+        return Render::generateView("docs/viewer", $this->vars);
     }
 
     /**
@@ -113,52 +119,81 @@ class DocsController extends BaseController
     {
         // Step 1: Proteggi i code blocks (non devono essere processati)
         $codeBlocks = [];
-        $html = preg_replace_callback('/```([^\r\n]*)\r?\n(.*?)\r?\n```\s*/s', function($matches) use (&$codeBlocks) {
-            $lang = trim($matches[1]) ?: 'plaintext';
-            $code = $matches[2];
+        $html = preg_replace_callback(
+            '/```([^\r\n]*)\r?\n(.*?)\r?\n[ \t]*```/s',
+            function ($matches) use (&$codeBlocks) {
+                $lang = trim($matches[1]) ?: "plaintext";
+                $code = $matches[2];
 
-            $placeholder = '___CODEBLOCK_' . count($codeBlocks) . '___';
-            $codeBlocks[$placeholder] = '<pre><code class="language-' . htmlspecialchars($lang) . '">' . htmlspecialchars($code, ENT_QUOTES, 'UTF-8') . '</code></pre>';
+                $placeholder = "___CODEBLOCK_" . count($codeBlocks) . "___";
+                $codeBlocks[$placeholder] =
+                    '<pre><code class="language-' .
+                    htmlspecialchars($lang) .
+                    '">' .
+                    htmlspecialchars($code, ENT_QUOTES, "UTF-8") .
+                    "</code></pre>";
 
-            return "\n" . $placeholder . "\n";
-        }, $markdown);
+                return "\n" . $placeholder . "\n";
+            },
+            $markdown,
+        );
 
         // Step 2: Proteggi inline code
         $inlineCodes = [];
-        $html = preg_replace_callback('/`([^`]+)`/', function($matches) use (&$inlineCodes) {
-            $placeholder = '___INLINECODE_' . count($inlineCodes) . '___';
-            $inlineCodes[$placeholder] = '<code>' . htmlspecialchars($matches[1], ENT_QUOTES, 'UTF-8') . '</code>';
-            return $placeholder;
-        }, $html);
+        $html = preg_replace_callback(
+            "/`([^`]+)`/",
+            function ($matches) use (&$inlineCodes) {
+                $placeholder = "___INLINECODE_" . count($inlineCodes) . "___";
+                $inlineCodes[$placeholder] =
+                    "<code>" .
+                    htmlspecialchars($matches[1], ENT_QUOTES, "UTF-8") .
+                    "</code>";
+                return $placeholder;
+            },
+            $html,
+        );
 
         // Step 3: Processa tabelle
-        $html = preg_replace_callback('/^\|(.+)\|[ ]*\n\|[\s\-:|]+\|[ ]*\n((?:\|.+\|[ ]*\n?)+)/m', function($matches) {
-            $headers = array_map('trim', explode('|', trim($matches[1], '|')));
-            $rows = array_filter(explode("\n", trim($matches[2])));
+        $html = preg_replace_callback(
+            '/^\|(.+)\|[ ]*\n\|[\s\-:|]+\|[ ]*\n((?:\|.+\|[ ]*\n?)+)/m',
+            function ($matches) {
+                $headers = array_map(
+                    "trim",
+                    explode("|", trim($matches[1], "|")),
+                );
+                $rows = array_filter(explode("\n", trim($matches[2])));
 
-            $table = '<table class="table table-striped table-bordered">';
+                $table = '<table class="table table-striped table-bordered">';
 
-            // Header
-            $table .= '<thead><tr>';
-            foreach ($headers as $header) {
-                $table .= '<th>' . $this->parseInlineMarkdown(trim($header)) . '</th>';
-            }
-            $table .= '</tr></thead>';
-
-            // Body
-            $table .= '<tbody>';
-            foreach ($rows as $row) {
-                $cells = array_map('trim', explode('|', trim($row, '|')));
-                $table .= '<tr>';
-                foreach ($cells as $cell) {
-                    $table .= '<td>' . $this->parseInlineMarkdown(trim($cell)) . '</td>';
+                // Header
+                $table .= "<thead><tr>";
+                foreach ($headers as $header) {
+                    $table .=
+                        "<th>" .
+                        $this->parseInlineMarkdown(trim($header)) .
+                        "</th>";
                 }
-                $table .= '</tr>';
-            }
-            $table .= '</tbody></table>';
+                $table .= "</tr></thead>";
 
-            return $table;
-        }, $html);
+                // Body
+                $table .= "<tbody>";
+                foreach ($rows as $row) {
+                    $cells = array_map("trim", explode("|", trim($row, "|")));
+                    $table .= "<tr>";
+                    foreach ($cells as $cell) {
+                        $table .=
+                            "<td>" .
+                            $this->parseInlineMarkdown(trim($cell)) .
+                            "</td>";
+                    }
+                    $table .= "</tr>";
+                }
+                $table .= "</tbody></table>";
+
+                return $table;
+            },
+            $html,
+        );
 
         // Step 4: Headers (dal più specifico al meno)
         $html = preg_replace('/^#### (.*?)$/m', '<h4>$1</h4>', $html);
@@ -167,68 +202,96 @@ class DocsController extends BaseController
         $html = preg_replace('/^# (.*?)$/m', '<h1>$1</h1>', $html);
 
         // Step 5: Horizontal rule
-        $html = preg_replace('/^[\-\*]{3,}$/m', '<hr>', $html);
+        $html = preg_replace('/^[\-\*]{3,}$/m', "<hr>", $html);
 
         // Step 6: Blockquote
-        $html = preg_replace('/^> (.+)$/m', '<blockquote class="blockquote">$1</blockquote>', $html);
+        $html = preg_replace(
+            '/^> (.+)$/m',
+            '<blockquote class="blockquote">$1</blockquote>',
+            $html,
+        );
 
         // Step 7: Unordered lists (supporta indentazione)
-        $html = preg_replace_callback('/(?:^[ ]{0,4}[\*\-\+] .+\n?)+/m', function($matches) {
-            $lines = explode("\n", trim($matches[0]));
-            $result = '<ul>';
-            $inNested = false;
+        $html = preg_replace_callback(
+            '/(?:^[ ]{0,4}[\*\-\+] .+\n?)+/m',
+            function ($matches) {
+                $lines = explode("\n", trim($matches[0]));
+                $result = "<ul>";
+                $inNested = false;
 
-            foreach ($lines as $line) {
-                if (preg_match('/^[ ]{2,4}[\*\-\+] (.+)$/', $line, $m)) {
-                    // Lista annidata (indentata)
-                    if (!$inNested) {
-                        $result .= '<ul>';
-                        $inNested = true;
+                foreach ($lines as $line) {
+                    if (preg_match('/^[ ]{2,4}[\*\-\+] (.+)$/', $line, $m)) {
+                        // Lista annidata (indentata)
+                        if (!$inNested) {
+                            $result .= "<ul>";
+                            $inNested = true;
+                        }
+                        $result .= "<li>" . trim($m[1]) . "</li>";
+                    } elseif (preg_match('/^[\*\-\+] (.+)$/', $line, $m)) {
+                        // Lista principale
+                        if ($inNested) {
+                            $result .= "</ul>";
+                            $inNested = false;
+                        }
+                        $result .= "<li>" . trim($m[1]) . "</li>";
                     }
-                    $result .= '<li>' . trim($m[1]) . '</li>';
-                } else if (preg_match('/^[\*\-\+] (.+)$/', $line, $m)) {
-                    // Lista principale
-                    if ($inNested) {
-                        $result .= '</ul>';
-                        $inNested = false;
-                    }
-                    $result .= '<li>' . trim($m[1]) . '</li>';
                 }
-            }
 
-            if ($inNested) {
-                $result .= '</ul>';
-            }
-            $result .= '</ul>';
+                if ($inNested) {
+                    $result .= "</ul>";
+                }
+                $result .= "</ul>";
 
-            return $result;
-        }, $html);
+                return $result;
+            },
+            $html,
+        );
 
         // Step 8: Ordered lists
-        $html = preg_replace_callback('/(?:^\d+\. .+\n?)+/m', function($matches) {
-            $items = preg_replace('/^\d+\. (.+)$/m', '<li>$1</li>', $matches[0]);
-            return '<ol>' . $items . '</ol>';
-        }, $html);
+        $html = preg_replace_callback(
+            '/(?:^\d+\. .+\n?)+/m',
+            function ($matches) {
+                $items = preg_replace(
+                    '/^\d+\. (.+)$/m',
+                    '<li>$1</li>',
+                    $matches[0],
+                );
+                return "<ol>" . $items . "</ol>";
+            },
+            $html,
+        );
 
         // Step 9: Inline formatting (bold, italic, links)
-        $html = preg_replace('/\*\*([^\*]+)\*\*/', '<strong>$1</strong>', $html);
+        $html = preg_replace(
+            "/\*\*([^\*]+)\*\*/",
+            '<strong>$1</strong>',
+            $html,
+        );
         $html = preg_replace('/\*([^\*\n]+)\*/', '<em>$1</em>', $html);
 
         // Links: converte link .md in percorsi corretti
-        $html = preg_replace_callback('/\[([^\]]+)\]\(([^)]+)\)/', function($matches) {
-            $text = $matches[1];
-            $url = $matches[2];
+        $html = preg_replace_callback(
+            "/\[([^\]]+)\]\(([^)]+)\)/",
+            function ($matches) {
+                $text = $matches[1];
+                $url = $matches[2];
 
-            // Se è un link relativo .md, convertilo in /docs/view/file/
-            if (preg_match('/^([^\/]+)\.md$/', $url, $m)) {
-                $url = '/docs/view/file/' . $m[1];
-            } else if (preg_match('/^([^\/]+)\.md#(.+)$/', $url, $m)) {
-                // Con anchor
-                $url = '/docs/view/file/' . $m[1] . '#' . $m[2];
-            }
+                // Se è un link relativo .md, convertilo in /docs/view/file/
+                if (preg_match('/^([^\/]+)\.md$/', $url, $m)) {
+                    $url = "/docs/view/file/" . $m[1];
+                } elseif (preg_match('/^([^\/]+)\.md#(.+)$/', $url, $m)) {
+                    // Con anchor
+                    $url = "/docs/view/file/" . $m[1] . "#" . $m[2];
+                }
 
-            return '<a href="' . htmlspecialchars($url) . '">' . $text . '</a>';
-        }, $html);
+                return '<a href="' .
+                    htmlspecialchars($url) .
+                    '">' .
+                    $text .
+                    "</a>";
+            },
+            $html,
+        );
 
         // Step 10: Paragrafi (solo linee non vuote che non sono già HTML)
         $lines = explode("\n", $html);
@@ -239,15 +302,22 @@ class DocsController extends BaseController
             $trimmed = trim($line);
 
             // Salta linee vuote, già formattate, e placeholder dei code blocks
-            if (empty($trimmed) || preg_match('/^<(h\d|ul|ol|li|table|pre|hr|blockquote)/', $trimmed) || preg_match('/^___CODEBLOCK_\d+___$/', $trimmed)) {
+            if (
+                empty($trimmed) ||
+                preg_match(
+                    "/^<(h\d|ul|ol|li|table|pre|hr|blockquote)/",
+                    $trimmed,
+                ) ||
+                preg_match('/^___CODEBLOCK_\d+___$/', $trimmed)
+            ) {
                 if ($inParagraph) {
-                    $result[] = '</p>';
+                    $result[] = "</p>";
                     $inParagraph = false;
                 }
                 $result[] = $line;
             } else {
                 if (!$inParagraph) {
-                    $result[] = '<p>';
+                    $result[] = "<p>";
                     $inParagraph = true;
                 }
                 $result[] = $line;
@@ -255,7 +325,7 @@ class DocsController extends BaseController
         }
 
         if ($inParagraph) {
-            $result[] = '</p>';
+            $result[] = "</p>";
         }
 
         $html = implode("\n", $result);
@@ -269,7 +339,7 @@ class DocsController extends BaseController
         }
 
         // Step 12: Pulisci paragrafi vuoti
-        $html = preg_replace('/<p>\s*<\/p>/', '', $html);
+        $html = preg_replace("/<p>\s*<\/p>/", "", $html);
 
         return $html;
     }
@@ -279,10 +349,18 @@ class DocsController extends BaseController
      */
     private function parseInlineMarkdown(string $text): string
     {
-        $text = preg_replace('/\*\*([^\*]+)\*\*/', '<strong>$1</strong>', $text);
-        $text = preg_replace('/\*([^\*]+)\*/', '<em>$1</em>', $text);
-        $text = preg_replace('/`([^`]+)`/', '<code>$1</code>', $text);
-        $text = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2">$1</a>', $text);
+        $text = preg_replace(
+            "/\*\*([^\*]+)\*\*/",
+            '<strong>$1</strong>',
+            $text,
+        );
+        $text = preg_replace("/\*([^\*]+)\*/", '<em>$1</em>', $text);
+        $text = preg_replace("/`([^`]+)`/", '<code>$1</code>', $text);
+        $text = preg_replace(
+            "/\[([^\]]+)\]\(([^)]+)\)/",
+            '<a href="$2">$1</a>',
+            $text,
+        );
         return $text;
     }
 
@@ -294,7 +372,7 @@ class DocsController extends BaseController
         if (preg_match('/^# (.+)$/m', $markdown, $matches)) {
             return $matches[1];
         }
-        return 'Documentazione';
+        return "Documentazione";
     }
 
     /**
@@ -305,7 +383,7 @@ class DocsController extends BaseController
      */
     private function getDocsStructure(): array
     {
-        $indexPath = $this->docsPath . 'index.md';
+        $indexPath = $this->docsPath . "index.md";
 
         if (!file_exists($indexPath)) {
             return [];
@@ -319,21 +397,23 @@ class DocsController extends BaseController
 
         foreach ($lines as $line) {
             // Sezione principale: * **Nome Sezione**
-            if (preg_match('/^\* \*\*(.+?)\*\*/', $line, $matches)) {
+            if (preg_match("/^\* \*\*(.+?)\*\*/", $line, $matches)) {
                 $currentSection = trim($matches[1]);
                 $structure[$currentSection] = [];
             }
             // Elemento lista annidata: [Titolo](file.md)
-            else if (preg_match('/^\s+\* \[(.+?)\]\((.+?)\.md\)/', $line, $matches)) {
+            elseif (
+                preg_match("/^\s+\* \[(.+?)\]\((.+?)\.md\)/", $line, $matches)
+            ) {
                 if ($currentSection !== null) {
                     $title = trim($matches[1]);
                     // Rimuovi ** se presente
-                    $title = str_replace(['**', '*'], '', $title);
+                    $title = str_replace(["**", "*"], "", $title);
                     $file = trim($matches[2]);
 
                     $structure[$currentSection][] = [
-                        'file' => $file,
-                        'title' => $title
+                        "file" => $file,
+                        "title" => $title,
                     ];
                 }
             }
