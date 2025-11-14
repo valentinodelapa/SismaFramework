@@ -1,0 +1,30 @@
+<?php
+
+namespace SismaFramework\Console;
+
+use SismaFramework\Console\Commands\InstallationCommand;
+use SismaFramework\Console\Commands\ScaffoldCommand;
+use SismaFramework\Console\HelperClasses\CommandDispatcher;
+use SismaFramework\Console\HelperClasses\CommandLineInterfaceSettingsChecker;
+use SismaFramework\Core\HelperClasses\ErrorHandler;
+
+require_once dirname(__DIR__, 1) . '/Config/config.php';
+require_once dirname(__DIR__, 1) . '/Autoload/autoload.php';
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+date_default_timezone_set('Europe/Rome');
+
+try {
+    ErrorHandler::handleCommandLineInterfaceNonThrowableError();
+    CommandLineInterfaceSettingsChecker::checkIsCommandLineInterfaceMode(php_sapi_name());
+    CommandLineInterfaceSettingsChecker::checkIsProjectDirectory(\Config\SYSTEM_PATH);
+    $commandDispatcher = new CommandDispatcher(array_slice($argv, 1));
+    $commandDispatcher->addCommandStrategy(new InstallationCommand());
+    $commandDispatcher->addCommandStrategy(new ScaffoldCommand());
+    $commandDispatcher->run();
+} catch (\Throwable $e) {
+    echo "Error: " . $e->getMessage() . PHP_EOL;
+    exit(1);
+}

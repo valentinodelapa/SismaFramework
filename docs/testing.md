@@ -803,7 +803,7 @@ class DatabaseIntegrationTest extends TestCase
 namespace SismaFramework\Tests\Fixtures;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\HelperClasses\FixturesManager;
+use SismaFramework\Core\HelperClasses\Dispatcher\FixturesManager;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 class FixtureTest extends TestCase

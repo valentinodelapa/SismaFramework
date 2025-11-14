@@ -32,10 +32,16 @@
  * MODIFICHE APPORTATE RISPETTO ALLA CLASSE `MODEL` DI SIMPLEORM:
  * - Significativa riorganizzazione e rifattorizzazione per l'applicazione della tipizzazione forte.
  * - Passaggio dal pattern Active Record al pattern Data Mapper: La logica di persistenza è stata separata in una classe DataMapper.
- * - Separazione delle responsabilità:** Le operazioni di persistenza sono state estratte dalla classe che rappresentava i dati (Model).
+ * - Separazione delle responsabilità: Le operazioni di persistenza sono state estratte dalla classe che rappresentava i dati (Model).
  * - Nessun riferimento diretto alla rappresentazione dei dati (Entity): Il DataMapper si concentra sulla persistenza, interagendo con le `Entity` tramite interfacce.
- * - Implementazione di meccanismi e comportamenti specifici non presenti nella classe Model originale
- * - Implementazione meccanismo dei tipo di binding specifici nelle query di insert e update. 
+ * - Implementazione di meccanismi e comportamenti specifici non presenti nella classe Model originale.
+ * - Implementazione meccanismo dei tipo di binding specifici nelle query di insert e update.
+ * - Refactoring (2025): Estrazione parziale delle responsabilità in classi @internal separate:
+ *   - TransactionManager: Gestione delle transazioni database (separazione mantenuta)
+ *   - QueryExecutor: Esecuzione query di lettura (find, findFirst, getCount) con integrazione cache (separazione mantenuta)
+ *   - Logica di persistenza (insert, update, delete): Riportata come metodi privati in DataMapper per evitare accoppiamento circolare
+ *   - DataType::fromReflection(): Risoluzione automatica dei tipi di dato per il binding
+ * - Ottimizzazione dipendenze: Utilizzo di singleton pattern per BaseAdapter e ProcessedEntitiesCollection
  */
 
 namespace SismaFramework\Orm\HelperClasses;
@@ -44,16 +50,17 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
-use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
-use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Exceptions\DataMapperException;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor;
+use SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager;
 use SismaFramework\Orm\Permissions\ReferencedEntityDeletionPermission;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 
@@ -63,13 +70,17 @@ use SismaFramework\Security\Enumerations\AccessControlEntry;
 class DataMapper
 {
 
-    private bool $ormCacheStatus;
-    private BaseAdapter $adapter;
     private Config $config;
+    private BaseAdapter $adapter;
     private ProcessedEntitiesCollection $processedEntitiesCollection;
-    private static bool $isActiveTransaction = false;
+    private bool $ormCacheStatus;
 
-    public function __construct(?BaseAdapter $adapter = null, ?ProcessedEntitiesCollection $processedEntityCollection = null, ?Config $config = null)
+    public function __construct(
+            ?BaseAdapter $adapter = null,
+            ?ProcessedEntitiesCollection $processedEntityCollection = null,
+            ?Config $config = null,
+            private TransactionManager $transactionManager = new TransactionManager(),
+            private QueryExecutor $queryExecutor = new QueryExecutor())
     {
         $this->config = $config ?? Config::getInstance();
         $this->adapter = $adapter ?? BaseAdapter::getDefault();
@@ -94,12 +105,7 @@ class DataMapper
 
     public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()): bool
     {
-        $query->setVariable($variable);
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::set);
-        Parser::unparseValue($bindValue);
-        $result = $this->adapter->execute($cmd, [$bindValue], [$bindType]);
-        return $result;
+        return $this->queryExecutor->setVariable($variable, $bindValue, $bindType, $query);
     }
 
     public function save(BaseEntity $entity, Query $query = new Query()): bool
@@ -108,7 +114,7 @@ class DataMapper
             return true;
         } else {
             $this->processedEntitiesCollection->append($entity);
-            $isFirstExecution = $this->startTransaction();
+            $isFirstExecution = $this->transactionManager->start();
             if (empty($entity->{$entity->getPrimaryKeyPropertyName()})) {
                 $result = $this->insert($entity, $query);
             } elseif ($entity->modified) {
@@ -117,11 +123,11 @@ class DataMapper
                 $result = $this->saveForeignKeys($entity) && $this->checkIsReferencedEntity($entity);
             }
             if ($result) {
-                $this->commitTransaction($isFirstExecution);
+                $this->transactionManager->commit($isFirstExecution);
                 return true;
             } else {
-                $this->adapter->rollbackTransaction();
-                throw new DataMapperException();
+                $this->transactionManager->rollback();
+                throw new DataMapperException('Failed to save entity: ' . get_class($entity));
             }
         }
     }
@@ -137,6 +143,29 @@ class DataMapper
         $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
             $entity->setPrimaryKeyAfterSave($this->adapter->lastInsertId());
+            $entity->modified = false;
+            $this->checkIsReferencedEntity($entity);
+            if ($this->ormCacheStatus) {
+                Cache::setEntity($entity);
+            }
+        }
+        return $result;
+    }
+
+    private function update(BaseEntity $entity, Query $query = new Query()): bool
+    {
+        $bindValues = $bindTypes = [];
+        $query->setTable(NotationManager::convertEntityToTableName($entity));
+        $this->parseValues($entity, $query, $bindValues, $bindTypes);
+        $this->parseForeignKeyIndexes($entity, $query, $bindValues, $bindTypes);
+        $query->setWhere();
+        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
+        $query->close();
+        $cmd = $query->getCommandToExecute(Statement::update);
+        $bindValues[] = $entity->{$entity->getPrimaryKeyPropertyName()};
+        $bindTypes[] = DataType::typeInteger;
+        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        if ($result) {
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
             if ($this->ormCacheStatus) {
@@ -190,34 +219,9 @@ class DataMapper
             }
             $parsedValue = Encryptor::encryptString($parsedValue, $entity->$initializationVectorPropertyName);
         }
-        $bindTypes[] = $this->getType($reflectionProperty->getType(), $parsedValue);
+        $bindTypes[] = DataType::fromReflection($reflectionProperty->getType(), $parsedValue);
         $query->appendColumnValue($reflectionProperty->getName(), Placeholder::placeholder, is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
         $bindValues[] = $parsedValue;
-    }
-
-    private function getType(\ReflectionNamedType $reflectionNamedType, mixed $value): DataType
-    {
-        if ($reflectionNamedType->getName() === 'bool') {
-            return DataType::typeBoolean;
-        } elseif ($reflectionNamedType->getName() === 'int') {
-            return DataType::typeInteger;
-        } elseif ($reflectionNamedType->getName() === 'float') {
-            return DataType::typeDecimal;
-        } elseif ($reflectionNamedType->getName() === 'string') {
-            if (mb_detect_encoding($value ?? '', 'UTF-8', true)) {
-                return DataType::typeString;
-            } else {
-                return DataType::typeBinary;
-            }
-        } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
-            return DataType::typeEntity;
-        } elseif (enum_exists($reflectionNamedType->getName())) {
-            return DataType::typeEnumeration;
-        } elseif (is_subclass_of($reflectionNamedType->getName(), \DateTimeInterface::class)) {
-            return DataType::typeDate;
-        } else {
-            return DataType::typeGeneric;
-        }
     }
 
     private function parseForeignKeyIndexes(BaseEntity $entity, Query $query, array &$bindValues, array &$bindTypes): void
@@ -229,15 +233,16 @@ class DataMapper
         }
     }
 
-    public function startTransaction(): bool
+    private function saveForeignKeys(BaseEntity $entity): bool
     {
-        if (self::$isActiveTransaction === false) {
-            if ($this->adapter->beginTransaction()) {
-                self::$isActiveTransaction = true;
-                return true;
+        foreach ($entity->foreignKeys as $foreignKey) {
+            if ($entity->$foreignKey instanceof BaseEntity) {
+                if ($this->save($entity->$foreignKey) === false) {
+                    return false;
+                }
             }
         }
-        return false;
+        return true;
     }
 
     private function checkIsReferencedEntity(BaseEntity $entity): bool
@@ -263,49 +268,14 @@ class DataMapper
         return true;
     }
 
+    public function startTransaction(): bool
+    {
+        return $this->transactionManager->start();
+    }
+
     public function commitTransaction(bool $checkAnnidation = true): void
     {
-        if (self::$isActiveTransaction && $checkAnnidation) {
-            if ($this->adapter->commitTransaction()) {
-                self::$isActiveTransaction = false;
-                $this->processedEntitiesCollection->clear();
-            }
-        }
-    }
-
-    private function update(BaseEntity $entity, Query $query = new Query()): bool
-    {
-        $bindValues = $bindTypes = [];
-        $query->setTable(NotationManager::convertEntityToTableName($entity));
-        $this->parseValues($entity, $query, $bindValues, $bindTypes);
-        $this->parseForeignKeyIndexes($entity, $query, $bindValues, $bindTypes);
-        $query->setWhere();
-        $query->appendCondition($entity->getPrimaryKeyPropertyName(), ComparisonOperator::equal, Placeholder::placeholder);
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::update);
-        $bindValues[] = $entity->{$entity->getPrimaryKeyPropertyName()};
-        $bindTypes[] = DataType::typeInteger;
-        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
-        if ($result) {
-            $entity->modified = false;
-            $this->checkIsReferencedEntity($entity);
-            if ($this->ormCacheStatus) {
-                Cache::setEntity($entity);
-            }
-        }
-        return $result;
-    }
-
-    private function saveForeignKeys(BaseEntity $entity): bool
-    {
-        foreach ($entity->foreignKeys as $foreignKey) {
-            if ($entity->$foreignKey instanceof BaseEntity) {
-                if ($this->save($entity->$foreignKey) === false) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        $this->transactionManager->commit($checkAnnidation);
     }
 
     public function delete(BaseEntity $entity, Query $query = new Query()): bool
@@ -346,74 +316,16 @@ class DataMapper
 
     public function find(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
     {
-        $result = $this->getResultSet($entityName, $query, $bindValues, $bindTypes);
-        $collection = new SismaCollection($entityName);
-        if ($result instanceof BaseResultSet) {
-            foreach ($result as $entity) {
-                $collection->append($this->selectLastModifiedEntity($entityName, $entity));
-            }
-        }
-        return $collection;
-    }
-
-    private function selectLastModifiedEntity(string $entityName, BaseEntity $entity): BaseEntity
-    {
-        if ($this->ormCacheStatus && Cache::checkEntityPresenceInCache($entityName, $entity->id)) {
-            return Cache::getEntityById($entityName, $entity->id);
-        } elseif ($this->ormCacheStatus) {
-            Cache::setEntity($entity);
-        }
-        return $entity;
-    }
-
-    private function getResultSet(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
-    {
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::select);
-        Parser::unparseValues($bindValues);
-        $result = $this->adapter->select($cmd, $bindValues, $bindTypes);
-        if (!$result) {
-            return null;
-        }
-        $result->setReturnType($entityName);
-        return $result;
+        return $this->queryExecutor->find($entityName, $query, $bindValues, $bindTypes, $this->ormCacheStatus);
     }
 
     public function getCount(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): int
     {
-        $query->setCount('');
-        $query->close();
-        $cmd = $query->getCommandToExecute(Statement::select);
-        Parser::unparseValues($bindValues);
-        $result = $this->adapter->select($cmd, $bindValues, $bindTypes);
-        if ($result === null) {
-            return 0;
-        }
-        $data = $result->fetch();
-        $result->release();
-        unset($result);
-        if ($data === null) {
-            return 0;
-        }
-        return $data->_numrows;
+        return $this->queryExecutor->getCount($query, $bindValues, $bindTypes);
     }
 
     public function findFirst(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseEntity
     {
-        $query->setOffset(0);
-        $query->setLimit(1);
-        $result = $this->getResultSet($entityName, $query, $bindValues, $bindTypes);
-        if ($result === null) {
-            return null;
-        } else {
-            switch ($result->numRows()) {
-                case 0:
-                    return null;
-                case 1:
-                    return $this->selectLastModifiedEntity($entityName, $result->fetch());
-                default:
-                    throw new DataMapperException();
-            }
-        }
+        return $this->queryExecutor->findFirst($entityName, $query, $bindValues, $bindTypes, $this->ormCacheStatus);
     }
 }

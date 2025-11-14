@@ -61,6 +61,10 @@
 </h4>
     <ul class="phpdocumentor-list">
                     <li>
+                <a href="namespaces/sismaframework-console.html" class="">Console</a>
+                
+            </li>
+                    <li>
                 <a href="namespaces/sismaframework-core.html" class="">Core</a>
                 
             </li>
@@ -157,7 +161,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">63</span>
+    <span class="phpdocumentor-element-found-in__line">70</span>
 
     </aside>
 
@@ -219,12 +223,6 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_isActiveTransaction">$isActiveTransaction</a>
-    <span>
-                        &nbsp;: bool            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_ormCacheStatus">$ormCacheStatus</a>
     <span>
                         &nbsp;: bool            </span>
@@ -234,6 +232,18 @@
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_processedEntitiesCollection">$processedEntitiesCollection</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_queryExecutor">$queryExecutor</a>
+    <span>
+                        &nbsp;: <abbr title="\SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor">QueryExecutor</abbr>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_transactionManager">$transactionManager</a>
+    <span>
+                        &nbsp;: <abbr title="\SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager">TransactionManager</abbr>            </span>
 </dt>
 
     </dl>
@@ -323,18 +333,6 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_getResultSet">getResultSet()</a>
-    <span>
-                                &nbsp;: <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseResultSet">BaseResultSet</abbr></a>|null    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_getType">getType()</a>
-    <span>
-                                &nbsp;: <a href="classes/SismaFramework-Orm-Enumerations-DataType.html"><abbr title="\SismaFramework\Orm\Enumerations\DataType">DataType</abbr></a>    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_insert">insert()</a>
     <span>
                                 &nbsp;: bool    </span>
@@ -377,12 +375,6 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_selectLastModifiedEntity">selectLastModifiedEntity()</a>
-    <span>
-                                &nbsp;: <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_update">update()</a>
     <span>
                                 &nbsp;: bool    </span>
@@ -418,7 +410,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">67</span>
+    <span class="phpdocumentor-element-found-in__line">74</span>
 
     </aside>
 
@@ -454,7 +446,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">68</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
@@ -465,42 +457,6 @@
         <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></span>
     <span class="phpdocumentor-signature__name">$config</span>
     </code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-            -static                                            "
->
-    <h4 class="phpdocumentor-element__name" id="property_isActiveTransaction">
-        $isActiveTransaction
-        <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_isActiveTransaction" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">70</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-    <span class="phpdocumentor-signature__static">static</span>    <span class="phpdocumentor-signature__type">bool</span>
-    <span class="phpdocumentor-signature__name">$isActiveTransaction</span>
-     = <span class="phpdocumentor-signature__default-value">false</span></code>
 
     
     
@@ -526,7 +482,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">66</span>
+    <span class="phpdocumentor-element-found-in__line">76</span>
 
     </aside>
 
@@ -562,7 +518,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">69</span>
+    <span class="phpdocumentor-element-found-in__line">75</span>
 
     </aside>
 
@@ -573,6 +529,78 @@
         <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a></span>
     <span class="phpdocumentor-signature__name">$processedEntitiesCollection</span>
     </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_queryExecutor">
+        $queryExecutor
+        <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_queryExecutor" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">83</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor">QueryExecutor</abbr></span>
+    <span class="phpdocumentor-signature__name">$queryExecutor</span>
+     = <span class="phpdocumentor-signature__default-value">new QueryExecutor()</span></code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_transactionManager">
+        $transactionManager
+        <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_transactionManager" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">82</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager">TransactionManager</abbr></span>
+    <span class="phpdocumentor-signature__name">$transactionManager</span>
+     = <span class="phpdocumentor-signature__default-value">new TransactionManager()</span></code>
 
     
     
@@ -603,14 +631,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">72</span>
+    <span class="phpdocumentor-element-found-in__line">78</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseAdapter">BaseAdapter</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$adapter</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$processedEntityCollection</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseAdapter">BaseAdapter</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$adapter</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$processedEntityCollection</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager">TransactionManager</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$transactionManager</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new TransactionManager()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor">QueryExecutor</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$queryExecutor</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new QueryExecutor()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -639,6 +667,20 @@
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$transactionManager</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager">TransactionManager</abbr></span>
+                 = <span class="phpdocumentor-signature__argument__default-value">new TransactionManager()</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$queryExecutor</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor">QueryExecutor</abbr></span>
+                 = <span class="phpdocumentor-signature__argument__default-value">new QueryExecutor()</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
             </dl>
 
     
@@ -661,7 +703,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">266</span>
+    <span class="phpdocumentor-element-found-in__line">276</span>
 
     </aside>
 
@@ -705,7 +747,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">311</span>
+    <span class="phpdocumentor-element-found-in__line">281</span>
 
     </aside>
 
@@ -760,7 +802,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">335</span>
+    <span class="phpdocumentor-element-found-in__line">305</span>
 
     </aside>
 
@@ -822,7 +864,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">347</span>
+    <span class="phpdocumentor-element-found-in__line">317</span>
 
     </aside>
 
@@ -891,7 +933,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">401</span>
+    <span class="phpdocumentor-element-found-in__line">327</span>
 
     </aside>
 
@@ -960,7 +1002,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">382</span>
+    <span class="phpdocumentor-element-found-in__line">322</span>
 
     </aside>
 
@@ -1022,7 +1064,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">85</span>
+    <span class="phpdocumentor-element-found-in__line">96</span>
 
     </aside>
 
@@ -1077,7 +1119,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">105</span>
+    <span class="phpdocumentor-element-found-in__line">111</span>
 
     </aside>
 
@@ -1132,7 +1174,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">80</span>
+    <span class="phpdocumentor-element-found-in__line">91</span>
 
     </aside>
 
@@ -1176,7 +1218,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">95</span>
+    <span class="phpdocumentor-element-found-in__line">106</span>
 
     </aside>
 
@@ -1245,7 +1287,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">232</span>
+    <span class="phpdocumentor-element-found-in__line">271</span>
 
     </aside>
 
@@ -1283,7 +1325,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">243</span>
+    <span class="phpdocumentor-element-found-in__line">248</span>
 
     </aside>
 
@@ -1323,130 +1365,6 @@
             -private
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_getResultSet">
-        getResultSet()
-        <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_getResultSet" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">369</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">getResultSet</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entityName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-Query.html"><abbr title="\SismaFramework\Orm\HelperClasses\Query">Query</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$query</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$bindValues</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$bindTypes</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">[]</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseResultSet">BaseResultSet</abbr></a>|null</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$entityName</span>
-                : <span class="phpdocumentor-signature__argument__return-type">string</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$query</span>
-                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-Query.html"><abbr title="\SismaFramework\Orm\HelperClasses\Query">Query</abbr></a></span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$bindValues</span>
-                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
-                 = <span class="phpdocumentor-signature__argument__default-value">[]</span>            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$bindTypes</span>
-                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
-                 = <span class="phpdocumentor-signature__argument__default-value">[]</span>            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-    
-
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseResultSet">BaseResultSet</abbr></a>|null</span>
-            </section>
-
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -private
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_getType">
-        getType()
-        <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_getType" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">198</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">getType</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-Enumerations-DataType.html"><abbr title="\SismaFramework\Orm\Enumerations\DataType">DataType</abbr></a></span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span>
-                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr></span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$value</span>
-                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-    
-
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-Enumerations-DataType.html"><abbr title="\SismaFramework\Orm\Enumerations\DataType">DataType</abbr></a></span>
-            </section>
-
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -private
-                                                        "
->
     <h4 class="phpdocumentor-element__name" id="method_insert">
         insert()
         <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_insert" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1455,7 +1373,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">129</span>
+    <span class="phpdocumentor-element-found-in__line">135</span>
 
     </aside>
 
@@ -1510,7 +1428,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">223</span>
+    <span class="phpdocumentor-element-found-in__line">227</span>
 
     </aside>
 
@@ -1575,7 +1493,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">174</span>
+    <span class="phpdocumentor-element-found-in__line">203</span>
 
     </aside>
 
@@ -1647,7 +1565,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">149</span>
+    <span class="phpdocumentor-element-found-in__line">178</span>
 
     </aside>
 
@@ -1712,7 +1630,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">159</span>
+    <span class="phpdocumentor-element-found-in__line">188</span>
 
     </aside>
 
@@ -1767,7 +1685,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">252</span>
+    <span class="phpdocumentor-element-found-in__line">257</span>
 
     </aside>
 
@@ -1815,7 +1733,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">299</span>
+    <span class="phpdocumentor-element-found-in__line">236</span>
 
     </aside>
 
@@ -1855,61 +1773,6 @@
             -private
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_selectLastModifiedEntity">
-        selectLastModifiedEntity()
-        <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_selectLastModifiedEntity" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">359</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">selectLastModifiedEntity</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entityName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entity</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$entityName</span>
-                : <span class="phpdocumentor-signature__argument__return-type">string</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$entity</span>
-                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-    
-
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
-            </section>
-
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -private
-                                                        "
->
     <h4 class="phpdocumentor-element__name" id="method_update">
         update()
         <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_update" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1918,7 +1781,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/HelperClasses/DataMapper.php"><a href="files/orm-helperclasses-datamapper.html"><abbr title="Orm/HelperClasses/DataMapper.php">DataMapper.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">276</span>
+    <span class="phpdocumentor-element-found-in__line">155</span>
 
     </aside>
 
@@ -2074,9 +1937,10 @@
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_adapter">$adapter</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_config">$config</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_isActiveTransaction">$isActiveTransaction</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_ormCacheStatus">$ormCacheStatus</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_processedEntitiesCollection">$processedEntitiesCollection</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_queryExecutor">$queryExecutor</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#property_transactionManager">$transactionManager</a></li>
                                             </ul>
                 </li>
             
@@ -2096,8 +1960,6 @@
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_setVariable">setVariable()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_startTransaction">startTransaction()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_checkIsReferencedEntity">checkIsReferencedEntity()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_getResultSet">getResultSet()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_getType">getType()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_insert">insert()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_parseForeignKeyIndexes">parseForeignKeyIndexes()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_parseSingleProperty">parseSingleProperty()</a></li>
@@ -2105,7 +1967,6 @@
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_propertyIsParsable">propertyIsParsable()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_saveEntityCollection">saveEntityCollection()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_saveForeignKeys">saveForeignKeys()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_selectLastModifiedEntity">selectLastModifiedEntity()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_update">update()</a></li>
                                     </ul>
             </li>

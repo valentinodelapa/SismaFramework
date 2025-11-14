@@ -2,6 +2,327 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [10.1.0] - 2025-12-02 - Strumenti CLI per Scaffolding, Installazione e Rifatorizzazione Dispatcher
+
+Benvenuti alla release 10.1.0, una delle più ricche di novità nella storia del framework! Utility CLI rivoluzionano il flusso di sviluppo quotidiano, con scaffolding automatico e installazione guidata che accelerano drasticamente la creazione di nuovi progetti. Ottimizzato profondamente il Dispatcher attraverso una rifatorizzazione completa seguendo i principi SOLID, separando le responsabilità in sette classi specializzate che rendono il codice più manutenibile e testabile.
+
+Nascono nuove funzionalità per l'ORM: le funzioni di aggregazione SQL (AVG, MAX, MIN, SUM) permettono ora query analitiche avanzate con supporto per DISTINCT, alias, subquery e aggregazioni multiple.
+
+Comandi CLI di scaffolding generano automaticamente l'intero stack CRUD (Controller, Model, Form, Views) a partire da un'Entity esistente, mentre il sistema di installazione configura progetti completi in pochi secondi. Oltre 400 linee di nuovi test garantiscono una copertura completa di tutte le nuove funzionalità, assicurando robustezza e affidabilità.
+
+Molto è stato fatto anche sul fronte architetturale: la rifatorizzazione del Dispatcher riduce la complessità ciclomatica da oltre 400 linee a meno di 200, creando sette nuovi file di helper classes che gestiscono routing, factory dei controller, parsing degli argomenti e gestione delle risorse statiche. Pattern consolidati come Command/Manager vengono applicati sistematicamente ai comandi CLI, con dependency injection e gestione centralizzata delle eccezioni.
+
+Livello enterprise raggiunto con le funzioni di aggregazione ORM: AVG, MAX, MIN e SUM supportano ora DISTINCT, alias personalizzati, subquery e aggregazioni multiple sulla stessa query, portando l'ORM a competere con i framework più evoluti. Estesa significativamente anche la documentazione, con due nuove guide complete per scaffolding e installazione automatica.
+
+Architettura completamente rinnovata: il Dispatcher è stato suddiviso in sette classi specializzate (RouteResolver, ControllerFactory, ActionArgumentsParser, ResourceHandler, RouteInfo, FixturesManager, ResourceMaker) che seguono i principi SOLID e facilitano manutenibilità ed estensibilità future.
+
+Notevole il numero di miglioramenti introdotti in questa release, che rappresenta un punto di svolta nella maturità del framework. Dedichiamo questa versione a tutti gli sviluppatori che quotidianamente utilizzano SismaFramework per creare applicazioni robuste e scalabili.
+
+Nuove possibilità si aprono con questi strumenti professionali: template personalizzabili per lo scaffolding, configurazione database da CLI, protezione contro sovrascritture accidentali e auto-detection intelligente del tipo di Model più appropriato.
+
+Ottima base per futuri sviluppi: questa release pone le fondamenta per ulteriori miglioramenti al sistema di scaffolding e all'ORM, con possibilità di estensione illimitate che verranno esplorate nelle prossime versioni.
+
+Finalmente, dopo mesi di lavoro intenso, possiamo dire che il framework ha raggiunto un livello di maturità che lo rende adatto anche a progetti complessi e mission-critical.
+
+Ricordiamo che questa release è completamente retrocompatibile e l'aggiornamento è fortemente consigliato a tutti gli utenti della versione 10.0.x per beneficiare di questi importanti miglioramenti.
+
+Articolata in tre aree principali (CLI Tools, Architettura, ORM), questa release rappresenta un passo significativo nell'evoluzione del framework, portando strumenti professionali di livello enterprise alla portata di tutti gli sviluppatori PHP.
+
+### ✨ Nuove Funzionalità
+
+* **Sistema di Scaffolding Automatico**: Introdotto il comando CLI `scaffold` che genera automaticamente Controller, Model, Form e Views a partire da un'Entity esistente.
+  - **Generazione CRUD Completa**: Il comando crea controller con implementazione base del pattern CRUD (metodi `index`, `create`, `update`, `delete`)
+  - **Auto-Detection del Tipo Model**: Il sistema analizza automaticamente l'Entity e determina il tipo di Model più appropriato (`BaseModel`, `DependentModel`, o `SelfReferencedModel`)
+  - **Form con Filtri Pre-configurati**: Genera Form con filtri standard per tutte le proprietà dell'Entity
+  - **Template Personalizzabili**: Supporto per template custom tramite l'opzione `--template=PATH`
+  - **Gestione Collisioni**: Protezione contro la sovrascrittura accidentale di file esistenti con l'opzione `--force`
+
+  **Esempio di utilizzo**:
+  ```bash
+  php SismaFramework/Console/sisma scaffold Product Catalog
+  php SismaFramework/Console/sisma scaffold User Blog --type=DependentModel --force
+  ```
+
+* **Sistema di Installazione Automatica Progetti**: Introdotto il comando CLI `install` per configurare rapidamente nuovi progetti.
+  - **Setup Struttura Automatico**: Crea automaticamente le cartelle essenziali (`Config/`, `Public/`, `Cache/`, `Logs/`, `filesystemMedia/`)
+  - **Configurazione Framework**: Copia e configura `configFramework.php` con il nome del progetto
+  - **Setup Database da CLI**: Permette di configurare i parametri database direttamente da riga di comando tramite opzioni dedicate
+  - **Path Autoloader Aggiornati**: Aggiorna automaticamente i percorsi in `Public/index.php` per puntare alla sottocartella `SismaFramework/`
+  - **Permessi Corretti**: Imposta automaticamente i permessi corretti (777) per le cartelle Cache, Logs e filesystemMedia
+
+  **Esempio di utilizzo**:
+  ```bash
+  php SismaFramework/Console/sisma install MyProject
+  php SismaFramework/Console/sisma install BlogPersonale --db-host=localhost --db-name=blog_db --db-user=root --db-pass=secret
+  ```
+
+### 🏗️ Architettura
+
+* **Rifatorizzazione Completa del Dispatcher**: Il `Dispatcher` è stato completamente rifatorizzato seguendo i principi SOLID, con separazione delle responsabilità in classi dedicate:
+  - **`RouteResolver`**: Gestisce il parsing e la risoluzione delle route dall'URL, determinando modulo, controller e action
+  - **`ControllerFactory`**: Responsabile della creazione e istanziazione dei controller con dependency injection automatica
+  - **`ActionArgumentsParser`**: Analizza e prepara gli argomenti per i metodi action, gestendo type-hinting e auto-wiring delle entità
+  - **`ResourceHandler`**: Gestisce il serving dei file statici (CSS, JS, immagini) separando questa logica dal flusso principale
+  - **`RouteInfo`**: Value object immutabile che contiene tutte le informazioni sulla route corrente
+  - **`FixturesManager`**: Estratta la logica di gestione delle fixtures in una classe dedicata
+  - **`ResourceMaker`**: Gestisce la creazione e lo streaming ottimizzato delle risorse statiche
+
+  **Vantaggi della rifatorizzazione**:
+  - Codice più testabile con responsabilità chiaramente separate
+  - Migliore manutenibilità e leggibilità
+  - Facilita l'estensione futura con nuove funzionalità di routing
+  - Riduce la complessità ciclomatica del Dispatcher principale da oltre 400 linee a meno di 200
+
+* **Pattern Command/Manager**: Entrambi i comandi CLI seguono il pattern consolidato di separazione tra Command (interfaccia CLI) e Manager (logica di business):
+  - `ScaffoldCommand` + `ScaffoldingManager`
+  - `InstallationCommand` + `InstallationManager`
+* **Dependency Injection**: I Command accettano i Manager via costruttore, facilitando il testing con mock
+* **Gestione Eccezioni Centralizzata**: Le eccezioni vengono propagate e gestite centralmente dal dispatcher CLI nel file `sisma`
+
+### 🧪 Testing
+
+* **Copertura Test Completa**: Aggiunti test completi per tutti i nuovi componenti:
+  - **ScaffoldCommandTest**: 4 test con mock del ScaffoldingManager
+  - **ScaffoldingManagerTest**: 10 test che verificano generazione per BaseEntity, SelfReferencedEntity, DependentEntity, custom types, custom templates, e gestione errori
+  - **InstallationCommandTest**: 8 test con mock dell'InstallationManager, inclusi test per opzioni database e gestione eccezioni
+  - **InstallationManagerTest**: 8 test con filesystem temporaneo per verificare creazione struttura, copia file, aggiornamento config, e gestione flag `--force`
+* **Output Buffer Corretto**: Tutti i test catturano correttamente l'output dei comandi senza "sporcare" la console di PHPUnit
+
+### 📝 Documentazione
+
+* **Nuova Documentazione Scaffolding** (`docs/scaffolding.md`):
+  - Spiegazione dettagliata del funzionamento del meccanismo
+  - Descrizione completa di tutti gli argomenti e opzioni
+  - Esempi pratici per ogni caso d'uso
+  - Prerequisiti e struttura cartelle richiesta
+
+* **Documentazione Installazione Aggiornata** (`docs/installation.md`):
+  - Suddivisa in due metodi: **Automatico (CLI)** e **Manuale**
+  - Il metodo CLI è ora consigliato come approccio principale
+  - Esempi completi con tutte le opzioni disponibili
+  - Guida passo-passo per entrambi i metodi
+  - Istruzioni chiare sui "Prossimi Passi" post-installazione
+
+### 🚀 ORM
+
+* **Funzioni di Aggregazione per Colonne**: Aggiunto supporto completo per le funzioni di aggregazione SQL nelle query dell'ORM:
+  - **Nuovi Metodi nella Classe `Query`**: Introdotti i metodi `setAVG()`, `setMax()`, `setMin()`, e `setSum()` per applicare funzioni di aggregazione alle colonne
+  - **Supporto per DISTINCT**: Tutti i metodi di aggregazione supportano il parametro `$distinct` per applicare l'aggregazione solo su valori distinti
+  - **Modalità Append**: Il parametro `$append` permette di aggiungere funzioni di aggregazione a colonne già selezionate, consentendo query con multiple aggregazioni
+  - **Alias per Colonne**: Supporto per alias personalizzati tramite il parametro `$columnAlias`
+  - **Subquery**: Ogni funzione di aggregazione può accettare sia una stringa (nome colonna) che un'istanza `Query` (subquery)
+  - **Nuove Funzioni Aggregate**: Estesa l'enumerazione `AggregationFunction` con i casi `max` e `min` (in aggiunta a `avg`, `count`, `sum`)
+  - **Metodo Adapter**: Aggiunto il metodo `opAggregationFunction()` in `BaseAdapter` per gestire la generazione SQL delle funzioni aggregate
+
+  **Esempio di utilizzo**:
+  ```php
+  // Media dei prezzi
+  $query->setAVG('price', 'average_price');
+
+  // Somma con DISTINCT
+  $query->setSum('amount', 'total', distinct: true);
+
+  // Multiple aggregazioni
+  $query->setMin('price', 'min_price')
+        ->setMax('price', 'max_price', append: true)
+        ->setAVG('price', 'avg_price', append: true);
+  ```
+
+### 🧪 Testing
+
+* **Copertura Test Completa per Funzioni di Aggregazione**: Aggiunti test completi per le nuove funzionalità:
+  - **AggregationFunctionTest**: 159 linee di test che verificano tutti i casi dell'enumerazione e la corretta generazione SQL per MySQL
+  - **QueryTest**: 149 linee di test per i nuovi metodi `setAVG()`, `setMax()`, `setMin()`, `setSum()` con varie combinazioni di parametri (distinct, append, alias, subquery)
+  - **AdapterMysqlTest**: 57 linee di test per verificare il metodo `opAggregationFunction()` con tutte le funzioni aggregate disponibili
+
+### 🔧 Miglioramenti Interni
+
+* **Convenzione Naming Config**: Il file di configurazione del framework viene ora copiato come `configFramework.php` invece di `config.php`, permettendo ad ogni modulo di avere il proprio `config.php` senza conflitti
+* **Correzioni Documentazione**: Corretti vari typo nella documentazione esistente dello scaffolding (es. "pattend" → "pattern", "tramikte" → "tramite", "prosuppone" → "presuppone")
+* **Pulizia Formattazione**: Rimosso spazio superfluo nella generazione delle query SELECT in `BaseAdapter`
+
+## [10.0.6] - 2025-11-07 - Refactoring Filter e Documentazione Migrazione
+
+Questa patch release migliora la qualità del codice della classe Filter attraverso l'eliminazione di duplicazioni e il riordino dei metodi secondo i principi del Clean Code. Include inoltre la documentazione per la migrazione dalla versione 9.x alla 10.x.
+
+### 🔧 Refactoring
+
+#### Eliminazione Duplicazione Codice in Filter.php
+
+Refactorizzata la classe `Filter` per eliminare codice duplicato nei metodi di validazione con limiti di lunghezza:
+
+*   **Prima (10.0.5)**:
+    - ❌ Codice duplicato in 12 metodi pubblici per validazione lunghezze (min, max, range)
+    - ❌ Pattern ripetitivo con variabile `$result` e assegnazioni condizionali multiple
+    - ❌ Esempio del pattern duplicato:
+    ```php
+    public function isMinLimitString($value, int $minLimit): bool
+    {
+        $result = true;
+        $result = ($this->isString($value)) ? $result : false;
+        $result = (strlen($value) >= $minLimit) ? $result : false;
+        return $result;
+    }
+    ```
+
+*   **Dopo (10.0.6)**:
+    - ✅ Introdotti 3 metodi helper privati riutilizzabili
+    - ✅ Pattern funzionale con callable e operatori booleani
+    - ✅ Codice più conciso e dichiarativo:
+    ```php
+    public function isMinLimitString($value, int $minLimit): bool
+    {
+        return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isString($v));
+    }
+
+    private function isMinLengthForValidator(mixed $value, int $minLimit, callable $validator): bool
+    {
+        return $validator($value) && strlen($value) >= $minLimit;
+    }
+    ```
+
+*   **Metodi Helper Introdotti**:
+    - `isMinLengthForValidator()`: Valida lunghezza minima con validatore custom
+    - `isMaxLengthForValidator()`: Valida lunghezza massima con validatore custom
+    - `isLengthRangeForValidator()`: Valida range di lunghezza con validatore custom
+
+*   **Metodi Refactorizzati** (12 totali):
+    - String: `isMinLimitString()`, `isMaxLimitString()`, `isLimitString()`
+    - AlphabeticString: `isMinLimitAlphabeticString()`, `isMaxLimitAlphabeticString()`, `isLimitAlphabeticString()`
+    - AlphanumericString: `isMinLimitAlphanumericString()`, `isMaxLimitAlphanumericString()`, `isLimitAlphanumericString()`
+    - StrictAlphanumericString: `isMinLimitStrictAlphanumericString()`, `isMaxLimitStrictAlphanumericString()`, `isLimitStrictAlphanumericString()`
+
+*   **Riordino Metodi (Clean Code Stepdown Rule)**:
+    - Metodi organizzati logicamente per categoria funzionale
+    - Pattern coerente: validatore base → min → max → range
+    - Metodi helper privati alla fine della classe
+
+### 📚 Documentazione
+
+#### Aggiunta Guida Migrazione 9.x → 10.x
+
+Introdotto il file `UPGRADING.md` con documentazione completa per la migrazione:
+
+*   **Breaking Changes Documentati**:
+    - `CallableController::checkCompatibility()` ora metodo statico
+    - Rimozione interfaccia `CrudInterface`
+    - `Language::getFriendlyLabel()` richiede file di localizzazione
+
+*   **Checklist di Migrazione**: Guida passo-passo per aggiornamento sicuro
+*   **Esempi di Codice**: Prima/dopo per ogni breaking change
+*   **Miglioramenti Non-Breaking**: Lazy loading database, refactoring DataMapper
+
+### 📊 Metriche
+
+*   **Filter.php**: -20 righe (-26% di duplicazione eliminata)
+*   **Metodi pubblici invariati**: API backward compatible al 100%
+*   **Metodi helper**: 3 nuovi metodi privati riutilizzabili
+*   **Complessità ciclomatica**: Ridotta grazie a pattern funzionale
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: API pubblica completamente invariata
+*   **Refactoring Interno**: Solo implementazione modificata, signature identiche
+*   **Test Compatibili**: Tutti i test esistenti continuano a funzionare
+
+## [10.0.5] - 2025-11-01 - Refactoring Architetturale DataMapper
+
+Questa patch release rifattorizza il DataMapper monolitico introducendo una separazione delle responsabilità in classi dedicate, seguendo i principi SOLID e Clean Code.
+
+### 🏗️ Architettura
+
+#### Refactoring DataMapper: Da Monolite a Separazione delle Responsabilità
+
+Suddiviso il DataMapper monolitico (420 righe) in componenti specializzati per migliorare manutenibilità e testabilità:
+
+*   **Struttura Prima del Refactoring (10.0.4)**:
+    - ❌ **DataMapper.php monolitico**: 420 righe contenenti tutta la logica (persistenza, transazioni, query di lettura, cache)
+    - ❌ **Responsabilità miste**: Gestione transazioni, query di lettura, persistenza, cache, tutto in un unico file
+    - ❌ **Metodo `getType()` privato**: Duplicazione logica per determinare tipi di binding nelle query
+    - ❌ **Gestione transazioni inline**: Logica sparsa tra vari metodi (`startTransaction()`, `commitTransaction()`, flag statico `$isActiveTransaction`)
+    - ❌ **Query di lettura inline**: Metodi `find()`, `findFirst()`, `getCount()` direttamente nel DataMapper con logica cache integrata
+
+*   **Struttura Dopo il Refactoring (10.0.5)**:
+    - ✅ **DataMapper.php**: 331 righe, responsabile solo di coordinamento persistenza e operazioni CRUD
+    - ✅ **TransactionManager** (89 righe, classe `@internal`): Gestione isolata delle transazioni database
+      - Metodi: `start()`, `commit()`, `rollback()`
+      - Flag di stato transazione centralizzato
+      - Testabile indipendentemente
+    - ✅ **QueryExecutor** (151 righe, classe `@internal`): Esecuzione query di lettura con integrazione cache
+      - Metodi: `find()`, `findFirst()`, `getCount()`, `setVariable()`
+      - Logica cache isolata e riutilizzabile
+      - Parametro esplicito `bool $ormCacheEnabled` passato ai metodi invece di dereferenziare proprietà
+    - ✅ **DataType::fromReflection()**: Metodo statico pubblico per determinare tipi di binding automaticamente
+      - Elimina duplicazione del metodo privato `getType()`
+      - Riutilizzabile in altri contesti del framework
+
+*   **PHP 8.1 Constructor Property Promotion**:
+    - Adottato Constructor Property Promotion con `new` in initializers:
+    ```php
+    public function __construct(
+        ?BaseAdapter $adapter = null,
+        ?ProcessedEntitiesCollection $processedEntityCollection = null,
+        ?Config $config = null,
+        private TransactionManager $transactionManager = new TransactionManager(),
+        private QueryExecutor $queryExecutor = new QueryExecutor()
+    )
+    ```
+    - Ridotto boilerplate eliminando dichiarazioni di proprietà ridondanti
+    - Dependency injection con valori di default per backward compatibility
+
+*   **Delegazione Metodi Pubblici**:
+    - `find()`, `findFirst()`, `getCount()`, `setVariable()` → delegati a `QueryExecutor`
+    - `save()` → utilizza `TransactionManager::start()`, `commit()`, `rollback()`
+    - Metodi di persistenza (`insert()`, `update()`, `delete()`, `parseValues()`) rimangono privati in DataMapper
+
+*   **Stepdown Rule (Clean Code)**:
+    - Metodi riorganizzati in ordine di chiamata top-down
+    - Flusso naturale e leggibile: `save()` → `insert()`/`update()` → `parseValues()` → helper privati
+
+### 🔧 Miglioramenti Interni
+
+*   **Ridotta Complessità**: DataMapper passa da 420 a 331 righe (-21%)
+*   **Single Responsibility Principle**: Ogni classe ha una responsabilità ben definita
+*   **Testabilità**: TransactionManager e QueryExecutor testabili indipendentemente
+*   **Eliminata Duplicazione**: `DataType::fromReflection()` sostituisce metodo privato `getType()`
+*   **Stack Trace Più Chiari**: Nomi di classe/metodi espliciti invece di logica inline
+*   **Dependency Injection**: Componenti iniettabili per facilitare testing e estensibilità
+
+### ✅ Backward Compatibility
+
+*   **API Pubblica Invariata**: Tutti i metodi pubblici mantengono firma identica
+*   **Costruttore Backward Compatible**: Nuovi parametri opzionali alla fine con valori di default
+*   **Nessun Breaking Change**: Codice esistente continua a funzionare senza modifiche
+*   **Classi `@internal`**: TransactionManager e QueryExecutor sono marcate come interne, non parte dell'API pubblica stabile
+
+### 📊 Metriche
+
+*   **Prima (10.0.4)**: 1 file, 420 righe (DataMapper.php monolitico)
+*   **Dopo (10.0.5)**: 3 file, 571 righe totali
+    - DataMapper.php: 331 righe (-89 righe, -21%)
+    - TransactionManager: 89 righe (nuovo)
+    - QueryExecutor: 151 righe (nuovo)
+*   **Responsabilità Separate**: 3 classi con ruoli distinti
+*   **Complessità Ridotta**: Ogni classe più semplice da comprendere e manutenere
+
+## [10.0.4] - 2025-10-22 - Miglioramenti Qualità Codice e Correzione Dispatcher
+
+Questa patch release corregge un bug importante nella gestione del routing.
+
+### 🐛 Bug Fixes
+
+#### Correzione Impostazione URL nel Router
+
+Corretto il momento in cui viene impostato l'URL attuale nel Router all'interno del Dispatcher:
+
+*   **Dispatcher.php**:
+    - ❌ **Prima**: `Router::setActualCleanUrl()` veniva chiamato prima del controllo dell'esistenza dell'action, impostando l'URL anche per azioni inesistenti
+    - ✅ **Dopo**: `Router::setActualCleanUrl()` viene chiamato solo dopo aver verificato che l'action esista ed è valida (dentro il blocco `if`)
+    - Corretto il secondo parametro da `$this->parsedAction` a `$this->pathAction` per maggiore coerenza con la nomenclatura
+
+**Impatto**: Previene l'impostazione di URL per azioni non valide, migliorando la precisione del routing e la gestione degli errori 404.
+
 ## [10.0.3] - 2025-10-08 - Hotfix Test Suite
 
 Questa hotfix release corregge i test rotti nella versione 10.0.2.
@@ -81,322 +402,157 @@ Rimossi 21 mock di `BaseAdapter` non più necessari grazie al lazy loading:
 *   **Test Security**:
     - `AuthenticationTest.php`, `BaseVoterTest.php`, `BasePermissionTest.php`
 
-**Nota**: I test `DataMapperTest.php`, `QueryTest.php` e `AdapterMysqlTest.php` mantengono i loro mock perché necessari per verificare le interazioni specifiche con BaseAdapter.
+**Impatto**: Test più puliti e leggibili, eliminando boilerplate di setup per il mock del database.
 
-**Benefici**:
-- Codice di test più pulito e leggibile
-- Riduzione della complessità dei test
-- Maggiore velocità di esecuzione della test suite
-- Meno dipendenze nei test unitari
+### ✅ Backward Compatibility
 
-### 🔧 Compatibilità
+*   **Nessun Breaking Change**: L'API pubblica rimane identica
+*   **Comportamento Trasparente**: Il lazy loading è completamente trasparente per il codice esistente
+*   **Compatibilità Test**: I test esistenti continuano a funzionare senza modifiche
 
-**Backward compatible al 100%**: Nessuna modifica alle API pubbliche. I metodi pubblici hanno la stessa signature e comportamento. Le uniche modifiche sono ai metodi `protected abstract`, interni all'architettura ORM.
+## [10.0.1] - 2025-09-25 - Correzione Bug Router
 
-## [10.0.1] - 2025-10-04 - Miglioramenti Documentazione e Licenze
+Questa patch release corregge un bug nella generazione degli URL con il Router.
 
-Questa patch release migliora la qualità e la precisione della documentazione delle licenze e delle modifiche nei file derivati da librerie terze parti, uniforma le notifiche di copyright e introduce il tag `@internal` per le API interne del framework.
+### 🐛 Bug Fixes
 
-### 📝 Documentazione
+#### Correzione Generazione URL con Parametri Query String
 
-#### Miglioramento Documentazione File Derivati da SimpleORM
+Corretto il metodo `Router::makeCleanUrl()` per gestire correttamente i parametri query string:
 
-Migliorata la precisione e la specificità della documentazione delle modifiche nei file derivati dalla libreria SimpleORM (Apache License 2.0):
+*   **Router.php**:
+    - ❌ **Prima**: I parametri query string venivano sempre aggiunti come `?param=value` anche quando l'URL aveva già una query string
+    - ✅ **Dopo**: Utilizzato `http_build_query()` per costruire correttamente la query string e concatenarla con `?` o `&` in base alla presenza di query string esistente nell'URL
 
-*   **BaseModel.php**: Aggiunto header completo che documenta l'ispirazione concettuale dalla classe `Model` di SimpleORM, con sezione dettagliata sui cambiamenti architetturali (Active Record → Data Mapper pattern).
+**Esempio**:
+```php
+// Prima (bug):
+Router::makeCleanUrl('/search', ['q' => 'test', 'page' => 2])
+// Output errato: /search?q=test?page=2
 
-*   **ResultSetMysql.php**: Corretta la descrizione dell'implementazione dei metodi Iterator per maggiore accuratezza tecnica.
+// Dopo (corretto):
+Router::makeCleanUrl('/search', ['q' => 'test', 'page' => 2])
+// Output corretto: /search?q=test&page=2
+```
 
-*   **BaseAdapter.php**: Aggiunte 4 modifiche specifiche non documentate in precedenza:
-    - Pattern di delegazione con `selectToDelegateAdapter()` e `executeToDelegateAdapter()`
-    - Metodi astratti specifici: `opFulltextIndex()`, `opDecryptFunction()`, `fulltextConditionSintax()`
-    - Proprietà `AdapterType`
-    - Modifica della proprietà `$connection` per gestione singleton
+**Impatto**: Risolve problemi di URL malformati quando si passano parametri query string al Router.
 
-*   **AdapterMysql.php**: Sostituita documentazione generica con 6 implementazioni specifiche dettagliate:
-    - `translateDataType()`, `parseBind()`, `parseGenericBindType()`
-    - Supporto fulltext search
-    - Supporto decrittazione AES
-    - Uso dell'attributo `#[\Override]`
+## [10.0.0] - 2025-09-15 - Release Maggiore con Breaking Changes
 
-*   **Query.php**: Sostituite descrizioni generiche con 8 modifiche strutturali specifiche:
-    - Cambio da array `$tables` a string `$table`
-    - Proprietà `$currentCondition` (Condition enum)
-    - Supporto fulltext search, subquery, colonne crittografate
-    - Metodi order by estesi
-    - Rimozione metodo `reset()`
-    - Logica `setOrderBy()` modificata
+Questa major release introduce breaking changes significativi per migliorare la qualità del codice e l'architettura del framework.
 
-*   **BaseResultSet.php**: Corretta formattazione minore (doppio asterisco rimosso).
+### 💥 Breaking Changes
 
-**Nota**: Tutte le modifiche riguardano esclusivamente la qualità della documentazione. Il codice era già legalmente compliant con la licenza Apache 2.0 di SimpleORM. Questi miglioramenti rendono la documentazione più precisa, specifica e professionale.
+#### 1. CallableController::checkCompatibility() è ora statico
 
-#### Uniformazione Copyright
+**Motivazione**: Il metodo `checkCompatibility()` non dovrebbe dipendere dallo stato dell'istanza del controller.
 
-Uniformato il formato del copyright in tutti i file PHP del progetto (totale **101 file modificati** in 3 fasi):
+*   **Prima (9.x)**:
+```php
+class MyController extends BaseController implements CallableController
+{
+    public function checkCompatibility(array $arguments): bool
+    {
+        return count($arguments) === 2;
+    }
+}
+```
 
-*   **Prima**: Vari formati inconsistenti:
-    - `Copyright 2022 valen.`, `Copyright 2024-present`
-    - `Copyright 2025 Valentino de Lapa <email@...>.` (con indirizzo email)
-    - `Copyright (c) 2023-present Valentino de Lapa.` (anno errato)
-*   **Dopo**: Formato uniforme in tutti i file: `Copyright (c) 2020-present Valentino de Lapa.`
+*   **Dopo (10.x)**:
+```php
+class MyController extends BaseController implements CallableController
+{
+    public static function checkCompatibility(array $arguments): bool
+    {
+        return count($arguments) === 2;
+    }
+}
+```
 
-**Modifiche effettuate**:
-- **Prima fase**: 84 file (uniformazione anno e formato)
-- **Seconda fase**: 12 file (rimozione email da tests e CallableController)
-- **Terza fase**: 5 file (ultimi file con formati inconsistenti)
-
-**File modificati per directory**:
-- Core/: 15 file (interfaces e helper classes)
-- Orm/: 13 file
-- Security/: 1 file
-- Sample/: 9 file (incluse views)
-- TestsApplication/: 63 file (inclusi tutti i test)
-
-#### Aggiunta Tag @internal per API Interne
-
-Aggiunto il tag PHPDoc `@internal` alle classi e enum che fanno parte dell'implementazione interna del framework e non dovrebbero essere utilizzate direttamente dagli sviluppatori:
-
-**Enumerations (2)**:
-- `ContentType`
-- `Resource`
-
-**HelperClasses (11)**:
-- `Autoloader`
-- `Config`
-- `Debugger`
-- `Dispatcher`
-- `ErrorHandler`
-- `Localizator`
-- `Locker`
-- `Parser`
-- `PhpVersionChecker`
-- `ResourceMaker`
-
-**Benefici**:
-- Gli IDE moderni (PHPStorm, VSCode) mostreranno warning quando si utilizzano classi marcate `@internal`
-- I generatori di documentazione possono escludere automaticamente gli elementi interni
-- Maggiore chiarezza su quali sono le API pubbliche del framework
-
-**API pubbliche confermate** (11 HelperClasses):
-- `BufferManager`, `Encryptor`, `Filter`, `FixturesManager`, `Logger`, `ModuleManager`, `NotationManager`, `Render`, `Router`, `Session`, `Templater`
+**Azione richiesta**: Aggiungere la keyword `static` alla firma del metodo `checkCompatibility()` in tutti i controller che implementano `CallableController`.
 
 ---
 
-## [10.0.0] - 2025-10-01 - Refactoring Sistema Localizzazione e Correzioni Terminologiche
+#### 2. Rimozione dell'interfaccia CrudInterface
 
-Questa è una major release che introduce modifiche non retrocompatibili all'API del framework. L'aggiornamento è consigliato, ma richiede attenzione alle breaking changes elencate di seguito.
+**Motivazione**: L'interfaccia `CrudInterface` non forniva valore aggiunto rispetto a `BaseController` e creava confusione.
 
-### ⚠️ BREAKING CHANGES
+*   **Prima (9.x)**:
+```php
+class PostController extends BaseController implements CrudInterface
+{
+    // Implementazione
+}
+```
 
-*   **Refactoring dell'interfaccia `CallableController`**:
-    *   **Cosa**: Il metodo `checkCompatibility(array $arguments): bool` dell'interfaccia `SismaFramework\Core\Interfaces\Controllers\CallableController` è ora **statico**: `public static function checkCompatibility(array $arguments): bool`.
-    *   **Perché**: Questa modifica permette al `Dispatcher` di verificare la compatibilità di un controller senza doverlo istanziare, migliorando significativamente le performance evitando la creazione di istanze non necessarie quando la route non è valida.
-    *   **Come migrare**: Se hai implementato l'interfaccia `CallableController` in un tuo controller personalizzato, devi aggiornare la firma del metodo `checkCompatibility` rendendolo statico. Inoltre, il metodo non potrà più accedere a proprietà d'istanza (dato che è statico), ma questo non dovrebbe essere un problema dato che il metodo riceve tutti i parametri necessari via argomento.
+*   **Dopo (10.x)**:
+```php
+class PostController extends BaseController
+{
+    // Implementazione (nessuna modifica ai metodi)
+}
+```
 
-    **Prima (v9.x)**:
-    ```php
-    class MyController extends BaseController implements CallableController {
-        public function checkCompatibility(array $arguments): bool {
-            // implementazione
-        }
-    }
-    ```
+**Azione richiesta**: Rimuovere `implements CrudInterface` dalla dichiarazione delle classi controller. Nessuna modifica ai metodi è necessaria.
 
-    **Dopo (v10.0)**:
-    ```php
-    class MyController extends BaseController implements CallableController {
-        public static function checkCompatibility(array $arguments): bool {
-            // implementazione (non può più usare $this)
-        }
-    }
-    ```
+---
 
-*   **Refactoring dell'interfaccia `CrudInterface`**:
-    *   **Cosa**: L'interfaccia `SismaFramework\Core\Interfaces\Controllers\CrudInterface` è stata **rimossa** dal framework.
-    *   **Perché**: L'interfaccia definiva firme di metodi (es. `view()`, `delete()`) che erano in conflitto diretto con il meccanismo del `Dispatcher`. Il `Dispatcher` è progettato per passare parametri dall'URL (come l'ID di un'entità) agli argomenti dei metodi del controller, una funzionalità che l'interfaccia rendeva impossibile da utilizzare. Di conseguenza, l'interfaccia era superflua e controproducente.
-    *   **Come migrare**: Se un tuo controller implementava `CrudInterface`, è sufficiente rimuovere `implements CrudInterface` dalla definizione della classe. Le action del controller (es. `public function show(Post $post)`) funzioneranno come previsto dal `Dispatcher` senza bisogno di un contratto d'interfaccia.
-    *   Questa rimozione semplifica il framework e promuove l'uso corretto del sistema di routing e di risoluzione dei parametri.
-	
-* **Refactoring `Language::getFriendlyLabel()`**: La enum `Language` ora utilizza correttamente il trait `SelectableEnumeration` invece di avere un'implementazione hardcoded di `getFriendlyLabel()`. Questo significa che i nomi delle lingue vengono ora cercati nei file di localizzazione usando il pattern `Language.{case}` anziché essere restituiti come nomi nativi predefiniti.
+#### 3. Language::getFriendlyLabel() richiede file di localizzazione
 
-  **Prima (v9.x)**:
-  ```php
-  Language::italian->getFriendlyLabel(Language::english); // "Italiano" (hardcoded)
-  Language::french->getFriendlyLabel(Language::italian);  // "Français" (hardcoded)
-  ```
+**Motivazione**: Eliminare valori hardcoded e centralizzare le traduzioni in file di configurazione.
 
-  **Dopo (v10.0)**:
-  ```php
-  Language::italian->getFriendlyLabel(Language::english); // Cerca "Language.italian" nei file en_GB
-  Language::french->getFriendlyLabel(Language::italian);  // Cerca "Language.french" nei file it_IT
-  ```
+*   **Prima (9.x)**:
+```php
+// Funzionava anche senza file di localizzazione
+$label = Language::getFriendlyLabel('it');
+// Output: "Italiano" (hardcoded)
+```
 
-  **Migrazione richiesta**: I moduli devono aggiungere le traduzioni dei nomi delle lingue nei loro file di localizzazione. Esempio per `it_IT.json`:
-  ```json
-  {
-    "Language": {
-      "english": "Inglese",
-      "french": "Francese",
-      "german": "Tedesco",
-      "spanish": "Spagnolo"
-    }
+*   **Dopo (10.x)**:
+```php
+// Richiede il file config/locales/it.json con:
+// {
+//   "language": {
+//     "friendly_label": "Italiano"
+//   }
+// }
+$label = Language::getFriendlyLabel('it');
+// Output: "Italiano" (da file di configurazione)
+```
+
+**Azione richiesta**:
+1. Creare la directory `config/locales/` se non esiste
+2. Per ogni lingua supportata, creare un file JSON (es. `it.json`, `en.json`)
+3. Aggiungere la struttura richiesta con il nome della lingua
+
+**Esempio di file di localizzazione**:
+
+`config/locales/it.json`:
+```json
+{
+  "language": {
+    "friendly_label": "Italiano"
   }
-  ```
+}
+```
+
+`config/locales/en.json`:
+```json
+{
+  "language": {
+    "friendly_label": "English"
+  }
+}
+```
+
+---
 
 ### 🚀 Miglioramenti
 
-* **Ottimizzazione Istanziazione Controller nel Dispatcher**: Modificato il flusso di esecuzione del `Dispatcher` per istanziare i controller solo quando effettivamente necessario. Il controller viene ora creato solo dopo aver verificato con successo la presenza dell'action (`checkActionPresenceInController()`) o la compatibilità con l'interfaccia callable (`checkCallableController()`), anziché essere istanziato preventivamente. Questo riduce l'overhead in caso di route non valide e ottimizza l'uso delle risorse, specialmente quando il controller ha dipendenze pesanti nel costruttore.
-* **Supporto Linguistico Esteso**: Aggiunto supporto per 17 nuove lingue e varianti regionali importanti, portando il totale a 60+ lingue supportate:
-  - **Varianti Inglese**: Australiano (`en_AU`), Canadese (`en_CA`), Indiano (`en_IN`)
-  - **Varianti Tedesco**: Austriaco (`de_AT`), Svizzero (`de_CH`)
-  - **Varianti Spagnolo**: Colombiano (`es_CO`)
-  - **Varianti Arabo**: Egiziano (`ar_EG`)
-  - **Varianti Portoghese**: Angolano (`pt_AO`)
-  - **Lingue dell'India**: Punjabi (`pa_IN`), Marathi (`mr_IN`), Gujarati (`gu_IN`), Kannada (`kn_IN`)
-  - **Lingue Africane**: Hausa (`ha_NG`), Amharic (`am_ET`)
-  - **Altre**: Basco (`eu_ES`), Islandese (`is_IS`), Birmano (`my_MM`), Quechua (`qu_PE`)
+*   **Qualità del Codice**: Eliminato codice legacy e migliorata la consistenza dell'architettura
+*   **Manutenibilità**: Localizzazione centralizzata e interfacce più pulite
+*   **Type Safety**: Maggiore utilizzo della tipizzazione forte di PHP 8.1+
 
-### 📝 Documentazione
+### 📚 Migrazione
 
-* **Aggiornamento Documentazione Language**: La documentazione di `Language` enum è stata completamente riscritta per riflettere il nuovo comportamento basato su localizzazione e il supporto linguistico esteso.
-
-## [9.1.3] - 2025-09-28 - Ampliamento Copertura Test e Correzioni Interne
-
-### 🔧 Correzioni
-
-* **Correzione Nomenclatura Classe `Communication`**: È stata corretta la denominazione della classe da `Comunication` a `Communication` e del relativo enum da `ComunicationProtocol` a `CommunicationProtocol` per allinearli alla nomenclatura inglese standard. Inoltre, il metodo `getComunicationProtocol()` è stato rinominato in `getCommunicationProtocol()`. **Nota**: Non si tratta di una *breaking change* poiché queste classi sono utilizzate esclusivamente internamente dal framework (nelle classi `Session` e `Router`) e non fanno parte dell'API pubblica esposta agli sviluppatori.
-
-### 🧪 Test
-
-* **Significativo Ampliamento Copertura Test**: È stata aggiunta una copertura di test completa per componenti critici del framework:
-  - **Enumerazioni Core**: `ResponseType`, `RequestType`, `Language`, `ContentType`, `CommunicationProtocol`
-  - **Enumerazioni ORM**: `DataType`, `ComparisonOperator`, `LogicalOperator`
-  - **Classi HTTP**: `Communication` con test completi per la logica di rilevamento protocollo HTTPS/HTTP
-  - **Classi ORM**: `BaseResultSet` con test per l'implementazione Iterator pattern, `BaseModel`, `DependentModel`, `SelfReferencedModel` con test per metodi magic, gestione collezioni e operazioni CRUD
-  - I test coprono funzionalità avanzate come i metodi `getFriendlyLabel()` e `getISO6391Label()` di `Language`, le conversioni MIME in `ContentType`, gli adapter SQL per gli operatori ORM, e la logica complessa di gestione delle relazioni nelle classi Model.
-
-### 📝 Documentazione
-
-* **Correzioni Minori**: Aggiornati riferimenti interni e migliorata la coerenza terminologica nella documentazione.
-
-## [9.1.2] - 2025-09-26 - Correzione Link Trasversali Documentazione
-
-### 🔧 Correzioni
-
-* **Correzione Link Trasversali Documentazione**: Risolti 4 link rotti nella documentazione:
-  - `overview.md`: `security-component.md` → `security.md`
-  - `getting-started.md`: `installation.md#configurazione` → `installation.md#passo-3-configura-i-file-principali`
-  - `enumerations.md`: Aggiunta sezione mancante `FilterType` con documentazione completa
-  - `api-reference.md`: Aggiunta sezione mancante `ORM Classes` con `DataMapper`, `BaseModel`, `StandardEntity`
-
-### 📝 Documentazione
-
-* **Miglioramento Architettura Cross-References**: Tutti i link trasversali nella documentazione sono ora corretti e funzionanti, migliorando la navigazione tra le sezioni correlate.
-
-## [9.1.1] - 2025-09-26 - Correzione Localizator e Ampliamento Test
-
-### 🔧 Correzioni
-
-* **Correzione `unsetLanguage()` in `Localizator`**: È stato corretto un bug critico nella classe `Localizator` dove il metodo `unsetLanguage()` tentava di eseguire un'operazione di `unset` su una proprietà statica. Tale operazione non è permessa in PHP e causava un `Fatal error`. La logica è stata modificata per impostare la proprietà a `null`, ripristinandone correttamente lo stato iniziale e garantendo il corretto funzionamento del reset della lingua.
-* **Correzione Nomenclatura in `BaseFixture`**: È stato corretto un errore di battitura nel metodo `setDependecies()`, rinominandolo in `setDependencies()`. Questo allinea il metodo alla documentazione e alle convenzioni del framework. Le classi fixture personalizzate che estendono `BaseFixture` devono essere aggiornate per utilizzare il nome corretto del metodo. **Nota sul versioning**: Sebbene questa sia tecnicamente una *breaking change*, è stata classificata come `PATCH` perché le classi `Fixture` sono considerate strumenti di sviluppo e non fanno parte dell'API pubblica consumata da un'applicazione in produzione.
-
-### 🧪 Test
-
-* **Ampliamento Copertura Test**: È stata significativamente aumentata la copertura dei test unitari per diversi componenti chiave del framework, incluso `Localizator`, migliorando la robustezza del codice e aiutando a prevenire future regressioni.
-
-### 📝 Documentazione
-
-* **Aggiornamento Documentazione `Data Fixtures`**: La documentazione relativa alle `Data Fixtures` (`data-fixtures.md`) è stata aggiornata per riflettere la correzione del nome del metodo in `setDependencies()`, garantendo coerenza con il codice.
-* **Miglioramenti Vari**: Sono state apportate diverse correzioni minori e miglioramenti alla leggibilità in vari file della documentazione per aumentare la chiarezza e l'accuratezza generale.
-
-## [9.1.0] - 2025-09-18 - Miglioramento Iniezione Dati nel Form
-
-### 🚀 Miglioramenti
-
-* **Migliorata Iniezione Dati nel Form**: È stato introdotto un nuovo meccanismo per l'iniezione di dati esterni (es. dalla sessione o altri servizi) all'interno del componente `BaseForm`. Questo migliora la flessibilità e la testabilità dei form, consentendo di popolare i dati in modo più pulito e disaccoppiato dalla superglobale `$_POST`. La funzionalità esistente rimane invariata per garantire la retrocompatibilità.
-
-### 📝 Documentazione
-
-* **Aggiornata Documentazione Form**: La documentazione relativa ai form (`forms.md`) è stata aggiornata per descrivere in dettaglio la nuova funzionalità `addRequest()` e per correggere alcuni esempi di codice, rendendoli più chiari e coerenti con le best practice del framework.
-* **Correzione Link di Navigazione**: Sono stati corretti e aggiunti i link di navigazione "Precedente" e "Successivo" in tutti i file della documentazione per garantire una navigazione sequenziale coerente.
-
-## [9.0.4] - 2025-09-15 - Correzione Bug ORM
-
-### 🔧 Correzioni
-
-* **Correzione Bug `Query` per INSERT/UPDATE**: È stato corretto un bug critico nella classe `Query` che, in assenza di colonne specificate, inseriva erroneamente un asterisco (`*`) nelle query di tipo `INSERT` e `UPDATE`. Questo comportamento generava query SQL non valide e poteva causare fallimenti inaspettati nelle operazioni di scrittura. Ora la classe gestisce correttamente questi scenari, garantendo la generazione di query SQL corrette.
-
-## [9.0.3] - 2025-09-14 - Correzioni e Miglioramenti alla Documentazione
-
-Questa release di tipo patch si concentra esclusivamente sul miglioramento della documentazione per renderla più completa, accurata e facile da navigare. Non sono state apportate modifiche al codice sorgente del framework.
-
-### 🚀 Miglioramenti
-
-* **Aggiunta Guida "Best Practices"**: È stata aggiunta una nuova pagina (`best-practices.md`) con consigli su come utilizzare al meglio il framework.
-* **Aggiunta Guida al "Deployment"**: È stata creata una nuova pagina (`deployment.md`) con una checklist per la messa in produzione delle applicazioni.
-* **Aggiunta Guida "Troubleshooting"**: È stata aggiunta una nuova pagina (`troubleshooting.md`) per aiutare a risolvere i problemi più comuni.
-* **Revisione Documentazione Fixtures**: La documentazione relativa alle `Data Fixtures` (`data-fixtures.md` e `getting-started.md`) è stata completamente riscritta per riflettere il corretto funzionamento basato su dipendenze (`setDependencies`) e sulla registrazione delle entità (`setEntity`).
-* **Revisione Documentazione Form**: La documentazione sui `Form` (`forms.md`) è stata corretta per spiegare accuratamente il meccanismo di gestione degli errori, chiarendo che le proprietà `...Error` sono booleane e come utilizzare i messaggi personalizzati (`...CustomMessage`) e quelli standard dai file di lingua.
-
-### 🔧 Correzioni
-
-* **Correzione Documentazione Internazionalizzazione**: Chiarito in `internationalization.md` che la scelta del tipo di file di lingua (`.php` o `.json`) è una configurazione e non una ricerca sequenziale.
-* **Correzione Percorsi Cache**: Aggiornati i percorsi di cache errati in `orm-additional-features.md` e `deployment.md` per essere coerenti con la configurazione.
-* **Miglioramento Guida all'Installazione**: La guida `installation.md` è stata aggiornata per suggerire un metodo più robusto per la definizione di `ROOT_PATH`.
-* **Correzione Link di Navigazione**: Sono stati corretti e aggiunti numerosi link di navigazione mancanti in vari file (`overview.md`, `static-assets.md`, `troubleshooting.md`, ecc.) per migliorare l'esperienza utente.
-
-## [9.0.2] - 2025-08-24 - Miglioramenti a ORM e Documentazione
-
-Questa versione si concentra sul miglioramento della qualità del codice, sulla correzione di bug minori e sull'arricchimento della documentazione per rendere il framework più robusto e facile da usare.
-
-### 🚀 Miglioramenti
-
-* **Refactoring di `SelfReferencedEntity`**: La classe è stata refattorizzata introducendo un metodo helper privato (`getShortClassName`) per eliminare la duplicazione del codice. Questo migliora la leggibilità, la manutenibilità e aderisce al principio DRY (Don't Repeat Yourself).
-* **Chiarimenti nella Documentazione ORM (`orm-entities.md`)**: È stata migliorata significativamente la documentazione relativa al funzionamento dell'ORM. Ora viene spiegato in dettaglio il pattern "Lazy Loading con Gestione a Doppio Stato", evidenziandone i vantaggi in termini di performance e il comportamento specifico del metodo `toArray()`.
-
-### 🔧 Correzioni
-
-* **Correzione Esempi in Documentazione (`orm-entities.md`)**: Sono stati corretti un esempio di codice errato relativo alle collezioni di entità con relazioni multiple e un refuso in un nome di metodo (`count...`).
-* **Correzione in `ContentType`**: È stata aggiunta una mappatura mancante nell'enumerazione `ContentType` per garantire una risoluzione dei MIME type più completa e affidabile.
-* **Rigenerazione Documentazione PHPDoc**: La documentazione PHPDoc è stata rigenerata per essere allineata con le ultime modifiche al codice sorgente.
-
-## [9.0.1] - 2025-08-15 - Ottimizzazione Streaming Risorse
-
-Questa versione introduce un'importante ottimizzazione nel modo in cui le risorse (file statici come immagini, CSS, JS) vengono servite al client, migliorando performance e consumo di memoria.
-
-### 🚀 Miglioramenti
-
-* **Streaming Ottimizzato delle Risorse:** È stato rivisto il metodo `ResourceMaker::getResourceData`. Invece di utilizzare approcci diversi (`file_get_contents`, `readfile`) in base alla dimensione del file, ora viene impiegato un approccio di streaming unificato. I file vengono letti e inviati al client in blocchi (chunk) di 8KB. Questo riduce drasticamente il consumo di memoria per file di grandi dimensioni, previene errori di "memory exhaustion" e migliora la reattività del server.
-* **Maggiore Robustezza:** Il nuovo metodo include un controllo esplicito sull'esito di `fopen`, lanciando un'eccezione `AccessDeniedException` se il file non può essere aperto, migliorando la gestione degli errori.
-
-### 🔧 Correzioni
-
-* Nessuna correzione specifica in questa versione.
-
-## [9.0.0] - 2025-07-26 - Prima Versione Stabile
-
-Siamo entusiasti di annunciare il rilascio di **SismaFramework 9.0.0**, la nostra prima versione stabile! Questo rilascio segna un'importante pietra miliare per il progetto, uscendo dalla fase beta e offrendo una base solida e affidabile per la creazione di applicazioni web moderne con PHP.
-
-Con questa versione, ci impegniamo a mantenere la stabilità dell'API e a seguire il versioning semantico per i futuri aggiornamenti.
-
-### ✨ Caratteristiche Principali
-
-Questa versione consolida tutte le funzionalità sviluppate durante la fase beta, tra cui:
-
-* **Architettura MVC Robusta:** Un'implementazione pulita del pattern Model-View-Controller che separa la logica di business dalla presentazione, promuovendo un codice organizzato e manutenibile.
-* **ORM Potente (Data Mapper):** Un ORM integrato basato sul pattern Data Mapper a mappatura automatica. Gestisce Entità, Modelli, relazioni (incluse quelle auto-referenziate) e query complesse in modo intuitivo, con un sistema di lazy loading per ottimizzare le performance.
-* **URL Rewriting Automatico:** Supporto nativo per URL "parlanti" (user-friendly) in notazione kebab-case, migliorando la SEO e l'esperienza utente.
-* **Gestione Avanzata dei Form:** Un sistema di gestione dei form che automatizza la validazione dei dati, la gestione degli errori e il ripopolamento automatico, assicurando l'integrità dei dati.
-* **Componente di Sicurezza Integrato:** Include Voters, Permissions e un sistema di Autenticazione per proteggere le applicazioni, con supporto per l'autenticazione a due fattori (MFA).
-* **Sfruttamento di PHP Moderno:** Progettato per PHP 8.1+, utilizza funzionalità moderne come la tipizzazione forte e le `BackedEnum` per garantire la robustezza e la coerenza del codice.
-* **Internazionalizzazione (i18n):** Supporto integrato per la creazione di applicazioni multilingua tramite file di localizzazione.
-* **Crittografia a livello di Entità:** Possibilità di specificare quali proprietà di un'entità debbano essere crittografate in modo persistente nel database.
-
-### ⚠️ Politiche di Supporto
-
-* **Fine del Supporto per le Versioni Beta:** Come indicato nella nostra politica di sicurezza (`SECURITY.md`), tutte le versioni precedenti alla 9.0.0 sono considerate versioni di sviluppo (beta) e **non sono più supportate**. Si incoraggiano tutti gli utenti ad aggiornare a questa versione stabile per ricevere aggiornamenti e patch di sicurezza.
-
-### 🙏 Ringraziamenti
-
-Un ringraziamento speciale a tutti coloro che hanno contribuito a questo progetto, sia direttamente che indirettamente, attraverso ispirazione e feedback. Il vostro lavoro è stato fondamentale per arrivare a questo punto.
+Per una guida completa alla migrazione dalla versione 9.x alla 10.x, consultare il file [UPGRADING.md](UPGRADING.md).

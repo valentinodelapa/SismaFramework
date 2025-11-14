@@ -29,8 +29,8 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
+use SismaFramework\Core\HelperClasses\Dispatcher\ResourceMaker;
 use SismaFramework\Core\HelperClasses\Locker;
-use SismaFramework\Core\HelperClasses\ResourceMaker;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 

@@ -35,18 +35,26 @@ enum AggregationFunction
     
     use \SismaFramework\Orm\Traits\OrmKeyword;
 
-    case count;
     case avg;
+    case count;
+    case max;
+    case min;
     case sum;
 
     public function getAdapterVersion(AdapterType $adapterType): string
     {
         return match ($this) {
+            self::avg => match ($adapterType) {
+                AdapterType::mysql => 'AVG',
+            },
             self::count => match ($adapterType) {
                 AdapterType::mysql => 'COUNT',
             },
-            self::avg => match ($adapterType) {
-                AdapterType::mysql => 'AVG',
+            self::max => match ($adapterType) {
+                AdapterType::mysql => 'MAX',
+            },
+            self::min => match ($adapterType) {
+                AdapterType::mysql => 'MIN',
             },
             self::sum => match ($adapterType) {
                 AdapterType::mysql => 'SUM',

@@ -46,6 +46,6 @@ Questo progetto si ispira a diverse eccellenti librerie e guide open source. Un 
 
 Per i dettagli completi su licenze e copyright di terze parti, si prega di consultare il file `NOTICE.md`.
 
-Ringrazio il mio amico Francesco Iezzi per aver esaminato la libreria dal punto di vista della sicurezza e aver fornito preziosi consigli in tale ambito.
+Ringrazio il mio amico Francesco per aver esaminato la libreria dal punto di vista della sicurezza e aver fornito preziosi consigli in tale ambito.
 
-Ringrazio inoltre i miei amici e colleghi per i supporto, il confronto ed i feedback forniti.
+Ringrazio inoltre i miei amici e colleghi per il supporto, il confronto ed i feedback forniti.

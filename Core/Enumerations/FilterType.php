@@ -27,6 +27,10 @@
 namespace SismaFramework\Core\Enumerations;
 
 use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\CustomTypes\SismaDate;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaTime;
 
 /**
  *
@@ -70,5 +74,27 @@ enum FilterType
     public function applyFilter(mixed $value, array $parameters, Filter $filter = new Filter()): bool
     {
         return $filter->{$this->name}($value, ...$parameters);
+    }
+
+    public static function fromPhpType(\ReflectionNamedType $reflectionNamedType): self
+    {
+        if ($reflectionNamedType->isBuiltin()) {
+            return match ($reflectionNamedType->getName()) {
+                'int' => self::isInteger,
+                'float' => self::isFloat,
+                'string' => self::isString,
+                'bool' => self::isBoolean,
+            };
+        } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
+            return self::isEntity;
+        } elseif (enum_exists($reflectionNamedType->getName())) {
+            return self::isEnumeration;
+        } elseif (is_a($reflectionNamedType->getName(), SismaDate::class, true)) {
+            return self::isDate;
+        } elseif (is_a($reflectionNamedType->getName(), SismaDateTime::class, true)) {
+            return self::isDatetime;
+        } elseif (is_a($reflectionNamedType->getName(), SismaTime::class, true)) {
+            return self::isTime;
+        }
     }
 }

@@ -131,7 +131,7 @@ class ErrorHandler
             return self::callInternalServerErrorAction($structuralController);
         }
     }
-
+		
     public static function showErrorInDevelopementEnvironment(?Config $customConfig = null): void
     {
         $config = $customConfig ?? Config::getInstance();
@@ -141,4 +141,12 @@ class ErrorHandler
             error_reporting(E_ALL & ~E_DEPRECATED);
         }
     }
+	
+    public static function handleCommandLineInterfaceNonThrowableError(): void
+    {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            echo "Error ($errno): $errstr in $errfile on line $errline" . PHP_EOL;
+            exit(1);
+        });
+	}
 }

@@ -1,17 +1,16 @@
- {
-    "name": "valentinodelapa/sismaframework",
-    "version" : "10.0.3",
-    "description": "PHP MVC framework with ORM",
-    "type": "library",
-    "license": "MIT",
-    "homepage": "https://www.sisma-framework.dev",
-    "authors": [
-        {
-            "name": "Valentino de Lapa",
-            "role": "Developer"
-        }
-    ],
-    "require": {
-        "php": ">=8.1.0"
+{
+  "name": "valentinodelapa/sismaframework",
+  "version": "10.0.6",
+  "description": "PHP MVC framework with ORM",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Valentino de Lapa",
+      "role": "Developer"
     }
+  ],
+  "require": {
+    "php": ">=8.1.0"
+  }
 }

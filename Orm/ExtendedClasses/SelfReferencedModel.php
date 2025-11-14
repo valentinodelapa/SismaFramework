@@ -111,18 +111,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        foreach ($referencedEntities as $propertyName => $baseEntity) {
-            if ($baseEntity === null) {
-                $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
-            } else {
-                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
-                $bindValues[] = $baseEntity;
-                $bindTypes[] = DataType::typeEntity;
-            }
-            if ($propertyName !== array_key_last($referencedEntities)) {
-                $query->appendAnd();
-            }
-        }
+        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -171,18 +160,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        foreach ($referencedEntities as $propertyName => $baseEntity) {
-            if ($baseEntity === null) {
-                $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
-            } else {
-                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
-                $bindValues[] = $baseEntity;
-                $bindTypes[] = DataType::typeEntity;
-            }
-            if ($propertyName !== array_key_last($referencedEntities)) {
-                $query->appendAnd();
-            }
-        }
+        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -264,18 +242,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        foreach ($referencedEntities as $propertyName => $baseEntity) {
-            if ($baseEntity === null) {
-                $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
-            } else {
-                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
-                $bindValues[] = $baseEntity;
-                $bindTypes[] = DataType::typeEntity;
-            }
-            if ($propertyName !== array_key_last($referencedEntities)) {
-                $query->appendAnd();
-            }
-        }
+        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);

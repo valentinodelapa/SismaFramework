@@ -38,6 +38,7 @@
  * - Definizione come astratti dei metodi precedentemente abbozzati, la cui implementazione è demandata alle classi derivate.
  * - Introduzione del pattern di delegazione con metodi selectToDelegateAdapter() e executeToDelegateAdapter().
  * - Aggiunta di metodi astratti specifici: opFulltextIndex(), opDecryptFunction(), fulltextConditionSintax().
+ * - Aggiunta gestione delle funzioni di aggregazione delle colonne delle query tramite il metodo opAggregationFunction().
  * - Introduzione della proprietà AdapterType per identificare il tipo di adapter.
  * - Modifica della proprietà $connection da protected a static protected per gestione singleton della connessione.
  */
@@ -248,6 +249,20 @@ abstract class BaseAdapter
         return AggregationFunction::count->getAdapterVersion($this->adapterType) . Keyword::openBlock->getAdapterVersion($this->adapterType) . ($distinct ? Keyword::distinct->getAdapterVersion($this->adapterType) . ' ' : '') . $column . Keyword::closeBlock->getAdapterVersion($this->adapterType) . ' as _numrows';
     }
 
+    public function opAggregationFunction(AggregationFunction $aggregationFunction, string|Query $columnOrSubquery, ?string $columnAlias, bool $distinct): string
+    {
+        if ($columnOrSubquery instanceof Query) {
+            $parsedColumn = $this->opSubquery($columnOrSubquery);
+        } else {
+            $parsedColumn = $this->escapeColumn($columnOrSubquery);
+        }
+        $column = $aggregationFunction->getAdapterVersion($this->adapterType) . Keyword::openBlock->getAdapterVersion($this->adapterType) . ($distinct ? Keyword::distinct->getAdapterVersion($this->adapterType) . ' ' : '') . $parsedColumn . Keyword::closeBlock->getAdapterVersion($this->adapterType);
+        if ($columnAlias !== null) {
+            $column .= ' as ' . $this->escapeColumn($columnAlias);
+        }
+        return $column;
+    }
+
     public function opSubquery(Query $subquery, ?string $columnAlias = null): string
     {
         $column = Keyword::openBlock->getAdapterVersion($this->adapterType) . $subquery->getCommandToExecute() . Keyword::closeBlock->getAdapterVersion($this->adapterType);
@@ -268,7 +283,7 @@ abstract class BaseAdapter
                 ($distinct ? Keyword::distinct->getAdapterVersion($this->adapterType) . ' ' : '') .
                 implode(',', $select) . ' ' .
                 Keyword::from->getAdapterVersion($this->adapterType) . ' ' . $from . ' ' .
-                ((count($where) > 0) ? Condition::where->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $where) : '' ) . ' ' .
+                ((count($where) > 0) ? Condition::where->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $where) : '') . ' ' .
                 ($groupby ? Keyword::groupBy->getAdapterVersion($this->adapterType) . ' ' . implode(',', $groupby) . ' ' : '') .
                 ($groupby && $having ? Condition::having->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $having) . ' ' : '') .
                 (count($orderby) > 0 ? Keyword::orderBy->getAdapterVersion($this->adapterType) . ' ' . implode(',', $orderby) . ' ' : '') .

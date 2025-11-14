@@ -25,6 +25,7 @@ THE SOFTWARE.
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="/bootstrap.php" colors="true" cacheResult="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.4/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false" failOnWarning="true" displayDetailsOnTestsThatTriggerDeprecations="true" displayDetailsOnTestsThatTriggerErrors="true" displayDetailsOnTestsThatTriggerNotices="true" displayDetailsOnTestsThatTriggerWarnings="true" displayDetailsOnPhpunitDeprecations="true">
     <testsuites>
         <testsuite name="Application Test Suite">
+            <directory suffix="Test.php">./Console</directory>
             <directory suffix="Test.php">./Core</directory>
             <directory suffix="Test.php">./Orm</directory>
             <directory suffix="Test.php">./Security</directory>
@@ -53,6 +54,7 @@ THE SOFTWARE.
     <source>
         <include>
             <directory suffix=".php">../Autoload</directory>
+            <directory suffix=".php">../Console</directory>
             <directory suffix=".php">../Core</directory>
             <directory suffix=".php">../Orm</directory>
             <directory suffix=".php">../Security</directory>
