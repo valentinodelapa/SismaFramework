@@ -176,14 +176,133 @@ abstract class BaseModel
         ]);
     }
 
-    public function findSingleColumn(string $entityName, string $columnName, bool $isForeignKey): ?BaseEntity
+    public function findSingleColumn(string $propertyName, string $columnName, bool $isForeignKey): ?BaseEntity
     {
         $query = $this->initQuery();
         $query->setColumn($columnName . (($isForeignKey) ? 'Id' : null))
                 ->setLimit(1);
         $this->dataMapper->setOrmCacheStatus(false);
-        $result = $this->dataMapper->findFirst($entityName, $query);
+        $result = $this->dataMapper->findFirst($propertyName, $query);
         $this->dataMapper->setOrmCacheStatus($this->config->ormCache);
         return $result;
+    }
+
+    public function __call($name, $arguments): SismaCollection|int|bool
+    {
+        $nameParts = explode('By', $name);
+        $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
+        $action = array_shift($sismaCollectionParts);
+        $properties = [];
+        $propertyNames = explode('And', $nameParts[1]);
+        $this->buildPropertiesArray($propertyNames, $arguments, $properties);
+        switch ($action) {
+            case 'count':
+                return $this->countEntityCollectionByProperty($properties, ...$arguments);
+            case 'get':
+                return $this->getEntityCollectionByProperty($properties, ...$arguments);
+            case 'delete':
+                return $this->deleteEntityCollectionByProperty($properties, ...$arguments);
+            default:
+                throw new ModelException($name);
+        }
+    }
+
+    protected function buildPropertiesArray(array $propertyNames, array &$arguments, array &$properties): void
+    {
+        foreach ($propertyNames as $propertyName) {
+            $propertyName = lcfirst($propertyName);
+            $propertyValue = array_shift($arguments);
+            $reflectionProperty = new \ReflectionProperty($this->entityName, $propertyName);
+            $propertyType = $reflectionProperty->getType();
+            if (($this->isVariableOfType($propertyValue, $propertyType)) || ($propertyValue === null)) {
+                $properties[$propertyName] = $propertyValue;
+            } else {
+                throw new InvalidArgumentException($propertyName);
+            }
+        }
+    }
+
+    function isVariableOfType(mixed $propertyValue, \ReflectionNamedType $reflectionType): bool
+    {
+        $typeName = $reflectionType->getName();
+        if ($reflectionType->isBuiltin()) {
+            return match ($typeName) {
+                'bool' => is_bool($propertyValue),
+                'int' => is_int($propertyValue),
+                'float' => is_float($propertyValue),
+                'string' => is_string($propertyValue),
+                default => false,
+            };
+        } elseif (is_object($propertyValue) || enum_exists($typeName)) {
+            return $propertyValue instanceof $typeName;
+        } else {
+            return false;
+        }
+    }
+
+    public function countEntityCollectionByProperty(array $properties, ?string $searchKey = null): int
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        $this->buildPropertiesConditions($query, $properties, $bindValues, $bindTypes);
+        if ($searchKey !== null) {
+            $query->appendAnd();
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->close();
+        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
+    }
+
+    protected function buildPropertiesConditions(Query $query, array $properties, array &$bindValues, array &$bindTypes): void
+    {
+        foreach ($properties as $propertyName => $propertyValue) {
+            if ($propertyValue === null) {
+                $query->appendCondition($propertyName, ComparisonOperator::isNull, '');
+            } else {
+                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder);
+                $reflectionNamedType = new \ReflectionProperty($this->entityName, $propertyName);
+                $bindValues[] = $propertyValue;
+                $bindTypes[] = DataType::fromReflection($reflectionNamedType->getType(), $propertyValue);
+            }
+            if ($propertyName !== array_key_last($properties)) {
+                $query->appendAnd();
+            }
+        }
+    }
+
+    public function getEntityCollectionByProperty(array $properties, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        $this->buildPropertiesConditions($query, $properties, $bindValues, $bindTypes);
+        if ($searchKey !== null) {
+            $query->appendAnd();
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->setOrderBy($order);
+        if ($offset !== null) {
+            $query->setOffset($offset);
+        }
+        if ($limit != null) {
+            $query->setLimit($limit);
+        }
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+    }
+
+    public function deleteEntityCollectionByProperty(array $properties, ?string $searchKey = null): bool
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        $this->buildPropertiesConditions($query, $properties, $bindValues, $bindTypes);
+        if ($searchKey !== null) {
+            $query->appendAnd();
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->close();
+        return $this->dataMapper->deleteBatch($query, $bindValues, $bindTypes);
     }
 }
