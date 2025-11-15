@@ -39,7 +39,7 @@ return [
 ];
 ```
 
-**`MyBlog/Application/Locales/en_US.json**
+**`MyBlog/Application/Locales/en_US.json`**
 
 ```json
 {

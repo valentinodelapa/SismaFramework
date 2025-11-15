@@ -201,8 +201,8 @@ class DocsController extends BaseController
         $html = preg_replace('/^## (.*?)$/m', '<h2>$1</h2>', $html);
         $html = preg_replace('/^# (.*?)$/m', '<h1>$1</h1>', $html);
 
-        // Step 5: Horizontal rule
-        $html = preg_replace('/^[\-\*]{3,}$/m', "<hr>", $html);
+        // Step 5: Horizontal rule (supporta --- o *** o * * *)
+        $html = preg_replace('/^([\-\*])\s*\1\s*\1\s*$/m', "<hr>", $html);
 
         // Step 6: Blockquote
         $html = preg_replace(
