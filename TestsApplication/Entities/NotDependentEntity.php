@@ -41,6 +41,7 @@ class NotDependentEntity extends BaseEntity
 {
     protected int $id;
     protected string $string;
+    protected int $int;
     protected float $float;
     protected bool $bool;
     protected SampleType $sampleType;

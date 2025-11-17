@@ -45,8 +45,9 @@
 namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\ModelException;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
@@ -193,15 +194,15 @@ abstract class BaseModel
         $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
         $action = array_shift($sismaCollectionParts);
         $properties = [];
-        $propertyNames = explode('And', $nameParts[1]);
+        $propertyNames = array_map('lcfirst', explode('And', $nameParts[1]));
         $this->buildPropertiesArray($propertyNames, $arguments, $properties);
         switch ($action) {
             case 'count':
-                return $this->countEntityCollectionByProperty($properties, ...$arguments);
+                return $this->countEntityCollectionByProperties($properties, ...$arguments);
             case 'get':
-                return $this->getEntityCollectionByProperty($properties, ...$arguments);
+                return $this->getEntityCollectionByProperties($properties, ...$arguments);
             case 'delete':
-                return $this->deleteEntityCollectionByProperty($properties, ...$arguments);
+                return $this->deleteEntityCollectionByProperties($properties, ...$arguments);
             default:
                 throw new ModelException($name);
         }
@@ -210,7 +211,6 @@ abstract class BaseModel
     protected function buildPropertiesArray(array $propertyNames, array &$arguments, array &$properties): void
     {
         foreach ($propertyNames as $propertyName) {
-            $propertyName = lcfirst($propertyName);
             $propertyValue = array_shift($arguments);
             $reflectionProperty = new \ReflectionProperty($this->entityName, $propertyName);
             $propertyType = $reflectionProperty->getType();
@@ -240,7 +240,7 @@ abstract class BaseModel
         }
     }
 
-    public function countEntityCollectionByProperty(array $properties, ?string $searchKey = null): int
+    protected function countEntityCollectionByProperties(array $properties, ?string $searchKey = null): int
     {
         $query = $this->initQuery();
         $query->setWhere();
@@ -271,7 +271,7 @@ abstract class BaseModel
         }
     }
 
-    public function getEntityCollectionByProperty(array $properties, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
+    public function getEntityCollectionByProperties(array $properties, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
     {
         $query = $this->initQuery();
         $query->setWhere();
@@ -292,7 +292,7 @@ abstract class BaseModel
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
-    public function deleteEntityCollectionByProperty(array $properties, ?string $searchKey = null): bool
+    public function deleteEntityCollectionByProperties(array $properties, ?string $searchKey = null): bool
     {
         $query = $this->initQuery();
         $query->setWhere();

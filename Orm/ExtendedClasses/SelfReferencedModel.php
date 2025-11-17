@@ -42,34 +42,33 @@ use SismaFramework\Orm\ExtendedClasses\DependentModel;
  */
 abstract class SelfReferencedModel extends DependentModel
 {
-    
+
     private string $parentForeignKey;
 
-    
     public function __construct(DataMapper $dataMapper = new DataMapper(), ?Config $config = null)
     {
         parent::__construct($dataMapper, $config);
         $entityNameParts = explode("\\", $this->entityName);
-        $this->parentForeignKey = $this->config->parentPrefixPropertyName.end($entityNameParts);
+        $this->parentForeignKey = $this->config->parentPrefixPropertyName . end($entityNameParts);
     }
 
     public function __call($name, $arguments): SismaCollection|int|bool
     {
         $nameParts = explode('By', $name);
-        if (str_contains($nameParts[1], 'ParentAnd')) {
+        if (str_starts_with($nameParts[1], 'ParentAnd')) {
             $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
             $action = array_shift($sismaCollectionParts);
-            $referencedEntities = [];
+            $properties = [];
             $parentEntity = array_shift($arguments);
-            $entityNames = explode('And', $nameParts[1]);
-            $this->buildReferencedEntitiesArray(array_slice($entityNames, 1), $arguments, $referencedEntities);
+            $propertyNames = array_map('lcfirst', explode('And', $nameParts[1]));
+            $this->buildPropertiesArray(array_slice($propertyNames, 1), $arguments, $properties);
             switch ($action) {
                 case 'count':
-                    return $this->countEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, ...$arguments);
+                    return $this->countEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments);
                 case 'get':
-                    return $this->getEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, ...$arguments);
+                    return $this->getEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments);
                 case 'delete':
-                    return $this->deleteEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, ...$arguments);
+                    return $this->deleteEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments);
                 default:
                     throw new ModelException($name);
             }
@@ -111,7 +110,29 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        if ($searchKey !== null) {
+            $query->appendAnd();
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->close();
+        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
+    }
+
+    private function countEntityCollectionByParentAndProperties(array $properties, ?BaseEntity $parentEntity = null, ?string $searchKey = null): int
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        if ($parentEntity === null) {
+            $query->appendCondition($this->parentForeignKey, ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($this->parentForeignKey, ComparisonOperator::equal, Placeholder::placeholder, true);
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        $query->appendAnd();
+        $this->buildPropertyConditions($query, $properties, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -160,7 +181,36 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        if ($searchKey !== null) {
+            $query->appendAnd();
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->setOrderBy($order);
+        if ($offset !== null) {
+            $query->setOffset($offset);
+        }
+        if ($limit != null) {
+            $query->setLimit($limit);
+        }
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+    }
+
+    private function getEntityCollectionByParentAndProperties(array $properties, ?BaseEntity $parentEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        if ($parentEntity === null) {
+            $query->appendCondition($this->parentForeignKey, ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($this->parentForeignKey, ComparisonOperator::equal, Placeholder::placeholder, true);
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        $query->appendAnd();
+        $this->buildPropertyConditions($query, $properties, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -242,7 +292,29 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        if ($searchKey !== null) {
+            $query->appendAnd();
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->close();
+        return $this->dataMapper->deleteBatch($query, $bindValues, $bindTypes);
+    }
+
+    private function deleteEntityCollectionByParentAndProperties(array $properties, ?BaseEntity $parentEntity = null, ?string $searchKey = null): bool
+    {
+        $query = $this->initQuery();
+        $query->setWhere();
+        $bindValues = $bindTypes = [];
+        if ($parentEntity === null) {
+            $query->appendCondition($this->parentForeignKey, ComparisonOperator::isNull, '', true);
+        } else {
+            $query->appendCondition($this->parentForeignKey, ComparisonOperator::equal, Placeholder::placeholder, true);
+            $bindValues[] = $parentEntity;
+            $bindTypes[] = DataType::typeEntity;
+        }
+        $query->appendAnd();
+        $this->buildPropertyConditions($query, $properties, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);

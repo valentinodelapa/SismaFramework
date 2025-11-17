@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Orm\BaseClasses\BaseModel;
 use SismaFramework\Orm\CustomTypes\SismaDate;
@@ -403,6 +404,18 @@ class BaseModelTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testMagicMethodWithInvalidAction()
+    {
+        $this->expectException(ModelException::class);
+        $this->model->invalidActionByInt(1);
+    }
+
+    public function testMagicMethodWithInvalidArgument()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->model->getByString(5);
+    }
+
     public function testMagicMethodCountByBuiltinProperty()
     {
         $this->dataMapperMock->expects($this->once())
@@ -410,7 +423,7 @@ class BaseModelTest extends TestCase
                 ->willReturn($this->queryMock);
         $this->queryMock->expects($this->once())
                 ->method('setWhere');
-        $invokedCount = $this->exactly(3);
+        $invokedCount = $this->exactly(4);
         $this->queryMock->expects($invokedCount)
                 ->method('appendCondition')
                 ->willReturnCallback(function ($column, $operator, $value, $foreignKey = false) use ($invokedCount) {
@@ -422,12 +435,18 @@ class BaseModelTest extends TestCase
                             $this->assertEquals(false, $foreignKey);
                             break;
                         case 2:
-                            $this->assertEquals('float', $column);
+                            $this->assertEquals('int', $column);
                             $this->assertEquals(ComparisonOperator::equal, $operator);
                             $this->assertEquals(Placeholder::placeholder, $value);
                             $this->assertEquals(false, $foreignKey);
                             break;
                         case 3:
+                            $this->assertEquals('float', $column);
+                            $this->assertEquals(ComparisonOperator::equal, $operator);
+                            $this->assertEquals(Placeholder::placeholder, $value);
+                            $this->assertEquals(false, $foreignKey);
+                            break;
+                        case 4:
                             $this->assertEquals('bool', $column);
                             $this->assertEquals(ComparisonOperator::equal, $operator);
                             $this->assertEquals(Placeholder::placeholder, $value);
@@ -441,7 +460,7 @@ class BaseModelTest extends TestCase
         $this->dataMapperMock->expects($this->once())
                 ->method('getCount')
                 ->willReturn(2);
-        $result = $this->model->countByStringAndFloatAndBool('sample string', 1.2, false);
+        $result = $this->model->countByStringAndIntAndFloatAndBool('sample string', 5, 1.2, false);
         $this->assertEquals(2, $result);
     }
 

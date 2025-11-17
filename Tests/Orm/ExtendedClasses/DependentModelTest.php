@@ -318,6 +318,107 @@ class DependentModelTest extends TestCase
         $result = $this->model->deleteEntityCollectionByEntity($referencedEntities);
         $this->assertTrue($result);
     }
+    
+    public function testGetEntityCollectionByEntityAndBuiltinProperty()
+    {
+        $referencedEntity = $this->createMock(ReferencedSample::class);
+        $referencedEntities = [
+            'referenced_entity_with_initialization' => $referencedEntity,
+            'boolean' => true,
+            'string_with_inizialization' => 'test string'
+        ];
+        $expectedCollection = new SismaCollection(BaseSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->exactly(3))
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('setOrderBy');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('find')
+            ->willReturn($expectedCollection);
+
+        $result = $this->model->getEntityCollectionByEntity($referencedEntities);
+        $this->assertInstanceOf(SismaCollection::class, $result);
+    }
+
+    public function testCountEntityCollectionByEntityAndBuiltinPropertyWithNull()
+    {
+        $referencedEntities = [
+            'referenced_entity_with_initialization' => null,
+            'nullable_string_with_inizialization' => null
+        ];
+        $expectedCount = 4;
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('getCount')
+            ->willReturn($expectedCount);
+
+        $result = $this->model->countEntityCollectionByEntity($referencedEntities);
+        $this->assertEquals($expectedCount, $result);
+    }
+
+    public function testDeleteEntityCollectionByEntityAndBuiltinProperty()
+    {
+        $referencedEntity = $this->createMock(ReferencedSample::class);
+        $referencedEntities = [
+            'referenced_entity_with_initialization' => $referencedEntity,
+            'boolean' => false
+        ];
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('deleteBatch')
+            ->willReturn(true);
+
+        $result = $this->model->deleteEntityCollectionByEntity($referencedEntities);
+        $this->assertTrue($result);
+    }
 
     public function testGetOtherEntityCollectionByEntity()
     {

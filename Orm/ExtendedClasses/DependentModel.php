@@ -43,48 +43,12 @@ use SismaFramework\Orm\HelperClasses\Query;
 abstract class DependentModel extends BaseModel
 {
 
-    public function __call($name, $arguments): SismaCollection|int|bool
-    {
-        $nameParts = explode('By', $name);
-        $sismaCollectionParts = array_filter(preg_split('/(?=[A-Z])/', $nameParts[0]));
-        $action = array_shift($sismaCollectionParts);
-        $referencedEntities = [];
-        $entityNames = explode('And', $nameParts[1]);
-        $this->buildReferencedEntitiesArray($entityNames, $arguments, $referencedEntities);
-        switch ($action) {
-            case 'count':
-                return $this->countEntityCollectionByEntity($referencedEntities, ...$arguments);
-            case 'get':
-                return $this->getEntityCollectionByEntity($referencedEntities, ...$arguments);
-            case 'delete':
-                return $this->deleteEntityCollectionByEntity($referencedEntities, ...$arguments);
-            default:
-                throw new ModelException($name);
-        }
-    }
-
-    protected function buildReferencedEntitiesArray(array $entityNames, array &$arguments, array &$referencedEntities): void
-    {
-        foreach ($entityNames as $entityName) {
-            $entity = array_shift($arguments);
-            $reflectionProperty = new \ReflectionProperty($this->entityName, lcfirst($entityName));
-            $fullEntityName = $reflectionProperty->getType()->getName();
-            if (($entity instanceof $fullEntityName) || ($entity === null)) {
-                $entityNameParts = array_filter(preg_split('/(?=[A-Z])/', $entityName));
-                $propertyName = strtolower(implode('_', $entityNameParts));
-                $referencedEntities[$propertyName] = $entity;
-            } else {
-                throw new InvalidArgumentException($entityName);
-            }
-        }
-    }
-
     public function countEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): int
     {
         $query = $this->initQuery();
         $query->setWhere();
         $bindValues = $bindTypes = [];
-        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -93,17 +57,17 @@ abstract class DependentModel extends BaseModel
         return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
     }
 
-    protected function buildReferencedEntitiesConditions(Query $query, array $referencedEntities, array &$bindValues, array &$bindTypes): void
+    protected function buildPropertyConditions(Query $query, array $properties, array &$bindValues, array &$bindTypes): void
     {
-        foreach ($referencedEntities as $propertyName => $baseEntity) {
-            if ($baseEntity === null) {
-                $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
+        foreach ($properties as $propertyName => $propertyValue) {
+            if ($propertyValue === null) {
+                $query->appendCondition($propertyName, ComparisonOperator::isNull, '', $propertyValue instanceof ReferencedEntity);
             } else {
-                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
-                $bindValues[] = $baseEntity;
+                $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, $propertyValue instanceof ReferencedEntity);
+                $bindValues[] = $propertyValue;
                 $bindTypes[] = DataType::typeEntity;
             }
-            if ($propertyName !== array_key_last($referencedEntities)) {
+            if ($propertyName !== array_key_last($properties)) {
                 $query->appendAnd();
             }
         }
@@ -114,7 +78,7 @@ abstract class DependentModel extends BaseModel
         $query = $this->initQuery();
         $query->setWhere();
         $bindValues = $bindTypes = [];
-        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -135,7 +99,7 @@ abstract class DependentModel extends BaseModel
         $query = $this->initQuery();
         $query->setWhere();
         $bindValues = $bindTypes = [];
-        $this->buildReferencedEntitiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
