@@ -41,8 +41,9 @@ class ReferencedSampleFormFromOtherForm extends BaseForm
         return ReferencedSample::class;
     }
 
-    protected function customFilter(): void
+    protected function customFilter(): bool
     {
+        return true;
         
     }
 

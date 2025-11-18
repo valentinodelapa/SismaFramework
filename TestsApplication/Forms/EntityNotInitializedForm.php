@@ -41,8 +41,9 @@ class EntityNotInitializedForm extends BaseForm
         return 'FakeString';
     }
     
-    protected function customFilter(): void
+    protected function customFilter(): bool
     {
+        return true;
         
     }
 

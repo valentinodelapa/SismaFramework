@@ -27,6 +27,8 @@
 namespace SismaFramework\Tests\Core\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\BaseClasses\BaseForm\FilterManager;
+use SismaFramework\Core\BaseClasses\BaseForm\FormValidator;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;
@@ -48,6 +50,7 @@ use SismaFramework\TestsApplication\Forms\BaseSampleFormWithFakeEntityFromForm;
 use SismaFramework\TestsApplication\Forms\EntityNotInitializedForm;
 use SismaFramework\TestsApplication\Forms\FakeBaseSampleForm;
 use SismaFramework\TestsApplication\Forms\FakeReferencedSampleForm;
+use SismaFramework\TestsApplication\Forms\FormWithCustomFilterFalse;
 use SismaFramework\TestsApplication\Forms\IncompleteSimpleEntityFrom;
 use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
@@ -65,6 +68,8 @@ class BaseFormTest extends TestCase
     private Config $configMock;
     private DataMapper $dataMapperMock;
     private Request $requestMock;
+    private FilterManager $filterManager;
+    private FormValidator $formValidator;
 
     #[\Override]
     public function setUp(): void
@@ -98,6 +103,8 @@ class BaseFormTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
+        $this->filterManager = new FilterManager();
+        $this->formValidator = new FormValidator($this->dataMapperMock, $this->filterManager, $this->configMock);
         $this->requestMock = $this->getMockBuilder(Request::class)
                 ->disableOriginalConstructor()
                 ->getMock();
@@ -107,10 +114,10 @@ class BaseFormTest extends TestCase
     public function testAddEntityFromFormWithException()
     {
         $this->expectException(FormException::class);
-        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->configMock);
+        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->filterManager, $this->formValidator);
         $baseSampleFormWithFakeEntityFromForm->handleRequest($this->requestMock);
     }
-    
+
     public function testAddRequest()
     {
         $simpleEntityWithInjectRequestForm = new SimpleEntityWithInjectRequestForm();
@@ -122,7 +129,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForBaseEntityNotSubmitted()
     {
-        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->configMock);
+        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->filterManager, $this->formValidator);
         $baseSampleForm->handleRequest($this->requestMock);
         $this->assertFalse($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());
@@ -523,5 +530,20 @@ class BaseFormTest extends TestCase
         $this->assertEquals('base sample', $baseSampleResult->stringWithoutInizialization);
         $this->assertInstanceOf(ReferencedSample::class, $baseSampleResult->referencedEntityWithoutInitialization);
         $this->assertEquals('referenced sample', $baseSampleResult->referencedEntityWithoutInitialization->text);
+    }
+
+    public function testWithCustomFilterFalse()
+    {
+        $formWithCustomFilterFalse = new FormWithCustomFilterFalse();
+        $this->requestMock->input = [
+            'stringWithoutInizialization' => 'base sample',
+            'referencedEntityWithoutInitialization' => [
+                'text' => 'referenced sample',
+            ],
+            'submitted' => 'on'
+        ];
+        $formWithCustomFilterFalse->handleRequest($this->requestMock);
+        $this->assertTrue($formWithCustomFilterFalse->isSubmitted());
+        $this->assertFalse($formWithCustomFilterFalse->isValid());
     }
 }
