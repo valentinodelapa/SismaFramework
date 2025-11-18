@@ -9076,6 +9076,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html#method_testCollectionPropertyIsSettedWithAddEntityOnCollection"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003AtestAddEntityCollection\u0028\u0029",
+            "name": "testAddEntityCollection",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-ReferencedEntityTest.html#method_testAddEntityCollection"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\ReferencedEntityTest\u003A\u003A\u0024dataMapperMock",
             "name": "dataMapperMock",
             "summary": "",

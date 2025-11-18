@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 
 
+## [10.0.7] - 2025-11-17 - Correzione Bug SismaCollection
+
+Questa patch release corregge un bug critico nella gestione delle entità persistenti all'interno delle SismaCollection.
+
+### 🐛 Bug Fixes
+
+#### Correzione Inserimento Entità Persistenti in SismaCollection
+
+Corretto un bug nel metodo `addOrUpdateIntoEntityCollection()` della classe `ReferencedEntity` che causava errori durante l'inserimento in una SismaCollection di entità già persistenti dopo entità non ancora salvate:
+
+*   **ReferencedEntity.php**:
+    - ❌ **Prima**: Il confronto `$includedEntity->id === $entity->id` falliva quando `$includedEntity->id` era `null` (entità non ancora persistita)
+    - ✅ **Dopo**: Aggiunto controllo `isset($includedEntity->id)` prima del confronto per evitare confronti con valori `null`
+    - Codice corretto (linea 209):
+    ```php
+    // Prima (bug):
+    if (isset($entity->id) && ($includedEntity->id === $entity->id)) {
+        $includedEntity = $entity;
+        $found = true;
+    }
+    
+    // Dopo (corretto):
+    if (isset($entity->id) && isset($includedEntity->id) && ($includedEntity->id === $entity->id)) {
+        $includedEntity = $entity;
+        $found = true;
+    }
+    ```
+
+**Scenario del bug**:
+1. Una SismaCollection contiene un'entità non ancora salvata (con `id = null`)
+2. Si tenta di aggiungere un'entità già persistente (con `id` valorizzato)
+3. Il confronto `null === 123` falliva, ma il controllo `isset()` mancava per `$includedEntity->id`
+4. Questo poteva causare comportamenti imprevisti nell'aggiornamento della collection
+
+**Impatto**: Risolve problemi di inconsistenza nelle SismaCollection quando si mescolano entità persistite e non persistite.
+
+### 🧪 Testing
+
+*   **ReferencedEntityTest.php**: Aggiunto test specifico per verificare il corretto inserimento di entità persistenti dopo entità non persistite
+
 ## [10.0.6] - 2025-11-07 - Refactoring Filter e Documentazione Migrazione
 
 Questa patch release migliora la qualità del codice della classe Filter attraverso l'eliminazione di duplicazioni e il riordino dei metodi secondo i principi del Clean Code. Include inoltre la documentazione per la migrazione dalla versione 9.x alla 10.x.
