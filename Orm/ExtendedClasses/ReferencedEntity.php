@@ -206,7 +206,7 @@ abstract class ReferencedEntity extends BaseEntity
         $found = false;
         $this->inizializeEntityCollection($propertyName);
         foreach ($this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] as &$includedEntity) {
-            if (isset($entity->id) && ($includedEntity->id === $entity->id)) {
+            if (isset($entity->id) && isset($includedEntity->id) && ($includedEntity->id === $entity->id)) {
                 $includedEntity = $entity;
                 $found = true;
             }
