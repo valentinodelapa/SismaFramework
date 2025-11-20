@@ -164,12 +164,22 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleReferencedEntity.php"><a href="files/sample-entities-samplereferencedentity.html"><abbr title="Sample/Entities/SampleReferencedEntity.php">SampleReferencedEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">34</span>
+    <span class="phpdocumentor-element-found-in__line">44</span>
 
     </aside>
 
-        
+            <p class="phpdocumentor-summary">Esempio di ReferencedEntity - Autore</p>
 
+
+    <section class="phpdocumentor-description"><p>Una ReferencedEntity è un'entità che può essere referenziata da altre entità.
+In questo caso, l'Autore può essere referenziato da più articoli.</p>
+<p>Benefici di ReferencedEntity:</p>
+<ul>
+<li>Cache automatica delle entità referenziate per ottimizzare le performance</li>
+<li>Accesso alle collezioni inverse (es. $author-&gt;sampleDependentEntityCollection per ottenere tutti gli articoli)</li>
+<li>Metodi magici per gestire le relazioni inverse</li>
+</ul>
+</section>
 
 
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
@@ -226,6 +236,13 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_bio">$bio</a>
+    <span>
+                        &nbsp;: string|null            </span>
+</dt>
+<dd>Biografia dell&#039;autore</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collections">$collections</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;            </span>
@@ -242,6 +259,20 @@
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>            </span>
 </dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_email">$email</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>Email dell&#039;autore (crittografata per privacy)</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_fullName">$fullName</a>
+    <span>
+                        &nbsp;: string            </span>
+</dt>
+<dd>Nome completo dell&#039;autore</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_id">$id</a>
@@ -272,6 +303,13 @@
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>            </span>
 </dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_verified">$verified</a>
+    <span>
+                        &nbsp;: bool            </span>
+</dt>
+<dd>Flag per autore verificato</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns">$encryptedColumns</a>
@@ -490,12 +528,14 @@
     <span>
                                 &nbsp;: void    </span>
 </dt>
+<dd>Definisce le proprietà da crittografare</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#method_setPropertyDefaultValue">setPropertyDefaultValue()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
+<dd>Definisce i valori di default</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_switchSettingType">switchSettingType()</a>
@@ -649,6 +689,43 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="property_bio">
+        $bio
+        <a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_bio" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleReferencedEntity.php"><a href="files/sample-entities-samplereferencedentity.html"><abbr title="Sample/Entities/SampleReferencedEntity.php">SampleReferencedEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">55</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Biografia dell&#039;autore</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">string|null</span>
+    <span class="phpdocumentor-signature__name">$bio</span>
+     = <span class="phpdocumentor-signature__default-value">null</span></code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_collections">
         $collections
         <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collections" class="headerlink"><i class="fas fa-link"></i></a>
@@ -757,6 +834,80 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="property_email">
+        $email
+        <a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_email" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleReferencedEntity.php"><a href="files/sample-entities-samplereferencedentity.html"><abbr title="Sample/Entities/SampleReferencedEntity.php">SampleReferencedEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">52</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Email dell&#039;autore (crittografata per privacy)</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$email</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_fullName">
+        $fullName
+        <a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_fullName" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleReferencedEntity.php"><a href="files/sample-entities-samplereferencedentity.html"><abbr title="Sample/Entities/SampleReferencedEntity.php">SampleReferencedEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">49</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Nome completo dell&#039;autore</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__name">$fullName</span>
+    </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_id">
         $id
         <a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_id" class="headerlink"><i class="fas fa-link"></i></a>
@@ -767,7 +918,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleReferencedEntity.php"><a href="files/sample-entities-samplereferencedentity.html"><abbr title="Sample/Entities/SampleReferencedEntity.php">SampleReferencedEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">36</span>
+    <span class="phpdocumentor-element-found-in__line">46</span>
 
     </aside>
 
@@ -922,6 +1073,43 @@
         <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a></span>
     <span class="phpdocumentor-signature__name">$processedEntitesCollection</span>
     </code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_verified">
+        $verified
+        <a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_verified" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleReferencedEntity.php"><a href="files/sample-entities-samplereferencedentity.html"><abbr title="Sample/Entities/SampleReferencedEntity.php">SampleReferencedEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">58</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Flag per autore verificato</p>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">bool</span>
+    <span class="phpdocumentor-signature__name">$verified</span>
+     = <span class="phpdocumentor-signature__default-value">false</span></code>
 
     
     
@@ -2512,11 +2700,12 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleReferencedEntity.php"><a href="files/sample-entities-samplereferencedentity.html"><abbr title="Sample/Entities/SampleReferencedEntity.php">SampleReferencedEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">38</span>
+    <span class="phpdocumentor-element-found-in__line">63</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">Definisce le proprietà da crittografare</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
                     <span class="phpdocumentor-signature__name">setEncryptedProperties</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
@@ -2557,11 +2746,12 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Entities/SampleReferencedEntity.php"><a href="files/sample-entities-samplereferencedentity.html"><abbr title="Sample/Entities/SampleReferencedEntity.php">SampleReferencedEntity.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">44</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">Definisce i valori di default</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
                     <span class="phpdocumentor-signature__name">setPropertyDefaultValue</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
@@ -3228,14 +3418,18 @@
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeys">$foreignKeys</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_modified">$modified</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_bio">$bio</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collections">$collections</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_config">$config</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper">$dataMapper</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_email">$email</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_fullName">$fullName</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_id">$id</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_initializationVectorPropertyName">$initializationVectorPropertyName</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_isActiveTransaction">$isActiveTransaction</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKeyPropertyName">$primaryKeyPropertyName</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_processedEntitesCollection">$processedEntitesCollection</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_verified">$verified</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns">$encryptedColumns</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyIndexes">$foreignKeyIndexes</a></li>
                                             </ul>

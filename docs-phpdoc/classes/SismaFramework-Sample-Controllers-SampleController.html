@@ -167,14 +167,41 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">13</span>
+    <span class="phpdocumentor-element-found-in__line">35</span>
 
     </aside>
 
-        
+            <p class="phpdocumentor-summary">Controller di esempio che mostra tutte le funzionalità del framework</p>
 
 
+    <section class="phpdocumentor-description"><p>Questo controller dimostra:</p>
+<ul>
+<li>Autowiring di servizi (Request, Authentication)</li>
+<li>Binding automatico di parametri tipizzati</li>
+<li>Entity injection dall'URL</li>
+<li>Gestione di enum nei parametri</li>
+<li>Interazione con i Model</li>
+<li>Rendering di viste con dati</li>
+</ul>
+</section>
 
+
+    <h5 class="phpdocumentor-tag-list__heading" id="tags">
+        Tags
+        <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#tags" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h5>
+    <dl class="phpdocumentor-tag-list">
+                                    <dt class="phpdocumentor-tag-list__entry">
+                    <span class="phpdocumentor-tag__name">author</span>
+                </dt>
+                <dd class="phpdocumentor-tag-list__definition">
+                                                                                
+                                                 <section class="phpdocumentor-description"><p>Valentino de Lapa</p>
+</section>
+
+                                    </dd>
+                                            </dl>
 
 
 
@@ -234,22 +261,65 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_articlesByAuthor">articlesByAuthor()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
+</dt>
+<dd>Mostra articoli di un autore - Esempio di RELAZIONI e LAZY LOADING</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_articlesByDate">articlesByDate()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
+</dt>
+<dd>Esempio con DateTime - CUSTOM TYPE PARAMETER BINDING</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_error">error()</a>
     <span>
                                 &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_filterByStatus">filterByStatus()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
+</dt>
+<dd>Filtra articoli per stato - Esempio di ENUM PARAMETER BINDING</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_index">index()</a>
     <span>
                                 &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
 </dt>
+<dd>Action base - Lista tutti gli articoli</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_notify">notify()</a>
     <span>
                                 &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
 </dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_protected">protected()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
+</dt>
+<dd>Area protetta - Esempio di AUTHENTICATION</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_search">search()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
+</dt>
+<dd>Ricerca articoli - Esempio di AUTOWIRING del Request</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_showArticle">showArticle()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a>    </span>
+</dt>
+<dd>Mostra un singolo articolo - Esempio di ENTITY INJECTION</dd>
 
     </dl>
 
@@ -358,7 +428,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">16</span>
+    <span class="phpdocumentor-element-found-in__line">37</span>
 
     </aside>
 
@@ -394,6 +464,109 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_articlesByAuthor">
+        articlesByAuthor()
+        <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_articlesByAuthor" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">106</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Mostra articoli di un autore - Esempio di RELAZIONI e LAZY LOADING</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">articlesByAuthor</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$authorId</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>URL: /sample/articles-by-author/authorId/1</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$authorId</span>
+                : <span class="phpdocumentor-signature__argument__return-type">int</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_articlesByDate">
+        articlesByDate()
+        <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_articlesByDate" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">170</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Esempio con DateTime - CUSTOM TYPE PARAMETER BINDING</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">articlesByDate</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaDateTime.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaDateTime">SismaDateTime</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$date</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>URL: /sample/articles-by-date/date/2025-01-15 14:30:00</p>
+<p>Il framework converte automaticamente la stringa in SismaDateTime</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$date</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaDateTime.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaDateTime">SismaDateTime</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_error">
         error()
         <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_error" class="headerlink"><i class="fas fa-link"></i></a>
@@ -402,7 +575,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">27</span>
+    <span class="phpdocumentor-element-found-in__line">178</span>
 
     </aside>
 
@@ -460,6 +633,59 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_filterByStatus">
+        filterByStatus()
+        <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_filterByStatus" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">90</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Filtra articoli per stato - Esempio di ENUM PARAMETER BINDING</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">filterByStatus</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Sample-Enumerations-ArticleStatus.html"><abbr title="\SismaFramework\Sample\Enumerations\ArticleStatus">ArticleStatus</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$status</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>URL: /sample/filter-by-status/status/P
+URL: /sample/filter-by-status/status/D</p>
+<p>Il framework converte automaticamente 'P' in ArticleStatus::PUBLISHED</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$status</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Sample-Enumerations-ArticleStatus.html"><abbr title="\SismaFramework\Sample\Enumerations\ArticleStatus">ArticleStatus</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_index">
         index()
         <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_index" class="headerlink"><i class="fas fa-link"></i></a>
@@ -468,11 +694,12 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">22</span>
+    <span class="phpdocumentor-element-found-in__line">48</span>
 
     </aside>
 
-    
+        <p class="phpdocumentor-summary">Action base - Lista tutti gli articoli</p>
+
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
                     <span class="phpdocumentor-signature__name">index</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
@@ -480,7 +707,9 @@
     <div class="phpdocumentor-label-line">
         </div>
     
-    
+        <section class="phpdocumentor-description"><p>URL: /sample/index</p>
+</section>
+
     
     
 
@@ -506,7 +735,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">34</span>
+    <span class="phpdocumentor-element-found-in__line">185</span>
 
     </aside>
 
@@ -544,6 +773,167 @@
     </dt>
     </dl>
             </section>
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_protected">
+        protected()
+        <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_protected" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">149</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Area protetta - Esempio di AUTHENTICATION</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">protected</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Security\Authentication">Authentication</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$auth</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>URL: /sample/protected</p>
+<p>Dimostra l'autowiring di Authentication per gestire utenti autenticati</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$auth</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Security\Authentication">Authentication</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_search">
+        search()
+        <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_search" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">131</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Ricerca articoli - Esempio di AUTOWIRING del Request</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">search</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$request</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>URL: /sample/search?q=parola+chiave</p>
+<p>Il framework inietta automaticamente l'oggetto Request</p>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$request</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_showArticle">
+        showArticle()
+        <a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_showArticle" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Sample/Controllers/SampleController.php"><a href="files/sample-controllers-samplecontroller.html"><abbr title="Sample/Controllers/SampleController.php">SampleController.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">74</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Mostra un singolo articolo - Esempio di ENTITY INJECTION</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">showArticle</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Sample-Entities-SampleBaseEntity.html"><abbr title="\SismaFramework\Sample\Entities\SampleBaseEntity">SampleBaseEntity</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$article</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Core-HttpClasses-Response.html"><abbr title="\SismaFramework\Core\HttpClasses\Response">Response</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+        <section class="phpdocumentor-description"><p>URL: /sample/show-article/article/1</p>
+<p>Il framework carica automaticamente l'entity dal database:</p>
+<ul>
+<li>Il nome del parametro nell'URL ('article') deve corrispondere al nome del parametro del metodo</li>
+<li>Il valore (1) viene usato per chiamare SampleBaseEntityModel::getEntityById(1)</li>
+<li>Il Model viene derivato automaticamente dall'Entity (Entities -&gt; Models + 'Model')</li>
+</ul>
+</section>
+
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$article</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Sample-Entities-SampleBaseEntity.html"><abbr title="\SismaFramework\Sample\Entities\SampleBaseEntity">SampleBaseEntity</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
 
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
@@ -673,9 +1063,15 @@
             <li>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method___construct">__construct()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_articlesByAuthor">articlesByAuthor()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_articlesByDate">articlesByDate()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_error">error()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_filterByStatus">filterByStatus()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_index">index()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_notify">notify()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_protected">protected()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_search">search()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Sample-Controllers-SampleController.html#method_showArticle">showArticle()</a></li>
                                     </ul>
             </li>
                     </ul>

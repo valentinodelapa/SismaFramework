@@ -2,6 +2,141 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.0.0] - 2025-11-18 - Rifattorizzazione Architetturale BaseForm con Principi SOLID
+
+Questa major release rifattorizza completamente la classe `BaseForm` applicando il Single Responsibility Principle, estraendo le responsabilità in tre classi specializzate che migliorano manutenibilità e testabilità del sistema di gestione form.
+
+La rifattorizzazione introduce **breaking changes**: il metodo astratto `customFilter()` ora ritorna `bool` invece di `void`, permettendo una gestione più coerente della validazione custom e contribuendo al risultato finale di validità del form.
+
+### 🏗️ Architettura
+
+* **Rifattorizzazione Completa BaseForm con Principi SOLID**: La classe `BaseForm` è stata completamente rifattorizzata applicando il Single Responsibility Principle, con estrazione delle responsabilità in classi dedicate:
+
+  - **`FilterManager`** (`Core/BaseClasses/BaseForm/FilterManager.php`): Gestisce la configurazione e l'applicazione dei filtri di validazione
+    - Metodo `addFilterFieldMode()`: Registra la configurazione del filtro per una proprietà
+    - Metodo `hasFilter()`: Verifica se una proprietà ha un filtro configurato
+    - Metodo `getFilterConfig()`: Recupera la configurazione completa di un filtro
+    - Metodo `applyFilter()`: Applica il filtro a un valore specifico
+    - Metodo `isNullable()`: Verifica se una proprietà accetta valori null
+    - Metodo `getAllFilteredPropertyNames()`: Ritorna l'elenco di tutte le proprietà con filtri configurati
+
+  - **`FormValidator`** (`Core/BaseClasses/BaseForm/FormValidator.php`): Responsabile della validazione completa del form
+    - Gestisce la validazione di proprietà standard, entità referenziate e collezioni
+    - Applica i filtri configurati e popola gli errori di validazione
+    - Gestisce la parsing di proprietà complesse (foreign keys, self-referenced entities, collections)
+    - Ritorna un array con `entityData` (StandardEntity validato) e `filterResult` (bool)
+    - Supporta dependency injection di `DataMapper`, `FilterManager` e `Config`
+
+  - **`EntityResolver`** (`Core/BaseClasses/BaseForm/EntityResolver.php`): Gestisce la risoluzione e il popolamento delle entità a partire dai dati validati
+    - Metodo `resolveEntity()`: Popola l'entità con i dati validati dal form
+    - Gestisce la risoluzione di entità nidificate tramite form
+    - Gestisce la risoluzione di SismaCollection con entità multiple
+    - Distingue tra proprietà semplici, entità referenziate e collezioni
+
+  **Vantaggi della rifattorizzazione**:
+  - Ogni classe ha una singola, chiara responsabilità (SRP)
+  - Codice più testabile con dipendenze iniettabili
+  - Migliore leggibilità e manutenibilità
+  - Facilita l'estensione con validatori o filtri custom
+  - Riduce la complessità della classe `BaseForm` da oltre 400 linee a circa 200
+
+* **Dependency Injection in BaseForm**: Il costruttore di `BaseForm` ora accetta le nuove classi helper come parametri opzionali:
+  ```php
+  public function __construct(
+      ?BaseEntity $baseEntity = null,
+      DataMapper $dataMapper = new DataMapper(),
+      FilterManager $filterManager = new FilterManager(),
+      ?FormValidator $formValidator = null,
+      EntityResolver $entityResolver = new EntityResolver()
+  )
+  ```
+  Questo permette di iniettare implementazioni custom per testing o estensioni.
+
+### 💥 Breaking Changes
+
+* **Modifica Firma Metodo `customFilter()`**: Il metodo astratto `customFilter()` ora ritorna `bool` invece di `void`
+
+  **Prima (10.x)**:
+  ```php
+  abstract protected function customFilter(): void;
+  ```
+
+  **Dopo (11.0.0)**:
+  ```php
+  abstract protected function customFilter(): bool;
+  ```
+
+  **Motivazione**: Il nuovo tipo di ritorno `bool` permette al metodo `customFilter()` di contribuire al risultato finale di validazione del form. Ritornando `true` se la validazione custom ha successo o `false` in caso di errori, si ottiene un'API più coerente e un flusso di validazione più chiaro.
+
+  **Impatto**: Tutte le classi che estendono `BaseForm` devono essere aggiornate per ritornare un valore booleano dal metodo `customFilter()`.
+
+  **Azione richiesta**:
+  - Aggiungere `return true;` alla fine del metodo `customFilter()` se non ci sono errori di validazione custom
+  - Ritornare `false` quando la validazione custom fallisce
+  - Esempio:
+    ```php
+    // Prima (10.x):
+    protected function customFilter(): void
+    {
+        if ($this->entity->startDate > $this->entity->endDate) {
+            $this->formFilterError->startDateError = true;
+        }
+    }
+
+    // Dopo (11.0.0):
+    protected function customFilter(): bool
+    {
+        if ($this->entity->startDate > $this->entity->endDate) {
+            $this->formFilterError->startDateError = true;
+            return false;
+        }
+        return true;
+    }
+    ```
+
+### ✨ Miglioramenti
+
+* **Messaggi di Eccezione Descrittivi in BaseForm**: Tutte le eccezioni lanciate dalla classe `BaseForm` ora includono messaggi descrittivi che spiegano chiaramente il problema:
+  - `FormException`: "Entity name returned by getEntityName() must be a subclass of BaseEntity"
+  - `InvalidArgumentException`: "BaseEntity parameter must be an instance of {EntityClassName} or null"
+
+  Questo facilita il debugging e rende più chiaro agli sviluppatori il motivo degli errori di configurazione.
+
+### 🧪 Testing
+
+* **Test Aggiornati per BaseForm**: Aggiornati tutti i test esistenti per riflettere la nuova firma del metodo `customFilter()`:
+  - `BaseFormTest.php`: Aggiornato per testare il valore di ritorno booleano
+  - Creato nuovo test `FormWithCustomFilterFalse.php` per verificare il comportamento quando `customFilter()` ritorna `false`
+  - Tutti i form di test nell'applicazione di test aggiornati con la nuova firma
+
+* **Copertura Completa Nuove Classi**: Le tre nuove classi helper (`EntityResolver`, `FilterManager`, `FormValidator`) sono completamente testate attraverso i test esistenti di `BaseForm`, garantendo che la rifattorizzazione non abbia introdotto regressioni.
+
+### 📝 Documentazione
+
+* **Classi Marcate @internal**: Le tre nuove classi helper sono marcate con l'annotazione `@internal` per indicare che fanno parte dell'implementazione interna di `BaseForm` e non dovrebbero essere utilizzate direttamente dagli sviluppatori.
+
+### 🔄 Compatibilità
+
+**Questa è una major release (11.0.0)** che introduce breaking changes. L'aggiornamento richiede modifiche al codice esistente:
+
+- ⚠️ **Richiesta modifica**: Tutte le classi che estendono `BaseForm` devono aggiornare il metodo `customFilter()` per ritornare `bool`
+- ✅ **Retrocompatibilità API**: Tutti gli altri metodi pubblici e protetti di `BaseForm` mantengono la stessa interfaccia
+- ✅ **Nessun impatto su DataMapper/ORM**: Le modifiche sono isolate al sistema di form
+
+### 📋 Checklist di Migrazione da 10.x a 11.0.0
+
+- [ ] **Form con customFilter()**
+  - [ ] Aggiungere tipo di ritorno `: bool` alla firma del metodo `customFilter()`
+  - [ ] Ritornare `true` quando la validazione custom ha successo
+  - [ ] Ritornare `false` quando la validazione custom fallisce
+  - [ ] Verificare che la logica di validazione custom sia corretta
+
+- [ ] **Testing**
+  - [ ] Eseguire tutti i test unitari
+  - [ ] Verificare che i form funzionino correttamente in tutti i flussi
+  - [ ] Testare sia casi di validazione con successo che con fallimento
+
+---
 
 ## [10.1.0] - 2025-12-02 - Strumenti CLI per Scaffolding, Installazione e Rifatorizzazione Dispatcher
 
