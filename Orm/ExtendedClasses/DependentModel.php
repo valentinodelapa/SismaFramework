@@ -43,6 +43,9 @@ use SismaFramework\Orm\HelperClasses\Query;
 abstract class DependentModel extends BaseModel
 {
 
+    /**
+     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     */
     public function countEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): int
     {
         $query = $this->initQuery();
@@ -73,6 +76,9 @@ abstract class DependentModel extends BaseModel
         }
     }
 
+    /**
+     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     */
     public function getEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
     {
         $query = $this->initQuery();
@@ -94,6 +100,9 @@ abstract class DependentModel extends BaseModel
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
+    /**
+     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     */
     public function deleteEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): bool
     {
         $query = $this->initQuery();

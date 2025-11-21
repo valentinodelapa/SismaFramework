@@ -97,6 +97,9 @@ abstract class SelfReferencedModel extends DependentModel
         return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
     }
 
+    /**
+     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     */
     public function countEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null): int
     {
         $query = $this->initQuery();
@@ -168,6 +171,9 @@ abstract class SelfReferencedModel extends DependentModel
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
+    /**
+     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     */
     public function getEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
     {
         $query = $this->initQuery();
@@ -279,6 +285,9 @@ abstract class SelfReferencedModel extends DependentModel
         return $this->dataMapper->deleteBatch($query, $bindValues, $bindTypes);
     }
 
+    /**
+     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     */
     public function deleteEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null): bool
     {
         $query = $this->initQuery();
