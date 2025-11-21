@@ -229,4 +229,15 @@ class ReferencedEntityTest extends TestCase
         $otherReferencedSampleThree->addEntityToEntityCollection('baseSampleCollection', new BaseSample());
         $this->assertTrue($otherReferencedSampleThree->collectionPropertyIsSetted('baseSampleCollection'));
     }
+    
+    public function testAddEntityCollection()
+    {
+        $baseSampleOne = new BaseSample();
+        $baseSampleTwo = new BaseSample();
+        $baseSampleTwo->id = 2;
+        $otherReferencedSample = new OtherReferencedSample();
+        $otherReferencedSample->addBaseSample($baseSampleOne);
+        $otherReferencedSample->addBaseSample($baseSampleTwo);
+        $this->assertCount(2, $otherReferencedSample->baseSampleCollection);
+    }
 }
