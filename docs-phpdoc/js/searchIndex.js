@@ -4071,6 +4071,41 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_findSingleColumn"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003A__call\u0028\u0029",
+            "name": "__call",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method___call"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AbuildPropertiesArray\u0028\u0029",
+            "name": "buildPropertiesArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_buildPropertiesArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AisVariableOfType\u0028\u0029",
+            "name": "isVariableOfType",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_isVariableOfType"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AcountEntityCollectionByProperties\u0028\u0029",
+            "name": "countEntityCollectionByProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_countEntityCollectionByProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AbuildPropertiesConditions\u0028\u0029",
+            "name": "buildPropertiesConditions",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_buildPropertiesConditions"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AgetEntityCollectionByProperties\u0028\u0029",
+            "name": "getEntityCollectionByProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_getEntityCollectionByProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AdeleteEntityCollectionByProperties\u0028\u0029",
+            "name": "deleteEntityCollectionByProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_deleteEntityCollectionByProperties"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003A\u0024dataMapper",
             "name": "dataMapper",
             "summary": "",
@@ -4771,20 +4806,15 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003A__call\u0028\u0029",
-            "name": "__call",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method___call"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AbuildReferencedEntitiesArray\u0028\u0029",
-            "name": "buildReferencedEntitiesArray",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_buildReferencedEntitiesArray"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AcountEntityCollectionByEntity\u0028\u0029",
             "name": "countEntityCollectionByEntity",
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_countEntityCollectionByEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AbuildPropertyConditions\u0028\u0029",
+            "name": "buildPropertyConditions",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_buildPropertyConditions"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AgetEntityCollectionByEntity\u0028\u0029",
             "name": "getEntityCollectionByEntity",
@@ -4961,6 +4991,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_countEntityCollectionByParentAndEntity"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AcountEntityCollectionByParentAndProperties\u0028\u0029",
+            "name": "countEntityCollectionByParentAndProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_countEntityCollectionByParentAndProperties"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AgetEntityCollectionByParent\u0028\u0029",
             "name": "getEntityCollectionByParent",
             "summary": "",
@@ -4970,6 +5005,11 @@ Search.appendIndex(
             "name": "getEntityCollectionByParentAndEntity",
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_getEntityCollectionByParentAndEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AgetEntityCollectionByParentAndProperties\u0028\u0029",
+            "name": "getEntityCollectionByParentAndProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_getEntityCollectionByParentAndProperties"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AgetOtherEntityCollectionByParent\u0028\u0029",
             "name": "getOtherEntityCollectionByParent",
@@ -4990,6 +5030,11 @@ Search.appendIndex(
             "name": "deleteEntityCollectionByParentAndEntity",
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_deleteEntityCollectionByParentAndEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AdeleteEntityCollectionByParentAndProperties\u0028\u0029",
+            "name": "deleteEntityCollectionByParentAndProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_deleteEntityCollectionByParentAndProperties"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AdeleteEntityTree\u0028\u0029",
             "name": "deleteEntityTree",
@@ -5641,9 +5686,94 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-Voters-ReferencedEntityDeletionVoter.html#method_isInstancePermitted"
         },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController",
+            "name": "DocsController",
+            "summary": "Controller\u0020per\u0020la\u0020visualizzazione\u0020della\u0020documentazione",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003Aindex\u0028\u0029",
+            "name": "index",
+            "summary": "Indice\u0020della\u0020documentazione",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#method_index"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003AdebugRegex\u0028\u0029",
+            "name": "debugRegex",
+            "summary": "Debug\u0020temporaneo\u0020per\u0020testare\u0020il\u0020regex",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#method_debugRegex"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003Aview\u0028\u0029",
+            "name": "view",
+            "summary": "Visualizza\u0020un\u0020file\u0020di\u0020documentazione",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#method_view"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003AparseMarkdown\u0028\u0029",
+            "name": "parseMarkdown",
+            "summary": "Parser\u0020Markdown\u0020migliorato",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#method_parseMarkdown"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003AparseInlineMarkdown\u0028\u0029",
+            "name": "parseInlineMarkdown",
+            "summary": "Parse\u0020inline\u0020markdown\u0020\u0028per\u0020celle\u0020di\u0020tabelle\u0029",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#method_parseInlineMarkdown"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003AextractTitle\u0028\u0029",
+            "name": "extractTitle",
+            "summary": "Estrae\u0020il\u0020titolo\u0020dal\u0020contenuto\u0020Markdown\u0020\u0028primo\u0020\u0023\u0020heading\u0029",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#method_extractTitle"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003AgetDocsStructure\u0028\u0029",
+            "name": "getDocsStructure",
+            "summary": "Estrae\u0020la\u0020struttura\u0020della\u0020documentazione\u0020da\u0020index.md",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#method_getDocsStructure"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\DocsController\u003A\u003A\u0024docsPath",
+            "name": "docsPath",
+            "summary": "",
+            "url": "classes/SismaFramework-Sample-Controllers-DocsController.html#property_docsPath"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\HomeController",
+            "name": "HomeController",
+            "summary": "Controller\u0020per\u0020la\u0020homepage\u0020e\u0020presentazione\u0020del\u0020framework",
+            "url": "classes/SismaFramework-Sample-Controllers-HomeController.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\HomeController\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Sample-Controllers-HomeController.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\HomeController\u003A\u003Aindex\u0028\u0029",
+            "name": "index",
+            "summary": "Homepage\u0020\u002D\u0020Landing\u0020page\u0020del\u0020framework",
+            "url": "classes/SismaFramework-Sample-Controllers-HomeController.html#method_index"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\HomeController\u003A\u003Afeatures\u0028\u0029",
+            "name": "features",
+            "summary": "Pagina\u0020Features\u0020dettagliate",
+            "url": "classes/SismaFramework-Sample-Controllers-HomeController.html#method_features"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\HomeController\u003A\u003Awelcome\u0028\u0029",
+            "name": "welcome",
+            "summary": "Redirect\u0020alla\u0020homepage\u0020se\u0020si\u0020accede\u0020alla\u0020root",
+            "url": "classes/SismaFramework-Sample-Controllers-HomeController.html#method_welcome"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\HomeController\u003A\u003Aprivacy\u0028\u0029",
+            "name": "privacy",
+            "summary": "Privacy\u0020Policy",
+            "url": "classes/SismaFramework-Sample-Controllers-HomeController.html#method_privacy"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\HomeController\u003A\u003Acookies\u0028\u0029",
+            "name": "cookies",
+            "summary": "Cookie\u0020Policy",
+            "url": "classes/SismaFramework-Sample-Controllers-HomeController.html#method_cookies"
+        },                {
             "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController",
             "name": "SampleController",
-            "summary": "",
+            "summary": "Controller\u0020di\u0020esempio\u0020che\u0020mostra\u0020tutte\u0020le\u0020funzionalit\u00E0\u0020del\u0020framework",
             "url": "classes/SismaFramework-Sample-Controllers-SampleController.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003A__construct\u0028\u0029",
@@ -5653,8 +5783,38 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003Aindex\u0028\u0029",
             "name": "index",
-            "summary": "",
+            "summary": "Action\u0020base\u0020\u002D\u0020Lista\u0020tutti\u0020gli\u0020articoli",
             "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_index"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003AshowArticle\u0028\u0029",
+            "name": "showArticle",
+            "summary": "Mostra\u0020un\u0020singolo\u0020articolo\u0020\u002D\u0020Esempio\u0020di\u0020ENTITY\u0020INJECTION",
+            "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_showArticle"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003AfilterByStatus\u0028\u0029",
+            "name": "filterByStatus",
+            "summary": "Filtra\u0020articoli\u0020per\u0020stato\u0020\u002D\u0020Esempio\u0020di\u0020ENUM\u0020PARAMETER\u0020BINDING",
+            "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_filterByStatus"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003AarticlesByAuthor\u0028\u0029",
+            "name": "articlesByAuthor",
+            "summary": "Mostra\u0020articoli\u0020di\u0020un\u0020autore\u0020\u002D\u0020Esempio\u0020di\u0020RELAZIONI\u0020e\u0020LAZY\u0020LOADING",
+            "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_articlesByAuthor"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003Asearch\u0028\u0029",
+            "name": "search",
+            "summary": "Ricerca\u0020articoli\u0020\u002D\u0020Esempio\u0020di\u0020AUTOWIRING\u0020del\u0020Request",
+            "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_search"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003Aprotected\u0028\u0029",
+            "name": "protected",
+            "summary": "Area\u0020protetta\u0020\u002D\u0020Esempio\u0020di\u0020AUTHENTICATION",
+            "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_protected"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003AarticlesByDate\u0028\u0029",
+            "name": "articlesByDate",
+            "summary": "Esempio\u0020con\u0020DateTime\u0020\u002D\u0020CUSTOM\u0020TYPE\u0020PARAMETER\u0020BINDING",
+            "url": "classes/SismaFramework-Sample-Controllers-SampleController.html#method_articlesByDate"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Controllers\\SampleController\u003A\u003Aerror\u0028\u0029",
             "name": "error",
@@ -5668,17 +5828,17 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity",
             "name": "SampleBaseEntity",
-            "summary": "",
+            "summary": "Esempio\u0020di\u0020Entity\u0020base\u0020con\u0020diverse\u0020tipologie\u0020di\u0020propriet\u00E0",
             "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003AsetEncryptedProperties\u0028\u0029",
             "name": "setEncryptedProperties",
-            "summary": "",
+            "summary": "Definisce\u0020quali\u0020propriet\u00E0\u0020devono\u0020essere\u0020crittografate\u0020nel\u0020database\nLe\u0020propriet\u00E0\u0020crittografate\u0020sono\u0020protette\u0020con\u0020AES\u002D256",
             "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#method_setEncryptedProperties"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
             "name": "setPropertyDefaultValue",
-            "summary": "",
+            "summary": "Definisce\u0020i\u0020valori\u0020di\u0020default\u0020per\u0020le\u0020propriet\u00E0\nQuesti\u0020valori\u0020vengono\u0020impostati\u0020quando\u0020si\u0020crea\u0020una\u0020nuova\u0020entity",
             "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#method_setPropertyDefaultValue"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003A\u0024id",
@@ -5686,9 +5846,44 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#property_id"
         },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003A\u0024title",
+            "name": "title",
+            "summary": "Titolo\u0020dell\u0027articolo",
+            "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#property_title"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003A\u0024content",
+            "name": "content",
+            "summary": "Contenuto\u0020dell\u0027articolo\u0020\u0028nullable\u0029",
+            "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#property_content"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003A\u0024rating",
+            "name": "rating",
+            "summary": "Punteggio\/rating\u0020dell\u0027articolo\u0020\u0028esempio\u0020di\u0020float\u0029",
+            "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#property_rating"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003A\u0024featured",
+            "name": "featured",
+            "summary": "Flag\u0020per\u0020articolo\u0020in\u0020evidenza",
+            "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#property_featured"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003A\u0024publishedAt",
+            "name": "publishedAt",
+            "summary": "Data\u0020di\u0020pubblicazione\u0020\u0028custom\u0020type\u0029",
+            "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#property_publishedAt"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003A\u0024status",
+            "name": "status",
+            "summary": "Stato\u0020dell\u0027articolo\u0020\u0028BackedEnum\u0029",
+            "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#property_status"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleBaseEntity\u003A\u003A\u0024internalNotes",
+            "name": "internalNotes",
+            "summary": "Note\u0020interne\u0020sensibili\u0020\u0028verranno\u0020crittografate\u0029",
+            "url": "classes/SismaFramework-Sample-Entities-SampleBaseEntity.html#property_internalNotes"
+        },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleDependentEntity",
             "name": "SampleDependentEntity",
-            "summary": "Description\u0020of\u0020SampleDependentEntity",
+            "summary": "Esempio\u0020di\u0020Entity\u0020con\u0020Relazioni\u0020\u002D\u0020Articolo\u0020con\u0020Autore",
             "url": "classes/SismaFramework-Sample-Entities-SampleDependentEntity.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleDependentEntity\u003A\u003AsetEncryptedProperties\u0028\u0029",
@@ -5706,9 +5901,34 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Sample-Entities-SampleDependentEntity.html#property_id"
         },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleDependentEntity\u003A\u003A\u0024title",
+            "name": "title",
+            "summary": "Titolo\u0020dell\u0027articolo",
+            "url": "classes/SismaFramework-Sample-Entities-SampleDependentEntity.html#property_title"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleDependentEntity\u003A\u003A\u0024content",
+            "name": "content",
+            "summary": "Contenuto\u0020dell\u0027articolo",
+            "url": "classes/SismaFramework-Sample-Entities-SampleDependentEntity.html#property_content"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleDependentEntity\u003A\u003A\u0024createdAt",
+            "name": "createdAt",
+            "summary": "Data\u0020di\u0020creazione",
+            "url": "classes/SismaFramework-Sample-Entities-SampleDependentEntity.html#property_createdAt"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleDependentEntity\u003A\u003A\u0024status",
+            "name": "status",
+            "summary": "Stato\u0020dell\u0027articolo",
+            "url": "classes/SismaFramework-Sample-Entities-SampleDependentEntity.html#property_status"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleDependentEntity\u003A\u003A\u0024views",
+            "name": "views",
+            "summary": "Numero\u0020di\u0020visualizzazioni",
+            "url": "classes/SismaFramework-Sample-Entities-SampleDependentEntity.html#property_views"
+        },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleDependentEntity\u003A\u003A\u0024sampleReferencedEntity",
             "name": "sampleReferencedEntity",
-            "summary": "",
+            "summary": "Relazione\u0020Many\u002Dto\u002DOne\u0020con\u0020l\u0027Autore",
             "url": "classes/SismaFramework-Sample-Entities-SampleDependentEntity.html#property_sampleReferencedEntity"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleMultipleDependentEntity",
@@ -5743,23 +5963,43 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleReferencedEntity",
             "name": "SampleReferencedEntity",
-            "summary": "",
+            "summary": "Esempio\u0020di\u0020ReferencedEntity\u0020\u002D\u0020Autore",
             "url": "classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleReferencedEntity\u003A\u003AsetEncryptedProperties\u0028\u0029",
             "name": "setEncryptedProperties",
-            "summary": "",
+            "summary": "Definisce\u0020le\u0020propriet\u00E0\u0020da\u0020crittografare",
             "url": "classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#method_setEncryptedProperties"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleReferencedEntity\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
             "name": "setPropertyDefaultValue",
-            "summary": "",
+            "summary": "Definisce\u0020i\u0020valori\u0020di\u0020default",
             "url": "classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#method_setPropertyDefaultValue"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleReferencedEntity\u003A\u003A\u0024id",
             "name": "id",
             "summary": "",
             "url": "classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleReferencedEntity\u003A\u003A\u0024fullName",
+            "name": "fullName",
+            "summary": "Nome\u0020completo\u0020dell\u0027autore",
+            "url": "classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_fullName"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleReferencedEntity\u003A\u003A\u0024email",
+            "name": "email",
+            "summary": "Email\u0020dell\u0027autore\u0020\u0028crittografata\u0020per\u0020privacy\u0029",
+            "url": "classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_email"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleReferencedEntity\u003A\u003A\u0024bio",
+            "name": "bio",
+            "summary": "Biografia\u0020dell\u0027autore",
+            "url": "classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_bio"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleReferencedEntity\u003A\u003A\u0024verified",
+            "name": "verified",
+            "summary": "Flag\u0020per\u0020autore\u0020verificato",
+            "url": "classes/SismaFramework-Sample-Entities-SampleReferencedEntity.html#property_verified"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Entities\\SampleSelfReferencedEntity",
             "name": "SampleSelfReferencedEntity",
@@ -5786,14 +6026,44 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Sample-Entities-SampleSelfReferencedEntity.html#property_parentSampleSelfReferencedEntity"
         },                {
+            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\ArticleStatus",
+            "name": "ArticleStatus",
+            "summary": "Enumeration\u0020che\u0020rappresenta\u0020lo\u0020stato\u0020di\u0020un\u0020articolo",
+            "url": "classes/SismaFramework-Sample-Enumerations-ArticleStatus.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\ArticleStatus\u003A\u003AgetLabel\u0028\u0029",
+            "name": "getLabel",
+            "summary": "Restituisce\u0020una\u0020label\u0020leggibile\u0020per\u0020l\u0027enum",
+            "url": "classes/SismaFramework-Sample-Enumerations-ArticleStatus.html#method_getLabel"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\ArticleStatus\u003A\u003AisPublic\u0028\u0029",
+            "name": "isPublic",
+            "summary": "Verifica\u0020se\u0020l\u0027articolo\u0020\u00E8\u0020visibile\u0020pubblicamente",
+            "url": "classes/SismaFramework-Sample-Enumerations-ArticleStatus.html#method_isPublic"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\ArticleStatus\u003A\u003ADRAFT",
+            "name": "DRAFT",
+            "summary": "",
+            "url": "classes/SismaFramework-Sample-Enumerations-ArticleStatus.html#enumcase_DRAFT"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\ArticleStatus\u003A\u003APUBLISHED",
+            "name": "PUBLISHED",
+            "summary": "",
+            "url": "classes/SismaFramework-Sample-Enumerations-ArticleStatus.html#enumcase_PUBLISHED"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Enumerations\\ArticleStatus\u003A\u003AARCHIVED",
+            "name": "ARCHIVED",
+            "summary": "",
+            "url": "classes/SismaFramework-Sample-Enumerations-ArticleStatus.html#enumcase_ARCHIVED"
+        },                {
             "fqsen": "\\SismaFramework\\Sample\\Models\\SampleBaseEntityModel",
             "name": "SampleBaseEntityModel",
-            "summary": "Description\u0020of\u0020SampleBaseEntityModel",
+            "summary": "Model\u0020per\u0020SampleBaseEntity\u0020\u002D\u0020Gestione\u0020Articoli",
             "url": "classes/SismaFramework-Sample-Models-SampleBaseEntityModel.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Models\\SampleBaseEntityModel\u003A\u003AappendSearchCondition\u0028\u0029",
             "name": "appendSearchCondition",
-            "summary": "",
+            "summary": "Implementa\u0020la\u0020logica\u0020di\u0020ricerca\u0020testuale",
             "url": "classes/SismaFramework-Sample-Models-SampleBaseEntityModel.html#method_appendSearchCondition"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Models\\SampleBaseEntityModel\u003A\u003AgetEntityName\u0028\u0029",
@@ -5801,20 +6071,75 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Sample-Models-SampleBaseEntityModel.html#method_getEntityName"
         },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleBaseEntityModel\u003A\u003AgetPublishedArticles\u0028\u0029",
+            "name": "getPublishedArticles",
+            "summary": "Esempio\u0020di\u0020metodo\u0020custom\u003A\u0020recupera\u0020solo\u0020articoli\u0020pubblicati",
+            "url": "classes/SismaFramework-Sample-Models-SampleBaseEntityModel.html#method_getPublishedArticles"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleBaseEntityModel\u003A\u003AgetFeaturedArticles\u0028\u0029",
+            "name": "getFeaturedArticles",
+            "summary": "Esempio\u003A\u0020recupera\u0020articoli\u0020in\u0020evidenza",
+            "url": "classes/SismaFramework-Sample-Models-SampleBaseEntityModel.html#method_getFeaturedArticles"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleBaseEntityModel\u003A\u003AcountByStatus\u0028\u0029",
+            "name": "countByStatus",
+            "summary": "Esempio\u003A\u0020conta\u0020articoli\u0020per\u0020stato",
+            "url": "classes/SismaFramework-Sample-Models-SampleBaseEntityModel.html#method_countByStatus"
+        },                {
             "fqsen": "\\SismaFramework\\Sample\\Models\\SampleDependentEntityModel",
             "name": "SampleDependentEntityModel",
-            "summary": "Description\u0020of\u0020SampleDependentEntityModel",
+            "summary": "Model\u0020per\u0020SampleDependentEntity\u0020\u002D\u0020Articoli\u0020con\u0020Relazioni",
             "url": "classes/SismaFramework-Sample-Models-SampleDependentEntityModel.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Models\\SampleDependentEntityModel\u003A\u003AappendSearchCondition\u0028\u0029",
             "name": "appendSearchCondition",
-            "summary": "",
+            "summary": "Implementa\u0020la\u0020ricerca\u0020testuale\u0020su\u0020titolo\u0020e\u0020contenuto",
             "url": "classes/SismaFramework-Sample-Models-SampleDependentEntityModel.html#method_appendSearchCondition"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Models\\SampleDependentEntityModel\u003A\u003AgetEntityName\u0028\u0029",
             "name": "getEntityName",
             "summary": "",
             "url": "classes/SismaFramework-Sample-Models-SampleDependentEntityModel.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleDependentEntityModel\u003A\u003AgetArticlesByAuthor\u0028\u0029",
+            "name": "getArticlesByAuthor",
+            "summary": "Esempio\u0020di\u0020metodo\u0020magico\u003A\u0020recupera\u0020tutti\u0020gli\u0020articoli\u0020di\u0020un\u0020autore",
+            "url": "classes/SismaFramework-Sample-Models-SampleDependentEntityModel.html#method_getArticlesByAuthor"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleDependentEntityModel\u003A\u003AgetPublishedArticlesByAuthor\u0028\u0029",
+            "name": "getPublishedArticlesByAuthor",
+            "summary": "Esempio\u0020avanzato\u003A\u0020recupera\u0020articoli\u0020pubblicati\u0020di\u0020un\u0020autore",
+            "url": "classes/SismaFramework-Sample-Models-SampleDependentEntityModel.html#method_getPublishedArticlesByAuthor"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleDependentEntityModel\u003A\u003AcountArticlesByAuthor\u0028\u0029",
+            "name": "countArticlesByAuthor",
+            "summary": "Esempio\u003A\u0020conta\u0020articoli\u0020di\u0020un\u0020autore",
+            "url": "classes/SismaFramework-Sample-Models-SampleDependentEntityModel.html#method_countArticlesByAuthor"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleDependentEntityModel\u003A\u003AgetMostViewedArticles\u0028\u0029",
+            "name": "getMostViewedArticles",
+            "summary": "Esempio\u003A\u0020recupera\u0020gli\u0020articoli\u0020pi\u00F9\u0020visti",
+            "url": "classes/SismaFramework-Sample-Models-SampleDependentEntityModel.html#method_getMostViewedArticles"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleReferencedEntityModel",
+            "name": "SampleReferencedEntityModel",
+            "summary": "Model\u0020per\u0020SampleReferencedEntity\u0020\u002D\u0020Gestione\u0020Autori",
+            "url": "classes/SismaFramework-Sample-Models-SampleReferencedEntityModel.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleReferencedEntityModel\u003A\u003AappendSearchCondition\u0028\u0029",
+            "name": "appendSearchCondition",
+            "summary": "Implementa\u0020la\u0020ricerca\u0020testuale\u0020su\u0020nome\u0020completo",
+            "url": "classes/SismaFramework-Sample-Models-SampleReferencedEntityModel.html#method_appendSearchCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleReferencedEntityModel\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-Sample-Models-SampleReferencedEntityModel.html#method_getEntityName"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Models\\SampleReferencedEntityModel\u003A\u003AgetVerifiedAuthors\u0028\u0029",
+            "name": "getVerifiedAuthors",
+            "summary": "Recupera\u0020solo\u0020autori\u0020verificati",
+            "url": "classes/SismaFramework-Sample-Models-SampleReferencedEntityModel.html#method_getVerifiedAuthors"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Models\\SampleSelfReferencedEntityModel",
             "name": "SampleSelfReferencedEntityModel",
@@ -9301,6 +9626,56 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testFindSingleColumnWithForeignKey"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodWithInvalidAction\u0028\u0029",
+            "name": "testMagicMethodWithInvalidAction",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodWithInvalidAction"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodWithInvalidArgument\u0028\u0029",
+            "name": "testMagicMethodWithInvalidArgument",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodWithInvalidArgument"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodCountByBuiltinProperty\u0028\u0029",
+            "name": "testMagicMethodCountByBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodCountByBuiltinProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodGetByEnumerationProperty\u0028\u0029",
+            "name": "testMagicMethodGetByEnumerationProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodGetByEnumerationProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodDeleteBySismaDateProperty\u0028\u0029",
+            "name": "testMagicMethodDeleteBySismaDateProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodDeleteBySismaDateProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodCountWithSearchKey\u0028\u0029",
+            "name": "testMagicMethodCountWithSearchKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodCountWithSearchKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodGetWithSearchKeyAndPagination\u0028\u0029",
+            "name": "testMagicMethodGetWithSearchKeyAndPagination",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodGetWithSearchKeyAndPagination"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodDeleteWithSearchKey\u0028\u0029",
+            "name": "testMagicMethodDeleteWithSearchKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodDeleteWithSearchKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodCountByMultiplePropertiesWithNull\u0028\u0029",
+            "name": "testMagicMethodCountByMultiplePropertiesWithNull",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodCountByMultiplePropertiesWithNull"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003AtestMagicMethodThrowsExceptionForNullOnNonNullableProperty\u0028\u0029",
+            "name": "testMagicMethodThrowsExceptionForNullOnNonNullableProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-BaseClasses-BaseModelTest.html#method_testMagicMethodThrowsExceptionForNullOnNonNullableProperty"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses\\BaseModelTest\u003A\u003A\u0024configMock",
             "name": "configMock",
             "summary": "",
@@ -9891,6 +10266,21 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-DependentModelTest.html#method_testDeleteEntityCollectionByEntity"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\DependentModelTest\u003A\u003AtestGetEntityCollectionByEntityAndBuiltinProperty\u0028\u0029",
+            "name": "testGetEntityCollectionByEntityAndBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-DependentModelTest.html#method_testGetEntityCollectionByEntityAndBuiltinProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\DependentModelTest\u003A\u003AtestCountEntityCollectionByEntityAndBuiltinPropertyWithNull\u0028\u0029",
+            "name": "testCountEntityCollectionByEntityAndBuiltinPropertyWithNull",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-DependentModelTest.html#method_testCountEntityCollectionByEntityAndBuiltinPropertyWithNull"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\DependentModelTest\u003A\u003AtestDeleteEntityCollectionByEntityAndBuiltinProperty\u0028\u0029",
+            "name": "testDeleteEntityCollectionByEntityAndBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-DependentModelTest.html#method_testDeleteEntityCollectionByEntityAndBuiltinProperty"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\DependentModelTest\u003A\u003AtestGetOtherEntityCollectionByEntity\u0028\u0029",
             "name": "testGetOtherEntityCollectionByEntity",
             "summary": "",
@@ -9900,6 +10290,21 @@ Search.appendIndex(
             "name": "testGetOtherEntityCollectionByEntityWithNullEntity",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-DependentModelTest.html#method_testGetOtherEntityCollectionByEntityWithNullEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\DependentModelTest\u003A\u003AtestMagicMethodCountByEntityWithSearchKey\u0028\u0029",
+            "name": "testMagicMethodCountByEntityWithSearchKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-DependentModelTest.html#method_testMagicMethodCountByEntityWithSearchKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\DependentModelTest\u003A\u003AtestMagicMethodGetByEntityWithSearchKeyAndPagination\u0028\u0029",
+            "name": "testMagicMethodGetByEntityWithSearchKeyAndPagination",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-DependentModelTest.html#method_testMagicMethodGetByEntityWithSearchKeyAndPagination"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\DependentModelTest\u003A\u003AtestMagicMethodDeleteByEntityWithSearchKey\u0028\u0029",
+            "name": "testMagicMethodDeleteByEntityWithSearchKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-DependentModelTest.html#method_testMagicMethodDeleteByEntityWithSearchKey"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\DependentModelTest\u003A\u003A\u0024configMock",
             "name": "configMock",
@@ -10125,6 +10530,61 @@ Search.appendIndex(
             "name": "testDeleteEntityTree",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testDeleteEntityTree"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestCountEntityCollectionByParentAndEntityWithBuiltinProperty\u0028\u0029",
+            "name": "testCountEntityCollectionByParentAndEntityWithBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testCountEntityCollectionByParentAndEntityWithBuiltinProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestGetEntityCollectionByParentAndEntityWithBuiltinProperty\u0028\u0029",
+            "name": "testGetEntityCollectionByParentAndEntityWithBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testGetEntityCollectionByParentAndEntityWithBuiltinProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestDeleteEntityCollectionByParentAndEntityWithBuiltinProperty\u0028\u0029",
+            "name": "testDeleteEntityCollectionByParentAndEntityWithBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testDeleteEntityCollectionByParentAndEntityWithBuiltinProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestMagicMethodCallCountByParentAndBuiltinProperty\u0028\u0029",
+            "name": "testMagicMethodCallCountByParentAndBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testMagicMethodCallCountByParentAndBuiltinProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestMagicMethodCallGetByParentAndBuiltinProperty\u0028\u0029",
+            "name": "testMagicMethodCallGetByParentAndBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testMagicMethodCallGetByParentAndBuiltinProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestMagicMethodCallDeleteByParentAndBuiltinProperty\u0028\u0029",
+            "name": "testMagicMethodCallDeleteByParentAndBuiltinProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testMagicMethodCallDeleteByParentAndBuiltinProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestMagicMethodCallCountByParentAndBuiltinPropertyWithSearchKey\u0028\u0029",
+            "name": "testMagicMethodCallCountByParentAndBuiltinPropertyWithSearchKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testMagicMethodCallCountByParentAndBuiltinPropertyWithSearchKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestMagicMethodCallGetByParentAndBuiltinPropertyWithSearchKeyAndPagination\u0028\u0029",
+            "name": "testMagicMethodCallGetByParentAndBuiltinPropertyWithSearchKeyAndPagination",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testMagicMethodCallGetByParentAndBuiltinPropertyWithSearchKeyAndPagination"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestMagicMethodCallDeleteByParentAndBuiltinPropertyWithSearchKey\u0028\u0029",
+            "name": "testMagicMethodCallDeleteByParentAndBuiltinPropertyWithSearchKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testMagicMethodCallDeleteByParentAndBuiltinPropertyWithSearchKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestMagicMethodCallCountByParentAndMultiplePropertiesWithNull\u0028\u0029",
+            "name": "testMagicMethodCallCountByParentAndMultiplePropertiesWithNull",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testMagicMethodCallCountByParentAndMultiplePropertiesWithNull"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003AtestMagicMethodCallThrowsExceptionForNullOnNonNullableProperty\u0028\u0029",
+            "name": "testMagicMethodCallThrowsExceptionForNullOnNonNullableProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-ExtendedClasses-SelfReferencedModelTest.html#method_testMagicMethodCallThrowsExceptionForNullOnNonNullableProperty"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ExtendedClasses\\SelfReferencedModelTest\u003A\u003A\u0024configMock",
             "name": "configMock",
@@ -11326,6 +11786,76 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-TestsApplication-Entities-MultiFactorRecovery.html#method_setPropertyDefaultValue"
         },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity",
+            "name": "NotDependentEntity",
+            "summary": "Description\u0020of\u0020NotDependentEntity",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003AsetEncryptedProperties\u0028\u0029",
+            "name": "setEncryptedProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#method_setEncryptedProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
+            "name": "setPropertyDefaultValue",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#method_setPropertyDefaultValue"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024id",
+            "name": "id",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_id"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024string",
+            "name": "string",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_string"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024int",
+            "name": "int",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_int"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024float",
+            "name": "float",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_float"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024bool",
+            "name": "bool",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_bool"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024sampleType",
+            "name": "sampleType",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_sampleType"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024date",
+            "name": "date",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_date"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024datetime",
+            "name": "datetime",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_datetime"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024time",
+            "name": "time",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_time"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024nullableString",
+            "name": "nullableString",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_nullableString"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\NotDependentEntity\u003A\u003A\u0024nullableInt",
+            "name": "nullableInt",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-NotDependentEntity.html#property_nullableInt"
+        },                {
             "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\OtherBaseSample",
             "name": "OtherBaseSample",
             "summary": "",
@@ -11455,6 +11985,11 @@ Search.appendIndex(
             "name": "text",
             "summary": "",
             "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#property_text"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SelfReferencedSample\u003A\u003A\u0024nullableText",
+            "name": "nullableText",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Entities-SelfReferencedSample.html#property_nullableText"
         },                {
             "fqsen": "\\SismaFramework\\TestsApplication\\Entities\\SimpleEntity",
             "name": "SimpleEntity",
@@ -12051,6 +12586,21 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-TestsApplication-Models-BaseSampleModel.html#method_appendSearchCondition"
         },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\NotDependentEntityModel",
+            "name": "NotDependentEntityModel",
+            "summary": "Description\u0020of\u0020NotDependentEntityModel",
+            "url": "classes/SismaFramework-TestsApplication-Models-NotDependentEntityModel.html"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\NotDependentEntityModel\u003A\u003AappendSearchCondition\u0028\u0029",
+            "name": "appendSearchCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-NotDependentEntityModel.html#method_appendSearchCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\TestsApplication\\Models\\NotDependentEntityModel\u003A\u003AgetEntityName\u0028\u0029",
+            "name": "getEntityName",
+            "summary": "",
+            "url": "classes/SismaFramework-TestsApplication-Models-NotDependentEntityModel.html#method_getEntityName"
+        },                {
             "fqsen": "\\SismaFramework\\TestsApplication\\Models\\OtherRefetencedSampleModel",
             "name": "OtherRefetencedSampleModel",
             "summary": "Description\u0020of\u0020OtherRefetencedSampleModel",
@@ -12335,6 +12885,11 @@ Search.appendIndex(
             "name": "Entities",
             "summary": "",
             "url": "namespaces/sismaframework-sample-entities.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Sample\\Enumerations",
+            "name": "Enumerations",
+            "summary": "",
+            "url": "namespaces/sismaframework-sample-enumerations.html"
         },                {
             "fqsen": "\\SismaFramework\\Sample\\Models",
             "name": "Models",
