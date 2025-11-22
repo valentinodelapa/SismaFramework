@@ -38,6 +38,7 @@ class SelfReferencedSample extends SelfReferencedEntity
     protected ?SelfReferencedSample $parentSelfReferencedSample = null;
     protected ?BaseSample $baseSample = null;
     protected string $text;
+    protected ?string $nullableText = null;
 
     protected function setPropertyDefaultValue(): void
     {

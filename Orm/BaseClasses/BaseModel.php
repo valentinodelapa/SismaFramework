@@ -214,7 +214,7 @@ abstract class BaseModel
             $propertyValue = array_shift($arguments);
             $reflectionProperty = new \ReflectionProperty($this->entityName, $propertyName);
             $propertyType = $reflectionProperty->getType();
-            if (($this->isVariableOfType($propertyValue, $propertyType)) || ($propertyValue === null)) {
+            if (($propertyType->allowsNull() && ($propertyValue === null)) || ($this->isVariableOfType($propertyValue, $propertyType))) {
                 $properties[$propertyName] = $propertyValue;
             } else {
                 throw new InvalidArgumentException($propertyName);
@@ -222,7 +222,7 @@ abstract class BaseModel
         }
     }
 
-    function isVariableOfType(mixed $propertyValue, \ReflectionNamedType $reflectionType): bool
+    protected function isVariableOfType(mixed $propertyValue, \ReflectionNamedType $reflectionType): bool
     {
         $typeName = $reflectionType->getName();
         if ($reflectionType->isBuiltin()) {
@@ -233,7 +233,7 @@ abstract class BaseModel
                 'string' => is_string($propertyValue),
                 default => false,
             };
-        } elseif (is_object($propertyValue) || enum_exists($typeName)) {
+        } elseif (is_object($propertyValue)) {
             return $propertyValue instanceof $typeName;
         } else {
             return false;

@@ -697,4 +697,137 @@ class SelfReferencedModelTest extends TestCase
         $result = $this->model->deleteByParentAndText($parentEntity, 'text to delete');
         $this->assertTrue($result);
     }
+
+    public function testMagicMethodCallCountByParentAndBuiltinPropertyWithSearchKey()
+    {
+        $parentEntity = $this->createMock(SelfReferencedSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('getCount')
+            ->willReturn(7);
+
+        $result = $this->model->countByParentAndText($parentEntity, 'test text', 'searchKey');
+        $this->assertEquals(7, $result);
+    }
+
+    public function testMagicMethodCallGetByParentAndBuiltinPropertyWithSearchKeyAndPagination()
+    {
+        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $expectedCollection = new SismaCollection(SelfReferencedSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('setOrderBy')
+            ->with(['text' => 'ASC']);
+
+        $this->queryMock->expects($this->once())
+            ->method('setOffset')
+            ->with(0);
+
+        $this->queryMock->expects($this->once())
+            ->method('setLimit')
+            ->with(50);
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('find')
+            ->willReturn($expectedCollection);
+
+        $result = $this->model->getByParentAndText($parentEntity, 'test text', 'searchKey', ['text' => 'ASC'], 0, 50);
+        $this->assertInstanceOf(SismaCollection::class, $result);
+    }
+
+    public function testMagicMethodCallDeleteByParentAndBuiltinPropertyWithSearchKey()
+    {
+        $parentEntity = $this->createMock(SelfReferencedSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('deleteBatch')
+            ->willReturn(true);
+
+        $result = $this->model->deleteByParentAndText($parentEntity, 'test text', 'searchKey');
+        $this->assertTrue($result);
+    }
+
+    public function testMagicMethodCallCountByParentAndMultiplePropertiesWithNull()
+    {
+        $parentEntity = $this->createMock(SelfReferencedSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->exactly(2))
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('getCount')
+            ->willReturn(3);
+
+        // Test with null value for nullable text property
+        $result = $this->model->countByParentAndNullableText($parentEntity, null);
+        $this->assertEquals(3, $result);
+    }
+
+    public function testMagicMethodCallThrowsExceptionForNullOnNonNullableProperty()
+    {
+        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->expectException(\SismaFramework\Core\Exceptions\InvalidArgumentException::class);
+        $this->model->countByParentAndText($parentEntity, null);
+    }
 }

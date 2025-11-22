@@ -528,4 +528,121 @@ class BaseModelTest extends TestCase
         $result = $this->model->deleteByDateAndDatetimeAndTime($date, $datetime, $time);
         $this->assertTrue($result);
     }
+
+    public function testMagicMethodCountWithSearchKey()
+    {
+        $this->dataMapperMock->expects($this->once())
+                ->method('initQuery')
+                ->willReturn($this->queryMock);
+        $this->queryMock->expects($this->once())
+                ->method('setWhere');
+        $this->queryMock->expects($this->once())
+                ->method('appendCondition')
+                ->with('int', ComparisonOperator::equal, Placeholder::placeholder, false);
+        $this->queryMock->expects($this->once())
+                ->method('appendAnd');
+        $this->queryMock->expects($this->once())
+                ->method('close');
+        $this->dataMapperMock->expects($this->once())
+                ->method('getCount')
+                ->willReturn(3);
+        $result = $this->model->countByInt(5, 'search');
+        $this->assertEquals(3, $result);
+    }
+
+    public function testMagicMethodGetWithSearchKeyAndPagination()
+    {
+        $sismaCollection = new SismaCollection(NotDependentEntity::class);
+        $this->dataMapperMock->expects($this->once())
+                ->method('initQuery')
+                ->willReturn($this->queryMock);
+        $this->queryMock->expects($this->once())
+                ->method('setWhere');
+        $this->queryMock->expects($this->once())
+                ->method('appendCondition')
+                ->with('string', ComparisonOperator::equal, Placeholder::placeholder, false);
+        $this->queryMock->expects($this->once())
+                ->method('appendAnd');
+        $this->queryMock->expects($this->once())
+                ->method('setOrderBy')
+                ->with(['id' => 'ASC']);
+        $this->queryMock->expects($this->once())
+                ->method('setOffset')
+                ->with(10);
+        $this->queryMock->expects($this->once())
+                ->method('setLimit')
+                ->with(20);
+        $this->queryMock->expects($this->once())
+                ->method('close');
+        $this->dataMapperMock->expects($this->once())
+                ->method('find')
+                ->willReturn($sismaCollection);
+        $result = $this->model->getByString('test', 'search', ['id' => 'ASC'], 10, 20);
+        $this->assertEquals($sismaCollection, $result);
+    }
+
+    public function testMagicMethodDeleteWithSearchKey()
+    {
+        $this->dataMapperMock->expects($this->once())
+                ->method('initQuery')
+                ->willReturn($this->queryMock);
+        $this->queryMock->expects($this->once())
+                ->method('setWhere');
+        $this->queryMock->expects($this->once())
+                ->method('appendCondition')
+                ->with('bool', ComparisonOperator::equal, Placeholder::placeholder, false);
+        $this->queryMock->expects($this->once())
+                ->method('appendAnd');
+        $this->queryMock->expects($this->once())
+                ->method('close');
+        $this->dataMapperMock->expects($this->once())
+                ->method('deleteBatch')
+                ->willReturn(true);
+        $result = $this->model->deleteByBool(true, 'search');
+        $this->assertTrue($result);
+    }
+
+    public function testMagicMethodCountByMultiplePropertiesWithNull()
+    {
+        $this->dataMapperMock->expects($this->once())
+                ->method('initQuery')
+                ->willReturn($this->queryMock);
+        $this->queryMock->expects($this->once())
+                ->method('setWhere');
+        $invokedCount = $this->exactly(2);
+        $this->queryMock->expects($invokedCount)
+                ->method('appendCondition')
+                ->willReturnCallback(function ($column, $operator, $value, $foreignKey = false) use ($invokedCount) {
+                    switch ($invokedCount->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('nullableString', $column);
+                            $this->assertEquals(ComparisonOperator::isNull, $operator);
+                            $this->assertEquals('', $value);
+                            $this->assertEquals(false, $foreignKey);
+                            break;
+                        case 2:
+                            $this->assertEquals('int', $column);
+                            $this->assertEquals(ComparisonOperator::equal, $operator);
+                            $this->assertEquals(Placeholder::placeholder, $value);
+                            $this->assertEquals(false, $foreignKey);
+                            break;
+                    }
+                    return $this->queryMock;
+                });
+        $this->queryMock->expects($this->once())
+                ->method('appendAnd');
+        $this->queryMock->expects($this->once())
+                ->method('close');
+        $this->dataMapperMock->expects($this->once())
+                ->method('getCount')
+                ->willReturn(2);
+        $result = $this->model->countByNullableStringAndInt(null, 42);
+        $this->assertEquals(2, $result);
+    }
+
+    public function testMagicMethodThrowsExceptionForNullOnNonNullableProperty()
+    {
+        $this->expectException(\SismaFramework\Core\Exceptions\InvalidArgumentException::class);
+        $this->model->countByString(null);
+    }
 }

@@ -481,4 +481,101 @@ class DependentModelTest extends TestCase
         $result = $this->model->getOtherEntityCollectionByEntity($excludedEntity, $propertyName, $referencedEntity);
         $this->assertInstanceOf(SismaCollection::class, $result);
     }
+
+    public function testMagicMethodCountByEntityWithSearchKey()
+    {
+        $referencedEntity = $this->createMock(ReferencedSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('getCount')
+            ->willReturn(5);
+
+        $result = $this->model->countByReferencedEntityWithInitialization($referencedEntity, 'searchKey');
+        $this->assertEquals(5, $result);
+    }
+
+    public function testMagicMethodGetByEntityWithSearchKeyAndPagination()
+    {
+        $referencedEntity = $this->createMock(ReferencedSample::class);
+        $expectedCollection = new SismaCollection(BaseSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('setOrderBy')
+            ->with(['id' => 'DESC']);
+
+        $this->queryMock->expects($this->once())
+            ->method('setOffset')
+            ->with(5);
+
+        $this->queryMock->expects($this->once())
+            ->method('setLimit')
+            ->with(10);
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('find')
+            ->willReturn($expectedCollection);
+
+        $result = $this->model->getByReferencedEntityWithInitialization($referencedEntity, 'searchKey', ['id' => 'DESC'], 5, 10);
+        $this->assertInstanceOf(SismaCollection::class, $result);
+    }
+
+    public function testMagicMethodDeleteByEntityWithSearchKey()
+    {
+        $referencedEntity = $this->createMock(ReferencedSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendCondition');
+
+        $this->queryMock->expects($this->once())
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('deleteBatch')
+            ->willReturn(true);
+
+        $result = $this->model->deleteByReferencedEntityWithInitialization($referencedEntity, 'searchKey');
+        $this->assertTrue($result);
+    }
 }

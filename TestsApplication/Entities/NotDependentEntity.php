@@ -48,6 +48,8 @@ class NotDependentEntity extends BaseEntity
     protected SismaDate $date;
     protected SismaDateTime $datetime;
     protected SismaTime $time;
+    protected ?string $nullableString;
+    protected ?int $nullableInt;
 
 
     #[\Override]
