@@ -2996,6 +2996,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Router.html#method_concatenateMetaUrl"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Router\u003A\u003AsetMetaUrl\u0028\u0029",
+            "name": "setMetaUrl",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Router.html#method_setMetaUrl"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Router\u003A\u003AgetMetaUrl\u0028\u0029",
             "name": "getMetaUrl",
             "summary": "",
@@ -8845,6 +8850,16 @@ Search.appendIndex(
             "name": "testGetActualUrl",
             "summary": "",
             "url": "classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testGetActualUrl"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RouterTest\u003A\u003AtestSetMetaUrl\u0028\u0029",
+            "name": "testSetMetaUrl",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testSetMetaUrl"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RouterTest\u003A\u003AtestSetMetaUrlOverwritesPreviousValue\u0028\u0029",
+            "name": "testSetMetaUrlOverwritesPreviousValue",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Core-HelperClasses-RouterTest.html#method_testSetMetaUrlOverwritesPreviousValue"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Core\\HelperClasses\\RouterTest\u003A\u003AtestReloadWithParsedQueryString\u0028\u0029",
             "name": "testReloadWithParsedQueryString",

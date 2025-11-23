@@ -177,6 +177,8 @@ Articolata in tre aree principali (CLI Tools, Architettura, ORM), questa release
 
 ### 🔧 Miglioramenti Interni
 
+* **Router: Aggiunto metodo setMetaUrl()**: Introdotto il metodo `Router::setMetaUrl()` per permettere la sovrascrittura completa del metaUrl, completando l'API esistente che già forniva `getMetaUrl()`, `concatenateMetaUrl()` e `resetMetaUrl()`. Il nuovo metodo offre maggiore flessibilità nella gestione del routing e migliora la testabilità del componente.
+* **RouterTest**: Aggiunti due nuovi test per il metodo `setMetaUrl()`: `testSetMetaUrl()` verifica l'impostazione corretta del valore, `testSetMetaUrlOverwritesPreviousValue()` verifica la sovrascrittura completa anche di valori precedentemente concatenati
 * **Convenzione Naming Config**: Il file di configurazione del framework viene ora copiato come `configFramework.php` invece di `config.php`, permettendo ad ogni modulo di avere il proprio `config.php` senza conflitti
 * **Correzioni Documentazione**: Corretti vari typo nella documentazione esistente dello scaffolding (es. "pattend" → "pattern", "tramikte" → "tramite", "prosuppone" → "presuppone")
 * **Pulizia Formattazione**: Rimosso spazio superfluo nella generazione delle query SELECT in `BaseAdapter`
