@@ -22,6 +22,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
+ *
+ * Estende DependentModel che a sua volta estende BaseModel (ispirato a SimpleORM - vedere BaseModel.php per dettagli licenza originale).
  */
 
 namespace SismaFramework\Orm\ExtendedClasses;

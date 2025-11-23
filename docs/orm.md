@@ -141,22 +141,133 @@ $user = $userModel->getEntityById(1);
 $userPosts = $postModel->getEntityCollectionByEntity(['author' => $user]);
 ```
 
-### Metodi Magici
+### Metodi Magici (Query Dinamiche)
 
-Per semplificare ulteriormente le query basate su relazioni, puoi usare una sintassi magica.
+A partire dalla versione 10.1.0, l'ORM supporta **query dinamiche** su **tutte le proprietà** delle entità, non solo sulle relazioni. Questo sistema di metaprogrammazione genera automaticamente query type-safe basandosi sui nomi dei metodi chiamati.
+
+#### Sintassi
+
+La sintassi generale è: `get|count|delete` + `By` + `NomeProprietà` [+ `And` + `AltraProprietà`]
+
+#### Query su Proprietà Singole
+
+Puoi interrogare il database utilizzando qualsiasi proprietà dell'entità:
 
 ```php
-// Equivalente a getEntityCollectionByEntity(['author' => $user])
+// Query su entità referenziate (come prima)
 $userPosts = $postModel->getByAuthor($user);
-
-// Equivalente a countEntityCollectionByEntity(['author' => $user])
 $postCount = $postModel->countByAuthor($user);
-
-// Equivalente a deleteEntityCollectionByEntity(['author' => $user])
 $postModel->deleteByAuthor($user);
+
+// Query su tipi builtin (int, string, float, bool) - NUOVO in 10.1.0
+$activeUsers = $userModel->getByStatus('active');
+$expensiveProducts = $productModel->getByPrice(99.99);
+$publishedPosts = $postModel->getByPublished(true);
+$totalActiveUsers = $userModel->countByActive(true);
+
+// Query con enum PHP 8.1+
+$activePosts = $postModel->getByStatus(PostStatus::Published);
+$draftCount = $postModel->countByStatus(PostStatus::Draft);
+
+// Query con tipi custom (SismaDateTime, SismaDate, SismaTime)
+$todayPosts = $postModel->getByPublicationDate(new SismaDate('2025-01-15'));
+$recentPosts = $postModel->getByCreatedAt(new SismaDateTime('2025-01-01 00:00:00'));
 ```
 
-La sintassi è `get|count|delete` + `By` + `NomeProprietàInCamelCase`.
+#### Query su Proprietà Multiple con AND Logico
+
+Puoi combinare più proprietà con operatore AND:
+
+```php
+// Query con due proprietà
+$products = $productModel->getByNameAndCategory('iPhone', $electronicsCategory);
+$users = $userModel->getByStatusAndRole('active', 'admin');
+
+// Query con tre o più proprietà
+$articles = $articleModel->getByAuthorAndCategoryAndStatus($user, $category, ArticleStatus::Published);
+```
+
+#### Gestione dei Valori NULL
+
+Le query dinamiche gestiscono correttamente i valori `null` su proprietà nullable:
+
+```php
+// Trova entità con proprietà nullable = NULL
+$orphanPosts = $postModel->getByParentPost(null); // WHERE parent_post IS NULL
+
+// Trova utenti senza avatar
+$usersWithoutAvatar = $userModel->getByAvatarUrl(null); // WHERE avatar_url IS NULL
+```
+
+⚠️ **Nota:** Passare `null` a una proprietà **non-nullable** lancerà un'eccezione `InvalidArgumentException`.
+
+#### Parametri Aggiuntivi (SearchKey, Order, Paginazione)
+
+I metodi magici supportano gli stessi parametri opzionali dei metodi standard:
+
+```php
+// Sintassi completa per getBy...()
+$posts = $postModel->getByAuthor(
+    $author,                              // Valore della proprietà
+    'keyword',                            // searchKey (opzionale)
+    ['publicationDate' => 'DESC'],        // order (opzionale)
+    0,                                    // offset (opzionale)
+    20                                    // limit (opzionale)
+);
+
+// Con paginazione
+$page2Posts = $postModel->getByCategory($category, null, null, 20, 10);
+```
+
+#### Query Gerarchiche (SelfReferencedModel)
+
+Per modelli auto-referenziati, le query dinamiche supportano anche il parametro `parent`:
+
+```php
+$subCategories = $categoryModel->getByParentAndActive($parentCategory, true);
+$childCount = $categoryModel->countByParentAndStatus($parentCategory, 'active');
+```
+
+#### Type Safety e Validazione Automatica
+
+Il sistema utilizza **Reflection** per validare automaticamente i tipi:
+
+- Verifica che il valore passato corrisponda al tipo della proprietà
+- Gestisce correttamente `null` solo su proprietà nullable
+- Supporta istanze di classi (`User`, `SismaDateTime`, enum, etc.)
+- Lancia `InvalidArgumentException` in caso di tipo non valido
+
+```php
+// ✅ Corretto - tipo compatibile
+$posts = $postModel->getByViewCount(1000); // int
+
+// ❌ Errore - tipo non compatibile
+$posts = $postModel->getByViewCount('mille'); // InvalidArgumentException
+```
+
+#### Metodi Legacy Deprecati
+
+I seguenti metodi sono **deprecati dalla versione 10.1.0** e saranno rimossi nella **v11.0.0**. Utilizza invece le query dinamiche:
+
+**DependentModel:**
+- ~~`getEntityCollectionByEntity()`~~ → `getBy{PropertyName}()`
+- ~~`countEntityCollectionByEntity()`~~ → `countBy{PropertyName}()`
+- ~~`deleteEntityCollectionByEntity()`~~ → `deleteBy{PropertyName}()`
+
+**SelfReferencedModel:**
+- ~~`getEntityCollectionByParentAndEntity()`~~ → `getByParentAnd{PropertyName}()`
+- ~~`countEntityCollectionByParentAndEntity()`~~ → `countByParentAnd{PropertyName}()`
+- ~~`deleteEntityCollectionByParentAndEntity()`~~ → `deleteByParentAnd{PropertyName}()`
+
+**Esempio di migrazione:**
+
+```php
+// VECCHIO (deprecato, rimosso in v11.0.0)
+$posts = $postModel->getEntityCollectionByEntity(['author' => $user, 'category' => $category]);
+
+// NUOVO (consigliato)
+$posts = $postModel->getByAuthorAndCategory($user, $category);
+```
 
 ## Query Personalizzate
 
@@ -213,6 +324,245 @@ class PostModel extends DependentModel
         $query->close();
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
+}
+```
+
+### Funzioni di Aggregazione
+
+A partire dalla versione 10.1.0, l'ORM supporta nativamente le funzioni di aggregazione SQL (`AVG`, `MAX`, `MIN`, `SUM`) tramite la classe `Query`. Queste funzioni permettono di eseguire calcoli statistici direttamente nel database.
+
+#### Metodi Disponibili
+
+- `setAVG()` - Calcola la media di una colonna
+- `setMax()` - Trova il valore massimo
+- `setMin()` - Trova il valore minimo
+- `setSum()` - Calcola la somma totale
+
+#### Sintassi
+
+```php
+$query->setAVG(
+    string|Query $columnOrSubquery,  // Colonna o subquery da aggregare
+    ?string $columnAlias = null,      // Alias per il risultato (opzionale)
+    bool $distinct = false,           // Applica DISTINCT (opzionale)
+    bool $append = false              // Aggiungi alle colonne esistenti (opzionale)
+);
+```
+
+Gli stessi parametri si applicano a `setMax()`, `setMin()` e `setSum()`.
+
+#### Aggregazioni Semplici
+
+```php
+// Calcolare la media dei prezzi
+public function getAveragePrice(): float
+{
+    $query = $this->initQuery();
+    $query->setAVG('price', 'average_price');
+    $query->close();
+    
+    $result = $this->dataMapper->find($this->entityName, $query);
+    return $result[0]->averagePrice ?? 0.0;
+}
+
+// Trovare il prodotto più costoso
+public function getMaxPrice(): float
+{
+    $query = $this->initQuery();
+    $query->setMax('price', 'max_price');
+    $query->close();
+    
+    $result = $this->dataMapper->find($this->entityName, $query);
+    return $result[0]->maxPrice ?? 0.0;
+}
+
+// Somma totale delle vendite
+public function getTotalSales(): float
+{
+    $query = $this->initQuery();
+    $query->setSum('amount', 'total_sales');
+    $query->close();
+    
+    $result = $this->dataMapper->find($this->entityName, $query);
+    return $result[0]->totalSales ?? 0.0;
+}
+```
+
+#### Aggregazioni con DISTINCT
+
+Utilizza il parametro `$distinct` per aggregare solo valori unici:
+
+```php
+// Somma dei prezzi distinti (ignora duplicati)
+public function getSumOfDistinctPrices(): float
+{
+    $query = $this->initQuery();
+    $query->setSum('price', 'total_distinct_prices', distinct: true);
+    $query->close();
+    
+    $result = $this->dataMapper->find($this->entityName, $query);
+    return $result[0]->totalDistinctPrices ?? 0.0;
+}
+
+// Media delle valutazioni distinte
+public function getAverageDistinctRating(): float
+{
+    $query = $this->initQuery();
+    $query->setAVG('rating', 'avg_rating', distinct: true);
+    $query->close();
+    
+    $result = $this->dataMapper->find($this->entityName, $query);
+    return $result[0]->avgRating ?? 0.0;
+}
+```
+
+#### Multiple Aggregazioni con `$append`
+
+Il parametro `$append` permette di calcolare più aggregazioni nella stessa query:
+
+```php
+// Statistiche complete sui prezzi
+public function getPriceStatistics(): object
+{
+    $query = $this->initQuery();
+    
+    // Prima aggregazione (sostituisce le colonne)
+    $query->setMin('price', 'min_price');
+    
+    // Aggregazioni successive (aggiungono alle colonne)
+    $query->setMax('price', 'max_price', append: true);
+    $query->setAVG('price', 'avg_price', append: true);
+    $query->setSum('price', 'total_price', append: true);
+    
+    $query->close();
+    
+    $result = $this->dataMapper->find($this->entityName, $query);
+    return $result[0] ?? (object)[
+        'minPrice' => 0,
+        'maxPrice' => 0,
+        'avgPrice' => 0,
+        'totalPrice' => 0
+    ];
+}
+```
+
+⚠️ **Nota:** Senza `$append`, ogni chiamata sostituisce le colonne precedenti. Con `$append = true`, le aggregazioni vengono aggiunte.
+
+#### Aggregazioni con Condizioni WHERE
+
+Combina aggregazioni con filtri per calcoli condizionali:
+
+```php
+// Media dei prezzi solo per prodotti attivi
+public function getAveragePriceForActiveProducts(): float
+{
+    $query = $this->initQuery();
+    $query->setAVG('price', 'avg_active_price');
+    $query->setWhere()
+          ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+    $query->close();
+    
+    $result = $this->dataMapper->find(
+        $this->entityName, 
+        $query, 
+        [ProductStatus::Active]
+    );
+    return $result[0]->avgActivePrice ?? 0.0;
+}
+```
+
+#### Aggregazioni con GROUP BY
+
+Combina aggregazioni con raggruppamento per analisi dettagliate:
+
+```php
+// Somma vendite per categoria
+public function getSalesByCategory(): SismaCollection
+{
+    $query = $this->initQuery();
+    $query->setColumns(['category_id']);
+    $query->setSum('amount', 'total_sales', append: true);
+    $query->setGroupBy(['category_id']);
+    $query->setOrderBy(['total_sales' => 'DESC']);
+    $query->close();
+    
+    return $this->dataMapper->find($this->entityName, $query);
+}
+```
+
+#### Aggregazioni su Subquery
+
+Le funzioni di aggregazione supportano anche subquery come argomento:
+
+```php
+// Media del numero di commenti per post
+public function getAverageCommentsPerPost(): float
+{
+    // Subquery per contare commenti per post
+    $commentCountQuery = (new CommentModel($this->dataMapper))->initQuery();
+    $commentCountQuery->setColumns(['COUNT(*)'])
+                     ->setWhere()
+                     ->appendCondition('post_id', ComparisonOperator::equal, 'post.id');
+    $commentCountQuery->close();
+    
+    // Aggregazione sulla subquery
+    $query = $this->initQuery();
+    $query->setAVG($commentCountQuery, 'avg_comments');
+    $query->close();
+    
+    $result = $this->dataMapper->find($this->entityName, $query);
+    return $result[0]->avgComments ?? 0.0;
+}
+```
+
+#### Esempi Pratici Completi
+
+**Dashboard con statistiche prodotti:**
+
+```php
+public function getDashboardStats(): object
+{
+    $query = $this->initQuery();
+    
+    // Multiple aggregazioni
+    $query->setSum('quantity', 'total_quantity')
+          ->setAVG('price', 'average_price', append: true)
+          ->setMin('price', 'cheapest_price', append: true)
+          ->setMax('price', 'most_expensive_price', append: true);
+    
+    // Solo prodotti in stock
+    $query->setWhere()
+          ->appendCondition('in_stock', ComparisonOperator::equal, Placeholder::placeholder);
+    
+    $query->close();
+    
+    $result = $this->dataMapper->find($this->entityName, $query, [true]);
+    return $result[0] ?? (object)[];
+}
+```
+
+**Report vendite mensili con aggregazioni:**
+
+```php
+public function getMonthlySalesReport(): SismaCollection
+{
+    $query = $this->initQuery();
+    
+    // Seleziona anno e mese
+    $query->setColumns(['YEAR(sale_date) as year', 'MONTH(sale_date) as month']);
+    
+    // Aggregazioni multiple
+    $query->setSum('amount', 'total_sales', append: true)
+          ->setAVG('amount', 'avg_sale', append: true)
+          ->setMax('amount', 'max_sale', append: true);
+    
+    // Raggruppa per anno e mese
+    $query->setGroupBy(['YEAR(sale_date)', 'MONTH(sale_date)']);
+    $query->setOrderBy(['year' => 'DESC', 'month' => 'DESC']);
+    
+    $query->close();
+    
+    return $this->dataMapper->find($this->entityName, $query);
 }
 ```
 

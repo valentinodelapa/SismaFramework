@@ -40,6 +40,13 @@
  * - Aggiunta di metodo astratto appendSearchCondition() per logica di ricerca specifica per entità.
  * - Integrazione con sistema di cache ORM del framework.
  * - Supporto per SismaCollection tipizzata invece di array.
+ * - Sistema di query dinamiche con metaprogrammazione via __call() (v10.1.0):
+ *   * Estensione del sistema esistente di query dinamiche a tutte le proprietà (non solo entità referenziate)
+ *   * Type safety tramite Reflection API con validazione automatica dei tipi
+ *   * Supporto per tipi builtin, oggetti custom, enum PHP 8.1+ e proprietà nullable
+ *   * Pattern {action}By{Property}And{Property2}() per query con condizioni AND multiple
+ *   * Metodi: buildPropertiesArray(), isVariableOfType(), buildPropertiesConditions()
+ *   * Metodi: countEntityCollectionByProperties(), getEntityCollectionByProperties(), deleteEntityCollectionByProperties()
  */
 
 namespace SismaFramework\Orm\BaseClasses;

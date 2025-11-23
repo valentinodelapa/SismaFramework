@@ -6,11 +6,102 @@ La libreria è dotata di un meccanismo di scaffolding che, data un'entità, ne g
 
 - `Model`: nel comando può essere indicata la tipologia della classe astratta che lo stesso dovrà estendere (`BaseModel`, `DependentModel` o `SelfReferencedModel`). Qualora la scelta non venga esplicitata, il sistema effettuerà un controllo tramite il quale stabilirà in autonomia la classe astratta da estendere.
 
-- `Form`: nell'implementazione base, verranno implementati i filtri standard per tutte le proprietà dell'entità.
+- `Form`: nell'implementazione base, verranno implementati i filtri standard per tutte le proprietà dell'entità. Il sistema analizza automaticamente il tipo di ogni proprietà e genera il filtro appropriato (vedi sezione "Generazione Automatica dei Filtri" sotto).
 
 - `Views`: nella cartella Views del modulo, verrà creata la cartella che si riferisce al controller ed, al suo interno, verranno creati (vuoti) i files relativi alle view `index`, `create` e `update`
 
 Tale comando presuppone che l'entità di riferimento sia stata precedentemente creata manualmente dallo sviluppatore.
+
+## Generazione Automatica dei Filtri
+
+Il sistema di scaffolding analizza ogni proprietà dell'entità tramite **Reflection** e genera automaticamente il filtro di validazione appropriato nel Form. La mappatura avviene secondo la seguente logica:
+
+### Tipi Supportati e Filtri Generati
+
+| Tipo Proprietà | FilterType Generato | Descrizione |
+|----------------|---------------------|-------------|
+| `int` | `FilterType::isInteger` | Valida numeri interi |
+| `float` | `FilterType::isFloat` | Valida numeri decimali |
+| `string` | `FilterType::isString` | Valida stringhe di testo |
+| `bool` | `FilterType::isBoolean` | Valida valori booleani |
+| `BaseEntity` (e sottoclassi) | `FilterType::isEntity` | Valida entità referenziate |
+| `BackedEnum` | `FilterType::isEnumeration` | Valida enum PHP 8.1+ |
+| `SismaDate` | `FilterType::isDate` | Valida date |
+| `SismaDateTime` | `FilterType::isDatetime` | Valida date con orario |
+| `SismaTime` | `FilterType::isTime` | Valida orari |
+
+### Gestione Proprietà Nullable
+
+Se una proprietà è dichiarata **nullable** (es. `?string`, `?int`), il sistema aggiunge automaticamente il flag `true` come terzo parametro del filtro per permettere valori nulli:
+
+```php
+// Proprietà non-nullable
+protected string $title;
+// Genera: $this->addFilterFieldMode("title", FilterType::isString);
+
+// Proprietà nullable
+protected ?string $description;
+// Genera: $this->addFilterFieldMode("description", FilterType::isString, [], true);
+```
+
+### Esempio di Form Generato
+
+Data questa entità:
+
+```php
+class Product extends BaseEntity
+{
+    protected int $id;
+    protected string $name;
+    protected ?string $description;
+    protected float $price;
+    protected bool $inStock;
+    protected SismaDateTime $createdAt;
+    protected Category $category;
+    protected ProductStatus $status; // BackedEnum
+}
+```
+
+Il sistema genererà automaticamente questo codice nel Form:
+
+```php
+protected function setFilterFieldsMode(): void
+{
+    $this->addFilterFieldMode("id", FilterType::isInteger)
+         ->addFilterFieldMode("name", FilterType::isString)
+         ->addFilterFieldMode("description", FilterType::isString, [], true)
+         ->addFilterFieldMode("price", FilterType::isFloat)
+         ->addFilterFieldMode("inStock", FilterType::isBoolean)
+         ->addFilterFieldMode("createdAt", FilterType::isDatetime)
+         ->addFilterFieldMode("category", FilterType::isEntity)
+         ->addFilterFieldMode("status", FilterType::isEnumeration);
+}
+```
+
+### Personalizzazione Post-Generazione
+
+Dopo la generazione, è possibile personalizzare i filtri manualmente, ad esempio:
+
+- Aggiungendo validazioni di lunghezza per le stringhe
+- Specificando range per i numeri
+- Aggiungendo filtri custom nel metodo `customFilter()`
+- Implementando logica di validazione complessa
+
+**Esempio di personalizzazione:**
+
+```php
+protected function setFilterFieldsMode(): void
+{
+    $this->addFilterFieldMode("id", FilterType::isInteger)
+         ->addFilterFieldMode("name", FilterType::isLimitString, [3, 100]) // Min 3, Max 100 caratteri
+         ->addFilterFieldMode("description", FilterType::isString, [], true)
+         ->addFilterFieldMode("price", FilterType::isFloat)
+         ->addFilterFieldMode("inStock", FilterType::isBoolean)
+         ->addFilterFieldMode("createdAt", FilterType::isDatetime)
+         ->addFilterFieldMode("category", FilterType::isEntity)
+         ->addFilterFieldMode("status", FilterType::isEnumeration);
+}
+```
 
 ## Funzionamento
 

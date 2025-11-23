@@ -43,9 +43,9 @@ php SismaFramework/Console/sisma install NomeDelProgetto
 ```
 
 Questo comando creerà automaticamente:
-- La cartella `Config/` con il file `configFramework.php`
-- La cartella `Public/` con `index.php` configurato
-- Le cartelle `Cache/`, `Logs/` e `filesystemMedia/` con i permessi corretti
+- La cartella `Config/` con il file `configFramework.php` pre-configurato con il nome del progetto
+- La cartella `Public/` con `index.php` configurato (path dell'autoloader aggiornati automaticamente)
+- Le cartelle `Cache/`, `Logs/` e `filesystemMedia/` con permessi **0777** (lettura, scrittura, esecuzione per tutti)
 
 #### Opzioni disponibili
 
@@ -76,6 +76,27 @@ php SismaFramework/Console/sisma install BlogPersonale \
   --db-name=blog_db \
   --db-user=root \
   --db-pass=mypassword
+```
+
+#### Comportamento con File Esistenti
+
+Se esegui il comando `install` in una directory dove `Config/configFramework.php` esiste già, il comando **fallirà** per proteggere da sovrascritture accidentali. Per forzare la sovrascrittura, usa l'opzione `--force`:
+
+```bash
+php SismaFramework/Console/sisma install MyProject --force
+```
+
+⚠️ **Attenzione:** L'opzione `--force` sovrascriverà tutti i file di configurazione esistenti. Usala solo se sei sicuro.
+
+#### Note sui Permessi delle Cartelle
+
+Le cartelle `Cache/`, `Logs/` e `filesystemMedia/` vengono create con **permessi 0777** (rwxrwxrwx) per garantire che il web server possa scrivere log e file temporanei.
+
+Se il tuo ambiente richiede permessi più restrittivi per motivi di sicurezza, puoi modificarli manualmente dopo l'installazione:
+
+```bash
+# Per ambienti multi-utente più sicuri
+chmod 755 Cache Logs filesystemMedia
 ```
 
 ### Passo 3: Configura il Web Server
@@ -132,12 +153,14 @@ Rinomina il file di configurazione del framework:
 mv Config/config.php Config/configFramework.php
 ```
 
-Crea le cartelle necessarie:
+Crea le cartelle necessarie con i permessi appropriati:
 
 ```bash
 mkdir Cache Logs filesystemMedia
-chmod 777 Cache Logs filesystemMedia
+chmod 777 Cache Logs filesystemMedia  # 0777 = rwxrwxrwx (tutti possono leggere, scrivere, eseguire)
 ```
+
+**Nota:** I permessi 0777 sono necessari affinché il web server possa scrivere log e file temporanei. Per ambienti più sicuri, considera l'uso di permessi più restrittivi (es. 0755) se il web server ha lo stesso proprietario delle cartelle.
 
 La struttura della tua cartella di progetto dovrebbe ora essere simile a questa:
 
