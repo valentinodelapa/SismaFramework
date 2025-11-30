@@ -47,6 +47,13 @@
  *   * Pattern {action}By{Property}And{Property2}() per query con condizioni AND multiple
  *   * Metodi: buildPropertiesArray(), isVariableOfType(), buildPropertiesConditions()
  *   * Metodi: countEntityCollectionByProperties(), getEntityCollectionByProperties(), deleteEntityCollectionByProperties()
+ * - Introduzione del supporto JOIN SQL con eager loading (v10.1.0):
+ *   * Aggiunta di getEntityCollectionWithRelations() per eager loading tramite JOIN espliciti
+ *   * Supporto per relazioni nested a più livelli con dot notation e sintassi array nested
+ *   * Aggiunta di flattenRelations() per normalizzazione delle sintassi di relazione
+ *   * Aggiunta di appendNestedRelationJoin() per costruzione ricorsiva di JOIN multi-livello
+ *   * Validazione automatica delle proprietà foreign key tramite Reflection API
+ *   * Integrazione con sistema di cache esistente per evitare duplicazione di entità
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -56,9 +63,11 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
+use SismaFramework\Orm\Enumerations\JoinType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\DataMapper;
@@ -125,6 +134,253 @@ abstract class BaseModel
         }
         $query->close();
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+    }
+
+    public function getEntityCollectionWithRelations(array $relations, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null, JoinType $joinType = JoinType::left): SismaCollection
+    {
+        $query = $this->initQuery();
+        $bindValues = $bindTypes = [];
+        $collectionsToLoad = [];
+        $flattenedRelations = $this->flattenRelations($relations);
+        foreach ($flattenedRelations as $relationPath) {
+            $firstSegment = explode('.', $relationPath)[0];
+            if ($this->isCollectionRelation($firstSegment)) {
+                $collectionsToLoad[] = $relationPath;
+            } else {
+                $this->appendNestedRelationJoin($query, $relationPath, $joinType);
+            }
+        }
+        if ($searchKey !== null) {
+            $query->setWhere();
+            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
+        }
+        $query->setOrderBy($order);
+        if ($offset !== null) {
+            $query->setOffset($offset);
+        }
+        if ($limit != null) {
+            $query->setLimit($limit);
+        }
+        $query->close();
+        $collection = $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+        if (!empty($collectionsToLoad)) {
+            $this->eagerLoadCollections($collection, $collectionsToLoad);
+        }
+        return $collection;
+    }
+
+    protected function flattenRelations(array $relations, string $prefix = ''): array
+    {
+        $flattened = [];
+        foreach ($relations as $key => $value) {
+            if (is_int($key)) {
+                if (is_string($value)) {
+                    $flattened[] = $prefix . $value;
+                } elseif (is_array($value)) {
+                    $flattened = array_merge($flattened, $this->flattenRelations($value, $prefix));
+                }
+            } else {
+                $currentPath = $prefix . $key;
+                $flattened[] = $currentPath;
+                if (is_array($value)) {
+                    $flattened = array_merge($flattened, $this->flattenRelations($value, $currentPath . '.'));
+                } elseif (is_string($value)) {
+                    $flattened[] = $currentPath . '.' . $value;
+                }
+            }
+        }
+        return array_unique($flattened);
+    }
+
+    protected function appendNestedRelationJoin(Query &$query, string $relationPath, JoinType $joinType): void
+    {
+        $segments = explode('.', $relationPath);
+        $currentEntityClass = $this->entityName;
+        $parentAlias = null;
+        foreach ($segments as $index => $segment) {
+            $entityReflection = new \ReflectionClass($currentEntityClass);
+            if (!$entityReflection->hasProperty($segment)) {
+                throw new InvalidArgumentException("Property '{$segment}' does not exist in entity '{$currentEntityClass}'");
+            }
+            $property = $entityReflection->getProperty($segment);
+            $propertyType = $property->getType();
+            if ($propertyType === null || !is_subclass_of($propertyType->getName(), BaseEntity::class)) {
+                throw new InvalidArgumentException("Property '{$segment}' in '{$currentEntityClass}' is not a foreign key relationship");
+            }
+            $relatedEntityClass = $propertyType->getName();
+            $alias = implode('_', array_slice($segments, 0, $index + 1));
+            if ($parentAlias === null) {
+                $query->appendJoinOnForeignKey($joinType, $segment, $relatedEntityClass);
+            } else {
+                $foreignKeyColumn = $query->getAdapter()->escapeColumn($segment, true);
+                $onCondition = $parentAlias . '.' . $foreignKeyColumn . ' = ' . $alias . '.id';
+                $query->appendJoin(
+                    $joinType,
+                    $relatedEntityClass,
+                    $alias,
+                    $onCondition,
+                    $relatedEntityClass
+                );
+            }
+            $joinedColumns = $query->getAdapter()->buildJoinedColumns($alias, $relatedEntityClass);
+            foreach ($joinedColumns as $column) {
+                $query->appendColumn($column);
+            }
+            $currentEntityClass = $relatedEntityClass;
+            $parentAlias = $alias;
+        }
+    }
+
+    protected function isCollectionRelation(string $relationName): bool
+    {
+        if (!is_subclass_of($this->entityName, ReferencedEntity::class)) {
+            return false;
+        }
+
+        $tempEntity = new $this->entityName();
+        if ($tempEntity instanceof ReferencedEntity) {
+            return $tempEntity->checkCollectionExists($relationName);
+        }
+
+        return false;
+    }
+
+    protected function eagerLoadCollections(SismaCollection $entities, array $collectionNames): void
+    {
+        if ($entities->count() === 0) {
+            return;
+        }
+
+        $entityIds = [];
+        foreach ($entities as $entity) {
+            if (isset($entity->id)) {
+                $entityIds[] = $entity->id;
+            }
+        }
+
+        if (empty($entityIds)) {
+            return;
+        }
+
+        foreach ($collectionNames as $collectionName) {
+            $this->loadCollectionForEntities($entities, $collectionName, $entityIds);
+        }
+    }
+
+    protected function loadCollectionForEntities(SismaCollection $entities, string $collectionName, array $entityIds): void
+    {
+        $firstEntity = $entities[0];
+        $collectionDataClass = $firstEntity->getCollectionDataInformation($collectionName);
+        $foreignKeyName = $firstEntity->getForeignKeyName($collectionName);
+
+        $childModelName = str_replace('Entities', 'Models', $collectionDataClass) . 'Model';
+        $childModel = new $childModelName($this->dataMapper);
+
+        $query = $childModel->initQuery();
+        $query->setWhere();
+        $query->appendCondition($foreignKeyName, ComparisonOperator::in, array_fill(0, count($entityIds), Placeholder::placeholder), true);
+
+        $bindValues = $entityIds;
+        $bindTypes = array_fill(0, count($entityIds), DataType::typeInteger);
+        $query->close();
+
+        $allChildren = $this->dataMapper->find($collectionDataClass, $query, $bindValues, $bindTypes);
+
+        $groupedChildren = [];
+        foreach ($allChildren as $child) {
+            $parentId = $child->$foreignKeyName;
+            if ($parentId instanceof BaseEntity && isset($parentId->id)) {
+                $parentId = $parentId->id;
+            }
+
+            if (!isset($groupedChildren[$parentId])) {
+                $groupedChildren[$parentId] = new SismaCollection($collectionDataClass);
+            }
+            $groupedChildren[$parentId]->append($child);
+        }
+
+        foreach ($entities as $entity) {
+            if (isset($entity->id) && isset($groupedChildren[$entity->id])) {
+                $entity->setEntityCollection($collectionName, $groupedChildren[$entity->id]);
+            } else {
+                $entity->setEntityCollection($collectionName, new SismaCollection($collectionDataClass));
+            }
+        }
+    }
+
+    public function getEntityByIdWithRelations(int $id, array $relations, JoinType $joinType = JoinType::left): ?BaseEntity
+    {
+        if (Cache::checkEntityPresenceInCache($this->entityName, $id)) {
+            $entity = Cache::getEntityById($this->entityName, $id);
+
+            foreach ($relations as $relation) {
+                if (!isset($entity->$relation) || $entity->$relation === null) {
+                    return $this->fetchEntityByIdWithRelations($id, $relations, $joinType);
+                }
+            }
+
+            return $entity;
+        }
+
+        return $this->fetchEntityByIdWithRelations($id, $relations, $joinType);
+    }
+
+    protected function fetchEntityByIdWithRelations(int $id, array $relations, JoinType $joinType): ?BaseEntity
+    {
+        $query = $this->initQuery();
+
+        foreach ($relations as $relation) {
+            $this->appendRelationJoin($query, $relation, $joinType);
+        }
+
+        $query->setWhere();
+        $query->appendCondition('id', ComparisonOperator::equal, Placeholder::placeholder);
+        $bindValues = [$id];
+        $bindTypes = [DataType::typeInteger];
+        $query->close();
+
+        $results = $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+
+        return $results->count() > 0 ? $results[0] : null;
+    }
+
+    protected function appendRelationJoin(Query &$query, string $foreignKeyProperty, JoinType $joinType): void
+    {
+        $entityReflection = new \ReflectionClass($this->entityName);
+
+        if (!$entityReflection->hasProperty($foreignKeyProperty)) {
+            throw new InvalidArgumentException("Property '{$foreignKeyProperty}' does not exist in entity '{$this->entityName}'");
+        }
+
+        $property = $entityReflection->getProperty($foreignKeyProperty);
+        $propertyType = $property->getType();
+
+        if ($propertyType === null || !is_subclass_of($propertyType->getName(), BaseEntity::class)) {
+            throw new InvalidArgumentException("Property '{$foreignKeyProperty}' is not a foreign key relationship");
+        }
+
+        $relatedEntityClass = $propertyType->getName();
+
+        if ($relatedEntityClass === $this->entityName) {
+            $this->appendSelfReferencedJoin($query, $foreignKeyProperty, $joinType);
+        } else {
+            $query->appendJoinOnForeignKey($joinType, $foreignKeyProperty, $relatedEntityClass);
+
+            $joinedColumns = $query->getAdapter()->buildJoinedColumns($foreignKeyProperty, $relatedEntityClass);
+            foreach ($joinedColumns as $column) {
+                $query->appendColumn($column);
+            }
+        }
+    }
+
+    protected function appendSelfReferencedJoin(Query &$query, string $foreignKeyProperty, JoinType $joinType): void
+    {
+        $query->appendJoinOnForeignKey($joinType, $foreignKeyProperty, $this->entityName);
+
+        $joinedColumns = $query->getAdapter()->buildJoinedColumns($foreignKeyProperty, $this->entityName);
+        foreach ($joinedColumns as $column) {
+            $query->appendColumn($column);
+        }
     }
 
     abstract protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void;

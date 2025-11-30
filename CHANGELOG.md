@@ -168,15 +168,85 @@ Articolata in tre aree principali (CLI Tools, Architettura, ORM), questa release
         ->setAVG('price', 'avg_price', append: true);
   ```
 
+* **Supporto JOIN SQL con Eager Loading Gerarchico Multi-Entità**: Implementato supporto completo per operazioni JOIN SQL con caricamento eager e idratazione gerarchica automatica, risolvendo il problema N+1 delle query.
+  - **Nuovo Enum `JoinType`**: Introdotta enumerazione per gestire in modo type-safe i diversi tipi di JOIN (INNER, LEFT, RIGHT, CROSS)
+  - **Estensione Query Builder**: Aggiunta proprietà `$joins` e metodi `appendJoin()`, `appendJoinOnForeignKey()`, `hasJoins()`, `getJoins()`, `getColumns()` nella classe `Query`
+  - **Metodi Eager Loading in BaseModel**:
+    * `getEntityCollectionWithRelations()`: Carica collection con relazioni via JOIN e batch loading
+    * `getEntityByIdWithRelations()`: Carica singola entità con le sue relazioni
+    * `flattenRelations()`: Normalizza sintassi dot notation e array nested per relazioni multi-livello
+    * `appendNestedRelationJoin()`: Costruisce ricorsivamente JOIN per relazioni nested
+  - **Supporto Relazioni Nested Multi-Livello**: Permette eager loading di relazioni a più livelli con due sintassi:
+    * Dot notation: `['author.country.continent']`
+    * Array nested: `['author' => ['country' => ['continent']]]`
+    * Sintassi mista supportata
+  - **Idratazione Gerarchica Automatica in BaseResultSet**:
+    * Aggiunta proprietà `$joinMetadata` per tracciare metadati delle tabelle joined
+    * `convertToHierarchicalEntity()`: Separa dati entità principali da nested entities
+    * `hydrateNestedEntities()`: Idratazione ricorsiva di relazioni multi-livello
+    * `getEntityClassForAlias()`: Risoluzione entity class da alias JOIN
+  - **Supporto ReferencedEntity Collections**: Eager loading di relazioni one-to-many inverse tramite batch loading ottimizzato (singola query IN per tutte le entities)
+  - **Supporto SelfReferencedEntity**: Gestione nativa di relazioni ricorsive (tree structures) tramite self-join
+  - **Integrazione con Cache**: Piena compatibilità con Identity Map pattern esistente per evitare duplicazione di entità in memoria
+  - **Estensione BaseAdapter**:
+    * `buildJoinedColumns()`: Genera automaticamente colonne con alias (separatore `__`)
+    * `buildJoinMetadata()`: Costruisce metadati JOIN includendo `relatedEntityClass`
+    * Modifica di `buildJoinOnForeignKey()` per includere `relatedEntityClass` nei metadati
+  - **Zero Breaking Changes**: Implementazione completamente trasparente che rileva automaticamente presenza di JOIN nei metadati
+
+  **Esempi di utilizzo**:
+  ```php
+  // Many-to-one: eager loading con JOIN
+  $articles = $articleModel->getEntityCollectionWithRelations(['author', 'category']);
+  foreach ($articles as $article) {
+      echo $article->author->name; // Già caricato, nessuna query N+1
+  }
+
+  // One-to-many: eager loading con batch loading
+  $authors = $authorModel->getEntityCollectionWithRelations(['articleCollection']);
+
+  // Relazioni nested multi-livello (dot notation)
+  $articles = $articleModel->getEntityCollectionWithRelations(['author.country.continent']);
+
+  // Relazioni nested (sintassi array)
+  $articles = $articleModel->getEntityCollectionWithRelations([
+      'author' => ['country', 'publisher' => ['city']]
+  ]);
+
+  // SelfReferencedEntity (tree structures)
+  $categories = $categoryModel->getEntityCollectionWithRelations([
+      'parentCategory',     // Padre
+      'sonCollection'       // Figli
+  ]);
+
+  // Con parametri aggiuntivi
+  $products = $productModel->getEntityCollectionWithRelations(
+      relations: ['category', 'brand'],
+      searchKey: 'laptop',
+      order: ['price' => 'ASC'],
+      limit: 20,
+      joinType: JoinType::inner
+  );
+  ```
+
 ### 🧪 Testing
 
 * **Copertura Test Completa per Funzioni di Aggregazione**: Aggiunti test completi per le nuove funzionalità:
   - **AggregationFunctionTest**: 159 linee di test che verificano tutti i casi dell'enumerazione e la corretta generazione SQL per MySQL
   - **QueryTest**: 149 linee di test per i nuovi metodi `setAVG()`, `setMax()`, `setMin()`, `setSum()` con varie combinazioni di parametri (distinct, append, alias, subquery)
   - **AdapterMysqlTest**: 57 linee di test per verificare il metodo `opAggregationFunction()` con tutte le funzioni aggregate disponibili
+* **Copertura Test per JOIN ed Eager Loading**: Aggiunti test completi per verificare supporto JOIN e relazioni nested:
+  - **JoinEagerLoadingTest**: 19 test totali che coprono tutti gli aspetti delle funzionalità JOIN
+  - Test normalizzazione sintassi relazioni: `testFlattenRelationsDotNotation()`, `testFlattenRelationsNestedArray()`, `testFlattenRelationsMixedSyntax()`
+  - Test query custom con JOIN: `testCustomQueryWithJoinAndConditionOnJoinedTable()`, `testCustomQueryWithMultipleJoins()`, `testCustomQueryWithManualJoinAndCustomCondition()`
+  - Test tipi di JOIN: `testCustomQuerySupportsCrossJoin()`, `testJoinTypeEnumHasAllCases()`
+  - Test metodi helper: `testQueryAppendColumnForJoinedTables()`, `testBaseAdapterHasBuildJoinedColumnsMethod()`
+  - Test qualificazione colonne: `testAllColumnsReturnsQualifiedNameWithTable()`, `testAllColumnsReturnsAsteriskWithoutTable()`
+  - Test presenza metodi in classi base: `testBaseModelHasNestedRelationMethods()`, `testBaseResultSetHasNestedHydrationMethods()`
 
 ### 🔧 Miglioramenti Interni
 
+* **BaseAdapter: Qualificazione Automatica delle Colonne con Nome Tabella**: Modificato `allColumns()` per accettare un parametro opzionale `$table` e restituire `table.*` quando fornito, invece di `*`. Questo centralizza la logica di qualificazione delle colonne nell'adapter (dove appartiene concettualmente, essendo formattazione SQL) invece che nella Query. Previene conflitti di nomi colonna sia con JOIN che senza, rendendo le query più robuste. La modifica è backward compatible grazie al parametro opzionale.
 * **Router: Aggiunto metodo setMetaUrl()**: Introdotto il metodo `Router::setMetaUrl()` per permettere la sovrascrittura completa del metaUrl, completando l'API esistente che già forniva `getMetaUrl()`, `concatenateMetaUrl()` e `resetMetaUrl()`. Il nuovo metodo offre maggiore flessibilità nella gestione del routing e migliora la testabilità del componente.
 * **RouterTest**: Aggiunti due nuovi test per il metodo `setMetaUrl()`: `testSetMetaUrl()` verifica l'impostazione corretta del valore, `testSetMetaUrlOverwritesPreviousValue()` verifica la sovrascrittura completa anche di valori precedentemente concatenati
 * **Convenzione Naming Config**: Il file di configurazione del framework viene ora copiato come `configFramework.php` invece di `config.php`, permettendo ad ogni modulo di avere il proprio `config.php` senza conflitti

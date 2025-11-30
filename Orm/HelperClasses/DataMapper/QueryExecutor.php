@@ -88,6 +88,18 @@ class QueryExecutor
         return $collection;
     }
 
+    public function findWithJoins(string $entityName, Query $query, array $bindValues = [], array $bindTypes = [], bool $ormCacheEnabled = true): SismaCollection
+    {
+        $result = $this->getHierarchicalResultSet($entityName, $query, $bindValues, $bindTypes);
+        $collection = new SismaCollection($entityName);
+        if ($result instanceof HierarchicalResultSet) {
+            foreach ($result as $entity) {
+                $collection->append($this->selectLastModifiedEntity($entityName, $entity, $ormCacheEnabled));
+            }
+        }
+        return $collection;
+    }
+
     public function findFirst(string $entityName, Query $query, array $bindValues = [], array $bindTypes = [], bool $ormCacheEnabled = true): ?BaseEntity
     {
         $query->setOffset(0);
@@ -136,6 +148,12 @@ class QueryExecutor
             return null;
         }
         $result->setReturnType($entityName);
+
+        $joins = $query->getJoins();
+        if (!empty($joins)) {
+            $result->setJoinMetadata($joins);
+        }
+
         return $result;
     }
 
