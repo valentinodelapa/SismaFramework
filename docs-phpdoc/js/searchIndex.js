@@ -3681,6 +3681,26 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_parseSet"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AbuildJoinOnForeignKey\u0028\u0029",
+            "name": "buildJoinOnForeignKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_buildJoinOnForeignKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AbuildJoinMetadata\u0028\u0029",
+            "name": "buildJoinMetadata",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_buildJoinMetadata"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AbuildJoinedColumns\u0028\u0029",
+            "name": "buildJoinedColumns",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_buildJoinedColumns"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AbuildJoinClause\u0028\u0029",
+            "name": "buildJoinClause",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseAdapter.html#method_buildJoinClause"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseAdapter\u003A\u003AparseSelect\u0028\u0029",
             "name": "parseSelect",
             "summary": "",
@@ -4046,6 +4066,56 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_getEntityCollection"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AgetEntityCollectionWithRelations\u0028\u0029",
+            "name": "getEntityCollectionWithRelations",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_getEntityCollectionWithRelations"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AflattenRelations\u0028\u0029",
+            "name": "flattenRelations",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_flattenRelations"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AappendNestedRelationJoin\u0028\u0029",
+            "name": "appendNestedRelationJoin",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_appendNestedRelationJoin"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AisCollectionRelation\u0028\u0029",
+            "name": "isCollectionRelation",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_isCollectionRelation"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AeagerLoadCollections\u0028\u0029",
+            "name": "eagerLoadCollections",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_eagerLoadCollections"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AloadCollectionForEntities\u0028\u0029",
+            "name": "loadCollectionForEntities",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_loadCollectionForEntities"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AgetEntityByIdWithRelations\u0028\u0029",
+            "name": "getEntityByIdWithRelations",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_getEntityByIdWithRelations"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AfetchEntityByIdWithRelations\u0028\u0029",
+            "name": "fetchEntityByIdWithRelations",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_fetchEntityByIdWithRelations"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AappendRelationJoin\u0028\u0029",
+            "name": "appendRelationJoin",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_appendRelationJoin"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AappendSelfReferencedJoin\u0028\u0029",
+            "name": "appendSelfReferencedJoin",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseModel.html#method_appendSelfReferencedJoin"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseModel\u003A\u003AappendSearchCondition\u0028\u0029",
             "name": "appendSearchCondition",
             "summary": "",
@@ -4146,6 +4216,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_setReturnType"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AsetJoinMetadata\u0028\u0029",
+            "name": "setJoinMetadata",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_setJoinMetadata"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003Arelease\u0028\u0029",
             "name": "release",
             "summary": "",
@@ -4191,6 +4266,31 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrate"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AconvertToHierarchicalEntity\u0028\u0029",
+            "name": "convertToHierarchicalEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToHierarchicalEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AhydrateNestedEntities\u0028\u0029",
+            "name": "hydrateNestedEntities",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateNestedEntities"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AgetEntityClassForAlias\u0028\u0029",
+            "name": "getEntityClassForAlias",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getEntityClassForAlias"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AhydrateRelatedEntity\u0028\u0029",
+            "name": "hydrateRelatedEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateRelatedEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AgetJoinInfoByProperty\u0028\u0029",
+            "name": "getJoinInfoByProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getJoinInfoByProperty"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AconvertToStandardEntity\u0028\u0029",
             "name": "convertToStandardEntity",
             "summary": "",
@@ -4200,6 +4300,11 @@ Search.appendIndex(
             "name": "convertToBaseEntity",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToBaseEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003ACOLUMN_SEPARATOR",
+            "name": "COLUMN_SEPARATOR",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#constant_COLUMN_SEPARATOR"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003A\u0024returnType",
             "name": "returnType",
@@ -4215,6 +4320,11 @@ Search.appendIndex(
             "name": "maxRecord",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_maxRecord"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003A\u0024joinMetadata",
+            "name": "joinMetadata",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_joinMetadata"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaCollection",
             "name": "SismaCollection",
@@ -4565,6 +4675,36 @@ Search.appendIndex(
             "name": "desc",
             "summary": "",
             "url": "classes/SismaFramework-Orm-Enumerations-Indexing.html#enumcase_desc"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JoinType",
+            "name": "JoinType",
+            "summary": "Tipi\u0020di\u0020JOIN\u0020SQL\u0020supportati\u0020dall\u0027ORM",
+            "url": "classes/SismaFramework-Orm-Enumerations-JoinType.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JoinType\u003A\u003AgetAdapterVersion\u0028\u0029",
+            "name": "getAdapterVersion",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JoinType.html#method_getAdapterVersion"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JoinType\u003A\u003Ainner",
+            "name": "inner",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JoinType.html#enumcase_inner"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JoinType\u003A\u003Aleft",
+            "name": "left",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JoinType.html#enumcase_left"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JoinType\u003A\u003Aright",
+            "name": "right",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JoinType.html#enumcase_right"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JoinType\u003A\u003Across",
+            "name": "cross",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JoinType.html#enumcase_cross"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Keyword",
             "name": "Keyword",
@@ -5376,6 +5516,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setColumn"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendColumn\u0028\u0029",
+            "name": "appendColumn",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendColumn"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetFulltextIndexColumn\u0028\u0029",
             "name": "setFulltextIndexColumn",
             "summary": "",
@@ -5405,6 +5550,31 @@ Search.appendIndex(
             "name": "setTable",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setTable"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendJoin\u0028\u0029",
+            "name": "appendJoin",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendJoin"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendJoinOnForeignKey\u0028\u0029",
+            "name": "appendJoinOnForeignKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendJoinOnForeignKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AgetJoins\u0028\u0029",
+            "name": "getJoins",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_getJoins"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AhasJoins\u0028\u0029",
+            "name": "hasJoins",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_hasJoins"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AgetColumns\u0028\u0029",
+            "name": "getColumns",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_getColumns"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetOffset\u0028\u0029",
             "name": "setOffset",
@@ -5516,6 +5686,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_getCommandToExecute"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003A\u0024tableName",
+            "name": "tableName",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#property_tableName"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003A\u0024table",
             "name": "table",
             "summary": "",
@@ -5565,6 +5740,11 @@ Search.appendIndex(
             "name": "order",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#property_order"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003A\u0024joins",
+            "name": "joins",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#property_joins"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003A\u0024variable",
             "name": "variable",
@@ -11036,6 +11216,141 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Tests-Orm-HelperClasses-QueryTest.html#method_testInsertIntoEntityWithOnlyId"
         },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest",
+            "name": "JoinEagerLoadingTest",
+            "summary": "Test\u0020per\u0020JOIN\u0020con\u0020eager\u0020loading\u0020e\u0020idratazione\u0020gerarchica",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AsetUp\u0028\u0029",
+            "name": "setUp",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_setUp"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestQueryWithJoinBuildsCorrectSQL\u0028\u0029",
+            "name": "testQueryWithJoinBuildsCorrectSQL",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testQueryWithJoinBuildsCorrectSQL"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestJoinedColumnsHaveSeparator\u0028\u0029",
+            "name": "testJoinedColumnsHaveSeparator",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testJoinedColumnsHaveSeparator"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestBaseModelHasEagerLoadingMethods\u0028\u0029",
+            "name": "testBaseModelHasEagerLoadingMethods",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testBaseModelHasEagerLoadingMethods"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestSeparatorConstant\u0028\u0029",
+            "name": "testSeparatorConstant",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testSeparatorConstant"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestJoinTypeEnum\u0028\u0029",
+            "name": "testJoinTypeEnum",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testJoinTypeEnum"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestIsCollectionRelationDetectsCollections\u0028\u0029",
+            "name": "testIsCollectionRelationDetectsCollections",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testIsCollectionRelationDetectsCollections"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestIsCollectionRelationDetectsSonCollection\u0028\u0029",
+            "name": "testIsCollectionRelationDetectsSonCollection",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testIsCollectionRelationDetectsSonCollection"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestBaseModelHasCollectionEagerLoadingMethod\u0028\u0029",
+            "name": "testBaseModelHasCollectionEagerLoadingMethod",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testBaseModelHasCollectionEagerLoadingMethod"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestSelfReferencedEntityHasSonCollectionProperty\u0028\u0029",
+            "name": "testSelfReferencedEntityHasSonCollectionProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testSelfReferencedEntityHasSonCollectionProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestReferencedEntityHasCollectionSupport\u0028\u0029",
+            "name": "testReferencedEntityHasCollectionSupport",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testReferencedEntityHasCollectionSupport"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestFlattenRelationsDotNotation\u0028\u0029",
+            "name": "testFlattenRelationsDotNotation",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testFlattenRelationsDotNotation"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestFlattenRelationsNestedArray\u0028\u0029",
+            "name": "testFlattenRelationsNestedArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testFlattenRelationsNestedArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestFlattenRelationsMixedSyntax\u0028\u0029",
+            "name": "testFlattenRelationsMixedSyntax",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testFlattenRelationsMixedSyntax"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestBaseModelHasNestedRelationMethods\u0028\u0029",
+            "name": "testBaseModelHasNestedRelationMethods",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testBaseModelHasNestedRelationMethods"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestBaseResultSetHasNestedHydrationMethods\u0028\u0029",
+            "name": "testBaseResultSetHasNestedHydrationMethods",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testBaseResultSetHasNestedHydrationMethods"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestCustomQueryWithJoinAndConditionOnJoinedTable\u0028\u0029",
+            "name": "testCustomQueryWithJoinAndConditionOnJoinedTable",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testCustomQueryWithJoinAndConditionOnJoinedTable"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestCustomQueryWithMultipleJoins\u0028\u0029",
+            "name": "testCustomQueryWithMultipleJoins",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testCustomQueryWithMultipleJoins"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestCustomQueryWithManualJoinAndCustomCondition\u0028\u0029",
+            "name": "testCustomQueryWithManualJoinAndCustomCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testCustomQueryWithManualJoinAndCustomCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestCustomQuerySupportsCrossJoin\u0028\u0029",
+            "name": "testCustomQuerySupportsCrossJoin",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testCustomQuerySupportsCrossJoin"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestQueryAppendColumnForJoinedTables\u0028\u0029",
+            "name": "testQueryAppendColumnForJoinedTables",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testQueryAppendColumnForJoinedTables"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestBaseAdapterHasBuildJoinedColumnsMethod\u0028\u0029",
+            "name": "testBaseAdapterHasBuildJoinedColumnsMethod",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testBaseAdapterHasBuildJoinedColumnsMethod"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestAllColumnsReturnsQualifiedNameWithTable\u0028\u0029",
+            "name": "testAllColumnsReturnsQualifiedNameWithTable",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testAllColumnsReturnsQualifiedNameWithTable"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AtestAllColumnsReturnsAsteriskWithoutTable\u0028\u0029",
+            "name": "testAllColumnsReturnsAsteriskWithoutTable",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#method_testAllColumnsReturnsAsteriskWithoutTable"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AJOINED_COLUMN_ID",
+            "name": "JOINED_COLUMN_ID",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#constant_JOINED_COLUMN_ID"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm\\JoinEagerLoadingTest\u003A\u003AJOINED_COLUMN_NAME",
+            "name": "JOINED_COLUMN_NAME",
+            "summary": "",
+            "url": "classes/SismaFramework-Tests-Orm-JoinEagerLoadingTest.html#constant_JOINED_COLUMN_NAME"
+        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ResultSets\\ResultSetMysqlTest",
             "name": "ResultSetMysqlTest",
             "summary": "",
@@ -13046,11 +13361,6 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-tests-orm-adapters.html"
         },                {
-            "fqsen": "\\SismaFramework\\Tests\\Orm",
-            "name": "Orm",
-            "summary": "",
-            "url": "namespaces/sismaframework-tests-orm.html"
-        },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\BaseClasses",
             "name": "BaseClasses",
             "summary": "",
@@ -13075,6 +13385,11 @@ Search.appendIndex(
             "name": "HelperClasses",
             "summary": "",
             "url": "namespaces/sismaframework-tests-orm-helperclasses.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Tests\\Orm",
+            "name": "Orm",
+            "summary": "",
+            "url": "namespaces/sismaframework-tests-orm.html"
         },                {
             "fqsen": "\\SismaFramework\\Tests\\Orm\\ResultSets",
             "name": "ResultSets",
