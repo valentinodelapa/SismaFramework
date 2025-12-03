@@ -43,8 +43,10 @@
 
     <style>
         :root {
-            --primary-color: #4a90e2;
-            --secondary-color: #7b68ee;
+            --primary-color: #017cb8;
+            --primary-light: #0096d6;
+            --secondary-color: #54bfe9;
+            --secondary-light: #6dd5ed;
             --dark-bg: #1a1a2e;
             --light-bg: #f8f9fa;
         }
@@ -57,7 +59,7 @@
         .navbar-brand {
             font-weight: 700;
             font-size: 1.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -74,7 +76,7 @@
 
         /* Hero Section */
         .hero-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color), var(--secondary-color));
             color: white;
             padding: 4rem 0;
         }
@@ -137,7 +139,7 @@
 
         .docs-sidebar .nav-link.active {
             color: var(--primary-color);
-            background-color: #e7f3ff;
+            background-color: #e3f4ff;
             border-left-color: var(--primary-color);
             font-weight: 600;
         }
@@ -188,14 +190,14 @@
 
         /* Utility classes */
         .gradient-text {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .btn-gradient {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color), var(--secondary-color));
             border: none;
             color: white;
             font-weight: 600;
@@ -250,54 +252,45 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" style="width: 40px; height: 40px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120.75616 120.75616" style="width: 40px; height: 40px;">
                     <defs>
-                        <!-- Vibrant gradient with multiple stops -->
-                        <linearGradient id="logoGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-                            <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
-                        </linearGradient>
-                        <!-- Secondary gradient for depth -->
-                        <linearGradient id="logoGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.9" />
-                            <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.9" />
-                        </linearGradient>
-                        <!-- Soft shadow -->
-                        <filter id="softShadow">
-                            <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-                            <feOffset dx="0" dy="3" result="offsetblur"/>
-                            <feComponentTransfer>
-                                <feFuncA type="linear" slope="0.4"/>
-                            </feComponentTransfer>
-                            <feMerge>
-                                <feMergeNode/>
-                                <feMergeNode in="SourceGraphic"/>
-                            </feMerge>
+                        <mask maskUnits="userSpaceOnUse" id="mask15header">
+                            <rect style="fill:#ffffff;fill-opacity:1;stroke-width:0.264583" width="100" height="100" x="35.387501" y="-50" rx="25" ry="25" transform="rotate(45)" />
+                        </mask>
+                        <filter style="color-interpolation-filters:sRGB;" id="filter42header" x="-0.06" y="-0.008" width="1.17" height="1.1826667">
+                            <feFlood result="flood" in="SourceGraphic" flood-opacity="0.498039" flood-color="rgb(0,79,118)" />
+                            <feGaussianBlur result="blur" in="SourceGraphic" stdDeviation="0.500000" />
+                            <feOffset result="offset" in="blur" dx="1.000000" dy="25.000000" />
+                            <feComposite result="comp1" operator="in" in="flood" in2="offset" />
+                            <feComposite result="comp2" operator="over" in="SourceGraphic" in2="comp1" />
                         </filter>
+                        <linearGradient id="blueGradHeader" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0096d6;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#017cb8;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="cyanGradHeader" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#6dd5ed;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#54bfe9;stop-opacity:1" />
+                        </linearGradient>
                     </defs>
-
-                    <!-- Hexagon background con angoli arrotondati -->
-                    <path d="M 50 5 L 80 23 Q 87 27 87 35 L 87 65 Q 87 73 80 77 L 50 95 L 20 77 Q 13 73 13 65 L 13 35 Q 13 27 20 23 Z"
-                          fill="url(#logoGrad1)"
-                          filter="url(#softShadow)"/>
-
-                    <!-- Overlapping shapes for depth - triangolo interno -->
-                    <path d="M 50 25 L 70 50 L 50 75 L 30 50 Z"
-                          fill="url(#logoGrad2)"
-                          opacity="0.3"/>
-
-                    <!-- "S" elegante e fluida (centrata verticalmente) -->
-                    <path d="M 38 33 Q 35 33 35 36 Q 35 39 38 39 L 55 39 Q 62 39 62 46 Q 62 53 55 53 L 45 53 Q 38 53 38 60 Q 38 67 45 67 L 62 67 Q 65 67 65 64 Q 65 61 62 61"
-                          fill="none"
-                          stroke="white"
-                          stroke-width="5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          opacity="0.95"/>
-
-                    <!-- Accent line per dinamismo -->
-                    <circle cx="72" cy="30" r="3" fill="white" opacity="0.6"/>
+                    <g mask="url(#mask15header)">
+                        <g transform="translate(-32.412208,-63.808624)">
+                            <rect style="display:inline;fill:url(#cyanGradHeader);fill-opacity:1;stroke-width:0.264583" width="100" height="100" x="103.4259" y="-27.799381" rx="25" ry="25" transform="rotate(45)" />
+                        </g>
+                        <g>
+                            <circle style="fill:url(#blueGradHeader);fill-opacity:1;stroke-width:0.264583" cx="20.113077" cy="102.72737" r="65" />
+                            <circle style="fill:url(#cyanGradHeader);fill-opacity:1;stroke-width:0.264583" cx="20.113077" cy="102.72737" r="50" />
+                        </g>
+                        <g transform="translate(-32.412207,-63.808623)">
+                            <rect style="fill:url(#blueGradHeader);fill-opacity:1;stroke-width:0.264583" width="59.895657" height="107.34053" x="143.53024" y="-35.139908" rx="22.965372" ry="25" transform="rotate(45)" />
+                        </g>
+                        <g>
+                            <circle style="display:inline;fill:url(#cyanGradHeader);fill-opacity:1;stroke-width:0.31059" cx="31.902811" cy="86.340149" r="30" />
+                        </g>
+                        <g>
+                            <rect style="fill:url(#blueGradHeader);fill-opacity:1;stroke-width:0.165728;filter:url(#filter42header)" width="20" height="150" x="74.363625" y="-51.149162" rx="20" ry="0" transform="rotate(45)" />
+                        </g>
+                    </g>
                 </svg>
                 <span>SismaFramework</span>
             </a>
