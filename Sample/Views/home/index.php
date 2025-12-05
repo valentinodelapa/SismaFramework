@@ -5,9 +5,12 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7">
-                <h1 class="display-4 fw-bold mb-4">
+                <h1 class="display-4 fw-bold mb-3">
                     SismaFramework
                 </h1>
+                <p class="fs-5 mb-3" style="opacity: 0.95;">
+                    <strong>SI</strong>mple <strong>SMA</strong>rt Framework
+                </p>
                 <p class="lead mb-4">
                     Framework PHP MVC moderno, robusto e manutenibile per lo sviluppo di applicazioni web professionali.
                     Sfrutta le potenzialità di PHP 8.1+ con tipizzazione forte, ORM potente e sicurezza integrata.

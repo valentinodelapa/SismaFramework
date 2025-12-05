@@ -6,8 +6,8 @@
     <title><?= htmlspecialchars($pageTitle ?? 'SismaFramework - Framework PHP MVC moderno') ?></title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="<?= htmlspecialchars($pageDescription ?? 'SismaFramework è un framework PHP moderno basato su MVC con ORM potente, sicurezza integrata, gestione form avanzata e supporto completo per PHP 8.1+') ?>">
-    <meta name="keywords" content="<?= htmlspecialchars($pageKeywords ?? 'php framework, mvc, orm, php 8.1, dependency injection, routing, sicurezza php, form validation, lazy loading, framework italiano, modern php, sismaframework') ?>">
+    <meta name="description" content="<?= htmlspecialchars($pageDescription ?? 'SismaFramework (Simple Smart Framework) è un framework PHP moderno basato su MVC con ORM potente, sicurezza integrata, gestione form avanzata e supporto completo per PHP 8.1+') ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($pageKeywords ?? 'sismaframework, simple smart framework, php framework, mvc, orm, php 8.1, dependency injection, routing, sicurezza php, form validation, lazy loading, framework italiano, modern php') ?>">
     <meta name="author" content="Valentino de Lapa">
     <meta name="robots" content="<?= htmlspecialchars($robotsDirective ?? 'index, follow') ?>">
     <link rel="canonical" href="https://www.sisma-framework.dev<?= $_SERVER['REQUEST_URI'] ?? '' ?>">
@@ -327,6 +327,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <h5 class="gradient-text">SismaFramework</h5>
+                    <p style="color: rgba(255,255,255,0.85)"><strong>SI</strong>mple <strong>SMA</strong>rt Framework</p>
                     <p style="color: rgba(255,255,255,0.7)">Framework PHP MVC moderno per applicazioni web robuste e manutenibili.</p>
                     <p style="color: rgba(255,255,255,0.7)">
                         <i class="bi bi-globe"></i> <a href="https://www.sisma-framework.dev/" target="_blank">www.sisma-framework.dev</a>
