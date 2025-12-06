@@ -24,30 +24,35 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HttpClasses;
+namespace SismaFramework\Core\Exceptions;
 
 use SismaFramework\Core\Enumerations\ResponseType;
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Security\ExtendedClasses\LogException;
 
 /**
- *
  * @author Valentino de Lapa
  */
-class Response
+class RangeNotSatisfiableException extends LogException
 {
-    private ResponseType $responseType;
-    
-    public function __construct(?ResponseType $responseType = null)
+
+    private int $fileSize;
+
+    public function __construct(string $message = "", int $fileSize = 0, int $code = 0, ?\Throwable $previous = null, ?Config $config = null)
     {
-        if ($responseType !== null) {
-            $this->setResponseType($responseType);
-        } else {
-            $this->responseType = ResponseType::from(intval(http_response_code()));
-        }
+        $this->fileSize = $fileSize;
+        parent::__construct($message, $code, $previous, $config);
+        header("Content-Range: bytes */" . $this->fileSize);
     }
-    
-    public function setResponseType(ResponseType $responseType):void
+
+    #[\Override]
+    protected function setResponseType(): ResponseType
     {
-        $this->responseType = $responseType;
-        http_response_code($this->responseType->value);
+        return ResponseType::httpRequestedRangeNotSatisfiable;
+    }
+
+    public function getFileSize(): int
+    {
+        return $this->fileSize;
     }
 }

@@ -50,18 +50,10 @@ class Render
             ?Config $customConfig = null): Response
     {
         $config = $customConfig ?? Config::getInstance();
-        $response = self::getResponse($responseType);
         Debugger::setVars($vars);
         self::assemblesComponents($view, $localizator, $vars, $config);
         echo static::generateDebugBar($debugger, $config);
-        return $response;
-    }
-
-    private static function getResponse(ResponseType $responseType): Response
-    {
-        $response = new Response();
-        $response->setResponseType($responseType);
-        return $response;
+        return new Response($responseType);
     }
 
     private static function assemblesComponents(string $view, Localizator $localizator, array $vars, Config $config): void
@@ -113,15 +105,13 @@ class Render
             ?Config $customConfig = null): Response
     {
         $config = $customConfig ?? Config::getInstance();
-        $response = self::getResponse($responseType);
         self::assemblesComponents($view, $localizator, $vars, $config);
-        return $response;
+        return new Response($responseType);
     }
 
     public static function generateJson(array $vars,
             ResponseType $responseType = ResponseType::httpOk): Response
     {
-        $response = self::getResponse($responseType);
         BufferManager::start();
         $jsonData = $vars;
         $encodedJsonData = json_encode($jsonData);
@@ -132,7 +122,7 @@ class Render
         header("Content-Disposition: inline");
         header("Content-Length: " . strlen($encodedJsonData));
         echo $encodedJsonData;
-        return $response;
+        return new Response($responseType);
     }
 
     public static function setStructural(bool $isStructural = true): void
