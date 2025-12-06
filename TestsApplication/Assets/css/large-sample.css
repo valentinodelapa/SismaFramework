@@ -1,0 +1,26 @@
+/* This is a test CSS file for range request testing */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.header {
+    background-color: #333;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+.content {
+    margin: 20px 0;
+    line-height: 1.6;
+}
+
+.footer {
+    background-color: #f4f4f4;
+    padding: 10px;
+    text-align: center;
+    margin-top: 20px;
+}

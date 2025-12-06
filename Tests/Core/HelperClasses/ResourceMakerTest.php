@@ -29,6 +29,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\AccessDeniedException;
+use SismaFramework\Core\Exceptions\RangeNotSatisfiableException;
 use SismaFramework\Core\HelperClasses\Dispatcher\ResourceMaker;
 use SismaFramework\Core\HelperClasses\Locker;
 use SismaFramework\Core\HttpClasses\Request;
@@ -164,5 +165,159 @@ class ResourceMakerTest extends TestCase
         $this->expectOutputString(file_get_contents($filePath));
         $resourceMaker = new ResourceMaker($this->requestMock, $this->configMock);
         $this->assertInstanceOf(Response::class, $resourceMaker->makeResource($filePath, false, $this->lockerMock));
+    }
+
+    public function testMakeResourceWithValidRangeRequest()
+    {
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/large-sample.css';
+        $fileContent = file_get_contents($filePath);
+        $fileSize = filesize($filePath);
+        
+        // Simula una richiesta range per i primi 100 bytes
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->headers = ['Range' => 'bytes=0-99'];
+        
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        
+        $expectedOutput = substr($fileContent, 0, 100);
+        $this->expectOutputString($expectedOutput);
+        
+        $resourceMaker = new ResourceMaker($requestMock, $this->configMock);
+        $response = $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+        
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    public function testMakeResourceWithPartialRangeRequest()
+    {
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/large-sample.css';
+        $fileContent = file_get_contents($filePath);
+        $fileSize = filesize($filePath);
+        
+        // Simula una richiesta range dal byte 50 al byte 149
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->headers = ['Range' => 'bytes=50-149'];
+        
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        
+        $expectedOutput = substr($fileContent, 50, 100);
+        $this->expectOutputString($expectedOutput);
+        
+        $resourceMaker = new ResourceMaker($requestMock, $this->configMock);
+        $response = $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+        
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    public function testMakeResourceWithOpenEndedRangeRequest()
+    {
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/large-sample.css';
+        $fileContent = file_get_contents($filePath);
+        $fileSize = filesize($filePath);
+        
+        // Simula una richiesta range dal byte 50 fino alla fine
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->headers = ['Range' => 'bytes=50-'];
+        
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        
+        $expectedOutput = substr($fileContent, 50);
+        $this->expectOutputString($expectedOutput);
+        
+        $resourceMaker = new ResourceMaker($requestMock, $this->configMock);
+        $response = $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+        
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    public function testMakeResourceWithInvalidRangeFormat()
+    {
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/large-sample.css';
+        
+        // Simula una richiesta range con formato invalido
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->headers = ['Range' => 'invalid-range-format'];
+        
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        
+        $resourceMaker = new ResourceMaker($requestMock, $this->configMock);
+        
+        $this->expectException(RangeNotSatisfiableException::class);
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+    }
+
+    public function testMakeResourceWithRangeOutOfBounds()
+    {
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/large-sample.css';
+        $fileSize = filesize($filePath);
+        
+        // Simula una richiesta range che supera la dimensione del file
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->headers = ['Range' => 'bytes=' . ($fileSize + 100) . '-' . ($fileSize + 200)];
+        
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        
+        $resourceMaker = new ResourceMaker($requestMock, $this->configMock);
+        
+        $this->expectException(RangeNotSatisfiableException::class);
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
+    }
+
+    public function testMakeResourceWithInvalidRangeStartGreaterThanEnd()
+    {
+        $filePath = __DIR__ . '/../../../TestsApplication/Assets/css/large-sample.css';
+        
+        // Simula una richiesta range dove start > end
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->headers = ['Range' => 'bytes=200-100'];
+        
+        $this->lockerMock->expects($this->once())
+                ->method('fileIsLocked')
+                ->with($filePath)
+                ->willReturn(false);
+        $this->lockerMock->expects($this->once())
+                ->method('folderIsLocked')
+                ->with(dirname($filePath))
+                ->willReturn(false);
+        
+        $resourceMaker = new ResourceMaker($requestMock, $this->configMock);
+        
+        $this->expectException(RangeNotSatisfiableException::class);
+        $resourceMaker->makeResource($filePath, false, $this->lockerMock);
     }
 }

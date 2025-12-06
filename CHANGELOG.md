@@ -3,6 +3,69 @@
 All notable changes to this project will be documented in this file.
 
 
+## [10.1.1] - 2025-12-06 - Supporto HTTP Range Requests e Miglioramenti API Response
+
+Questa patch release corregge un bug critico di conformità agli standard HTTP che impediva la riproduzione di video in Safari. Implementato il supporto completo per HTTP Range Requests (RFC 7233) con gestione di 206 Partial Content e 416 Range Not Satisfiable. Migliorata l'API della classe Response con constructor injection.
+
+### 🐛 Bug Fixes
+
+#### Supporto HTTP Range Requests per Streaming Media
+
+Corretto bug critico nel serving di file statici che causava la mancata riproduzione di video in Safari:
+
+*   **ResourceMaker.php**:
+    - ❌ **Prima**: Il server ignorava l'header `Range` e restituiva sempre 200 OK con l'intero file
+    - ✅ **Dopo**: Gestione completa delle range requests secondo RFC 7233
+    - `viewResource()` e `downloadResource()`: Rilevamento header `Range` e delega a `servePartialContent()`
+    - `servePartialContent()`: Gestisce risposta 206 Partial Content
+    - `parseRangeHeader()`: Validazione formato con regex e controlli
+    - `getResourceDataRange()`: Lettura efficiente chunk-based (8KB)
+
+*   **RangeNotSatisfiableException.php** (nuova classe):
+    - Eccezione dedicata per gestire range invalidi
+    - Risposta 416 Range Not Satisfiable conforme a RFC 7233
+    - Header `Content-Range: bytes */filesize` settato automaticamente
+    - Validazione: formato header, start ≤ end, range entro limiti file
+
+**Scenario del bug**:
+1. Safari richiede un video con header `Range: bytes=0-1023`
+2. Il server ignorava l'header e restituiva 200 OK con l'intero file
+3. Safari rifiutava di riprodurre il video
+4. Impossibilità di fare seek/skip nei file multimediali
+
+**Casi d'uso risolti**:
+- Video/audio streaming con seek (Safari, Chrome, Firefox, Edge)
+- Download resumable con download manager
+- Caricamento progressivo PDF di grandi dimensioni
+
+### 🎨 Refactoring
+
+#### Response Constructor Injection
+
+Migliorata l'API della classe `Response`:
+
+*   **Response.php**:
+    - Aggiunto parametro opzionale `?ResponseType $responseType = null`
+    - Pattern conciso: `new Response(ResponseType::httpPartialContent)`
+    - Backward compatible al 100%
+
+*   **Applicato in**:
+    - `ResourceMaker::servePartialContent()`: -2 linee
+    - `Render::getResponse()`: Metodo rimosso (-7 linee)
+    - `Render`: Return diretto in `generateView()`, `generateData()`, `generateJson()`
+
+### 🧪 Testing
+
+*   **ResourceMakerTest.php**: 6 nuovi test
+*   **ResponseTest.php**: 3 nuovi test
+*   **large-sample.css**: File test 384 bytes
+
+### 🔧 Dettagli Tecnici
+
+*   **Standard**: RFC 7233, RFC 7231
+*   **Response Codes**: 206, 416
+*   **Headers**: `Range`, `Content-Range`, `Accept-Ranges`, `Content-Length`
+
 ## [10.1.0] - 2025-12-02 - Strumenti CLI per Scaffolding, Installazione e Rifatorizzazione Dispatcher
 
 Benvenuti alla release 10.1.0, una delle più ricche di novità nella storia del framework! Utility CLI rivoluzionano il flusso di sviluppo quotidiano, con scaffolding automatico e installazione guidata che accelerano drasticamente la creazione di nuovi progetti. Ottimizzato profondamente il Dispatcher attraverso una rifatorizzazione completa seguendo i principi SOLID, separando le responsabilità in sette classi specializzate che rendono il codice più manutenibile e testabile.
