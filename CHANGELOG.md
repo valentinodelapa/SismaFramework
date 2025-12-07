@@ -2,12 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [11.0.0] - 2025-11-18 - Rifattorizzazione Architetturale BaseForm con Principi SOLID
+## [11.0.0] - 2025-11-18 - Rifattorizzazione Architetturale e Semplificazione API
 
-Questa major release rifattorizza completamente la classe `BaseForm` applicando il Single Responsibility Principle, estraendo le responsabilità in tre classi specializzate che migliorano manutenibilità e testabilità del sistema di gestione form.
+Questa major release introduce miglioramenti architetturali significativi: rifattorizzazione completa di BaseForm con principi SOLID e semplificazione API Response attraverso rimozione del metodo pubblico setResponseType().
 
-La rifattorizzazione introduce **breaking changes**: il metodo astratto `customFilter()` ora ritorna `bool` invece di `void`, permettendo una gestione più coerente della validazione custom e contribuendo al risultato finale di validità del form.
-
+La release introduce breaking changes: il metodo astratto customFilter() di BaseForm ora ritorna bool invece di void, e il metodo pubblico setResponseType() di Response è stato rimosso in favore dell'immutabilità tramite constructor injection.
 ### 🏗️ Architettura
 
 * **Rifattorizzazione Completa BaseForm con Principi SOLID**: La classe `BaseForm` è stata completamente rifattorizzata applicando il Single Responsibility Principle, con estrazione delle responsabilità in classi dedicate:
@@ -53,6 +52,34 @@ La rifattorizzazione introduce **breaking changes**: il metodo astratto `customF
   Questo permette di iniettare implementazioni custom per testing o estensioni.
 
 ### 💥 Breaking Changes
+
+### 💥 Breaking Changes
+
+* **Rimozione Metodo Response::setResponseType()**: Il metodo pubblico setResponseType() è stato rimosso dalla classe Response
+
+  **Prima (10.x)**:
+  ```php
+  $response = new Response();
+  $response->setResponseType(ResponseType::httpNotFound);
+  ```
+
+  **Dopo (11.0.0)**:
+  ```php
+  $response = new Response(ResponseType::httpNotFound);
+  ```
+
+  **Motivazione**:
+  - Promuove immutabilità: un oggetto Response dovrebbe nascere con un tipo e mantenerlo
+  - Proprietà `$responseType` ora `readonly` (PHP 8.1+) per garantire immutabilità a livello di linguaggio
+  - Semplifica API: constructor injection è più pulito e type-safe
+  - Elimina metodi non utilizzati: nessun codice nel framework usava setResponseType() dopo creazione oggetto
+  - Migliora testabilità: stato dell'oggetto più prevedibile
+
+  **Impatto**: Il metodo setResponseType() non è più disponibile. Utilizzare il costruttore per impostare il response type.
+
+  **Azione richiesta**:
+  - Sostituire chiamate a setResponseType() passando il ResponseType al costruttore
+  - Se necessario modificare il response type, creare una nuova istanza di Response
 
 * **Modifica Firma Metodo `customFilter()`**: Il metodo astratto `customFilter()` ora ritorna `bool` invece di `void`
 
@@ -111,6 +138,11 @@ La rifattorizzazione introduce **breaking changes**: il metodo astratto `customF
 
 * **Copertura Completa Nuove Classi**: Le tre nuove classi helper (`EntityResolver`, `FilterManager`, `FormValidator`) sono completamente testate attraverso i test esistenti di `BaseForm`, garantendo che la rifattorizzazione non abbia introdotto regressioni.
 
+
+* **Test Aggiornati per Response**: Rimossi tutti i test che utilizzavano setResponseType(), sostituiti con test per constructor injection:
+  - ResponseTest.php: Ridotto da 13 a 6 test, focalizzati sul costruttore
+  - Aggiunto testConstructorWithVariousResponseTypes() che testa tutti i ResponseType principali inclusi 206 e 416
+
 ### 📝 Documentazione
 
 * **Classi Marcate @internal**: Le tre nuove classi helper sono marcate con l'annotazione `@internal` per indicare che fanno parte dell'implementazione interna di `BaseForm` e non dovrebbero essere utilizzate direttamente dagli sviluppatori.
@@ -136,7 +168,20 @@ La rifattorizzazione introduce **breaking changes**: il metodo astratto `customF
   - [ ] Verificare che i form funzionino correttamente in tutti i flussi
   - [ ] Testare sia casi di validazione con successo che con fallimento
 
+
+- [ ] **Utilizzo di Response**
+  - [ ] Cercare tutte le occorrenze di ->setResponseType(
+  - [ ] Sostituire con constructor injection: new Response(ResponseType::...)
+  - [ ] Se necessario modificare response type, creare nuova istanza invece di chiamare metodo
+
+- [ ] **Testing**
+  - [ ] Eseguire tutti i test unitari
+  - [ ] Verificare che i form funzionino correttamente in tutti i flussi
+  - [ ] Testare sia casi di validazione con successo che con fallimento
+  - [ ] Verificare che tutti i response codes siano impostati correttamente
+
 ---
+
 
 ## [10.1.1] - 2025-12-06 - Supporto HTTP Range Requests e Miglioramenti API Response
 

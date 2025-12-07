@@ -34,20 +34,15 @@ use SismaFramework\Core\Enumerations\ResponseType;
  */
 class Response
 {
-    private ResponseType $responseType;
+    private readonly ResponseType $responseType;
     
     public function __construct(?ResponseType $responseType = null)
     {
         if ($responseType !== null) {
-            $this->setResponseType($responseType);
+            $this->responseType = $responseType;
+            http_response_code($this->responseType->value);
         } else {
             $this->responseType = ResponseType::from(intval(http_response_code()));
         }
-    }
-    
-    public function setResponseType(ResponseType $responseType):void
-    {
-        $this->responseType = $responseType;
-        http_response_code($this->responseType->value);
     }
 }

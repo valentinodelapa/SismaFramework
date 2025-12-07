@@ -53,12 +53,11 @@ class ResponseTest extends TestCase
 
     public function testConstructorSetsResponseTypeFromCurrentHttpCode()
     {
-        // Set a specific response code before creating Response
         http_response_code(404);
 
         $response = new Response();
 
-        // We can't directly access private property, but we can test behavior
+        $this->assertEquals(404, http_response_code());
         $this->assertInstanceOf(Response::class, $response);
     }
 
@@ -68,97 +67,8 @@ class ResponseTest extends TestCase
 
         $response = new Response();
 
+        $this->assertEquals(200, http_response_code());
         $this->assertInstanceOf(Response::class, $response);
-    }
-
-    public function testSetResponseTypeUpdatesHttpResponseCode()
-    {
-        $response = new Response();
-
-        $response->setResponseType(ResponseType::httpNotFound);
-
-        $this->assertEquals(404, http_response_code());
-    }
-
-    public function testSetResponseTypeWithSuccessCode()
-    {
-        $response = new Response();
-
-        $response->setResponseType(ResponseType::httpOk);
-
-        $this->assertEquals(200, http_response_code());
-    }
-
-    public function testSetResponseTypeWithServerErrorCode()
-    {
-        $response = new Response();
-
-        $response->setResponseType(ResponseType::httpInternalServerError);
-
-        $this->assertEquals(500, http_response_code());
-    }
-
-    public function testSetResponseTypeWithUnauthorizedCode()
-    {
-        $response = new Response();
-
-        $response->setResponseType(ResponseType::httpUnauthorized);
-
-        $this->assertEquals(401, http_response_code());
-    }
-
-    public function testMultipleSetResponseTypeCalls()
-    {
-        $response = new Response();
-
-        $response->setResponseType(ResponseType::httpNotFound);
-        $this->assertEquals(404, http_response_code());
-
-        $response->setResponseType(ResponseType::httpOk);
-        $this->assertEquals(200, http_response_code());
-
-        $response->setResponseType(ResponseType::httpInternalServerError);
-        $this->assertEquals(500, http_response_code());
-    }
-
-    public function testResponseTypeEnumValues()
-    {
-        $response = new Response();
-
-        // Test specific response type enum values one by one
-        $response->setResponseType(ResponseType::httpOk);
-        $this->assertEquals(200, http_response_code());
-
-        $response->setResponseType(ResponseType::httpUnauthorized);
-        $this->assertEquals(401, http_response_code());
-
-        $response->setResponseType(ResponseType::httpNotFound);
-        $this->assertEquals(404, http_response_code());
-
-        $response->setResponseType(ResponseType::httpInternalServerError);
-        $this->assertEquals(500, http_response_code());
-    }
-
-    public function testConstructorWithVariousInitialCodes()
-    {
-        $testCodes = [200, 404, 500, 401];
-
-        foreach ($testCodes as $code) {
-            http_response_code($code);
-            $response = new Response();
-
-            // Constructor should read the current response code
-            $this->assertInstanceOf(Response::class, $response);
-        }
-    }
-
-    public function testSetResponseTypeReturnVoid()
-    {
-        $response = new Response();
-
-        $result = $response->setResponseType(ResponseType::httpOk);
-
-        $this->assertNull($result);
     }
 
     public function testConstructorWithResponseTypeParameter()
@@ -183,5 +93,25 @@ class ResponseTest extends TestCase
 
         $this->assertEquals(206, http_response_code());
         $this->assertInstanceOf(Response::class, $response);
+    }
+
+    public function testConstructorWithVariousResponseTypes()
+    {
+        $testCases = [
+            [ResponseType::httpOk, 200],
+            [ResponseType::httpUnauthorized, 401],
+            [ResponseType::httpNotFound, 404],
+            [ResponseType::httpInternalServerError, 500],
+            [ResponseType::httpPartialContent, 206],
+            [ResponseType::httpRequestedRangeNotSatisfiable, 416],
+        ];
+
+        foreach ($testCases as [$responseType, $expectedCode]) {
+            http_response_code(200); // Reset
+            $response = new Response($responseType);
+
+            $this->assertEquals($expectedCode, http_response_code());
+            $this->assertInstanceOf(Response::class, $response);
+        }
     }
 }
