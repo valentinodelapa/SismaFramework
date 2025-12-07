@@ -217,6 +217,18 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterFiledsMode">$filterFiledsMode</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterResult">$filterResult</a>
+    <span>
+                        &nbsp;: bool            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
     <a class="" href="classes/SismaFramework-Core-AbstractClasses-Submittable.html#property_formFilterError">$formFilterError</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Core-CustomTypes-FormFilterError.html"><abbr title="\SismaFramework\Core\CustomTypes\FormFilterError">FormFilterError</abbr></a>            </span>
@@ -229,33 +241,21 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_config">$config</a>
+    <span>
+                        &nbsp;: <abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_dataMapper">$dataMapper</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_entityResolver">$entityResolver</a>
-    <span>
-                        &nbsp;: <abbr title="\SismaFramework\Core\BaseClasses\BaseForm\EntityResolver">EntityResolver</abbr>            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_entityToResolve">$entityToResolve</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterManager">$filterManager</a>
-    <span>
-                        &nbsp;: <abbr title="\SismaFramework\Core\BaseClasses\BaseForm\FilterManager">FilterManager</abbr>            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_formValidator">$formValidator</a>
-    <span>
-                        &nbsp;: <abbr title="\SismaFramework\Core\BaseClasses\BaseForm\FormValidator">FormValidator</abbr>            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
@@ -347,7 +347,7 @@
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/SismaFramework-TestsApplication-Forms-BaseSampleFormFromOtherForm.html#method_customFilter">customFilter()</a>
     <span>
-                                &nbsp;: bool    </span>
+                                &nbsp;: void    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
@@ -399,6 +399,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_filterHasFailed">filterHasFailed()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_generateFormProperty">generateFormProperty()</a>
     <span>
                                 &nbsp;: <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm">BaseForm</abbr></a>    </span>
@@ -414,6 +420,96 @@
     <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_getBaseCollectionFormKeys">getBaseCollectionFormKeys()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isFiltered">isFiltered()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isNotPrimaryKeyOrPassIsActive">isNotPrimaryKeyOrPassIsActive()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isNullButNotNullable">isNullButNotNullable()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isSelfReferencedProperty">isSelfReferencedProperty()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseCollectionProperties">parseCollectionProperties()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseCollectionWithMultipleReferencedForeignKey">parseCollectionWithMultipleReferencedForeignKey()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseFile">parseFile()</a>
+    <span>
+                                &nbsp;: mixed    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseSingleStandardProperty">parseSingleStandardProperty()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseStandardProperties">parseStandardProperties()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_resolveEntityByForm">resolveEntityByForm()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_resolveSismaCollection">resolveSismaCollection()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFilter">switchFilter()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchForm">switchForm()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Orm-ExtendedClasses-StandardEntity.html"><abbr title="\SismaFramework\Orm\ExtendedClasses\StandardEntity">StandardEntity</abbr></a>    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFormOfCollection">switchFormOfCollection()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFormPropertyType">switchFormPropertyType()</a>
+    <span>
+                                &nbsp;: void    </span>
 </dt>
 
     </dl>
@@ -446,7 +542,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">52</span>
+    <span class="phpdocumentor-element-found-in__line">54</span>
 
     </aside>
 
@@ -482,7 +578,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">53</span>
+    <span class="phpdocumentor-element-found-in__line">55</span>
 
     </aside>
 
@@ -518,7 +614,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">54</span>
+    <span class="phpdocumentor-element-found-in__line">56</span>
 
     </aside>
 
@@ -529,6 +625,78 @@
         <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
     <span class="phpdocumentor-signature__name">$entityFromForm</span>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_filterFiledsMode">
+        $filterFiledsMode
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterFiledsMode" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">57</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$filterFiledsMode</span>
+     = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_filterResult">
+        $filterResult
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterResult" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">53</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">bool</span>
+    <span class="phpdocumentor-signature__name">$filterResult</span>
+     = <span class="phpdocumentor-signature__default-value">true</span></code>
 
     
     
@@ -616,9 +784,9 @@
             -private
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="property_dataMapper">
-        $dataMapper
-        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_dataMapper" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="property_config">
+        $config
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_config" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                 </span>
@@ -626,7 +794,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">59</span>
 
     </aside>
 
@@ -634,8 +802,8 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
-    <span class="phpdocumentor-signature__name">$dataMapper</span>
+        <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></span>
+    <span class="phpdocumentor-signature__name">$config</span>
     </code>
 
     
@@ -652,9 +820,9 @@
             -private
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="property_entityResolver">
-        $entityResolver
-        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_entityResolver" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="property_dataMapper">
+        $dataMapper
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_dataMapper" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                 </span>
@@ -670,8 +838,8 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\EntityResolver">EntityResolver</abbr></span>
-    <span class="phpdocumentor-signature__name">$entityResolver</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$dataMapper</span>
     </code>
 
     
@@ -698,7 +866,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">59</span>
+    <span class="phpdocumentor-element-found-in__line">60</span>
 
     </aside>
 
@@ -724,78 +892,6 @@
             -private
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="property_filterManager">
-        $filterManager
-        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterManager" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">56</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\FilterManager">FilterManager</abbr></span>
-    <span class="phpdocumentor-signature__name">$filterManager</span>
-    </code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="property_formValidator">
-        $formValidator
-        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_formValidator" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">57</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\FormValidator">FormValidator</abbr></span>
-    <span class="phpdocumentor-signature__name">$formValidator</span>
-    </code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-                                                        "
->
     <h4 class="phpdocumentor-element__name" id="property_responseType">
         $responseType
         <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_responseType" class="headerlink"><i class="fas fa-link"></i></a>
@@ -806,7 +902,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">61</span>
+    <span class="phpdocumentor-element-found-in__line">62</span>
 
     </aside>
 
@@ -842,7 +938,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">60</span>
+    <span class="phpdocumentor-element-found-in__line">61</span>
 
     </aside>
 
@@ -883,14 +979,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">63</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$baseEntity</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\FilterManager">FilterManager</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$filterManager</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new FilterManager()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\FormValidator">FormValidator</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$formValidator</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\EntityResolver">EntityResolver</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entityResolver</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new EntityResolver()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$baseEntity</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -913,23 +1009,9 @@
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$filterManager</span>
-                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\FilterManager">FilterManager</abbr></span>
-                 = <span class="phpdocumentor-signature__argument__default-value">new FilterManager()</span>            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$formValidator</span>
-                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\FormValidator">FormValidator</abbr>|null</span>
+                <span class="phpdocumentor-signature__argument__name">$config</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null</span>
                  = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$entityResolver</span>
-                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\BaseClasses\BaseForm\EntityResolver">EntityResolver</abbr></span>
-                 = <span class="phpdocumentor-signature__argument__default-value">new EntityResolver()</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -955,7 +1037,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">237</span>
+    <span class="phpdocumentor-element-found-in__line">394</span>
 
     </aside>
 
@@ -1031,7 +1113,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">245</span>
+    <span class="phpdocumentor-element-found-in__line">402</span>
 
     </aside>
 
@@ -1069,7 +1151,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">99</span>
+    <span class="phpdocumentor-element-found-in__line">94</span>
 
     </aside>
 
@@ -1151,7 +1233,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">203</span>
+    <span class="phpdocumentor-element-found-in__line">202</span>
 
     </aside>
 
@@ -1189,7 +1271,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">226</span>
+    <span class="phpdocumentor-element-found-in__line">364</span>
 
     </aside>
 
@@ -1227,7 +1309,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">126</span>
+    <span class="phpdocumentor-element-found-in__line">125</span>
 
     </aside>
 
@@ -1289,7 +1371,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">118</span>
+    <span class="phpdocumentor-element-found-in__line">113</span>
 
     </aside>
 
@@ -1358,7 +1440,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">110</span>
+    <span class="phpdocumentor-element-found-in__line">105</span>
 
     </aside>
 
@@ -1420,7 +1502,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">customFilter</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">customFilter</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1431,11 +1513,7 @@
 
     
 
-            <section>
-        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
-        <span class="phpdocumentor-signature__response_type">bool</span>
-            </section>
-
+    
 </article>
                     <article
         class="phpdocumentor-element
@@ -1489,7 +1567,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Forms/BaseSampleFormFromOtherForm.php"><a href="files/testsapplication-forms-basesampleformfromotherform.html"><abbr title="TestsApplication/Forms/BaseSampleFormFromOtherForm.php">BaseSampleFormFromOtherForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">23</span>
+    <span class="phpdocumentor-element-found-in__line">22</span>
 
     </aside>
 
@@ -1523,7 +1601,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Forms/BaseSampleFormFromOtherForm.php"><a href="files/testsapplication-forms-basesampleformfromotherform.html"><abbr title="TestsApplication/Forms/BaseSampleFormFromOtherForm.php">BaseSampleFormFromOtherForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">28</span>
+    <span class="phpdocumentor-element-found-in__line">27</span>
 
     </aside>
 
@@ -1557,7 +1635,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="TestsApplication/Forms/BaseSampleFormFromOtherForm.php"><a href="files/testsapplication-forms-basesampleformfromotherform.html"><abbr title="TestsApplication/Forms/BaseSampleFormFromOtherForm.php">BaseSampleFormFromOtherForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">33</span>
+    <span class="phpdocumentor-element-found-in__line">32</span>
 
     </aside>
 
@@ -1591,7 +1669,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">138</span>
+    <span class="phpdocumentor-element-found-in__line">137</span>
 
     </aside>
 
@@ -1649,7 +1727,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">185</span>
+    <span class="phpdocumentor-element-found-in__line">184</span>
 
     </aside>
 
@@ -1707,7 +1785,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">78</span>
+    <span class="phpdocumentor-element-found-in__line">73</span>
 
     </aside>
 
@@ -1741,7 +1819,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">87</span>
+    <span class="phpdocumentor-element-found-in__line">82</span>
 
     </aside>
 
@@ -1777,6 +1855,54 @@
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_filterHasFailed">
+        filterHasFailed()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_filterHasFailed" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">337</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">filterHasFailed</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_generateFormProperty">
         generateFormProperty()
         <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_generateFormProperty" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1785,7 +1911,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">176</span>
+    <span class="phpdocumentor-element-found-in__line">175</span>
 
     </aside>
 
@@ -1847,7 +1973,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">166</span>
+    <span class="phpdocumentor-element-found-in__line">165</span>
 
     </aside>
 
@@ -1916,7 +2042,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">157</span>
+    <span class="phpdocumentor-element-found-in__line">156</span>
 
     </aside>
 
@@ -1949,6 +2075,663 @@
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
             </section>
 
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_isFiltered">
+        isFiltered()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isFiltered" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">294</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">isFiltered</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$property</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$property</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_isNotPrimaryKeyOrPassIsActive">
+        isNotPrimaryKeyOrPassIsActive()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isNotPrimaryKeyOrPassIsActive" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">289</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">isNotPrimaryKeyOrPassIsActive</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$property</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$property</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_isNullButNotNullable">
+        isNullButNotNullable()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isNullButNotNullable" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">342</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">isNullButNotNullable</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_isSelfReferencedProperty">
+        isSelfReferencedProperty()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isSelfReferencedProperty" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">351</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">isSelfReferencedProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyData</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyData</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_parseCollectionProperties">
+        parseCollectionProperties()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseCollectionProperties" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">217</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">parseCollectionProperties</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_parseCollectionWithMultipleReferencedForeignKey">
+        parseCollectionWithMultipleReferencedForeignKey()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseCollectionWithMultipleReferencedForeignKey" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">265</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">parseCollectionWithMultipleReferencedForeignKey</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyData</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyData</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_parseFile">
+        parseFile()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseFile" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">317</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">parseFile</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_parseSingleStandardProperty">
+        parseSingleStandardProperty()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseSingleStandardProperty" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">299</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">parseSingleStandardProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$property</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$property</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_parseStandardProperties">
+        parseStandardProperties()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseStandardProperties" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">275</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">parseStandardProperties</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_resolveEntityByForm">
+        resolveEntityByForm()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_resolveEntityByForm" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">378</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">resolveEntityByForm</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_resolveSismaCollection">
+        resolveSismaCollection()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_resolveSismaCollection" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">385</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">resolveSismaCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_switchFilter">
+        switchFilter()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFilter" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">322</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">switchFilter</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_switchForm">
+        switchForm()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchForm" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">257</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">switchForm</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">self&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entityFromForm</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-ExtendedClasses-StandardEntity.html"><abbr title="\SismaFramework\Orm\ExtendedClasses\StandardEntity">StandardEntity</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$entityFromForm</span>
+                : <span class="phpdocumentor-signature__argument__return-type">self</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-ExtendedClasses-StandardEntity.html"><abbr title="\SismaFramework\Orm\ExtendedClasses\StandardEntity">StandardEntity</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_switchFormOfCollection">
+        switchFormOfCollection()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFormOfCollection" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">243</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">switchFormOfCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_switchFormPropertyType">
+        switchFormPropertyType()
+        <a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFormPropertyType" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/BaseClasses/BaseForm.php"><a href="files/core-baseclasses-baseform.html"><abbr title="Core/BaseClasses/BaseForm.php">BaseForm.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">230</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">switchFormPropertyType</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
 </article>
             </section>
 
@@ -2066,13 +2849,13 @@
                                                     <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_entity">$entity</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_entityData">$entityData</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_entityFromForm">$entityFromForm</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterFiledsMode">$filterFiledsMode</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterResult">$filterResult</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-AbstractClasses-Submittable.html#property_formFilterError">$formFilterError</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-AbstractClasses-Submittable.html#property_request">$request</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_config">$config</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_dataMapper">$dataMapper</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_entityResolver">$entityResolver</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_entityToResolve">$entityToResolve</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_filterManager">$filterManager</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_formValidator">$formValidator</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_responseType">$responseType</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_sismaCollectionToResolve">$sismaCollectionToResolve</a></li>
                                             </ul>
@@ -2101,9 +2884,25 @@
                                             <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_addEntityFromFormViaForeignKey">addEntityFromFormViaForeignKey()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_checkEntityName">checkEntityName()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_embedEntity">embedEntity()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_filterHasFailed">filterHasFailed()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_generateFormProperty">generateFormProperty()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_generateSismaCollectionProperty">generateSismaCollectionProperty()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_getBaseCollectionFormKeys">getBaseCollectionFormKeys()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isFiltered">isFiltered()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isNotPrimaryKeyOrPassIsActive">isNotPrimaryKeyOrPassIsActive()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isNullButNotNullable">isNullButNotNullable()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_isSelfReferencedProperty">isSelfReferencedProperty()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseCollectionProperties">parseCollectionProperties()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseCollectionWithMultipleReferencedForeignKey">parseCollectionWithMultipleReferencedForeignKey()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseFile">parseFile()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseSingleStandardProperty">parseSingleStandardProperty()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_parseStandardProperties">parseStandardProperties()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_resolveEntityByForm">resolveEntityByForm()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_resolveSismaCollection">resolveSismaCollection()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFilter">switchFilter()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchForm">switchForm()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFormOfCollection">switchFormOfCollection()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_switchFormPropertyType">switchFormPropertyType()</a></li>
                                     </ul>
             </li>
                     </ul>
