@@ -29,7 +29,6 @@ namespace SismaFramework\Tests\Orm\BaseClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;

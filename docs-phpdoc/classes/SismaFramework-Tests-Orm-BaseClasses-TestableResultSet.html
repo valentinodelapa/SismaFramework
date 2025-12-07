@@ -191,6 +191,19 @@
 
 
 
+<h4 id="toc-constants">
+    Constants
+    <a href="classes/SismaFramework-Tests-Orm-BaseClasses-TestableResultSet.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -protected">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#constant_COLUMN_SEPARATOR">COLUMN_SEPARATOR</a>
+    <span>
+        &nbsp;= &#039;__&#039;                            </span>
+</dt>
+
+    </dl>
 
 
 <h4 id="toc-properties">
@@ -203,6 +216,12 @@
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_currentRecord">$currentRecord</a>
     <span>
                         &nbsp;: int            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_joinMetadata">$joinMetadata</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -protected">
@@ -304,6 +323,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_setJoinMetadata">setJoinMetadata()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_setReturnType">setReturnType()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -328,9 +353,39 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToHierarchicalEntity">convertToHierarchicalEntity()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToStandardEntity">convertToStandardEntity()</a>
     <span>
                                 &nbsp;: <a href="classes/SismaFramework-Orm-ExtendedClasses-StandardEntity.html"><abbr title="\SismaFramework\Orm\ExtendedClasses\StandardEntity">StandardEntity</abbr></a>    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getEntityClassForAlias">getEntityClassForAlias()</a>
+    <span>
+                                &nbsp;: string|null    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getJoinInfoByProperty">getJoinInfoByProperty()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;|null    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateNestedEntities">hydrateNestedEntities()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateRelatedEntity">hydrateRelatedEntity()</a>
+    <span>
+                                &nbsp;: <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>    </span>
 </dt>
 
     </dl>
@@ -338,6 +393,44 @@
 
 
         
+    <section class="phpdocumentor-constants">
+        <h3 class="phpdocumentor-elements__header" id="constants">
+            Constants
+            <a href="classes/SismaFramework-Tests-Orm-BaseClasses-TestableResultSet.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article class="phpdocumentor-element -constant -protected ">
+    <h4 class="phpdocumentor-element__name" id="constant_COLUMN_SEPARATOR">
+        COLUMN_SEPARATOR
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#constant_COLUMN_SEPARATOR" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">62</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">COLUMN_SEPARATOR</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;__&#039;</span>
+</code>
+
+
+    
+    
+    
+
+    
+
+</article>
+            </section>
 
         
     <section class="phpdocumentor-properties">
@@ -363,7 +456,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">56</span>
+    <span class="phpdocumentor-element-found-in__line">65</span>
 
     </aside>
 
@@ -389,6 +482,42 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="property_joinMetadata">
+        $joinMetadata
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_joinMetadata" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">67</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$joinMetadata</span>
+     = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="property_maxRecord">
         $maxRecord
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_maxRecord" class="headerlink"><i class="fas fa-link"></i></a>
@@ -399,7 +528,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">57</span>
+    <span class="phpdocumentor-element-found-in__line">66</span>
 
     </aside>
 
@@ -435,7 +564,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">64</span>
 
     </aside>
 
@@ -512,7 +641,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">59</span>
+    <span class="phpdocumentor-element-found-in__line">69</span>
 
     </aside>
 
@@ -594,7 +723,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">89</span>
+    <span class="phpdocumentor-element-found-in__line">104</span>
 
     </aside>
 
@@ -756,7 +885,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">99</span>
+    <span class="phpdocumentor-element-found-in__line">114</span>
 
     </aside>
 
@@ -794,7 +923,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">94</span>
+    <span class="phpdocumentor-element-found-in__line">109</span>
 
     </aside>
 
@@ -866,7 +995,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">71</span>
+    <span class="phpdocumentor-element-found-in__line">86</span>
 
     </aside>
 
@@ -900,7 +1029,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">104</span>
+    <span class="phpdocumentor-element-found-in__line">119</span>
 
     </aside>
 
@@ -934,7 +1063,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">79</span>
+    <span class="phpdocumentor-element-found-in__line">94</span>
 
     </aside>
 
@@ -970,6 +1099,50 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_setJoinMetadata">
+        setJoinMetadata()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_setJoinMetadata" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">81</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setJoinMetadata</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$joinMetadata</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$joinMetadata</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_setReturnType">
         setReturnType()
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_setReturnType" class="headerlink"><i class="fas fa-link"></i></a>
@@ -978,7 +1151,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">66</span>
+    <span class="phpdocumentor-element-found-in__line">76</span>
 
     </aside>
 
@@ -1022,7 +1195,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">109</span>
+    <span class="phpdocumentor-element-found-in__line">124</span>
 
     </aside>
 
@@ -1060,7 +1233,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">118</span>
+    <span class="phpdocumentor-element-found-in__line">133</span>
 
     </aside>
 
@@ -1108,7 +1281,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">136</span>
+    <span class="phpdocumentor-element-found-in__line">260</span>
 
     </aside>
 
@@ -1148,6 +1321,54 @@
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_convertToHierarchicalEntity">
+        convertToHierarchicalEntity()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToHierarchicalEntity" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">144</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">convertToHierarchicalEntity</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\stdClass">stdClass</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$result</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$result</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\stdClass">stdClass</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_convertToStandardEntity">
         convertToStandardEntity()
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToStandardEntity" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1156,7 +1377,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">127</span>
+    <span class="phpdocumentor-element-found-in__line">251</span>
 
     </aside>
 
@@ -1187,6 +1408,208 @@
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-ExtendedClasses-StandardEntity.html"><abbr title="\SismaFramework\Orm\ExtendedClasses\StandardEntity">StandardEntity</abbr></a></span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_getEntityClassForAlias">
+        getEntityClassForAlias()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getEntityClassForAlias" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">207</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">getEntityClassForAlias</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$alias</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|null</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$alias</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string|null</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_getJoinInfoByProperty">
+        getJoinInfoByProperty()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getJoinInfoByProperty" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">240</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">getJoinInfoByProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$foreignKeyProperty</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;|null</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$foreignKeyProperty</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;|null</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_hydrateNestedEntities">
+        hydrateNestedEntities()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateNestedEntities" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">166</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">hydrateNestedEntities</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$parentEntity</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$nestedEntitiesData</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$parentEntity</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$nestedEntitiesData</span>
+                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_hydrateRelatedEntity">
+        hydrateRelatedEntity()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateRelatedEntity" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseResultSet.php"><a href="files/orm-baseclasses-baseresultset.html"><abbr title="Orm/BaseClasses/BaseResultSet.php">BaseResultSet.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">217</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">hydrateRelatedEntity</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\stdClass">stdClass</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$data</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entityClass</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$data</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\stdClass">stdClass</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$entityClass</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
             </section>
 
 </article>
@@ -1295,15 +1718,23 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                        <li><a href="classes/SismaFramework-Tests-Orm-BaseClasses-TestableResultSet.html#toc-constants">Constants</a></li>
                                                             <li><a href="classes/SismaFramework-Tests-Orm-BaseClasses-TestableResultSet.html#toc-properties">Properties</a></li>
                                                             <li><a href="classes/SismaFramework-Tests-Orm-BaseClasses-TestableResultSet.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
+                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#constant_COLUMN_SEPARATOR">COLUMN_SEPARATOR</a></li>
+                                            </ul>
+                </li>
             
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_currentRecord">$currentRecord</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_joinMetadata">$joinMetadata</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_maxRecord">$maxRecord</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#property_returnType">$returnType</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Tests-Orm-BaseClasses-TestableResultSet.html#property_data">$data</a></li>
@@ -1325,11 +1756,17 @@
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_release">release()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_rewind">rewind()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_seek">seek()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_setJoinMetadata">setJoinMetadata()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_setReturnType">setReturnType()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_valid">valid()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrate">hydrate()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToBaseEntity">convertToBaseEntity()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToHierarchicalEntity">convertToHierarchicalEntity()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToStandardEntity">convertToStandardEntity()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getEntityClassForAlias">getEntityClassForAlias()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getJoinInfoByProperty">getJoinInfoByProperty()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateNestedEntities">hydrateNestedEntities()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateRelatedEntity">hydrateRelatedEntity()</a></li>
                                     </ul>
             </li>
                     </ul>

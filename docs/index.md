@@ -23,6 +23,7 @@
 
   * [Introduzione all'ORM (Data Mapper)](orm.md)
   * [Funzionalità Avanzate dell'ORM](orm-additional-features.md)
+  * [JOIN ed Eager Loading](join-eager-loading.md)
 
 * **Sicurezza**
 

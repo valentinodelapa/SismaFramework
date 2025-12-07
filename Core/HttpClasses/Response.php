@@ -36,9 +36,13 @@ class Response
 {
     private ResponseType $responseType;
     
-    public function __construct()
+    public function __construct(?ResponseType $responseType = null)
     {
-        $this->responseType = ResponseType::from(intval(http_response_code()));
+        if ($responseType !== null) {
+            $this->setResponseType($responseType);
+        } else {
+            $this->responseType = ResponseType::from(intval(http_response_code()));
+        }
     }
     
     public function setResponseType(ResponseType $responseType):void

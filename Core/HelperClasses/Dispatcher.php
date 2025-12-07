@@ -30,7 +30,6 @@ use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\HelperClasses\Dispatcher\ActionArgumentsParser;
 use SismaFramework\Core\HelperClasses\Dispatcher\ControllerFactory;
 use SismaFramework\Core\HelperClasses\Dispatcher\ResourceHandler;
-use SismaFramework\Core\HelperClasses\Dispatcher\RouteInfo;
 use SismaFramework\Core\HelperClasses\Dispatcher\RouteResolver;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;

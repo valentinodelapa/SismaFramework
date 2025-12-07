@@ -28,7 +28,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * MODIFICHE APPORTATE A QUESTO FILE RISPETTO AL CODICE ORIGINALE DI SIMPLEORM:
  * - Aggiunta gestione delle funzioni di aggregazione delle colonne delle query tramite i metodi setAVG(), setMax(), setMin(), setSum() e setAggregationFunction().
  * - Modifica del namespace per l'integrazione nel SismaFramework.
@@ -42,6 +42,16 @@
  * - Estensione dei metodi order by: appendOrderByCondition(), appendOrderBySubquery().
  * - Rimozione del metodo reset() presente nell'originale.
  * - Modifica della logica di setOrderBy() per supportare array associativi con Indexing enum.
+ * - Introduzione del supporto JOIN SQL (v10.1.0):
+ *   * Aggiunta di proprietà $joins per tracciamento delle clausole JOIN
+ *   * Aggiunta di appendJoin() per costruzione JOIN espliciti con supporto relatedEntityClass
+ *   * Aggiunta di appendJoinOnForeignKey() per JOIN automatici basati su foreign key
+ *   * Aggiunta di hasJoins() per rilevamento presenza di JOIN nella query
+ *   * Aggiunta di getJoins() per recupero metadati JOIN
+ *   * Aggiunta di getColumns() per recupero colonne selezionate
+ *   * Modifica di initializeColumn() per passare $this->table a allColumns() delegando qualificazione all'adapter
+ *   * Modifica di build() per includere clausole JOIN nella query SQL finale
+ *   * Supporto per tutti i tipi di JOIN: INNER, LEFT, RIGHT, CROSS tramite enum JoinType
  */
 
 namespace SismaFramework\Orm\HelperClasses;
@@ -51,6 +61,7 @@ use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\JoinType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
@@ -61,6 +72,7 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 class Query
 {
 
+    protected string $tableName = '';
     protected string $table = '';
     protected bool $distinct = false;
     protected array $columns = [];
@@ -71,6 +83,7 @@ class Query
     protected array $group = [];
     protected array $having = [];
     protected array $order = [];
+    protected array $joins = [];
     protected string $variable;
     protected string $value;
     protected bool $closed = false;
@@ -154,6 +167,13 @@ class Query
         return $this;
     }
 
+    public function &appendColumn(string $column): self
+    {
+        $this->initializeColumn();
+        $this->columns[] = $column;
+        return $this;
+    }
+
     public function &setFulltextIndexColumn(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null, bool $append = false): self
     {
         if ($append) {
@@ -168,7 +188,7 @@ class Query
     private function initializeColumn()
     {
         if (count($this->columns) === 0) {
-            $this->columns = [$this->adapter->allColumns()];
+            $this->columns = [$this->adapter->allColumns($this->tableName)];
         }
     }
 
@@ -198,8 +218,47 @@ class Query
 
     public function &setTable(string $table, ?string $tableAlias = null): self
     {
-        $this->table = $this->adapter->escapeTable($table, $tableAlias);
+        $this->tableName = $this->table = $this->adapter->escapeTable($table);
+        if ($tableAlias !== null) {
+            $this->table .= ' as ' . $this->adapter->escapeTable($tableAlias);
+        }
         return $this;
+    }
+
+    public function &appendJoin(JoinType $joinType, string $joinedTable, string $tableAlias, string $onCondition, ?string $relatedEntityClass = null): self
+    {
+        $joinData = [
+            'type' => $joinType,
+            'table' => $this->adapter->escapeTable($joinedTable),
+            'alias' => $this->adapter->escapeIdentifier($tableAlias),
+            'on' => $onCondition
+        ];
+        if ($relatedEntityClass !== null) {
+            $joinData['relatedEntityClass'] = $relatedEntityClass;
+        }
+        $this->joins[] = $joinData;
+        return $this;
+    }
+
+    public function &appendJoinOnForeignKey(JoinType $joinType, string $foreignKeyProperty, string $relatedEntityClass): self
+    {
+        $this->joins[] = $this->adapter->buildJoinOnForeignKey($joinType, $foreignKeyProperty, $relatedEntityClass, $this->table);
+        return $this;
+    }
+
+    public function getJoins(): array
+    {
+        return $this->joins;
+    }
+
+    public function hasJoins(): bool
+    {
+        return !empty($this->joins);
+    }
+
+    public function getColumns(): array
+    {
+        return $this->columns;
     }
 
     public function &setOffset(int $offset): self
@@ -410,7 +469,7 @@ class Query
                     break;
                 case Statement::select:
                 default:
-                    $this->command = $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns()], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit);
+                    $this->command = $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns($this->tableName)], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit, $this->joins);
                     break;
             }
             return $this->command;

@@ -36,12 +36,20 @@
  * - Miglioramento della nomenclatura di metodi, parametri e variabili per maggiore chiarezza.
  * - Implementazione dell'interfaccia `\Iterator` per consentire l'iterazione tramite `foreach`.
  * - Introduzione del metodo `convertToBaseEntity()` per convertire una riga di dati in un oggetto `BaseEntity`.
+ * - Introduzione del supporto JOIN SQL con hydration gerarchica multi-entità (v10.1.0):
+ *   * Aggiunta di proprietà $joinMetadata per tracciare i metadati delle tabelle joined
+ *   * Modifica di convertToHierarchicalEntity() per separazione dati entità principali/nested
+ *   * Aggiunta di hydrateNestedEntities() per hydration ricorsiva di relazioni multi-livello
+ *   * Aggiunta di getEntityClassForAlias() per risoluzione entity class da alias JOIN
+ *   * Integrazione con Cache per Identity Map pattern su entità nested
+ *   * Supporto per navigazione gerarchica delle relazioni tramite alias path
  */
 
 namespace SismaFramework\Orm\BaseClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
+use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
@@ -51,10 +59,12 @@ use SismaFramework\Core\HelperClasses\Parser;
  */
 abstract class BaseResultSet implements \Iterator
 {
+    protected const COLUMN_SEPARATOR = '__';
 
     protected string $returnType = StandardEntity::class;
     protected int $currentRecord = 0;
     protected int $maxRecord = -1;
+    protected array $joinMetadata = [];
 
     public function __construct()
     {
@@ -66,6 +76,11 @@ abstract class BaseResultSet implements \Iterator
     public function setReturnType(string $type): void
     {
         $this->returnType = strval($type);
+    }
+
+    public function setJoinMetadata(array $joinMetadata): void
+    {
+        $this->joinMetadata = $joinMetadata;
     }
 
     public function release(): void
@@ -119,9 +134,118 @@ abstract class BaseResultSet implements \Iterator
     {
         if ($this->returnType == StandardEntity::class) {
             return $this->convertToStandardEntity($result);
+        } elseif (!empty($this->joinMetadata)) {
+            return $this->convertToHierarchicalEntity($result);
         } else {
             return $this->convertToBaseEntity($result);
         }
+    }
+
+    private function convertToHierarchicalEntity(\stdClass $result): BaseEntity
+    {
+        $mainEntityData = new \stdClass();
+        $nestedEntitiesData = [];
+        foreach ($result as $columnName => $value) {
+            if (str_contains($columnName, static::COLUMN_SEPARATOR)) {
+                $parts = explode(static::COLUMN_SEPARATOR, $columnName, 2);
+                $aliasPath = $parts[0];
+                $childProperty = $parts[1];
+                if (!isset($nestedEntitiesData[$aliasPath])) {
+                    $nestedEntitiesData[$aliasPath] = new \stdClass();
+                }
+                $nestedEntitiesData[$aliasPath]->$childProperty = $value;
+            } else {
+                $mainEntityData->$columnName = $value;
+            }
+        }
+        $mainEntity = $this->convertToBaseEntity($mainEntityData);
+        $this->hydrateNestedEntities($mainEntity, $nestedEntitiesData);
+        return $mainEntity;
+    }
+
+    private function hydrateNestedEntities(BaseEntity $parentEntity, array $nestedEntitiesData): void
+    {
+        $hydratedEntities = [];
+        foreach ($nestedEntitiesData as $aliasPath => $childData) {
+            if (!isset($childData->id) || $childData->id === null) {
+                continue;
+            }
+            $segments = explode('_', $aliasPath);
+            $entityClass = $this->getEntityClassForAlias($aliasPath);
+            if ($entityClass === null) {
+                continue;
+            }
+            $entityId = (int) $childData->id;
+            if (Cache::checkEntityPresenceInCache($entityClass, $entityId)) {
+                $relatedEntity = Cache::getEntityById($entityClass, $entityId);
+            } else {
+                $relatedEntity = $this->hydrateRelatedEntity($childData, $entityClass);
+                Cache::setEntity($relatedEntity);
+            }
+            $hydratedEntities[$aliasPath] = $relatedEntity;
+        }
+        foreach ($hydratedEntities as $aliasPath => $relatedEntity) {
+            $segments = explode('_', $aliasPath);
+            if (count($segments) === 1) {
+                $parentEntity->{$segments[0]} = $relatedEntity;
+            } else {
+                $currentEntity = $parentEntity;
+                for ($i = 0; $i < count($segments) - 1; $i++) {
+                    $propertyName = $segments[$i];
+                    if (!isset($currentEntity->$propertyName)) {
+                        break;
+                    }
+                    $currentEntity = $currentEntity->$propertyName;
+                }
+                if ($currentEntity !== null) {
+                    $lastSegment = $segments[count($segments) - 1];
+                    $currentEntity->$lastSegment = $relatedEntity;
+                }
+            }
+        }
+    }
+    private function getEntityClassForAlias(string $alias): ?string
+    {
+        foreach ($this->joinMetadata as $join) {
+            if (isset($join['alias']) && $join['alias'] === $alias) {
+                return $join['relatedEntityClass'] ?? $join['entityClass'] ?? null;
+            }
+        }
+        return null;
+    }
+
+    private function hydrateRelatedEntity(\stdClass $data, string $entityClass): BaseEntity
+    {
+        $entity = new $entityClass();
+
+        foreach ($data as $property => $value) {
+            $property = NotationManager::convertColumnNameToPropertyName($property);
+            if (property_exists($entity, $property)) {
+                $reflectionProperty = new \ReflectionProperty($entityClass, $property);
+                $reflectionType = $reflectionProperty->getType();
+
+                $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
+                if ($entity->isEncryptedProperty($property) && isset($data->$initializationVectorColumnName) && ($data->$initializationVectorColumnName !== null)) {
+                    $value = Encryptor::decryptString($value, $data->$initializationVectorColumnName) ?: $value;
+                }
+
+                $entity->$property = Parser::parseValue($reflectionType, $value, false);
+            }
+        }
+
+        $entity->modified = false;
+        return $entity;
+    }
+
+    private function getJoinInfoByProperty(string $foreignKeyProperty): ?array
+    {
+        foreach ($this->joinMetadata as $join) {
+            if ($join['foreignKeyProperty'] === $foreignKeyProperty) {
+                return $join;
+            }
+        }
+
+        return null;
     }
 
     private function convertToStandardEntity(\stdClass $standardClass): StandardEntity

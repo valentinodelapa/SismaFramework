@@ -41,15 +41,13 @@ class ResponseTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        // Store original response code and reset to 200
-        $this->originalResponseCode = http_response_code();
         http_response_code(200);
+        $this->originalResponseCode = 200;
     }
 
     #[\Override]
     public function tearDown(): void
     {
-        // Restore original response code
         http_response_code($this->originalResponseCode);
     }
 
@@ -161,5 +159,29 @@ class ResponseTest extends TestCase
         $result = $response->setResponseType(ResponseType::httpOk);
 
         $this->assertNull($result);
+    }
+
+    public function testConstructorWithResponseTypeParameter()
+    {
+        $response = new Response(ResponseType::httpNotFound);
+
+        $this->assertEquals(404, http_response_code());
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    public function testConstructorWithNullParameter()
+    {
+        $response = new Response(null);
+
+        $this->assertEquals(200, http_response_code());
+        $this->assertInstanceOf(Response::class, $response);
+    }
+
+    public function testConstructorWithPartialContentResponseType()
+    {
+        $response = new Response(ResponseType::httpPartialContent);
+
+        $this->assertEquals(206, http_response_code());
+        $this->assertInstanceOf(Response::class, $response);
     }
 }

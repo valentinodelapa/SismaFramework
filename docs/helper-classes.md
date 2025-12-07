@@ -189,14 +189,36 @@ $currentUrl = Router::getActualCleanUrl();
 
 #### Gestione Meta URL
 ```php
-// Impostare un prefisso per l'applicazione
+// Impostare un prefisso per l'applicazione (CONCATENA al valore esistente)
 Router::concatenateMetaUrl('/api/v1');
 
 // Tutte le successive chiamate includeranno questo prefisso
 $rootUrl = Router::getRootUrl(); // "https://example.com/api/v1"
 
+// Sovrascrivere completamente il meta URL (v10.1.0+)
+Router::setMetaUrl('/api/v2');
+$rootUrl = Router::getRootUrl(); // "https://example.com/api/v2"
+
 // Reset del meta URL
 Router::resetMetaUrl();
+```
+
+**Differenza tra `setMetaUrl()` e `concatenateMetaUrl()`:**
+
+- **`setMetaUrl()`**: Sostituisce completamente il meta URL esistente
+- **`concatenateMetaUrl()`**: Aggiunge al meta URL esistente
+
+```php
+// Esempio della differenza
+Router::setMetaUrl('/app');
+Router::concatenateMetaUrl('/api');
+$url = Router::getRootUrl(); // "https://example.com/app/api"
+
+// vs
+
+Router::setMetaUrl('/app');
+Router::setMetaUrl('/api');  // Sostituisce '/app'
+$url = Router::getRootUrl(); // "https://example.com/api"
 ```
 
 ### Casi d'Uso Avanzati
@@ -218,14 +240,18 @@ class BreadcrumbManager {
 ```php
 class ApiRouter extends Router {
     public static function setApiVersion(string $version): void {
-        parent::resetMetaUrl();
-        parent::concatenateMetaUrl("/api/{$version}");
+        // Usa setMetaUrl() per sovrascrivere direttamente (v10.1.0+)
+        parent::setMetaUrl("/api/{$version}");
     }
 }
 
 // Utilizzo
 ApiRouter::setApiVersion('v2');
 $apiUrl = ApiRouter::getRootUrl(); // "https://example.com/api/v2"
+
+// Cambiare versione
+ApiRouter::setApiVersion('v3');
+$apiUrl = ApiRouter::getRootUrl(); // "https://example.com/api/v3" (sostituisce v2)
 ```
 
 ---

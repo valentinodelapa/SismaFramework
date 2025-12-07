@@ -41,6 +41,12 @@
  * - Aggiunta gestione delle funzioni di aggregazione delle colonne delle query tramite il metodo opAggregationFunction().
  * - Introduzione della proprietà AdapterType per identificare il tipo di adapter.
  * - Modifica della proprietà $connection da protected a static protected per gestione singleton della connessione.
+ * - Introduzione del supporto JOIN SQL (v10.1.0):
+ *   * Aggiunta di buildJoinedColumns() per generazione automatica delle colonne con alias per le tabelle joined
+ *   * Aggiunta di buildJoinMetadata() per costruzione dei metadati JOIN con relatedEntityClass
+ *   * Modifica di buildJoinOnForeignKey() per includere relatedEntityClass nei metadati
+ *   * Modifica di allColumns() per accettare parametro opzionale $table e restituire table.* per qualificazione colonne
+ *   * Supporto per eager loading gerarchico multi-entità con hydration automatica
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -54,6 +60,7 @@ use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\JoinType;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\LogicalOperator;
@@ -130,9 +137,9 @@ abstract class BaseAdapter
 
     abstract public function close(): void;
 
-    public function allColumns(): string
+    public function allColumns(string $table = ''): string
     {
-        return '*';
+        return $table ? $table . '.*' : '*';
     }
 
     public function escapeIdentifier(string $name): string
@@ -141,13 +148,9 @@ abstract class BaseAdapter
         return $parsedName;
     }
 
-    public function escapeTable(string $table, ?string $tableAlias = null): string
+    public function escapeTable(string $table): string
     {
-        $parsedTable = $this->escapeIdentifier(NotationManager::convertEntityNameToTableName($table));
-        if ($tableAlias !== null) {
-            $parsedTable .= ' as ' . $this->escapeIdentifier(NotationManager::convertEntityNameToTableName($tableAlias));
-        }
-        return $parsedTable;
+        return $this->escapeIdentifier(NotationManager::convertEntityNameToTableName($table));
     }
 
     public function escapeOrderIndexing(null|string|Indexing $order = null): string
@@ -277,12 +280,87 @@ abstract class BaseAdapter
         return Statement::set->getAdapterVersion($this->adapterType) . ' ' . $variable . ' = ' . $value;
     }
 
-    public function parseSelect(bool $distinct, array $select, string $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit): string
+    public function buildJoinOnForeignKey(JoinType $joinType, string $foreignKeyProperty, string $relatedEntityClass, string $mainTable): array
+    {
+        $tableAlias = $this->escapeIdentifier($foreignKeyProperty);
+        $relatedTable = $this->escapeTable(NotationManager::convertEntityNameToTableName($relatedEntityClass));
+        $foreignKeyColumn = $this->escapeColumn($foreignKeyProperty, true);
+
+        $onCondition = $mainTable . '.' . $foreignKeyColumn . ' = ' . $tableAlias . '.id';
+
+        return [
+            'type' => $joinType,
+            'table' => $relatedTable,
+            'alias' => $tableAlias,
+            'on' => $onCondition,
+            'entityClass' => $relatedEntityClass,
+            'relatedEntityClass' => $relatedEntityClass,
+            'foreignKeyProperty' => $foreignKeyProperty
+        ];
+    }
+
+    public function buildJoinMetadata(JoinType $joinType, string $relatedTable, string $alias, string $onCondition, string $relatedEntityClass): array
+    {
+        return [
+            'type' => $joinType,
+            'table' => $relatedTable,
+            'alias' => $alias,
+            'on' => $onCondition,
+            'relatedEntityClass' => $relatedEntityClass
+        ];
+    }
+
+    public function buildJoinedColumns(string $tableAlias, string $entityClass): array
+    {
+        $reflection = new \ReflectionClass($entityClass);
+        $columns = [];
+        $separator = '__';
+
+        foreach ($reflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+            if (BaseEntity::checkFinalClassReflectionProperty($property)) {
+                $propertyName = $property->getName();
+                $columnName = $this->escapeColumn($propertyName);
+                $isForeignKey = $property->getType() !== null && is_subclass_of($property->getType()->getName(), BaseEntity::class);
+
+                if ($isForeignKey) {
+                    $columnName = $this->escapeColumn($propertyName, true);
+                }
+
+                $columns[] = $tableAlias . '.' . $columnName . ' ' .
+                        Keyword::as->getAdapterVersion($this->adapterType) . ' ' .
+                        $tableAlias . $separator . $propertyName;
+            }
+        }
+
+        return $columns;
+    }
+
+    protected function buildJoinClause(array $joins): string
+    {
+        if (empty($joins)) {
+            return '';
+        }
+
+        $clauses = [];
+        foreach ($joins as $join) {
+            $clauses[] = $join['type']->getAdapterVersion($this->adapterType) . ' ' .
+                    Keyword::join->getAdapterVersion($this->adapterType) . ' ' .
+                    $join['table'] . ' ' .
+                    Keyword::as->getAdapterVersion($this->adapterType) . ' ' .
+                    $join['alias'] . ' ' .
+                    'ON ' . $join['on'];
+        }
+
+        return implode(' ', $clauses) . ' ';
+    }
+
+    public function parseSelect(bool $distinct, array $select, string $from, array $where, array $groupby, array $having, array $orderby, int $offset, int $limit, array $joins = []): string
     {
         $query = Statement::select->getAdapterVersion($this->adapterType) . ' ' .
                 ($distinct ? Keyword::distinct->getAdapterVersion($this->adapterType) . ' ' : '') .
                 implode(',', $select) . ' ' .
                 Keyword::from->getAdapterVersion($this->adapterType) . ' ' . $from . ' ' .
+                $this->buildJoinClause($joins) .
                 ((count($where) > 0) ? Condition::where->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $where) : '') . ' ' .
                 ($groupby ? Keyword::groupBy->getAdapterVersion($this->adapterType) . ' ' . implode(',', $groupby) . ' ' : '') .
                 ($groupby && $having ? Condition::having->getAdapterVersion($this->adapterType) . ' ' . implode(' ', $having) . ' ' : '') .

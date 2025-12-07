@@ -53,6 +53,11 @@ class Router
         self::$metaUrl .= $pathToConcatenate;
     }
 
+    public static function setMetaUrl(string $metaUrl): void
+    {
+        self::$metaUrl = $metaUrl;
+    }
+
     public static function getMetaUrl(): string
     {
         return self::$metaUrl;

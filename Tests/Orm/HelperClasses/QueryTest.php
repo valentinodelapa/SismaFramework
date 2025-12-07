@@ -53,7 +53,7 @@ class QueryTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
                 ->with(true, ['*'], '', [], [], [], [], 0, 0);
@@ -85,8 +85,8 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('opAggregationFunction')
                 ->with($this->callback(function ($aggregationFunction) {
-                    return $aggregationFunction->name === 'avg';
-                }), 'price', 'avg_price', false)
+                            return $aggregationFunction->name === 'avg';
+                        }), 'price', 'avg_price', false)
                 ->willReturn('AVG(price) as avg_price');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
@@ -103,8 +103,8 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('opAggregationFunction')
                 ->with($this->callback(function ($aggregationFunction) {
-                    return $aggregationFunction->name === 'avg';
-                }), 'price', null, true)
+                            return $aggregationFunction->name === 'avg';
+                        }), 'price', null, true)
                 ->willReturn('AVG(DISTINCT price)');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
@@ -119,19 +119,24 @@ class QueryTest extends TestCase
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
+                ->method('escapeTable', null)
+                ->with('tableName')
+                ->willReturn('table_name');
+        $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $baseAdapterMock->expects($this->once())
                 ->method('opAggregationFunction')
                 ->with($this->callback(function ($aggregationFunction) {
-                    return $aggregationFunction->name === 'avg';
-                }), 'price', 'avg_price', false)
+                            return $aggregationFunction->name === 'avg';
+                        }), 'price', 'avg_price', false)
                 ->willReturn('AVG(price) as avg_price');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*', 'AVG(price) as avg_price'], '', [], [], [], [], 0, 0);
+                ->with(false, ['table_name.*', 'AVG(price) as avg_price'], 'table_name', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
-        $query->setAVG('price', 'avg_price', false, true)
+        $query->setTable('tableName')
+                ->setAVG('price', 'avg_price', false, true)
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
     }
@@ -142,8 +147,8 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('opAggregationFunction')
                 ->with($this->callback(function ($aggregationFunction) {
-                    return $aggregationFunction->name === 'sum';
-                }), 'amount', 'total', false)
+                            return $aggregationFunction->name === 'sum';
+                        }), 'amount', 'total', false)
                 ->willReturn('SUM(amount) as total');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
@@ -160,8 +165,8 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('opAggregationFunction')
                 ->with($this->callback(function ($aggregationFunction) {
-                    return $aggregationFunction->name === 'sum';
-                }), 'amount', null, true)
+                            return $aggregationFunction->name === 'sum';
+                        }), 'amount', null, true)
                 ->willReturn('SUM(DISTINCT amount)');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
@@ -178,8 +183,8 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('opAggregationFunction')
                 ->with($this->callback(function ($aggregationFunction) {
-                    return $aggregationFunction->name === 'max';
-                }), 'score', 'max_score', false)
+                            return $aggregationFunction->name === 'max';
+                        }), 'score', 'max_score', false)
                 ->willReturn('MAX(score) as max_score');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
@@ -196,8 +201,8 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('opAggregationFunction')
                 ->with($this->callback(function ($aggregationFunction) {
-                    return $aggregationFunction->name === 'min';
-                }), 'score', 'min_score', false)
+                            return $aggregationFunction->name === 'min';
+                        }), 'score', 'min_score', false)
                 ->willReturn('MIN(score) as min_score');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
@@ -216,8 +221,8 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('opAggregationFunction')
                 ->with($this->callback(function ($aggregationFunction) {
-                    return $aggregationFunction->name === 'avg';
-                }), $subquery, 'avg_sub', false)
+                            return $aggregationFunction->name === 'avg';
+                        }), $subquery, 'avg_sub', false)
                 ->willReturn('AVG((subquery)) as avg_sub');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
@@ -233,7 +238,7 @@ class QueryTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $baseAdapterMock->expects($this->exactly(3))
                 ->method('parseSelect')
                 ->with(false, ['*'], '', [], [], [], [], 0, 0);
@@ -298,9 +303,13 @@ class QueryTest extends TestCase
     public function testSelectSetFullIndexColumnAndCondition()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('escapeTable', null)
+                ->with('tableName')
+                ->willReturn('table_name');
         $baseAdapterMock->expects($this->exactly(1))
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $matcherOne = $this->exactly(2);
         $baseAdapterMock->expects($matcherOne)
                 ->method('opFulltextIndex')
@@ -341,7 +350,7 @@ class QueryTest extends TestCase
                         case 1:
                             $this->assertFalse($distinct);
                             $this->assertEquals(['MATCH (filltext_column) AGAINST ?'], $select);
-                            $this->assertEquals('', $from);
+                            $this->assertEquals('table_name', $from);
                             $this->assertEquals(['MATCH (filltext_column) AGAINST ?'], $where);
                             $this->assertEquals([], $groupby);
                             $this->assertEquals([], $having);
@@ -351,8 +360,8 @@ class QueryTest extends TestCase
                             break;
                         case 2:
                             $this->assertFalse($distinct);
-                            $this->assertEquals(['*', 'MATCH (filltext_column) AGAINST value as column_alias'], $select);
-                            $this->assertEquals('', $from);
+                            $this->assertEquals(['table_name.*', 'MATCH (filltext_column) AGAINST value as column_alias'], $select);
+                            $this->assertEquals('table_name', $from);
                             $this->assertEquals(['MATCH (filltext_column) AGAINST value'], $where);
                             $this->assertEquals([], $groupby);
                             $this->assertEquals([], $having);
@@ -364,13 +373,15 @@ class QueryTest extends TestCase
                     return '';
                 });
         $queryOne = new Query($baseAdapterMock);
-        $queryOne->setWhere()
+        $queryOne->setTable('tableName')
+                ->setWhere()
                 ->setFulltextIndexColumn(['fulltextColumn'])
                 ->appendFulltextCondition(['fulltextColumn'])
                 ->close();
         $this->assertEquals('', $queryOne->getCommandToExecute());
         $queryTwo = new Query($baseAdapterMock);
-        $queryTwo->setWhere()
+        $queryTwo->setTable('tableName')
+                ->setWhere()
                 ->setFulltextIndexColumn(['fulltextColumn'], 'value', 'columnAlias', true)
                 ->appendFulltextCondition(['fulltextColumn'], 'value')
                 ->close();
@@ -380,16 +391,32 @@ class QueryTest extends TestCase
     public function testSelectSetSubqueryColumn()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $matcherOne = $this->exactly(3);
+        $baseAdapterMock->expects($matcherOne)
+                ->method('escapeTable')
+                ->willReturnCallback(function ($tableName) use ($matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('subqueryTableName', $tableName);
+                            return 'subquery_table_name';
+                        case 2:
+                            $this->assertEquals('tableNameOne', $tableName);
+                            return 'table_name_one';
+                        case 3:
+                            $this->assertEquals('tableNameTwo', $tableName);
+                            return 'table_name_two';
+                    }
+                });
         $baseAdapterMock->expects($this->exactly(1))
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $subquery = new Query($baseAdapterMock);
-        $subquery->close();
-        $matcherOne = $this->exactly(2);
-        $baseAdapterMock->expects($matcherOne)
+        $subquery->setTable('subqueryTableName')->close();
+        $matcherTwo = $this->exactly(2);
+        $baseAdapterMock->expects($matcherTwo)
                 ->method('opSubquery')
-                ->willReturnCallback(function ($columns, $columnAlias) use ($matcherOne, $subquery) {
-                    switch ($matcherOne->numberOfInvocations()) {
+                ->willReturnCallback(function ($columns, $columnAlias) use ($matcherTwo, $subquery) {
+                    switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals($subquery, $columns);
                             $this->assertNull($columnAlias);
@@ -400,15 +427,15 @@ class QueryTest extends TestCase
                             return 'subquery';
                     }
                 });
-        $matcherTwo = $this->exactly(2);
-        $baseAdapterMock->expects($matcherTwo)
+        $matcherThree = $this->exactly(2);
+        $baseAdapterMock->expects($matcherThree)
                 ->method('parseSelect')
-                ->willReturnCallback(function ($distinct, $select, $from, $where, $groupby, $having, $orderby, $offset, $limit) use ($matcherTwo) {
-                    switch ($matcherTwo->numberOfInvocations()) {
+                ->willReturnCallback(function ($distinct, $select, $from, $where, $groupby, $having, $orderby, $offset, $limit) use ($matcherThree) {
+                    switch ($matcherThree->numberOfInvocations()) {
                         case 1:
                             $this->assertFalse($distinct);
                             $this->assertEquals(['subquery'], $select);
-                            $this->assertEquals('', $from);
+                            $this->assertEquals('table_name_one', $from);
                             $this->assertEquals([], $where);
                             $this->assertEquals([], $groupby);
                             $this->assertEquals([], $having);
@@ -418,8 +445,8 @@ class QueryTest extends TestCase
                             break;
                         case 2:
                             $this->assertFalse($distinct);
-                            $this->assertEquals(['*', 'subquery'], $select);
-                            $this->assertEquals('', $from);
+                            $this->assertEquals(['table_name_two.*', 'subquery'], $select);
+                            $this->assertEquals('table_name_two', $from);
                             $this->assertEquals([], $where);
                             $this->assertEquals([], $groupby);
                             $this->assertEquals([], $having);
@@ -431,11 +458,13 @@ class QueryTest extends TestCase
                     return '';
                 });
         $queryOne = new Query($baseAdapterMock);
-        $queryOne->setSubqueryColumn($subquery)
+        $queryOne->setTable('tableNameOne')
+                ->setSubqueryColumn($subquery)
                 ->close();
         $this->assertEquals('', $queryOne->getCommandToExecute());
         $queryTwo = new Query($baseAdapterMock);
-        $queryTwo->setSubqueryColumn($subquery, 'columnAlias', true)
+        $queryTwo->setTable('tableNameTwo')
+                ->setSubqueryColumn($subquery, 'columnAlias', true)
                 ->close();
         $this->assertEquals('', $queryTwo->getCommandToExecute());
     }
@@ -444,8 +473,12 @@ class QueryTest extends TestCase
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
+                ->method('escapeTable', null)
+                ->with('tableName')
+                ->willReturn('table_name');
+        $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $matcherOne = $this->exactly(4);
         $baseAdapterMock->expects($matcherOne)
                 ->method('escapeColumn')
@@ -528,7 +561,7 @@ class QueryTest extends TestCase
                 ->willReturn('NOT');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], '', [
+                ->with(false, ['table_name.*'], 'table_name', [
                     'column_one = ?',
                     'AND',
                     '(',
@@ -540,7 +573,8 @@ class QueryTest extends TestCase
                     'column_four_id IS NULL ',
                         ], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
-        $query->setWhere()
+        $query->setTable('tableName')
+                ->setWhere()
                 ->appendCondition('columnOne', ComparisonOperator::equal)
                 ->appendAnd()
                 ->appendOpenBlock()
@@ -559,7 +593,7 @@ class QueryTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $matcherOne = $this->exactly(4);
         $baseAdapterMock->expects($matcherOne)
                 ->method('escapeColumn')
@@ -673,14 +707,14 @@ class QueryTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $baseAdapterMock->expects($this->once())
                 ->method('escapeTable')
                 ->with('tableName')
                 ->willReturn('table_name');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], 'table_name', [], [], [], [], 0, 0);
+                ->with(false, ['table_name.*'], 'table_name', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setTable('tableName')
                 ->setWhere()
@@ -693,14 +727,23 @@ class QueryTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
-        $baseAdapterMock->expects($this->once())
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $matcherOne = $this->exactly(2);
+        $baseAdapterMock->expects($matcherOne)
                 ->method('escapeTable')
-                ->with('tableName', 'A')
-                ->willReturn('table_name as A');
+                ->willReturnCallback(function ($tableName) use ($matcherOne) {
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('tableName', $tableName);
+                            return 'table_name';
+                        case 2:
+                            $this->assertEquals('A', $tableName);
+                            return 'a';
+                    }
+                });
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['*'], 'table_name as A', [], [], [], [], 0, 0);
+                ->with(false, ['table_name.*'], 'table_name as a', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setTable('tableName', 'A')
                 ->setWhere()
@@ -713,7 +756,7 @@ class QueryTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
                 ->with(false, ['*'], '', [], [], [], [], 5, 10);
@@ -730,7 +773,7 @@ class QueryTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $matcherOne = $this->exactly(3);
         $baseAdapterMock->expects($matcherOne)
                 ->method('escapeColumn')
@@ -801,7 +844,7 @@ class QueryTest extends TestCase
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
         $baseAdapterMock->expects($this->once())
                 ->method('allColumns')
-                ->willReturn('*');
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $baseAdapterMock->expects($this->once())
                 ->method('escapeColumns')
                 ->with(['columnNameOne', 'columnNameTwo'])

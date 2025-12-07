@@ -138,11 +138,74 @@ La rifattorizzazione introduce **breaking changes**: il metodo astratto `customF
 
 ---
 
+## [10.1.1] - 2025-12-06 - Supporto HTTP Range Requests e Miglioramenti API Response
+
+Questa patch release corregge un bug critico di conformità agli standard HTTP che impediva la riproduzione di video in Safari. Implementato il supporto completo per HTTP Range Requests (RFC 7233) con gestione di 206 Partial Content e 416 Range Not Satisfiable. Migliorata l'API della classe Response con constructor injection.
+
+### 🐛 Bug Fixes
+
+#### Supporto HTTP Range Requests per Streaming Media
+
+Corretto bug critico nel serving di file statici che causava la mancata riproduzione di video in Safari:
+
+*   **ResourceMaker.php**:
+    - ❌ **Prima**: Il server ignorava l'header `Range` e restituiva sempre 200 OK con l'intero file
+    - ✅ **Dopo**: Gestione completa delle range requests secondo RFC 7233
+    - `viewResource()` e `downloadResource()`: Rilevamento header `Range` e delega a `servePartialContent()`
+    - `servePartialContent()`: Gestisce risposta 206 Partial Content
+    - `parseRangeHeader()`: Validazione formato con regex e controlli
+    - `getResourceDataRange()`: Lettura efficiente chunk-based (8KB)
+
+*   **RangeNotSatisfiableException.php** (nuova classe):
+    - Eccezione dedicata per gestire range invalidi
+    - Risposta 416 Range Not Satisfiable conforme a RFC 7233
+    - Header `Content-Range: bytes */filesize` settato automaticamente
+    - Validazione: formato header, start ≤ end, range entro limiti file
+
+**Scenario del bug**:
+1. Safari richiede un video con header `Range: bytes=0-1023`
+2. Il server ignorava l'header e restituiva 200 OK con l'intero file
+3. Safari rifiutava di riprodurre il video
+4. Impossibilità di fare seek/skip nei file multimediali
+
+**Casi d'uso risolti**:
+- Video/audio streaming con seek (Safari, Chrome, Firefox, Edge)
+- Download resumable con download manager
+- Caricamento progressivo PDF di grandi dimensioni
+
+### 🎨 Refactoring
+
+#### Response Constructor Injection
+
+Migliorata l'API della classe `Response`:
+
+*   **Response.php**:
+    - Aggiunto parametro opzionale `?ResponseType $responseType = null`
+    - Pattern conciso: `new Response(ResponseType::httpPartialContent)`
+    - Backward compatible al 100%
+
+*   **Applicato in**:
+    - `ResourceMaker::servePartialContent()`: -2 linee
+    - `Render::getResponse()`: Metodo rimosso (-7 linee)
+    - `Render`: Return diretto in `generateView()`, `generateData()`, `generateJson()`
+
+### 🧪 Testing
+
+*   **ResourceMakerTest.php**: 6 nuovi test
+*   **ResponseTest.php**: 3 nuovi test
+*   **large-sample.css**: File test 384 bytes
+
+### 🔧 Dettagli Tecnici
+
+*   **Standard**: RFC 7233, RFC 7231
+*   **Response Codes**: 206, 416
+*   **Headers**: `Range`, `Content-Range`, `Accept-Ranges`, `Content-Length`
+
 ## [10.1.0] - 2025-12-02 - Strumenti CLI per Scaffolding, Installazione e Rifatorizzazione Dispatcher
 
 Benvenuti alla release 10.1.0, una delle più ricche di novità nella storia del framework! Utility CLI rivoluzionano il flusso di sviluppo quotidiano, con scaffolding automatico e installazione guidata che accelerano drasticamente la creazione di nuovi progetti. Ottimizzato profondamente il Dispatcher attraverso una rifatorizzazione completa seguendo i principi SOLID, separando le responsabilità in sette classi specializzate che rendono il codice più manutenibile e testabile.
 
-Nascono nuove funzionalità per l'ORM: le funzioni di aggregazione SQL (AVG, MAX, MIN, SUM) permettono ora query analitiche avanzate con supporto per DISTINCT, alias, subquery e aggregazioni multiple.
+Nascono nuove funzionalità per l'ORM: le funzioni di aggregazione SQL (AVG, MAX, MIN, SUM) permettono ora query analitiche avanzate con supporto per DISTINCT, alias, subquery e aggregazioni multiple, mentre l'estensione del sistema di query dinamiche con metaprogrammazione a tutte le proprietà (non più solo entità referenziate) riduce drasticamente la necessità di scrivere metodi repository ripetitivi generando automaticamente query type-safe, e il supporto completo per JOIN SQL con eager loading gerarchico multi-entità risolve definitivamente il problema N+1 delle query supportando relazioni nested a più livelli con dot notation e sintassi array.
 
 Comandi CLI di scaffolding generano automaticamente l'intero stack CRUD (Controller, Model, Form, Views) a partire da un'Entity esistente, mentre il sistema di installazione configura progetti completi in pochi secondi. Oltre 400 linee di nuovi test garantiscono una copertura completa di tutte le nuove funzionalità, assicurando robustezza e affidabilità.
 
@@ -192,6 +255,37 @@ Articolata in tre aree principali (CLI Tools, Architettura, ORM), questa release
   php SismaFramework/Console/sisma install BlogPersonale --db-host=localhost --db-name=blog_db --db-user=root --db-pass=secret
   ```
 
+* **Estensione Query Dinamiche ORM a Tutte le Proprietà**: Esteso il sistema esistente di metaprogrammazione per query dinamiche, precedentemente limitato alle sole entità referenziate, ora funzionante con **tutte le proprietà** delle entità.
+  - **Ambito Ampliato**: Precedentemente solo `getByReferencedEntity()`, ora supporta qualsiasi proprietà: `getByName()`, `countByStatus()`, `deleteByEmail()`
+  - **Tipi Supportati**: Tipi builtin (`int`, `string`, `float`, `bool`), oggetti custom (`SismaDate`, `SismaDateTime`, `SismaTime`), enum PHP 8.1+, proprietà nullable
+  - **Type Safety con Reflection**: Validazione automatica del tipo di ogni argomento con `ReflectionType::allowsNull()` per gestione corretta dei valori null
+  - **Pattern Multiple Properties**: Supporto per condizioni AND su più proprietà: `getByNameAndCategory()`, `countByStatusAndType()`
+  - **Backward Compatibility**: I metodi legacy come `getEntityCollectionByEntity()` rimangono funzionanti ma vengono marcati `@deprecated` (rimozione prevista in v11.0.0)
+  - **Refactoring Interno**: Unificata la logica con `buildPropertyConditions()` che supporta sia entità che proprietà builtin
+
+  **Esempi di utilizzo**:
+  ```php
+  // PRIMA (solo entità referenziate):
+  $model->getEntityCollectionByEntity(['referenced_entity' => $entity]);
+
+  // ADESSO (qualsiasi proprietà):
+  $users = $userModel->getByStatus(UserStatus::ACTIVE);
+  $count = $productModel->countByPrice(99.99);
+  $model->deleteByEmail('test@example.com');
+
+  // Proprietà multiple con AND logico:
+  $products = $productModel->getByNameAndCategory('iPhone', $electronics);
+
+  // Con searchKey e paginazione:
+  $articles = $articleModel->getByAuthor($author, 'keyword', ['date' => 'DESC'], 0, 20);
+
+  // Query gerarchiche (SelfReferencedModel):
+  $subCategories = $categoryModel->getByParentAndActive($parent, true);
+
+  // Valori null su proprietà nullable:
+  $orphans = $entityModel->getByNullableParent(null); // WHERE nullable_parent IS NULL
+  ```
+
 ### 🏗️ Architettura
 
 * **Rifatorizzazione Completa del Dispatcher**: Il `Dispatcher` è stato completamente rifatorizzato seguendo i principi SOLID, con separazione delle responsabilità in classi dedicate:
@@ -214,6 +308,10 @@ Articolata in tre aree principali (CLI Tools, Architettura, ORM), questa release
   - `InstallationCommand` + `InstallationManager`
 * **Dependency Injection**: I Command accettano i Manager via costruttore, facilitando il testing con mock
 * **Gestione Eccezioni Centralizzata**: Le eccezioni vengono propagate e gestite centralmente dal dispatcher CLI nel file `sisma`
+* **Deprecazione Metodi Legacy ORM**: Metodi per query con entità marcati `@deprecated dalla versione 11.0.0` in favore del sistema di query dinamiche:
+  - `DependentModel`: `countEntityCollectionByEntity()`, `getEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()`
+  - `SelfReferencedModel`: `countEntityCollectionByParentAndEntity()`, `getEntityCollectionByParentAndEntity()`, `deleteEntityCollectionByParentAndEntity()`
+  - **Backward Compatibility Garantita**: I metodi rimangono pienamente funzionanti fino alla rimozione prevista nella v11.0.0
 
 ### 🧪 Testing
 
@@ -222,7 +320,11 @@ Articolata in tre aree principali (CLI Tools, Architettura, ORM), questa release
   - **ScaffoldingManagerTest**: 10 test che verificano generazione per BaseEntity, SelfReferencedEntity, DependentEntity, custom types, custom templates, e gestione errori
   - **InstallationCommandTest**: 8 test con mock dell'InstallationManager, inclusi test per opzioni database e gestione eccezioni
   - **InstallationManagerTest**: 8 test con filesystem temporaneo per verificare creazione struttura, copia file, aggiornamento config, e gestione flag `--force`
+  - **BaseModelTest**: +5 test per query dinamiche (searchKey, paginazione, null su nullable, eccezione su non-nullable)
+  - **DependentModelTest**: +3 test per query dinamiche con entità e searchKey/paginazione
+  - **SelfReferencedModelTest**: +5 test per query gerarchiche dinamiche con searchKey, null e eccezioni
 * **Output Buffer Corretto**: Tutti i test catturano correttamente l'output dei comandi senza "sporcare" la console di PHPUnit
+* **Entità di Test Estese**: Aggiunte proprietà nullable (`NotDependentEntity::$nullableString`, `SelfReferencedSample::$nullableText`) per testare correttamente la gestione dei valori null
 
 ### 📝 Documentazione
 
@@ -264,18 +366,93 @@ Articolata in tre aree principali (CLI Tools, Architettura, ORM), questa release
         ->setAVG('price', 'avg_price', append: true);
   ```
 
+* **Supporto JOIN SQL con Eager Loading Gerarchico Multi-Entità**: Implementato supporto completo per operazioni JOIN SQL con caricamento eager e idratazione gerarchica automatica, risolvendo il problema N+1 delle query.
+  - **Nuovo Enum `JoinType`**: Introdotta enumerazione per gestire in modo type-safe i diversi tipi di JOIN (INNER, LEFT, RIGHT, CROSS)
+  - **Estensione Query Builder**: Aggiunta proprietà `$joins` e metodi `appendJoin()`, `appendJoinOnForeignKey()`, `hasJoins()`, `getJoins()`, `getColumns()` nella classe `Query`
+  - **Metodi Eager Loading in BaseModel**:
+    * `getEntityCollectionWithRelations()`: Carica collection con relazioni via JOIN e batch loading
+    * `getEntityByIdWithRelations()`: Carica singola entità con le sue relazioni
+    * `flattenRelations()`: Normalizza sintassi dot notation e array nested per relazioni multi-livello
+    * `appendNestedRelationJoin()`: Costruisce ricorsivamente JOIN per relazioni nested
+  - **Supporto Relazioni Nested Multi-Livello**: Permette eager loading di relazioni a più livelli con due sintassi:
+    * Dot notation: `['author.country.continent']`
+    * Array nested: `['author' => ['country' => ['continent']]]`
+    * Sintassi mista supportata
+  - **Idratazione Gerarchica Automatica in BaseResultSet**:
+    * Aggiunta proprietà `$joinMetadata` per tracciare metadati delle tabelle joined
+    * `convertToHierarchicalEntity()`: Separa dati entità principali da nested entities
+    * `hydrateNestedEntities()`: Idratazione ricorsiva di relazioni multi-livello
+    * `getEntityClassForAlias()`: Risoluzione entity class da alias JOIN
+  - **Supporto ReferencedEntity Collections**: Eager loading di relazioni one-to-many inverse tramite batch loading ottimizzato (singola query IN per tutte le entities)
+  - **Supporto SelfReferencedEntity**: Gestione nativa di relazioni ricorsive (tree structures) tramite self-join
+  - **Integrazione con Cache**: Piena compatibilità con Identity Map pattern esistente per evitare duplicazione di entità in memoria
+  - **Estensione BaseAdapter**:
+    * `buildJoinedColumns()`: Genera automaticamente colonne con alias (separatore `__`)
+    * `buildJoinMetadata()`: Costruisce metadati JOIN includendo `relatedEntityClass`
+    * Modifica di `buildJoinOnForeignKey()` per includere `relatedEntityClass` nei metadati
+  - **Zero Breaking Changes**: Implementazione completamente trasparente che rileva automaticamente presenza di JOIN nei metadati
+
+  **Esempi di utilizzo**:
+  ```php
+  // Many-to-one: eager loading con JOIN
+  $articles = $articleModel->getEntityCollectionWithRelations(['author', 'category']);
+  foreach ($articles as $article) {
+      echo $article->author->name; // Già caricato, nessuna query N+1
+  }
+
+  // One-to-many: eager loading con batch loading
+  $authors = $authorModel->getEntityCollectionWithRelations(['articleCollection']);
+
+  // Relazioni nested multi-livello (dot notation)
+  $articles = $articleModel->getEntityCollectionWithRelations(['author.country.continent']);
+
+  // Relazioni nested (sintassi array)
+  $articles = $articleModel->getEntityCollectionWithRelations([
+      'author' => ['country', 'publisher' => ['city']]
+  ]);
+
+  // SelfReferencedEntity (tree structures)
+  $categories = $categoryModel->getEntityCollectionWithRelations([
+      'parentCategory',     // Padre
+      'sonCollection'       // Figli
+  ]);
+
+  // Con parametri aggiuntivi
+  $products = $productModel->getEntityCollectionWithRelations(
+      relations: ['category', 'brand'],
+      searchKey: 'laptop',
+      order: ['price' => 'ASC'],
+      limit: 20,
+      joinType: JoinType::inner
+  );
+  ```
+
 ### 🧪 Testing
 
 * **Copertura Test Completa per Funzioni di Aggregazione**: Aggiunti test completi per le nuove funzionalità:
   - **AggregationFunctionTest**: 159 linee di test che verificano tutti i casi dell'enumerazione e la corretta generazione SQL per MySQL
   - **QueryTest**: 149 linee di test per i nuovi metodi `setAVG()`, `setMax()`, `setMin()`, `setSum()` con varie combinazioni di parametri (distinct, append, alias, subquery)
   - **AdapterMysqlTest**: 57 linee di test per verificare il metodo `opAggregationFunction()` con tutte le funzioni aggregate disponibili
+* **Copertura Test per JOIN ed Eager Loading**: Aggiunti test completi per verificare supporto JOIN e relazioni nested:
+  - **JoinEagerLoadingTest**: 19 test totali che coprono tutti gli aspetti delle funzionalità JOIN
+  - Test normalizzazione sintassi relazioni: `testFlattenRelationsDotNotation()`, `testFlattenRelationsNestedArray()`, `testFlattenRelationsMixedSyntax()`
+  - Test query custom con JOIN: `testCustomQueryWithJoinAndConditionOnJoinedTable()`, `testCustomQueryWithMultipleJoins()`, `testCustomQueryWithManualJoinAndCustomCondition()`
+  - Test tipi di JOIN: `testCustomQuerySupportsCrossJoin()`, `testJoinTypeEnumHasAllCases()`
+  - Test metodi helper: `testQueryAppendColumnForJoinedTables()`, `testBaseAdapterHasBuildJoinedColumnsMethod()`
+  - Test qualificazione colonne: `testAllColumnsReturnsQualifiedNameWithTable()`, `testAllColumnsReturnsAsteriskWithoutTable()`
+  - Test presenza metodi in classi base: `testBaseModelHasNestedRelationMethods()`, `testBaseResultSetHasNestedHydrationMethods()`
 
 ### 🔧 Miglioramenti Interni
 
+* **BaseAdapter: Qualificazione Automatica delle Colonne con Nome Tabella**: Modificato `allColumns()` per accettare un parametro opzionale `$table` e restituire `table.*` quando fornito, invece di `*`. Questo centralizza la logica di qualificazione delle colonne nell'adapter (dove appartiene concettualmente, essendo formattazione SQL) invece che nella Query. Previene conflitti di nomi colonna sia con JOIN che senza, rendendo le query più robuste. La modifica è backward compatible grazie al parametro opzionale.
+* **Router: Aggiunto metodo setMetaUrl()**: Introdotto il metodo `Router::setMetaUrl()` per permettere la sovrascrittura completa del metaUrl, completando l'API esistente che già forniva `getMetaUrl()`, `concatenateMetaUrl()` e `resetMetaUrl()`. Il nuovo metodo offre maggiore flessibilità nella gestione del routing e migliora la testabilità del componente.
+* **RouterTest**: Aggiunti due nuovi test per il metodo `setMetaUrl()`: `testSetMetaUrl()` verifica l'impostazione corretta del valore, `testSetMetaUrlOverwritesPreviousValue()` verifica la sovrascrittura completa anche di valori precedentemente concatenati
 * **Convenzione Naming Config**: Il file di configurazione del framework viene ora copiato come `configFramework.php` invece di `config.php`, permettendo ad ogni modulo di avere il proprio `config.php` senza conflitti
 * **Correzioni Documentazione**: Corretti vari typo nella documentazione esistente dello scaffolding (es. "pattend" → "pattern", "tramikte" → "tramite", "prosuppone" → "presuppone")
 * **Pulizia Formattazione**: Rimosso spazio superfluo nella generazione delle query SELECT in `BaseAdapter`
+* **Ottimizzazione Type Check in BaseModel**: Correzione gestione enum in `isVariableOfType()` rimuovendo `enum_exists()` dalla condizione OR per evitare TypeError (BaseModel.php:236)
+* **Ottimizzazione Nullable Check**: Invertite condizioni in `buildPropertiesArray()` per verificare prima `allowsNull()` (O(1)) poi `isVariableOfType()` (più costoso) migliorando le performance (BaseModel.php:217)
+* **Refactoring DependentModel**: Rinominato `buildReferencedEntitiesConditions()` in `buildPropertyConditions()` per unificare logica tra entità referenziate e proprietà builtin
 
 ## [10.0.7] - 2025-11-17 - Correzione Bug SismaCollection
 
