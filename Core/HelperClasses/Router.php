@@ -44,13 +44,13 @@ class Router
 
     public static function redirect(string $relativeUrl, $request = new Request()): Response
     {
-        header("Location: " . self::getRootUrl($request) . '/' . $relativeUrl);
+        header("Location: " . self::getRootUrl($request) . '/' . rtrim($relativeUrl, '/'));
         return new Response();
     }
 
     public static function concatenateMetaUrl(string $pathToConcatenate)
     {
-        self::$metaUrl .= $pathToConcatenate;
+        self::$metaUrl .= '/' . rtrim($pathToConcatenate, '/');
     }
 
     public static function setMetaUrl(string $metaUrl): void

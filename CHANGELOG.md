@@ -3,6 +3,73 @@
 All notable changes to this project will be documented in this file.
 
 
+## [10.1.2] - 2025-12-10 - Normalizzazione Gestione Slash nei Path
+
+Questa patch release migliora la robustezza della gestione dei path nel router attraverso la normalizzazione automatica degli slash, eliminando potenziali bug da doppi slash o slash mancanti.
+
+### 🔧 Refactoring
+
+#### Correzioni PHPStan per Qualità del Codice
+
+Risolti warning di analisi statica segnalati da PHPStan per migliorare la qualità e la correttezza del codice:
+
+*   **Console/Exceptions/** (3 file): Rimosso `return` non necessario dai costruttori delle eccezioni
+    - `ApplicationPathException.php:41`, `EntityPathException.php:47`, `ModulePathException.php:41`
+    - I costruttori non devono avere statement `return`
+    - Prima: `return parent::__construct($message, $code, $previous);`
+    - Dopo: `parent::__construct($message, $code, $previous);`
+
+*   **ScaffoldingManager.php:168**: Rimosso parametro inutilizzato da chiamata a metodo
+    - Prima: `$this->checkDependencies($this->entityReflection)`
+    - Dopo: `$this->checkDependencies()`
+
+*   **QueryExecutor.php**: Rimosso metodo morto `findWithJoins()` (codice non utilizzato da refactoring precedente)
+
+*   **SampleController.php:18**: Corretto namespace import per classe `Authentication`
+    - Prima: `use SismaFramework\Security\Authentication;`
+    - Dopo: `use SismaFramework\Security\HttpClasses\Authentication;`
+    - Rimosso import inutilizzato `SampleReferencedEntity`
+
+#### Normalizzazione Automatica Slash in Router
+
+Migliorata la gestione dei path nel Router per rendere più robusta e consistente la concatenazione degli URL:
+
+*   **Router.php**:
+    - **`concatenateMetaUrl()`**: Il metodo ora gestisce automaticamente l'aggiunta del `/` iniziale e rimuove eventuali trailing slash tramite `rtrim()`
+      - ❌ **Prima**: La responsabilità di aggiungere `/` era del chiamante (`concatenateMetaUrl('/path')`)
+      - ✅ **Dopo**: Il metodo normalizza automaticamente il path (`concatenateMetaUrl('path')` → `/path`)
+    - **`redirect()`**: Aggiunto `rtrim($relativeUrl, '/')` per normalizzare l'URL di destinazione prima del redirect
+    - **Vantaggi**:
+      - Idempotenza: `rtrim()` rende l'operazione sempre sicura
+      - Prevenzione doppi slash: eliminati potenziali path malformati come `/meta//url`
+      - API più intuitiva: non serve più passare `/` manualmente
+
+*   **RouteResolver.php**:
+    - **`slicePathElement()`**: Aggiornata la chiamata a `concatenateMetaUrl()` per passare il path senza `/` iniziale
+      - Prima: `Router::concatenateMetaUrl('/' . $this->pathController)`
+      - Dopo: `Router::concatenateMetaUrl($this->pathController)`
+    - Il comportamento funzionale rimane identico grazie alla normalizzazione automatica
+
+### 🧪 Testing
+
+*   **RouterTest.php**: Aggiornati i test per riflettere la nuova interfaccia del metodo `concatenateMetaUrl()`
+    - `testGetActualUrl()`: Ora utilizza chiamate separate (`concatenateMetaUrl('meta')` + `concatenateMetaUrl('url')`) invece di una singola chiamata con path completo
+    - `testSetMetaUrlOverwritesPreviousValue()`: Stessa modifica per testare la sovrascrittura
+    - I test verificano che il comportamento esterno rimanga identico nonostante il refactoring interno
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: Il comportamento funzionale dell'API pubblica rimane completamente invariato
+*   **Compatibilità Chiamate Esistenti**: Grazie a `rtrim()`, sia `concatenateMetaUrl('/path')` che `concatenateMetaUrl('path')` producono lo stesso risultato
+*   **Fix Implicito**: Risolve edge case con slash duplicati o mancanti che potrebbero causare URL malformati
+
+### 📊 Impatto
+
+*   **Robustezza**: Gestione slash più affidabile e meno soggetta a errori
+*   **Manutenibilità**: Logica di normalizzazione centralizzata in un unico punto
+*   **Pulizia API**: Interfaccia più semplice e intuitiva per i chiamanti
+
+
 ## [10.1.1] - 2025-12-06 - Supporto HTTP Range Requests e Miglioramenti API Response
 
 Questa patch release corregge un bug critico di conformità agli standard HTTP che impediva la riproduzione di video in Safari. Implementato il supporto completo per HTTP Range Requests (RFC 7233) con gestione di 206 Partial Content e 416 Range Not Satisfiable. Migliorata l'API della classe Response con constructor injection.

@@ -165,7 +165,7 @@ class ScaffoldingManager
     {
         if ($this->entityReflection->isSubclassOf(SelfReferencedEntity::class)) {
             return ModelType::selfReferencedModel;
-        } elseif ($this->checkDependencies($this->entityReflection)) {
+        } elseif ($this->checkDependencies()) {
             return ModelType::dependentModel;
         } else {
             return ModelType::baseModel;

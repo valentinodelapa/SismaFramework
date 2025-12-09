@@ -12,12 +12,11 @@ use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Sample\Entities\SampleBaseEntity;
-use SismaFramework\Sample\Entities\SampleReferencedEntity;
 use SismaFramework\Sample\Enumerations\ArticleStatus;
 use SismaFramework\Sample\Models\SampleBaseEntityModel;
 use SismaFramework\Sample\Models\SampleDependentEntityModel;
 use SismaFramework\Sample\Models\SampleReferencedEntityModel;
-use SismaFramework\Security\Authentication;
+use SismaFramework\Security\HttpClasses\Authentication;
 
 /**
  * Controller di esempio che mostra tutte le funzionalità del framework

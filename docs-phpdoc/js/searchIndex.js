@@ -2481,6 +2481,31 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Exceptions-PhpVersionException.html#method___construct"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\Exceptions\\RangeNotSatisfiableException",
+            "name": "RangeNotSatisfiableException",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Exceptions\\RangeNotSatisfiableException\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Exceptions\\RangeNotSatisfiableException\u003A\u003AsetResponseType\u0028\u0029",
+            "name": "setResponseType",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html#method_setResponseType"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Exceptions\\RangeNotSatisfiableException\u003A\u003AgetFileSize\u0028\u0029",
+            "name": "getFileSize",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html#method_getFileSize"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\Exceptions\\RangeNotSatisfiableException\u003A\u003A\u0024fileSize",
+            "name": "fileSize",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html#property_fileSize"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\Exceptions\\RenderException",
             "name": "RenderException",
             "summary": "",

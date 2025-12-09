@@ -38,6 +38,6 @@ class ApplicationPathException extends \RuntimeException
     public function __construct(string $module, int $code = 0, ?\Throwable $previous = null)
     {
         $message = Templater::generateStructuralTemplate('applicationPathException', ['module' => $module]);
-        return parent::__construct($message, $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }
