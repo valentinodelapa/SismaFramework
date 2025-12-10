@@ -106,7 +106,7 @@ class RouteResolver
         if ($this->resourceMaker->isAcceptedResourceFile($this->pathController)) {
             throw new PageNotFoundException($this->originalPath);
         } else {
-            Router::concatenateMetaUrl('/' . $this->pathController);
+            Router::concatenateMetaUrl($this->pathController);
             $this->path = '/' . implode('/', $this->pathParts);
             $this->defaultControllerChecked = $this->defaultActionChecked = false;
             $this->reloadAttempts++;

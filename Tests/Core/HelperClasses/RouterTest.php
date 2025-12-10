@@ -68,7 +68,8 @@ class RouterTest extends TestCase
 
     public function testGetActualUrl()
     {
-        Router::concatenateMetaUrl('/meta/url');
+        Router::concatenateMetaUrl('meta');
+        Router::concatenateMetaUrl('url');
         $this->requestMock->server['REQUEST_URI'] = '/meta/url/sample/error/';
         $this->assertEquals('sample/error/', Router::getActualUrl($this->requestMock));
     }
@@ -81,7 +82,8 @@ class RouterTest extends TestCase
 
     public function testSetMetaUrlOverwritesPreviousValue()
     {
-        Router::concatenateMetaUrl('/initial/path');
+        Router::concatenateMetaUrl('initial');
+        Router::concatenateMetaUrl('path');
         Router::setMetaUrl('/overwritten/path');
         $this->assertEquals('/overwritten/path', Router::getMetaUrl());
     }

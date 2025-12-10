@@ -44,6 +44,6 @@ class EntityPathException extends \RuntimeException
             'entityShortName' => $entityShortName,
             'module' => $module
         ]);
-        return parent::__construct($message, $code, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }
