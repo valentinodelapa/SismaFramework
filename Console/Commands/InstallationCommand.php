@@ -72,16 +72,13 @@ OUTPUT);
     #[\Override]
     protected function execute(): bool
     {
-        $projectName = $this->getArgument('projectName');
 
+        $projectName = $this->getArgument('0');
         if (!$projectName) {
             $this->output('Error: Project name is required');
             return false;
         }
-
         $force = $this->getOption('force') !== null;
-
-        // Prepara le configurazioni opzionali del database
         $config = [];
         if ($dbHost = $this->getOption('db-host')) {
             $config['DATABASE_HOST'] = $dbHost;
@@ -98,14 +95,10 @@ OUTPUT);
         if ($dbPort = $this->getOption('db-port')) {
             $config['DATABASE_PORT'] = $dbPort;
         }
-
         $this->installationManager->setForce($force);
-
         $this->output("Installing SismaFramework project: {$projectName}");
         $this->output('Creating project structure...');
-
         $this->installationManager->install($projectName, $config);
-
         $this->output('');
         $this->output('Installation completed successfully!');
         $this->output('');
@@ -120,7 +113,6 @@ OUTPUT);
         $this->output('  1. Review and update Config/configFramework.php with your settings');
         $this->output('  2. Configure your web server to point to the Public directory');
         $this->output('  3. Start building your application!');
-
         return true;
     }
 }

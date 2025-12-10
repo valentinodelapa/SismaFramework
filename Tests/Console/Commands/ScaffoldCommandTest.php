@@ -65,7 +65,7 @@ class ScaffoldCommandTest extends TestCase
 
     public function testExecuteWithMissingModule(): void
     {
-        $this->command->setArguments(['entity' => 'User']);
+        $this->command->setArguments(['0' => 'User']);
 
         ob_start();
         $result = $this->command->run();
@@ -78,8 +78,8 @@ class ScaffoldCommandTest extends TestCase
     public function testSuccessfulExecution(): void
     {
         $this->command->setArguments([
-            'entity' => 'MockEntity',
-            'module' => 'TestModule'
+            '0' => 'MockEntity',
+            '1' => 'TestModule'
         ]);
         $this->command->setOptions(['force' => true]);
 

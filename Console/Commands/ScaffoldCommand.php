@@ -72,8 +72,8 @@ OUTPUT);
     #[\Override]
     protected function execute(): bool
     {
-        $entityName = $this->getArgument('entity');
-        $module = $this->getArgument('module');
+        $entityName = $this->getArgument('0');
+        $module = $this->getArgument('1');
         if (!$entityName) {
             $this->output('Error: Entity name is required');
             return false;

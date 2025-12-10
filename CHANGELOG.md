@@ -183,6 +183,68 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
 ---
 
 
+## [10.1.3] - 2025-12-10 - Correzione Parsing Argomenti CLI
+
+Questa patch release corregge un bug critico nel sistema di parsing degli argomenti posizionali dei comandi CLI che impediva il corretto funzionamento del comando `install`.
+
+### 🐛 Bug Fixes
+
+#### Parsing Dinamico Argomenti Posizionali CLI
+
+Corretto bug nel `CommandDispatcher` che utilizzava nomi hardcodati per gli argomenti posizionali, causando incompatibilità tra comandi diversi:
+
+*   **CommandDispatcher.php**:
+    - ❌ **Prima**: Gli argomenti posizionali erano assegnati con nomi fissi (`entity`, `module`)
+    - ✅ **Dopo**: Utilizzo di indici numerici (`0`, `1`, `2`, ...) per massima flessibilità
+    - Ogni comando può ora definire autonomamente i propri nomi di argomenti
+    - Eliminata dipendenza dal tipo di comando nel dispatcher
+
+*   **InstallationCommand.php**:
+    - Aggiornato per leggere `getArgument('0')` invece di `getArgument('projectName')`
+    - Il comando ora riceve correttamente il nome del progetto dal primo argomento posizionale
+
+*   **ScaffoldCommand.php**:
+    - Aggiornato per leggere `getArgument('0')` e `getArgument('1')` invece di `entity` e `module`
+    - Mantiene piena compatibilità con la sintassi esistente
+
+**Scenario del bug**:
+1. Utente esegue: `php Console/sisma install MyProject`
+2. `CommandDispatcher` assegnava l'argomento come `['entity' => 'MyProject']`
+3. `InstallationCommand` cercava `getArgument('projectName')` → `null`
+4. Il comando falliva con errore "Project name is required"
+
+**Dopo la correzione**:
+1. `CommandDispatcher` assegna: `['0' => 'MyProject']`
+2. `InstallationCommand` legge `getArgument('0')` → `'MyProject'`
+3. Il comando funziona correttamente
+
+### 🧪 Testing
+
+*   **InstallationCommandTest.php**: Aggiornati tutti i test per utilizzare indici numerici negli argomenti
+    - `testSuccessfulInstallation()`: `['0' => 'MyProject']` invece di `['projectName' => 'MyProject']`
+    - `testInstallationWithDatabaseOptions()`: Stessa modifica
+    - `testInstallationFailure()`: Stessa modifica
+
+*   **ScaffoldCommandTest.php**: Aggiornati tutti i test per utilizzare indici numerici
+    - `testExecuteWithMissingModule()`: `['0' => 'User']` invece di `['entity' => 'User']`
+    - `testSuccessfulExecution()`: `['0' => 'MockEntity', '1' => 'TestModule']`
+
+*   ✅ **Tutti i 13 test passano correttamente**
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change per gli utenti**: La sintassi CLI rimane identica
+    - `php Console/sisma install MyProject` continua a funzionare
+    - `php Console/sisma scaffold User Blog` continua a funzionare
+*   **Refactoring interno**: Il cambio riguarda solo l'implementazione interna del dispatcher
+
+### 📊 Impatto
+
+*   **Correttezza**: Il comando `install` ora funziona come previsto
+*   **Flessibilità**: Il sistema di comandi può ora supportare comandi con argomenti posizionali arbitrari
+*   **Estensibilità**: Nuovi comandi possono definire i propri schemi di argomenti senza vincoli
+
+
 ## [10.1.2] - 2025-12-10 - Normalizzazione Gestione Slash nei Path
 
 Questa patch release migliora la robustezza della gestione dei path nel router attraverso la normalizzazione automatica degli slash, eliminando potenziali bug da doppi slash o slash mancanti.
