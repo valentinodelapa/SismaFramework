@@ -74,13 +74,13 @@ ERROR);
 
     private function sortCommandParts(): void
     {
+        $positionalIndex = 0;
         foreach ($this->commandParts as $arg) {
             if (strpos($arg, '--') === 0) {
                 $this->parseOption(substr($arg, 2));
-            } elseif (!isset($this->arguments['entity'])) {
-                $this->arguments['entity'] = $arg;
-            } elseif (!isset($this->arguments['module'])) {
-                $this->arguments['module'] = $arg;
+            } else {
+                $this->arguments[$positionalIndex] = $arg;
+                $positionalIndex++;
             }
         }
     }

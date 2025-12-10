@@ -67,7 +67,7 @@ class InstallationCommandTest extends TestCase
     public function testSuccessfulInstallation(): void
     {
         $this->command->setArguments([
-            'projectName' => 'MyProject'
+            '0' => 'MyProject'
         ]);
         $this->command->setOptions(['force' => true]);
 
@@ -94,7 +94,7 @@ class InstallationCommandTest extends TestCase
     public function testInstallationWithDatabaseOptions(): void
     {
         $this->command->setArguments([
-            'projectName' => 'MyProject'
+            '0' => 'MyProject'
         ]);
         $this->command->setOptions([
             'db-host' => 'localhost',
@@ -134,7 +134,7 @@ class InstallationCommandTest extends TestCase
     public function testInstallationFailure(): void
     {
         $this->command->setArguments([
-            'projectName' => 'MyProject'
+            '0' => 'MyProject'
         ]);
 
         $this->mockInstallationManager
