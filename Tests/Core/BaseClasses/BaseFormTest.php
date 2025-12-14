@@ -103,7 +103,7 @@ class BaseFormTest extends TestCase
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
         $this->filterManager = new FilterManager();
-        $this->formValidator = new FormValidator($this->dataMapperMock, $this->filterManager, $this->configMock);
+        $this->formValidator = new FormValidator($this->dataMapperMock, $this->filterManager, $this->configStub);
         $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->query = $this->requestMock->input = $this->requestMock->cookie = $this->requestMock->files = $this->requestMock->server = $this->requestMock->headers = [];
     }
