@@ -56,7 +56,7 @@ use SismaFramework\TestsApplication\Entities\Password;
 class AuthenticationTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
     private DataMapper $dataMapperMock;
     private Authentication $authentication;
     private Filter $filterMock;
@@ -74,30 +74,82 @@ class AuthenticationTest extends TestCase
 
     public function setUp(): void
     {
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['blowfishHashWorkload', 10],
         ]);
-        $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->sessionMock = $this->createMock(Session::class);
-        $this->filterMock = $this->createMock(Filter::class);
-        $this->sessionMock = $this->createMock(Session::class);
-        $this->authenticableInterfaceMock = $this->createMock(AuthenticableInterface::class);
-        $this->multiFactorInterfaceMock = $this->createMock(MultiFactorInterface::class);
-        $this->multiFactorRecoveryMock = $this->createMock(MultiFactorRecovery::class);
-        $this->passwordMock = $this->createMock(Password::class);
-        $this->authenticableModelInterfaceMock = $this->createMock(AuthenticableModelInterface::class);
-        $this->multiFactorModelInterfaceMock = $this->createMock(MultiFactorModelInterface::class);
-        $this->multiFactorRecoveryModelInterfaceMock = $this->createMock(MultiFactorRecoveryModelInterface::class);
-        $this->passwordModelInterfaceMock = $this->createMock(PasswordModelInterface::class);
-        $this->multiFactorWrapperInterfaceMock = $this->createMock(MultiFactorWrapperInterface::class);
-        $this->requestMock = $this->createMock(Request::class);
+        $this->authenticableInterfaceMock = $this->createStub(AuthenticableInterface::class);
+        $this->multiFactorInterfaceMock = $this->createStub(MultiFactorInterface::class);
+        $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->server['REQUEST_METHOD'] = 'POST';
         $this->requestMock->input = [];
+    }
+
+    private function configureMock(bool $dataMapper,
+            bool $session,
+            bool $filter,
+            bool $multiFactorRecovery,
+            bool $password,
+            bool $authenticableModelInterface,
+            bool $multiFactorModelInterface,
+            bool $multiFactorRecoveryModelInterface,
+            bool $passwordModelInterface,
+            bool $multiFactorWrapperInterface
+    )
+    {
+        if ($dataMapper) {
+            $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
+                    ->disableOriginalConstructor()
+                    ->getMock();
+        } else {
+            $this->dataMapperMock = $this->createStub(DataMapper::class);
+        }
+        if ($session) {
+            $this->sessionMock = $this->createMock(Session::class);
+        } else {
+            $this->sessionMock = $this->createStub(Session::class);
+        }
+        if ($filter) {
+            $this->filterMock = $this->createMock(Filter::class);
+        } else {
+            $this->filterMock = $this->createStub(Filter::class);
+        }
+        if ($multiFactorRecovery) {
+            $this->multiFactorRecoveryMock = $this->createMock(MultiFactorRecovery::class);
+        } else {
+            $this->multiFactorRecoveryMock = $this->createStub(MultiFactorRecovery::class);
+        }
+        if ($password) {
+            $this->passwordMock = $this->createMock(Password::class);
+        } else {
+            $this->passwordMock = $this->createStub(Password::class);
+        }
+        if ($authenticableModelInterface) {
+            $this->authenticableModelInterfaceMock = $this->createMock(AuthenticableModelInterface::class);
+        } else {
+            $this->authenticableModelInterfaceMock = $this->createStub(AuthenticableModelInterface::class);
+        }
+        if ($multiFactorModelInterface) {
+            $this->multiFactorModelInterfaceMock = $this->createMock(MultiFactorModelInterface::class);
+        } else {
+            $this->multiFactorModelInterfaceMock = $this->createStub(MultiFactorModelInterface::class);
+        }
+        if ($multiFactorRecoveryModelInterface) {
+            $this->multiFactorRecoveryModelInterfaceMock = $this->createMock(MultiFactorRecoveryModelInterface::class);
+        } else {
+            $this->multiFactorRecoveryModelInterfaceMock = $this->createStub(MultiFactorRecoveryModelInterface::class);
+        }
+        if ($passwordModelInterface) {
+            $this->passwordModelInterfaceMock = $this->createMock(PasswordModelInterface::class);
+        } else {
+            $this->passwordModelInterfaceMock = $this->createStub(PasswordModelInterface::class);
+        }
+        if ($multiFactorWrapperInterface) {
+            $this->multiFactorWrapperInterfaceMock = $this->createMock(MultiFactorWrapperInterface::class);
+        } else {
+            $this->multiFactorWrapperInterfaceMock = $this->createStub(MultiFactorWrapperInterface::class);
+        }
         $this->authentication = new Authentication($this->requestMock, $this->filterMock, $this->sessionMock);
         $this->authentication->setAuthenticableModelInterface($this->authenticableModelInterfaceMock);
         $this->authentication->setPasswordModelInterface($this->passwordModelInterfaceMock);
@@ -108,6 +160,7 @@ class AuthenticationTest extends TestCase
 
     public function testCheckAuthenticable()
     {
+        $this->configureMock(false, false, true, false, true, true, false, false, true, false);
         $matcherOne = $this->exactly(5);
         $this->filterMock->expects($matcherOne)
                 ->method('isString')
@@ -147,7 +200,7 @@ class AuthenticationTest extends TestCase
         $this->passwordMock->expects($this->once())
                 ->method('__get')
                 ->with('password')
-                ->willReturn(Encryptor::getBlowfishHash('password-test', $this->configMock));
+                ->willReturn(Encryptor::getBlowfishHash('password-test', $this->configStub));
         $this->requestMock->input['csrfToken'] = 'csfr-token-test';
         $this->assertFalse($this->authentication->checkAuthenticable(true));
         $this->assertFalse($this->authentication->checkAuthenticable(true));
@@ -161,7 +214,7 @@ class AuthenticationTest extends TestCase
 
     public function testCheckCsrfToken()
     {
-
+        $this->configureMock(false, true, true, false, false, false, false, false, false, false);
         $matcherOne = $this->exactly(5);
         $this->sessionMock->expects($matcherOne)
                 ->method('__isset')
@@ -209,6 +262,7 @@ class AuthenticationTest extends TestCase
 
     public function testCheckPassword()
     {
+        $this->configureMock(false, false, true, false, true, false, false, false, true, false);
         $matcherOne = $this->exactly(4);
         $this->filterMock->expects($matcherOne)
                 ->method('isString')
@@ -240,9 +294,9 @@ class AuthenticationTest extends TestCase
                     $this->assertEquals('password', $name);
                     switch ($matcherThree->numberOfInvocations()) {
                         case 1:
-                            return Encryptor::getBlowfishHash('fake-password-test', $this->configMock);
+                            return Encryptor::getBlowfishHash('fake-password-test', $this->configStub);
                         default :
-                            return Encryptor::getBlowfishHash('password-test', $this->configMock);
+                            return Encryptor::getBlowfishHash('password-test', $this->configStub);
                     }
                 });
         $this->requestMock->input = [];
@@ -256,7 +310,7 @@ class AuthenticationTest extends TestCase
 
     public function testCheckMultiFactor()
     {
-
+        $this->configureMock(true, false, true, true, false, false, true, true, false, true);
         $matcherOne = $this->exactly(5);
         $this->filterMock->expects($matcherOne)
                 ->method('isString')
@@ -311,7 +365,7 @@ class AuthenticationTest extends TestCase
         $this->multiFactorRecoveryMock->expects($this->once())
                 ->method('__get')
                 ->with('token')
-                ->willReturn(Encryptor::getBlowfishHash('code-test', $this->configMock));
+                ->willReturn(Encryptor::getBlowfishHash('code-test', $this->configStub));
         $this->dataMapperMock->expects($this->once())
                 ->method('delete')
                 ->with($this->multiFactorRecoveryMock)
@@ -322,14 +376,14 @@ class AuthenticationTest extends TestCase
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
         $this->assertTrue($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
-        $this->multiFactorRecoveryMock->token = Encryptor::getBlowfishHash('code-test', $this->configMock);
+        $this->multiFactorRecoveryMock->token = Encryptor::getBlowfishHash('code-test', $this->configStub);
         $this->assertTrue($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
         $this->assertFalse($this->authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->dataMapperMock));
     }
 
     public function testCheckMultiFactorRecovery()
     {
-
+        $this->configureMock(true, false, false, true, false, false, false, true, false, false);
         $matcherOne = $this->exactly(3);
         $this->multiFactorRecoveryModelInterfaceMock->expects($matcherOne)
                 ->method('getMultiFactorRecoveryInterfaceCollectionByMultiFactorInterface')
@@ -351,9 +405,9 @@ class AuthenticationTest extends TestCase
                     $this->assertEquals('token', $name);
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
-                            return Encryptor::getBlowfishHash('fake-code-test', $this->configMock);
+                            return Encryptor::getBlowfishHash('fake-code-test', $this->configStub);
                         case 2:
-                            return Encryptor::getBlowfishHash('code-test', $this->configMock);
+                            return Encryptor::getBlowfishHash('code-test', $this->configStub);
                     }
                 });
         $this->dataMapperMock->expects($this->once())
@@ -367,12 +421,14 @@ class AuthenticationTest extends TestCase
 
     public function testGetAuthenticableInterfaceWithException()
     {
+        $this->configureMock(false, false, false, false, false, false, false, false, false, false);
         $this->expectException(AuthenticationException::class);
         $this->assertEquals($this->authenticableInterfaceMock, $this->authentication->getAuthenticableInterface());
     }
 
     public function testGetAuthenticableInterface()
     {
+        $this->configureMock(false, false, true, false, true, true, false, false, true, false);
         $matcher = $this->exactly(2);
         $this->filterMock->expects($matcher)
                 ->method('isString')
@@ -398,7 +454,7 @@ class AuthenticationTest extends TestCase
         $this->passwordMock->expects($this->once())
                 ->method('__get')
                 ->with('password')
-                ->willReturn(Encryptor::getBlowfishHash('password-test', $this->configMock));
+                ->willReturn(Encryptor::getBlowfishHash('password-test', $this->configStub));
         $this->requestMock->input['csrfToken'] = 'csfr-token-test';
         $this->requestMock->input['identifier'] = 'identifier-test';
         $this->requestMock->input['password'] = 'password-test';

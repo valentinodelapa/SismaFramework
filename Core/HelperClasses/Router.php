@@ -35,8 +35,7 @@ use SismaFramework\Core\HttpClasses\Response;
  */
 class Router
 {
-
-    private static $metaUrl = '';
+    private static $metaUrl = "";
     private static $controllerUrl = null;
     private static $actionUrl = null;
     private static $actualCleanUrl = null;
@@ -44,13 +43,13 @@ class Router
 
     public static function redirect(string $relativeUrl, $request = new Request()): Response
     {
-        header("Location: " . self::getRootUrl($request) . '/' . rtrim($relativeUrl, '/'));
+        header("Location: " . self::getRootUrl($request) . "/" . rtrim($relativeUrl, "/"));
         return new Response();
     }
 
     public static function concatenateMetaUrl(string $pathToConcatenate)
     {
-        self::$metaUrl .= '/' . rtrim($pathToConcatenate, '/');
+        self::$metaUrl .= "/" . rtrim($pathToConcatenate, "/");
     }
 
     public static function setMetaUrl(string $metaUrl): void
@@ -67,7 +66,7 @@ class Router
     {
         self::$controllerUrl = $controllerUrl;
         self::$actionUrl = $actionUrl;
-        self::$actualCleanUrl = self::$metaUrl . '/' . $controllerUrl . '/' . $actionUrl . '/';
+        self::$actualCleanUrl = self::$metaUrl . "/" . $controllerUrl . "/" . $actionUrl . "/";
     }
 
     public static function getControllerUrl(): ?string
@@ -87,29 +86,29 @@ class Router
 
     public static function getRootUrl($request = new Request()): string
     {
-        $httpHost = $request->server['HTTP_HOST'];
+        $httpHost = $request->server["HTTP_HOST"];
         return Communication::getCommunicationProtocol()->value . $httpHost . self::$metaUrl;
     }
 
     public static function getActualUrl($request = new Request()): string
     {
-        $requestUri = $request->server['REQUEST_URI'];
-        $relativeUrl = str_replace(self::$metaUrl, '', $requestUri);
+        $requestUri = $request->server["REQUEST_URI"];
+        $relativeUrl = str_replace(self::$metaUrl, "", $requestUri);
         return substr($relativeUrl, 1);
     }
 
     public static function resetMetaUrl(): void
     {
-        self::$metaUrl = '';
+        self::$metaUrl = "";
     }
 
     public function reloadWithParsedQueryString($request = new Request()): Response
     {
-        $requestUriParts = explode('?', $request->server['REQUEST_URI'], 2);
+        $requestUriParts = explode('?', $request->server["REQUEST_URI"], 2);
         $baseUrl = $requestUriParts[0];
-        $this->parsedUrl = str_ends_with($baseUrl, '/') ? $baseUrl : $baseUrl . '/';
+        $this->parsedUrl = str_ends_with($baseUrl, "/") ? $baseUrl : $baseUrl . "/";
         foreach ($request->query as $key => $value) {
-            $this->parsedUrl .= $key . '/' . urlencode($value ?? 'empty') . '/';
+            $this->parsedUrl .= $key . "/" . urlencode($value ?? "empty") . "/";
         }
         header("Location: " . self::$metaUrl . $this->parsedUrl);
         return new Response();

@@ -37,16 +37,15 @@ use SismaFramework\Core\HelperClasses\Locker;
 class LoggerTest extends TestCase
 {
 
-    private Config $configMockOne;
-    private Config $configMockTwo;
+    private Config $configStubOne;
+    private Config $configStubTwo;
     private Locker $lockerMock;
 
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->configMockOne = $this->createMock(Config::class);
-        $this->configMockOne->expects($this->any())
-                ->method('__get')
+        $this->configStubOne = $this->createStub(Config::class);
+        $this->configStubOne->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', false],
                     ['logDevelopmentMaxRow', 100],
@@ -55,9 +54,8 @@ class LoggerTest extends TestCase
                     ['logProductionMaxRow', 100],
                     ['logVerboseActive', true],
         ]);
-        $this->configMockTwo = $this->createMock(Config::class);
-        $this->configMockTwo->expects($this->any())
-                ->method('__get')
+        $this->configStubTwo = $this->createStub(Config::class);
+        $this->configStubTwo->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', false],
                     ['logDevelopmentMaxRow', 100],
@@ -66,47 +64,47 @@ class LoggerTest extends TestCase
                     ['logProductionMaxRow', 2],
                     ['logVerboseActive', true],
         ]);
-        $this->lockerMock = $this->createMock(Locker::class);
+        $this->lockerMock = $this->createStub(Locker::class);
     }
 
     public function testSaveLogAndGetLog()
     {
-        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configMockOne);
-        $log = Logger::getLog($this->lockerMock, $this->configMockOne);
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configStubOne);
+        $log = Logger::getLog($this->lockerMock, $this->configStubOne);
         $this->assertStringContainsString("1\tsample message\tfilePath(0)\n", $log);
     }
 
     public function testTruncateLog()
     {
-        $this->assertEquals(0, count(Logger::getLogRowByRow($this->lockerMock, $this->configMockTwo)));
-        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configMockTwo);
-        $this->assertEquals(1, count(Logger::getLogRowByRow($this->lockerMock, $this->configMockTwo)));
-        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configMockTwo);
-        $this->assertEquals(2, count(Logger::getLogRowByRow($this->lockerMock, $this->configMockTwo)));
-        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configMockTwo);
-        $this->assertEquals(2, count(Logger::getLogRowByRow($this->lockerMock, $this->configMockTwo)));
+        $this->assertEquals(0, count(Logger::getLogRowByRow($this->lockerMock, $this->configStubTwo)));
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configStubTwo);
+        $this->assertEquals(1, count(Logger::getLogRowByRow($this->lockerMock, $this->configStubTwo)));
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configStubTwo);
+        $this->assertEquals(2, count(Logger::getLogRowByRow($this->lockerMock, $this->configStubTwo)));
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configStubTwo);
+        $this->assertEquals(2, count(Logger::getLogRowByRow($this->lockerMock, $this->configStubTwo)));
     }
 
     public function testSaveTrace()
     {
-        Logger::saveTrace(debug_backtrace(), $this->lockerMock, $this->configMockOne);
-        $log = Logger::getLog($this->lockerMock, $this->configMockOne);
+        Logger::saveTrace(debug_backtrace(), $this->lockerMock, $this->configStubOne);
+        $log = Logger::getLog($this->lockerMock, $this->configStubOne);
         $this->assertStringContainsString('SismaFramework\Tests\Core\HelperClasses\LoggerTest->testSaveTrace', $log);
     }
 
     public function testAssertClearLog()
     {
-        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configMockOne);
-        $this->assertNotEquals(0, count(Logger::getLogRowByRow($this->lockerMock, $this->configMockOne)));
-        Logger::clearLog($this->lockerMock, $this->configMockOne);
-        $this->assertEquals(0, count(Logger::getLogRowByRow($this->lockerMock, $this->configMockOne)));
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configStubOne);
+        $this->assertNotEquals(0, count(Logger::getLogRowByRow($this->lockerMock, $this->configStubOne)));
+        Logger::clearLog($this->lockerMock, $this->configStubOne);
+        $this->assertEquals(0, count(Logger::getLogRowByRow($this->lockerMock, $this->configStubOne)));
     }
 
     public function testGetLogRowByRow()
     {
-        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configMockOne);
-        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configMockOne);
-        $log = Logger::getLogRowByRow($this->lockerMock, $this->configMockOne);
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configStubOne);
+        Logger::saveLog('sample message', 1, 'filePath', 0, $this->lockerMock, $this->configStubOne);
+        $log = Logger::getLogRowByRow($this->lockerMock, $this->configStubOne);
         $this->assertIsArray($log);
         $this->assertCount(2, $log);
     }

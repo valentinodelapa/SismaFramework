@@ -50,9 +50,8 @@ class ReferencedEntityTest extends TestCase
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -70,12 +69,12 @@ class ReferencedEntityTest extends TestCase
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
-        Config::setInstance($configMock);
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
+        Config::setInstance($configStub);
     }
 
     public function testGetCollectionNames()
     {
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $this->assertIsArray($otherReferencedSample->getCollectionNames());
         $this->assertContains('baseSampleCollectionOtherReferencedSample', $otherReferencedSample->getCollectionNames());
@@ -83,6 +82,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testGetInvalidProperty()
     {
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
         $this->expectException(InvalidPropertyException::class);
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $otherReferencedSample->inexistentProperty;
@@ -90,6 +90,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testSetCollectionProperty()
     {
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
         $baseSampleCollection = new SismaCollection(BaseSample::class);
         $referencedSample = new ReferencedSample($this->dataMapperMock);
         $referencedSample->baseSampleCollectionReferencedEntityWithoutInitialization = $baseSampleCollection;
@@ -106,6 +107,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testSetInconsistentEntityInCollection()
     {
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
         $this->expectException(InvalidArgumentException::class);
         $referencedSampleCollection = new SismaCollection(ReferencedSample::class);
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
@@ -114,6 +116,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testSetInvalidProperty()
     {
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
         $this->expectException(InvalidPropertyException::class);
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $otherReferencedSample->inexistentProperty = 'value';
@@ -121,6 +124,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testCheckCollectionExsists()
     {
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
         $referencedSample = new ReferencedSample($this->dataMapperMock);
         $this->assertTrue($referencedSample->checkCollectionExists('baseSampleCollectionReferencedEntityWithoutInitialization'));
         $this->assertTrue($referencedSample->checkCollectionExists('baseSampleCollectionReferencedEntityWithInitialization'));
@@ -133,6 +137,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testCheckIssetAndCountCollectionProperty()
     {
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
         $otherReferencedSample = new OtherReferencedSample($this->dataMapperMock);
         $this->dataMapperMock->expects($this->exactly(2))
                 ->method('getCount')
@@ -146,6 +151,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testForceCollectionPropertyWithId()
     {
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
         $baseSampleOne = new BaseSample($this->dataMapperMock);
         $sismaCollectionOne = new SismaCollection(BaseSample::class);
         $sismaCollectionOne->append($baseSampleOne);
@@ -160,6 +166,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testNotForceCollectionPropertyWithoutId()
     {
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->dataMapperMock->expects($this->never())
                 ->method('find');
         $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
@@ -168,6 +175,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testNotForceCollectionProperty()
     {
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->dataMapperMock->expects($this->never())
                 ->method('find');
         $baseSampleOne = new BaseSample();
@@ -196,6 +204,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testCollectionPropertyIsSettedWithSetCollection()
     {
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->dataMapperMock->expects($this->never())
                 ->method('find');
         $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);
@@ -214,6 +223,7 @@ class ReferencedEntityTest extends TestCase
 
     public function testCollectionPropertyIsSettedWithAddEntityOnCollection()
     {
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->dataMapperMock->expects($this->never())
                 ->method('find');
         $otherReferencedSampleOne = new OtherReferencedSample($this->dataMapperMock);

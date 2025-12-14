@@ -35,9 +35,7 @@ use SismaFramework\Orm\Enumerations\JoinType;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\TestsApplication\Entities\DependentEntityOne;
 use SismaFramework\TestsApplication\Entities\EntityWithTwoCollection;
-use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
-use SismaFramework\TestsApplication\Models\BaseSampleModel;
 use SismaFramework\TestsApplication\Models\ReferencedSampleModel;
 use SismaFramework\TestsApplication\Models\SelfReferencedSampleModel;
 
@@ -48,58 +46,57 @@ use SismaFramework\TestsApplication\Models\SelfReferencedSampleModel;
  */
 class JoinEagerLoadingTest extends TestCase
 {
+
     private const JOINED_COLUMN_ID = 'entityWithTwoCollection.id AS entityWithTwoCollection__id';
     private const JOINED_COLUMN_NAME = 'entityWithTwoCollection.name AS entityWithTwoCollection__name';
+
     #[\Override]
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
 
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-            ->method('__get')
-            ->willReturnMap([
-                ['defaultPrimaryKeyPropertyName', 'id'],
-                ['developmentEnvironment', false],
-                ['encryptionPassphrase', 'encryption-key'],
-                ['encryptionAlgorithm', 'AES-256-CBC'],
-                ['entityNamespace', 'TestsApplication\\Entities\\'],
-                ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
-                ['foreignKeySuffix', 'Collection'],
-                ['initializationVectorBytes', 16],
-                ['logDevelopmentMaxRow', 100],
-                ['logDirectoryPath', $logDirectoryPath],
-                ['logPath', $logDirectoryPath . 'log.txt'],
-                ['logProductionMaxRow', 2],
-                ['logVerboseActive', true],
-                ['moduleFolders', ['SismaFramework']],
-                ['ormCache', true],
-                ['parentPrefixPropertyName', 'parent'],
-                ['referenceCacheDirectory', $referenceCacheDirectory],
-                ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
-                ['rootPath', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR],
-                ['sonCollectionPropertyName', 'sonCollection'],
-            ]);
-        $configMock->expects($this->any())
-            ->method('__isset')
-            ->willReturn(true);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnMap([
+                    ['defaultPrimaryKeyPropertyName', 'id'],
+                    ['developmentEnvironment', false],
+                    ['encryptionPassphrase', 'encryption-key'],
+                    ['encryptionAlgorithm', 'AES-256-CBC'],
+                    ['entityNamespace', 'TestsApplication\\Entities\\'],
+                    ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
+                    ['foreignKeySuffix', 'Collection'],
+                    ['initializationVectorBytes', 16],
+                    ['logDevelopmentMaxRow', 100],
+                    ['logDirectoryPath', $logDirectoryPath],
+                    ['logPath', $logDirectoryPath . 'log.txt'],
+                    ['logProductionMaxRow', 2],
+                    ['logVerboseActive', true],
+                    ['moduleFolders', ['SismaFramework']],
+                    ['ormCache', true],
+                    ['parentPrefixPropertyName', 'parent'],
+                    ['referenceCacheDirectory', $referenceCacheDirectory],
+                    ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
+                    ['rootPath', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR],
+                    ['sonCollectionPropertyName', 'sonCollection'],
+        ]);
+        $configStub->method('__isset')
+                ->willReturn(true);
 
-        Config::setInstance($configMock);
+        Config::setInstance($configStub);
     }
 
     public function testQueryWithJoinBuildsCorrectSQL(): void
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeTable')
+                ->with(DependentEntityOne::class)
+                ->willReturn('dependent_entity_one');
 
         $baseAdapterMock->expects($this->once())
-            ->method('escapeTable')
-            ->with(DependentEntityOne::class)
-            ->willReturn('dependent_entity_one');
-
-        $baseAdapterMock->expects($this->once())
-            ->method('allColumns')
-            ->willReturn('*');
+                ->method('allColumns')
+                ->willReturn('*');
 
         $joinMetadata = [
             'type' => JoinType::left,
@@ -110,37 +107,37 @@ class JoinEagerLoadingTest extends TestCase
         ];
 
         $baseAdapterMock->expects($this->once())
-            ->method('buildJoinOnForeignKey')
-            ->with(
-                JoinType::left,
-                'entityWithTwoCollection',
-                EntityWithTwoCollection::class,
-                'dependent_entity_one'
-            )
-            ->willReturn($joinMetadata);
+                ->method('buildJoinOnForeignKey')
+                ->with(
+                        JoinType::left,
+                        'entityWithTwoCollection',
+                        EntityWithTwoCollection::class,
+                        'dependent_entity_one'
+                )
+                ->willReturn($joinMetadata);
 
         $baseAdapterMock->expects($this->once())
-            ->method('parseSelect')
-            ->with(
-                false,
-                ['*', 'column_as_alias'],
-                'dependent_entity_one',
-                [],
-                [],
-                [],
-                [],
-                0,
-                0,
-                [$joinMetadata]
-            )
-            ->willReturn('SELECT * FROM dependent_entity_one LEFT JOIN entity_with_two_collection');
+                ->method('parseSelect')
+                ->with(
+                        false,
+                        ['*', 'column_as_alias'],
+                        'dependent_entity_one',
+                        [],
+                        [],
+                        [],
+                        [],
+                        0,
+                        0,
+                        [$joinMetadata]
+                )
+                ->willReturn('SELECT * FROM dependent_entity_one LEFT JOIN entity_with_two_collection');
 
         $query = new Query($baseAdapterMock);
         $query->setTable(DependentEntityOne::class);
         $query->appendJoinOnForeignKey(
-            JoinType::left,
-            'entityWithTwoCollection',
-            EntityWithTwoCollection::class
+                JoinType::left,
+                'entityWithTwoCollection',
+                EntityWithTwoCollection::class
         );
         $query->appendColumn('column_as_alias');
         $query->close();
@@ -156,18 +153,17 @@ class JoinEagerLoadingTest extends TestCase
     public function testJoinedColumnsHaveSeparator(): void
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);
-
         $baseAdapterMock->expects($this->once())
-            ->method('buildJoinedColumns')
-            ->with('entityWithTwoCollection', EntityWithTwoCollection::class)
-            ->willReturn([
-                self::JOINED_COLUMN_ID,
-                self::JOINED_COLUMN_NAME
-            ]);
+                ->method('buildJoinedColumns')
+                ->with('entityWithTwoCollection', EntityWithTwoCollection::class)
+                ->willReturn([
+                    self::JOINED_COLUMN_ID,
+                    self::JOINED_COLUMN_NAME
+        ]);
 
         $columns = $baseAdapterMock->buildJoinedColumns(
-            'entityWithTwoCollection',
-            EntityWithTwoCollection::class
+                'entityWithTwoCollection',
+                EntityWithTwoCollection::class
         );
 
         $this->assertIsArray($columns);
@@ -259,6 +255,7 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertTrue($reflection->hasMethod('getCollectionDataInformation'));
         $this->assertTrue($reflection->hasMethod('getCollectionNames'));
     }
+
     public function testFlattenRelationsDotNotation(): void
     {
         $model = new ReferencedSampleModel();
@@ -267,6 +264,7 @@ class JoinEagerLoadingTest extends TestCase
         $result = $method->invoke($model, ['author.country.continent']);
         $this->assertContains('author.country.continent', $result);
     }
+
     public function testFlattenRelationsNestedArray(): void
     {
         $model = new ReferencedSampleModel();
@@ -283,6 +281,7 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertContains('author.country.continent', $result);
         $this->assertContains('author.publisher', $result);
     }
+
     public function testFlattenRelationsMixedSyntax(): void
     {
         $model = new ReferencedSampleModel();
@@ -296,21 +295,24 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertContains('category', $result);
         $this->assertContains('category.parent', $result);
     }
+
     public function testBaseModelHasNestedRelationMethods(): void
     {
         $reflection = new \ReflectionClass(\SismaFramework\Orm\BaseClasses\BaseModel::class);
         $this->assertTrue($reflection->hasMethod('flattenRelations'));
         $this->assertTrue($reflection->hasMethod('appendNestedRelationJoin'));
     }
+
     public function testBaseResultSetHasNestedHydrationMethods(): void
     {
         $reflection = new \ReflectionClass(BaseResultSet::class);
         $this->assertTrue($reflection->hasMethod('hydrateNestedEntities'));
         $this->assertTrue($reflection->hasMethod('getEntityClassForAlias'));
     }
+
     public function testCustomQueryWithJoinAndConditionOnJoinedTable(): void
     {
-        $adapterMock = $this->createMock(BaseAdapter::class);
+        $adapterMock = $this->createStub(BaseAdapter::class);
         $adapterMock->method('escapeTable')->willReturnCallback(fn($table) => strtolower(basename(str_replace('\\', '/', $table))));
         $adapterMock->method('escapeIdentifier')->willReturnCallback(fn($id) => "`$id`");
         $adapterMock->method('escapeColumn')->willReturnCallback(fn($col, $withTable = false) => $withTable ? "`table`.`$col`" : "`$col`");
@@ -330,26 +332,27 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertSame(JoinType::left, $joins[0]['type']);
         $this->assertSame(EntityWithTwoCollection::class, $joins[0]['relatedEntityClass']);
     }
+
     public function testCustomQueryWithMultipleJoins(): void
     {
-        $adapterMock = $this->createMock(BaseAdapter::class);
+        $adapterMock = $this->createStub(BaseAdapter::class);
         $adapterMock->method('escapeTable')->willReturnCallback(fn($table) => strtolower(basename(str_replace('\\', '/', $table))));
         $adapterMock->method('escapeIdentifier')->willReturnCallback(fn($id) => "`$id`");
         $adapterMock->method('buildJoinOnForeignKey')->willReturnOnConsecutiveCalls(
-            [
-                'type' => JoinType::inner,
-                'table' => 'entitywithttwocollection',
-                'alias' => 'entityWithTwoCollection',
-                'on' => 'dependententityone.entity_with_two_collection_id = entityWithTwoCollection.id',
-                'relatedEntityClass' => EntityWithTwoCollection::class
-            ],
-            [
-                'type' => JoinType::left,
-                'table' => 'basesample',
-                'alias' => 'baseSample',
-                'on' => 'referencesample.base_sample_id = baseSample.id',
-                'relatedEntityClass' => \SismaFramework\TestsApplication\Entities\BaseSample::class
-            ]
+                [
+                    'type' => JoinType::inner,
+                    'table' => 'entitywithttwocollection',
+                    'alias' => 'entityWithTwoCollection',
+                    'on' => 'dependententityone.entity_with_two_collection_id = entityWithTwoCollection.id',
+                    'relatedEntityClass' => EntityWithTwoCollection::class
+                ],
+                [
+                    'type' => JoinType::left,
+                    'table' => 'basesample',
+                    'alias' => 'baseSample',
+                    'on' => 'referencesample.base_sample_id = baseSample.id',
+                    'relatedEntityClass' => \SismaFramework\TestsApplication\Entities\BaseSample::class
+                ]
         );
         $query = new Query($adapterMock);
         $query->setTable(DependentEntityOne::class);
@@ -360,19 +363,20 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertSame(JoinType::inner, $joins[0]['type']);
         $this->assertSame(JoinType::left, $joins[1]['type']);
     }
+
     public function testCustomQueryWithManualJoinAndCustomCondition(): void
     {
-        $adapterMock = $this->createMock(BaseAdapter::class);
+        $adapterMock = $this->createStub(BaseAdapter::class);
         $adapterMock->method('escapeTable')->willReturnCallback(fn($table) => strtolower(basename(str_replace('\\', '/', $table))));
         $adapterMock->method('escapeIdentifier')->willReturnCallback(fn($id) => "`$id`");
         $query = new Query($adapterMock);
         $query->setTable(DependentEntityOne::class);
         $query->appendJoin(
-            JoinType::inner,
-            EntityWithTwoCollection::class,
-            'custom_alias',
-            'dependententityone.entity_with_two_collection_id = custom_alias.id AND custom_alias.active = 1',
-            EntityWithTwoCollection::class
+                JoinType::inner,
+                EntityWithTwoCollection::class,
+                'custom_alias',
+                'dependententityone.entity_with_two_collection_id = custom_alias.id AND custom_alias.active = 1',
+                EntityWithTwoCollection::class
         );
         $joins = $query->getJoins();
         $this->assertCount(1, $joins);
@@ -380,28 +384,30 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertStringContainsString('custom_alias.active = 1', $joins[0]['on']);
         $this->assertSame(EntityWithTwoCollection::class, $joins[0]['relatedEntityClass']);
     }
+
     public function testCustomQuerySupportsCrossJoin(): void
     {
-        $adapterMock = $this->createMock(BaseAdapter::class);
+        $adapterMock = $this->createStub(BaseAdapter::class);
         $adapterMock->method('escapeTable')->willReturnCallback(fn($table) => strtolower(basename(str_replace('\\', '/', $table))));
         $adapterMock->method('escapeIdentifier')->willReturnCallback(fn($id) => "`$id`");
         $query = new Query($adapterMock);
         $query->setTable(DependentEntityOne::class);
         $query->appendJoin(
-            JoinType::cross,
-            EntityWithTwoCollection::class,
-            'crossed',
-            '',
-            EntityWithTwoCollection::class
+                JoinType::cross,
+                EntityWithTwoCollection::class,
+                'crossed',
+                '',
+                EntityWithTwoCollection::class
         );
         $joins = $query->getJoins();
         $this->assertCount(1, $joins);
         $this->assertSame(JoinType::cross, $joins[0]['type']);
         $this->assertEmpty($joins[0]['on']);
     }
+
     public function testQueryAppendColumnForJoinedTables(): void
     {
-        $adapterMock = $this->createMock(BaseAdapter::class);
+        $adapterMock = $this->createStub(BaseAdapter::class);
         $adapterMock->method('escapeTable')->willReturnCallback(fn($table) => strtolower(basename(str_replace('\\', '/', $table))));
         $adapterMock->method('allColumns')->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $query = new Query($adapterMock);
@@ -414,22 +420,25 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertContains(self::JOINED_COLUMN_ID, $columns);
         $this->assertContains(self::JOINED_COLUMN_NAME, $columns);
     }
+
     public function testBaseAdapterHasBuildJoinedColumnsMethod(): void
     {
         $reflection = new \ReflectionClass(BaseAdapter::class);
         $this->assertTrue($reflection->hasMethod('buildJoinedColumns'));
         $this->assertTrue($reflection->hasMethod('buildJoinMetadata'));
     }
+
     public function testAllColumnsReturnsQualifiedNameWithTable(): void
     {
-        $adapterMock = $this->createMock(BaseAdapter::class);
+        $adapterMock = $this->createStub(BaseAdapter::class);
         $adapterMock->method('allColumns')->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $result = $adapterMock->allColumns('users');
         $this->assertSame('users.*', $result);
     }
+
     public function testAllColumnsReturnsAsteriskWithoutTable(): void
     {
-        $adapterMock = $this->createMock(BaseAdapter::class);
+        $adapterMock = $this->createStub(BaseAdapter::class);
         $adapterMock->method('allColumns')->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
         $result = $adapterMock->allColumns();
         $this->assertSame('*', $result);

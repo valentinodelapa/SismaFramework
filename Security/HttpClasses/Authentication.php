@@ -49,7 +49,6 @@ use SismaFramework\Core\HelperClasses\Session;
  */
 class Authentication extends Submittable
 {
-
     private MultiFactorModelInterface $multiFactorModelInterface;
     private MultiFactorRecoveryModelInterface $multiFactorRecoveryModelInterface;
     private MultiFactorWrapperInterface $multiFactorWrapperInterface;
@@ -99,8 +98,8 @@ class Authentication extends Submittable
         if ($withCsrfToken && ($this->checkCsrfToken() === false)) {
             return false;
         }
-        if (array_key_exists('identifier', $this->request->input) && $this->filter->isString($this->request->input['identifier'])) {
-            $this->authenticableInterface = $this->authenticableModelInterface->getValidAuthenticableInterfaceByIdentifier($this->request->input['identifier']);
+        if (array_key_exists('identifier', $this->request->input) && $this->filter->isString($this->request->input["identifier"])) {
+            $this->authenticableInterface = $this->authenticableModelInterface->getValidAuthenticableInterfaceByIdentifier($this->request->input["identifier"]);
             if (($this->authenticableInterface instanceof AuthenticableInterface) && $this->checkPassword($this->authenticableInterface)) {
                 return true;
             } else {
@@ -115,12 +114,12 @@ class Authentication extends Submittable
     {
         if (isset($this->session->csrfToken) === false) {
             return false;
-        } elseif (array_key_exists('csrfToken', $this->request->input) === false) {
+        } elseif (array_key_exists("csrfToken", $this->request->input) === false) {
             return false;
-        } elseif ($this->filter->isString($this->request->input['csrfToken']) === false) {
+        } elseif ($this->filter->isString($this->request->input["csrfToken"]) === false) {
             return false;
         } else {
-            return $this->request->input['csrfToken'] === $this->session->csrfToken;
+            return $this->request->input["csrfToken"] === $this->session->csrfToken;
         }
     }
 
@@ -129,7 +128,7 @@ class Authentication extends Submittable
         if (array_key_exists('password', $this->request->input) && $this->filter->isString($this->request->input['password'])) {
             $passwordInterface = $this->passwordModelInterface->getPasswordByAuthenticableInterface($authenticableInterface);
             if ($passwordInterface instanceof PasswordInterface) {
-                return Encryptor::verifyBlowfishHash($this->request->input['password'], $passwordInterface->password);
+                return Encryptor::verifyBlowfishHash($this->request->input["password"], $passwordInterface->password);
             } else {
                 return false;
             }
@@ -139,7 +138,7 @@ class Authentication extends Submittable
 
     public function checkMultiFactor(AuthenticableInterface $authenticableInterface, DataMapper $dataMapper = new DataMapper()): bool
     {
-        if (array_key_exists('code', $this->request->input) && $this->filter->isString($this->request->input['code'])) {
+        if (array_key_exists("code", $this->request->input) && $this->filter->isString($this->request->input["code"])) {
             $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByAuthenticableInterface($authenticableInterface);
             if ($multiFactorInterface instanceof MultiFactorInterface) {
                 return $this->switchMultiFactorOptions($multiFactorInterface, $dataMapper);
@@ -151,9 +150,9 @@ class Authentication extends Submittable
 
     private function switchMultiFactorOptions(MultiFactorInterface $multiFactorInterface, DataMapper $dataMapper): bool
     {
-        if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->input['code'])) {
+        if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->input["code"])) {
             return true;
-        } elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->input['code'], $dataMapper)) {
+        } elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->input["code"], $dataMapper)) {
             return true;
         } else {
             $this->formFilterError->codeError = true;

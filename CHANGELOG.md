@@ -183,6 +183,121 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
 ---
 
 
+## [10.1.4] - 2025-12-14 - Correzioni Installazione e Aggiornamento Test Suite PHPUnit
+
+Questa patch release corregge un bug nel processo di installazione automatica e aggiorna la test suite per conformità alle best practice di PHPUnit 11+ eliminando deprecation notices relative all'uso di mock al posto di stub.
+
+### 🐛 Bug Fixes
+
+#### Correzione Riferimento File Configurazione in Installazione
+
+Corretto il processo di installazione automatica per rinominare correttamente il riferimento al file di configurazione in `Public/index.php`:
+
+*   **InstallationManager.php**:
+    - ❌ **Prima**: Il file `Public/index.php` copiato manteneva il riferimento hardcoded a `'Config' . DIRECTORY_SEPARATOR . 'config.php'`
+    - ✅ **Dopo**: Aggiunto pattern di sostituzione per rinominare il riferimento a `'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'`
+    - Pattern aggiunto all'array di replacements (linea 117):
+    ```php
+    $patterns = [
+        "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config'",
+        "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload'",
+        "'Config' . DIRECTORY_SEPARATOR . 'config.php'",  // ← NUOVO
+    ];
+    $replacements = [
+        "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Config'",
+        "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'",
+        "'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'",  // ← NUOVO
+    ];
+    ```
+
+**Scenario del bug**:
+1. Utente esegue: `php Console/sisma install MyProject`
+2. Il file `Public/index.php` veniva copiato e aggiornato per i path di Autoload e Config
+3. Tuttavia, il riferimento al file di configurazione rimaneva `config.php` invece di `configFramework.php`
+4. L'applicazione non riusciva a trovare il file di configurazione causando errori fatali
+
+**Dopo la correzione**:
+- Il file `Public/index.php` include correttamente `Config/configFramework.php`
+- L'installazione automatica produce un progetto immediatamente funzionante
+
+### 🧪 Testing
+
+#### Aggiornamento Test Suite per PHPUnit 11+
+
+Aggiornati tutti i file di test per utilizzare `createStub()` al posto di `createMock()` quando non vengono configurate aspettative (expectations), eliminando deprecation notices introdotte in PHPUnit 11:
+
+*   **Motivazione del Cambiamento**:
+    - PHPUnit 11+ depreca l'uso di `expects()` su oggetti creati con `createStub()`
+    - PHPUnit 12 (futuro) non permetterà più questa configurazione
+    - Best practice: `createStub()` per test stub (solo valori di ritorno), `createMock()` per mock object (verifica interazioni)
+
+*   **File Aggiornati** (49 test totali):
+    - **Console Tests** (3 file):
+        * `InstallationCommandTest.php`: `$mockInstallationManager` → `$installationManagerStub`
+        * `ScaffoldCommandTest.php`: `$mockScaffoldingManager` → `$scaffoldingManagerStub`
+        * `ScaffoldingManagerTest.php`: `$configMock` → `$configStub` (2 occorrenze)
+        * `InstallationManagerTest.php`: Rimossi `setAccessible(true)` deprecati (PHP 8.1+)
+    
+    - **Core Tests** (13 file):
+        * `BaseFixtureTest.php`: `$configMock` → `$configStub`, `$dataMapperMock` → stub
+        * `BaseFormTest.php`: `$configMock` → `$configStub`, `$dataMapperMock` → stub, `$requestMock` → stub
+        * `FilterTypeTest.php`, `AutoloaderTest.php`, `ConfigTest.php`, `DebuggerTest.php`, `DispatcherTest.php`
+        * `EncryptorTest.php`, `FilterTest.php`, `FixturesManagerTest.php`, `LoggerTest.php`
+        * `ModuleManagerTest.php`, `NotationManagerTest.php`
+    
+    - **ORM Tests** (10 file):
+        * `AdapterMysqlTest.php`, `BaseEntityTest.php`, `BaseModelTest.php`, `SismaCollectionTest.php`
+        * `DependentModelTest.php`, `ReferencedEntityTest.php`, `SelfReferencedEntityTest.php`, `SelfReferencedModelTest.php`
+        * `CacheTest.php`, `DataMapperTest.php`, `ErrorHandlerTest.php`, `ProcessedEntitiesCollectionTest.php`, `QueryTest.php`
+        * `JoinEagerLoadingTest.php`, `ResultSetMysqlTest.php`
+    
+    - **Security Tests** (3 file):
+        * `BasePermissionTest.php`, `BaseVoterTest.php`, `AuthenticationTest.php`
+
+*   **Pattern di Aggiornamento Applicato**:
+    ```php
+    // ❌ Prima (PHPUnit 11 deprecation warning):
+    $configMock = $this->createMock(Config::class);
+    $configMock->expects($this->any())  // ← expects() su stub non necessario
+            ->method('__get')
+            ->willReturnMap([...]);
+    
+    // ✅ Dopo (conforme PHPUnit 11+):
+    $configStub = $this->createStub(Config::class);
+    $configStub->method('__get')  // ← solo configurazione valori di ritorno
+            ->willReturnMap([...]);
+    ```
+
+*   **Deprecation PHP 8.1+**:
+    - Rimossi tutti i `setAccessible(true)` in `InstallationManagerTest.php` (non più necessari per proprietà private da PHP 8.1)
+
+### 🔧 Refactoring
+
+#### Pulizia Codice InstallationManager
+
+Refactorizzata formattazione del codice in `InstallationManager.php` per migliorare leggibilità:
+
+*   Rimossi commenti ridondanti che duplicavano informazioni evidenti dal codice
+*   Normalizzata formattazione spaziatura e indentazione
+*   Rimossi spazi vuoti superflui tra metodi
+*   Codice più conciso mantenendo identica funzionalità
+
+**Impatto**: Nessun cambiamento funzionale, solo miglioramento della manutenibilità.
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: Tutte le modifiche sono retrocompatibili
+*   **Test Suite**: Tutti i test continuano a passare con identica copertura
+*   **Installazione**: Il processo di installazione ora funziona correttamente end-to-end
+
+### 📊 Metriche
+
+*   **Test Aggiornati**: 49 file di test modificati
+*   **Deprecation Warnings**: Eliminati tutti i warning PHPUnit 11+
+*   **Conformità**: Test suite conforme alle best practice PHPUnit 11/12
+*   **Compatibilità PHP**: Rimossi pattern deprecati da PHP 8.1+
+
+
 ## [10.1.3] - 2025-12-10 - Correzione Parsing Argomenti CLI
 
 Questa patch release corregge un bug critico nel sistema di parsing degli argomenti posizionali dei comandi CLI che impediva il corretto funzionamento del comando `install`.

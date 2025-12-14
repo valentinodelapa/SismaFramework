@@ -38,60 +38,49 @@ use SismaFramework\Core\HelperClasses\Config;
  */
 class CommunicationTest extends TestCase
 {
-    private Config $configMock;
+    private Config $configStub;
     private Request $requestMock;
 
     protected function setUp(): void
     {
-        $this->configMock = $this->createMock(Config::class);
-        $this->requestMock = $this->createMock(Request::class);
+        $this->configStub = $this->createStub(Config::class);
+        $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->server = [];
     }
 
     public function testGetCommunicationProtocolWithForcedHttps()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->with('httpsIsForced')
             ->willReturn(true);
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::https, $result);
     }
 
     public function testGetCommunicationProtocolWithHttpsOn()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->with('httpsIsForced')
             ->willReturn(false);
-
         $this->requestMock->server['HTTPS'] = 'on';
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::https, $result);
     }
 
     public function testGetCommunicationProtocolWithHttpsOff()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->with('httpsIsForced')
             ->willReturn(false);
 
         $this->requestMock->server['HTTPS'] = 'off';
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::http, $result);
     }
 
     public function testGetCommunicationProtocolWithHttpsNotSet()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->willReturnCallback(function($property) {
                 return match($property) {
                     'httpsIsForced' => false,
@@ -99,61 +88,47 @@ class CommunicationTest extends TestCase
                     default => null
                 };
             });
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertInstanceOf(CommunicationProtocol::class, $result);
     }
 
     public function testGetCommunicationProtocolWithPort443()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->with('httpsIsForced')
             ->willReturn(false);
-
         unset($this->requestMock->server['HTTPS']);
         $this->requestMock->server['SERVER_PORT'] = '443';
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::https, $result);
     }
 
     public function testGetCommunicationProtocolWithPort80()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->with('httpsIsForced')
             ->willReturn(false);
-
         unset($this->requestMock->server['HTTPS']);
         $this->requestMock->server['SERVER_PORT'] = '80';
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::http, $result);
     }
 
     public function testGetCommunicationProtocolWithNumericPort443()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->with('httpsIsForced')
             ->willReturn(false);
 
         unset($this->requestMock->server['HTTPS']);
         $this->requestMock->server['SERVER_PORT'] = 443;
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::https, $result);
     }
 
     public function testGetCommunicationProtocolWithDevelopmentEnvironment()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->willReturnCallback(function($property) {
                 return match($property) {
                     'httpsIsForced' => false,
@@ -161,19 +136,15 @@ class CommunicationTest extends TestCase
                     default => null
                 };
             });
-
         unset($this->requestMock->server['HTTPS']);
         unset($this->requestMock->server['SERVER_PORT']);
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::http, $result);
     }
 
     public function testGetCommunicationProtocolWithProductionEnvironment()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->willReturnCallback(function($property) {
                 return match($property) {
                     'httpsIsForced' => false,
@@ -181,19 +152,15 @@ class CommunicationTest extends TestCase
                     default => null
                 };
             });
-
         unset($this->requestMock->server['HTTPS']);
         unset($this->requestMock->server['SERVER_PORT']);
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::https, $result);
     }
 
     public function testGetCommunicationProtocolPriorityForcedHttps()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->willReturnCallback(function($property) {
                 return match($property) {
                     'httpsIsForced' => true,
@@ -201,34 +168,26 @@ class CommunicationTest extends TestCase
                     default => null
                 };
             });
-
         $this->requestMock->server['HTTPS'] = 'off';
         $this->requestMock->server['SERVER_PORT'] = '80';
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::https, $result);
     }
 
     public function testGetCommunicationProtocolPriorityHttpsHeader()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->with('httpsIsForced')
             ->willReturn(false);
-
         $this->requestMock->server['HTTPS'] = 'on';
         $this->requestMock->server['SERVER_PORT'] = '80';
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::https, $result);
     }
 
     public function testGetCommunicationProtocolPriorityServerPort()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->willReturnCallback(function($property) {
                 return match($property) {
                     'httpsIsForced' => false,
@@ -236,12 +195,9 @@ class CommunicationTest extends TestCase
                     default => null
                 };
             });
-
         unset($this->requestMock->server['HTTPS']);
         $this->requestMock->server['SERVER_PORT'] = '80';
-
-        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configMock);
-
+        $result = Communication::getCommunicationProtocol($this->requestMock, $this->configStub);
         $this->assertEquals(CommunicationProtocol::http, $result);
     }
 
@@ -262,7 +218,6 @@ class CommunicationTest extends TestCase
     {
         $reflection = new \ReflectionMethod(Communication::class, 'getCommunicationProtocol');
         $parameters = $reflection->getParameters();
-
         $this->assertEquals(2, count($parameters));
         $this->assertEquals('request', $parameters[0]->getName());
         $this->assertEquals('customConfig', $parameters[1]->getName());
@@ -271,8 +226,7 @@ class CommunicationTest extends TestCase
 
     public function testDefaultParameterValues()
     {
-        $this->configMock->expects($this->any())
-            ->method('__get')
+        $this->configStub->method('__get')
             ->willReturnCallback(function($property) {
                 return match($property) {
                     'httpsIsForced' => false,
@@ -280,10 +234,7 @@ class CommunicationTest extends TestCase
                     default => null
                 };
             });
-
-        // Test with default request parameter
-        $result = Communication::getCommunicationProtocol(customConfig: $this->configMock);
-
+        $result = Communication::getCommunicationProtocol(customConfig: $this->configStub);
         $this->assertInstanceOf(CommunicationProtocol::class, $result);
     }
 }

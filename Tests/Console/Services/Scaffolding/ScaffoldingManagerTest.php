@@ -20,9 +20,8 @@ class ScaffoldingManagerTest extends TestCase
         $this->templatesPath = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Services' . DIRECTORY_SEPARATOR . 'Scaffolding' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR;
         $this->tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'scaffolding_test_' . uniqid() . DIRECTORY_SEPARATOR;
         mkdir($this->tempDir, 0777, true);
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['application', 'Application'],
                     ['controllers', 'Controllers'],
@@ -33,8 +32,8 @@ class ScaffoldingManagerTest extends TestCase
                     ['structuralTemplatesPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'Structural' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR],
                     ['rootPath', $this->tempDir],
         ]);
-        Config::setInstance($configMock);
-        $this->scaffoldingManager = new ScaffoldingManager($configMock);
+        Config::setInstance($configStub);
+        $this->scaffoldingManager = new ScaffoldingManager($configStub);
         mkdir($this->tempDir . 'TestModule/Application/Entities', 0777, true);
         mkdir($this->tempDir . 'TestModule/Application/Models', 0777, true);
         mkdir($this->tempDir . 'TestModule/Application/Controllers', 0777, true);
@@ -328,9 +327,8 @@ ERROR);
 
     public function testFakeApplication()
     {
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['application', 'FakeApplication'],
                     ['defaultPrimaryKeyPropertyName', 'id'],
@@ -349,7 +347,7 @@ Each module in the project root must have this structure:
   
 Create this structure or use --force to create it automatically.
 ERROR);
-        $scaffoldingManager = new ScaffoldingManager($configMock);
+        $scaffoldingManager = new ScaffoldingManager($configStub);
         $scaffoldingManager->generateScaffolding('SimpleEntity', 'TestModule');
     }
 

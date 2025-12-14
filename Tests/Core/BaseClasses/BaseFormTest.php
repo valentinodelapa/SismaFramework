@@ -65,7 +65,7 @@ use SismaFramework\TestsApplication\Forms\SimpleEntityWithInjectRequestForm;
 class BaseFormTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
     private DataMapper $dataMapperMock;
     private Request $requestMock;
     private FilterManager $filterManager;
@@ -76,9 +76,8 @@ class BaseFormTest extends TestCase
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -99,15 +98,13 @@ class BaseFormTest extends TestCase
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
                     ['sonCollectionPropertyName', 'sonCollection'],
         ]);
-        Config::setInstance($this->configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        Config::setInstance($this->configStub);
+        $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
         $this->filterManager = new FilterManager();
         $this->formValidator = new FormValidator($this->dataMapperMock, $this->filterManager, $this->configMock);
-        $this->requestMock = $this->getMockBuilder(Request::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->query = $this->requestMock->input = $this->requestMock->cookie = $this->requestMock->files = $this->requestMock->server = $this->requestMock->headers = [];
     }
 

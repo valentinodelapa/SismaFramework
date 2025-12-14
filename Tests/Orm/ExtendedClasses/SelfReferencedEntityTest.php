@@ -47,9 +47,8 @@ class SelfReferencedEntityTest extends TestCase
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -69,7 +68,7 @@ class SelfReferencedEntityTest extends TestCase
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['sonCollectionPropertyName', 'sonCollection'],
         ]);
-        Config::setInstance($configMock);
+        Config::setInstance($configStub);
         $this->dataMapperMock = $this->createMock(DataMapper::class);
     }
 

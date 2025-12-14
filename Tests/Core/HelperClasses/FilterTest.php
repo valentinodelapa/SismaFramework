@@ -360,18 +360,17 @@ class FilterTest extends TestCase
 
     public function testIsEntity()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
-        $dataMapperMock = $this->createMock(DataMapper::class);
-        $processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $dataMapperMock = $this->createStub(DataMapper::class);
+        $processedEntitiesCollectionMock = $this->createStub(ProcessedEntitiesCollection::class);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
         ]);
-        Config::setInstance($configMock);
-        $this->assertTrue($this->filter->isEntity(new BaseSample($dataMapperMock, $processedEntitiesCollectionMock, $configMock)));
+        Config::setInstance($configStub);
+        $this->assertTrue($this->filter->isEntity(new BaseSample($dataMapperMock, $processedEntitiesCollectionMock, $configStub)));
         $this->assertFalse($this->filter->isEntity(['array']));
         $this->assertFalse($this->filter->isEntity(1.1));
         $this->assertFalse($this->filter->isEntity(0.0));

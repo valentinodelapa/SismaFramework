@@ -300,6 +300,8 @@ class FilterTypeTest extends TestCase
 
     public function testFromPhpType()
     {
+        $this->filterMock->expects($this->never())
+                ->method(FilterType::customFilter->name);
         $reflectionNabedTypeMock = $this->createMock(\ReflectionNamedType::class);
         $matcherOne = $this->exactly(9);
         $reflectionNabedTypeMock->expects($matcherOne)
@@ -312,7 +314,7 @@ class FilterTypeTest extends TestCase
                         case 4:
                             return true;
                         case 5:
-                        case 6;
+                        case 6:
                         case 7:
                         case 8:
                         case 9:
@@ -334,7 +336,7 @@ class FilterTypeTest extends TestCase
                             return 'bool';
                         case 5:
                             return SampleBaseEntity::class;
-                        case 6;
+                        case 6:
                         case 7:
                             return SampleType::class;
                         case 8:

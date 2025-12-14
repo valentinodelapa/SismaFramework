@@ -44,35 +44,34 @@ class BaseVoterTest extends TestCase
 
     private DataMapper $dataMapperMock;
     private ProcessedEntitiesCollection $processedEntitiesCollectionMock;
-    private Config $configMock;
+    private Config $configStub;
     
     #[\Override]
     public function setUp(): void
     {
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
-        $this->processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $this->processedEntitiesCollectionMock = $this->createStub(ProcessedEntitiesCollection::class);
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
         ]);
-        Config::setInstance($this->configMock);
+        Config::setInstance($this->configStub);
     }
 
     public function testIstanceNotPermitted()
     {
-        $this->assertFalse(SampleVoter::isAllowed(new ReferencedSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configMock), AccessControlEntry::allow));
+        $this->assertFalse(SampleVoter::isAllowed(new ReferencedSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub), AccessControlEntry::allow));
     }
 
     public function testCheckVoterFalse()
     {
-        $this->assertFalse(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configMock), AccessControlEntry::allow));
+        $this->assertFalse(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub), AccessControlEntry::allow));
     }
 
     public function testCheckVoterTrue()
     {
-        $this->assertTrue(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configMock), AccessControlEntry::deny));
+        $this->assertTrue(SampleVoter::isAllowed(new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub), AccessControlEntry::deny));
     }
 
 }

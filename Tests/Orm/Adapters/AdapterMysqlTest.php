@@ -38,9 +38,6 @@ use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager;
-use SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor;
-use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
@@ -53,16 +50,16 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 class AdapterMysqlTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
     private DataMapper $dataMapperMock;
+    private \PDO $connectionMock;
 
     #[\Override]
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultAdapterType', AdapterType::mysql],
                     ['defaultPrimaryKeyPropertyName', 'id'],
@@ -74,25 +71,12 @@ class AdapterMysqlTest extends TestCase
                     ['logVerboseActive', true],
                     ['ormCache', true],
         ]);
-        Config::setInstance($this->configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        Config::setInstance($this->configStub);
+        $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
-        $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
-
-        $transactionManager = new TransactionManager($baseAdapterMock, $processedEntitesCollectionMock);
-        $queryExecutor = new QueryExecutor($baseAdapterMock);
-
-        $this->dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([
-                    $baseAdapterMock,
-                    $processedEntitesCollectionMock,
-                    $this->configMock,
-                    $transactionManager,
-                    $queryExecutor
-                ])
-                ->getMock();
-        $connectionMock = $this->createMock(\PDO::class);
-        AdapterMysql::setConnection($connectionMock);
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $this->connectionMock = $this->createStub(\PDO::class);
+        AdapterMysql::setConnection($this->connectionMock);
     }
 
     public function testAllColumns()
@@ -275,9 +259,8 @@ class AdapterMysqlTest extends TestCase
 
     public function testOpSubquery()
     {
-        $queryMock = $this->createMock(Query::class);
-        $queryMock->expects($this->any())
-                ->method('getCommandToExecute')
+        $queryMock = $this->createStub(Query::class);
+        $queryMock->method('getCommandToExecute')
                 ->willReturn('subquery');
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('(subquery)', $adapterMysql->opSubquery($queryMock));
@@ -383,11 +366,8 @@ class AdapterMysqlTest extends TestCase
                     }
                     return true;
                 });
-        $connectionMock = $this->createMock(\PDO::class);
-        $connectionMock->expects($this->any())
-                ->method('prepare')
+        $this->connectionMock->method('prepare')
                 ->willReturn($pdoStatementMock);
-        AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
         $bindValues = [
             0 => 1,
@@ -496,11 +476,8 @@ class AdapterMysqlTest extends TestCase
                     }
                     return true;
                 });
-        $connectionMock = $this->createMock(\PDO::class);
-        $connectionMock->expects($this->any())
-                ->method('prepare')
+        $this->connectionMock->method('prepare')
                 ->willReturn($pdoStatementMock);
-        AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
         $bindValues = [
             0 => 1,
@@ -538,18 +515,13 @@ class AdapterMysqlTest extends TestCase
     public function testExecute()
     {
         $this->expectException(AdapterException::class);
-        $pdoStatementMock = $this->createMock(\PDOStatement::class);
-        $pdoStatementMock->expects($this->any())
-                ->method('execute')
+        $pdoStatementMock = $this->createStub(\PDOStatement::class);
+        $pdoStatementMock->method('execute')
                 ->willReturn(false);
-        $pdoStatementMock->expects($this->any())
-                ->method('errorInfo')
+        $pdoStatementMock->method('errorInfo')
                 ->willReturn(['error', '000', 'message']);
-        $connectionMock = $this->createMock(\PDO::class);
-        $connectionMock->expects($this->any())
-                ->method('prepare')
+        $this->connectionMock->method('prepare')
                 ->willReturn($pdoStatementMock);
-        AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
         $adapterMysql->execute('');
     }

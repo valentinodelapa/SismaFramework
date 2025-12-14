@@ -44,7 +44,7 @@ use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
  */
 class SelfReferencedModelTest extends TestCase
 {
-    private Config $configMock;
+    private Config $configStub;
     private DataMapper $dataMapperMock;
     private Query $queryMock;
     private ProcessedEntitiesCollection $processedEntitiesCollectionMock;
@@ -55,9 +55,8 @@ class SelfReferencedModelTest extends TestCase
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
 
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -81,29 +80,45 @@ class SelfReferencedModelTest extends TestCase
                     ['sonCollectionPropertyName', 'sonCollection'],
                     ['sonCollectionGetterMethod', 'getSonCollection'],
         ]);
-        $this->configMock->expects($this->any())
-                ->method('__isset')
+        $this->configStub->method('__isset')
                 ->willReturn(true);
 
-        Config::setInstance($this->configMock);
-
+        Config::setInstance($this->configStub);
+        $this->processedEntitiesCollectionMock = $this->createStub(ProcessedEntitiesCollection::class);
+    }
+    
+    private function initializeMock()
+    {
         $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->queryMock = $this->createMock(Query::class);
-        $this->processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
-
-        $this->model = new SelfReferencedSampleModel($this->dataMapperMock, $this->configMock);
+        $this->model = new SelfReferencedSampleModel($this->dataMapperMock, $this->configStub);
+    }
+    
+    private function initializePartialMock()
+    {
+        $this->dataMapperMock = $this->createMock(DataMapper::class);
+        $this->queryMock = $this->createStub(Query::class);
+        $this->model = new SelfReferencedSampleModel($this->dataMapperMock, $this->configStub);
+    }
+    
+    private function initializeStub()
+    {
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $this->queryMock = $this->createStub(Query::class);
+        $this->model = new SelfReferencedSampleModel($this->dataMapperMock, $this->configStub);
     }
 
     public function testConstructorSetParentForeignKey()
     {
-        $model = new SelfReferencedSampleModel($this->dataMapperMock, $this->configMock);
-        $this->assertInstanceOf(SelfReferencedModel::class, $model);
+        $this->initializeStub();
+        $this->assertInstanceOf(SelfReferencedModel::class, $this->model);
     }
 
     public function testMagicMethodCallWithParentAndEntity()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
-        $referencedEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
+        $referencedEntity = $this->createStub(SelfReferencedSample::class);
         $expectedCollection = new SismaCollection(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -136,17 +151,19 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallWithInvalidAction()
     {
+        $this->initializeStub();
         $this->expectException(ModelException::class);
 
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
-        $referencedEntity = $this->createMock(SelfReferencedSample::class);
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
+        $referencedEntity = $this->createStub(SelfReferencedSample::class);
 
         $this->model->invalidActionByParentAndParentSelfReferencedSample($parentEntity, $referencedEntity);
     }
 
     public function testMagicMethodCallFallbackToParent()
     {
-        $referencedEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $referencedEntity = $this->createStub(SelfReferencedSample::class);
         $expectedCollection = new SismaCollection(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -176,6 +193,7 @@ class SelfReferencedModelTest extends TestCase
 
     public function testCountEntityCollectionByParentWithNullParent()
     {
+        $this->initializeMock();
         $expectedCount = 3;
 
         $this->dataMapperMock->expects($this->once())
@@ -201,7 +219,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testCountEntityCollectionByParentWithSearchKey()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $searchKey = 'test search';
         $expectedCount = 2;
 
@@ -231,8 +250,9 @@ class SelfReferencedModelTest extends TestCase
 
     public function testCountEntityCollectionByParentAndEntity()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
-        $referencedEntities = ['parent_self_referenced_sample' => $this->createMock(SelfReferencedSample::class)];
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
+        $referencedEntities = ['parent_self_referenced_sample' => $this->createStub(SelfReferencedSample::class)];
         $expectedCount = 1;
 
         $this->dataMapperMock->expects($this->once())
@@ -261,7 +281,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testGetEntityCollectionByParentWithAllParameters()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $searchKey = 'test';
         $order = ['name' => 'ASC'];
         $offset = 5;
@@ -306,8 +327,9 @@ class SelfReferencedModelTest extends TestCase
 
     public function testGetEntityCollectionByParentAndEntity()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
-        $referencedEntities = ['parent_self_referenced_sample' => $this->createMock(SelfReferencedSample::class)];
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
+        $referencedEntities = ['parent_self_referenced_sample' => $this->createStub(SelfReferencedSample::class)];
         $expectedCollection = new SismaCollection(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -339,8 +361,9 @@ class SelfReferencedModelTest extends TestCase
 
     public function testGetOtherEntityCollectionByParent()
     {
-        $excludedEntity = $this->createMock(SelfReferencedSample::class);
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $excludedEntity = $this->createStub(SelfReferencedSample::class);
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $order = ['name' => 'DESC'];
         $expectedCollection = new SismaCollection(SelfReferencedSample::class);
 
@@ -374,7 +397,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testGetEntityTree()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $order = ['name' => 'ASC'];
 
         // Create mock entities with children
@@ -413,7 +437,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testDeleteEntityCollectionByParent()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
             ->method('initQuery')
@@ -438,8 +463,9 @@ class SelfReferencedModelTest extends TestCase
 
     public function testDeleteEntityCollectionByParentAndEntity()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
-        $referencedEntities = ['parent_self_referenced_sample' => $this->createMock(SelfReferencedSample::class)];
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
+        $referencedEntities = ['parent_self_referenced_sample' => $this->createStub(SelfReferencedSample::class)];
 
         $this->dataMapperMock->expects($this->once())
             ->method('initQuery')
@@ -467,13 +493,14 @@ class SelfReferencedModelTest extends TestCase
 
     public function testDeleteEntityTree()
     {
+        $this->initializePartialMock();
         // Crea mock che simula il comportamento di __call per getSonCollection
-        $childEntity = $this->createMock(SelfReferencedSample::class);
+        $childEntity = $this->createStub(SelfReferencedSample::class);
         $childEntity->method('__call')
             ->with('getSonCollection', [])
             ->willReturn(new SismaCollection(SelfReferencedSample::class));
 
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $childCollection = new SismaCollection(SelfReferencedSample::class);
         $childCollection->append($childEntity);
 
@@ -492,8 +519,9 @@ class SelfReferencedModelTest extends TestCase
 
     public function testCountEntityCollectionByParentAndEntityWithBuiltinProperty()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
-        $baseSampleEntity = $this->createMock(\SismaFramework\TestsApplication\Entities\BaseSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
+        $baseSampleEntity = $this->createStub(\SismaFramework\TestsApplication\Entities\BaseSample::class);
         $referencedEntities = [
             'base_sample' => $baseSampleEntity,
             'text' => 'test text'
@@ -526,8 +554,9 @@ class SelfReferencedModelTest extends TestCase
 
     public function testGetEntityCollectionByParentAndEntityWithBuiltinProperty()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
-        $baseSampleEntity = $this->createMock(\SismaFramework\TestsApplication\Entities\BaseSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
+        $baseSampleEntity = $this->createStub(\SismaFramework\TestsApplication\Entities\BaseSample::class);
         $referencedEntities = [
             'base_sample' => $baseSampleEntity,
             'text' => 'sample text'
@@ -576,7 +605,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testDeleteEntityCollectionByParentAndEntityWithBuiltinProperty()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $referencedEntities = [
             'base_sample' => null,
             'text' => 'delete this'
@@ -608,7 +638,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallCountByParentAndBuiltinProperty()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $expectedCount = 3;
 
         $this->dataMapperMock->expects($this->once())
@@ -638,7 +669,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallGetByParentAndBuiltinProperty()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $expectedCollection = new SismaCollection(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -671,7 +703,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallDeleteByParentAndBuiltinProperty()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
             ->method('initQuery')
@@ -700,7 +733,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallCountByParentAndBuiltinPropertyWithSearchKey()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
             ->method('initQuery')
@@ -728,7 +762,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallGetByParentAndBuiltinPropertyWithSearchKeyAndPagination()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $expectedCollection = new SismaCollection(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -769,7 +804,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallDeleteByParentAndBuiltinPropertyWithSearchKey()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
             ->method('initQuery')
@@ -797,7 +833,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallCountByParentAndMultiplePropertiesWithNull()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeMock();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
             ->method('initQuery')
@@ -826,7 +863,8 @@ class SelfReferencedModelTest extends TestCase
 
     public function testMagicMethodCallThrowsExceptionForNullOnNonNullableProperty()
     {
-        $parentEntity = $this->createMock(SelfReferencedSample::class);
+        $this->initializeStub();
+        $parentEntity = $this->createStub(SelfReferencedSample::class);
         $this->expectException(\SismaFramework\Core\Exceptions\InvalidArgumentException::class);
         $this->model->countByParentAndText($parentEntity, null);
     }

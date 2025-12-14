@@ -51,7 +51,7 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 class BaseModelTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
     private DataMapper $dataMapperMock;
     private Query $queryMock;
     private ProcessedEntitiesCollection $processedEntitiesCollectionMock;
@@ -62,9 +62,8 @@ class BaseModelTest extends TestCase
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
 
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -87,31 +86,42 @@ class BaseModelTest extends TestCase
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['sonCollectionPropertyName', 'sonCollection'],
         ]);
-        $this->configMock->expects($this->any())
-                ->method('__isset')
+        $this->configStub->method('__isset')
                 ->willReturn(true);
 
-        Config::setInstance($this->configMock);
+        Config::setInstance($this->configStub);
 
+        $this->processedEntitiesCollectionMock = $this->createStub(ProcessedEntitiesCollection::class);
+    }
+    
+    private function initializeModelWithMock()
+    {
         $this->dataMapperMock = $this->createMock(DataMapper::class);
         $this->queryMock = $this->createMock(Query::class);
-        $this->processedEntitiesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
-
-        $this->model = new NotDependentEntityModel($this->dataMapperMock, $this->configMock);
+        $this->model = new NotDependentEntityModel($this->dataMapperMock, $this->configStub);
+    }
+    
+    private function initializeModelWithStub()
+    {
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $this->queryMock = $this->createStub(Query::class);
+        $this->model = new NotDependentEntityModel($this->dataMapperMock, $this->configStub);
     }
 
     public function testConstructorWithValidEntity()
     {
-        $model = new NotDependentEntityModel($this->dataMapperMock, $this->configMock);
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $model = new NotDependentEntityModel($this->dataMapperMock, $this->configStub);
         $this->assertInstanceOf(BaseModel::class, $model);
     }
 
     public function testConstructorThrowsExceptionForInvalidEntity()
     {
+        $this->initializeModelWithStub();
         $this->expectException(ModelException::class);
 
         // Create a mock model that returns a non-existent entity name
-        $mockModel = new class($this->dataMapperMock, $this->configMock) extends BaseModel
+        $mockModel = new class($this->dataMapperMock, $this->configStub) extends BaseModel
         {
 
             protected function getEntityName(): string
@@ -128,6 +138,7 @@ class BaseModelTest extends TestCase
 
     public function testCountEntityCollectionWithoutSearch()
     {
+        $this->initializeModelWithMock();
         $expectedCount = 5;
 
         $this->dataMapperMock->expects($this->once())
@@ -149,6 +160,7 @@ class BaseModelTest extends TestCase
 
     public function testCountEntityCollectionWithSearch()
     {
+        $this->initializeModelWithMock();
         $searchKey = 'test search';
         $expectedCount = 3;
 
@@ -173,6 +185,7 @@ class BaseModelTest extends TestCase
 
     public function testGetEntityCollectionWithoutParameters()
     {
+        $this->initializeModelWithMock();
         $expectedCollection = new SismaCollection(NotDependentEntity::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -198,6 +211,7 @@ class BaseModelTest extends TestCase
 
     public function testGetEntityCollectionWithAllParameters()
     {
+        $this->initializeModelWithMock();
         $searchKey = 'test';
         $order = ['name' => 'ASC'];
         $offset = 10;
@@ -237,7 +251,8 @@ class BaseModelTest extends TestCase
 
     public function testGetOtherEntityCollection()
     {
-        $excludedEntity = $this->createMock(NotDependentEntity::class);
+        $this->initializeModelWithMock();
+        $excludedEntity = $this->createStub(NotDependentEntity::class);
         $expectedCollection = new SismaCollection(NotDependentEntity::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -264,8 +279,9 @@ class BaseModelTest extends TestCase
 
     public function testConvertArrayIntoEntityCollection()
     {
+        $this->initializeModelWithMock();
         $entitiesId = [1, 2, 3];
-        $mockEntity = $this->createMock(NotDependentEntity::class);
+        $mockEntity = $this->createStub(NotDependentEntity::class);
 
         $this->dataMapperMock->expects($this->exactly(3))
                 ->method('initQuery')
@@ -291,6 +307,7 @@ class BaseModelTest extends TestCase
 
     public function testGetEntityByIdReturnsNull()
     {
+        $this->initializeModelWithMock();
         $id = 999;
 
         $this->dataMapperMock->expects($this->once())
@@ -316,6 +333,7 @@ class BaseModelTest extends TestCase
 
     public function testDeleteEntityById()
     {
+        $this->initializeModelWithMock();
         $id = 1;
 
         $this->dataMapperMock->expects($this->once())
@@ -342,10 +360,11 @@ class BaseModelTest extends TestCase
 
     public function testFindSingleColumn()
     {
+        $this->initializeModelWithMock();
         $entityName = NotDependentEntity::class;
         $columnName = 'name';
         $isForeignKey = false;
-        $mockEntity = $this->createMock(NotDependentEntity::class);
+        $mockEntity = $this->createStub(NotDependentEntity::class);
 
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
@@ -375,6 +394,7 @@ class BaseModelTest extends TestCase
 
     public function testFindSingleColumnWithForeignKey()
     {
+        $this->initializeModelWithMock();
         $entityName = NotDependentEntity::class;
         $columnName = 'referenced';
         $isForeignKey = true;
@@ -406,18 +426,21 @@ class BaseModelTest extends TestCase
 
     public function testMagicMethodWithInvalidAction()
     {
+        $this->initializeModelWithStub();
         $this->expectException(ModelException::class);
         $this->model->invalidActionByInt(1);
     }
 
     public function testMagicMethodWithInvalidArgument()
     {
+        $this->initializeModelWithStub();
         $this->expectException(InvalidArgumentException::class);
         $this->model->getByString(5);
     }
 
     public function testMagicMethodCountByBuiltinProperty()
     {
+        $this->initializeModelWithMock();
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
                 ->willReturn($this->queryMock);
@@ -466,6 +489,7 @@ class BaseModelTest extends TestCase
 
     public function testMagicMethodGetByEnumerationProperty()
     {
+        $this->initializeModelWithMock();
         $sismaCollection = new SismaCollection(NotDependentEntity::class);
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
@@ -486,6 +510,7 @@ class BaseModelTest extends TestCase
 
     public function testMagicMethodDeleteBySismaDateProperty()
     {
+        $this->initializeModelWithMock();
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
                 ->willReturn($this->queryMock);
@@ -531,6 +556,7 @@ class BaseModelTest extends TestCase
 
     public function testMagicMethodCountWithSearchKey()
     {
+        $this->initializeModelWithMock();
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
                 ->willReturn($this->queryMock);
@@ -552,6 +578,7 @@ class BaseModelTest extends TestCase
 
     public function testMagicMethodGetWithSearchKeyAndPagination()
     {
+        $this->initializeModelWithMock();
         $sismaCollection = new SismaCollection(NotDependentEntity::class);
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
@@ -583,6 +610,7 @@ class BaseModelTest extends TestCase
 
     public function testMagicMethodDeleteWithSearchKey()
     {
+        $this->initializeModelWithMock();
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
                 ->willReturn($this->queryMock);
@@ -604,6 +632,7 @@ class BaseModelTest extends TestCase
 
     public function testMagicMethodCountByMultiplePropertiesWithNull()
     {
+        $this->initializeModelWithMock();
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
                 ->willReturn($this->queryMock);
@@ -642,6 +671,7 @@ class BaseModelTest extends TestCase
 
     public function testMagicMethodThrowsExceptionForNullOnNonNullableProperty()
     {
+        $this->initializeModelWithStub();
         $this->expectException(\SismaFramework\Core\Exceptions\InvalidArgumentException::class);
         $this->model->countByString(null);
     }

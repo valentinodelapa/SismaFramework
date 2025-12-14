@@ -29,6 +29,9 @@
  */
 // TODO: check include path
 //ini_set('include_path', ini_get('include_path'));
+error_reporting(-1);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
 spl_autoload_register(function (string $className) {
     $actualClassPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
     if (file_exists($actualClassPath)) {

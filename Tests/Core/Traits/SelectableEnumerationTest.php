@@ -42,15 +42,14 @@ class SelectableEnumerationTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['language', Language::italian],
                     ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
-        Config::setInstance($configMock);
+        Config::setInstance($configStub);
     }
 
     public function testGetFriendlyLabel()

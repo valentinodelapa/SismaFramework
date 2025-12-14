@@ -29,7 +29,6 @@ namespace SismaFramework\Tests\Orm\ResultSets;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
@@ -41,13 +40,13 @@ use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
 class ResultSetMysqlTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
+    private \PDOStatement $PDOStatementMock;
 
     public function setUp(): void
     {
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', true],
@@ -56,63 +55,52 @@ class ResultSetMysqlTest extends TestCase
                     ['initializationVectorBytes', 16],
                     ['ormCache', true],
         ]);
-        $this->configMock->expects($this->any())
-                ->method('__isset')
+        $this->configStub->method('__isset')
                 ->willReturnMap([
                     ['encryptionPassphrase', true],
         ]);
-        Config::setInstance($this->configMock);
+        Config::setInstance($this->configStub);
+        $this->PDOStatementMock = $this->createStub(\PDOStatement::class);
     }
 
     public function testNumRows()
     {
-        $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $this->PDOStatementMock->method('rowCount')
                 ->willReturn(10);
-        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql = new ResultSetMysql($this->PDOStatementMock);
         $this->assertEquals(10, $resultSetMysql->numRows());
     }
 
     public function testFetchWithNoRows()
     {
-        $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $this->PDOStatementMock->method('rowCount')
                 ->willReturn(0);
-        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql = new ResultSetMysql($this->PDOStatementMock);
         $this->assertNull($resultSetMysql->fetch());
     }
 
     public function testFetchWithRelease()
     {
-        $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $this->PDOStatementMock->method('rowCount')
                 ->willReturn(0);
-        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql = new ResultSetMysql($this->PDOStatementMock);
         $resultSetMysql->release();
         $this->assertNull($resultSetMysql->fetch());
     }
 
     public function testFetchWithPDOFetchFalse()
     {
-        $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $this->PDOStatementMock->method('rowCount')
                 ->willReturn(1);
-        $PDOStatementMock->expects($this->any())
-                ->method('fetch')
+        $this->PDOStatementMock->method('fetch')
                 ->willReturn(false);
-        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql = new ResultSetMysql($this->PDOStatementMock);
         $this->assertNull($resultSetMysql->fetch());
     }
 
     public function testFetchWithStandardEntity()
     {
-        $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $this->PDOStatementMock->method('rowCount')
                 ->willReturnCallback(function () {
                     $rowsNum = 1;
                     $actualRowsNum = $rowsNum;
@@ -122,10 +110,9 @@ class ResultSetMysqlTest extends TestCase
         $result = new \stdClass();
         $result->id = 1;
         $result->name = 'name';
-        $PDOStatementMock->expects($this->any())
-                ->method('fetch')
+        $this->PDOStatementMock->method('fetch')
                 ->willReturn($result);
-        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql = new ResultSetMysql($this->PDOStatementMock);
         $this->assertTrue($resultSetMysql->valid());
         $this->assertEquals(0, $resultSetMysql->key());
         $this->assertInstanceOf(StandardEntity::class, $resultSetMysql->fetch());
@@ -174,11 +161,11 @@ class ResultSetMysqlTest extends TestCase
                 });
         $propertyValueOne = 'test-value-one';
         $propertyValueTwo = 'test-value-two';
-        $initializationVector = Encryptor::createInizializationVector($this->configMock);
+        $initializationVector = Encryptor::createInizializationVector($this->configStub);
         $result = new \stdClass();
         $result->id = 1;
-        $result->encrypted_property_one = Encryptor::encryptString($propertyValueOne, $initializationVector, $this->configMock);
-        $result->encrypted_property_two = Encryptor::encryptString($propertyValueTwo, $initializationVector, $this->configMock);
+        $result->encrypted_property_one = Encryptor::encryptString($propertyValueOne, $initializationVector, $this->configStub);
+        $result->encrypted_property_two = Encryptor::encryptString($propertyValueTwo, $initializationVector, $this->configStub);
         $result->initialization_vector = $initializationVector;
         $PDOStatementMock->expects($this->once())
                 ->method('fetch')
@@ -248,11 +235,9 @@ class ResultSetMysqlTest extends TestCase
 
     public function testIndexNavigation()
     {
-        $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $this->PDOStatementMock->method('rowCount')
                 ->willReturn(10);
-        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql = new ResultSetMysql($this->PDOStatementMock);
         $this->assertEquals(10, $resultSetMysql->numRows());
         $this->assertEquals(0, $resultSetMysql->key());
         $resultSetMysql->next();

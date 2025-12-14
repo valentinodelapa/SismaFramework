@@ -38,62 +38,58 @@ use SismaFramework\Core\HelperClasses\Config;
 class AutoloaderTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
 
     public function setUp(): void
     {
-        $this->configMock = $this->createMock(Config::class);
+        $this->configStub = $this->createStub(Config::class);
     }
 
     public function testDirectAccessClass()
     {
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
-        $autoloader = new Autoloader(Autoloader::class, $this->configMock);
+        $autoloader = new Autoloader(Autoloader::class, $this->configStub);
         $this->assertTrue($autoloader->findClass());
         $this->assertEquals(dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'HelperClasses' . DIRECTORY_SEPARATOR . 'Autoloader.php', $autoloader->getClassPath());
     }
 
     public function testMapNamespace()
     {
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['autoloadNamespaceMapper', ['TestsApplication\\Vendor' => 'SismaFramework' . DIRECTORY_SEPARATOR . 'TestsApplication' . DIRECTORY_SEPARATOR . 'Vendor']],
         ]);
-        $autoloader = new Autoloader('TestsApplication\\Vendor\\ClassWithNamespace', $this->configMock);
+        $autoloader = new Autoloader('TestsApplication\\Vendor\\ClassWithNamespace', $this->configStub);
         $this->assertTrue($autoloader->findClass());
         $this->assertEquals(dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'TestsApplication' . DIRECTORY_SEPARATOR . 'Vendor' . DIRECTORY_SEPARATOR . 'ClassWithNamespace.php', $autoloader->getClassPath());
     }
 
     public function testMapClass()
     {
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['autoloadNamespaceMapper', []],
                     ['autoloadClassMapper', ['ClassWithoutNamespace' => 'SismaFramework' . DIRECTORY_SEPARATOR . 'TestsApplication' . DIRECTORY_SEPARATOR . 'Vendor' . DIRECTORY_SEPARATOR . 'ClassWithoutNamespace']],
         ]);
-        $autoloader = new Autoloader('ClassWithoutNamespace', $this->configMock);
+        $autoloader = new Autoloader('ClassWithoutNamespace', $this->configStub);
         $this->assertTrue($autoloader->findClass());
         $this->assertEquals(dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'TestsApplication' . DIRECTORY_SEPARATOR . 'Vendor' . DIRECTORY_SEPARATOR . 'ClassWithoutNamespace.php', $autoloader->getClassPath());
     }
 
     public function testFakeClass()
     {
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['autoloadNamespaceMapper', []],
                     ['autoloadClassMapper', []],
         ]);
-        $autoloader = new Autoloader('FakeClass', $this->configMock);
+        $autoloader = new Autoloader('FakeClass', $this->configStub);
         $this->assertFalse($autoloader->findClass());
     }
 }

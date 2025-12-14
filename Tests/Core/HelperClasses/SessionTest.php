@@ -40,18 +40,15 @@ class SessionTest extends TestCase
 
     public function setUp(): void
     {
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', true],
                     ['httpsIsForced', false],
         ]);
-        Config::setInstance($configMock);
+        Config::setInstance($configStub);
         Session::end();
-        $this->requestMock = $this->getMockBuilder(Request::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->server = [
             'HTTP_HOST' => '',
             'HTTP_USER_AGENT' => '',

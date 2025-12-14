@@ -70,7 +70,7 @@ class ConfigTest extends TestCase
 
     public function testSetInstance()
     {
-        $mockConfig = $this->createMock(Config::class);
+        $mockConfig = $this->createStub(Config::class);
         Config::setInstance($mockConfig);
 
         $this->assertSame($mockConfig, Config::getInstance());
@@ -89,7 +89,7 @@ class ConfigTest extends TestCase
 
     public function testSetInstanceAndGetInstance()
     {
-        $mockConfig = $this->createMock(Config::class);
+        $mockConfig = $this->createStub(Config::class);
 
         Config::setInstance($mockConfig);
         $retrievedConfig = Config::getInstance();
