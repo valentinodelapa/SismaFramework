@@ -39,27 +39,26 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
 class PhpVersionCheckerTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
 
     #[\Override]
     public function setUp(): void
     {
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['minimumMajorPhpVersion', 8],
                     ['minimumMinorPhpVersion', 1],
                     ['minimumReleasePhpVersion', 1],
         ]);
-        Config::setInstance($this->configMock);
+        Config::setInstance($this->configStub);
     }
 
     public function testMinimumMajorVersionNotPassed()
     {
         $this->expectException(PhpVersionException::class);
         PhpVersionChecker::forceCurrentMajorVersionValue(7);
-        PhpVersionChecker::checkPhpVersion($this->configMock);
+        PhpVersionChecker::checkPhpVersion($this->configStub);
     }
 
     public function testMinimumMinorVersionNotPassed()
@@ -67,7 +66,7 @@ class PhpVersionCheckerTest extends TestCase
         $this->expectException(PhpVersionException::class);
         PhpVersionChecker::forceCurrentMajorVersionValue(8);
         PhpVersionChecker::forceCurrentMinorVersionValue(0);
-        PhpVersionChecker::checkPhpVersion($this->configMock);
+        PhpVersionChecker::checkPhpVersion($this->configStub);
     }
 
     public function testMinimumReleaseVersionNotPassed()
@@ -76,6 +75,6 @@ class PhpVersionCheckerTest extends TestCase
         PhpVersionChecker::forceCurrentMajorVersionValue(8);
         PhpVersionChecker::forceCurrentMinorVersionValue(1);
         PhpVersionChecker::forceCurrentReleaseVersionValue(0);
-        PhpVersionChecker::checkPhpVersion($this->configMock);
+        PhpVersionChecker::checkPhpVersion($this->configStub);
     }
 }

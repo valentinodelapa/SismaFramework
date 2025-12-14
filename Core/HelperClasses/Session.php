@@ -49,12 +49,12 @@ class Session
     public static function start(Request $request = new Request()): void
     {
         session_set_cookie_params([
-            'lifetime' => 3600,
-            'path' => '/',
-            'domain' => $request->server['HTTP_HOST'],
-            'secure' => (Communication::getCommunicationProtocol($request) === CommunicationProtocol::https),
-            'httponly' => true,
-            'samesite' => 'Lax'
+            "lifetime" => 3600,
+            "path" => "/",
+            "domain" => $request->server["HTTP_HOST"],
+            "secure" => Communication::getCommunicationProtocol($request) === CommunicationProtocol::https,
+            "httponly" => true,
+            "samesite" => "Lax",
         ]);
         session_start();
         session_regenerate_id();

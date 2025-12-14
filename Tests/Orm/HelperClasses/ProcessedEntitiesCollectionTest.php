@@ -46,14 +46,13 @@ class ProcessedEntitiesCollectionTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
         ]);
-        Config::setInstance($configMock);
+        Config::setInstance($configStub);
     }
     
     public function testHas()

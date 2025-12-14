@@ -43,7 +43,7 @@ class QueryTest extends TestCase
 
     public function testGetAdapter()
     {
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock = $this->createStub(BaseAdapter::class);
         $query = new Query($baseAdapterMock);
         $this->assertEquals($baseAdapterMock, $query->getAdapter());
     }

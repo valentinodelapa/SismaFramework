@@ -44,16 +44,15 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 class ParserTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
     private DataMapper $dataMapperMock;
 
     #[\Override]
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -66,15 +65,15 @@ class ParserTest extends TestCase
                     ['modelNamespace', 'TestsApplication\\Models\\'],
                     ['ormCache', true],
         ]);
-        Config::setInstance($this->configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        Config::setInstance($this->configStub);
+        $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
     }
 
     public function testParseValueWithEmpty()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(true);
         $this->assertNull(Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock));
@@ -83,7 +82,7 @@ class ParserTest extends TestCase
 
     public function testParseValueWithBuiltinInt()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
@@ -100,7 +99,7 @@ class ParserTest extends TestCase
 
     public function testParseValueWithBuiltinString()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
@@ -117,7 +116,7 @@ class ParserTest extends TestCase
 
     public function testParseValueWithBuiltinFloat()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
@@ -136,29 +135,27 @@ class ParserTest extends TestCase
     {
         $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->id = 1;
-        $this->dataMapperMock->expects($this->any())
-                ->method('initQuery');
-        $this->dataMapperMock->expects($this->any())
-                ->method('findFirst')
+        $this->dataMapperMock->method('initQuery');
+        $this->dataMapperMock->method('findFirst')
                 ->willReturn($baseSample);
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn(BaseSample::class);
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock, $this->configMock));
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock, $this->configMock));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->configMock));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->configMock));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->configMock));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->configMock));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock, $this->configStub));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock, $this->configStub));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->configStub));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->configStub));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->configStub));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->configStub));
     }
 
     public function testParseValueWithEnumeration()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
@@ -170,7 +167,7 @@ class ParserTest extends TestCase
 
     public function testParseValueWithSismaDate()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
@@ -183,7 +180,7 @@ class ParserTest extends TestCase
 
     public function testParseValueWithSismaDateTime()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
@@ -196,7 +193,7 @@ class ParserTest extends TestCase
 
     public function testParseValueWithSismaTime()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
@@ -208,7 +205,7 @@ class ParserTest extends TestCase
 
     public function testParseValueWithArray()
     {
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')
@@ -221,7 +218,7 @@ class ParserTest extends TestCase
     public function testParseValueWithException()
     {
         $this->expectException(InvalidArgumentException::class);
-        $reflectionNamedTypeMock = $this->createMock(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
         $reflectionNamedTypeMock->method('allowsNull')
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')

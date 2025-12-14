@@ -9,12 +9,12 @@ use SismaFramework\Console\Services\Installation\InstallationManager;
 class InstallationCommandTest extends TestCase
 {
     private InstallationCommand $command;
-    private InstallationManager $mockInstallationManager;
+    private InstallationManager $installationManagerStub;
 
     protected function setUp(): void
     {
-        $this->mockInstallationManager = $this->createMock(InstallationManager::class);
-        $this->command = new InstallationCommand($this->mockInstallationManager);
+        $this->installationManagerStub = $this->createStub(InstallationManager::class);
+        $this->command = new InstallationCommand($this->installationManagerStub);
     }
 
     public function testCheckCompatibility(): void
@@ -71,14 +71,12 @@ class InstallationCommandTest extends TestCase
         ]);
         $this->command->setOptions(['force' => true]);
 
-        $this->mockInstallationManager
-            ->expects($this->once())
+        $this->installationManagerStub
             ->method('setForce')
             ->with(true)
             ->willReturnSelf();
 
-        $this->mockInstallationManager
-            ->expects($this->once())
+        $this->installationManagerStub
             ->method('install')
             ->with('MyProject', [])
             ->willReturn(true);
@@ -112,14 +110,12 @@ class InstallationCommandTest extends TestCase
             'DATABASE_PORT' => '3306'
         ];
 
-        $this->mockInstallationManager
-            ->expects($this->once())
+        $this->installationManagerStub
             ->method('setForce')
             ->with(false)
             ->willReturnSelf();
 
-        $this->mockInstallationManager
-            ->expects($this->once())
+        $this->installationManagerStub
             ->method('install')
             ->with('MyProject', $expectedConfig)
             ->willReturn(true);
@@ -137,13 +133,11 @@ class InstallationCommandTest extends TestCase
             '0' => 'MyProject'
         ]);
 
-        $this->mockInstallationManager
-            ->expects($this->once())
+        $this->installationManagerStub
             ->method('setForce')
             ->willReturnSelf();
 
-        $this->mockInstallationManager
-            ->expects($this->once())
+        $this->installationManagerStub
             ->method('install')
             ->willThrowException(new \RuntimeException('Installation failed'));
 

@@ -31,8 +31,6 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Orm\HelperClasses\DataMapper\TransactionManager;
-use SismaFramework\Orm\HelperClasses\DataMapper\QueryExecutor;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 
@@ -72,31 +70,18 @@ class NotationManagerTest extends TestCase
 
     public function testConvertEntityToTableName()
     {
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['ormCache', true],
         ]);
-        Config::setInstance($configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        Config::setInstance($configStub);
+        $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
-        $processedEntitesCollectionMock = $this->createMock(ProcessedEntitiesCollection::class);
-
-        $transactionManager = new TransactionManager($baseAdapterMock, $processedEntitesCollectionMock);
-        $queryExecutor = new QueryExecutor($baseAdapterMock);
-
-        $dataMapperMock = $this->getMockBuilder(DataMapper::class)
-                ->setConstructorArgs([
-                    $baseAdapterMock,
-                    $processedEntitesCollectionMock,
-                    $configMock,
-                    $transactionManager,
-                    $queryExecutor
-                ])
-                ->getMock();
-        $baseSample = new BaseSample($dataMapperMock, $processedEntitesCollectionMock, $configMock);
+        $processedEntitesCollectionMock = $this->createStub(ProcessedEntitiesCollection::class);
+        $dataMapperMock = $this->createStub(DataMapper::class);
+        $baseSample = new BaseSample($dataMapperMock, $processedEntitesCollectionMock, $configStub);
         $result = NotationManager::convertEntityToTableName($baseSample);
         $this->assertEquals('base_sample', $result);
     }

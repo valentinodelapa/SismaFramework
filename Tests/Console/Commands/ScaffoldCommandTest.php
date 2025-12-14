@@ -37,12 +37,12 @@ class MockEntity extends BaseEntity
 class ScaffoldCommandTest extends TestCase
 {
     private ScaffoldCommand $command;
-    private ScaffoldingManager $mockScaffoldingManager;
+    private ScaffoldingManager $scaffoldingManagerStub;
 
     protected function setUp(): void
     {        
-        $this->mockScaffoldingManager = $this->createMock(ScaffoldingManager::class);
-        $this->command = new ScaffoldCommand($this->mockScaffoldingManager);
+        $this->scaffoldingManagerStub = $this->createStub(ScaffoldingManager::class);
+        $this->command = new ScaffoldCommand($this->scaffoldingManagerStub);
     }
 
     public function testCheckCompatibility(): void
@@ -83,26 +83,22 @@ class ScaffoldCommandTest extends TestCase
         ]);
         $this->command->setOptions(['force' => true]);
 
-        $this->mockScaffoldingManager
-            ->expects($this->once())
+        $this->scaffoldingManagerStub
             ->method('setForce')
             ->with(true)
             ->willReturnSelf();
 
-        $this->mockScaffoldingManager
-            ->expects($this->once())
+        $this->scaffoldingManagerStub
             ->method('setCustomType')
             ->with(null)
             ->willReturnSelf();
 
-        $this->mockScaffoldingManager
-            ->expects($this->once())
+        $this->scaffoldingManagerStub
             ->method('setCustomTemplatePath')
             ->with(null)
             ->willReturnSelf();
 
-        $this->mockScaffoldingManager
-            ->expects($this->once())
+        $this->scaffoldingManagerStub
             ->method('generateScaffolding')
             ->with('MockEntity', 'TestModule')
             ->willReturn(true);

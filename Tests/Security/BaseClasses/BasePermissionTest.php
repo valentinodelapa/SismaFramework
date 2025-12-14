@@ -48,9 +48,8 @@ class BasePermissionTest extends TestCase
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', true],
@@ -60,8 +59,8 @@ class BasePermissionTest extends TestCase
                     ['logProductionMaxRow', 2],
                     ['logVerboseActive', true],
         ]);
-        Config::setInstance($configMock);
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
+        Config::setInstance($configStub);
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
     }
 
     public function testIstanceNotPermitted()

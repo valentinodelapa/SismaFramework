@@ -40,7 +40,21 @@ class SismaCollection extends \ArrayObject
     public function __construct(string $restrictiveType, array|object $array = [], int $flags = 0, string $iteratorClass = \ArrayIterator::class)
     {
         $this->restrictiveType = $restrictiveType;
+        if (is_object($array)) {
+            $array = $this->convertObjectInArray($array);
+        }
         parent::__construct($array, $flags, $iteratorClass);
+    }
+
+    private function convertObjectInArray(object $object): array
+    {
+        if ($object instanceof \ArrayObject) {
+            return $object->getArrayCopy();
+        } elseif ($object instanceof \Traversable) {
+            return iterator_to_array($object);
+        } else {
+            return (array) $object;
+        }
     }
 
     public function getRestrictiveType(): string
@@ -61,6 +75,9 @@ class SismaCollection extends \ArrayObject
     #[\Override]
     public function exchangeArray(array|object $array): array
     {
+        if (is_object($array)) {
+            $array = $this->convertObjectInArray($array);
+        }
         foreach ($array as $entity) {
             if (($entity instanceof $this->restrictiveType) === false) {
                 throw new InvalidTypeException();

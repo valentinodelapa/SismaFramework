@@ -43,17 +43,14 @@ class RouterTest extends TestCase
 
     public function setUp(): void
     {
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', true],
                     ['httpsIsForced', false],
         ]);
-        Config::setInstance($configMock);
-        $this->requestMock = $this->getMockBuilder(Request::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+        Config::setInstance($configStub);
+        $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->server = [
             'HTTP_HOST' => 'http.host',
         ];

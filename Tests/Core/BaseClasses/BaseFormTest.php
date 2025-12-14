@@ -62,7 +62,7 @@ use SismaFramework\TestsApplication\Forms\SimpleEntityWithInjectRequestForm;
 class BaseFormTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
     private DataMapper $dataMapperMock;
     private Request $requestMock;
 
@@ -71,9 +71,8 @@ class BaseFormTest extends TestCase
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -94,20 +93,18 @@ class BaseFormTest extends TestCase
                     ['referenceCachePath', $referenceCacheDirectory . 'referenceCache.json'],
                     ['sonCollectionPropertyName', 'sonCollection'],
         ]);
-        Config::setInstance($this->configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        Config::setInstance($this->configStub);
+        $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
-        $this->requestMock = $this->getMockBuilder(Request::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->query = $this->requestMock->input = $this->requestMock->cookie = $this->requestMock->files = $this->requestMock->server = $this->requestMock->headers = [];
     }
 
     public function testAddEntityFromFormWithException()
     {
         $this->expectException(FormException::class);
-        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->configMock);
+        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->configStub);
         $baseSampleFormWithFakeEntityFromForm->handleRequest($this->requestMock);
     }
     
@@ -122,7 +119,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForBaseEntityNotSubmitted()
     {
-        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->configMock);
+        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->configStub);
         $baseSampleForm->handleRequest($this->requestMock);
         $this->assertFalse($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());

@@ -55,9 +55,8 @@ class BaseFixtureTest extends TestCase
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $configMock = $this->createMock(Config::class);
-        $configMock->expects($this->any())
-                ->method('__get')
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -67,10 +66,10 @@ class BaseFixtureTest extends TestCase
                     ['logProductionMaxRow', 100],
                     ['logVerboseActive', true],
         ]);
-        Config::setInstance($configMock);
-        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        Config::setInstance($configStub);
+        $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
+        $this->dataMapperMock = $this->createStub(DataMapper::class);
     }
 
     public function testBaseSampleFixture()

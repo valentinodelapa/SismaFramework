@@ -38,15 +38,14 @@ use SismaFramework\Core\Exceptions\ModuleException;
 class ModuleManagerTest extends TestCase
 {
 
-    private Config $configMock;
+    private Config $configStub;
 
     #[\Override]
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['developmentEnvironment', false],
                     ['logDevelopmentMaxRow', 100],
@@ -57,7 +56,7 @@ class ModuleManagerTest extends TestCase
                     ['moduleFolders', ['SismaFramework']],
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
         ]);
-        Config::setInstance($this->configMock);
+        Config::setInstance($this->configStub);
     }
 
     public function testGetModuleList()
@@ -126,14 +125,14 @@ class ModuleManagerTest extends TestCase
     public function testGetExistingFilePathWithException()
     {
         $this->expectException(ModuleException::class);
-        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php, $this->configMock);
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'fake', Resource::php, $this->configStub);
     }
 
     public function testGetConsequentFilePathWithException()
     {
         $this->expectException(ModuleException::class);
         ModuleManager::setApplicationModule('SismaFramework');
-        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php, $this->configMock);
-        ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'en_EN', Resource::json, $this->configMock);
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php, $this->configStub);
+        ModuleManager::getConsequentFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'en_EN', Resource::json, $this->configStub);
     }
 }

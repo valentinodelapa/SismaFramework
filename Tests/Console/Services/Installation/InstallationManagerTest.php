@@ -15,13 +15,9 @@ class InstallationManagerTest extends TestCase
     {
         $this->testProjectRoot = sys_get_temp_dir() . '/sisma_test_' . uniqid();
         $this->testFrameworkPath = $this->testProjectRoot . '/SismaFramework';
-
         mkdir($this->testProjectRoot, 0755, true);
         mkdir($this->testFrameworkPath, 0755, true);
-
-        // Crea struttura minima del framework per i test
         $this->createFrameworkStructure();
-
         $this->manager = new InstallationManager($this->testProjectRoot);
     }
 
@@ -36,30 +32,22 @@ class InstallationManagerTest extends TestCase
     {
         $reflection = new \ReflectionClass($this->manager);
         $property = $reflection->getProperty('projectRoot');
-        $property->setAccessible(true);
-
         $this->assertEquals($this->testProjectRoot, $property->getValue($this->manager));
     }
 
     public function testSetForce(): void
     {
         $result = $this->manager->setForce(true);
-
         $this->assertInstanceOf(InstallationManager::class, $result);
-
         $reflection = new \ReflectionClass($this->manager);
         $property = $reflection->getProperty('force');
-        $property->setAccessible(true);
-
         $this->assertTrue($property->getValue($this->manager));
     }
 
     public function testInitializeModule(): void
     {
         $moduleName = 'TestModule';
-
         $result = $this->manager->initializeModule($moduleName);
-
         $this->assertTrue($result);
         $this->assertDirectoryExists($this->testProjectRoot . '/TestModule/Application');
         $this->assertDirectoryExists($this->testProjectRoot . '/TestModule/Application/Controllers');

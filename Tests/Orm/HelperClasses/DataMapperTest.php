@@ -66,16 +66,15 @@ class DataMapperTest extends TestCase
 {
 
     private BaseAdapter $baseAdapterMock;
-    private Config $configMock;
+    private Config $configStub;
     private Query $queryMock;
 
     public function setUp(): void
     {
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
-        $this->configMock = $this->createMock(Config::class);
-        $this->configMock->expects($this->any())
-                ->method('__get')
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
@@ -98,20 +97,31 @@ class DataMapperTest extends TestCase
                     ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
                     ['sonCollectionPropertyName', 'sonCollection'],
         ]);
-        $this->configMock->expects($this->any())
-                ->method('__isset')
+        $this->configStub->method('__isset')
                 ->willReturnMap([
                     ['encryptionPassphrase', true],
         ]);
-        Config::setInstance($this->configMock);
-        $this->baseAdapterMock = $this->createMock(BaseAdapter::class);
-        BaseAdapter::setDefault($this->baseAdapterMock);
+        Config::setInstance($this->configStub);
+    }
+    
+    private function initializeMock()
+    {
+        $this->initializeBaseAdapterMock();
         $this->queryMock = $this->createMock(Query::class);
     }
+    
+    private function initializeBaseAdapterMock()
+    {
+        $this->baseAdapterMock = $this->createMock(BaseAdapter::class);
+        BaseAdapter::setDefault($this->baseAdapterMock);
+    }
+    
+    private function initializeStub()
+    {
+        $this->initializeBaseAdapterMock();
+        $this->queryMock = $this->createStub(Query::class);
+    }
 
-    /**
-     * Helper method to create a DataMapper with mocked dependencies
-     */
     private function createDataMapperWithMockedAdapter(?ProcessedEntitiesCollection $processedEntitiesCollection = null): DataMapper
     {
         $transactionManager = new TransactionManager($this->baseAdapterMock, $processedEntitiesCollection);
@@ -120,7 +130,7 @@ class DataMapperTest extends TestCase
         return new DataMapper(
             $this->baseAdapterMock,
             $processedEntitiesCollection,
-            $this->configMock,
+            $this->configStub,
             $transactionManager,
             $queryExecutor
         );
@@ -128,6 +138,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithInsertInsertInsert()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(3);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -198,6 +209,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithInsertUpdateInsert()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(3);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -271,6 +283,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithNothingUpdateInsert()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(2);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -341,6 +354,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithInsertInsertUpdate()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(3);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -415,6 +429,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithInsertUpdateUpdate()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(3);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -490,6 +505,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithNothingUpdateUpdate()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(2);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -557,6 +573,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithInsertInsertNothing()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(2);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -602,6 +619,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithInsertUpdateNothing()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(2);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -650,6 +668,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewBaseEntityWithNothingUpdateNothing()
     {
+        $this->initializeBaseAdapterMock();
         $this->baseAdapterMock->expects($this->once())
                 ->method('execute')
                 ->willReturnCallback(function ($param1, $param2, $param3) {
@@ -685,6 +704,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewEntityWithEncryptedPropertyOne()
     {
+        $this->initializeMock();
         $initializationVector = null;
         $propertyValueOne = 'test-value-one';
         $propertyValueTwo = 'test-value-two';
@@ -787,6 +807,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewEntityWithEncryptedPropertyTwo()
     {
+        $this->initializeMock();
         $initializationVector = null;
         $propertyValueOne = 'test-value-one';
         $propertyValueTwo = 'test-value-two';
@@ -889,6 +910,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveNewDependentEntityWithForeignKeyIndex()
     {
+        $this->initializeBaseAdapterMock();
         $this->baseAdapterMock->expects($this->once())
                 ->method('execute')
                 ->willReturnCallback(function ($param1, $param2, $param3) {
@@ -906,6 +928,7 @@ class DataMapperTest extends TestCase
 
     public function testNewReferencedEntityWithInsertInsertInsert()
     {
+        $this->initializeBaseAdapterMock();
         $matcher = $this->exactly(3);
         $this->baseAdapterMock->expects($matcher)
                 ->method('execute')
@@ -980,8 +1003,10 @@ class DataMapperTest extends TestCase
 
     public function testInitQuery()
     {
-        $this->queryMock->expects($this->any())
-                ->method('setTable')
+        $this->baseAdapterMock = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($this->baseAdapterMock);
+        $this->queryMock = $this->createStub(Query::class);
+        $this->queryMock->method('setTable')
                 ->with('entity_name');
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $this->assertInstanceOf(Query::class, $dataMapper->initQuery(BaseSample::class));
@@ -989,6 +1014,7 @@ class DataMapperTest extends TestCase
 
     public function testInsertAutomaticStartTransaction()
     {
+        $this->initializeBaseAdapterMock();
         $this->baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
                 ->willReturn(true);
@@ -1021,6 +1047,7 @@ class DataMapperTest extends TestCase
 
     public function testInsertManualStartTransaction()
     {
+        $this->initializeBaseAdapterMock();
         $adapterMethodCallOrder = [];
         $this->baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
@@ -1069,6 +1096,7 @@ class DataMapperTest extends TestCase
 
     public function testNotDuplicateSavingCollection()
     {
+        $this->initializeBaseAdapterMock();
         $adapterMethodCallOrder = [];
         $this->baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
@@ -1112,6 +1140,7 @@ class DataMapperTest extends TestCase
 
     public function testDoubleSaveAfterModification()
     {
+        $this->initializeBaseAdapterMock();
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('execute')
                 ->willReturn(true);
@@ -1132,6 +1161,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveModificationOnSubnidificateCollection()
     {
+        $this->initializeBaseAdapterMock();
         $adapterMethodCallOrder = [];
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('beginTransaction')
@@ -1253,6 +1283,7 @@ class DataMapperTest extends TestCase
 
     public function testSaveModificationOnSubnidificateEntity()
     {
+        $this->initializeBaseAdapterMock();
         $adapterMethodCallOrder = [];
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('beginTransaction')
@@ -1374,6 +1405,7 @@ class DataMapperTest extends TestCase
 
     public function testUpdateAutomaticStartTransaction()
     {
+        $this->initializeBaseAdapterMock();
         $this->baseAdapterMock->expects($this->once())
                 ->method('beginTransaction')
                 ->willReturn(true);
@@ -1407,6 +1439,7 @@ class DataMapperTest extends TestCase
 
     public function testDelete()
     {
+        $this->initializeMock();
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('execute')
                 ->willReturnOnConsecutiveCalls(false, true);
@@ -1431,6 +1464,7 @@ class DataMapperTest extends TestCase
 
     public function testDeleteBatch()
     {
+        $this->initializeMock();
         $this->baseAdapterMock->expects($this->exactly(2))
                 ->method('execute')
                 ->willReturnOnConsecutiveCalls(false, true);
@@ -1450,6 +1484,7 @@ class DataMapperTest extends TestCase
 
     public function testFind()
     {
+        $this->initializeMock();
         $firstInitializedBaseSample = new BaseSample();
         $firstInitializedBaseSample->id = 1;
         $secondInitializedBaseSample = new BaseSample();
@@ -1460,33 +1495,25 @@ class DataMapperTest extends TestCase
         $firstBaseResultSetMock->expects($this->exactly(2))
                 ->method('current')
                 ->willReturnOnConsecutiveCalls($firstInitializedBaseSample, $secondInitializedBaseSample);
-        $firstBaseResultSetMock->expects($this->any())
-                ->method('valid')
+        $firstBaseResultSetMock->method('valid')
                 ->willReturnOnConsecutiveCalls(true, true, false);
-        $firstBaseResultSetMock->expects($this->any())
-                ->method('key')
+        $firstBaseResultSetMock->method('key')
                 ->willReturnOnConsecutiveCalls(0, 1);
-        $firstBaseResultSetMock->expects($this->any())
-                ->method('next')
+        $firstBaseResultSetMock->method('next')
                 ->willReturnSelf();
-        $firstBaseResultSetMock->expects($this->any())
-                ->method('rewind')
+        $firstBaseResultSetMock->method('rewind')
                 ->willReturnSelf();
         $secondBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $secondBaseResultSetMock->expects($this->exactly(1))
                 ->method('current')
                 ->willReturnOnConsecutiveCalls($thirdInitializedBaseSample);
-        $secondBaseResultSetMock->expects($this->any())
-                ->method('valid')
+        $secondBaseResultSetMock->method('valid')
                 ->willReturnOnConsecutiveCalls(true, false);
-        $secondBaseResultSetMock->expects($this->any())
-                ->method('key')
+        $secondBaseResultSetMock->method('key')
                 ->willReturnOnConsecutiveCalls(0);
-        $secondBaseResultSetMock->expects($this->any())
-                ->method('next')
+        $secondBaseResultSetMock->method('next')
                 ->willReturnSelf();
-        $secondBaseResultSetMock->expects($this->any())
-                ->method('rewind')
+        $secondBaseResultSetMock->method('rewind')
                 ->willReturnSelf();
         $this->baseAdapterMock->expects($this->exactly(3))
                 ->method('select')
@@ -1507,6 +1534,7 @@ class DataMapperTest extends TestCase
 
     public function testGetCount()
     {
+        $this->initializeMock();
         $standardEntity = new StandardEntity();
         $standardEntity->_numrows = 5;
         $baseResultSetMock = $this->createMock(BaseResultSet::class);
@@ -1527,22 +1555,20 @@ class DataMapperTest extends TestCase
 
     public function testFindFirst()
     {
+        $this->initializeMock();
         $initializedBaseSample = new BaseSample();
         $initializedBaseSample->id = 1;
-        $firstBaseResultSetMock = $this->createMock(BaseResultSet::class);
-        $firstBaseResultSetMock->expects($this->any())
-                ->method('numRows')
+        $firstBaseResultSetMock = $this->createStub(BaseResultSet::class);
+        $firstBaseResultSetMock->method('numRows')
                 ->willReturn(0);
         $secondBaseResultSetMock = $this->createMock(BaseResultSet::class);
         $secondBaseResultSetMock->expects($this->exactly(1))
                 ->method('fetch')
                 ->willReturn($initializedBaseSample);
-        $secondBaseResultSetMock->expects($this->any())
-                ->method('numRows')
+        $secondBaseResultSetMock->method('numRows')
                 ->willReturn(1);
-        $thidBaseResultSetMock = $this->createMock(BaseResultSet::class);
-        $thidBaseResultSetMock->expects($this->any())
-                ->method('numRows')
+        $thidBaseResultSetMock = $this->createStub(BaseResultSet::class);
+        $thidBaseResultSetMock->method('numRows')
                 ->willReturn(2);
         $this->baseAdapterMock->expects($this->exactly(4))
                 ->method('select')
