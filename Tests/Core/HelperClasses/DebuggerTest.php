@@ -53,7 +53,6 @@ class DebuggerTest extends TestCase
                     ['logPath', $logDirectoryPath . 'log.txt'],
         ]);
         Config::setInstance($configStub);
-        Debugger::startExecutionTimeCalculation();
     }
 
     public function testStartExecutionTimeCalculation()
@@ -66,8 +65,9 @@ class DebuggerTest extends TestCase
 
     public function testGenerateDebugBar()
     {
-        Debugger::addQueryExecuted('sample query');
         $debugger = new Debugger();
+        $debugger->startExecutionTimeCalculation();
+        $debugger->addQueryExecuted('sample query');
         $result = $debugger->generateDebugBar();
         $this->assertIsString($result);
         $this->assertStringContainsString('sample query', $result);
@@ -83,9 +83,10 @@ class DebuggerTest extends TestCase
 
     public function testAddQueryExecuted()
     {
-        Debugger::addQueryExecuted('sample query one');
-        Debugger::addQueryExecuted('sample query two');
         $debugger = new Debugger();
+        $debugger->startExecutionTimeCalculation();
+        $debugger->addQueryExecuted('sample query one');
+        $debugger->addQueryExecuted('sample query two');
         $informations = $debugger->getInformations();
         $this->assertEquals(2, $informations['queryExecutedNumber']);
         $debugBbar = $debugger->generateDebugBar();
@@ -100,7 +101,8 @@ class DebuggerTest extends TestCase
         $formFilter->sampleFieldTwoError = true;
         $formFilter->sampleFieldThreeError = true;
         $debugger = new Debugger();
-        $debugger::setFormFilter($formFilter);
+        $debugger->startExecutionTimeCalculation();
+        $debugger->setFormFilter($formFilter);
         $informations = $debugger->getInformations();
         $this->assertEquals(3, $informations['formFilterNumber']);
         $debugBbar = $debugger->generateDebugBar();

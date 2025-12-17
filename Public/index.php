@@ -39,25 +39,27 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPAR
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 date_default_timezone_set('Europe/Rome');
-ErrorHandler::disabligErrorDisplay();
+$errorHandler = new ErrorHandler();
+$errorHandler->disableErrorDisplay();
 
 try {
-    ErrorHandler::handleNonThrowableError();
-    Debugger::startExecutionTimeCalculation();
+    $errorHandler->registerNonThrowableErrorHandler();
+    $debugger = new Debugger();
+    $debugger->startExecutionTimeCalculation();
     PhpVersionChecker::checkPhpVersion();
     Session::start();
     header('Pragma: cache');
     header('Cache-control: public');
-    $dispatcher = new Dispatcher();
+    $dispatcher = new Dispatcher(debugger: $debugger);
     return $dispatcher->run();
 } catch (PhpVersionException $exception) {
     echo $exception->getMessage();
 } catch (RedirectException $exception) {
     return $exception->redirect();
 } catch (BaseException $exception) {
-    ErrorHandler::handleBaseException($exception);
+    $errorHandler->handleBaseException($exception);
 } catch (\Throwable $throwable) {
-    ErrorHandler::handleThrowableError($throwable);
+    $errorHandler->handleThrowableError($throwable);
 } finally {
-    ErrorHandler::showErrorInDevelopementEnvironment();
+    $errorHandler->showErrorInDevelopmentEnvironment();
 }

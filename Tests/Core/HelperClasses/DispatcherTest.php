@@ -91,7 +91,6 @@ class DispatcherTest extends TestCase
         $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
-        Debugger::startExecutionTimeCalculation();
     }
 
     private function createDispatcherWithResourceMakerStub(): Dispatcher

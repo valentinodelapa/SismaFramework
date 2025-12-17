@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Exceptions\PageNotFoundException;
+use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher\ActionArgumentsParser;
 use SismaFramework\Core\HelperClasses\Dispatcher\ControllerFactory;
 use SismaFramework\Core\HelperClasses\Dispatcher\ResourceHandler;
@@ -51,6 +52,7 @@ class Dispatcher
     private ActionArgumentsParser $actionArgumentsParser;
     private ResourceHandler $resourceHandler;
     private DataMapper $dataMapper;
+    private Debugger $debugger;
     private array $crawlComponentMakerList = [];
     private CrawlComponentMakerInterface $currentCrawlComponentMaker;
 
@@ -59,12 +61,14 @@ class Dispatcher
             RouteResolver $routeResolver = new RouteResolver(),
             ResourceHandler $resourceHandler = new ResourceHandler(),
             ?ControllerFactory $controllerFactory = null,
-            ?ActionArgumentsParser $actionArgumentsParser = null)
+            ?ActionArgumentsParser $actionArgumentsParser = null,
+            Debugger $debugger = new Debugger())
     {
         $this->request = $request;
         $this->dataMapper = $dataMapper;
+        $this->debugger = $debugger;
         $this->routeResolver = $routeResolver;
-        $this->controllerFactory = $controllerFactory ?? new ControllerFactory($this->dataMapper);
+        $this->controllerFactory = $controllerFactory ?? new ControllerFactory($this->dataMapper, $this->debugger);
         $this->actionArgumentsParser = $actionArgumentsParser ?? new ActionArgumentsParser($this->request, $this->dataMapper);
         $this->resourceHandler = $resourceHandler;
     }

@@ -26,21 +26,21 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use Psr\Log\LoggerInterface;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\BufferManager;
-use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HelperClasses\SismaLogger;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
 use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
 use SismaFramework\Sample\Controllers\SampleController;
 use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
 use SismaFramework\Structural\Controllers\FrameworkController;
 use Throwable;
 
 /**
- * Description of ErrorHandler
- *
  * @internal
  *
  * @author Valentino de Lapa
@@ -48,66 +48,78 @@ use Throwable;
 class ErrorHandler
 {
 
-    public static function disabligErrorDisplay()
+    private LoggerInterface $logger;
+    private Config $config;
+
+    public function __construct(?LoggerInterface $logger = null, ?Config $config = null)
+    {
+        $this->logger = $logger ?? new SismaLogger();
+        $this->config = $config ?? Config::getInstance();
+    }
+
+    public function disableErrorDisplay(): void
     {
         ini_set('display_errors', 0);
         ini_set('display_startup_errors', 0);
         error_reporting(0);
     }
 
-    public static function handleNonThrowableError(StructuralControllerInterface $controller = new FrameworkController(), ?Config $customConfig = null): void
+    public function registerNonThrowableErrorHandler(StructuralControllerInterface $controller = new FrameworkController()): void
     {
-        $config = $customConfig ?? Config::getInstance();
-        register_shutdown_function(function () use ($controller, $config) {
+        register_shutdown_function(function () use ($controller) {
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error)) {
                 BufferManager::clear();
-                Logger::saveLog($error['message'], $error['type'], $error['file'], $error['line']);
-                if ($config->logVerboseActive) {
-                    Logger::saveTrace($backtrace);
-                }
-                if ($config->developmentEnvironment) {
-                    self::callNonThrowableErrorAction($controller, $error, $backtrace);
+                $this->logger->error($error['message'], [
+                    'code' => $error['type'],
+                    'file' => $error['file'],
+                    'line' => $error['line'],
+                    'trace' => $this->config->logVerboseActive ? $backtrace : null
+                ]);
+                if ($this->config->developmentEnvironment) {
+                    $this->callNonThrowableErrorAction($controller, $error, $backtrace);
                 } else {
-                    self::callInternalServerErrorAction($controller);
+                    $this->callInternalServerErrorAction($controller);
                 }
             }
         });
     }
 
-    private static function callNonThrowableErrorAction(StructuralControllerInterface $controller, array $error, array $backtrace): Response
+    private function callNonThrowableErrorAction(StructuralControllerInterface $controller, array $error, array $backtrace): Response
     {
         Router::setActualCleanUrl('framework', 'nonThowableError');
         return $controller->nonThrowableError($error, $backtrace);
     }
 
-    private static function callInternalServerErrorAction($structuralController): Response
+    private function callInternalServerErrorAction(StructuralControllerInterface $structuralController): Response
     {
         Router::setActualCleanUrl('framework', 'internalServerError');
         return $structuralController->internalServerError();
     }
 
-    public static function handleBaseException(BaseException $exception,
+    public function handleBaseException(BaseException $exception,
             DefaultControllerInterface $defaultController = new SampleController(),
-            StructuralControllerInterface $structuralController = new FrameworkController(),
-            ?Config $customConfig = null): Response
+            StructuralControllerInterface $structuralController = new FrameworkController()): Response
     {
-        $config = $customConfig ?? Config::getInstance();
-        if ($config->developmentEnvironment) {
-            return self::callThrowableErrorAction($structuralController, $exception);
+        if ($exception instanceof ShouldBeLoggedException) {
+            $this->logException($exception);
+        }
+        
+        if ($this->config->developmentEnvironment) {
+            return $this->callThrowableErrorAction($structuralController, $exception);
         } else {
-            return self::callDefaultControllerError($defaultController, $exception);
+            return $this->callDefaultControllerError($defaultController, $exception);
         }
     }
 
-    private static function callThrowableErrorAction(StructuralControllerInterface $controller, Throwable $throwable): Response
+    private function callThrowableErrorAction(StructuralControllerInterface $controller, Throwable $throwable): Response
     {
         Router::setActualCleanUrl('framework', 'thowableError');
         return $controller->throwableError($throwable);
     }
 
-    private static function callDefaultControllerError(DefaultControllerInterface $controller, BaseException $exception): Response
+    private function callDefaultControllerError(DefaultControllerInterface $controller, BaseException $exception): Response
     {
         $fullControllerName = get_class($controller);
         $controllerName = basename(str_replace('\\', DIRECTORY_SEPARATOR, $fullControllerName));
@@ -115,27 +127,38 @@ class ErrorHandler
         return $controller->error($exception->getMessage(), $exception->getResponseType());
     }
 
-    public static function handleThrowableError(Throwable $throwable,
-            StructuralControllerInterface $structuralController = new FrameworkController(),
-            ?Config $customConfig = null): Response
+    public function handleThrowableError(Throwable $throwable,
+            StructuralControllerInterface $structuralController = new FrameworkController()): Response
     {
-        $config = $customConfig ?? Config::getInstance();
         BufferManager::clear();
-        Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
-        if ($config->logVerboseActive) {
-            Logger::saveTrace($throwable->getTrace());
-        }
-        if ($config->developmentEnvironment) {
-            return self::callThrowableErrorAction($structuralController, $throwable);
+        
+        $this->logException($throwable);
+        
+        if ($this->config->developmentEnvironment) {
+            return $this->callThrowableErrorAction($structuralController, $throwable);
         } else {
-            return self::callInternalServerErrorAction($structuralController);
+            return $this->callInternalServerErrorAction($structuralController);
         }
     }
-		
-    public static function showErrorInDevelopementEnvironment(?Config $customConfig = null): void
+
+    private function logException(Throwable $exception): void
     {
-        $config = $customConfig ?? Config::getInstance();
-        if ($config->developmentEnvironment) {
+        $context = [
+            'code' => $exception->getCode(),
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine()
+        ];
+        
+        if ($this->config->logVerboseActive) {
+            $context['trace'] = $exception->getTrace();
+        }
+        
+        $this->logger->error($exception->getMessage(), $context);
+    }
+		
+    public function showErrorInDevelopmentEnvironment(): void
+    {
+        if ($this->config->developmentEnvironment) {
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             error_reporting(E_ALL & ~E_DEPRECATED);

@@ -50,7 +50,7 @@ class Render
             ?Config $customConfig = null): Response
     {
         $config = $customConfig ?? Config::getInstance();
-        Debugger::setVars($vars);
+        $debugger->setVars($vars);
         self::assemblesComponents($view, $localizator, $vars, $config);
         echo static::generateDebugBar($debugger, $config);
         return new Response($responseType);

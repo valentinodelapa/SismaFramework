@@ -27,14 +27,14 @@
 namespace SismaFramework\Security\Exceptions;
 
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Security\ExtendedClasses\NoLogException;
+use SismaFramework\Security\BaseClasses\BaseException;
 
 /**
  * Description of AuthenticationException
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
-class AuthenticationException extends NoLogException
+class AuthenticationException extends BaseException
 {
 
     #[\Override]

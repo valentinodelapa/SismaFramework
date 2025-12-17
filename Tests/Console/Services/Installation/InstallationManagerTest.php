@@ -199,6 +199,63 @@ PHP
         }
     }
 
+    public function testInstallCreatesComposerJson(): void
+    {
+        $projectName = 'MyTestProject';
+
+        $this->manager->install($projectName);
+
+        $composerFile = $this->testProjectRoot . '/composer.json';
+        $this->assertFileExists($composerFile);
+
+        $composer = json_decode(file_get_contents($composerFile), true);
+        $this->assertEquals('mytestproject', $composer['name']);
+        $this->assertEquals('Project built with SismaFramework', $composer['description']);
+        $this->assertEquals('project', $composer['type']);
+        $this->assertArrayHasKey('psr/log', $composer['require']);
+        $this->assertEquals('^3.0', $composer['require']['psr/log']);
+    }
+
+    public function testInstallUpdatesExistingComposerJson(): void
+    {
+        $projectName = 'MyTestProject';
+
+        $existingComposer = [
+            'name' => 'existing/project',
+            'require' => [
+                'php' => '>=8.1'
+            ]
+        ];
+        file_put_contents(
+            $this->testProjectRoot . '/composer.json',
+            json_encode($existingComposer, JSON_PRETTY_PRINT)
+        );
+
+        $this->manager->install($projectName);
+
+        $composer = json_decode(file_get_contents($this->testProjectRoot . '/composer.json'), true);
+        $this->assertEquals('existing/project', $composer['name']);
+        $this->assertArrayHasKey('php', $composer['require']);
+        $this->assertArrayHasKey('psr/log', $composer['require']);
+        $this->assertEquals('^3.0', $composer['require']['psr/log']);
+    }
+
+    public function testInstallAddsVendorAutoloadToIndexPhp(): void
+    {
+        $projectName = 'MyTestProject';
+
+        $this->manager->install($projectName);
+
+        $indexFile = $this->testProjectRoot . '/Public/index.php';
+        $content = file_get_contents($indexFile);
+
+        $this->assertStringContainsString("'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'", $content);
+
+        $vendorAutoloadPos = strpos($content, "'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'");
+        $frameworkAutoloadPos = strpos($content, "'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'");
+        $this->assertLessThan($frameworkAutoloadPos, $vendorAutoloadPos);
+    }
+
     private function createFrameworkStructure(): void
     {
         // Crea Config/config.php

@@ -105,14 +105,16 @@ OUTPUT);
         $this->output('Project structure created:');
         $this->output('  - Config/configFramework.php');
         $this->output('  - Public/index.php');
+        $this->output('  - composer.json');
         $this->output('  - Cache/');
         $this->output('  - Logs/');
         $this->output('  - filesystemMedia/');
         $this->output('');
         $this->output('Next steps:');
-        $this->output('  1. Review and update Config/configFramework.php with your settings');
-        $this->output('  2. Configure your web server to point to the Public directory');
-        $this->output('  3. Start building your application!');
+        $this->output('  1. Run "composer install" to install dependencies');
+        $this->output('  2. Review and update Config/configFramework.php with your settings');
+        $this->output('  3. Configure your web server to point to the Public directory');
+        $this->output('  4. Start building your application!');
         return true;
     }
 }

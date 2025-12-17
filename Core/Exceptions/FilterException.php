@@ -27,12 +27,13 @@
 namespace SismaFramework\Core\Exceptions;
 
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Security\ExtendedClasses\LogException;
+use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
 
 /**
  * @author Valentino de Lapa
  */
-class FilterException extends LogException
+class FilterException extends BaseException implements ShouldBeLoggedException
 {
     
     #[\Override]

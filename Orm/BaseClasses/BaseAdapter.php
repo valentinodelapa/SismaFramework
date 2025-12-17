@@ -81,11 +81,13 @@ abstract class BaseAdapter
     protected static mixed $connection = null;
     protected bool $isConnected = false;
     protected array $connectionOptions = [];
+    protected Debugger $debugger;
 
-    public function __construct(array $options = [])
+    public function __construct(array $options = [], Debugger $debugger = new Debugger())
     {
         $this->connectionOptions = $options;
         $this->adapterType = $this->setAdapterType();
+        $this->debugger = $debugger;
     }
 
     /**
@@ -400,7 +402,7 @@ abstract class BaseAdapter
     public function select(string $cmd, array $bindValues = [], array $bindTypes = []): ?BaseResultSet
     {
         $this->ensureConnected();
-        Debugger::addQueryExecuted($cmd);
+        $this->debugger->addQueryExecuted($cmd);
         return $this->selectToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
 
@@ -409,7 +411,7 @@ abstract class BaseAdapter
     public function execute(string $cmd, array $bindValues = [], array $bindTypes = []): bool
     {
         $this->ensureConnected();
-        Debugger::addQueryExecuted($cmd);
+        $this->debugger->addQueryExecuted($cmd);
         return $this->executeToDelegateAdapter($cmd, $bindValues, $bindTypes);
     }
 

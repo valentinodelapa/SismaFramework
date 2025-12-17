@@ -7,6 +7,7 @@ Questa guida ti accompagnerà passo dopo passo nell'installazione e nella config
 Prima di iniziare, assicurati che il tuo ambiente di sviluppo soddisfi i seguenti requisiti:
 
 * **PHP 8.1** o superiore.
+* **Composer** per la gestione delle dipendenze.
 * Un web server come **Apache** o **Nginx**.
   * Per Apache, è necessario che il modulo `mod_rewrite` sia abilitato.
 * Un database **MySQL** o **MariaDB**.
@@ -36,7 +37,17 @@ git init
 git submodule add https://github.com/valentinodelapa/SismaFramework.git
 ```
 
-### Passo 2: Esegui il comando di installazione
+### Passo 2: Installa le dipendenze
+
+```bash
+cd SismaFramework
+composer install
+cd ..
+```
+
+Questo comando installerà le dipendenze necessarie, inclusa la libreria PSR-3 per il logging standard.
+
+### Passo 3: Esegui il comando di installazione
 
 ```bash
 php SismaFramework/Console/sisma install NomeDelProgetto
@@ -99,7 +110,7 @@ Se il tuo ambiente richiede permessi più restrittivi per motivi di sicurezza, p
 chmod 755 Cache Logs filesystemMedia
 ```
 
-### Passo 3: Configura il Web Server
+### Passo 4: Configura il Web Server
 
 Crea un file `.htaccess` nella root del progetto:
 
@@ -137,6 +148,14 @@ Se preferisci configurare manualmente il progetto, segui questi passaggi.
    ```
 
    Questo creerà una cartella `SismaFramework` all'interno del tuo progetto.
+
+3. Installa le dipendenze del framework:
+
+   ```bash
+   cd SismaFramework
+   composer install
+   cd ..
+   ```
 
 ### Passo 2: Prepara la struttura del progetto
 

@@ -27,12 +27,12 @@
 namespace SismaFramework\Core\Exceptions;
 
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Security\ExtendedClasses\NoLogException;
+use SismaFramework\Security\BaseClasses\BaseException;
 
 /**
  * @author valen
  */
-class LoggerException extends NoLogException
+class LoggerException extends BaseException
 {
     
     #[\Override]

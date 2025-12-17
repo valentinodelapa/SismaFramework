@@ -27,9 +27,10 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\CustomTypes\FormFilterError;
-use SismaFramework\Core\HelperClasses\Logger;
+use SismaFramework\Core\HelperClasses\SismaLogReader;
 use SismaFramework\Core\HelperClasses\Templater;
 use SismaFramework\Core\HelperClasses\Parser;
+use SismaFramework\Core\Interfaces\Logging\LogReaderInterface;
 
 /**
  * @internal
@@ -39,40 +40,46 @@ use SismaFramework\Core\HelperClasses\Parser;
 class Debugger
 {
 
-    private static float $startMicrotime;
-    private static float $executionTime;
-    private static int $queryExecutedNumber = 0;
-    private static int $logRowNumber = 0;
-    private static int $formFilterNumber = 0;
-    private static int $varsNumber = 0;
-    private static array $queryExecuted = [];
-    private static array $formFilter = [];
-    private static array $vars = [];
+    private float $startMicrotime = 0.0;
+    private float $executionTime = 0.0;
+    private int $queryExecutedNumber = 0;
+    private int $logRowNumber = 0;
+    private int $formFilterNumber = 0;
+    private int $varsNumber = 0;
+    private array $queryExecuted = [];
+    private array $formFilter = [];
+    private array $vars = [];
+    private LogReaderInterface $logReader;
 
-    public static function startExecutionTimeCalculation(): void
+    public function __construct(?LogReaderInterface $logReader = null)
     {
-        static::$startMicrotime = microtime(true);
+        $this->logReader = $logReader ?? new SismaLogReader();
     }
 
-    public static function establishExecutionTimeCalculation(): void
+    public function startExecutionTimeCalculation(): void
     {
-        $executionTime = (microtime(true) - self::$startMicrotime) * 1000;
-        static::$executionTime = round($executionTime, 2);
+        $this->startMicrotime = microtime(true);
     }
 
-    public function generateDebugBar()
+    public function establishExecutionTimeCalculation(): void
+    {
+        $executionTime = (microtime(true) - $this->startMicrotime) * 1000;
+        $this->executionTime = round($executionTime, 2);
+    }
+
+    public function generateDebugBar(): string
     {
         $debugBarQuery = $debugBarLog = $debugBarForm = $debugBarVars = '';
-        foreach (self::$queryExecuted as $query) {
+        foreach ($this->queryExecuted as $query) {
             $debugBarQuery .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $query]);
         }
-        foreach (Logger::getLogRowByRow() as $logRow) {
-            self::$logRowNumber++;
+        foreach ($this->logReader->getLogRowByRow() as $logRow) {
+            $this->logRowNumber++;
             $debugBarLog .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $logRow]);
         }
-        $debugBarForm = self::generateDebugBarForm(self::$formFilter);
-        $debugBarVars = self::generateDebugBarVars();
-        $vars = array_merge(self::getInformations(), [
+        $debugBarForm = $this->generateDebugBarForm($this->formFilter);
+        $debugBarVars = $this->generateDebugBarVars();
+        $vars = array_merge($this->getInformations(), [
             'debugBarQuery' => $debugBarQuery,
             'debugBarLog' => $debugBarLog,
             'debugBarForm' => $debugBarForm,
@@ -81,13 +88,13 @@ class Debugger
         return Templater::generateStructuralTemplate('debugBar', $vars);
     }
 
-    private static function generateDebugBarForm(array $informations, string $tabulation = '')
+    private function generateDebugBarForm(array $informations, string $tabulation = ''): string
     {
         $debugBarForm = '';
         foreach ($informations as $field => $information) {
             if (is_array($information)) {
                 $debugBarForm .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $tabulation . $field . ':']);
-                $debugBarForm .= self::generateDebugBarForm($information, $tabulation . '&emsp;');
+                $debugBarForm .= $this->generateDebugBarForm($information, $tabulation . '&emsp;');
             } else {
                 $debugBarForm .= Templater::generateStructuralTemplate('debugBarBody', ['information' => $tabulation . $field . ': ' . (($information) ? 'true' : 'false')]);
             }
@@ -95,10 +102,10 @@ class Debugger
         return $debugBarForm;
     }
 
-    private static function generateDebugBarVars()
+    private function generateDebugBarVars(): string
     {
         $vars = [];
-        foreach (self::$vars as $key => $value) {
+        foreach ($this->vars as $key => $value) {
             $vars[$key] = $value;
         }
         Parser::unparseValues($vars);
@@ -109,43 +116,43 @@ class Debugger
         return $debugBarVars;
     }
 
-    public static function getInformations(): array
+    public function getInformations(): array
     {
-        self::establishExecutionTimeCalculation();
+        $this->establishExecutionTimeCalculation();
         return [
-            "queryExecutedNumber" => self::$queryExecutedNumber,
-            "logRowNumber" => self::$logRowNumber,
-            "formFilterNumber" => self::$formFilterNumber,
-            "varsNumber" => self::$varsNumber,
-            "memoryUsed" => self::getMemoryUsed(),
-            "executionTime" => self::$executionTime,
+            "queryExecutedNumber" => $this->queryExecutedNumber,
+            "logRowNumber" => $this->logRowNumber,
+            "formFilterNumber" => $this->formFilterNumber,
+            "varsNumber" => $this->varsNumber,
+            "memoryUsed" => $this->getMemoryUsed(),
+            "executionTime" => $this->executionTime,
         ];
     }
 
-    private static function getMemoryUsed(): float
+    private function getMemoryUsed(): float
     {
         $memoryUsedInByte = memory_get_usage();
         return round($memoryUsedInByte / 1024 / 1024, 2);
     }
 
-    public static function addQueryExecuted(string $query): void
+    public function addQueryExecuted(string $query): void
     {
-        self::$queryExecuted[] = $query;
-        self::incrementQueryExecutedNumber();
+        $this->queryExecuted[] = $query;
+        $this->incrementQueryExecutedNumber();
     }
 
-    private static function incrementQueryExecutedNumber(): void
+    private function incrementQueryExecutedNumber(): void
     {
-        self::$queryExecutedNumber = self::$queryExecutedNumber + 1;
+        $this->queryExecutedNumber = $this->queryExecutedNumber + 1;
     }
 
-    public static function setFormFilter(FormFilterError $formFilter): void
+    public function setFormFilter(FormFilterError $formFilter): void
     {
-        self::$formFilter = $formFilter->getErrorsToArray();
-        self::$formFilterNumber = count(self::$formFilter);
+        $this->formFilter = $formFilter->getErrorsToArray();
+        $this->formFilterNumber = count($this->formFilter);
     }
 
-    public static function setVars(array $vars): void
+    public function setVars(array $vars): void
     {
         $parsedVars = [];
         foreach ($vars as $key => $value) {
@@ -157,7 +164,7 @@ class Debugger
                 $parsedVars[$key] = gettype($value);
             }
         }
-        self::$vars = $parsedVars;
-        self::$varsNumber = count(self::$vars);
+        $this->vars = $parsedVars;
+        $this->varsNumber = count($this->vars);
     }
 }

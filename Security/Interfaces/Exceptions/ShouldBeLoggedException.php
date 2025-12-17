@@ -24,21 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Exceptions;
-
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Security\BaseClasses\BaseException;
-use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
+namespace SismaFramework\Security\Interfaces\Exceptions;
 
 /**
+ * Marker interface for exceptions that should be automatically logged.
+ * 
+ * Exceptions implementing this interface will be logged by the ErrorHandler
+ * when they are caught and processed.
+ *
  * @author Valentino de Lapa
  */
-class LocalizatorException extends BaseException implements ShouldBeLoggedException
+interface ShouldBeLoggedException
 {
-    
-    #[\Override]
-    protected function setResponseType(): ResponseType
-    {
-        return ResponseType::httpInternalServerError;
-    }
 }

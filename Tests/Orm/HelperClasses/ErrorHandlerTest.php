@@ -79,7 +79,8 @@ class ErrorHandlerTest extends TestCase
         $structuralControllerMock->expects($this->once())
                 ->method('throwableError')
                 ->with($baseExceptionMock);
-        ErrorHandler::handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock, $this->configStubDevelopement);
+        $errorHandler = new ErrorHandler(null, $this->configStubDevelopement);
+        $errorHandler->handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock);
     }
 
     public function testHandleBaseExceptionNotInDevelopmentEnvironment()
@@ -93,7 +94,8 @@ class ErrorHandlerTest extends TestCase
         $baseExceptionMock->expects($this->once())
                 ->method('getResponseType')
                 ->willReturn(ResponseType::httpInternalServerError);
-        ErrorHandler::handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock, $this->configStubProduction);
+        $errorHandler = new ErrorHandler(null, $this->configStubProduction);
+        $errorHandler->handleBaseException($baseExceptionMock, $defaultControllerMock, $structuralControllerMock);
     }
 
     public function testHandleThrowableErrorInDevelopmentEnvironment()
@@ -104,7 +106,8 @@ class ErrorHandlerTest extends TestCase
         $structuralControllerMock->expects($this->once())
                 ->method('throwableError')
                 ->with($throwableMock);
-        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock, $this->configStubDevelopement);
+        $errorHandler = new ErrorHandler(null, $this->configStubDevelopement);
+        $errorHandler->handleThrowableError($throwableMock, $structuralControllerMock);
     }
 
     public function testHandleThrowableErrorNotInDevelopmentEnvironment()
@@ -114,6 +117,7 @@ class ErrorHandlerTest extends TestCase
         $throwableMock = $this->createStub(\Throwable::class);
         $structuralControllerMock->expects($this->once())
                 ->method('internalServerError');
-        ErrorHandler::handleThrowableError($throwableMock, $structuralControllerMock, $this->configStubProduction);
+        $errorHandler = new ErrorHandler(null, $this->configStubProduction);
+        $errorHandler->handleThrowableError($throwableMock, $structuralControllerMock);
     }
 }

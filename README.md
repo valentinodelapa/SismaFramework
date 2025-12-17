@@ -16,6 +16,7 @@ SismaFramework è un framework PHP moderno, basato sul pattern MVC, progettato p
 
 *   **Architettura MVC Robusta:** Separazione netta tra logica di business, dati e presentazione.
 *   **ORM Potente (Data Mapper):** Un ORM a mappatura automatica con supporto per relazioni, lazy loading e crittografia a livello di proprietà.
+*   **PSR-3 Compliant:** Sistema di logging standard con supporto per logger personalizzati.
 *   **Componente di Sicurezza:** Gestione di autenticazione (con supporto MFA), permessi e ruoli tramite Voters.
 *   **Gestione Avanzata dei Form:** Validazione, ripopolamento automatico e gestione degli errori integrati.
 *   **URL Rewriting Automatico:** Supporto nativo per URL "parlanti" in notazione kebab-case per una migliore SEO.
@@ -24,6 +25,7 @@ SismaFramework è un framework PHP moderno, basato sul pattern MVC, progettato p
 ## Requisiti
 
 *   PHP >= 8.1
+*   Composer (per installare la dipendenza PSR-3)
 *   Database supportati: MySQL, MariaDB (con possibilità di estendere il supporto ad altri RDBMS).
 
 ## Installazione e Documentazione

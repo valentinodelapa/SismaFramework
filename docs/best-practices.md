@@ -45,7 +45,18 @@ Per personalizzare il comportamento del framework:
 
 ## 7. Logga gli Eventi Importanti
 
-Il logging non serve solo per gli errori. Usa `Logger::saveLog()` per registrare eventi significativi dell'applicazione (es. un utente amministratore che esegue un'azione critica, un pagamento andato a buon fine). Questo crea una traccia di audit (audit trail) che può essere preziosa.
+Il logging non serve solo per gli errori. Usa il logger PSR-3 (`SismaLogger`) per registrare eventi significativi dell'applicazione (es. un utente amministratore che esegue un'azione critica, un pagamento andato a buon fine). Questo crea una traccia di audit (audit trail) che può essere preziosa.
+
+```php
+$logger = new \SismaFramework\Core\HelperClasses\SismaLogger();
+$logger->info('Pagamento completato', [
+    'code' => 'PAYMENT_SUCCESS',
+    'file' => __FILE__,
+    'line' => __LINE__
+]);
+```
+
+Sfrutta i diversi livelli di log PSR-3 (`debug`, `info`, `warning`, `error`, `critical`) per categorizzare correttamente gli eventi.
 
 ---
 

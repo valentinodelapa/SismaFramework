@@ -55,6 +55,7 @@ class InstallationManager
             $this->copyConfigFolder($projectName);
             $this->copyPublicFolder();
             $this->createAdditionalFolders();
+            $this->createOrUpdateComposerJson($projectName);
             if (!empty($config)) {
                 $this->updateConfigFile($config);
             }
@@ -125,6 +126,10 @@ class InstallationManager
             ];
 
             $content = str_replace($patterns, $replacements, $content);
+
+            $vendorAutoload = "require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';\n";
+            $autoloadLine = "require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';";
+            $content = str_replace($autoloadLine, $vendorAutoload . $autoloadLine, $content);
 
             file_put_contents($indexPath, $content);
         }
@@ -212,5 +217,30 @@ class InstallationManager
             }
         }
         return true;
+    }
+
+    private function createOrUpdateComposerJson(string $projectName): void
+    {
+        $composerPath = $this->projectRoot . DIRECTORY_SEPARATOR . 'composer.json';
+
+        if (file_exists($composerPath)) {
+            $composer = json_decode(file_get_contents($composerPath), true);
+        } else {
+            $composer = [
+                'name' => strtolower(str_replace(' ', '-', $projectName)),
+                'description' => 'Project built with SismaFramework',
+                'type' => 'project',
+                'require' => []
+            ];
+        }
+
+        if (!isset($composer['require']['psr/log'])) {
+            $composer['require']['psr/log'] = '^3.0';
+        }
+
+        $json = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        if (!file_put_contents($composerPath, $json)) {
+            throw new \RuntimeException('Failed to create/update composer.json');
+        }
     }
 }

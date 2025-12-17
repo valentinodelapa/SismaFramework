@@ -8,4 +8,5 @@
 /Tests/.phpunit.result.cache
 /TestsApplication/Cache/
 /TestsApplication/Logs/
+/vendor/
 .scannerwork/

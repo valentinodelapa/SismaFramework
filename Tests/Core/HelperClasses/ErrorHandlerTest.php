@@ -43,16 +43,16 @@ class ErrorHandlerTest extends TestCase
     public function testDisableErrorDisplayMethodExists()
     {
         $reflection = new \ReflectionClass(ErrorHandler::class);
-        $this->assertTrue($reflection->hasMethod('disabligErrorDisplay'));
-        $this->assertTrue($reflection->getMethod('disabligErrorDisplay')->isStatic());
-        $this->assertTrue($reflection->getMethod('disabligErrorDisplay')->isPublic());
+        $this->assertTrue($reflection->hasMethod('disableErrorDisplay'));
+        $this->assertFalse($reflection->getMethod('disableErrorDisplay')->isStatic());
+        $this->assertTrue($reflection->getMethod('disableErrorDisplay')->isPublic());
     }
 
     public function testHandleBaseExceptionMethodExists()
     {
         $reflection = new \ReflectionClass(ErrorHandler::class);
         $this->assertTrue($reflection->hasMethod('handleBaseException'));
-        $this->assertTrue($reflection->getMethod('handleBaseException')->isStatic());
+        $this->assertFalse($reflection->getMethod('handleBaseException')->isStatic());
         $this->assertTrue($reflection->getMethod('handleBaseException')->isPublic());
     }
 
@@ -60,16 +60,16 @@ class ErrorHandlerTest extends TestCase
     {
         $reflection = new \ReflectionClass(ErrorHandler::class);
         $this->assertTrue($reflection->hasMethod('handleThrowableError'));
-        $this->assertTrue($reflection->getMethod('handleThrowableError')->isStatic());
+        $this->assertFalse($reflection->getMethod('handleThrowableError')->isStatic());
         $this->assertTrue($reflection->getMethod('handleThrowableError')->isPublic());
     }
 
-    public function testHandleNonThrowableErrorMethodExists()
+    public function testRegisterNonThrowableErrorHandlerMethodExists()
     {
         $reflection = new \ReflectionClass(ErrorHandler::class);
-        $this->assertTrue($reflection->hasMethod('handleNonThrowableError'));
-        $this->assertTrue($reflection->getMethod('handleNonThrowableError')->isStatic());
-        $this->assertTrue($reflection->getMethod('handleNonThrowableError')->isPublic());
+        $this->assertTrue($reflection->hasMethod('registerNonThrowableErrorHandler'));
+        $this->assertFalse($reflection->getMethod('registerNonThrowableErrorHandler')->isStatic());
+        $this->assertTrue($reflection->getMethod('registerNonThrowableErrorHandler')->isPublic());
     }
 
     public function testDisableErrorDisplay()
@@ -78,13 +78,13 @@ class ErrorHandlerTest extends TestCase
         $originalDisplayStartupErrors = ini_get('display_startup_errors');
         $originalErrorReporting = error_reporting();
 
-        ErrorHandler::disabligErrorDisplay();
+        $errorHandler = new ErrorHandler();
+        $errorHandler->disableErrorDisplay();
 
         $this->assertEquals('0', ini_get('display_errors'));
         $this->assertEquals('0', ini_get('display_startup_errors'));
         $this->assertEquals(0, error_reporting());
 
-        // Restore original settings
         ini_set('display_errors', $originalDisplayErrors);
         ini_set('display_startup_errors', $originalDisplayStartupErrors);
         error_reporting($originalErrorReporting);

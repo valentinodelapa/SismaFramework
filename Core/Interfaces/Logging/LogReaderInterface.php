@@ -24,21 +24,18 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Exceptions;
-
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Security\BaseClasses\BaseException;
-use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
+namespace SismaFramework\Core\Interfaces\Logging;
 
 /**
  * @author Valentino de Lapa
  */
-class LocalizatorException extends BaseException implements ShouldBeLoggedException
+interface LogReaderInterface
 {
-    
-    #[\Override]
-    protected function setResponseType(): ResponseType
-    {
-        return ResponseType::httpInternalServerError;
-    }
+    public function getLog(): string|false;
+
+    public function getLogRowByRow(): array|false;
+
+    public function getLogRowNumber(): int;
+
+    public function clearLog(): void;
 }

@@ -149,7 +149,6 @@ class RenderTest extends TestCase
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        Debugger::startExecutionTimeCalculation();
         Render::generateData('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->configStubDevelop);
     }
 
@@ -165,7 +164,6 @@ class RenderTest extends TestCase
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        Debugger::startExecutionTimeCalculation();
         Render::generateData('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->configStubProduction);
     }
 

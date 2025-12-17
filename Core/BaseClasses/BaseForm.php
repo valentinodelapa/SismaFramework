@@ -56,6 +56,7 @@ abstract class BaseForm extends Submittable
     private FilterManager $filterManager;
     private FormValidator $formValidator;
     private EntityResolver $entityResolver;
+    private Debugger $debugger;
     private array $entityToResolve = [];
     private array $sismaCollectionToResolve = [];
     private ResponseType $responseType = ResponseType::httpOk;
@@ -64,13 +65,15 @@ abstract class BaseForm extends Submittable
             DataMapper $dataMapper = new DataMapper(),
             FilterManager $filterManager = new FilterManager(),
             ?FormValidator $formValidator = null,
-            EntityResolver $entityResolver = new EntityResolver())
+            EntityResolver $entityResolver = new EntityResolver(),
+            Debugger $debugger = new Debugger())
     {
         parent::__construct();
         $this->dataMapper = $dataMapper;
         $this->filterManager = $filterManager;
         $this->formValidator = $formValidator ?? new FormValidator($dataMapper, $filterManager);
         $this->entityResolver = $entityResolver;
+        $this->debugger = $debugger;
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
     }
@@ -213,7 +216,7 @@ abstract class BaseForm extends Submittable
         $this->entityData = $result['entityData'];
         $filterResult = $result['filterResult'];
         $customFilterResult = $this->customFilter();
-        Debugger::setFormFilter($this->formFilterError);
+        $this->debugger->setFormFilter($this->formFilterError);
         $isValid = $filterResult && $customFilterResult;
         if ($isValid === false) {
             $this->responseType = ResponseType::httpBadRequest;

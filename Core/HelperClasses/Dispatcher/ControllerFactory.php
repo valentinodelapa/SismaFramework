@@ -28,6 +28,7 @@ namespace SismaFramework\Core\HelperClasses\Dispatcher;
 
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Exceptions\BadRequestException;
+use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
@@ -39,10 +40,12 @@ class ControllerFactory
 {
 
     private DataMapper $dataMapper;
+    private Debugger $debugger;
 
-    public function __construct(DataMapper $dataMapper)
+    public function __construct(DataMapper $dataMapper, Debugger $debugger = new Debugger())
     {
         $this->dataMapper = $dataMapper;
+        $this->debugger = $debugger;
     }
 
     public function createController(string $controllerClassName): BaseController
@@ -52,7 +55,7 @@ class ControllerFactory
         $reflectionConstructorArguments = $reflectionConstructor->getParameters();
         if ((count($reflectionConstructorArguments) == 0) ||
                 (is_a($reflectionConstructorArguments[0]->getType()->getName(), DataMapper::class, true))) {
-            return new $controllerClassName($this->dataMapper);
+            return new $controllerClassName($this->dataMapper, $this->debugger);
         } else {
             $constructorArguments = $this->resolveConstructorArguments($reflectionConstructorArguments);
             return $reflectionController->newInstanceArgs($constructorArguments);
@@ -66,6 +69,8 @@ class ControllerFactory
             $argumentType = $argument->getType();
             if (is_a($argumentType->getName(), DataMapper::class, true)) {
                 $arguments[] = $this->dataMapper;
+            } elseif (is_a($argumentType->getName(), Debugger::class, true)) {
+                $arguments[] = $this->debugger;
             } elseif ($argumentType->isBuiltin() === false) {
                 $className = $argumentType->getName();
                 $arguments[] = new $className();

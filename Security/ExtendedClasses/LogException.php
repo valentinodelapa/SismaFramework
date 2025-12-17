@@ -26,27 +26,13 @@
 
 namespace SismaFramework\Security\ExtendedClasses;
 
-use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\HelperClasses\BufferManager;
-use SismaFramework\Core\HelperClasses\Logger;
 use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
 
 /**
+ * @deprecated Use BaseException with ShouldBeLoggedException interface instead
  * @author Valentino de Lapa
  */
-abstract class LogException extends BaseException
+abstract class LogException extends BaseException implements ShouldBeLoggedException
 {
-	
-    protected Config $config;
-
-    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null, ?Config $config = null)
-    {
-        parent::__construct($message, $code, $previous);
-        $this->config = $config ?? Config::getInstance();
-        BufferManager::clear();
-        Logger::saveLog($message, $code, $this->getFile(), $this->getLine());
-        if ($this->config->logVerboseActive) {
-            Logger::saveTrace($this->getTrace());
-        }
-    }
 }

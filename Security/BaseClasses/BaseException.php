@@ -27,12 +27,19 @@
 namespace SismaFramework\Security\BaseClasses;
 
 use SismaFramework\Core\Enumerations\ResponseType;
+use SismaFramework\Core\HelperClasses\BufferManager;
 
 /**
  * @author Valentino de Lapa
  */
 abstract class BaseException extends \Exception
 {
+
+    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        BufferManager::clear();
+    }
 
     abstract protected function setResponseType(): ResponseType;
 

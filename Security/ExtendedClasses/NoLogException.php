@@ -27,18 +27,11 @@
 namespace SismaFramework\Security\ExtendedClasses;
 
 use SismaFramework\Security\BaseClasses\BaseException;
-use SismaFramework\Core\HelperClasses\BufferManager;
 
 /**
- * Description of NoLogException
- *
+ * @deprecated Use BaseException directly instead
  * @author Valentino de Lapa
  */
 abstract class NoLogException extends BaseException
 {
-    public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-        BufferManager::clear();
-    }
 }

@@ -132,7 +132,7 @@ Developer Experience Eccellente
 • PHP 8.1+ richiesto
 • Pattern MVC + Data Mapper
 • >85% test coverage
-• Zero dipendenze esterne critiche
+• Dipendenze minimali (solo PSR-3 per standard compliance)
 • Documentazione completa in italiano
 • Open Source (MIT License)
 

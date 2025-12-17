@@ -27,21 +27,21 @@
 namespace SismaFramework\Core\Exceptions;
 
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Security\ExtendedClasses\LogException;
+use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
 
 /**
  * @author Valentino de Lapa
  */
-class RangeNotSatisfiableException extends LogException
+class RangeNotSatisfiableException extends BaseException implements ShouldBeLoggedException
 {
 
     private int $fileSize;
 
-    public function __construct(string $message = "", int $fileSize = 0, int $code = 0, ?\Throwable $previous = null, ?Config $config = null)
+    public function __construct(string $message = "", int $fileSize = 0, int $code = 0, ?\Throwable $previous = null)
     {
         $this->fileSize = $fileSize;
-        parent::__construct($message, $code, $previous, $config);
+        parent::__construct($message, $code, $previous);
         header("Content-Range: bytes */" . $this->fileSize);
     }
 

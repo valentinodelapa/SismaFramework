@@ -27,13 +27,14 @@
 namespace SismaFramework\Orm\Exceptions;
 
 use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Security\ExtendedClasses\LogException;
+use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
  * @author Valentino de Lapa
  */
-class ReferencedEntityDeletionException extends LogException
+class ReferencedEntityDeletionException extends BaseException implements ShouldBeLoggedException
 {
 
     private BaseEntity $entity;
