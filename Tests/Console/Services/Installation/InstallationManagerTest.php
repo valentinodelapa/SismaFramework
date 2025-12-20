@@ -103,6 +103,10 @@ class InstallationManagerTest extends TestCase
 
         $content = file_get_contents($configFile);
         $this->assertStringContainsString("const PROJECT = '{$projectName}'", $content);
+        $this->assertStringContainsString("const APPLICATION = 'Application'", $content);
+        $this->assertStringContainsString("const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;", $content);
+        $this->assertStringContainsString("const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . LOG_DIRECTORY_PATH;", $content);
+        $this->assertStringContainsString("const MODULE_FOLDERS = [];", $content);
     }
 
     public function testInstallCopiesPublicFolder(): void
@@ -263,7 +267,21 @@ PHP
         mkdir($configDir, 0755, true);
         file_put_contents(
             $configDir . '/config.php',
-            "<?php\nconst PROJECT = 'TestProject';\n"
+            <<<'PHP'
+<?php
+const PROJECT = 'TestProject';
+const APPLICATION = 'Sample';
+const CACHE = 'Cache';
+const LOGS = 'Logs';
+const SYSTEM_PATH = 'system/path/';
+const APPLICATION_PATH = 'app/path/';
+const ROOT_PATH = 'root/path/';
+const REFERENCE_CACHE_DIRECTORY = SYSTEM_PATH . APPLICATION_PATH . CACHE . DIRECTORY_SEPARATOR;
+const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . LOG_DIRECTORY_PATH;
+const MODULE_FOLDERS = [
+    'SismaFramework',
+];
+PHP
         );
 
         // Crea Public/index.php con il formato reale del framework

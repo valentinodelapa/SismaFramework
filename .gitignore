@@ -1,4 +1,5 @@
 /.tools/
+/build/
 /nbproject/
 /Sample/Cache/
 /Sample/Logs/
