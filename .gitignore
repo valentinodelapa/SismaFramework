@@ -1,4 +1,5 @@
 /.tools/
+/build/
 /nbproject/
 /Sample/Cache/
 /Sample/Logs/
@@ -8,4 +9,5 @@
 /Tests/.phpunit.result.cache
 /TestsApplication/Cache/
 /TestsApplication/Logs/
+/vendor/
 .scannerwork/

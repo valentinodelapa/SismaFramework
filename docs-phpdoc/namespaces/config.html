@@ -73,10 +73,6 @@
                 
             </li>
                     <li>
-                <a href="namespaces/sismaframework-sample.html" class="">Sample</a>
-                
-            </li>
-                    <li>
                 <a href="namespaces/sismaframework-security.html" class="">Security</a>
                 
             </li>
@@ -84,29 +80,11 @@
                 <a href="namespaces/sismaframework-structural.html" class="">Structural</a>
                 
             </li>
-                    <li>
-                <a href="namespaces/sismaframework-tests.html" class="">Tests</a>
-                
-            </li>
-                    <li>
-                <a href="namespaces/sismaframework-testsapplication.html" class="">TestsApplication</a>
-                
-            </li>
             </ul>
 
                                     <h4 class="phpdocumentor-sidebar__root-namespace">
     <a href="namespaces/config.html" class="-active">Config</a>
 </h4>
-
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="namespaces/testsapplication.html" class="">TestsApplication</a>
-</h4>
-    <ul class="phpdocumentor-list">
-                    <li>
-                <a href="namespaces/testsapplication-vendor.html" class="">Vendor</a>
-                
-            </li>
-            </ul>
 
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
@@ -207,18 +185,6 @@
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/config.html#constant_AUTOLOAD_CLASS_MAPPER">AUTOLOAD_CLASS_MAPPER</a>
-    <span>
-        &nbsp;= []                            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
-    <a class="" href="namespaces/config.html#constant_AUTOLOAD_CLASS_MAPPER">AUTOLOAD_CLASS_MAPPER</a>
-    <span>
-        &nbsp;= []                            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
-    <a class="" href="namespaces/config.html#constant_AUTOLOAD_NAMESPACE_MAPPER">AUTOLOAD_NAMESPACE_MAPPER</a>
     <span>
         &nbsp;= []                            </span>
 </dt>
@@ -386,12 +352,6 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
-    <a class="" href="namespaces/config.html#constant_DIRECTORY_UP">DIRECTORY_UP</a>
-    <span>
-        &nbsp;= &#039;..&#039;                            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/config.html#constant_ENCRYPTION_ALGORITHM">ENCRYPTION_ALGORITHM</a>
     <span>
         &nbsp;= &#039;AES-256-CBC&#039;                            </span>
@@ -496,13 +456,13 @@
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/config.html#constant_LOG_DIRECTORY_PATH">LOG_DIRECTORY_PATH</a>
     <span>
-        &nbsp;= SYSTEM_PATH . APPLICATION_PATH . LOGS                            </span>
+        &nbsp;= SYSTEM_PATH . APPLICATION_PATH . LOGS . LOG_DIRECTORY_PATH                            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/config.html#constant_LOG_PATH">LOG_PATH</a>
     <span>
-        &nbsp;= LOG_DIRECTORY_PATH . DIRECTORY_SEPARATOR . &#039;log.txt&#039;                            </span>
+        &nbsp;= DIRECTORY_SEPARATOR . &#039;log.txt&#039;                            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
@@ -653,12 +613,6 @@
     <a class="" href="namespaces/config.html#constant_ROOT_PATH">ROOT_PATH</a>
     <span>
         &nbsp;= __DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR                            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
-    <a class="" href="namespaces/config.html#constant_ROOT_PATH">ROOT_PATH</a>
-    <span>
-        &nbsp;= __DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR                            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
@@ -1050,37 +1004,6 @@
 
 </article>
                     <article class="phpdocumentor-element -constant -public ">
-    <h4 class="phpdocumentor-element__name" id="constant_AUTOLOAD_CLASS_MAPPER">
-        AUTOLOAD_CLASS_MAPPER
-        <a href="namespaces/config.html#constant_AUTOLOAD_CLASS_MAPPER" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Config/config.php"><a href="files/tests-config-config.html"><abbr title="Tests/Config/config.php">config.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">33</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-signature phpdocumentor-code ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-        <span class="phpdocumentor-signature__type">mixed</span>
-    <span class="phpdocumentor-signature__name">AUTOLOAD_CLASS_MAPPER</span>
-    = <span class="phpdocumentor-signature__default-value">[]</span>
-</code>
-
-
-    
-    
-    
-
-    
-
-</article>
-                    <article class="phpdocumentor-element -constant -public ">
     <h4 class="phpdocumentor-element__name" id="constant_AUTOLOAD_NAMESPACE_MAPPER">
         AUTOLOAD_NAMESPACE_MAPPER
         <a href="namespaces/config.html#constant_AUTOLOAD_NAMESPACE_MAPPER" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1091,37 +1014,6 @@
     <abbr class="phpdocumentor-element-found-in__file" title="Config/config.php"><a href="files/config-config.html"><abbr title="Config/config.php">config.php</abbr></a></abbr>
     :
     <span class="phpdocumentor-element-found-in__line">79</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-signature phpdocumentor-code ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-        <span class="phpdocumentor-signature__type">mixed</span>
-    <span class="phpdocumentor-signature__name">AUTOLOAD_NAMESPACE_MAPPER</span>
-    = <span class="phpdocumentor-signature__default-value">[]</span>
-</code>
-
-
-    
-    
-    
-
-    
-
-</article>
-                    <article class="phpdocumentor-element -constant -public ">
-    <h4 class="phpdocumentor-element__name" id="constant_AUTOLOAD_NAMESPACE_MAPPER">
-        AUTOLOAD_NAMESPACE_MAPPER
-        <a href="namespaces/config.html#constant_AUTOLOAD_NAMESPACE_MAPPER" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Config/config.php"><a href="files/tests-config-config.html"><abbr title="Tests/Config/config.php">config.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">31</span>
 
     </aside>
 
@@ -1949,37 +1841,6 @@
 
 </article>
                     <article class="phpdocumentor-element -constant -public ">
-    <h4 class="phpdocumentor-element__name" id="constant_DIRECTORY_UP">
-        DIRECTORY_UP
-        <a href="namespaces/config.html#constant_DIRECTORY_UP" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Config/config.php"><a href="files/tests-config-config.html"><abbr title="Tests/Config/config.php">config.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">29</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-signature phpdocumentor-code ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-        <span class="phpdocumentor-signature__type">mixed</span>
-    <span class="phpdocumentor-signature__name">DIRECTORY_UP</span>
-    = <span class="phpdocumentor-signature__default-value">&#039;..&#039;</span>
-</code>
-
-
-    
-    
-    
-
-    
-
-</article>
-                    <article class="phpdocumentor-element -constant -public ">
     <h4 class="phpdocumentor-element__name" id="constant_ENCRYPTION_ALGORITHM">
         ENCRYPTION_ALGORITHM
         <a href="namespaces/config.html#constant_ENCRYPTION_ALGORITHM" class="headerlink"><i class="fas fa-link"></i></a>
@@ -2526,7 +2387,7 @@
     <span class="phpdocumentor-signature__visibility">public</span>
         <span class="phpdocumentor-signature__type">mixed</span>
     <span class="phpdocumentor-signature__name">LOG_DIRECTORY_PATH</span>
-    = <span class="phpdocumentor-signature__default-value">SYSTEM_PATH . APPLICATION_PATH . LOGS</span>
+    = <span class="phpdocumentor-signature__default-value">SYSTEM_PATH . APPLICATION_PATH . LOGS . LOG_DIRECTORY_PATH</span>
 </code>
 
 
@@ -2557,7 +2418,7 @@
     <span class="phpdocumentor-signature__visibility">public</span>
         <span class="phpdocumentor-signature__type">mixed</span>
     <span class="phpdocumentor-signature__name">LOG_PATH</span>
-    = <span class="phpdocumentor-signature__default-value">LOG_DIRECTORY_PATH . DIRECTORY_SEPARATOR . &#039;log.txt&#039;</span>
+    = <span class="phpdocumentor-signature__default-value">DIRECTORY_SEPARATOR . &#039;log.txt&#039;</span>
 </code>
 
 
@@ -3344,37 +3205,6 @@
 
 </article>
                     <article class="phpdocumentor-element -constant -public ">
-    <h4 class="phpdocumentor-element__name" id="constant_ROOT_PATH">
-        ROOT_PATH
-        <a href="namespaces/config.html#constant_ROOT_PATH" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Tests/Config/config.php"><a href="files/tests-config-config.html"><abbr title="Tests/Config/config.php">config.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">30</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-signature phpdocumentor-code ">
-    <span class="phpdocumentor-signature__visibility">public</span>
-        <span class="phpdocumentor-signature__type">mixed</span>
-    <span class="phpdocumentor-signature__name">ROOT_PATH</span>
-    = <span class="phpdocumentor-signature__default-value">__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR</span>
-</code>
-
-
-    
-    
-    
-
-    
-
-</article>
-                    <article class="phpdocumentor-element -constant -public ">
     <h4 class="phpdocumentor-element__name" id="constant_SIMPLE_HASH_ALGORITHM">
         SIMPLE_HASH_ALGORITHM
         <a href="namespaces/config.html#constant_SIMPLE_HASH_ALGORITHM" class="headerlink"><i class="fas fa-link"></i></a>
@@ -3992,8 +3822,6 @@
                                                     <li class=""><a href="namespaces/config.html#constant_APPLICATION_PATH">APPLICATION_PATH</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_ASSETS">ASSETS</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_AUTOLOAD_CLASS_MAPPER">AUTOLOAD_CLASS_MAPPER</a></li>
-                                                    <li class=""><a href="namespaces/config.html#constant_AUTOLOAD_CLASS_MAPPER">AUTOLOAD_CLASS_MAPPER</a></li>
-                                                    <li class=""><a href="namespaces/config.html#constant_AUTOLOAD_NAMESPACE_MAPPER">AUTOLOAD_NAMESPACE_MAPPER</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_AUTOLOAD_NAMESPACE_MAPPER">AUTOLOAD_NAMESPACE_MAPPER</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_BLOWFISH_HASH_WORKLOAD">BLOWFISH_HASH_WORKLOAD</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_CACHE">CACHE</a></li>
@@ -4020,7 +3848,6 @@
                                                     <li class=""><a href="namespaces/config.html#constant_DEFAULT_PATH">DEFAULT_PATH</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_DEFAULT_PRIMARY_KEY_PROPERTY_NAME">DEFAULT_PRIMARY_KEY_PROPERTY_NAME</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_DEVELOPMENT_ENVIRONMENT">DEVELOPMENT_ENVIRONMENT</a></li>
-                                                    <li class=""><a href="namespaces/config.html#constant_DIRECTORY_UP">DIRECTORY_UP</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_DIRECTORY_UP">DIRECTORY_UP</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_ENCRYPTION_ALGORITHM">ENCRYPTION_ALGORITHM</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_ENCRYPTION_PASSPHRASE">ENCRYPTION_PASSPHRASE</a></li>
@@ -4065,7 +3892,6 @@
                                                     <li class=""><a href="namespaces/config.html#constant_REFERENCE_CACHE_PATH">REFERENCE_CACHE_PATH</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_RESOURCES">RESOURCES</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_RESOURCES_PATH">RESOURCES_PATH</a></li>
-                                                    <li class=""><a href="namespaces/config.html#constant_ROOT_PATH">ROOT_PATH</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_ROOT_PATH">ROOT_PATH</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_SIMPLE_HASH_ALGORITHM">SIMPLE_HASH_ALGORITHM</a></li>
                                                     <li class=""><a href="namespaces/config.html#constant_SON_COLLECTION_GETTER_METHOD">SON_COLLECTION_GETTER_METHOD</a></li>

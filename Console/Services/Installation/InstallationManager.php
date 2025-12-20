@@ -89,9 +89,39 @@ class InstallationManager
             throw new \RuntimeException("Failed to copy config file.");
         }
         $content = file_get_contents($destConfig);
+        
+        // Update PROJECT constant
         $content = preg_replace(
                 "/(const\s+PROJECT\s*=\s*')[^']*(')/",
                 "$1{$projectName}$2",
+                $content
+        );
+        
+        // Update APPLICATION constant
+        $content = preg_replace(
+                "/(const\s+APPLICATION\s*=\s*')[^']*(')/",
+                "$1Application$2",
+                $content
+        );
+        
+        // Update REFERENCE_CACHE_DIRECTORY constant
+        $content = str_replace(
+                "const REFERENCE_CACHE_DIRECTORY = SYSTEM_PATH . APPLICATION_PATH . CACHE . DIRECTORY_SEPARATOR;",
+                "const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;",
+                $content
+        );
+        
+        // Update LOG_DIRECTORY_PATH constant
+        $content = str_replace(
+                "const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . LOG_DIRECTORY_PATH;",
+                "const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . LOG_DIRECTORY_PATH;",
+                $content
+        );
+        
+        // Update MODULE_FOLDERS to empty array
+        $content = preg_replace(
+                "/const\s+MODULE_FOLDERS\s*=\s*\[[^\]]*\];/s",
+                "const MODULE_FOLDERS = [];",
                 $content
         );
 
