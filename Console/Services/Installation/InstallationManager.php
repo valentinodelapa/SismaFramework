@@ -114,8 +114,8 @@ class InstallationManager
         
         // Update LOG_DIRECTORY_PATH constant
         $content = str_replace(
-                "const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . LOG_DIRECTORY_PATH;",
-                "const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . LOG_DIRECTORY_PATH;",
+                "const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . DIRECTORY_SEPARATOR;",
+                "const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;",
                 $content
         );
         
