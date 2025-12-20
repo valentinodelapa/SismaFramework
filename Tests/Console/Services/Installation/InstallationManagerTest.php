@@ -105,7 +105,7 @@ class InstallationManagerTest extends TestCase
         $this->assertStringContainsString("const PROJECT = '{$projectName}'", $content);
         $this->assertStringContainsString("const APPLICATION = 'Application'", $content);
         $this->assertStringContainsString("const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;", $content);
-        $this->assertStringContainsString("const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . LOG_DIRECTORY_PATH;", $content);
+        $this->assertStringContainsString("const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;", $content);
         $this->assertStringContainsString("const MODULE_FOLDERS = [];", $content);
     }
 
