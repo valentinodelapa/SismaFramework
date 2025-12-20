@@ -183,6 +183,60 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
 ---
 
 
+## [10.1.6] - 2025-12-20 - Hotfix Costante LOG_DIRECTORY_PATH
+
+Questa patch release corregge un bug critico introdotto nella versione 10.1.5 relativo alla definizione ricorsiva della costante `LOG_DIRECTORY_PATH` nel file di configurazione.
+
+### 🐛 Bug Fixes
+
+#### Correzione Definizione Ricorsiva LOG_DIRECTORY_PATH
+
+Corretto un bug introdotto nella versione 10.1.5 che causava una definizione ricorsiva della costante `LOG_DIRECTORY_PATH`:
+
+*   **Config/config.php**:
+    - ❌ **Prima (10.1.5)**: `const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . LOG_DIRECTORY_PATH;`
+    - ✅ **Dopo (10.1.6)**: `const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . DIRECTORY_SEPARATOR;`
+    - La costante ora usa correttamente `DIRECTORY_SEPARATOR` invece di fare riferimento a se stessa
+
+*   **Console/Services/Installation/InstallationManager.php**:
+    - Aggiornato il pattern di sostituzione nel metodo `copyConfigFolder()` per riflettere la definizione corretta:
+    ```php
+    // Pattern di sostituzione corretto (linee 115-116):
+    "const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . DIRECTORY_SEPARATOR;",
+    "const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;",
+    ```
+
+*   **Tests/Console/Services/Installation/InstallationManagerTest.php**:
+    - Aggiornato il test `testInstallCopiesConfigFile()` per verificare la costante corretta:
+    ```php
+    $this->assertStringContainsString(
+        "const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;", 
+        $content
+    );
+    ```
+
+**Scenario del bug**:
+1. Nella versione 10.1.5, la costante `LOG_DIRECTORY_PATH` era definita usando se stessa: `... . LOG_DIRECTORY_PATH`
+2. Questo causava una definizione ricorsiva non valida che avrebbe potuto generare errori a runtime
+3. Il bug era presente sia nel file di configurazione del framework che nel processo di installazione
+
+**Impatto della correzione**:
+- Il percorso dei log viene ora costruito correttamente utilizzando `DIRECTORY_SEPARATOR`
+- Sia il file `Config/config.php` del framework che il processo di installazione automatica utilizzano la definizione corretta
+- I test verificano che la sostituzione durante l'installazione funzioni correttamente
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: La correzione risolve un bug senza modificare l'API pubblica
+*   **Installazioni Esistenti**: Progetti installati con versione 10.1.5 devono aggiornare manualmente il file `Config/configFramework.php` sostituendo la riga errata
+
+### 📊 Impatto
+
+*   **Correttezza**: Eliminata definizione ricorsiva della costante `LOG_DIRECTORY_PATH`
+*   **Stabilità**: Prevenuti potenziali errori a runtime causati dalla definizione errata
+*   **Qualità**: Test aggiornati per garantire che il processo di installazione generi la costante corretta
+
+
 ## [10.1.5] - 2025-12-20 - Correzione Configurazione Framework Post-Installazione
 
 Questa patch release corregge un problema nel processo di installazione automatica che non modificava correttamente alcune costanti del file di configurazione framework nella root del progetto.
