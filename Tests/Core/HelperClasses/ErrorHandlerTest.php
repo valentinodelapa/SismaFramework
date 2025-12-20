@@ -28,6 +28,12 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Tests\Core\Fixtures\TestLoggableException;
+use SismaFramework\Tests\Core\Fixtures\TestNonLoggableException;
+use Psr\Log\LoggerInterface;
+use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
+use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
 
 /**
  * @author Valentino de Lapa
@@ -88,5 +94,165 @@ class ErrorHandlerTest extends TestCase
         ini_set('display_errors', $originalDisplayErrors);
         ini_set('display_startup_errors', $originalDisplayStartupErrors);
         error_reporting($originalErrorReporting);
+    }
+
+    public function testErrorHandlerAcceptsLoggerInterface()
+    {
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $errorHandler = new ErrorHandler($loggerMock);
+
+        $this->assertInstanceOf(ErrorHandler::class, $errorHandler);
+    }
+
+    public function testHandleBaseExceptionLogsWhenShouldBeLoggedException()
+    {
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+            ->willReturnMap([
+                ['developmentEnvironment', true],
+                ['logVerboseActive', false]
+            ]);
+
+        $loggerMock->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->equalTo('Test loggable exception'),
+                $this->callback(function ($context) {
+                    return isset($context['code']) &&
+                           isset($context['file']) &&
+                           isset($context['line']);
+                })
+            );
+
+        $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
+        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+
+        $errorHandler = new ErrorHandler($loggerMock, $configStub);
+        $exception = new TestLoggableException('Test loggable exception', 500);
+
+        try {
+            $errorHandler->handleBaseException($exception, $defaultControllerMock, $structuralControllerMock);
+        } catch (\Exception $e) {
+        }
+    }
+
+    public function testHandleBaseExceptionDoesNotLogWhenNotShouldBeLoggedException()
+    {
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+            ->willReturnMap([
+                ['developmentEnvironment', true],
+                ['logVerboseActive', false]
+            ]);
+
+        $loggerMock->expects($this->never())
+            ->method('error');
+
+        $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
+        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+
+        $errorHandler = new ErrorHandler($loggerMock, $configStub);
+        $exception = new TestNonLoggableException('Test non-loggable exception', 400);
+
+        try {
+            $errorHandler->handleBaseException($exception, $defaultControllerMock, $structuralControllerMock);
+        } catch (\Exception $e) {
+        }
+    }
+
+    public function testHandleThrowableErrorAlwaysLogs()
+    {
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+            ->willReturnMap([
+                ['developmentEnvironment', true],
+                ['logVerboseActive', false]
+            ]);
+
+        $loggerMock->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->equalTo('Generic throwable'),
+                $this->callback(function ($context) {
+                    return isset($context['code']) &&
+                           isset($context['file']) &&
+                           isset($context['line']);
+                })
+            );
+
+        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+
+        $errorHandler = new ErrorHandler($loggerMock, $configStub);
+        $throwable = new \Exception('Generic throwable', 999);
+
+        try {
+            $errorHandler->handleThrowableError($throwable, $structuralControllerMock);
+        } catch (\Exception $e) {
+        }
+    }
+
+    public function testLogIncludesTraceWhenVerboseActive()
+    {
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+            ->willReturnMap([
+                ['developmentEnvironment', true],
+                ['logVerboseActive', true]
+            ]);
+
+        $loggerMock->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->anything(),
+                $this->callback(function ($context) {
+                    return isset($context['trace']) && is_array($context['trace']);
+                })
+            );
+
+        $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
+        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+
+        $errorHandler = new ErrorHandler($loggerMock, $configStub);
+        $exception = new TestLoggableException('Test with trace', 500);
+
+        try {
+            $errorHandler->handleBaseException($exception, $defaultControllerMock, $structuralControllerMock);
+        } catch (\Exception $e) {
+        }
+    }
+
+    public function testLogDoesNotIncludeTraceWhenVerboseInactive()
+    {
+        $loggerMock = $this->createMock(LoggerInterface::class);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+            ->willReturnMap([
+                ['developmentEnvironment', true],
+                ['logVerboseActive', false]
+            ]);
+
+        $loggerMock->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->anything(),
+                $this->callback(function ($context) {
+                    return !isset($context['trace']);
+                })
+            );
+
+        $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
+        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+
+        $errorHandler = new ErrorHandler($loggerMock, $configStub);
+        $exception = new TestLoggableException('Test without trace', 500);
+
+        try {
+            $errorHandler->handleBaseException($exception, $defaultControllerMock, $structuralControllerMock);
+        } catch (\Exception $e) {
+        }
     }
 }

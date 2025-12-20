@@ -31,6 +31,7 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\SismaLogger;
 use SismaFramework\Core\HelperClasses\SismaLogReader;
 use SismaFramework\Core\HelperClasses\Locker;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Valentino de Lapa
@@ -116,5 +117,103 @@ class LoggerTest extends TestCase
         $log = $this->logReaderOne->getLogRowByRow();
         $this->assertIsArray($log);
         $this->assertCount(2, $log);
+    }
+
+    public function testImplementsPsr3LoggerInterface()
+    {
+        $this->assertInstanceOf(LoggerInterface::class, $this->loggerOne);
+    }
+
+    public function testEmergencyMethod()
+    {
+        $this->loggerOne->emergency('emergency message');
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString("emergency\temergency message", $log);
+    }
+
+    public function testAlertMethod()
+    {
+        $this->loggerOne->alert('alert message');
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString("alert\talert message", $log);
+    }
+
+    public function testCriticalMethod()
+    {
+        $this->loggerOne->critical('critical message');
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString("critical\tcritical message", $log);
+    }
+
+    public function testWarningMethod()
+    {
+        $this->loggerOne->warning('warning message');
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString("warning\twarning message", $log);
+    }
+
+    public function testNoticeMethod()
+    {
+        $this->loggerOne->notice('notice message');
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString("notice\tnotice message", $log);
+    }
+
+    public function testInfoMethod()
+    {
+        $this->loggerOne->info('info message');
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString("info\tinfo message", $log);
+    }
+
+    public function testDebugMethod()
+    {
+        $this->loggerOne->debug('debug message');
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString("debug\tdebug message", $log);
+    }
+
+    public function testMessageInterpolation()
+    {
+        $this->loggerOne->error('User {username} failed login from {ip}', [
+            'username' => 'johndoe',
+            'ip' => '192.168.1.1',
+            'code' => 401
+        ]);
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString('User johndoe failed login from 192.168.1.1', $log);
+    }
+
+    public function testMessageInterpolationIgnoresReservedKeys()
+    {
+        $this->loggerOne->error('Message with {code}', [
+            'code' => 123,
+            'file' => 'test.php',
+            'line' => 45
+        ]);
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString('Message with {code}', $log);
+        $this->assertStringContainsString('test.php(45)', $log);
+    }
+
+    public function testLogWithoutFileAndLine()
+    {
+        $this->loggerOne->error('simple error');
+        $log = $this->logReaderOne->getLog();
+        $this->assertStringContainsString("error\tsimple error", $log);
+        $this->assertStringNotContainsString('()', $log);
+    }
+
+    public function testLogReaderAndLoggerAreSeparated()
+    {
+        $reflection = new \ReflectionClass(SismaLogger::class);
+        $this->assertFalse($reflection->hasMethod('getLog'));
+        $this->assertFalse($reflection->hasMethod('getLogRowByRow'));
+        $this->assertFalse($reflection->hasMethod('clearLog'));
+
+        $readerReflection = new \ReflectionClass(SismaLogReader::class);
+        $this->assertFalse($readerReflection->hasMethod('log'));
+        $this->assertFalse($readerReflection->hasMethod('emergency'));
+        $this->assertFalse($readerReflection->hasMethod('error'));
     }
 }
