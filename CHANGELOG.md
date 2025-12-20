@@ -3,6 +3,80 @@
 All notable changes to this project will be documented in this file.
 
 
+## [10.1.5] - 2025-12-20 - Correzione Configurazione Framework Post-Installazione
+
+Questa patch release corregge un problema nel processo di installazione automatica che non modificava correttamente alcune costanti del file di configurazione framework nella root del progetto.
+
+### 🐛 Bug Fixes
+
+#### Aggiornamento Automatico Costanti in configFramework.php
+
+Corretto il processo di installazione per aggiornare automaticamente le costanti del file `configFramework.php` creato nella root del progetto durante l'installazione:
+
+*   **InstallationManager.php (copyConfigFolder)**:
+    - Il metodo `copyConfigFolder()` ora modifica correttamente le seguenti costanti quando crea il file di configurazione nella root del progetto:
+    
+    **1. APPLICATION**:
+    - ❌ **Prima**: Rimaneva `'Sample'` (valore originale del framework)
+    - ✅ **Dopo**: Viene impostato a `'Application'`
+    
+    **2. REFERENCE_CACHE_DIRECTORY**:
+    - ❌ **Prima**: `SYSTEM_PATH . APPLICATION_PATH . CACHE . DIRECTORY_SEPARATOR`
+    - ✅ **Dopo**: `ROOT_PATH . CACHE . DIRECTORY_SEPARATOR`
+    
+    **3. LOG_DIRECTORY_PATH**:
+    - ❌ **Prima**: `SYSTEM_PATH . APPLICATION_PATH . LOGS . LOG_DIRECTORY_PATH`
+    - ✅ **Dopo**: `ROOT_PATH . LOGS . LOG_DIRECTORY_PATH`
+    
+    **4. MODULE_FOLDERS**:
+    - ❌ **Prima**: Array contenente `'SismaFramework'`
+    - ✅ **Dopo**: Array vuoto `[]`
+
+**Scenario del problema**:
+1. Utente esegue: `php SismaFramework/Console/sisma install MyProject`
+2. Il file `Config/configFramework.php` veniva creato nella root del progetto
+3. La costante `PROJECT` veniva aggiornata correttamente, ma `APPLICATION`, `REFERENCE_CACHE_DIRECTORY`, `LOG_DIRECTORY_PATH` e `MODULE_FOLDERS` mantenevano i valori del framework originale
+4. Questo causava percorsi errati per cache e log, e riferimenti all'applicazione 'Sample' invece di 'Application'
+
+**Dopo la correzione**:
+- Il file `configFramework.php` ha i valori corretti per un nuovo progetto
+- I percorsi di cache e log puntano alla root del progetto invece che al framework
+- L'applicazione è correttamente identificata come 'Application'
+- L'array MODULE_FOLDERS è vuoto, pronto per essere popolato dall'utente
+
+### 🧪 Testing
+
+#### Aggiornamento Test InstallationManager
+
+Aggiornati i test per verificare le nuove modifiche al processo di installazione:
+
+*   **InstallationManagerTest.php**:
+    - **testInstallCopiesConfigFile()**: Esteso per verificare che tutte le costanti vengano modificate correttamente:
+      - Verifica `const APPLICATION = 'Application'`
+      - Verifica `const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;`
+      - Verifica `const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . LOG_DIRECTORY_PATH;`
+      - Verifica `const MODULE_FOLDERS = [];`
+    
+    - **createFrameworkStructure()**: Aggiornato per creare un file `config.php` di test più completo con tutte le costanti necessarie:
+      - Aggiunge costanti `APPLICATION = 'Sample'`
+      - Aggiunge costanti `CACHE`, `LOGS`, `SYSTEM_PATH`, `APPLICATION_PATH`, `ROOT_PATH`
+      - Aggiunge `REFERENCE_CACHE_DIRECTORY` e `LOG_DIRECTORY_PATH` con valori originali del framework
+      - Aggiunge `MODULE_FOLDERS` con `'SismaFramework'` nel array
+      - Questo permette ai test di verificare che la trasformazione avvenga correttamente
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: Tutte le modifiche riguardano solo il processo di installazione
+*   **File Framework Invariato**: Il file `SismaFramework/Config/config.php` originale rimane inalterato
+*   **Installazioni Esistenti**: Progetti già installati non sono influenzati, solo nuove installazioni beneficiano della correzione
+
+### 📊 Impatto
+
+*   **Correttezza**: I nuovi progetti hanno la configurazione corretta fin dall'inizio
+*   **Manutenibilità**: Riduce la necessità di modifiche manuali post-installazione
+*   **Qualità**: I test garantiscono che tutte le costanti vengano aggiornate correttamente
+
+
 ## [10.1.4] - 2025-12-14 - Correzioni Installazione e Aggiornamento Test Suite PHPUnit
 
 Questa patch release corregge un bug nel processo di installazione automatica e aggiorna la test suite per conformità alle best practice di PHPUnit 11+ eliminando deprecation notices relative all'uso di mock al posto di stub.

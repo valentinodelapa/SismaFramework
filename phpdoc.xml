@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor
+        configVersion="3"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="https://www.phpdoc.org"
+        xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/3.0/xml/phpdoc.xsd">
+
+    <title>SismaFramework</title>
+
+    <paths>
+        <output>docs/api</output>
+        <cache>build/cache</cache>
+    </paths>
+
+    <version number="1.0.0">
+        <api>
+            <source dsn=".">
+                <path>src</path> 
+            </source>
+
+            <ignore>
+                <path>vendor</path>
+                <path>Sample</path>
+                <path>Tests</path>
+                <path>TestsApplication</path>
+            </ignore>
+        </api>
+    </version>
+</phpdocumentor>
