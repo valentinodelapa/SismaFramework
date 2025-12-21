@@ -27,29 +27,31 @@
 namespace SismaFramework\Core\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\Services\RouterService;
+use SismaFramework\Core\Services\RenderService;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
- *
  * @author Valentino de Lapa
  */
 abstract class BaseController
 {
-
     protected DataMapper $dataMapper;
     protected Debugger $debugger;
+    protected RouterService $router;
+    protected RenderService $render;
     protected array $vars;
 
     public function __construct(DataMapper $dataMapper = new DataMapper(), Debugger $debugger = new Debugger())
     {
         $this->dataMapper = $dataMapper;
         $this->debugger = $debugger;
-        $this->vars['controllerUrl'] = Router::getControllerUrl();
-        $this->vars['actionUrl'] = Router::getActionUrl();
-        $this->vars['metaUrl'] = Router::getMetaUrl();
-        $this->vars['actualCleanUrl'] = Router::getActualCleanUrl();
-        $this->vars['rootUrl'] = Router::getRootUrl();
+        $this->router = RouterService::getInstance();
+        $this->render = RenderService::getInstance();
+        $this->vars['controllerUrl'] = $this->router->getControllerUrl();
+        $this->vars['actionUrl'] = $this->router->getActionUrl();
+        $this->vars['metaUrl'] = $this->router->getMetaUrl();
+        $this->vars['actualCleanUrl'] = $this->router->getActualCleanUrl();
+        $this->vars['rootUrl'] = $this->router->getRootUrl();
     }
-
 }

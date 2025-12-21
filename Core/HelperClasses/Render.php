@@ -26,107 +26,20 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\Enumerations\Resource;
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Core\Services\RenderService;
 
 /**
- *
  * @author Valentino de Lapa
  */
 class Render
 {
-
-    private static bool $isStructural = false;
-    private static string $view;
-
-    public static function generateView(string $view,
-            array $vars,
-            ResponseType $responseType = ResponseType::httpOk,
-            Localizator $localizator = new Localizator(),
-            Debugger $debugger = new Debugger(),
-            ?Config $customConfig = null): Response
+    public static function __callStatic(string $method, array $arguments): mixed
     {
-        $config = $customConfig ?? Config::getInstance();
-        $debugger->setVars($vars);
-        self::assemblesComponents($view, $localizator, $vars, $config);
-        echo static::generateDebugBar($debugger, $config);
-        return new Response($responseType);
+        return RenderService::getInstance()->$method(...$arguments);
     }
 
-    private static function assemblesComponents(string $view, Localizator $localizator, array $vars, Config $config): void
+    public function __call(string $method, array $arguments): mixed
     {
-        BufferManager::start();
-        self::$view = $view;
-        $deviceClass = self::getDeviceClass();
-        $viewPath = self::getViewPath(self::$view, $config);
-        if (self::$isStructural === false) {
-            $locale = $localizator->getPageLocaleArray(self::$view);
-            extract($locale);
-        }
-        extract($vars);
-        include($viewPath);
-    }
-
-    private static function getDeviceClass(): string|false
-    {
-        $request = new Request();
-        if (isset($request->server['HTTP_USER_AGENT'])) {
-            $ua = $request->server['HTTP_USER_AGENT'];
-            return (stristr($ua, 'mobile') !== false ) ? 'mobile' : 'desktop';
-        } else {
-            return false;
-        }
-    }
-
-    private static function getViewPath(string $view, Config $config): string
-    {
-        if (self::$isStructural) {
-            return $config->structuralViewsPath . $view . '.' . Resource::php->value;
-        } else {
-            return ModuleManager::getExistingFilePath($config->viewsPath . $view, Resource::php);
-        }
-    }
-
-    private static function generateDebugBar(Debugger $debugger, Config $config): string
-    {
-        if ($config->developmentEnvironment) {
-            return $debugger->generateDebugBar();
-        } else {
-            return '';
-        }
-    }
-
-    public static function generateData(string $view, array $vars,
-            ResponseType $responseType = ResponseType::httpOk,
-            Localizator $localizator = new Localizator(),
-            ?Config $customConfig = null): Response
-    {
-        $config = $customConfig ?? Config::getInstance();
-        self::assemblesComponents($view, $localizator, $vars, $config);
-        return new Response($responseType);
-    }
-
-    public static function generateJson(array $vars,
-            ResponseType $responseType = ResponseType::httpOk): Response
-    {
-        BufferManager::start();
-        $jsonData = $vars;
-        $encodedJsonData = json_encode($jsonData);
-        header("Expires: " . gmdate('D, d-M-Y H:i:s \G\M\T', time() + 60));
-        header("Accept-Ranges: bytes");
-        header("Content-type: " . Resource::json->getContentType()->getMime());
-        header('X-Content-Type-Options: nosniff');
-        header("Content-Disposition: inline");
-        header("Content-Length: " . strlen($encodedJsonData));
-        echo $encodedJsonData;
-        return new Response($responseType);
-    }
-
-    public static function setStructural(bool $isStructural = true): void
-    {
-        self::$isStructural = $isStructural;
+        return RenderService::getInstance()->$method(...$arguments);
     }
 }

@@ -117,10 +117,13 @@ class DispatcherTest extends TestCase
         $this->resourceMakerMock->expects($this->once())
                 ->method('isAcceptedResourceFile')
                 ->willReturn(false);
-        $routerMock = $this->createMock(Router::class);
-        $routerMock->expects($this->once())
+        $routerServiceMock = $this->createMock(\SismaFramework\Core\Services\RouterService::class);
+        $routerServiceMock->expects($this->once())
                 ->method('reloadWithParsedQueryString');
-        $dispatcher->run($routerMock);
+        \SismaFramework\Core\Services\RouterService::setInstance($routerServiceMock);
+        $router = new Router();
+        $dispatcher->run($router);
+        \SismaFramework\Core\Services\RouterService::resetInstance();
     }
 
     public function testStructuralFileFopen()
