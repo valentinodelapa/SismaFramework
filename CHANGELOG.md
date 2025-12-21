@@ -3,6 +3,137 @@
 All notable changes to this project will be documented in this file.
 
 
+## [10.1.7] - 2025-12-21 - Correzione Bug buildPropertiesConditions e Test Suite
+
+Questa patch release corregge un bug critico introdotto nella versione 10.1.0 nel metodo `buildPropertiesConditions` di `DependentModel` e `SelfReferencedModel`, che impediva il corretto override del metodo di `BaseModel`. Inoltre corregge errori sistematici nella test suite che utilizzavano nomi di proprietà in formato snake_case invece di camelCase.
+
+### 🐛 Bug Fixes
+
+#### Correzione Typo Nome Metodo buildPropertiesConditions
+
+Corretto un errore di battitura nel nome del metodo introdotto nella versione 10.1.0 che impediva l'override corretto del metodo di `BaseModel`:
+
+*   **DependentModel.php** e **SelfReferencedModel.php**:
+    - ❌ **Prima (10.1.0-10.1.6)**: `protected function buildPropertyConditions(...)` (singolare - typo)
+    - ✅ **Dopo (10.1.7)**: `protected function buildPropertiesConditions(...)` (plurale - corretto)
+    - Il metodo ora fa correttamente override del metodo definito in `BaseModel`
+
+**Scenario del bug**:
+1. Nella versione 10.1.0 è stata introdotta la feature "Estensione Query Dinamiche ORM a Tutte le Proprietà"
+2. Il metodo in `BaseModel` si chiamava correttamente `buildPropertiesConditions` (plurale)
+3. Il metodo in `DependentModel` e `SelfReferencedModel` era stato erroneamente chiamato `buildPropertyConditions` (singolare)
+4. A causa del nome diverso, **non avveniva l'override** del metodo
+5. Questo causava due problemi critici:
+   - Il quarto parametro di `appendCondition()` non veniva passato correttamente per distinguere proprietà entity da builtin
+   - I bind types venivano hardcodati a `DataType::typeEntity` invece di essere determinati dinamicamente
+
+**Conseguenze del bug**:
+- Per le proprietà `ReferencedEntity`, il quarto parametro (`$isForeignKey`) non veniva impostato a `true`
+- Questo impediva l'aggiunta automatica del suffisso `_id` ai nomi delle colonne foreign key
+- Per le proprietà builtin (string, int, bool, etc.), il bind type era erroneamente `typeEntity` invece del tipo corretto
+- Query SQL potenzialmente malformate e errori di binding dei parametri
+
+**Impatto della correzione**:
+- Il metodo ora fa correttamente override, utilizzando l'implementazione specializzata per `DependentModel`/`SelfReferencedModel`
+- Il quarto parametro di `appendCondition()` viene passato correttamente: `$propertyValue instanceof ReferencedEntity`
+- I bind types vengono determinati dinamicamente tramite `DataType::fromReflection()` invece di essere hardcodati
+- Le query SQL vengono costruite correttamente con i suffissi `_id` per le foreign key
+
+*   **Aggiunto import mancante**:
+    - `use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;` in `DependentModel.php`
+    - Necessario per il check `$propertyValue instanceof ReferencedEntity`
+
+#### Correzione Test Suite: Convenzione Naming Proprietà
+
+Corretti errori sistematici nella test suite che utilizzavano nomi di proprietà in formato snake_case (convenzione database) invece di camelCase (convenzione PHP):
+
+*   **DependentModelTest.php** (12 occorrenze corrette):
+    - ❌ **Prima**: `'referenced_entity_with_initialization'`, `'string_with_inizialization'`, `'nullable_string_with_inizialization'`
+    - ✅ **Dopo**: `'referencedEntityWithInitialization'`, `'stringWithInizialization'`, `'nullableStringWithInizialization'`
+
+*   **SelfReferencedModelTest.php** (6 occorrenze corrette):
+    - ❌ **Prima**: `'parent_self_referenced_sample'`, `'base_sample'`
+    - ✅ **Dopo**: `'parentSelfReferencedSample'`, `'baseSample'`
+
+**Motivo del problema**:
+- I metodi `getEntityCollectionByEntity()`, `countEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()` accettano array con chiavi = **nomi proprietà PHP** (camelCase)
+- I test utilizzavano erroneamente nomi di colonne database (snake_case)
+- Questo causava `ReflectionException` perché `new \ReflectionProperty($entityName, 'referenced_entity_with_initialization')` cercava una proprietà inesistente
+- La proprietà corretta è `$referencedEntityWithInitialization` (camelCase)
+
+**Esempio di correzione**:
+```php
+// ❌ PRIMA (errato - nome colonna database):
+$posts = $postModel->getEntityCollectionByEntity(['author_id' => $user]);
+
+// ✅ DOPO (corretto - nome proprietà PHP):
+$posts = $postModel->getEntityCollectionByEntity(['author' => $user]);
+```
+
+**Convenzione del framework**:
+- Magic methods: `getByAuthor($user)` → genera internamente `['author' => $user]` (camelCase)
+- Metodi espliciti: devono ricevere `['author' => $user]` (camelCase), non `['author_id' => $user]`
+- La conversione snake_case → camelCase avviene automaticamente solo nella costruzione delle query SQL
+
+### 🧪 Testing
+
+#### Nuovi Test per Prevenire Regressioni
+
+Aggiunti 2 nuovi test in `DependentModelTest.php` che avrebbero catturato il bug della versione 10.1.0:
+
+*   **`testBuildPropertiesConditionsPassesCorrectFourthParameterToAppendCondition()`**:
+    - Verifica che il quarto parametro di `appendCondition()` sia `true` per proprietà `ReferencedEntity`
+    - Verifica che il quarto parametro sia `false` per proprietà builtin (string, bool, int)
+    - **Questo test avrebbe fallito** con il bug 10.1.0-10.1.6 perché il metodo non veniva sovrascritto
+
+*   **`testBuildPropertiesConditionsGeneratesCorrectBindTypesForMixedProperties()`**:
+    - Verifica che i bind types siano corretti per proprietà miste (entity + builtin)
+    - Usa spy pattern per catturare i valori effettivi di `$bindTypes` passati a `DataMapper::getCount()`
+    - Verifica: `DataType::typeEntity` per `ReferencedEntity`, `DataType::typeBoolean` per `bool`, `DataType::typeString` per `string`
+    - **Questo test avrebbe fallito** con il bug 10.1.0-10.1.6 che hardcodava `DataType::typeEntity` per tutte le proprietà
+
+**Copertura test totale**:
+- 2 nuovi test aggiunti
+- 18 test esistenti corretti (convenzione naming)
+- Tutti i test ora passano correttamente
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: La correzione ripristina il comportamento previsto dalla versione 10.1.0
+*   **API Pubblica Invariata**: Tutti i metodi pubblici mantengono la stessa firma
+*   **Convenzione Esistente**: I progetti che utilizzavano correttamente nomi di proprietà in camelCase non sono affetti
+
+### 📊 Impatto
+
+*   **Correttezza**: Query SQL ora costruite correttamente con suffissi `_id` per foreign key
+*   **Type Safety**: Bind types corretti per tutte le tipologie di proprietà
+*   **Stabilità**: Eliminati errori di binding e query malformate
+*   **Test Coverage**: Aggiunti test specifici per prevenire regressioni future
+*   **Qualità**: Test suite conforme alle convenzioni del framework
+
+### 🎓 Note per gli Sviluppatori
+
+Quando si utilizzano i metodi `getEntityCollectionByEntity()`, `countEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()`, ricordare che le chiavi dell'array devono essere **nomi di proprietà PHP in camelCase**, non nomi di colonne database in snake_case:
+
+```php
+// ✅ CORRETTO:
+$posts = $postModel->getEntityCollectionByEntity([
+    'author' => $user,           // nome proprietà PHP
+    'category' => $category,     // nome proprietà PHP
+    'isPublished' => true        // nome proprietà PHP
+]);
+
+// ❌ ERRATO:
+$posts = $postModel->getEntityCollectionByEntity([
+    'author_id' => $user,        // nome colonna database - causerà ReflectionException
+    'category_id' => $category,  // nome colonna database - causerà ReflectionException
+    'is_published' => true       // nome colonna database - causerà ReflectionException
+]);
+```
+
+La conversione da camelCase (proprietà PHP) a snake_case (colonne database) avviene automaticamente all'interno del framework tramite `NotationManager`.
+
+
 ## [10.1.6] - 2025-12-20 - Hotfix Costante LOG_DIRECTORY_PATH
 
 Questa patch release corregge un bug critico introdotto nella versione 10.1.5 relativo alla definizione ricorsiva della costante `LOG_DIRECTORY_PATH` nel file di configurazione.

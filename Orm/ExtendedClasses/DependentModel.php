@@ -30,12 +30,11 @@ namespace SismaFramework\Orm\ExtendedClasses;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\BaseClasses\BaseModel;
-use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Core\Exceptions\ModelException;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\HelperClasses\Query;
 
 /**
@@ -53,7 +52,7 @@ abstract class DependentModel extends BaseModel
         $query = $this->initQuery();
         $query->setWhere();
         $bindValues = $bindTypes = [];
-        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -62,15 +61,16 @@ abstract class DependentModel extends BaseModel
         return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
     }
 
-    protected function buildPropertyConditions(Query $query, array $properties, array &$bindValues, array &$bindTypes): void
+    protected function buildPropertiesConditions(Query $query, array $properties, array &$bindValues, array &$bindTypes): void
     {
         foreach ($properties as $propertyName => $propertyValue) {
             if ($propertyValue === null) {
                 $query->appendCondition($propertyName, ComparisonOperator::isNull, '', $propertyValue instanceof ReferencedEntity);
             } else {
                 $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, $propertyValue instanceof ReferencedEntity);
+                $reflectionNamedType = new \ReflectionProperty($this->entityName, $propertyName);
                 $bindValues[] = $propertyValue;
-                $bindTypes[] = DataType::typeEntity;
+                $bindTypes[] = DataType::fromReflection($reflectionNamedType->getType(), $propertyValue);
             }
             if ($propertyName !== array_key_last($properties)) {
                 $query->appendAnd();
@@ -86,7 +86,7 @@ abstract class DependentModel extends BaseModel
         $query = $this->initQuery();
         $query->setWhere();
         $bindValues = $bindTypes = [];
-        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -110,7 +110,7 @@ abstract class DependentModel extends BaseModel
         $query = $this->initQuery();
         $query->setWhere();
         $bindValues = $bindTypes = [];
-        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
