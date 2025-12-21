@@ -115,7 +115,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -137,7 +137,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildPropertyConditions($query, $properties, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $properties, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -189,7 +189,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -218,7 +218,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildPropertyConditions($query, $properties, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $properties, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -303,7 +303,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildPropertyConditions($query, $referencedEntities, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -325,7 +325,7 @@ abstract class SelfReferencedModel extends DependentModel
             $bindTypes[] = DataType::typeEntity;
         }
         $query->appendAnd();
-        $this->buildPropertyConditions($query, $properties, $bindValues, $bindTypes);
+        $this->buildPropertiesConditions($query, $properties, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);

@@ -4896,10 +4896,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_countEntityCollectionByEntity"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AbuildPropertyConditions\u0028\u0029",
-            "name": "buildPropertyConditions",
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AbuildPropertiesConditions\u0028\u0029",
+            "name": "buildPropertiesConditions",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_buildPropertyConditions"
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_buildPropertiesConditions"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AgetEntityCollectionByEntity\u0028\u0029",
             "name": "getEntityCollectionByEntity",

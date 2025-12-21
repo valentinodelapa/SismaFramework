@@ -252,7 +252,7 @@ class SelfReferencedModelTest extends TestCase
     {
         $this->initializeMock();
         $parentEntity = $this->createStub(SelfReferencedSample::class);
-        $referencedEntities = ['parent_self_referenced_sample' => $this->createStub(SelfReferencedSample::class)];
+        $referencedEntities = ['parentSelfReferencedSample' => $this->createStub(SelfReferencedSample::class)];
         $expectedCount = 1;
 
         $this->dataMapperMock->expects($this->once())
@@ -329,7 +329,7 @@ class SelfReferencedModelTest extends TestCase
     {
         $this->initializeMock();
         $parentEntity = $this->createStub(SelfReferencedSample::class);
-        $referencedEntities = ['parent_self_referenced_sample' => $this->createStub(SelfReferencedSample::class)];
+        $referencedEntities = ['parentSelfReferencedSample' => $this->createStub(SelfReferencedSample::class)];
         $expectedCollection = new SismaCollection(SelfReferencedSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -465,7 +465,7 @@ class SelfReferencedModelTest extends TestCase
     {
         $this->initializeMock();
         $parentEntity = $this->createStub(SelfReferencedSample::class);
-        $referencedEntities = ['parent_self_referenced_sample' => $this->createStub(SelfReferencedSample::class)];
+        $referencedEntities = ['parentSelfReferencedSample' => $this->createStub(SelfReferencedSample::class)];
 
         $this->dataMapperMock->expects($this->once())
             ->method('initQuery')
@@ -523,7 +523,7 @@ class SelfReferencedModelTest extends TestCase
         $parentEntity = $this->createStub(SelfReferencedSample::class);
         $baseSampleEntity = $this->createStub(\SismaFramework\TestsApplication\Entities\BaseSample::class);
         $referencedEntities = [
-            'base_sample' => $baseSampleEntity,
+            'baseSample' => $baseSampleEntity,
             'text' => 'test text'
         ];
         $expectedCount = 2;
@@ -558,7 +558,7 @@ class SelfReferencedModelTest extends TestCase
         $parentEntity = $this->createStub(SelfReferencedSample::class);
         $baseSampleEntity = $this->createStub(\SismaFramework\TestsApplication\Entities\BaseSample::class);
         $referencedEntities = [
-            'base_sample' => $baseSampleEntity,
+            'baseSample' => $baseSampleEntity,
             'text' => 'sample text'
         ];
         $searchKey = 'search';
@@ -608,7 +608,7 @@ class SelfReferencedModelTest extends TestCase
         $this->initializeMock();
         $parentEntity = $this->createStub(SelfReferencedSample::class);
         $referencedEntities = [
-            'base_sample' => null,
+            'baseSample' => null,
             'text' => 'delete this'
         ];
 
