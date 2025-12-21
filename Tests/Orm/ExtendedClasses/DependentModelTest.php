@@ -37,6 +37,7 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\TestsApplication\Models\BaseSampleModel;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\Orm\Enumerations\DataType;
 
 /**
  * Test for DependentModel class
@@ -204,7 +205,7 @@ class DependentModelTest extends TestCase
     public function testCountEntityCollectionByEntityWithNullEntity()
     {
         $this->initializeMock();
-        $referencedEntities = ['referenced_entity_with_initialization' => null];
+        $referencedEntities = ['referencedEntityWithInitialization' => null];
         $expectedCount = 3;
 
         $this->dataMapperMock->expects($this->once())
@@ -232,7 +233,7 @@ class DependentModelTest extends TestCase
     {
         $this->initializeMock();
         $referencedEntity = $this->createStub(ReferencedSample::class);
-        $referencedEntities = ['referenced_entity_with_initialization' => $referencedEntity];
+        $referencedEntities = ['referencedEntityWithInitialization' => $referencedEntity];
         $searchKey = 'test search';
         $expectedCount = 2;
 
@@ -264,7 +265,7 @@ class DependentModelTest extends TestCase
     {
         $this->initializeMock();
         $referencedEntity = $this->createStub(ReferencedSample::class);
-        $referencedEntities = ['referenced_entity_with_initialization' => $referencedEntity];
+        $referencedEntities = ['referencedEntityWithInitialization' => $referencedEntity];
         $searchKey = 'test';
         $order = ['name' => 'ASC'];
         $offset = 10;
@@ -311,7 +312,7 @@ class DependentModelTest extends TestCase
     {
         $this->initializeMock();
         $referencedEntity = $this->createStub(ReferencedSample::class);
-        $referencedEntities = ['referenced_entity_with_initialization' => $referencedEntity];
+        $referencedEntities = ['referencedEntityWithInitialization' => $referencedEntity];
 
         $this->dataMapperMock->expects($this->once())
                 ->method('initQuery')
@@ -339,9 +340,9 @@ class DependentModelTest extends TestCase
         $this->initializeMock();
         $referencedEntity = $this->createStub(ReferencedSample::class);
         $referencedEntities = [
-            'referenced_entity_with_initialization' => $referencedEntity,
+            'referencedEntityWithInitialization' => $referencedEntity,
             'boolean' => true,
-            'string_with_inizialization' => 'test string'
+            'stringWithInizialization' => 'test string'
         ];
         $expectedCollection = new SismaCollection(BaseSample::class);
 
@@ -376,8 +377,8 @@ class DependentModelTest extends TestCase
     {
         $this->initializeMock();
         $referencedEntities = [
-            'referenced_entity_with_initialization' => null,
-            'nullable_string_with_inizialization' => null
+            'referencedEntityWithInitialization' => null,
+            'nullableStringWithInizialization' => null
         ];
         $expectedCount = 4;
 
@@ -410,7 +411,7 @@ class DependentModelTest extends TestCase
         $this->initializeMock();
         $referencedEntity = $this->createStub(ReferencedSample::class);
         $referencedEntities = [
-            'referenced_entity_with_initialization' => $referencedEntity,
+            'referencedEntityWithInitialization' => $referencedEntity,
             'boolean' => false
         ];
 
@@ -443,7 +444,7 @@ class DependentModelTest extends TestCase
         $this->initializeMock();
         $excludedEntity = $this->createStub(BaseSample::class);
         $referencedEntity = $this->createStub(ReferencedSample::class);
-        $propertyName = 'referenced_entity_with_initialization';
+        $propertyName = 'referencedEntityWithInitialization';
         $expectedCollection = new SismaCollection(BaseSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -474,7 +475,7 @@ class DependentModelTest extends TestCase
     {
         $this->initializeMock();
         $excludedEntity = $this->createStub(BaseSample::class);
-        $propertyName = 'referenced_entity_with_initialization';
+        $propertyName = 'referencedEntityWithInitialization';
         $expectedCollection = new SismaCollection(BaseSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -600,5 +601,137 @@ class DependentModelTest extends TestCase
 
         $result = $this->model->deleteByReferencedEntityWithInitialization($referencedEntity, 'searchKey');
         $this->assertTrue($result);
+    }
+
+    /**
+     * Test che verifica che il quarto parametro di appendCondition sia corretto
+     * per proprietà miste (entity e builtin).
+     * 
+     * Questo test avrebbe catturato il bug della versione 10.1.0 dove il metodo
+     * buildPropertyConditions (typo) non passava correttamente il quarto parametro
+     * e non faceva override del metodo di BaseModel.
+     */
+    public function testBuildPropertiesConditionsPassesCorrectFourthParameterToAppendCondition()
+    {
+        $this->initializeMock();
+        $referencedEntity = $this->createStub(ReferencedSample::class);
+        $referencedEntities = [
+            'referencedEntityWithInitialization' => $referencedEntity,  // ReferencedEntity
+            'boolean' => true,                                              // builtin
+            'stringWithInizialization' => 'test'                         // builtin
+        ];
+
+        $this->dataMapperMock->expects($this->once())
+                ->method('initQuery')
+                ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+                ->method('setWhere');
+
+        // Verifica che appendCondition venga chiamato con il quarto parametro corretto
+        $invokedCount = $this->exactly(3);
+        $this->queryMock->expects($invokedCount)
+                ->method('appendCondition')
+                ->willReturnCallback(function ($column, $operator, $value, $isForeignKey = false) use ($invokedCount) {
+                    switch ($invokedCount->numberOfInvocations()) {
+                        case 1:
+                            // Prima proprietà: referenced_entity_with_initialization (ReferencedEntity)
+                            $this->assertEquals('referencedEntityWithInitialization', $column);
+                            $this->assertTrue($isForeignKey, 'Il quarto parametro deve essere TRUE per ReferencedEntity');
+                            break;
+                        case 2:
+                            // Seconda proprietà: boolean (builtin)
+                            $this->assertEquals('boolean', $column);
+                            $this->assertFalse($isForeignKey, 'Il quarto parametro deve essere FALSE per proprietà builtin');
+                            break;
+                        case 3:
+                            // Terza proprietà: string_with_inizialization (builtin)
+                            $this->assertEquals('stringWithInizialization', $column);
+                            $this->assertFalse($isForeignKey, 'Il quarto parametro deve essere FALSE per proprietà builtin');
+                            break;
+                    }
+                    return $this->queryMock;
+                });
+
+        $this->queryMock->expects($this->exactly(2))
+                ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+                ->method('setOrderBy');
+
+        $this->queryMock->expects($this->once())
+                ->method('close');
+
+        $expectedCollection = new SismaCollection(BaseSample::class);
+        $this->dataMapperMock->expects($this->once())
+                ->method('find')
+                ->willReturn($expectedCollection);
+
+        $result = $this->model->getEntityCollectionByEntity($referencedEntities);
+        $this->assertInstanceOf(SismaCollection::class, $result);
+    }
+
+    /**
+     * Test che verifica che i bind types siano determinati correttamente
+     * per proprietà miste (entity e builtin).
+     * 
+     * Questo test avrebbe catturato il bug della versione 10.1.0 dove
+     * buildPropertyConditions hardcodava DataType::typeEntity per tutte
+     * le proprietà invece di usare DataType::fromReflection().
+     */
+    public function testBuildPropertiesConditionsGeneratesCorrectBindTypesForMixedProperties()
+    {
+        $this->initializeMock();
+        $referencedEntity = $this->createStub(ReferencedSample::class);
+        $referencedEntities = [
+            'referencedEntityWithInitialization' => $referencedEntity,
+            'boolean' => true,
+            'stringWithInizialization' => 'test string'
+        ];
+
+        $this->dataMapperMock->expects($this->once())
+                ->method('initQuery')
+                ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+                ->method('setWhere');
+
+        $this->queryMock->expects($this->exactly(3))
+                ->method('appendCondition');
+
+        $this->queryMock->expects($this->exactly(2))
+                ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+                ->method('close');
+
+        // Spy per catturare i bind types passati a getCount
+        $capturedBindTypes = null;
+        $this->dataMapperMock->expects($this->once())
+                ->method('getCount')
+                ->willReturnCallback(function ($query, $bindValues, $bindTypes) use (&$capturedBindTypes) {
+                    $capturedBindTypes = $bindTypes;
+                    return 5;
+                });
+
+        $result = $this->model->countEntityCollectionByEntity($referencedEntities);
+
+        // Verifica che i bind types siano corretti
+        $this->assertIsArray($capturedBindTypes);
+        $this->assertCount(3, $capturedBindTypes);
+        
+        // Prima proprietà: ReferencedEntity -> typeEntity
+        $this->assertEquals(DataType::typeEntity, $capturedBindTypes[0], 
+            'Il bind type per ReferencedEntity deve essere typeEntity');
+        
+        // Seconda proprietà: boolean -> typeBoolean
+        $this->assertEquals(DataType::typeBoolean, $capturedBindTypes[1], 
+            'Il bind type per boolean deve essere typeBoolean, NON typeEntity');
+        
+        // Terza proprietà: string -> typeString
+        $this->assertEquals(DataType::typeString, $capturedBindTypes[2], 
+            'Il bind type per string deve essere typeString, NON typeEntity');
+        
+        $this->assertEquals(5, $result);
     }
 }
