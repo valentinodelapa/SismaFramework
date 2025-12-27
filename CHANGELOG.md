@@ -135,6 +135,83 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
 
 * **Dependency Injection in BaseAdapter**: La classe `BaseAdapter` e le sue sottoclassi (`AdapterMysql`) ora accettano `LoggerInterface` via costruttore per logging delle query SQL e degli errori di connessione database.
 
+* **Implementazione Pattern Facade per Render e Router**: Le classi `Render` e `Router` sono state rifattorizzate implementando il pattern Facade combinato con Singleton, separando la logica di business in Service classes dedicate:
+
+  - **`RenderService`** (`Core/Services/RenderService.php`): Nuova classe singleton che contiene tutta la logica di rendering delle view
+    - Pattern Singleton con metodi `getInstance()`, `setInstance()`, `resetInstance()`
+    - Metodi per rendering: `generateView()`, `generateData()`, `generateJson()`
+    - Gestione completa del ciclo di vita del rendering (assembly componenti, device detection, debug bar)
+    - Supporto per view strutturali e modulari
+    - Dependency injection di `Localizator`, `Debugger`, `Config` per massima testabilità
+  
+  - **`RouterService`** (`Core/Services/RouterService.php`): Nuova classe singleton che gestisce tutte le operazioni di routing
+    - Pattern Singleton con metodi `getInstance()`, `setInstance()`, `resetInstance()`
+    - Gestione URL: `redirect()`, `concatenateMetaUrl()`, `setMetaUrl()`, `getMetaUrl()`
+    - Gestione route: `setActualCleanUrl()`, `getControllerUrl()`, `getActionUrl()`, `getActualCleanUrl()`
+    - Metodi di utilità: `getRootUrl()`, `getActualUrl()`, `resetMetaUrl()`, `reloadWithParsedQueryString()`
+    - Stato incapsulato in istanza singleton invece di proprietà statiche
+  
+  - **`Render` come Facade** (`Core/HelperClasses/Render.php`): La classe `Render` è ora una facade pura che delega a `RenderService`
+    - Implementa `__callStatic()` per chiamate statiche: `Render::generateView()` → `RenderService::getInstance()->generateView()`
+    - Implementa `__call()` per chiamate di istanza: `$render->generateView()` → `RenderService::getInstance()->generateView()`
+    - Retrocompatibilità totale: tutte le chiamate esistenti continuano a funzionare
+    - Zero logica di business: solo delegazione al service sottostante
+  
+  - **`Router` come Facade** (`Core/HelperClasses/Router.php`): La classe `Router` è ora una facade pura che delega a `RouterService`
+    - Implementa `__callStatic()` per chiamate statiche: `Router::redirect()` → `RouterService::getInstance()->redirect()`
+    - Implementa `__call()` per chiamate di istanza: `$router->redirect()` → `RouterService::getInstance()->redirect()`
+    - Retrocompatibilità totale: tutte le chiamate esistenti continuano a funzionare
+    - Zero logica di business: solo delegazione al service sottostante
+
+  **Vantaggi del Pattern Facade + Singleton**:
+  - **Flessibilità di utilizzo**: Possibilità di usare sia sintassi statica (`Render::generateView()`) che di istanza (`$this->render->generateView()`)
+  - **Dependency Injection nei Controller**: `BaseController` ora ha proprietà `$this->render` e `$this->router` utilizzabili come istanze
+  - **Testabilità**: Metodi `setInstance()` permettono di iniettare mock nei test
+  - **Isolamento dello stato**: Lo stato è incapsulato nel singleton invece di proprietà statiche sparse
+  - **Retrocompatibilità al 100%**: Nessun breaking change, tutto il codice esistente continua a funzionare
+  - **Separazione delle responsabilità**: Facade (interfaccia pubblica) separato da Service (logica di business)
+  - **Facilità di testing**: Metodo `resetInstance()` permette di resettare lo stato nei test
+
+  **Utilizzo nei Controller**:
+  ```php
+  class ProductController extends BaseController
+  {
+      public function index(): Response
+      {
+          // Sintassi di istanza (nuovo, preferito):
+          return $this->render->generateView('product/index', $this->vars);
+          
+          // Sintassi statica (legacy, ancora supportato):
+          return Render::generateView('product/index', $this->vars);
+      }
+      
+      public function create(): Response
+      {
+          // Sintassi di istanza per router:
+          return $this->router->redirect('product/list');
+          
+          // Sintassi statica (legacy):
+          return Router::redirect('product/list');
+      }
+  }
+  ```
+
+* **Proprietà Render e Router in BaseController**: La classe `BaseController` ora inizializza le proprietà `$this->render` e `$this->router` nel costruttore:
+  ```php
+  protected RenderService $router;
+  protected RenderService $render;
+  
+  public function __construct(DataMapper $dataMapper = new DataMapper(), Debugger $debugger = new Debugger())
+  {
+      $this->dataMapper = $dataMapper;
+      $this->debugger = $debugger;
+      $this->router = RouterService::getInstance();
+      $this->render = RenderService::getInstance();
+      // ...
+  }
+  ```
+  Questo permette di utilizzare `$this->render` e `$this->router` come istanze in tutti i controller che estendono `BaseController`.
+
 ### 💥 Breaking Changes
 
 * **Rimozione Metodo Response::setResponseType()**: Il metodo pubblico setResponseType() è stato rimosso dalla classe Response
@@ -281,6 +358,36 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
   - `DebuggerTest.php`: Modificato per creare istanze di `Debugger` con dependency injection di `LogReaderInterface`
   - Verifica isolamento dello stato tra multiple istanze di debugger
 
+* **Test Completi per Pattern Facade Render e Router**: Aggiunti test completi per verificare il corretto funzionamento del pattern Facade e dei Service sottostanti:
+  
+  - **`RenderServiceTest.php`** (259 linee): Test completi per la classe `RenderService`
+    - Test pattern Singleton: verifica che `getInstance()` ritorni sempre la stessa istanza
+    - Test `setInstance()` e `resetInstance()` per dependency injection nei test
+    - Test rendering view con diverse configurazioni (view standard, view strutturali)
+    - Test `generateView()`, `generateData()`, `generateJson()` con vari parametri
+    - Verifica generazione debug bar in development environment
+    - Test device detection (mobile/desktop)
+    - Test integrazione con `Localizator`, `Debugger`, `Config`
+    - Test gestione path view modulari e strutturali
+  
+  - **`RouterServiceTest.php`** (195 linee): Test completi per la classe `RouterService`
+    - Test pattern Singleton con `getInstance()`, `setInstance()`, `resetInstance()`
+    - Test `redirect()` con vari scenari di URL
+    - Test `concatenateMetaUrl()`, `setMetaUrl()`, `getMetaUrl()`
+    - Test `setActualCleanUrl()`, `getControllerUrl()`, `getActionUrl()`, `getActualCleanUrl()`
+    - Test `getRootUrl()`, `getActualUrl()` con diverse configurazioni di server
+    - Test `resetMetaUrl()` per reset dello stato
+    - Test `reloadWithParsedQueryString()` per parsing query string in URL
+    - Verifica isolamento dello stato tra reset delle istanze
+  
+  - **`BaseControllerTest.php`**: Esteso con nuovi test per le proprietà `$render` e `$router`
+    - Test che `$this->render` sia istanza di `RenderService`
+    - Test che `$this->router` sia istanza di `RouterService`
+    - Verifica inizializzazione corretta nel costruttore di `BaseController`
+    - Test che le variabili di routing (`controllerUrl`, `actionUrl`, `metaUrl`, etc.) siano popolate correttamente
+
+**Copertura totale**: +603 linee di test per garantire affidabilità del nuovo pattern architetturale.
+
 ### 📝 Documentazione
 
 * **Classi Marcate @internal**: Le tre nuove classi helper sono marcate con l'annotazione `@internal` per indicare che fanno parte dell'implementazione interna di `BaseForm` e non dovrebbero essere utilizzate direttamente dagli sviluppatori.
@@ -290,8 +397,12 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
 **Questa è una major release (11.0.0)** che introduce breaking changes. L'aggiornamento richiede modifiche al codice esistente:
 
 - ⚠️ **Richiesta modifica**: Tutte le classi che estendono `BaseForm` devono aggiornare il metodo `customFilter()` per ritornare `bool`
-- ✅ **Retrocompatibilità API**: Tutti gli altri metodi pubblici e protetti di `BaseForm` mantengono la stessa interfaccia
-- ✅ **Nessun impatto su DataMapper/ORM**: Le modifiche sono isolate al sistema di form
+- ⚠️ **Richiesta modifica**: Il file `Public/index.php` deve essere aggiornato per creare istanze di `ErrorHandler` e `Debugger` invece di usare metodi statici
+- ✅ **Retrocompatibilità API BaseForm**: Tutti gli altri metodi pubblici e protetti di `BaseForm` mantengono la stessa interfaccia
+- ✅ **Retrocompatibilità API Response**: Constructor injection mantiene compatibilità con chiamate esistenti a `new Response()`
+- ✅ **Retrocompatibilità totale Render/Router**: Il pattern Facade garantisce che tutte le chiamate esistenti (statiche o di istanza) continuino a funzionare senza modifiche
+- ✅ **Nessun impatto su DataMapper/ORM**: Le modifiche sono isolate ai sistemi di form, logging, rendering e routing
+- 💡 **Nuova sintassi preferita**: Nei controller, preferire `$this->render->generateView()` e `$this->router->redirect()` invece della sintassi statica legacy
 
 ### 📋 Checklist di Migrazione da 10.x a 11.0.0
 
