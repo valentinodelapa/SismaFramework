@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [11.0.0] - 2025-11-18 - Rifattorizzazione Architetturale e Semplificazione API
 
-Questa major release introduce miglioramenti architetturali significativi: rifattorizzazione completa di BaseForm con principi SOLID e semplificazione API Response attraverso rimozione del metodo pubblico setResponseType().
+Questa major release introduce miglioramenti architetturali significativi: rifattorizzazione completa di BaseForm con principi SOLID, semplificazione API Response attraverso rimozione del metodo pubblico setResponseType(), e implementazione completa dello standard PSR-3 per il logging con supporto per logger di terze parti.
 
-La release introduce breaking changes: il metodo astratto customFilter() di BaseForm ora ritorna bool invece di void, e il metodo pubblico setResponseType() di Response è stato rimosso in favore dell'immutabilità tramite constructor injection.
+La release introduce breaking changes: il metodo astratto customFilter() di BaseForm ora ritorna bool invece di void, il metodo pubblico setResponseType() di Response è stato rimosso in favore dell'immutabilità tramite constructor injection, e le classi ErrorHandler e Debugger sono state trasformate da statiche a di istanza per migliorare testabilità e dependency injection.
+
 ### 🏗️ Architettura
 
 * **Rifattorizzazione Completa BaseForm con Principi SOLID**: La classe `BaseForm` è stata completamente rifattorizzata applicando il Single Responsibility Principle, con estrazione delle responsabilità in classi dedicate:
@@ -51,7 +52,88 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
   ```
   Questo permette di iniettare implementazioni custom per testing o estensioni.
 
-### 💥 Breaking Changes
+* **Implementazione Standard PSR-3 per Logging**: Il sistema di logging del framework è stato completamente rifattorizzato per aderire allo standard PSR-3 (PHP Standards Recommendation 3), permettendo l'integrazione di logger di terze parti:
+
+  - **`SismaLogger`** (`Core/HelperClasses/SismaLogger.php`): Nuova classe che implementa `Psr\Log\LoggerInterface`
+    - Implementa tutti i metodi PSR-3: `emergency()`, `alert()`, `critical()`, `error()`, `warning()`, `notice()`, `info()`, `debug()`
+    - Metodo `log()` con supporto completo per interpolazione dei placeholder (`{key}`) secondo PSR-3
+    - Supporto per context array con chiavi riservate: `code`, `file`, `line`, `trace`
+    - Gestione automatica di trace per debug approfondito
+    - Dependency injection di `Locker` e `Config` per massima testabilità
+  
+  - **`SismaLogReader`** (`Core/HelperClasses/SismaLogReader.php`): Nuova classe per la lettura strutturata dei log
+    - Implementa `LogReaderInterface` per permettere implementazioni custom
+    - Metodo `getLogRowByRow()` per lettura riga per riga dei file di log
+    - Integrato con `Debugger` per visualizzazione nella debug bar
+  
+  - **`LogReaderInterface`** (`Core/Interfaces/Logging/LogReaderInterface.php`): Nuova interfaccia per astrazione lettori di log
+  
+  - **`ShouldBeLoggedException`** (`Security/Interfaces/Exceptions/ShouldBeLoggedException.php`): Nuova marker interface
+    - Permette alle eccezioni di dichiarare esplicitamente se devono essere loggate
+    - `ErrorHandler` verifica automaticamente se un'eccezione implementa questa interfaccia
+    - Separazione delle responsabilità: le eccezioni decidono autonomamente il loro comportamento di logging
+
+  **Vantaggi dell'implementazione PSR-3**:
+  - **Interoperabilità**: Possibilità di sostituire `SismaLogger` con qualsiasi logger PSR-3 compatibile (Monolog, Log4php, etc.)
+  - **Standard de facto**: Conformità allo standard più diffuso nell'ecosistema PHP
+  - **Dependency Injection**: Logger iniettabile via costruttore in `ErrorHandler`, `BaseAdapter`, e altre classi
+  - **Context-aware**: Supporto per metadati contestuali tramite array `$context`
+  - **Testing facilitato**: Possibilità di iniettare logger mock nei test
+  - **Compatibilità framework**: Integrazione semplificata con framework di terze parti
+
+  **Esempio di utilizzo con logger custom**:
+  ```php
+  use Monolog\Logger;
+  use Monolog\Handler\StreamHandler;
+  
+  // Logger di terze parti (Monolog)
+  $monolog = new Logger('app');
+  $monolog->pushHandler(new StreamHandler('path/to/your.log', Logger::WARNING));
+  
+  // Injection in ErrorHandler
+  $errorHandler = new ErrorHandler(logger: $monolog);
+  $errorHandler->registerNonThrowableErrorHandler();
+  ```
+
+* **Trasformazione ErrorHandler e Debugger da Statiche a di Istanza**: Le classi `ErrorHandler` e `Debugger` sono state completamente rifattorizzate da classi con metodi statici a classi di istanza con dependency injection:
+
+  - **`ErrorHandler`** (`Core/HelperClasses/ErrorHandler.php`):
+    - ❌ **Prima (10.x)**: Tutti i metodi erano statici: `ErrorHandler::disableErrorDisplay()`, `ErrorHandler::handleBaseException()`
+    - ✅ **Dopo (11.0.0)**: Classe di istanza con costruttore che accetta `LoggerInterface` e `Config`
+    - Metodi rinominati per chiarezza: `handleNonThrowableError()` → `registerNonThrowableErrorHandler()`
+    - Nuovo metodo `handleBaseException()` che verifica `ShouldBeLoggedException` prima di loggare
+    - Nuovo metodo `handleThrowableError()` per gestione generica di `Throwable`
+  
+  - **`Debugger`** (`Core/HelperClasses/Debugger.php`):
+    - ❌ **Prima (10.x)**: Metodi statici con stato globale condiviso
+    - ✅ **Dopo (11.0.0)**: Classe di istanza con costruttore che accetta `LogReaderInterface`
+    - Dependency injection di `SismaLogReader` (o implementazioni custom)
+    - Stato isolato per istanza, permettendo multiple istanze di debugger
+  
+  - **Aggiornamento `Public/index.php`**: Modificato il bootstrap dell'applicazione per utilizzare le nuove classi di istanza:
+    ```php
+    // Prima (10.x):
+    ErrorHandler::disableErrorDisplay();
+    ErrorHandler::handleNonThrowableError();
+    Debugger::startExecutionTimeCalculation();
+    
+    // Dopo (11.0.0):
+    $errorHandler = new ErrorHandler();
+    $errorHandler->disableErrorDisplay();
+    $errorHandler->registerNonThrowableErrorHandler();
+    $debugger = new Debugger();
+    $debugger->startExecutionTimeCalculation();
+    $dispatcher = new Dispatcher(debugger: $debugger);
+    ```
+  
+  **Motivazione della trasformazione**:
+  - **Testabilità**: Possibilità di iniettare mock di logger e config nei test
+  - **Dependency Injection**: Pattern moderno che favorisce loose coupling
+  - **Stato Isolato**: Eliminazione dello stato globale condiviso
+  - **SOLID Principles**: Conformità al Dependency Inversion Principle
+  - **Flessibilità**: Possibilità di avere multiple istanze con configurazioni diverse
+
+* **Dependency Injection in BaseAdapter**: La classe `BaseAdapter` e le sue sottoclassi (`AdapterMysql`) ora accettano `LoggerInterface` via costruttore per logging delle query SQL e degli errori di connessione database.
 
 ### 💥 Breaking Changes
 
@@ -121,6 +203,37 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
     }
     ```
 
+* **Trasformazione da Metodi Statici a Istanze**: Le classi `ErrorHandler` e `Debugger` non sono più utilizzabili con chiamate statiche. È necessario creare istanze di queste classi.
+
+  **Prima (10.x)**:
+  ```php
+  ErrorHandler::disableErrorDisplay();
+  ErrorHandler::handleNonThrowableError();
+  Debugger::startExecutionTimeCalculation();
+  ```
+
+  **Dopo (11.0.0)**:
+  ```php
+  $errorHandler = new ErrorHandler();
+  $errorHandler->disableErrorDisplay();
+  $errorHandler->registerNonThrowableErrorHandler();
+  $debugger = new Debugger();
+  $debugger->startExecutionTimeCalculation();
+  ```
+
+  **Motivazione**: 
+  - Eliminazione dello stato globale
+  - Miglioramento della testabilità attraverso dependency injection
+  - Conformità ai principi SOLID
+  - Possibilità di iniettare logger custom conformi a PSR-3
+
+  **Impatto**: Il file `Public/index.php` deve essere aggiornato per creare istanze delle classi invece di usare metodi statici. Tutte le chiamate statiche a `ErrorHandler` e `Debugger` devono essere convertite a chiamate di istanza.
+
+  **Azione richiesta**:
+  - Aggiornare il file `Public/index.php` per creare istanze di `ErrorHandler` e `Debugger`
+  - Se si desidera utilizzare un logger custom (es. Monolog), iniettarlo nel costruttore di `ErrorHandler`
+  - Verificare che non esistano altre chiamate statiche a queste classi nel codebase
+
 ### ✨ Miglioramenti
 
 * **Messaggi di Eccezione Descrittivi in BaseForm**: Tutte le eccezioni lanciate dalla classe `BaseForm` ora includono messaggi descrittivi che spiegano chiaramente il problema:
@@ -138,10 +251,35 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
 
 * **Copertura Completa Nuove Classi**: Le tre nuove classi helper (`EntityResolver`, `FilterManager`, `FormValidator`) sono completamente testate attraverso i test esistenti di `BaseForm`, garantendo che la rifattorizzazione non abbia introdotto regressioni.
 
-
 * **Test Aggiornati per Response**: Rimossi tutti i test che utilizzavano setResponseType(), sostituiti con test per constructor injection:
   - ResponseTest.php: Ridotto da 13 a 6 test, focalizzati sul costruttore
   - Aggiunto testConstructorWithVariousResponseTypes() che testa tutti i ResponseType principali inclusi 206 e 416
+
+* **Test Completi per Sistema di Logging PSR-3**: Aggiunti test completi per verificare la corretta implementazione dello standard PSR-3 e la gestione delle eccezioni loggabili:
+  
+  - **`LoggerTest.php`**: Test completi per la classe `SismaLogger`
+    - Verifica implementazione di tutti i metodi PSR-3: `emergency()`, `alert()`, `critical()`, `error()`, `warning()`, `notice()`, `info()`, `debug()`
+    - Test interpolazione placeholder secondo standard PSR-3 (`{key}`)
+    - Verifica supporto context array con chiavi riservate (`code`, `file`, `line`, `trace`)
+    - Test gestione trace per debug approfondito
+    - Verifica creazione automatica directory e file di log
+    - Test truncate automatico dei log secondo configurazione
+  
+  - **`ErrorHandlerTest.php`**: Test completi per la nuova classe `ErrorHandler` di istanza
+    - Test gestione eccezioni che implementano `ShouldBeLoggedException`
+    - Verifica che eccezioni loggabili vengano effettivamente scritte nel log
+    - Test che eccezioni non loggabili (es. `NoLogException`) non vengano scritte nel log
+    - Verifica dependency injection di `LoggerInterface` custom
+    - Test registrazione handler per errori non throwable
+    - Verifica gestione corretta di `BaseException` e `Throwable` generici
+  
+  - **`TestLoggableException.php`**: Fixture di test per eccezione che implementa `ShouldBeLoggedException`
+  
+  - **`TestNonLoggableException.php`**: Fixture di test per eccezione che non implementa l'interfaccia
+
+* **Test Aggiornati per Debugger**: Aggiornati tutti i test per utilizzare la nuova classe di istanza invece dei metodi statici:
+  - `DebuggerTest.php`: Modificato per creare istanze di `Debugger` con dependency injection di `LogReaderInterface`
+  - Verifica isolamento dello stato tra multiple istanze di debugger
 
 ### 📝 Documentazione
 
@@ -163,22 +301,28 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
   - [ ] Ritornare `false` quando la validazione custom fallisce
   - [ ] Verificare che la logica di validazione custom sia corretta
 
-- [ ] **Testing**
-  - [ ] Eseguire tutti i test unitari
-  - [ ] Verificare che i form funzionino correttamente in tutti i flussi
-  - [ ] Testare sia casi di validazione con successo che con fallimento
-
-
 - [ ] **Utilizzo di Response**
   - [ ] Cercare tutte le occorrenze di ->setResponseType(
   - [ ] Sostituire con constructor injection: new Response(ResponseType::...)
   - [ ] Se necessario modificare response type, creare nuova istanza invece di chiamare metodo
+
+- [ ] **ErrorHandler e Debugger - Trasformazione a Istanze**
+  - [ ] Aggiornare `Public/index.php` per creare istanze invece di chiamare metodi statici
+  - [ ] Sostituire `ErrorHandler::disableErrorDisplay()` con `$errorHandler = new ErrorHandler(); $errorHandler->disableErrorDisplay();`
+  - [ ] Sostituire `ErrorHandler::handleNonThrowableError()` con `$errorHandler->registerNonThrowableErrorHandler();`
+  - [ ] Sostituire `Debugger::startExecutionTimeCalculation()` con `$debugger = new Debugger(); $debugger->startExecutionTimeCalculation();`
+  - [ ] Iniettare `$debugger` nel costruttore di `Dispatcher`: `new Dispatcher(debugger: $debugger)`
+  - [ ] Sostituire tutte le chiamate statiche a `ErrorHandler::handleBaseException()` con `$errorHandler->handleBaseException()`
+  - [ ] Sostituire `ErrorHandler::handleThrowableError()` con `$errorHandler->handleThrowableError()`
+  - [ ] (Opzionale) Se si desidera usare un logger custom PSR-3, iniettarlo nel costruttore di ErrorHandler
 
 - [ ] **Testing**
   - [ ] Eseguire tutti i test unitari
   - [ ] Verificare che i form funzionino correttamente in tutti i flussi
   - [ ] Testare sia casi di validazione con successo che con fallimento
   - [ ] Verificare che tutti i response codes siano impostati correttamente
+  - [ ] Verificare che il logging funzioni correttamente con il nuovo sistema PSR-3
+  - [ ] Se si usa un logger custom, testare l'integrazione
 
 ---
 
