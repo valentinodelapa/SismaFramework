@@ -121,7 +121,7 @@
     RangeNotSatisfiableException
 
         <span class="phpdocumentor-element__extends">
-        extends <a href="classes/SismaFramework-Security-ExtendedClasses-LogException.html"><abbr title="\SismaFramework\Security\ExtendedClasses\LogException">LogException</abbr></a>
+        extends <a href="classes/SismaFramework-Security-BaseClasses-BaseException.html"><abbr title="\SismaFramework\Security\BaseClasses\BaseException">BaseException</abbr></a>
     </span>
     
             <div class="phpdocumentor-element__package">
@@ -131,6 +131,9 @@
                             </ul>
         </div>
     
+            <span class="phpdocumentor-element__implements">
+            implements
+                            <a href="classes/SismaFramework-Security-Interfaces-Exceptions-ShouldBeLoggedException.html"><abbr title="\SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException">ShouldBeLoggedException</abbr></a>                    </span>
     
     </h2>
 
@@ -179,6 +182,13 @@
 
 
 
+    <h4 id="toc-interfaces">
+        Interfaces
+        <a href="classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html#toc-interfaces" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <dl class="phpdocumentor-table-of-contents">
+                    <dt class="phpdocumentor-table-of-contents__entry -interface"><a href="classes/SismaFramework-Security-Interfaces-Exceptions-ShouldBeLoggedException.html"><abbr title="\SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException">ShouldBeLoggedException</abbr></a></dt><dd>Marker interface for exceptions that should be automatically logged.</dd>    </dl>
 
 
 
@@ -191,12 +201,6 @@
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
-            <dt class="phpdocumentor-table-of-contents__entry -property -protected">
-    <a class="" href="classes/SismaFramework-Security-ExtendedClasses-LogException.html#property_config">$config</a>
-    <span>
-                        &nbsp;: <abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>            </span>
-</dt>
-
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html#property_fileSize">$fileSize</a>
     <span>
@@ -248,42 +252,6 @@
             <a href="classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -protected
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="property_config">
-        $config
-        <a href="classes/SismaFramework-Security-ExtendedClasses-LogException.html#property_config" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Security/ExtendedClasses/LogException.php"><a href="files/security-extendedclasses-logexception.html"><abbr title="Security/ExtendedClasses/LogException.php">LogException.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">40</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">protected</span>
-        <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></span>
-    <span class="phpdocumentor-signature__name">$config</span>
-    </code>
-
-    
-    
-    
-
-    
-
-</article>
                     <article
         class="
             phpdocumentor-element
@@ -349,7 +317,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$message</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">&quot;&quot;</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fileSize</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">0</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$code</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">0</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\Throwable">Throwable</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$previous</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$message</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">&quot;&quot;</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fileSize</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">0</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$code</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">0</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\Throwable">Throwable</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$previous</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -381,13 +349,6 @@
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-signature__argument__name">$previous</span>
                 : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\Throwable">Throwable</abbr>|null</span>
-                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$config</span>
-                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null</span>
                  = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -452,7 +413,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Security/BaseClasses/BaseException.php"><a href="files/security-baseclasses-baseexception.html"><abbr title="Security/BaseClasses/BaseException.php">BaseException.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">39</span>
+    <span class="phpdocumentor-element-found-in__line">46</span>
 
     </aside>
 
@@ -638,7 +599,6 @@
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
-                                                    <li class=""><a href="classes/SismaFramework-Security-ExtendedClasses-LogException.html#property_config">$config</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-Exceptions-RangeNotSatisfiableException.html#property_fileSize">$fileSize</a></li>
                                             </ul>
                 </li>
