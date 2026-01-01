@@ -49,7 +49,7 @@ class BaseSampleFixture extends BaseFixture
         $baseSample->referencedEntityWithoutInitialization = $this->getEntityByFixtureName(ReferencedSampleFixture::class);
         $baseSample->referencedEntityWithInitialization = $this->getEntityByFixtureName(ReferencedSampleFixture::class);
         $baseSample->otherReferencedSample = $this->getEntityByFixtureName(OtherReferencedSampleFixture::class);
-        $baseSample->stringWithoutInizialization = 'base sample text';
+        $baseSample->stringWithoutInitialization = 'base sample text';
         $baseSample->boolean = true;
         $this->addEntity($baseSample);
     }

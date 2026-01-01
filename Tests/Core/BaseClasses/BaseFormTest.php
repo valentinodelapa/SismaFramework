@@ -163,7 +163,7 @@ class BaseFormTest extends TestCase
         $this->assertFalse($baseSampleForm->isValid());
         $this->assertEquals(ResponseType::httpBadRequest, $baseSampleForm->getResponseType());
         $filterErrors = $baseSampleForm->getFilterErrors();
-        $this->assertTrue($filterErrors->stringWithoutInizializationError);
+        $this->assertTrue($filterErrors->stringWithoutInitializationError);
         $baseSampleResult = $baseSampleForm->getEntityDataToStandardEntity();
         $this->assertInstanceOf(StandardEntity::class, $baseSampleResult);
         $this->assertInstanceOf(StandardEntity::class, $baseSampleResult->referencedEntityWithoutInitialization);
@@ -174,7 +174,7 @@ class BaseFormTest extends TestCase
     {
         $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
         $this->requestMock->input = [
-            'stringWithoutInizialization' => 'base sample',
+            'stringWithoutInitialization' => 'base sample',
             'referencedEntityWithoutInitialization' => [
                 'text' => 'referenced sample',
             ],
@@ -186,7 +186,7 @@ class BaseFormTest extends TestCase
         $this->assertEquals(ResponseType::httpOk, $baseSampleForm->getResponseType());
         $baseSampleResult = $baseSampleForm->resolveEntity();
         $this->assertInstanceOf(BaseSample::class, $baseSampleResult);
-        $this->assertEquals('base sample', $baseSampleResult->stringWithoutInizialization);
+        $this->assertEquals('base sample', $baseSampleResult->stringWithoutInitialization);
         $this->assertInstanceOf(ReferencedSample::class, $baseSampleResult->referencedEntityWithoutInitialization);
         $this->assertEquals('referenced sample', $baseSampleResult->referencedEntityWithoutInitialization->text);
     }
@@ -199,7 +199,7 @@ class BaseFormTest extends TestCase
         $baseSample->referencedEntityWithoutInitialization->id = 2;
         $baseSampleForm = new BaseSampleForm($baseSample, $this->dataMapperMock);
         $this->requestMock->input = [
-            'stringWithoutInizialization' => 'base sample',
+            'stringWithoutInitialization' => 'base sample',
             'referencedEntityWithoutInitialization' => [
                 'text' => 'referenced sample',
             ],
@@ -212,7 +212,7 @@ class BaseFormTest extends TestCase
         $baseSampleResult = $baseSampleForm->resolveEntity();
         $this->assertInstanceOf(BaseSample::class, $baseSampleResult);
         $this->assertEquals(1, $baseSampleResult->id);
-        $this->assertEquals('base sample', $baseSampleResult->stringWithoutInizialization);
+        $this->assertEquals('base sample', $baseSampleResult->stringWithoutInitialization);
         $this->assertInstanceOf(ReferencedSample::class, $baseSampleResult->referencedEntityWithoutInitialization);
         $this->assertEquals(2, $baseSampleResult->referencedEntityWithoutInitialization->id);
         $this->assertEquals('referenced sample', $baseSampleResult->referencedEntityWithoutInitialization->text);
@@ -233,7 +233,7 @@ class BaseFormTest extends TestCase
         $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollectionReferencedEntityWithoutInitialization' => [
-                ['stringWithoutInizialization' => 'base sample one'],
+                ['stringWithoutInitialization' => 'base sample one'],
                 []
             ],
             'submitted' => 'on'
@@ -244,10 +244,10 @@ class BaseFormTest extends TestCase
         $this->assertEquals(ResponseType::httpBadRequest, $referencedSampleForm->getResponseType());
         $filterErrors = $referencedSampleForm->getFilterErrors();
         $this->assertCount(2, $filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization);
-        $this->assertFalse($filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInizializationError);
-        $this->assertTrue($filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization[1]->stringWithoutInizializationError);
+        $this->assertFalse($filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInitializationError);
+        $this->assertTrue($filterErrors->baseSampleCollectionReferencedEntityWithoutInitialization[1]->stringWithoutInitializationError);
         $referencedSampleResult = $referencedSampleForm->getEntityDataToStandardEntity();
-        $this->assertEquals('base sample one', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInizialization);
+        $this->assertEquals('base sample one', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInitialization);
     }
 
     public function testFormForReferencedEntityWithCollectionValid()
@@ -256,8 +256,8 @@ class BaseFormTest extends TestCase
         $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollectionReferencedEntityWithoutInitialization' => [
-                ['stringWithoutInizialization' => 'base sample one'],
-                ['stringWithoutInizialization' => 'base sample two'],
+                ['stringWithoutInitialization' => 'base sample one'],
+                ['stringWithoutInitialization' => 'base sample two'],
             ],
             'submitted' => 'on'
         ];
@@ -268,8 +268,8 @@ class BaseFormTest extends TestCase
         $referencedSampleResult = $referencedSampleForm->resolveEntity();
         $this->assertInstanceOf(ReferencedSample::class, $referencedSampleResult);
         $this->assertCount(2, $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization);
-        $this->assertEquals('base sample one', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInizialization);
-        $this->assertEquals('base sample two', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[1]->stringWithoutInizialization);
+        $this->assertEquals('base sample one', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInitialization);
+        $this->assertEquals('base sample two', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[1]->stringWithoutInitialization);
     }
 
     public function testFormUpdateForReferencedEntityWithCollectionValid()
@@ -287,8 +287,8 @@ class BaseFormTest extends TestCase
         $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollectionReferencedEntityWithoutInitialization' => [
-                ['stringWithoutInizialization' => 'base sample one'],
-                ['stringWithoutInizialization' => 'base sample two'],
+                ['stringWithoutInitialization' => 'base sample one'],
+                ['stringWithoutInitialization' => 'base sample two'],
             ],
             'submitted' => 'on'
         ];
@@ -300,8 +300,8 @@ class BaseFormTest extends TestCase
         $this->assertInstanceOf(ReferencedSample::class, $referencedSampleResult);
         $this->assertEquals(1, $referencedSampleResult->id);
         $this->assertCount(2, $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization);
-        $this->assertEquals('base sample one', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInizialization);
-        $this->assertEquals('base sample two', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[1]->stringWithoutInizialization);
+        $this->assertEquals('base sample one', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->stringWithoutInitialization);
+        $this->assertEquals('base sample two', $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[1]->stringWithoutInitialization);
         $this->assertEquals(2, $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[0]->id);
         $this->assertEquals(3, $referencedSampleResult->baseSampleCollectionReferencedEntityWithoutInitialization[1]->id);
     }
@@ -320,8 +320,8 @@ class BaseFormTest extends TestCase
         $this->assertEquals(ResponseType::httpBadRequest, $otherReferencedSampleForm->getResponseType());
         $filterErrors = $otherReferencedSampleForm->getFilterErrors();
         $this->assertCount(2, $filterErrors->baseSampleCollection);
-        $this->assertTrue($filterErrors->baseSampleCollection[0]->stringWithoutInizializationError);
-        $this->assertTrue($filterErrors->baseSampleCollection[1]->stringWithoutInizializationError);
+        $this->assertTrue($filterErrors->baseSampleCollection[0]->stringWithoutInitializationError);
+        $this->assertTrue($filterErrors->baseSampleCollection[1]->stringWithoutInitializationError);
     }
 
     public function testFormForOtherReferencedEntityWithCollectionValid()
@@ -330,8 +330,8 @@ class BaseFormTest extends TestCase
         $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollection' => [
-                ['stringWithoutInizialization' => 'base sample one'],
-                ['stringWithoutInizialization' => 'base sample two'],
+                ['stringWithoutInitialization' => 'base sample one'],
+                ['stringWithoutInitialization' => 'base sample two'],
             ],
             'submitted' => 'on'
         ];
@@ -343,8 +343,8 @@ class BaseFormTest extends TestCase
         $this->assertInstanceOf(OtherReferencedSample::class, $otherReferencedSampleResult);
         $this->assertEquals('referenced sample', $otherReferencedSampleResult->text);
         $this->assertCount(2, $otherReferencedSampleResult->baseSampleCollection);
-        $this->assertEquals('base sample one', $otherReferencedSampleResult->baseSampleCollection[0]->stringWithoutInizialization);
-        $this->assertEquals('base sample two', $otherReferencedSampleResult->baseSampleCollection[1]->stringWithoutInizialization);
+        $this->assertEquals('base sample one', $otherReferencedSampleResult->baseSampleCollection[0]->stringWithoutInitialization);
+        $this->assertEquals('base sample two', $otherReferencedSampleResult->baseSampleCollection[1]->stringWithoutInitialization);
     }
 
     public function testFormUpdateForOtherReferencedEntityWithCollectionValid()
@@ -361,8 +361,8 @@ class BaseFormTest extends TestCase
         $this->requestMock->input = [
             'text' => 'referenced sample',
             'baseSampleCollection' => [
-                ['stringWithoutInizialization' => 'base sample one'],
-                ['stringWithoutInizialization' => 'base sample two'],
+                ['stringWithoutInitialization' => 'base sample one'],
+                ['stringWithoutInitialization' => 'base sample two'],
             ],
             'submitted' => 'on'
         ];
@@ -375,8 +375,8 @@ class BaseFormTest extends TestCase
         $this->assertEquals(1, $otherReferencedSampleResult->id);
         $this->assertEquals('referenced sample', $otherReferencedSampleResult->text);
         $this->assertCount(2, $otherReferencedSampleResult->baseSampleCollection);
-        $this->assertEquals('base sample one', $otherReferencedSampleResult->baseSampleCollection[0]->stringWithoutInizialization);
-        $this->assertEquals('base sample two', $otherReferencedSampleResult->baseSampleCollection[1]->stringWithoutInizialization);
+        $this->assertEquals('base sample one', $otherReferencedSampleResult->baseSampleCollection[0]->stringWithoutInitialization);
+        $this->assertEquals('base sample two', $otherReferencedSampleResult->baseSampleCollection[1]->stringWithoutInitialization);
         $this->assertEquals(2, $otherReferencedSampleResult->baseSampleCollection[0]->id);
         $this->assertEquals(3, $otherReferencedSampleResult->baseSampleCollection[1]->id);
     }
@@ -512,7 +512,7 @@ class BaseFormTest extends TestCase
     {
         $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock);
         $this->requestMock->input = [
-            'stringWithoutInizialization' => 'base sample',
+            'stringWithoutInitialization' => 'base sample',
             'referencedEntityWithoutInitialization' => [
                 'text' => 'referenced sample',
             ],
@@ -524,7 +524,7 @@ class BaseFormTest extends TestCase
         $this->assertEquals(ResponseType::httpOk, $baseSampleForm->getResponseType());
         $baseSampleResult = $baseSampleForm->resolveEntity();
         $this->assertInstanceOf(BaseSample::class, $baseSampleResult);
-        $this->assertEquals('base sample', $baseSampleResult->stringWithoutInizialization);
+        $this->assertEquals('base sample', $baseSampleResult->stringWithoutInitialization);
         $this->assertInstanceOf(ReferencedSample::class, $baseSampleResult->referencedEntityWithoutInitialization);
         $this->assertEquals('referenced sample', $baseSampleResult->referencedEntityWithoutInitialization->text);
     }
@@ -533,7 +533,7 @@ class BaseFormTest extends TestCase
     {
         $formWithCustomFilterFalse = new FormWithCustomFilterFalse();
         $this->requestMock->input = [
-            'stringWithoutInizialization' => 'base sample',
+            'stringWithoutInitialization' => 'base sample',
             'referencedEntityWithoutInitialization' => [
                 'text' => 'referenced sample',
             ],

@@ -63,14 +63,14 @@ namespace MyApp\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\HttpClasses\Response;
-use SismaFramework\Core\HelperClasses\Render;
 
 class HomeController extends BaseController
 {
     public function index(): Response
     {
         $this->vars['message'] = 'Hello World!';
-        return Render::generateView('home/index', $this->vars);
+        // Sintassi moderna (v11.0.0+)
+        return $this->render->generateView('home/index', $this->vars);
     }
 }</code></pre>
                     <p class="mb-0">
@@ -203,7 +203,7 @@ class HomeController extends BaseController
             </div>
             <div class="col-md-3">
                 <div class="p-3">
-                    <h2 class="gradient-text display-4">>85%</h2>
+                    <h2 class="gradient-text display-4">>80%</h2>
                     <p>Test Coverage</p>
                 </div>
             </div>

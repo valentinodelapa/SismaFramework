@@ -210,7 +210,7 @@ class DataMapper
         if ($entity->isEncryptedProperty($reflectionProperty->getName())) {
             $initializationVectorPropertyName = $entity->getInitializationVectorPropertyName();
             if (empty($entity->$initializationVectorPropertyName)) {
-                $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInizializationVector();
+                $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInitializationVector();
             }
             if ($query->hasColumn($initializationVectorPropertyName) === false) {
                 $query->appendColumnValue($initializationVectorPropertyName);

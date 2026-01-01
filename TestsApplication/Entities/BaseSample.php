@@ -56,9 +56,9 @@ class BaseSample extends BaseEntity
     protected SampleType $enumWithoutInitialization;
     protected SampleType $enumWithInitialization = SampleType::one;
     protected ?SampleType $enumNullableWithInitialization = null;
-    protected string $stringWithoutInizialization;
-    protected string $stringWithInizialization = 'base sample';
-    protected ?string $nullableStringWithInizialization = null;
+    protected string $stringWithoutInitialization;
+    protected string $stringWithInitialization = 'base sample';
+    protected ?string $nullableStringWithInitialization = null;
     protected ?string $nullableSecureString = null;
     protected bool $boolean;
 

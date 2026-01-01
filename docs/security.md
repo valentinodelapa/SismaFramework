@@ -33,7 +33,7 @@ class SecurityController extends BaseController
     {
         // Se l'utente è già loggato, reindirizzalo alla dashboard
         if ($auth->isLogged()) {
-            return Router::redirect('dashboard/index');
+            return $this->router->redirect('dashboard/index');
         }
 
         // Se il form è stato inviato (metodo POST)
@@ -48,7 +48,7 @@ class SecurityController extends BaseController
                 $user = $auth->getAuthenticableInterface();
                 $auth->login($user);
 
-                return Router::redirect('dashboard/index');
+                return $this->router->redirect('dashboard/index');
             } else {
                 // Se i controlli falliscono, imposta un messaggio di errore
                 $this->vars['error'] = 'Credenziali non valide.';
@@ -57,7 +57,7 @@ class SecurityController extends BaseController
 
         // Mostra la vista del form di login
         $this->vars['pageTitle'] = 'Login';
-        return Render::generateView('security/login', $this->vars);
+        return $this->render->generateView('security/login', $this->vars);
     }
 }
 ```
@@ -234,7 +234,7 @@ Per crittografare dati sensibili con chiave simmetrica:
 
 ```php
 // 1. Genera Initialization Vector (IV)
-$iv = Encryptor::createInizializationVector();
+$iv = Encryptor::createInitializationVector();
 
 // 2. Cifra il testo
 $plaintext = 'Dati sensibili da proteggere';
@@ -349,11 +349,11 @@ class AuthController extends BaseController
             $_SESSION['user_id'] = $user->getId();
             $_SESSION['session_token'] = Encryptor::getSimpleRandomToken();
 
-            return Router::redirect('dashboard');
+            return $this->router->redirect('dashboard');
         }
 
         $this->vars['error'] = 'Credenziali non valide';
-        return Render::generateView('auth/login', $this->vars);
+        return $this->render->generateView('auth/login', $this->vars);
     }
 }
 ```
@@ -365,7 +365,7 @@ class UserProfile
 {
     public function encryptSensitiveData(string $data): string
     {
-        $iv = Encryptor::createInizializationVector();
+        $iv = Encryptor::createInitializationVector();
         $encrypted = Encryptor::encryptString($data, $iv);
 
         // Combina IV e dati cifrati per storage
@@ -403,7 +403,7 @@ class PasswordResetController extends BaseController
             // ... codice invio email
         }
 
-        return Render::generateView('auth/reset-sent', $this->vars);
+        return $this->render->generateView('auth/reset-sent', $this->vars);
     }
 
     public function resetPassword(Request $request): Response
@@ -421,11 +421,11 @@ class PasswordResetController extends BaseController
 
             $this->dataMapper->save($user);
 
-            return Router::redirect('login');
+            return $this->router->redirect('login');
         }
 
         $this->vars['error'] = 'Token non valido o scaduto';
-        return Render::generateView('auth/reset-error', $this->vars);
+        return $this->render->generateView('auth/reset-error', $this->vars);
     }
 }
 ```

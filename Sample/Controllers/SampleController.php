@@ -36,7 +36,7 @@ class SampleController extends BaseController implements DefaultControllerInterf
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
         parent::__construct($dataMapper);
-        $this->vars['metaUrl'] = Router::getMetaUrl();
+        $this->vars['metaUrl'] = $this->router->getMetaUrl();
     }
 
     /**
@@ -57,7 +57,7 @@ class SampleController extends BaseController implements DefaultControllerInterf
         // Recupera articoli in evidenza
         $this->vars['featuredArticles'] = $model->getFeaturedArticles();
 
-        return Render::generateView('sample/index', $this->vars);
+        return $this->render->generateView('sample/index', $this->vars);
     }
 
     /**
@@ -149,7 +149,7 @@ class SampleController extends BaseController implements DefaultControllerInterf
     {
         // Verifica se l'utente è autenticato
         if (!$auth->isLogged()) {
-            return Router::redirect('/sample/error/message/Devi essere autenticato');
+            return $this->router->redirect('/sample/error/message/Devi essere autenticato');
         }
 
         // Recupera i dati dell'utente loggato

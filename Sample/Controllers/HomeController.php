@@ -18,7 +18,7 @@ class HomeController extends BaseController
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
         parent::__construct($dataMapper);
-        $this->vars['metaUrl'] = Router::getMetaUrl();
+        $this->vars['metaUrl'] = $this->router->getMetaUrl();
     }
 
     /**
@@ -69,6 +69,12 @@ class HomeController extends BaseController
                 'link' => '/docs/view/file/internationalization'
             ],
             [
+                'icon' => '📋',
+                'title' => 'Logging PSR-3',
+                'description' => 'Sistema di logging standard PSR-3 compatibile con Monolog e altri logger',
+                'link' => '/docs/view/file/error-handling-and-logging'
+            ],
+            [
                 'icon' => '⚡',
                 'title' => 'Performance',
                 'description' => 'Cache entità, lazy loading, query ottimizzate',
@@ -77,7 +83,7 @@ class HomeController extends BaseController
             [
                 'icon' => '🧪',
                 'title' => 'Testing',
-                'description' => 'Supporto PHPUnit con coverage >85%',
+                'description' => 'Supporto PHPUnit con coverage >80%',
                 'link' => '/docs/view/file/testing'
             ]
         ];
@@ -91,7 +97,7 @@ class HomeController extends BaseController
             'Crea Controller e Views'
         ];
 
-        return Render::generateView('home/index', $this->vars);
+        return $this->render->generateView('home/index', $this->vars);
     }
 
     /**
@@ -113,7 +119,7 @@ class HomeController extends BaseController
      */
     public function welcome(): Response
     {
-        return Router::redirect('/home/index');
+        return $this->router->redirect('/home/index');
     }
 
     /**

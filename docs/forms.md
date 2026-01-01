@@ -46,14 +46,16 @@ class PostForm extends BaseForm
 
     /**
      * Usato per validazioni personalizzate più complesse.
-     * In questo esempio non è necessario.
+     * Deve ritornare true se la validazione ha successo, false altrimenti.
      */
-    protected function customFilter(): void
+    protected function customFilter(): bool
     {
         // Esempio: se il titolo contiene una parola specifica, aggiungi un errore.
         // if (str_contains($this->entity->getTitle(), 'spam')) {
         //     $this->formFilterErrorManager->addErrorMessage('title', 'Il titolo non può contenere la parola "spam".');
+        //     return false;
         // }
+        return true;
     }
 
     /**
@@ -109,7 +111,7 @@ class PostController extends BaseController
             // Grazie a injectRequest(), non dobbiamo più gestire manualmente l'ID dell'autore.
             $nuovoPost = $form->resolveEntity();
             $this->dataMapper->save($nuovoPost);
-            return Router::redirect('post/show/id/' . $nuovoPost->getId());
+            return $this->router->redirect('post/show/id/' . $nuovoPost->getId());
         }
 
         // Se il form non è valido o è la prima visita, mostriamo il form
@@ -118,7 +120,7 @@ class PostController extends BaseController
         $this->vars['formEntity'] = $form->isSubmitted() ? $form->getEntityDataToStandardEntity() : $post;
         $this->vars['errors'] = $form->returnFilterErrors();
 
-        return Render::generateView('post/form', $this->vars);
+        return $this->render->generateView('post/form', $this->vars);
     }
 }
 ```

@@ -311,6 +311,27 @@ La release introduce breaking changes: il metodo astratto customFilter() di Base
   - Se si desidera utilizzare un logger custom (es. Monolog), iniettarlo nel costruttore di `ErrorHandler`
   - Verificare che non esistano altre chiamate statiche a queste classi nel codebase
 
+* **Correzione Typo nel Metodo `Encryptor::createInitializationVector()`**: Il metodo `createInizializationVector()` è stato rinominato in `createInitializationVector()` per correggere l'errore di spelling.
+
+  **Prima (10.x)**:
+  ```php
+  $iv = Encryptor::createInizializationVector();
+  ```
+
+  **Dopo (11.0.0)**:
+  ```php
+  $iv = Encryptor::createInitializationVector();
+  ```
+
+  **Motivazione**: Correzione di un typo nel nome del metodo per migliorare la coerenza del codebase e facilitare l'uso dell'API.
+
+  **Impatto**: Questo è un potenziale breaking change se il metodo veniva chiamato direttamente nel codice utente. Il metodo è principalmente utilizzato internamente dal framework (in `DataMapper` per proprietà crittografate), ma potrebbe essere stato usato in codice custom per crittografia manuale.
+
+  **Azione richiesta**:
+  - Cercare tutte le occorrenze di `createInizializationVector` nel proprio codebase
+  - Sostituire con `createInitializationVector` (con la "t" invece della "z")
+  - Verificare il corretto funzionamento delle operazioni di crittografia
+
 ### ✨ Miglioramenti
 
 * **Messaggi di Eccezione Descrittivi in BaseForm**: Tutte le eccezioni lanciate dalla classe `BaseForm` ora includono messaggi descrittivi che spiegano chiaramente il problema:

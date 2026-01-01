@@ -31,9 +31,13 @@ class PageController extends BaseController
         $this->vars['content'] = 'Questo è il contenuto della nostra prima pagina.';
 
         // Renderizza la vista 'page/index.php' e le passa le variabili
-        return Render::generateView('page/index', $this->vars);
+        // Sintassi moderna (v11.0.0+, preferita):
+        return $this->render->generateView('page/index', $this->vars);
+        
+        // Sintassi legacy (ancora supportata):
+        // return Render::generateView('page/index', $this->vars);
     }
-} Classe Render
+}
 ```
 
 Routing e Parametri delle Action
@@ -72,7 +76,7 @@ class PostController extends BaseController
         // $id conterrà il valore 42
         // $post sarà l'oggetto Post con id=42, caricato automaticamente dall'ORM
         $this->vars['post'] = $post;
-        return Render::generateView('post/show', $this->vars);
+        return $this->render->generateView('post/show', $this->vars);
     }
 }
 ```
@@ -131,7 +135,11 @@ public function create(): Response
     // ... logica per creare una nuova risorsa ...
 
     // Reindirizza alla pagina di successo
-    return Router::redirect('post/success');
+    // Sintassi moderna (v11.0.0+, preferita):
+    return $this->router->redirect('post/success');
+    
+    // Sintassi legacy (ancora supportata):
+    // return Router::redirect('post/success');
 }
 ```
 

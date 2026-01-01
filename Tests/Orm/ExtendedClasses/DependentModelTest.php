@@ -342,7 +342,7 @@ class DependentModelTest extends TestCase
         $referencedEntities = [
             'referencedEntityWithInitialization' => $referencedEntity,
             'boolean' => true,
-            'stringWithInizialization' => 'test string'
+            'stringWithInitialization' => 'test string'
         ];
         $expectedCollection = new SismaCollection(BaseSample::class);
 
@@ -378,7 +378,7 @@ class DependentModelTest extends TestCase
         $this->initializeMock();
         $referencedEntities = [
             'referencedEntityWithInitialization' => null,
-            'nullableStringWithInizialization' => null
+            'nullableStringWithInitialization' => null
         ];
         $expectedCount = 4;
 
@@ -618,7 +618,7 @@ class DependentModelTest extends TestCase
         $referencedEntities = [
             'referencedEntityWithInitialization' => $referencedEntity,  // ReferencedEntity
             'boolean' => true,                                              // builtin
-            'stringWithInizialization' => 'test'                         // builtin
+            'stringWithInitialization' => 'test'                         // builtin
         ];
 
         $this->dataMapperMock->expects($this->once())
@@ -646,7 +646,7 @@ class DependentModelTest extends TestCase
                             break;
                         case 3:
                             // Terza proprietà: string_with_inizialization (builtin)
-                            $this->assertEquals('stringWithInizialization', $column);
+                            $this->assertEquals('stringWithInitialization', $column);
                             $this->assertFalse($isForeignKey, 'Il quarto parametro deve essere FALSE per proprietà builtin');
                             break;
                     }
@@ -686,7 +686,7 @@ class DependentModelTest extends TestCase
         $referencedEntities = [
             'referencedEntityWithInitialization' => $referencedEntity,
             'boolean' => true,
-            'stringWithInizialization' => 'test string'
+            'stringWithInitialization' => 'test string'
         ];
 
         $this->dataMapperMock->expects($this->once())

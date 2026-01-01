@@ -22,7 +22,7 @@ class DocsController extends BaseController
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
         parent::__construct($dataMapper);
-        $this->vars["metaUrl"] = Router::getMetaUrl();
+        $this->vars["metaUrl"] = $this->router->getMetaUrl();
         $this->docsPath =
             dirname(__DIR__, 2) .
             DIRECTORY_SEPARATOR .
@@ -42,7 +42,7 @@ class DocsController extends BaseController
         // Leggi la struttura della documentazione
         $this->vars["docsSections"] = $this->getDocsStructure();
 
-        return Render::generateView("docs/index", $this->vars);
+        return $this->render->generateView("docs/index", $this->vars);
     }
 
     /**
@@ -89,7 +89,7 @@ class DocsController extends BaseController
 
         // Verifica che il file esista
         if (!file_exists($filePath)) {
-            return Router::redirect("/docs/index");
+            return $this->router->redirect("/docs/index");
         }
 
         // Leggi il contenuto Markdown

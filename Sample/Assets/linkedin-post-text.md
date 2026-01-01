@@ -131,7 +131,7 @@ Developer Experience Eccellente
 📊 CARATTERISTICHE TECNICHE
 • PHP 8.1+ richiesto
 • Pattern MVC + Data Mapper
-• >85% test coverage
+• >80% test coverage
 • Dipendenze minimali (solo PSR-3 per standard compliance)
 • Documentazione completa in italiano
 • Open Source (MIT License)
@@ -165,7 +165,7 @@ SISMA è l'acronimo di Simple Smart: un framework PHP 8.1+ MVC che unisce sempli
 
 🚀 Ideale per applicazioni enterprise, API REST moderne e progetti che richiedono manutenibilità a lungo termine.
 
-📊 >85% test coverage | MIT License | Documentazione completa in italiano
+📊 >80% test coverage | MIT License | Documentazione completa in italiano
 
 🌐 www.sisma-framework.dev
 💻 github.com/valentinodelapa/SismaFramework

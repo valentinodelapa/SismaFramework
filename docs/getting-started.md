@@ -264,7 +264,7 @@ class PostController extends BaseController
         $postModel = new PostModel($this->dataMapper);
         $this->vars['posts'] = $postModel->getEntityCollection();
         $this->vars['pageTitle'] = 'Il Mio Blog';
-        return Render::generateView('post/index', $this->vars);
+        return $this->render->generateView('post/index', $this->vars);
     }
 
     // URL: /post/show/id/1
@@ -272,7 +272,7 @@ class PostController extends BaseController
     {
         $this->vars['post'] = $post;
         $this->vars['pageTitle'] = $post->getTitle();
-        return Render::generateView('post/show', $this->vars);
+        return $this->render->generateView('post/show', $this->vars);
     }
 }
 ```

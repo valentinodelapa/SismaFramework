@@ -134,7 +134,7 @@ class ResultSetMysqlTest extends TestCase
                 });
         $result = new \stdClass();
         $result->id = 1;
-        $result->stringWithoutInizialization = 'name';
+        $result->stringWithoutInitialization = 'name';
         $PDOStatementMock->expects($this->once())
                 ->method('fetch')
                 ->willReturn($result);
@@ -161,7 +161,7 @@ class ResultSetMysqlTest extends TestCase
                 });
         $propertyValueOne = 'test-value-one';
         $propertyValueTwo = 'test-value-two';
-        $initializationVector = Encryptor::createInizializationVector($this->configStub);
+        $initializationVector = Encryptor::createInitializationVector($this->configStub);
         $result = new \stdClass();
         $result->id = 1;
         $result->encrypted_property_one = Encryptor::encryptString($propertyValueOne, $initializationVector, $this->configStub);
@@ -204,13 +204,13 @@ class ResultSetMysqlTest extends TestCase
                         case 2:
                             $result = new \stdClass();
                             $result->id = 1;
-                            $result->stringWithoutInizialization = 'name';
+                            $result->stringWithoutInitialization = 'name';
                             return $result;
                         case 3:
                         case 4:
                             $result = new \stdClass();
                             $result->id = 2;
-                            $result->stringWithoutInizialization = 'name';
+                            $result->stringWithoutInitialization = 'name';
                             return $result;
                     }
                 });
@@ -260,7 +260,7 @@ class ResultSetMysqlTest extends TestCase
                 ->willReturn(10);
         $result = new \stdClass();
         $result->id = 1;
-        $result->stringWithoutInizialization = 'name';
+        $result->stringWithoutInitialization = 'name';
         $PDOStatementMock->expects($this->exactly(10))
                 ->method('fetch')
                 ->willReturn($result);

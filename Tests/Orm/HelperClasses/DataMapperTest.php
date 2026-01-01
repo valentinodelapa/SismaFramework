@@ -201,7 +201,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
@@ -275,7 +275,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
@@ -346,7 +346,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
@@ -421,7 +421,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
@@ -497,7 +497,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
@@ -565,7 +565,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
@@ -610,7 +610,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
@@ -659,7 +659,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
@@ -695,7 +695,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $baseSample->modified = false;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
@@ -991,7 +991,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $baseSampleCollection = new SismaCollection(BaseSample::class);
         $baseSampleCollection->append($baseSample);
@@ -1039,7 +1039,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);
@@ -1085,7 +1085,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->startTransaction();
@@ -1431,7 +1431,7 @@ class DataMapperTest extends TestCase
         $baseSample->dateWithoutInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-02');
         $baseSample->timeWithoutInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
         $baseSample->enumWithoutInitialization = SampleType::two;
-        $baseSample->stringWithoutInizialization = 'base sample';
+        $baseSample->stringWithoutInitialization = 'base sample';
         $baseSample->boolean = true;
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $dataMapper->save($baseSample);

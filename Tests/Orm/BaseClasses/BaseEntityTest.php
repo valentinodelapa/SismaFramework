@@ -183,29 +183,29 @@ class BaseEntityTest extends TestCase
     {
         $baseSampleOne = new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
         $this->assertFalse($baseSampleOne->modified);
-        $baseSampleOne->stringWithoutInizialization = 'base sample';
+        $baseSampleOne->stringWithoutInitialization = 'base sample';
         $this->assertTrue($baseSampleOne->modified);
         $baseSampleOne->modified = false;
-        $baseSampleOne->stringWithoutInizialization = 'base sample';
+        $baseSampleOne->stringWithoutInitialization = 'base sample';
         $this->assertFalse($baseSampleOne->modified);
-        $baseSampleOne->stringWithoutInizialization = 'base sample modified';
+        $baseSampleOne->stringWithoutInitialization = 'base sample modified';
         $this->assertTrue($baseSampleOne->modified);
 
         $baseSampleTwo = new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
-        $baseSampleTwo->stringWithInizialization = 'base sample';
+        $baseSampleTwo->stringWithInitialization = 'base sample';
         $this->assertFalse($baseSampleTwo->modified);
-        $baseSampleTwo->stringWithInizialization = 'base sample modified';
+        $baseSampleTwo->stringWithInitialization = 'base sample modified';
         $this->assertTrue($baseSampleTwo->modified);
 
         $baseSampleThree = new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
-        $baseSampleThree->nullableStringWithInizialization = null;
+        $baseSampleThree->nullableStringWithInitialization = null;
         $this->assertFalse($baseSampleThree->modified);
-        $baseSampleThree->nullableStringWithInizialization = 'nullable string';
+        $baseSampleThree->nullableStringWithInitialization = 'nullable string';
         $this->assertTrue($baseSampleThree->modified);
         $baseSampleThree->modified = false;
-        $baseSampleThree->nullableStringWithInizialization = 'nullable string';
+        $baseSampleThree->nullableStringWithInitialization = 'nullable string';
         $this->assertFalse($baseSampleThree->modified);
-        $baseSampleThree->nullableStringWithInizialization = 'nullable modified string';
+        $baseSampleThree->nullableStringWithInitialization = 'nullable modified string';
         $this->assertTrue($baseSampleThree->modified);
     }
 

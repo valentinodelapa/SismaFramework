@@ -114,13 +114,13 @@ class SismaCollectionTest extends TestCase
     {
         $sismaCollection = new SismaCollection(BaseSample::class);
         $baseSampleOne = new BaseSample($this->dataMapperMock);
-        $baseSampleOne->stringWithoutInizialization = "search key one";
+        $baseSampleOne->stringWithoutInitialization = "search key one";
         $sismaCollection->append($baseSampleOne);
         $baseSampleTwo = new BaseSample($this->dataMapperMock);
-        $baseSampleTwo->stringWithoutInizialization = "search key two";
+        $baseSampleTwo->stringWithoutInitialization = "search key two";
         $sismaCollection->append($baseSampleTwo);
-        $this->assertEquals($baseSampleOne, $sismaCollection->findEntityFromProperty('stringWithoutInizialization', "search key one"));
-        $this->assertEquals($baseSampleTwo, $sismaCollection->findEntityFromProperty('stringWithoutInizialization', "search key two"));
+        $this->assertEquals($baseSampleOne, $sismaCollection->findEntityFromProperty('stringWithoutInitialization', "search key one"));
+        $this->assertEquals($baseSampleTwo, $sismaCollection->findEntityFromProperty('stringWithoutInitialization', "search key two"));
     }
     
     public function testHas()

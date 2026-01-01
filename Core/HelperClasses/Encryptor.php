@@ -65,7 +65,7 @@ class Encryptor
         return password_verify($text, $hash);
     }
 
-    public static function createInizializationVector(?Config $customConfig = null): string
+    public static function createInitializationVector(?Config $customConfig = null): string
     {
         $config = $customConfig ?? Config::getInstance();
         return openssl_random_pseudo_bytes($config->initializationVectorBytes);

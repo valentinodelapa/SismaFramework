@@ -78,7 +78,7 @@ class EncryptorTest extends TestCase
     {
         $testString = 'sample';
         $fakeTestString = 'fakeSample';
-        $initializationVector = Encryptor::createInizializationVector($this->configStub);
+        $initializationVector = Encryptor::createInitializationVector($this->configStub);
         $cryptTestString = Encryptor::encryptString($testString, $initializationVector, $this->configStub);
         $this->assertEquals($testString, Encryptor::decryptString($cryptTestString, $initializationVector, $this->configStub));
         $this->assertNotEquals($fakeTestString, Encryptor::decryptString($cryptTestString, $initializationVector, $this->configStub));

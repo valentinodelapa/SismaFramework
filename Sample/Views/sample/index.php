@@ -164,12 +164,15 @@ ob_start();
                         <li><i class="bi bi-check-circle-fill text-success"></i> <strong>ORM</strong>: Entity, Model, relazioni, lazy loading</li>
                         <li><i class="bi bi-check-circle-fill text-success"></i> <strong>Controller</strong>: Autowiring, entity injection, enum binding</li>
                         <li><i class="bi bi-check-circle-fill text-success"></i> <strong>Views</strong>: Accesso sicuro ai dati con htmlspecialchars()</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i> <strong>Logging PSR-3</strong>: Sistema standard compatibile con Monolog</li>
                     </ul>
                 </div>
                 <div class="col-md-6">
                     <ul class="list-unstyled">
                         <li><i class="bi bi-check-circle-fill text-success"></i> <strong>Custom Types</strong>: SismaDateTime, BackedEnum</li>
                         <li><i class="bi bi-check-circle-fill text-success"></i> <strong>Security</strong>: Crittografia proprietà, autenticazione</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i> <strong>Pattern Facade</strong>: Sintassi moderna $this->render e $this->router</li>
+                        <li><i class="bi bi-check-circle-fill text-success"></i> <strong>SOLID Principles</strong>: BaseForm rifattorizzato con DI</li>
                     </ul>
                 </div>
             </div>
