@@ -100,11 +100,14 @@ La nostra politica è di fornire aggiornamenti di sicurezza per la versione stab
 
 | Versione | Supportata | Note |
 |---|---|---|
-| **10.x** | ✅ Supporto completo | Versione stabile corrente |
-| **9.x** | ⚠️ Solo patch di sicurezza critiche | Supporto fino al 2026-01-01 |
+| **11.x** | ✅ Supporto completo | Versione stabile corrente |
+| **10.x** | ⚠️ Solo patch di sicurezza critiche | Supporto fino al 2026-07-01 |
+| **9.x** | ❌ | Fine supporto dal 2026-01-01 |
 | < 9.0.0 (Beta) | ❌ | Versioni di sviluppo non supportate |
 
-**Nota sulla versione 9.x:** Dopo il rilascio della versione 10.0.0, la serie 9.x riceverà solo patch di sicurezza per vulnerabilità critiche fino al 1° gennaio 2026. Si raccomanda fortemente di pianificare la migrazione alla versione 10.x per beneficiare di tutte le correzioni di sicurezza, i miglioramenti e le nuove funzionalità.
+**Nota sulla versione 10.x:** Dopo il rilascio della versione 11.0.0, la serie 10.x riceverà solo patch di sicurezza per vulnerabilità critiche fino al 1° luglio 2026. Si raccomanda di pianificare la migrazione alla versione 11.x per beneficiare di tutte le correzioni di sicurezza, i miglioramenti e le nuove funzionalità.
+
+**Nota sulla versione 9.x:** Il supporto per la serie 9.x è terminato il 1° gennaio 2026. Gli utenti che utilizzano ancora questa versione sono fortemente incoraggiati ad aggiornare immediatamente alla versione 11.x per ricevere le patch di sicurezza.
 
 Tutte le versioni precedenti alla 9.0.0 sono considerate versioni di sviluppo (beta) e non sono supportate. Incoraggiamo tutti gli utenti ad aggiornare all'ultima versione stabile per ricevere le patch di sicurezza.
 

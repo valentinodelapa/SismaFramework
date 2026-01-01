@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [11.0.0] - 2025-11-18 - Rifattorizzazione Architetturale e Semplificazione API
+## [11.0.0] - 2026-01-02 - Rifattorizzazione Architetturale e Semplificazione API
 
 Questa major release introduce miglioramenti architetturali significativi: rifattorizzazione completa di BaseForm con principi SOLID, semplificazione API Response attraverso rimozione del metodo pubblico setResponseType(), e implementazione completa dello standard PSR-3 per il logging con supporto per logger di terze parti.
 
