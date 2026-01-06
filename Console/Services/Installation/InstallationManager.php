@@ -90,35 +90,36 @@ class InstallationManager
         }
         $content = file_get_contents($destConfig);
         
-        // Update PROJECT constant
         $content = preg_replace(
                 "/(const\s+PROJECT\s*=\s*')[^']*(')/",
                 "$1{$projectName}$2",
                 $content
         );
         
-        // Update APPLICATION constant
         $content = preg_replace(
                 "/(const\s+APPLICATION\s*=\s*')[^']*(')/",
                 "$1Application$2",
                 $content
         );
         
-        // Update REFERENCE_CACHE_DIRECTORY constant
+        $content = str_replace(
+                "__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;",
+                "__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;",
+                $content
+        );
+        
         $content = str_replace(
                 "const REFERENCE_CACHE_DIRECTORY = SYSTEM_PATH . APPLICATION_PATH . CACHE . DIRECTORY_SEPARATOR;",
                 "const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;",
                 $content
         );
         
-        // Update LOG_DIRECTORY_PATH constant
         $content = str_replace(
                 "const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . DIRECTORY_SEPARATOR;",
                 "const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;",
                 $content
         );
         
-        // Update MODULE_FOLDERS to empty array
         $content = preg_replace(
                 "/const\s+MODULE_FOLDERS\s*=\s*\[[^\]]*\];/s",
                 "const MODULE_FOLDERS = [];",
@@ -143,18 +144,18 @@ class InstallationManager
         $indexPath = $destPublic . DIRECTORY_SEPARATOR . "index.php";
         if (file_exists($indexPath)) {
             $content = file_get_contents($indexPath);
-            $patterns = [
-                "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config'",
-                "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload'",
+            
+            $content = str_replace(
                 "'Config' . DIRECTORY_SEPARATOR . 'config.php'",
-            ];
-            $replacements = [
-                "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Config'",
-                "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'",
                 "'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'",
-            ];
-
-            $content = str_replace($patterns, $replacements, $content);
+                $content
+            );
+            
+            $content = str_replace(
+                "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload'",
+                "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'",
+                $content
+            );
 
             file_put_contents($indexPath, $content);
         }

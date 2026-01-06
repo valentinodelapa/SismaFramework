@@ -3,6 +3,84 @@
 All notable changes to this project will be documented in this file.
 
 
+## [10.1.8] - 2026-01-06 - Correzioni Processo di Installazione
+
+Questa patch release corregge due bug critici nel processo di installazione automatica del framework che causavano errori nel riferimento al file di configurazione e nel percorso ROOT_PATH.
+
+### 🐛 Bug Fixes
+
+#### Correzione Percorso configFramework.php in index.php
+
+Corretto il percorso del file di configurazione nel file `Public/index.php` generato durante l'installazione:
+
+*   **InstallationManager.php (copyPublicFolder)**:
+    - ❌ **Prima**: La sostituzione cambiava il percorso Config in `'SismaFramework' . DIRECTORY_SEPARATOR . 'Config'`
+    - ✅ **Dopo**: Il percorso Config rimane in `'Config'` (root del progetto), solo Autoload viene modificato
+    - Il file configFramework.php si trova correttamente in `root/Config/configFramework.php` e non in `root/SismaFramework/Config/configFramework.php`
+
+**Scenario del bug**:
+1. Durante l'installazione, il file `Config/configFramework.php` viene creato nella root del progetto
+2. Il file `Public/index.php` veniva modificato per cercare il config in `SismaFramework/Config/configFramework.php`
+3. L'applicazione non trovava il file di configurazione causando errori fatali
+
+**Dopo la correzione**:
+- Il file `Public/index.php` include correttamente `dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'`
+- Il percorso Autoload viene correttamente modificato in `SismaFramework/Autoload`
+- L'applicazione trova il file di configurazione e si avvia correttamente
+
+#### Correzione ROOT_PATH in configFramework.php
+
+Corretto il numero di livelli di risalita della costante ROOT_PATH nel file di configurazione installato:
+
+*   **InstallationManager.php (copyConfigFolder)**:
+    - ❌ **Prima**: La costante ROOT_PATH manteneva la risalita di due livelli del file originale del framework
+    - ✅ **Dopo**: ROOT_PATH viene modificata per risalire di un solo livello
+    - Aggiunta sostituzione: `__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP` → `__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP`
+
+**Scenario del bug**:
+1. Il file originale `SismaFramework/Config/config.php` si trova in `root/SismaFramework/Config/config.php`
+2. La ROOT_PATH sale di due livelli: `SismaFramework/Config` → `SismaFramework` → `root` (corretto per il framework)
+3. Il file installato `Config/configFramework.php` si trova in `root/Config/configFramework.php`
+4. Con due livelli di risalita: `Config` → `root` → `parent` (errato)
+5. Con un livello di risalita: `Config` → `root` (corretto)
+
+**Dopo la correzione**:
+- La costante ROOT_PATH punta correttamente alla root del progetto
+- Tutti i percorsi derivati (cache, log, etc.) funzionano correttamente
+
+### 🧪 Testing
+
+#### Aggiornamento Test Suite
+
+Aggiornato il test per riflettere la correzione apportata:
+
+*   **InstallationManagerTest.php**:
+    - **testInstallCopiesPublicFolder()**: 
+        - ❌ **Prima**: Verificava presenza di `'SismaFramework' . DIRECTORY_SEPARATOR . 'Config'`
+        - ✅ **Dopo**: Verifica presenza di `'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'`
+
+*   ✅ **Tutti i test passano correttamente**
+
+### ✅ Backward Compatibility
+
+*   **Installazioni Esistenti**: Progetti installati con versioni precedenti (10.1.0-10.1.7) devono:
+    1. Verificare che `Public/index.php` punti a `Config/configFramework.php` e non a `SismaFramework/Config/configFramework.php`
+    2. Verificare che ROOT_PATH in `Config/configFramework.php` salga di un solo livello
+
+*   **Nuove Installazioni**: Funzionano correttamente senza necessità di modifiche manuali
+
+### 📊 Impatto
+
+*   **Correttezza**: Eliminati due bug critici nel processo di installazione
+*   **Stabilità**: Applicazioni installate funzionano immediatamente senza errori
+*   **Manutenibilità**: Ridotta necessità di interventi manuali post-installazione
+
+### 📝 Note
+
+Questa release non include la correzione del formato nome composer.json (vendor/package-name) presente nella versione 11.0.1, in quanto il metodo `createOrUpdateComposerJson` non esiste ancora nella serie 10.1.X. Tale funzionalità è stata introdotta solo nella versione 11.0.0.
+
+---
+
 ## [10.1.7] - 2025-12-21 - Correzione Bug buildPropertiesConditions e Test Suite
 
 Questa patch release corregge un bug critico introdotto nella versione 10.1.0 nel metodo `buildPropertiesConditions` di `DependentModel` e `SelfReferencedModel`, che impediva il corretto override del metodo di `BaseModel`. Inoltre corregge errori sistematici nella test suite che utilizzavano nomi di proprietà in formato snake_case invece di camelCase.

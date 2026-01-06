@@ -120,7 +120,7 @@ class InstallationManagerTest extends TestCase
 
         $content = file_get_contents($indexFile);
         $this->assertStringContainsString("'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'", $content);
-        $this->assertStringContainsString("'SismaFramework' . DIRECTORY_SEPARATOR . 'Config'", $content);
+        $this->assertStringContainsString("'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'", $content);
     }
 
     public function testInstallWithDatabaseConfig(): void
