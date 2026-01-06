@@ -2,6 +2,104 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.0.1] - 2026-01-06 - Correzioni Processo di Installazione
+
+Questa patch release corregge tre bug critici nel processo di installazione automatica del framework che causavano errori nella generazione del file composer.json e nel riferimento al file di configurazione.
+
+### 🐛 Bug Fixes
+
+#### Correzione Formato Nome Composer.json
+
+Corretto il formato del nome del progetto nel file composer.json generato durante l'installazione:
+
+*   **InstallationManager.php (createOrUpdateComposerJson)**:
+    - ❌ **Prima**: `'name' => strtolower(str_replace(' ', '-', $projectName))` generava solo `"nome-progetto"`
+    - ✅ **Dopo**: `'name' => "vendor/{$normalizedName}"` genera correttamente `"vendor/nome-progetto"`
+    - Il formato generato è ora conforme allo standard Composer che richiede il formato `vendor/package-name`
+
+**Scenario del bug**:
+1. Utente esegue: `php SismaFramework/Console/sisma install MyProject`
+2. Il file `composer.json` veniva creato con `"name": "myproject"` invece di `"name": "vendor/myproject"`
+3. Questo causava errori durante `composer install` o `composer update` perché il formato non era valido
+
+**Dopo la correzione**:
+- Il file `composer.json` ha il formato nome corretto: `"vendor/myproject"`
+- Il comando `composer install` funziona senza errori
+
+#### Correzione Percorso configFramework.php in index.php
+
+Corretto il percorso del file di configurazione nel file `Public/index.php` generato durante l'installazione:
+
+*   **InstallationManager.php (copyPublicFolder)**:
+    - ❌ **Prima**: La sostituzione cambiava il percorso Config in `'SismaFramework' . DIRECTORY_SEPARATOR . 'Config'`
+    - ✅ **Dopo**: Il percorso Config rimane in `'Config'` (root del progetto), solo Autoload viene modificato
+    - Il file configFramework.php si trova correttamente in `root/Config/configFramework.php` e non in `root/SismaFramework/Config/configFramework.php`
+
+**Scenario del bug**:
+1. Durante l'installazione, il file `Config/configFramework.php` viene creato nella root del progetto
+2. Il file `Public/index.php` veniva modificato per cercare il config in `SismaFramework/Config/configFramework.php`
+3. L'applicazione non trovava il file di configurazione causando errori fatali
+
+**Dopo la correzione**:
+- Il file `Public/index.php` include correttamente `dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'`
+- Il percorso Autoload viene correttamente modificato in `SismaFramework/Autoload`
+- L'applicazione trova il file di configurazione e si avvia correttamente
+
+#### Correzione ROOT_PATH in configFramework.php
+
+Corretto il numero di livelli di risalita della costante ROOT_PATH nel file di configurazione installato:
+
+*   **InstallationManager.php (copyConfigFolder)**:
+    - ❌ **Prima**: La costante ROOT_PATH manteneva la risalita di due livelli del file originale del framework
+    - ✅ **Dopo**: ROOT_PATH viene modificata per risalire di un solo livello
+    - Aggiunta sostituzione: `__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP` → `__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP`
+
+**Scenario del bug**:
+1. Il file originale `SismaFramework/Config/config.php` si trova in `root/SismaFramework/Config/config.php`
+2. La ROOT_PATH sale di due livelli: `SismaFramework/Config` → `SismaFramework` → `root` (corretto per il framework)
+3. Il file installato `Config/configFramework.php` si trova in `root/Config/configFramework.php`
+4. Con due livelli di risalita: `Config` → `root` → `parent` (errato)
+5. Con un livello di risalita: `Config` → `root` (corretto)
+
+**Dopo la correzione**:
+- La costante ROOT_PATH punta correttamente alla root del progetto
+- Tutti i percorsi derivati (cache, log, etc.) funzionano correttamente
+
+### 🧪 Testing
+
+#### Aggiornamento Test Suite
+
+Aggiornati i test per riflettere le correzioni apportate:
+
+*   **InstallationManagerTest.php**:
+    - **testInstallCopiesPublicFolder()**: 
+        - ❌ **Prima**: Verificava presenza di `'SismaFramework' . DIRECTORY_SEPARATOR . 'Config'`
+        - ✅ **Dopo**: Verifica presenza di `'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'`
+    
+    - **testInstallCreatesComposerJson()**:
+        - ❌ **Prima**: Verificava nome come `'mytestproject'`
+        - ✅ **Dopo**: Verifica nome come `'vendor/mytestproject'`
+
+*   ✅ **Tutti i test passano correttamente**
+
+### ✅ Backward Compatibility
+
+*   **Installazioni Esistenti**: Progetti installati con versioni precedenti (11.0.0) devono:
+    1. Aggiornare manualmente `composer.json` per aggiungere il prefisso `vendor/`
+    2. Verificare che `Public/index.php` punti a `Config/configFramework.php` e non a `SismaFramework/Config/configFramework.php`
+    3. Verificare che ROOT_PATH in `Config/configFramework.php` salga di un solo livello
+
+*   **Nuove Installazioni**: Funzionano correttamente senza necessità di modifiche manuali
+
+### 📊 Impatto
+
+*   **Correttezza**: Eliminati tre bug critici nel processo di installazione
+*   **Conformità**: File composer.json conforme allo standard Composer
+*   **Stabilità**: Applicazioni installate funzionano immediatamente senza errori
+*   **Manutenibilità**: Ridotta necessità di interventi manuali post-installazione
+
+---
+
 ## [11.0.0] - 2026-01-02 - Rifattorizzazione Architetturale e Semplificazione API
 
 Questa major release introduce miglioramenti architetturali significativi: rifattorizzazione completa di BaseForm con principi SOLID, semplificazione API Response attraverso rimozione del metodo pubblico setResponseType(), e implementazione completa dello standard PSR-3 per il logging con supporto per logger di terze parti.

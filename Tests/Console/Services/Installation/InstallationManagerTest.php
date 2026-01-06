@@ -120,7 +120,7 @@ class InstallationManagerTest extends TestCase
 
         $content = file_get_contents($indexFile);
         $this->assertStringContainsString("'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'", $content);
-        $this->assertStringContainsString("'SismaFramework' . DIRECTORY_SEPARATOR . 'Config'", $content);
+        $this->assertStringContainsString("'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'", $content);
     }
 
     public function testInstallWithDatabaseConfig(): void
@@ -213,7 +213,7 @@ PHP
         $this->assertFileExists($composerFile);
 
         $composer = json_decode(file_get_contents($composerFile), true);
-        $this->assertEquals('mytestproject', $composer['name']);
+        $this->assertEquals('vendor/mytestproject', $composer['name']);
         $this->assertEquals('Project built with SismaFramework', $composer['description']);
         $this->assertEquals('project', $composer['type']);
         $this->assertArrayHasKey('psr/log', $composer['require']);
