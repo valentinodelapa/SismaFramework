@@ -29,8 +29,8 @@ class {{entityShortName}}Form extends BaseForm
         
     }
     
-    protected function customFilter(): void
+    protected function customFilter(): bool
     {
-        
+        return true;
     }
 }
