@@ -766,6 +766,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Services-Installation-InstallationManager.html#method_copyPublicFolder"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Installation\\InstallationManager\u003A\u003AcopyHtaccessFile\u0028\u0029",
+            "name": "copyHtaccessFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Installation-InstallationManager.html#method_copyHtaccessFile"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Installation\\InstallationManager\u003A\u003AcreateAdditionalFolders\u0028\u0029",
             "name": "createAdditionalFolders",
             "summary": "",

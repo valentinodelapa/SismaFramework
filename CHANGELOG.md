@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.0.3] - 2026-01-08 - Correzione Installazione File .htaccess
+
+Questa patch release corregge un bug nel processo di installazione che non copiava il file .htaccess necessario per il reindirizzamento verso la directory Public.
+
+### 🐛 Bug Fixes
+
+#### Copia File .htaccess Durante Installazione
+
+Aggiunta la copia del file `.htaccess` durante il processo di installazione automatica:
+
+*   **InstallationManager.php**:
+    - Aggiunto nuovo metodo `copyHtaccessFile()` che copia il file `.htaccess` dalla directory del framework alla root del progetto
+    - Il metodo rispetta il flag `--force`: se il file esiste e non viene specificato `--force`, il file non viene sovrascritto
+    - Integrato nella sequenza di installazione in `install()` dopo `copyPublicFolder()`
+
+*   **InstallationCommand.php**:
+    - Aggiornato l'output del comando per mostrare `.htaccess` tra i file creati
+
+**Scenario del bug**:
+1. Utente esegue: `php SismaFramework/Console/sisma install MyProject`
+2. Il file `.htaccess` non veniva copiato nella root del progetto
+3. Il web server non riusciva a reindirizzare correttamente le richieste verso `Public/index.php`
+4. L'applicazione non funzionava correttamente senza configurazione manuale del virtual host
+
+**Dopo la correzione**:
+- Il file `.htaccess` viene copiato automaticamente nella root del progetto
+- Il file contiene le regole di reindirizzamento verso `Public/` già configurate
+- L'applicazione funziona immediatamente senza configurazione aggiuntiva del web server
+
+**Contenuto del file .htaccess**:
+```apache
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{QUERY_STRING} fbclid= [NC]
+RewriteRule ^(.*)$ /$1? [R=301,L]
+RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php\/(.*)$ [NC]
+RewriteRule ^(.+/)?index\.php\/(.*)$ /$1$2 [R=301,L]
+RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php(.*)$ [NC]
+RewriteRule ^(.+/)?index\.php(.*)$ /$1$2 [R=301,L]
+RewriteCond %{REQUEST_URI} !^/Public/
+RewriteRule ^(.*)$ Public/ [L]
+</IfModule>
+```
+
+### ✅ Backward Compatibility
+
+*   **Installazioni Esistenti**: Progetti installati con versioni precedenti (11.0.0 - 11.0.2) devono copiare manualmente il file `.htaccess` dal framework o configurare il virtual host per puntare alla directory Public
+*   **Nuove Installazioni**: Il file `.htaccess` viene copiato automaticamente
+
+### 📊 Impatto
+
+*   **Facilità d'uso**: Eliminata la necessità di configurazione manuale del web server
+*   **Completezza**: Il processo di installazione è ora completo e funzionante out-of-the-box
+*   **Sicurezza**: Le regole di reindirizzamento proteggono correttamente i file della root
+
+---
+
 ## [11.0.1] - 2026-01-06 - Correzioni Processo di Installazione
 
 Questa patch release corregge tre bug critici nel processo di installazione automatica del framework che causavano errori nella generazione del file composer.json e nel riferimento al file di configurazione.
