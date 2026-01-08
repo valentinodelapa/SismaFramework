@@ -203,6 +203,51 @@ PHP
         }
     }
 
+    public function testInstallCopiesHtaccessFile(): void
+    {
+        $projectName = 'MyTestProject';
+
+        $this->manager->install($projectName);
+
+        $htaccessFile = $this->testProjectRoot . '/.htaccess';
+        $this->assertFileExists($htaccessFile);
+
+        $content = file_get_contents($htaccessFile);
+        $this->assertStringContainsString('RewriteEngine On', $content);
+        $this->assertStringContainsString('RewriteRule ^(.*)$ Public/ [L]', $content);
+    }
+
+    public function testInstallDoesNotOverwriteExistingHtaccessWithoutForce(): void
+    {
+        $projectName = 'MyTestProject';
+
+        // Crea un .htaccess esistente
+        $existingContent = '# Custom htaccess';
+        file_put_contents($this->testProjectRoot . '/.htaccess', $existingContent);
+
+        $this->manager->install($projectName);
+
+        $htaccessFile = $this->testProjectRoot . '/.htaccess';
+        $content = file_get_contents($htaccessFile);
+        $this->assertEquals($existingContent, $content);
+    }
+
+    public function testInstallOverwritesExistingHtaccessWithForce(): void
+    {
+        $projectName = 'MyTestProject';
+
+        // Crea un .htaccess esistente
+        file_put_contents($this->testProjectRoot . '/.htaccess', '# Custom htaccess');
+
+        $this->manager->setForce(true);
+        $this->manager->install($projectName);
+
+        $htaccessFile = $this->testProjectRoot . '/.htaccess';
+        $content = file_get_contents($htaccessFile);
+        $this->assertStringNotContainsString('# Custom htaccess', $content);
+        $this->assertStringContainsString('RewriteEngine On', $content);
+    }
+
     private function createFrameworkStructure(): void
     {
         // Crea Config/config.php
@@ -237,6 +282,24 @@ PHP
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
 PHP
+        );
+
+        // Crea .htaccess
+        file_put_contents(
+            $this->testFrameworkPath . '/.htaccess',
+            <<<'HTACCESS'
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{QUERY_STRING} fbclid= [NC]
+RewriteRule ^(.*)$ /$1? [R=301,L]
+RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php\/(.*)$ [NC]
+RewriteRule ^(.+/)?index\.php\/(.*)$ /$1$2 [R=301,L]
+RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php(.*)$ [NC]
+RewriteRule ^(.+/)?index\.php(.*)$ /$1$2 [R=301,L]
+RewriteCond %{REQUEST_URI} !^/Public/
+RewriteRule ^(.*)$ Public/ [L]
+</IfModule>
+HTACCESS
         );
     }
 

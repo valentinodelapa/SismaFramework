@@ -105,6 +105,7 @@ OUTPUT);
         $this->output('Project structure created:');
         $this->output('  - Config/configFramework.php');
         $this->output('  - Public/index.php');
+        $this->output('  - .htaccess');
         $this->output('  - Cache/');
         $this->output('  - Logs/');
         $this->output('  - filesystemMedia/');

@@ -54,6 +54,7 @@ class InstallationManager
             $this->createProjectStructure();
             $this->copyConfigFolder($projectName);
             $this->copyPublicFolder();
+            $this->copyHtaccessFile();
             $this->createAdditionalFolders();
             if (!empty($config)) {
                 $this->updateConfigFile($config);
@@ -158,6 +159,24 @@ class InstallationManager
             );
 
             file_put_contents($indexPath, $content);
+        }
+    }
+    
+    private function copyHtaccessFile(): void
+    {
+        $sourceHtaccess = $this->frameworkPath . DIRECTORY_SEPARATOR . '.htaccess';
+        $destHtaccess = $this->projectRoot . DIRECTORY_SEPARATOR . '.htaccess';
+        
+        if (!file_exists($sourceHtaccess)) {
+            throw new \RuntimeException("Source .htaccess file not found in framework.");
+        }
+        
+        if (file_exists($destHtaccess) && !$this->force) {
+            return;
+        }
+        
+        if (!copy($sourceHtaccess, $destHtaccess)) {
+            throw new \RuntimeException("Failed to copy .htaccess file.");
         }
     }
     

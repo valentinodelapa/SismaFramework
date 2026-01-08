@@ -2,6 +2,75 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.1.9] - 2026-01-08 - Correzione Installazione File .htaccess
+
+Questa patch release corregge un bug nel processo di installazione che non copiava il file .htaccess necessario per il reindirizzamento verso la directory Public.
+
+### 🐛 Bug Fixes
+
+#### Copia File .htaccess Durante Installazione
+
+Aggiunta la copia del file `.htaccess` durante il processo di installazione automatica:
+
+*   **InstallationManager.php**:
+    - Aggiunto nuovo metodo `copyHtaccessFile()` che copia il file `.htaccess` dalla directory del framework alla root del progetto
+    - Il metodo rispetta il flag `--force`: se il file esiste e non viene specificato `--force`, il file non viene sovrascritto
+    - Integrato nella sequenza di installazione in `install()` dopo `copyPublicFolder()`
+
+*   **InstallationCommand.php**:
+    - Aggiornato l'output del comando per mostrare `.htaccess` tra i file creati
+
+**Scenario del bug**:
+1. Utente esegue: `php SismaFramework/Console/sisma install MyProject`
+2. Il file `.htaccess` non veniva copiato nella root del progetto
+3. Il web server non riusciva a reindirizzare correttamente le richieste verso `Public/index.php`
+4. L'applicazione non funzionava correttamente senza configurazione manuale del virtual host
+
+**Dopo la correzione**:
+- Il file `.htaccess` viene copiato automaticamente nella root del progetto
+- Il file contiene le regole di reindirizzamento verso `Public/` già configurate
+- L'applicazione funziona immediatamente senza configurazione aggiuntiva del web server
+
+**Contenuto del file .htaccess**:
+```apache
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{QUERY_STRING} fbclid= [NC]
+RewriteRule ^(.*)$ /$1? [R=301,L]
+RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php\/(.*)$ [NC]
+RewriteRule ^(.+/)?index\.php\/(.*)$ /$1$2 [R=301,L]
+RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php(.*)$ [NC]
+RewriteRule ^(.+/)?index\.php(.*)$ /$1$2 [R=301,L]
+RewriteCond %{REQUEST_URI} !^/Public/
+RewriteRule ^(.*)$ Public/ [L]
+</IfModule>
+```
+
+### 🧪 Testing
+
+#### Aggiornamento Test Suite
+
+Aggiunti test per verificare la copia corretta del file .htaccess:
+
+*   **InstallationManagerTest.php**:
+    - **testInstallCopiesHtaccessFile()**: Verifica che il file `.htaccess` venga copiato correttamente durante l'installazione
+    - **testInstallDoesNotOverwriteExistingHtaccessWithoutForce()**: Verifica che un file `.htaccess` esistente non venga sovrascritto senza il flag `--force`
+    - **testInstallOverwritesExistingHtaccessWithForce()**: Verifica che con il flag `--force` il file venga correttamente sovrascritto
+
+*   ✅ **Tutti i test passano correttamente**
+
+### ✅ Backward Compatibility
+
+*   **Installazioni Esistenti**: Progetti installati con versioni precedenti (10.1.0 - 10.1.8) devono copiare manualmente il file `.htaccess` dal framework o configurare il virtual host per puntare alla directory Public
+*   **Nuove Installazioni**: Il file `.htaccess` viene copiato automaticamente
+
+### 📊 Impatto
+
+*   **Facilità d'uso**: Eliminata la necessità di configurazione manuale del web server
+*   **Completezza**: Il processo di installazione è ora completo e funzionante out-of-the-box
+*   **Sicurezza**: Le regole di reindirizzamento proteggono correttamente i file della root
+
+---
 
 ## [10.1.8] - 2026-01-06 - Correzioni Processo di Installazione
 
