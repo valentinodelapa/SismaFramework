@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.1.10] - 2026-01-17 - Correzione Percorso File di Log
+
+Questa patch release corregge un bug nel file di configurazione del framework dove la costante `LOG_PATH` puntava a un percorso errato.
+
+### 🐛 Bug Fixes
+
+#### Correzione Costante LOG_PATH
+
+Corretto il percorso del file di log nella configurazione predefinita del framework:
+
+*   **Config/config.php**:
+    - ❌ **Prima**: `const LOG_PATH = DIRECTORY_SEPARATOR . 'log.txt';`
+    - ✅ **Dopo**: `const LOG_PATH = LOG_DIRECTORY_PATH . "log.txt";`
+
+**Scenario del bug**:
+1. La costante `LOG_PATH` era definita come `DIRECTORY_SEPARATOR . 'log.txt'`
+2. Questo puntava erroneamente alla root del filesystem (`/log.txt` su Linux, `\log.txt` su Windows)
+3. Nella configurazione standard, questa costante non viene modificata durante l'installazione
+4. Il file di log non veniva scritto nella posizione corretta (`Sample/Logs/log.txt`)
+
+**Dopo la correzione**:
+- `LOG_PATH` utilizza correttamente `LOG_DIRECTORY_PATH` come base del percorso
+- Il file di log viene creato nella directory corretta: `{ROOT}/Sample/Logs/log.txt`
+- Il sistema di logging funziona correttamente senza necessità di configurazione manuale
+
+### ✅ Backward Compatibility
+
+*   **Installazioni Esistenti**: Progetti che hanno già modificato manualmente `LOG_PATH` nel proprio file di configurazione non sono interessati
+*   **Nuove Installazioni**: Funzionano correttamente senza modifiche
+
+### 📊 Impatto
+
+*   **Correttezza**: Il file di log viene ora scritto nella posizione corretta
+*   **Funzionalità**: Il sistema di logging funziona out-of-the-box senza configurazione aggiuntiva
+
+---
+
 ## [10.1.9] - 2026-01-08 - Correzione Installazione File .htaccess
 
 Questa patch release corregge un bug nel processo di installazione che non copiava il file .htaccess necessario per il reindirizzamento verso la directory Public.
