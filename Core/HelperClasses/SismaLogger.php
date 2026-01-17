@@ -37,6 +37,7 @@ use SismaFramework\Core\Exceptions\LoggerException;
  */
 class SismaLogger implements LoggerInterface
 {
+
     private Locker $locker;
     private Config $config;
 
@@ -89,14 +90,14 @@ class SismaLogger implements LoggerInterface
     public function log($level, $message, array $context = []): void
     {
         $message = $this->interpolate($message, $context);
-        $code = $context['code'] ?? $level;
-        $file = $context['file'] ?? '';
-        $line = $context['line'] ?? '';
-        
+        $code = $context["code"] ?? $level;
+        $file = $context["file"] ?? "";
+        $line = $context["line"] ?? "";
+
         $this->saveLog($message, $code, $file, $line);
-        
-        if (isset($context['trace']) && is_array($context['trace'])) {
-            $this->saveTrace($context['trace']);
+
+        if (isset($context["trace"]) && is_array($context["trace"])) {
+            $this->saveTrace($context["trace"]);
         }
     }
 
@@ -104,25 +105,24 @@ class SismaLogger implements LoggerInterface
     {
         $replace = [];
         foreach ($context as $key => $val) {
-            if (in_array($key, ['code', 'file', 'line', 'trace'])) {
+            if (in_array($key, ["code", "file", "line", "trace"])) {
                 continue;
             }
-            
-            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
-                $replace['{' . $key . '}'] = $val;
+            if (!is_array($val) && (!is_object($val) || method_exists($val, "__toString"))) {
+                $replace["{" . $key . "}"] = $val;
             }
         }
-        
+
         return strtr($message, $replace);
     }
 
-    private function saveLog(string $message, int|string $code, string $file, string $line): void
+    private function saveLog(string $message, int|string $code, string $file, string $line,): void
     {
         $this->createLogStructure();
-        $handle = fopen($this->config->logPath, 'a');
+        $handle = fopen($this->config->logPath, "a");
         if ($handle !== false) {
             $logEntry = date("Y-m-d H:i:s") . "\t" . $code . "\t" . $message;
-            if ($file !== '' || $line !== '') {
+            if ($file !== "" || $line !== "") {
                 $logEntry .= "\t" . $file . "(" . $line . ")";
             }
             fwrite($handle, $logEntry . "\n");
@@ -134,11 +134,11 @@ class SismaLogger implements LoggerInterface
     private function saveTrace(array $trace): void
     {
         $this->createLogStructure();
-        $handle = fopen($this->config->logPath, 'a');
+        $handle = fopen($this->config->logPath, "a");
         if ($handle !== false) {
             foreach ($trace as $call) {
-                $row = "\t" . ($call['class'] ?? '') . ($call['type'] ?? '') . ($call['function'] ?? '') . "\n";
-                $row .= isset($call['file']) ? "\t\t" . $call['file'] . '(' . $call['line'] . ')' . "\n" : '';
+                $row = "\t" . ($call["class"] ?? "") . ($call["type"] ?? "") . ($call["function"] ?? "") . "\n";
+                $row .= isset($call["file"]) ? "\t\t" . $call["file"] . "(" . $call["line"] . ")" . "\n" : "";
                 fwrite($handle, $row);
             }
             fclose($handle);
@@ -155,7 +155,7 @@ class SismaLogger implements LoggerInterface
     {
         if (is_dir($this->config->logDirectoryPath) === false) {
             mkdir($this->config->logDirectoryPath);
-            $handle = fopen($this->config->logPath, 'a');
+            $handle = fopen($this->config->logPath, "a");
             fclose($handle);
         }
         $this->locker->lockFolder($this->config->logDirectoryPath);
@@ -164,7 +164,7 @@ class SismaLogger implements LoggerInterface
     private function createLogFile(): void
     {
         if (file_exists($this->config->logPath) === false) {
-            $file = fopen($this->config->logPath, 'w');
+            $file = fopen($this->config->logPath, "w");
             if ($file) {
                 fclose($file);
             }
@@ -173,15 +173,13 @@ class SismaLogger implements LoggerInterface
 
     private function truncateLog(): void
     {
-        $maxRows = $this->config->developmentEnvironment 
-            ? $this->config->logDevelopmentMaxRow 
-            : $this->config->logProductionMaxRow;
-            
+        $maxRows = $this->config->developmentEnvironment ? $this->config->logDevelopmentMaxRow : $this->config->logProductionMaxRow;
+
         $logRows = file($this->config->logPath);
         if (count($logRows) > $maxRows) {
             $offset = $maxRows - count($logRows) - 1;
             $logRows = array_slice($logRows, $offset);
-            $file = fopen($this->config->logPath, 'w');
+            $file = fopen($this->config->logPath, "w");
             if ($file) {
                 foreach ($logRows as $line) {
                     fwrite($file, $line);

@@ -28,94 +28,90 @@ namespace Config;
 
 /* Name Constant */
 
-const ADAPTERS = 'Adapters';
-const APPLICATION = 'Sample';
-const ASSETS = 'Assets';
-const CACHE = 'Cache';
-const CONTROLLERS = 'Controllers';
-const CORE = 'Core';
-const DEFAULT_PATH = 'sample';
-const DEFAULT_ACTION = 'index';
-const DEFAULT_CONTROLLER = 'SampleController';
-const ENTITIES = 'Entities';
-const FIXTURES = 'Fixtures';
-const FORMS = 'Forms';
-const LOGS = 'Logs';
-const LOCALES = 'Locales';
-const MODELS = 'Models';
-const ORM = 'Orm';
-const PROJECT = 'SismaFramework';
-const SYSTEM = 'SismaFramework';
-const STRUCTURAL = 'Structural';
-const TEMPLATES = 'Templates';
-const RESOURCES = 'Resources';
-const VIEWS = 'Views';
-const THIS_DIRECTORY = '.';
-const DIRECTORY_UP = '..';
+const ADAPTERS = "Adapters";
+const APPLICATION = "Sample";
+const ASSETS = "Assets";
+const CACHE = "Cache";
+const CONTROLLERS = "Controllers";
+const CORE = "Core";
+const DEFAULT_PATH = "sample";
+const DEFAULT_ACTION = "index";
+const DEFAULT_CONTROLLER = "SampleController";
+const ENTITIES = "Entities";
+const FIXTURES = "Fixtures";
+const FORMS = "Forms";
+const LOGS = "Logs";
+const LOCALES = "Locales";
+const MODELS = "Models";
+const ORM = "Orm";
+const PROJECT = "SismaFramework";
+const SYSTEM = "SismaFramework";
+const STRUCTURAL = "Structural";
+const TEMPLATES = "Templates";
+const RESOURCES = "Resources";
+const VIEWS = "Views";
+const THIS_DIRECTORY = ".";
+const DIRECTORY_UP = "..";
 
 /* Base Constant */
-const LANGUAGE = 'it_IT';
-const DEFAULT_META_URL = '';
+const LANGUAGE = "it_IT";
+const DEFAULT_META_URL = "";
 const MINIMUM_MAJOR_PHP_VERSION = 8;
 const MINIMUM_MINOR_PHP_VERSION = 1;
 const MINIMUM_RELEASE_PHP_VERSION = 0;
 const MAX_RELOAD_ATTEMPTS = 3;
-const CONFIGURATION_PASSWORD = '';
+const CONFIGURATION_PASSWORD = "";
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;
 const APPLICATION_PATH = APPLICATION . DIRECTORY_SEPARATOR;
-const APPLICATION_NAMESPACE = APPLICATION . '\\';
+const APPLICATION_NAMESPACE = APPLICATION . "\\";
 const APPLICATION_ASSETS_PATH = APPLICATION_PATH . ASSETS . DIRECTORY_SEPARATOR;
 const SYSTEM_PATH = ROOT_PATH . SYSTEM . DIRECTORY_SEPARATOR;
 const CORE_PATH = SYSTEM_PATH . CORE . DIRECTORY_SEPARATOR;
-const CORE_NAMESPACE = SYSTEM . '\\' . CORE . '\\';
+const CORE_NAMESPACE = SYSTEM . "\\" . CORE . "\\";
 const STRUCTURAL_PATH = SYSTEM_PATH . STRUCTURAL;
 const STRUCTURAL_ASSETS_PATH = STRUCTURAL_PATH . DIRECTORY_SEPARATOR . ASSETS . DIRECTORY_SEPARATOR;
-const PUBLIC_PATH = SYSTEM_PATH . 'Public' . DIRECTORY_SEPARATOR;
+const PUBLIC_PATH = SYSTEM_PATH . "Public" . DIRECTORY_SEPARATOR;
 const DEVELOPMENT_ENVIRONMENT = true;
 const HTTPS_IS_FORCED = false;
-const MODULE_FOLDERS = [
-    'SismaFramework',
-];
-const AUTOLOAD_NAMESPACE_MAPPER = [
-];
-const AUTOLOAD_CLASS_MAPPER = [
-];
+const MODULE_FOLDERS = ["SismaFramework"];
+const AUTOLOAD_NAMESPACE_MAPPER = [];
+const AUTOLOAD_CLASS_MAPPER = [];
 
 /* Fixtures Constant */
 const FIXTURE_PATH = APPLICATION_PATH . FIXTURES . DIRECTORY_SEPARATOR;
-const FIXTURE_NAMESPACE = APPLICATION_NAMESPACE . FIXTURES . '\\';
+const FIXTURE_NAMESPACE = APPLICATION_NAMESPACE . FIXTURES . "\\";
 
 /* Object Relational Mapper Constant */
 const ORM_PATH = SYSTEM_PATH . ORM . DIRECTORY_SEPARATOR;
-const ORM_NAMESPACE = SYSTEM . '\\' . ORM . '\\';
+const ORM_NAMESPACE = SYSTEM . "\\" . ORM . "\\";
 const ORM_CACHE = true;
 const REFERENCE_CACHE_DIRECTORY = SYSTEM_PATH . APPLICATION_PATH . CACHE . DIRECTORY_SEPARATOR;
-const REFERENCE_CACHE_PATH = REFERENCE_CACHE_DIRECTORY . 'referenceCache.json';
+const REFERENCE_CACHE_PATH = REFERENCE_CACHE_DIRECTORY . "referenceCache.json";
 
 /* Adapter Constant */
 const ADAPTER_PATH = ORM_PATH . ADAPTERS . DIRECTORY_SEPARATOR;
-const ADAPTER_NAMESPACE = ORM_NAMESPACE . ADAPTERS . '\\';
-const DEFAULT_ADAPTER_TYPE = 'mysql';
+const ADAPTER_NAMESPACE = ORM_NAMESPACE . ADAPTERS . "\\";
+const DEFAULT_ADAPTER_TYPE = "mysql";
 
 /* Entities Constant */
 const ENTITY_PATH = APPLICATION_PATH . ENTITIES . DIRECTORY_SEPARATOR;
-const ENTITY_NAMESPACE = APPLICATION_NAMESPACE . ENTITIES . '\\';
-const DEFAULT_PRIMARY_KEY_PROPERTY_NAME = 'id';
-const FOREIGN_KEY_SUFFIX = 'Collection';
-const PARENT_PREFIX_PROPERTY_NAME = 'parent';
-const SON_COLLECTION_PROPERTY_NAME = 'sonCollection';
+const ENTITY_NAMESPACE = APPLICATION_NAMESPACE . ENTITIES . "\\";
+const DEFAULT_PRIMARY_KEY_PROPERTY_NAME = "id";
+const FOREIGN_KEY_SUFFIX = "Collection";
+const PARENT_PREFIX_PROPERTY_NAME = "parent";
+const SON_COLLECTION_PROPERTY_NAME = "sonCollection";
 
 /* Models Constant */
 const MODEL_PATH = APPLICATION_PATH . MODELS . DIRECTORY_SEPARATOR;
-const MODEL_NAMESPACE = APPLICATION_NAMESPACE . MODELS . '\\';
-const SON_COLLECTION_GETTER_METHOD = 'getSonCollection';
+const MODEL_NAMESPACE = APPLICATION_NAMESPACE . MODELS . "\\";
+const SON_COLLECTION_GETTER_METHOD = "getSonCollection";
 
 /* Forms Constant */
 const PRIMARY_KEY_PASS_ACCEPTED = false;
 
 /* Dispatcher Constant */
 const CONTROLLER_PATH = APPLICATION_PATH . CONTROLLERS . DIRECTORY_SEPARATOR;
-const CONTROLLER_NAMESPACE = APPLICATION_NAMESPACE . CONTROLLERS . '\\';
+const CONTROLLER_NAMESPACE = APPLICATION_NAMESPACE . CONTROLLERS . "\\";
 const DEFAULT_CONTROLLER_PATH = CONTROLLER_PATH . DEFAULT_CONTROLLER;
 const DEFAULT_CONTROLLER_NAMESPACE = CONTROLLER_NAMESPACE . DEFAULT_CONTROLLER;
 const CUSTOM_RENDERABLE_RESOURCE_TYPES = [];
@@ -136,7 +132,7 @@ const STRUCTURAL_RESOURCES_PATH = STRUCTURAL_PATH . DIRECTORY_SEPARATOR . RESOUR
 
 /* Log Constants */
 const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . DIRECTORY_SEPARATOR;
-const LOG_PATH = DIRECTORY_SEPARATOR . 'log.txt';
+const LOG_PATH = LOG_DIRECTORY_PATH . "log.txt";
 const LOG_VERBOSE_ACTIVE = true;
 const LOG_DEVELOPMENT_MAX_ROW = 1000;
 const LOG_PRODUCTION_MAX_ROW = 100;
@@ -144,16 +140,16 @@ const LOG_WARNING_ROW = 10;
 const LOG_DANGER_ROW = 50;
 
 /* Encryptor Constants */
-const SIMPLE_HASH_ALGORITHM = 'sha256';
+const SIMPLE_HASH_ALGORITHM = "sha256";
 const BLOWFISH_HASH_WORKLOAD = 12;
-const ENCRYPTION_PASSPHRASE = '';
-const ENCRYPTION_ALGORITHM = 'AES-256-CBC';
+const ENCRYPTION_PASSPHRASE = "";
+const ENCRYPTION_ALGORITHM = "AES-256-CBC";
 const INITIALIZATION_VECTOR_BYTES = 16;
 
 /* Database Constant */
-const DATABASE_HOST = '';
-const DATABASE_NAME = '';
-const DATABASE_PASSWORD = '';
-const DATABASE_PORT = '';
-const DATABASE_USERNAME = '';
+const DATABASE_HOST = "";
+const DATABASE_NAME = "";
+const DATABASE_PASSWORD = "";
+const DATABASE_PORT = "";
+const DATABASE_USERNAME = "";
 
