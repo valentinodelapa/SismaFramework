@@ -102,8 +102,8 @@ class InstallationManagerTest extends TestCase
         $this->assertFileExists($configFile);
 
         $content = file_get_contents($configFile);
-        $this->assertStringContainsString("const PROJECT = '{$projectName}'", $content);
-        $this->assertStringContainsString("const APPLICATION = 'Application'", $content);
+        $this->assertMatchesRegularExpression("/const PROJECT = ['\"]" . preg_quote($projectName, '/') . "['\"]/", $content);
+        $this->assertMatchesRegularExpression("/const APPLICATION = ['\"]Application['\"]/", $content);
         $this->assertStringContainsString("const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;", $content);
         $this->assertStringContainsString("const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;", $content);
         $this->assertStringContainsString("const MODULE_FOLDERS = [];", $content);
@@ -150,10 +150,10 @@ PHP
         $this->manager->install($projectName, $config);
 
         $installedConfig = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
-        $this->assertStringContainsString("const DATABASE_HOST = 'localhost'", $installedConfig);
-        $this->assertStringContainsString("const DATABASE_NAME = 'mydb'", $installedConfig);
-        $this->assertStringContainsString("const DATABASE_USERNAME = 'root'", $installedConfig);
-        $this->assertStringContainsString("const DATABASE_PASSWORD = 'secret'", $installedConfig);
+        $this->assertMatchesRegularExpression("/const DATABASE_HOST = ['\"]localhost['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const DATABASE_NAME = ['\"]mydb['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const DATABASE_USERNAME = ['\"]root['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const DATABASE_PASSWORD = ['\"]secret['\"]/", $installedConfig);
     }
 
     public function testInstallThrowsExceptionWhenConfigExists(): void
@@ -184,7 +184,7 @@ PHP
         $this->assertTrue($result);
         $content = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
         $this->assertStringNotContainsString('// old', $content);
-        $this->assertStringContainsString("const PROJECT = '{$projectName}'", $content);
+        $this->assertMatchesRegularExpression("/const PROJECT = ['\"]" . preg_quote($projectName, '/') . "['\"]/", $content);
     }
 
     public function testInstallCreatesDirectoriesWithCorrectPermissions(): void

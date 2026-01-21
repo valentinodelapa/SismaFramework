@@ -93,14 +93,14 @@ class InstallationManager
         $content = file_get_contents($destConfig);
         
         $content = preg_replace(
-                "/(const\s+PROJECT\s*=\s*')[^']*(')/",
-                "$1{$projectName}$2",
+                "/(const\s+PROJECT\s*=\s*)(['\"])[^'\"]*\\2/",
+                "$1$2{$projectName}$2",
                 $content
         );
         
         $content = preg_replace(
-                "/(const\s+APPLICATION\s*=\s*')[^']*(')/",
-                "$1Application$2",
+                "/(const\s+APPLICATION\s*=\s*)(['\"])[^'\"]*\\2/",
+                "$1$2Application$2",
                 $content
         );
         
@@ -206,8 +206,8 @@ class InstallationManager
         }
         $content = file_get_contents($configPath);
         foreach ($config as $key => $value) {
-            $pattern = "/(const\s+{$key}\s*=\s*')[^']*(')/";
-            $content = preg_replace($pattern, "$1{$value}$2", $content);
+            $pattern = "/(const\s+{$key}\s*=\s*)(['\"])[^'\"]*\\2/";
+            $content = preg_replace($pattern, "$1$2{$value}$2", $content);
         }
         if (!file_put_contents($configPath, $content)) {
             throw new \RuntimeException("Failed to update config file.");

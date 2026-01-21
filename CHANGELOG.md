@@ -2,6 +2,70 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.0.5] - 2026-01-21 - Correzione Sostituzione Costanti File Configurazione
+
+Questa patch release corregge un bug nel processo di installazione che impediva la corretta sostituzione delle costanti nel file di configurazione quando queste utilizzavano apici doppi invece di apici singoli.
+
+### 🐛 Bug Fixes
+
+#### Correzione Regex Sostituzione Costanti
+
+Corrette le espressioni regolari in `InstallationManager.php` per supportare sia apici singoli (`'`) che apici doppi (`"`) nella sostituzione delle costanti:
+
+*   **InstallationManager.php (copyConfigFolder)**:
+    - ❌ **Prima**: Le regex cercavano solo apici singoli: `/(const\s+PROJECT\s*=\s*')[^']*(')/`
+    - ✅ **Dopo**: Le regex supportano entrambi i tipi di apici: `/(const\s+PROJECT\s*=\s*)(['\"])[^'\"]*\\2/`
+    - Costanti interessate: `PROJECT`, `APPLICATION`
+
+*   **InstallationManager.php (updateConfigFile)**:
+    - ❌ **Prima**: Pattern con apici singoli: `/(const\s+{$key}\s*=\s*')[^']*(')/`
+    - ✅ **Dopo**: Pattern con entrambi gli apici: `/(const\s+{$key}\s*=\s*)(['\"])[^'\"]*\\2/`
+    - Costanti interessate: `DATABASE_HOST`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_PORT` e tutte le altre costanti passate nel parametro `$config`
+
+**Scenario del bug**:
+1. Il file `Config/config.php` del framework utilizza apici doppi per le stringhe (es. `const PROJECT = "SismaFramework"`)
+2. Le regex in `InstallationManager` cercavano solo apici singoli
+3. Durante l'installazione (`php SismaFramework/Console/sisma install MyProject`), le costanti non venivano sostituite
+4. Il file `configFramework.php` risultante manteneva i valori originali invece di quelli specificati dall'utente
+
+**Dopo la correzione**:
+- Le costanti vengono sostituite correttamente indipendentemente dal tipo di apice usato
+- Il processo di installazione funziona sia con file di configurazione che usano apici singoli che doppi
+- Maggiore robustezza e compatibilità del processo di installazione
+
+### 🧪 Testing
+
+#### Aggiornamento Test InstallationManager
+
+Aggiornati i test per essere agnostici rispetto al tipo di apice utilizzato:
+
+*   **InstallationManagerTest.php**:
+    - **testInstallCopiesConfigFile()**: Modificato per usare `assertMatchesRegularExpression()` invece di `assertStringContainsString()`
+    - **testInstallWithDatabaseConfig()**: Modificato per verificare la presenza delle costanti con entrambi i tipi di apice
+    - **testInstallWithForceOverwritesExistingConfig()**: Modificato per usare regex nella verifica
+
+**Esempio di verifica aggiornata**:
+```php
+// ❌ Prima (verificava solo apici singoli):
+$this->assertStringContainsString("const PROJECT = 'MyTestProject'", $content);
+
+// ✅ Dopo (verifica entrambi i tipi di apici):
+$this->assertMatchesRegularExpression("/const PROJECT = ['\"]MyTestProject['\"]/", $content);
+```
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: La correzione estende il supporto senza rimuovere funzionalità esistenti
+*   **Installazioni Esistenti**: Progetti installati con versioni precedenti che presentano costanti non sostituite devono essere aggiornati manualmente
+
+### 📊 Impatto
+
+*   **Correttezza**: Le costanti vengono ora sostituite correttamente durante l'installazione
+*   **Robustezza**: Il processo di installazione è più resiliente rispetto alle variazioni nel formato del file di configurazione
+*   **Compatibilità**: Supporto per entrambe le convenzioni di quotazione delle stringhe in PHP
+
+---
+
 ## [11.0.4] - 2026-01-17 - Correzione Percorso File di Log
 
 Questa patch release corregge un bug nel file di configurazione del framework dove la costante `LOG_PATH` puntava a un percorso errato.
