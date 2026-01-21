@@ -5,7 +5,6 @@ namespace SismaFramework\Tests\Console\Commands;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Console\Commands\InstallationCommand;
 use SismaFramework\Console\Services\Installation\InstallationManager;
-use SismaFramework\Console\Traits\InteractiveInputTrait;
 
 class InstallationCommandTest extends TestCase
 {
@@ -36,29 +35,19 @@ class InstallationCommandTest extends TestCase
             'Arguments:',
             'projectName    The name of the project to install',
             'Options:',
-            '--force',
-            '--skip-db',
-            '--db-host=HOST',
-            '--db-name=NAME',
-            '--db-user=USER',
-            '--db-pass=PASS',
-            '--db-port=PORT',
+            '--force        Force overwrite existing files',
+            '--db-host=HOST      Database host (default: 127.0.0.1)',
+            '--db-name=NAME      Database name',
+            '--db-user=USER      Database username',
+            '--db-pass=PASS      Database password',
+            '--db-port=PORT      Database port (default: 3306)',
             'Example:',
+            'php SismaFramework/Console/sisma install MyProject --db-name=mydb --db-user=root'
         ];
 
         foreach ($expectedStrings as $string) {
             $this->assertStringContainsString($string, $output);
         }
-    }
-
-    public function testConfigureShowsSkipDbOption(): void
-    {
-        ob_start();
-        $this->command->run();
-        $output = ob_get_clean();
-
-        $this->assertStringContainsString('--skip-db', $output);
-        $this->assertStringContainsString('Skip database configuration', $output);
     }
 
     public function testExecuteWithMissingProjectName(): void
@@ -75,37 +64,12 @@ class InstallationCommandTest extends TestCase
         $this->assertStringContainsString('Error: Project name is required', $output);
     }
 
-    public function testSuccessfulInstallationWithSkipDb(): void
+    public function testSuccessfulInstallation(): void
     {
         $this->command->setArguments([
             '0' => 'MyProject'
         ]);
-        $this->command->setOptions(['skip-db' => true]);
-
-        $this->installationManagerStub
-            ->method('setForce')
-            ->with(false)
-            ->willReturnSelf();
-
-        $this->installationManagerStub
-            ->method('install')
-            ->with('MyProject', [])
-            ->willReturn(true);
-
-        ob_start();
-        $result = $this->command->run();
-        $output = ob_get_clean();
-
-        $this->assertTrue($result);
-        $this->assertStringContainsString('Installation completed successfully', $output);
-    }
-
-    public function testSuccessfulInstallationWithForce(): void
-    {
-        $this->command->setArguments([
-            '0' => 'MyProject'
-        ]);
-        $this->command->setOptions(['force' => true, 'skip-db' => true]);
+        $this->command->setOptions(['force' => true]);
 
         $this->installationManagerStub
             ->method('setForce')
@@ -163,44 +127,11 @@ class InstallationCommandTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testInstallationWithPartialDatabaseOptions(): void
-    {
-        $this->command->setArguments([
-            '0' => 'MyProject'
-        ]);
-        $this->command->setOptions([
-            'db-host' => 'localhost',
-            'db-name' => 'mydb'
-        ]);
-
-        $expectedConfig = [
-            'DATABASE_HOST' => 'localhost',
-            'DATABASE_NAME' => 'mydb'
-        ];
-
-        $this->installationManagerStub
-            ->method('setForce')
-            ->with(false)
-            ->willReturnSelf();
-
-        $this->installationManagerStub
-            ->method('install')
-            ->with('MyProject', $expectedConfig)
-            ->willReturn(true);
-
-        ob_start();
-        $result = $this->command->run();
-        ob_get_clean();
-
-        $this->assertTrue($result);
-    }
-
     public function testInstallationFailure(): void
     {
         $this->command->setArguments([
             '0' => 'MyProject'
         ]);
-        $this->command->setOptions(['skip-db' => true]);
 
         $this->installationManagerStub
             ->method('setForce')
@@ -210,6 +141,7 @@ class InstallationCommandTest extends TestCase
             ->method('install')
             ->willThrowException(new \RuntimeException('Installation failed'));
 
+        // L'eccezione viene propagata e catturata dal dispatcher a monte
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Installation failed');
 
@@ -231,70 +163,5 @@ class InstallationCommandTest extends TestCase
         $this->assertFalse($this->command->checkCompatibility('uninstall'));
         $this->assertFalse($this->command->checkCompatibility('update'));
         $this->assertFalse($this->command->checkCompatibility(''));
-    }
-
-    public function testCommandUsesInteractiveInputTrait(): void
-    {
-        $reflection = new \ReflectionClass(InstallationCommand::class);
-        $traits = $reflection->getTraitNames();
-        
-        $this->assertContains(InteractiveInputTrait::class, $traits);
-    }
-
-    public function testOutputContainsProjectStructureInfo(): void
-    {
-        $this->command->setArguments([
-            '0' => 'MyProject'
-        ]);
-        $this->command->setOptions(['skip-db' => true]);
-
-        $this->installationManagerStub
-            ->method('setForce')
-            ->willReturnSelf();
-
-        $this->installationManagerStub
-            ->method('install')
-            ->willReturn(true);
-
-        ob_start();
-        $this->command->run();
-        $output = ob_get_clean();
-
-        $expectedStructure = [
-            'Config/configFramework.php',
-            'Public/index.php',
-            '.htaccess',
-            'composer.json',
-            'Cache/',
-            'Logs/',
-            'filesystemMedia/',
-        ];
-
-        foreach ($expectedStructure as $item) {
-            $this->assertStringContainsString($item, $output);
-        }
-    }
-
-    public function testOutputContainsNextSteps(): void
-    {
-        $this->command->setArguments([
-            '0' => 'MyProject'
-        ]);
-        $this->command->setOptions(['skip-db' => true]);
-
-        $this->installationManagerStub
-            ->method('setForce')
-            ->willReturnSelf();
-
-        $this->installationManagerStub
-            ->method('install')
-            ->willReturn(true);
-
-        ob_start();
-        $this->command->run();
-        $output = ob_get_clean();
-
-        $this->assertStringContainsString('Next steps:', $output);
-        $this->assertStringContainsString('composer install', $output);
     }
 }

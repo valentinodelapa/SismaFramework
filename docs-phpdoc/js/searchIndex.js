@@ -566,6 +566,21 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_execute"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003AcollectDatabaseConfiguration\u0028\u0029",
+            "name": "collectDatabaseConfiguration",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_collectDatabaseConfiguration"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003AhasDbOptionsFromCommandLine\u0028\u0029",
+            "name": "hasDbOptionsFromCommandLine",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDbOptionsFromCommandLine"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003AgetDbConfigFromOptions\u0028\u0029",
+            "name": "getDbConfigFromOptions",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_getDbConfigFromOptions"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003A\u0024installationManager",
             "name": "installationManager",
             "summary": "",
@@ -970,6 +985,26 @@ Search.appendIndex(
             "name": "config",
             "summary": "",
             "url": "classes/SismaFramework-Console-Services-Scaffolding-ScaffoldingManager.html#property_config"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait",
+            "name": "InteractiveInputTrait",
+            "summary": "Trait\u0020for\u0020handling\u0020interactive\u0020console\u0020input",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003Aask\u0028\u0029",
+            "name": "ask",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_ask"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003AaskConfirmation\u0028\u0029",
+            "name": "askConfirmation",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askConfirmation"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003AaskSecret\u0028\u0029",
+            "name": "askSecret",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askSecret"
         },                {
             "fqsen": "\\SismaFramework\\Core\\AbstractClasses\\Submittable",
             "name": "Submittable",
@@ -6580,6 +6615,11 @@ Search.appendIndex(
             "name": "Scaffolding",
             "summary": "",
             "url": "namespaces/sismaframework-console-services-scaffolding.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits",
+            "name": "Traits",
+            "summary": "",
+            "url": "namespaces/sismaframework-console-traits.html"
         },                {
             "fqsen": "\\SismaFramework\\Core\\AbstractClasses",
             "name": "AbstractClasses",

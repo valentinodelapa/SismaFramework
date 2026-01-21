@@ -132,6 +132,9 @@
         </div>
     
     
+            <span class="phpdocumentor-element__extends">
+            uses
+                            <a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html"><abbr title="\SismaFramework\Console\Traits\InteractiveInputTrait">InteractiveInputTrait</abbr></a>                    </span>
     </h2>
 
 <div class="phpdocumentor-label-line">
@@ -142,7 +145,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">35</span>
+    <span class="phpdocumentor-element-found-in__line">36</span>
 
     </aside>
 
@@ -248,6 +251,24 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_ask">ask()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askConfirmation">askConfirmation()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
+    <a class="" href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askSecret">askSecret()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -protected">
     <a class="" href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_configure">configure()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -275,6 +296,24 @@
     <a class="" href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_output">output()</a>
     <span>
                                 &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_collectDatabaseConfiguration">collectDatabaseConfiguration()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_getDbConfigFromOptions">getDbConfigFromOptions()</a>
+    <span>
+                                &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDbOptionsFromCommandLine">hasDbOptionsFromCommandLine()</a>
+    <span>
+                                &nbsp;: bool    </span>
 </dt>
 
     </dl>
@@ -379,7 +418,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">37</span>
+    <span class="phpdocumentor-element-found-in__line">40</span>
 
     </aside>
 
@@ -420,7 +459,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">39</span>
+    <span class="phpdocumentor-element-found-in__line">42</span>
 
     </aside>
 
@@ -464,7 +503,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">44</span>
+    <span class="phpdocumentor-element-found-in__line">47</span>
 
     </aside>
 
@@ -641,6 +680,164 @@
             -protected
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_ask">
+        ask()
+        <a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_ask" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">36</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">ask</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$question</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">string|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$default</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$question</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$default</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_askConfirmation">
+        askConfirmation()
+        <a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askConfirmation" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">52</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">askConfirmation</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$question</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type">bool&nbsp;</span><span class="phpdocumentor-signature__argument__name">$default</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">true</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$question</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$default</span>
+                : <span class="phpdocumentor-signature__argument__return-type">bool</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">true</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_askSecret">
+        askSecret()
+        <a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askSecret" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">68</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">protected</span>
+                    <span class="phpdocumentor-signature__name">askSecret</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$question</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$question</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -protected
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_configure">
         configure()
         <a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_configure" class="headerlink"><i class="fas fa-link"></i></a>
@@ -649,7 +846,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">50</span>
+    <span class="phpdocumentor-element-found-in__line">53</span>
 
     </aside>
 
@@ -694,7 +891,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">72</span>
+    <span class="phpdocumentor-element-found-in__line">78</span>
 
     </aside>
 
@@ -869,6 +1066,120 @@
 
     
 </article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_collectDatabaseConfiguration">
+        collectDatabaseConfiguration()
+        <a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_collectDatabaseConfiguration" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">124</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">collectDatabaseConfiguration</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_getDbConfigFromOptions">
+        getDbConfigFromOptions()
+        <a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_getDbConfigFromOptions" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">183</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">getDbConfigFromOptions</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_hasDbOptionsFromCommandLine">
+        hasDbOptionsFromCommandLine()
+        <a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDbOptionsFromCommandLine" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Commands/InstallationCommand.php"><a href="files/console-commands-installationcommand.html"><abbr title="Console/Commands/InstallationCommand.php">InstallationCommand.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">170</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">hasDbOptionsFromCommandLine</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
             </section>
 
         <div class="phpdocumentor-modal" id="source-view">
@@ -996,11 +1307,17 @@
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_run">run()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_setArguments">setArguments()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_setOptions">setOptions()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_ask">ask()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askConfirmation">askConfirmation()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askSecret">askSecret()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_configure">configure()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_execute">execute()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_getArgument">getArgument()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_getOption">getOption()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_output">output()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_collectDatabaseConfiguration">collectDatabaseConfiguration()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_getDbConfigFromOptions">getDbConfigFromOptions()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDbOptionsFromCommandLine">hasDbOptionsFromCommandLine()</a></li>
                                     </ul>
             </li>
                     </ul>

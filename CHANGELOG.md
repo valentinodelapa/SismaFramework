@@ -2,6 +2,84 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.1.0] - 2026-01-21 - Input Interattivo per Configurazione Database
+
+Questa minor release aggiunge la possibilità di configurare i parametri del database in modo interattivo durante l'installazione del framework, migliorando l'esperienza utente senza compromettere la retrocompatibilità.
+
+### ✨ Nuove Funzionalità
+
+#### Input Interattivo da Console
+
+Aggiunto nuovo trait `InteractiveInputTrait` per gestire l'input utente dalla console:
+
+*   **Console/Traits/InteractiveInputTrait.php** (nuovo file):
+    - `ask(string $question, ?string $default = null): string` - Richiede input testuale con valore predefinito opzionale
+    - `askConfirmation(string $question, bool $default = true): bool` - Richiede conferma Y/N
+    - `askSecret(string $question): string` - Richiede input senza echo (password)
+    - Supporto cross-platform (Windows/Linux/macOS)
+
+#### Configurazione Database Interattiva
+
+Migliorato `InstallationCommand` con richiesta interattiva dei parametri database:
+
+*   **Console/Commands/InstallationCommand.php**:
+    - Aggiunta opzione `--skip-db` per saltare completamente la configurazione database
+    - Se non vengono passati parametri da command line, viene avviata la configurazione interattiva
+    - L'utente può scegliere se configurare il database (default: No)
+    - Parametri richiesti interattivamente: Host, Port, Name, Username, Password
+    - I parametri da command line (`--db-host`, `--db-name`, ecc.) hanno priorità sull'input interattivo
+
+### 📖 Utilizzo
+
+```bash
+# Installazione con richiesta interattiva database
+php SismaFramework/Console/sisma install MyProject
+
+# Installazione senza configurazione database
+php SismaFramework/Console/sisma install MyProject --skip-db
+
+# Installazione con parametri da command line (comportamento precedente)
+php SismaFramework/Console/sisma install MyProject --db-host=localhost --db-name=mydb --db-user=root
+```
+
+**Esempio di output interattivo**:
+```
+Installing SismaFramework project: MyProject
+
+Database Configuration (optional)
+Press Enter to skip each field or use defaults.
+
+Do you want to configure database settings? [y/N]: y
+Database Host [127.0.0.1]: localhost
+Database Port [3306]: 3306
+Database Name []: myproject_db
+Database Username []: root
+Database Password: ********
+
+Creating project structure...
+```
+
+### ✅ Backward Compatibility
+
+*   **100% Retrocompatibile**: Tutti i parametri da command line funzionano esattamente come prima
+*   **Comportamento Predefinito**: Se vengono passati parametri `--db-*`, l'input interattivo viene saltato
+*   **Nessuna Breaking Change**: Il trait è opzionale e non modifica le API esistenti
+
+### 🔧 Dettagli Tecnici
+
+*   Il trait `InteractiveInputTrait` può essere riutilizzato da altri comandi o moduli
+*   Su Windows, `askSecret()` non nasconde l'input (limitazione del sistema)
+*   Su Linux/macOS, `askSecret()` utilizza `stty -echo` per nascondere l'input
+
+### 📊 File Modificati
+
+| File | Tipo | Descrizione |
+|------|------|-------------|
+| `Console/Traits/InteractiveInputTrait.php` | Nuovo | Trait per input interattivo |
+| `Console/Commands/InstallationCommand.php` | Modificato | Aggiunta configurazione interattiva DB |
+
+---
+
 ## [11.0.5] - 2026-01-21 - Correzione Sostituzione Costanti File Configurazione
 
 Questa patch release corregge un bug nel processo di installazione che impediva la corretta sostituzione delle costanti nel file di configurazione quando queste utilizzavano apici doppi invece di apici singoli.
