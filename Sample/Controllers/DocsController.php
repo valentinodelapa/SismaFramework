@@ -78,6 +78,27 @@ class DocsController extends BaseController
     }
 
     /**
+     * Visualizza il Changelog del framework
+     *
+     * URL: /docs/changelog
+     */
+    public function changelog(): Response
+    {
+        $changelogPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'CHANGELOG.md';
+
+        if (!file_exists($changelogPath)) {
+            return $this->router->redirect('/docs/index');
+        }
+
+        $markdownContent = file_get_contents($changelogPath);
+
+        $this->vars['htmlContent'] = $this->parseMarkdown($markdownContent);
+        $this->vars['pageTitle'] = 'Changelog - SismaFramework';
+
+        return Render::generateView('docs/changelog', $this->vars);
+    }
+
+    /**
      * Visualizza un file di documentazione
      *
      * URL: /docs/view/file/getting-started

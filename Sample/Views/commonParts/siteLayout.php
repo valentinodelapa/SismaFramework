@@ -309,6 +309,9 @@
                         <a class="nav-link" href="/sample/index"><i class="bi bi-code-square"></i> Esempi</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/docs/changelog"><i class="bi bi-journal-text"></i> Changelog</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="https://github.com/valentinodelapa/SismaFramework" target="_blank">
                             <i class="bi bi-github"></i> GitHub
                         </a>
