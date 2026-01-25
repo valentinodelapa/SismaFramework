@@ -58,9 +58,34 @@ Questo comando creerà automaticamente:
 - La cartella `Public/` con `index.php` configurato (path dell'autoloader aggiornati automaticamente)
 - Le cartelle `Cache/`, `Logs/` e `filesystemMedia/` con permessi **0777** (lettura, scrittura, esecuzione per tutti)
 
-#### Opzioni disponibili
+#### Configurazione Interattiva del Database
 
-Puoi configurare il database direttamente da riga di comando:
+A partire dalla versione 11.1.0, il comando di installazione supporta la **configurazione interattiva** dei parametri del database. Se non vengono passati parametri da riga di comando, il sistema chiederà interattivamente se si desidera configurare il database:
+
+```
+Installing SismaFramework project: MyProject
+
+Database Configuration (optional)
+Press Enter to skip each field or use defaults.
+
+Do you want to configure database settings? [y/N]: y
+Database Host [127.0.0.1]: localhost
+Database Port [3306]: 3306
+Database Name []: myproject_db
+Database Username []: root
+Database Password: ********
+
+Creating project structure...
+```
+
+**Note sulla configurazione interattiva:**
+- La password viene inserita in modo nascosto (su Linux/macOS)
+- È possibile premere Invio per accettare i valori predefiniti
+- Per saltare completamente la configurazione database, rispondere "N" alla domanda iniziale
+
+#### Opzioni da Riga di Comando
+
+Se preferisci evitare la configurazione interattiva, puoi passare i parametri direttamente da riga di comando:
 
 ```bash
 php SismaFramework/Console/sisma install NomeDelProgetto \
@@ -73,15 +98,23 @@ php SismaFramework/Console/sisma install NomeDelProgetto \
 
 **Opzioni:**
 - `--force` - Forza la sovrascrittura di file esistenti
+- `--skip-db` - Salta completamente la configurazione database (nessuna richiesta interattiva)
 - `--db-host=HOST` - Host del database (default: 127.0.0.1)
 - `--db-name=NAME` - Nome del database
 - `--db-user=USER` - Username del database
 - `--db-pass=PASS` - Password del database
 - `--db-port=PORT` - Porta del database (default: 3306)
 
-**Esempio completo:**
+**Esempi:**
 
 ```bash
+# Installazione con configurazione interattiva (default)
+php SismaFramework/Console/sisma install BlogPersonale
+
+# Installazione senza configurazione database
+php SismaFramework/Console/sisma install BlogPersonale --skip-db
+
+# Installazione con parametri da riga di comando
 php SismaFramework/Console/sisma install BlogPersonale \
   --db-host=localhost \
   --db-name=blog_db \
