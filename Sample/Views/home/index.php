@@ -40,16 +40,29 @@
             <h2 class="mb-4">Quick Start</h2>
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-download"></i> Installazione</h5>
-                    <h6>Clona il repository:</h6>
-                    <pre><code class="language-bash">git clone https://github.com/valentinodelapa/SismaFramework.git</code></pre>
+                    <h5 class="card-title"><i class="bi bi-terminal"></i> Scaffolding CLI</h5>
+                    <p class="text-muted small mb-3">
+                        SismaFramework include un <strong>Project Bootstrapper</strong> che genera automaticamente
+                        tutta la struttura del progetto con un singolo comando.
+                    </p>
+                    <pre><code class="language-bash"># 1. Crea il progetto e aggiungi il framework
+mkdir mio-progetto && cd mio-progetto
+git init
+git submodule add https://github.com/valentinodelapa/SismaFramework.git
 
-                    <h6 class="mt-4">5 passi per iniziare:</h6>
-                    <ol>
-                        <?php foreach ($quickStartSteps as $step): ?>
-                            <li><?= htmlspecialchars($step) ?></li>
-                        <?php endforeach; ?>
-                    </ol>
+# 2. Installa le dipendenze
+cd SismaFramework && composer install && cd ..
+
+# 3. Esegui lo scaffolding automatico
+php SismaFramework/Console/sisma install MioProgetto</code></pre>
+                    <p class="mb-0 mt-3">
+                        <a href="#how-it-works" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-arrow-down-circle"></i> Vedi cosa genera
+                        </a>
+                        <a href="/docs/view/file/installation" class="btn btn-sm btn-gradient ms-2">
+                            Guida completa →
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>
@@ -84,6 +97,135 @@ class HomeController extends BaseController
     </div>
 </div>
 
+<!-- How Installation Works Section -->
+<div class="bg-white py-5 border-top border-bottom" id="how-it-works">
+    <div class="container">
+        <h2 class="text-center mb-2">
+            <span class="gradient-text">Come Funziona l'Installazione</span>
+        </h2>
+        <p class="text-center text-muted mb-5">
+            Il comando <code>sisma install</code> trasforma il submodule in un progetto completo e pronto all'uso
+        </p>
+
+        <div class="row align-items-stretch">
+            <!-- PRIMA -->
+            <div class="col-lg-5">
+                <div class="card h-100 border-secondary">
+                    <div class="card-header bg-secondary text-white">
+                        <i class="bi bi-folder"></i> <strong>PRIMA</strong> <span class="small">(dopo git submodule add)</span>
+                    </div>
+                    <div class="card-body">
+                        <pre class="mb-0" style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.85rem;"><code>mio-progetto/
+└── SismaFramework/
+    ├── Console/
+    ├── Core/
+    ├── ORM/
+    ├── Security/
+    ├── Config/        <span class="text-muted"># template</span>
+    ├── Public/        <span class="text-muted"># template</span>
+    └── ...</code></pre>
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="bi bi-info-circle"></i> Solo il framework come submodule Git
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Freccia -->
+            <div class="col-lg-2 d-flex align-items-center justify-content-center py-4 py-lg-0">
+                <div class="text-center">
+                    <div class="d-none d-lg-block">
+                        <i class="bi bi-arrow-right-circle-fill text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <div class="d-lg-none">
+                        <i class="bi bi-arrow-down-circle-fill text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <div class="mt-2">
+                        <code class="small">sisma install</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOPO -->
+            <div class="col-lg-5">
+                <div class="card h-100 border-success">
+                    <div class="card-header bg-success text-white">
+                        <i class="bi bi-folder-check"></i> <strong>DOPO</strong> <span class="small">(progetto pronto)</span>
+                    </div>
+                    <div class="card-body">
+                        <pre class="mb-0" style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.85rem;"><code>mio-progetto/
+├── <span class="text-success fw-bold">Config/</span>              <span class="text-success"># creata</span>
+│   └── configFramework.php
+├── <span class="text-success fw-bold">Public/</span>              <span class="text-success"># creata</span>
+│   └── index.php
+├── <span class="text-success fw-bold">Cache/</span>               <span class="text-success"># creata</span>
+├── <span class="text-success fw-bold">Logs/</span>                <span class="text-success"># creata</span>
+├── <span class="text-success fw-bold">filesystemMedia/</span>     <span class="text-success"># creata</span>
+├── <span class="text-success fw-bold">.htaccess</span>            <span class="text-success"># creato</span>
+├── <span class="text-success fw-bold">composer.json</span>        <span class="text-success"># creato</span>
+└── SismaFramework/      <span class="text-muted"># intatto</span></code></pre>
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="bi bi-check-circle text-success"></i> Struttura completa, configurata e pronta all'uso
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dettagli -->
+        <div class="row mt-5">
+            <div class="col-lg-4">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-gear-fill text-primary fs-3 me-3"></i>
+                    </div>
+                    <div>
+                        <h5>Configurazione Automatica</h5>
+                        <p class="text-muted small mb-0">
+                            I path dell'autoloader vengono aggiornati automaticamente.
+                            Il nome del progetto viene configurato nel file di config.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-database-fill text-primary fs-3 me-3"></i>
+                    </div>
+                    <div>
+                        <h5>Setup Database Interattivo</h5>
+                        <p class="text-muted small mb-0">
+                            Configura host, nome, utente e password del database
+                            in modo interattivo o tramite parametri CLI.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="d-flex">
+                    <div class="flex-shrink-0">
+                        <i class="bi bi-shield-fill-check text-primary fs-3 me-3"></i>
+                    </div>
+                    <div>
+                        <h5>Permessi Corretti</h5>
+                        <p class="text-muted small mb-0">
+                            Le cartelle Cache, Logs e filesystemMedia vengono create
+                            con i permessi appropriati per il web server.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="/docs/view/file/installation" class="btn btn-gradient btn-lg">
+                <i class="bi bi-book"></i> Leggi la Guida Completa all'Installazione
+            </a>
+        </div>
+    </div>
+</div>
+
 <!-- Features Section -->
 <div class="bg-light py-5">
     <div class="container">
@@ -96,12 +238,18 @@ class HomeController extends BaseController
                 <div class="col-md-6 col-lg-3">
                     <div class="card feature-card shadow-sm">
                         <div class="card-body text-center">
-                            <div class="feature-icon"><?= $feature['icon'] ?></div>
-                            <h5 class="card-title"><?= htmlspecialchars($feature['title']) ?></h5>
+                            <div class="feature-icon"><?= $feature[
+                                "icon"
+                            ] ?></div>
+                            <h5 class="card-title"><?= htmlspecialchars(
+                                $feature["title"],
+                            ) ?></h5>
                             <p class="card-text text-muted small">
-                                <?= htmlspecialchars($feature['description']) ?>
+                                <?= htmlspecialchars($feature["description"]) ?>
                             </p>
-                            <a href="<?= $feature['link'] ?>" class="btn btn-sm btn-outline-primary">
+                            <a href="<?= $feature[
+                                "link"
+                            ] ?>" class="btn btn-sm btn-outline-primary">
                                 Scopri di più →
                             </a>
                         </div>
@@ -225,4 +373,5 @@ class HomeController extends BaseController
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../commonParts/siteLayout.php';
+require __DIR__ . "/../commonParts/siteLayout.php";
+

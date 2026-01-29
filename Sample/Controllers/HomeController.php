@@ -18,7 +18,7 @@ class HomeController extends BaseController
     public function __construct(DataMapper $dataMapper = new DataMapper())
     {
         parent::__construct($dataMapper);
-        $this->vars['metaUrl'] = $this->router->getMetaUrl();
+        $this->vars["metaUrl"] = $this->router->getMetaUrl();
     }
 
     /**
@@ -28,76 +28,75 @@ class HomeController extends BaseController
      */
     public function index(): Response
     {
-        $this->vars['pageTitle'] = 'SismaFramework - PHP MVC Framework';
+        $this->vars["pageTitle"] = "SismaFramework - PHP MVC Framework";
 
         // Features del framework
-        $this->vars['features'] = [
+        $this->vars["features"] = [
             [
-                'icon' => '🏗️',
-                'title' => 'Architettura MVC',
-                'description' => 'Separazione netta tra logica, dati e presentazione con pattern MVC robusto',
-                'link' => '/docs/view/file/overview'
+                "icon" => "🏗️",
+                "title" => "Architettura MVC",
+                "description" =>
+                    "Separazione netta tra logica, dati e presentazione con pattern MVC robusto",
+                "link" => "/docs/view/file/overview",
             ],
             [
-                'icon' => '💾',
-                'title' => 'ORM Potente',
-                'description' => 'Data Mapper con lazy loading, relazioni automatiche e crittografia a livello di proprietà',
-                'link' => '/docs/view/file/orm'
+                "icon" => "💾",
+                "title" => "ORM Potente",
+                "description" =>
+                    "Data Mapper con lazy loading, relazioni automatiche e crittografia a livello di proprietà",
+                "link" => "/docs/view/file/orm",
             ],
             [
-                'icon' => '🔐',
-                'title' => 'Sicurezza Integrata',
-                'description' => 'Autenticazione MFA, sistema di permessi con Voters, protezione CSRF',
-                'link' => '/docs/view/file/security'
+                "icon" => "🔐",
+                "title" => "Sicurezza Integrata",
+                "description" =>
+                    "Autenticazione MFA, sistema di permessi con Voters, protezione CSRF",
+                "link" => "/docs/view/file/security",
             ],
             [
-                'icon' => '📝',
-                'title' => 'Form Avanzati',
-                'description' => 'Validazione, ripopolamento automatico, gestione errori integrata',
-                'link' => '/docs/view/file/forms'
+                "icon" => "📝",
+                "title" => "Form Avanzati",
+                "description" =>
+                    "Validazione, ripopolamento automatico, gestione errori integrata",
+                "link" => "/docs/view/file/forms",
             ],
             [
-                'icon' => '🔗',
-                'title' => 'URL Rewriting',
-                'description' => 'URL SEO-friendly in kebab-case con routing automatico',
-                'link' => '/docs/view/file/controllers'
+                "icon" => "🔗",
+                "title" => "URL Rewriting",
+                "description" =>
+                    "URL SEO-friendly in kebab-case con routing automatico",
+                "link" => "/docs/view/file/controllers",
             ],
             [
-                'icon' => '🌍',
-                'title' => 'Internazionalizzazione',
-                'description' => 'Supporto completo per applicazioni multilingua',
-                'link' => '/docs/view/file/internationalization'
+                "icon" => "🌍",
+                "title" => "Internazionalizzazione",
+                "description" =>
+                    "Supporto completo per applicazioni multilingua",
+                "link" => "/docs/view/file/internationalization",
             ],
             [
-                'icon' => '📋',
-                'title' => 'Logging PSR-3',
-                'description' => 'Sistema di logging standard PSR-3 compatibile con Monolog e altri logger',
-                'link' => '/docs/view/file/error-handling-and-logging'
+                "icon" => "📋",
+                "title" => "Logging PSR-3",
+                "description" =>
+                    "Sistema di logging standard PSR-3 compatibile con Monolog e altri logger",
+                "link" => "/docs/view/file/error-handling-and-logging",
             ],
             [
-                'icon' => '⚡',
-                'title' => 'Performance',
-                'description' => 'Cache entità, lazy loading, query ottimizzate',
-                'link' => '/docs/view/file/performance'
+                "icon" => "⚡",
+                "title" => "Performance",
+                "description" =>
+                    "Cache entità, lazy loading, query ottimizzate",
+                "link" => "/docs/view/file/performance",
             ],
             [
-                'icon' => '🧪',
-                'title' => 'Testing',
-                'description' => 'Supporto PHPUnit con coverage >80%',
-                'link' => '/docs/view/file/testing'
-            ]
+                "icon" => "🧪",
+                "title" => "Testing",
+                "description" => "Supporto PHPUnit con coverage >80%",
+                "link" => "/docs/view/file/testing",
+            ],
         ];
 
-        // Quick start steps
-        $this->vars['quickStartSteps'] = [
-            'Clona o scarica il framework dal repository',
-            'Configura database in Config/config.php',
-            'Crea il tuo primo modulo',
-            'Definisci Entity e Model',
-            'Crea Controller e Views'
-        ];
-
-        return $this->render->generateView('home/index', $this->vars);
+        return $this->render->generateView("home/index", $this->vars);
     }
 
     /**
@@ -107,9 +106,9 @@ class HomeController extends BaseController
      */
     public function features(): Response
     {
-        $this->vars['pageTitle'] = 'Features - SismaFramework';
+        $this->vars["pageTitle"] = "Features - SismaFramework";
 
-        return Render::generateView('home/features', $this->vars);
+        return Render::generateView("home/features", $this->vars);
     }
 
     /**
@@ -119,7 +118,7 @@ class HomeController extends BaseController
      */
     public function welcome(): Response
     {
-        return $this->router->redirect('/home/index');
+        return $this->router->redirect("/home/index");
     }
 
     /**
@@ -129,11 +128,12 @@ class HomeController extends BaseController
      */
     public function privacy(): Response
     {
-        $this->vars['pageTitle'] = 'Privacy Policy - SismaFramework';
-        $this->vars['pageDescription'] = 'Informativa sulla privacy e trattamento dei dati personali di SismaFramework.';
-        $this->vars['robotsDirective'] = 'noindex, follow';
+        $this->vars["pageTitle"] = "Privacy Policy - SismaFramework";
+        $this->vars["pageDescription"] =
+            "Informativa sulla privacy e trattamento dei dati personali di SismaFramework.";
+        $this->vars["robotsDirective"] = "noindex, follow";
 
-        return Render::generateView('home/privacy', $this->vars);
+        return Render::generateView("home/privacy", $this->vars);
     }
 
     /**
@@ -143,10 +143,11 @@ class HomeController extends BaseController
      */
     public function cookies(): Response
     {
-        $this->vars['pageTitle'] = 'Cookie Policy - SismaFramework';
-        $this->vars['pageDescription'] = 'Informativa sull\'utilizzo dei cookie su SismaFramework.';
-        $this->vars['robotsDirective'] = 'noindex, follow';
+        $this->vars["pageTitle"] = "Cookie Policy - SismaFramework";
+        $this->vars["pageDescription"] =
+            'Informativa sull\'utilizzo dei cookie su SismaFramework.';
+        $this->vars["robotsDirective"] = "noindex, follow";
 
-        return Render::generateView('home/cookies', $this->vars);
+        return Render::generateView("home/cookies", $this->vars);
     }
 }

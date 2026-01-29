@@ -3,29 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle ?? 'SismaFramework - Framework PHP MVC moderno') ?></title>
+    <title><?= htmlspecialchars(
+        $pageTitle ?? "SismaFramework - Framework PHP MVC moderno",
+    ) ?></title>
 
     <!-- SEO Meta Tags -->
-    <meta name="description" content="<?= htmlspecialchars($pageDescription ?? 'SismaFramework (Simple Smart Framework) è un framework PHP moderno basato su MVC con ORM potente, sicurezza integrata, gestione form avanzata e supporto completo per PHP 8.1+') ?>">
-    <meta name="keywords" content="<?= htmlspecialchars($pageKeywords ?? 'sismaframework, simple smart framework, php framework, mvc, orm, php 8.1, dependency injection, routing, sicurezza php, form validation, lazy loading, framework italiano, modern php') ?>">
+    <meta name="description" content="<?= htmlspecialchars(
+        $pageDescription ??
+            "SismaFramework (Simple Smart Framework) è un framework PHP moderno basato su MVC con ORM potente, sicurezza integrata, gestione form avanzata e supporto completo per PHP 8.1+",
+    ) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars(
+        $pageKeywords ??
+            "sismaframework, simple smart framework, php framework, mvc, orm, php 8.1, dependency injection, routing, sicurezza php, form validation, lazy loading, framework italiano, modern php",
+    ) ?>">
     <meta name="author" content="Valentino de Lapa">
-    <meta name="robots" content="<?= htmlspecialchars($robotsDirective ?? 'index, follow') ?>">
-    <link rel="canonical" href="https://www.sisma-framework.dev<?= $_SERVER['REQUEST_URI'] ?? '' ?>">
+    <meta name="robots" content="<?= htmlspecialchars(
+        $robotsDirective ?? "index, follow",
+    ) ?>">
+    <link rel="canonical" href="https://www.sisma-framework.dev<?= $_SERVER[
+        "REQUEST_URI"
+    ] ?? "" ?>">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.sisma-framework.dev<?= $_SERVER['REQUEST_URI'] ?? '' ?>">
-    <meta property="og:title" content="<?= htmlspecialchars($pageTitle ?? 'SismaFramework - Framework PHP MVC moderno') ?>">
-    <meta property="og:description" content="<?= htmlspecialchars($pageDescription ?? 'Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.1+') ?>">
+    <meta property="og:url" content="https://www.sisma-framework.dev<?= $_SERVER[
+        "REQUEST_URI"
+    ] ?? "" ?>">
+    <meta property="og:title" content="<?= htmlspecialchars(
+        $pageTitle ?? "SismaFramework - Framework PHP MVC moderno",
+    ) ?>">
+    <meta property="og:description" content="<?= htmlspecialchars(
+        $pageDescription ??
+            "Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.1+",
+    ) ?>">
     <meta property="og:image" content="https://www.sisma-framework.dev/Sample/Assets/images/sisma-og-image.png">
     <meta property="og:locale" content="it_IT">
     <meta property="og:site_name" content="SismaFramework">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.sisma-framework.dev<?= $_SERVER['REQUEST_URI'] ?? '' ?>">
-    <meta name="twitter:title" content="<?= htmlspecialchars($pageTitle ?? 'SismaFramework - Framework PHP MVC moderno') ?>">
-    <meta name="twitter:description" content="<?= htmlspecialchars($pageDescription ?? 'Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.1+') ?>">
+    <meta name="twitter:url" content="https://www.sisma-framework.dev<?= $_SERVER[
+        "REQUEST_URI"
+    ] ?? "" ?>">
+    <meta name="twitter:title" content="<?= htmlspecialchars(
+        $pageTitle ?? "SismaFramework - Framework PHP MVC moderno",
+    ) ?>">
+    <meta name="twitter:description" content="<?= htmlspecialchars(
+        $pageDescription ??
+            "Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.1+",
+    ) ?>">
     <meta name="twitter:image" content="https://www.sisma-framework.dev/Sample/Assets/images/sisma-twitter-card.png">
 
     <!-- Favicon -->
@@ -303,6 +329,9 @@
                         <a class="nav-link" href="/"><i class="bi bi-house"></i> Home</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/docs/view/file/installation"><i class="bi bi-download"></i> Installazione</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/docs/index"><i class="bi bi-book"></i> Documentazione</a>
                     </li>
                     <li class="nav-item">
@@ -322,7 +351,7 @@
     </nav>
 
     <!-- Content (da sovrascrivere nelle view) -->
-    <?= $content ?? '' ?>
+    <?= $content ?? "" ?>
 
     <!-- Footer -->
     <footer class="py-4">
