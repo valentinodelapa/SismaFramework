@@ -54,6 +54,7 @@ abstract class SelfReferencedModel extends DependentModel
         $this->parentForeignKey = $this->config->parentPrefixPropertyName . end($entityNameParts);
     }
 
+    #[\Override]
     public function __call($name, $arguments): SismaCollection|int|bool
     {
         $nameParts = explode('By', $name);

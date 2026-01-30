@@ -1,6 +1,6 @@
 # Traits per Enumerazioni
 
-I **Traits** di SismaFramework estendono le funzionalità delle [enumerazioni](enumerations.md) PHP 8.1+, fornendo capacità avanzate per localizzazione, gestione gerarchica e creazione di dropdown dinamici.
+I **Traits** di SismaFramework estendono le funzionalità delle [enumerazioni](enumerations.md) PHP 8.3+, fornendo capacità avanzate per localizzazione, gestione gerarchica e creazione di dropdown dinamici.
 
 ## `SelectableEnumeration`
 

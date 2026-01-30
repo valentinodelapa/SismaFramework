@@ -11,7 +11,7 @@ Non creare un unico, grande modulo "Application". Suddividi la tua logica in mod
 
 ## 2. Abbraccia la Tipizzazione Forte
 
-SismaFramework è costruito su PHP 8.1+ e fa largo uso della tipizzazione forte. Usala sempre:
+SismaFramework è costruito su PHP 8.3+ e fa largo uso della tipizzazione forte. Usala sempre:
 *   **Nelle proprietà delle Entità:** Garantisce l'integrità dei dati e abilita la "magia" dell'ORM.
 *   **Negli argomenti delle Action:** Permette il binding automatico dei parametri dall'URL e l'iniezione di servizi.
 

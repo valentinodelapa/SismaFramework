@@ -127,8 +127,8 @@ class BaseControllerTest extends TestCase
 
     public function testControllerServiceInstancesCanBeMockedForTesting(): void
     {
-        $mockRouter = $this->createMock(RouterService::class);
-        $mockRender = $this->createMock(RenderService::class);
+        $mockRouter = $this->createStub(RouterService::class);
+        $mockRender = $this->createStub(RenderService::class);
         
         RouterService::setInstance($mockRouter);
         RenderService::setInstance($mockRender);

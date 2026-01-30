@@ -13,7 +13,7 @@
                 </p>
                 <p class="lead mb-4">
                     Framework PHP MVC moderno, robusto e manutenibile per lo sviluppo di applicazioni web professionali.
-                    Sfrutta le potenzialità di PHP 8.1+ con tipizzazione forte, ORM potente e sicurezza integrata.
+                    Sfrutta le potenzialità di PHP 8.3+ con tipizzazione forte, ORM potente e sicurezza integrata.
                 </p>
                 <div class="d-flex gap-3">
                     <a href="/docs/view/file/getting-started" class="btn btn-light btn-lg">
@@ -117,12 +117,12 @@ class HomeController extends BaseController
                     <div class="card-body">
                         <pre class="mb-0" style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.85rem;"><code>mio-progetto/
 └── SismaFramework/
+    ├── Config/        <span class="text-muted"># template</span>
     ├── Console/
     ├── Core/
     ├── ORM/
-    ├── Security/
-    ├── Config/        <span class="text-muted"># template</span>
     ├── Public/        <span class="text-muted"># template</span>
+    ├── Security/
     └── ...</code></pre>
                         <p class="text-muted small mt-3 mb-0">
                             <i class="bi bi-info-circle"></i> Solo il framework come submodule Git
@@ -154,18 +154,51 @@ class HomeController extends BaseController
                     </div>
                     <div class="card-body">
                         <pre class="mb-0" style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.85rem;"><code>mio-progetto/
+├── <span class="text-success fw-bold">Cache/</span>               <span class="text-success"># creata</span>
 ├── <span class="text-success fw-bold">Config/</span>              <span class="text-success"># creata</span>
 │   └── configFramework.php
+├── <span class="text-success fw-bold">filesystemMedia/</span>     <span class="text-success"># creata</span>
+├── <span class="text-success fw-bold">Logs/</span>                <span class="text-success"># creata</span>
+├── <span class="text-success fw-bold">MioProgetto/</span>         <span class="text-success"># modulo <a href="#module-structure" class="text-success">↓</a></span>
 ├── <span class="text-success fw-bold">Public/</span>              <span class="text-success"># creata</span>
 │   └── index.php
-├── <span class="text-success fw-bold">Cache/</span>               <span class="text-success"># creata</span>
-├── <span class="text-success fw-bold">Logs/</span>                <span class="text-success"># creata</span>
-├── <span class="text-success fw-bold">filesystemMedia/</span>     <span class="text-success"># creata</span>
+├── SismaFramework/      <span class="text-muted"># intatto</span>
 ├── <span class="text-success fw-bold">.htaccess</span>            <span class="text-success"># creato</span>
-├── <span class="text-success fw-bold">composer.json</span>        <span class="text-success"># creato</span>
-└── SismaFramework/      <span class="text-muted"># intatto</span></code></pre>
+└── <span class="text-success fw-bold">composer.json</span>        <span class="text-success"># creato</span></code></pre>
                         <p class="text-muted small mt-3 mb-0">
                             <i class="bi bi-check-circle text-success"></i> Struttura completa, configurata e pronta all'uso
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Struttura Modulo -->
+        <div class="row mt-4" id="module-structure">
+            <div class="col-12">
+                <div class="card border-success">
+                    <div class="card-header bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-diagram-3"></i> <strong>Struttura del Modulo</strong> <span class="small text-muted">— MioProgetto/</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">
+                            Il comando <code>sisma install</code> crea automaticamente la cartella del modulo con la struttura MVC completa:
+                        </p>
+                        <pre class="mb-0" style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.85rem;"><code>MioProgetto/
+└── Application/
+    ├── <span class="text-primary fw-bold">Assets/</span>         <span class="text-muted"># CSS, JS, immagini</span>
+    ├── <span class="text-primary fw-bold">Controllers/</span>    <span class="text-muted"># Controller MVC</span>
+    ├── <span class="text-primary fw-bold">Entities/</span>       <span class="text-muted"># Entity ORM (Data Mapper)</span>
+    ├── <span class="text-primary fw-bold">Enumerations/</span>   <span class="text-muted"># BackedEnum PHP 8.3+</span>
+    ├── <span class="text-primary fw-bold">Forms/</span>          <span class="text-muted"># Definizione form</span>
+    ├── <span class="text-primary fw-bold">Locales/</span>        <span class="text-muted"># File di traduzione</span>
+    ├── <span class="text-primary fw-bold">Models/</span>         <span class="text-muted"># Business logic e query</span>
+    ├── <span class="text-primary fw-bold">Permissions/</span>    <span class="text-muted"># Definizione permessi</span>
+    ├── <span class="text-primary fw-bold">Templates/</span>      <span class="text-muted"># Layout riutilizzabili</span>
+    ├── <span class="text-primary fw-bold">Views/</span>          <span class="text-muted"># Template PHP</span>
+    └── <span class="text-primary fw-bold">Voters/</span>         <span class="text-muted"># Logic di autorizzazione</span></code></pre>
+                        <p class="text-muted small mt-3 mb-0">
+                            <i class="bi bi-lightbulb text-warning"></i> Il nome del modulo corrisponde al nome del progetto specificato nel comando di installazione
                         </p>
                     </div>
                 </div>
@@ -271,7 +304,7 @@ class HomeController extends BaseController
                 </div>
                 <div>
                     <h5>Moderno e Type-Safe</h5>
-                    <p class="text-muted">Sfrutta PHP 8.1+ con tipizzazione forte, readonly properties, BackedEnum e attributi.</p>
+                    <p class="text-muted">Sfrutta PHP 8.3+ con tipizzazione forte, readonly properties, BackedEnum e attributi.</p>
                 </div>
             </div>
             <div class="d-flex mb-3">
@@ -345,7 +378,7 @@ class HomeController extends BaseController
         <div class="row text-center">
             <div class="col-md-3">
                 <div class="p-3">
-                    <h2 class="gradient-text display-4">8.1+</h2>
+                    <h2 class="gradient-text display-4">8.3+</h2>
                     <p>PHP Version</p>
                 </div>
             </div>

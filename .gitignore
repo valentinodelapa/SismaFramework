@@ -10,4 +10,6 @@
 /TestsApplication/Cache/
 /TestsApplication/Logs/
 /vendor/
+composer.lock
+.phpunit.cache/
 .scannerwork/

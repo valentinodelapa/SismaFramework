@@ -123,7 +123,7 @@
   <!-- Features compact -->
   <g transform="translate(320, 360)">
     <text y="0" font-family="Arial, sans-serif" font-size="24" fill="white">
-      ✓ ORM potente  ✓ Security  ✓ PHP 8.1+
+      ✓ ORM potente  ✓ Security  ✓ PHP 8.3+
     </text>
   </g>
 

@@ -35,6 +35,7 @@ use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 class SismaDateTime extends \DateTimeImmutable implements CustomDateTimeInterface
 {
 
+    #[\Override]
     public function equals(CustomDateTimeInterface $other): bool
     {
         return $this->getTimestamp() === $other->getTimestamp();

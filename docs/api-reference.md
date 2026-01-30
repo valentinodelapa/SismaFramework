@@ -388,7 +388,7 @@ public function validate(): array
 
 ## Note Generali
 
-- **Tipizzazione Forte**: Tutte le API utilizzano la tipizzazione forte di PHP 8.1+
+- **Tipizzazione Forte**: Tutte le API utilizzano la tipizzazione forte di PHP 8.3+
 - **Convenzioni**: I metodi seguono le convenzioni PSR-12 per il naming
 - **Immutabilità**: Molti helper restituiscono nuovi valori senza modificare gli input
 - **Thread Safety**: Le classi statiche sono thread-safe per l'uso in ambienti multi-processo

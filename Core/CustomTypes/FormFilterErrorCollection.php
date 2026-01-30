@@ -32,6 +32,7 @@ namespace SismaFramework\Core\CustomTypes;
 class FormFilterErrorCollection extends \ArrayObject
 {
 
+    #[\Override]
     public function offsetGet(mixed $key): mixed
     {
         if (!isset($this[$key])) {

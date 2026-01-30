@@ -10,11 +10,11 @@
     <!-- SEO Meta Tags -->
     <meta name="description" content="<?= htmlspecialchars(
         $pageDescription ??
-            "SismaFramework (Simple Smart Framework) è un framework PHP moderno basato su MVC con ORM potente, sicurezza integrata, gestione form avanzata e supporto completo per PHP 8.1+",
+            "SismaFramework (Simple Smart Framework) è un framework PHP moderno basato su MVC con ORM potente, sicurezza integrata, gestione form avanzata e supporto completo per PHP 8.3+",
     ) ?>">
     <meta name="keywords" content="<?= htmlspecialchars(
         $pageKeywords ??
-            "sismaframework, simple smart framework, php framework, mvc, orm, php 8.1, dependency injection, routing, sicurezza php, form validation, lazy loading, framework italiano, modern php",
+            "sismaframework, simple smart framework, php framework, mvc, orm, php 8.3, dependency injection, routing, sicurezza php, form validation, lazy loading, framework italiano, modern php",
     ) ?>">
     <meta name="author" content="Valentino de Lapa">
     <meta name="robots" content="<?= htmlspecialchars(
@@ -34,7 +34,7 @@
     ) ?>">
     <meta property="og:description" content="<?= htmlspecialchars(
         $pageDescription ??
-            "Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.1+",
+            "Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.3+",
     ) ?>">
     <meta property="og:image" content="https://www.sisma-framework.dev/Sample/Assets/images/sisma-og-image.png">
     <meta property="og:locale" content="it_IT">
@@ -50,7 +50,7 @@
     ) ?>">
     <meta name="twitter:description" content="<?= htmlspecialchars(
         $pageDescription ??
-            "Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.1+",
+            "Framework PHP moderno con ORM, sicurezza integrata e supporto PHP 8.3+",
     ) ?>">
     <meta name="twitter:image" content="https://www.sisma-framework.dev/Sample/Assets/images/sisma-twitter-card.png">
 
@@ -250,7 +250,7 @@
         "name": "SismaFramework",
         "applicationCategory": "DeveloperApplication",
         "operatingSystem": "Cross-platform",
-        "description": "Framework PHP moderno basato su MVC con ORM potente, sicurezza integrata e supporto completo per PHP 8.1+",
+        "description": "Framework PHP moderno basato su MVC con ORM potente, sicurezza integrata e supporto completo per PHP 8.3+",
         "url": "https://www.sisma-framework.dev",
         "author": {
             "@type": "Person",
@@ -265,7 +265,7 @@
         "programmingLanguage": {
             "@type": "ComputerLanguage",
             "name": "PHP",
-            "version": "8.1"
+            "version": "8.3"
         },
         "softwareVersion": "10.0.3",
         "datePublished": "2020",

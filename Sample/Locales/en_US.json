@@ -17,7 +17,7 @@
       "index": {
         "title": "SismaFramework",
         "tagline": "Modern, robust and maintainable PHP MVC framework",
-        "description": "Leverages PHP 8.1+ features with strong typing, powerful ORM and integrated security.",
+        "description": "Leverages PHP 8.3+ features with strong typing, powerful ORM and integrated security.",
         "quickStart": "Quick Start",
         "installation": "Installation",
         "firstExample": "First Example",

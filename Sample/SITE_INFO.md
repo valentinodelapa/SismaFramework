@@ -88,7 +88,7 @@ Esempi tecnici con autowiring, entity injection, ecc.
 - Features cards (8 features principali)
 - Quick start con codice
 - Why Choose section
-- Stats section (PHP 8.1+, Coverage >80%, MIT, MVC)
+- Stats section (PHP 8.3+, Coverage >80%, MIT, MVC)
 - CTA buttons
 
 #### **docs/index.php**

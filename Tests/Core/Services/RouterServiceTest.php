@@ -74,10 +74,10 @@ class RouterServiceTest extends TestCase
 
     public function testSetInstanceAllowsInjectingCustomInstance(): void
     {
-        $mockRouter = $this->createMock(RouterService::class);
-        RouterService::setInstance($mockRouter);
+        $stubRouter = $this->createStub(RouterService::class);
+        RouterService::setInstance($stubRouter);
         
-        $this->assertSame($mockRouter, RouterService::getInstance());
+        $this->assertSame($stubRouter, RouterService::getInstance());
     }
 
     public function testResetInstanceCreatesNewInstance(): void

@@ -124,7 +124,7 @@
   <!-- Bottom info -->
   <g transform="translate(280, 310)">
     <text x="0" y="0" font-family="Arial, sans-serif" font-size="20" fill="rgba(255,255,255,0.8)">
-      ⚡ PHP 8.1+  |  🛡️ Sicurezza integrata  |  🚀 Performance ottimizzate
+      ⚡ PHP 8.3+  |  🛡️ Sicurezza integrata  |  🚀 Performance ottimizzate
     </text>
   </g>
 

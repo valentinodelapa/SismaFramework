@@ -1,6 +1,6 @@
 # Enumerations
 
-SismaFramework fa largo uso delle enumerazioni introdotte in PHP 8.1+ per garantire type safety e migliorare la leggibilità del codice. Le enumerazioni sono organizzate per namespace funzionale e coprono tutti gli aspetti principali del framework.
+SismaFramework fa largo uso delle enumerazioni introdotte in PHP 8.1+ (e potenziate in PHP 8.3+) per garantire type safety e migliorare la leggibilità del codice. Le enumerazioni sono organizzate per namespace funzionale e coprono tutti gli aspetti principali del framework.
 
 ## Panoramica delle Enumerazioni
 

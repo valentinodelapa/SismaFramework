@@ -145,10 +145,10 @@ INSERT INTO `sample_referenced_entity` (`full_name`, `email`, `email_iv`, `bio`,
 
 -- Inserimento Articoli Base (sample_base_entity)
 INSERT INTO `sample_base_entity` (`title`, `content`, `rating`, `featured`, `published_at`, `status`, `internal_notes`, `internal_notes_iv`) VALUES
-('Introduzione a SismaFramework', 'SismaFramework è un framework PHP moderno che sfrutta le potenzialità di PHP 8.1+ per creare applicazioni web robuste e manutenibili. In questo articolo esploreremo le caratteristiche principali.', 4.5, 1, '2025-01-15 10:00:00', 'P', NULL, NULL),
+('Introduzione a SismaFramework', 'SismaFramework è un framework PHP moderno che sfrutta le potenzialità di PHP 8.3+ per creare applicazioni web robuste e manutenibili. In questo articolo esploreremo le caratteristiche principali.', 4.5, 1, '2025-01-15 10:00:00', 'P', NULL, NULL),
 ('ORM e Data Mapper Pattern', 'Il pattern Data Mapper separa la logica di business dalla persistenza dei dati, permettendo un codice più pulito e testabile. Scopriamo come implementarlo correttamente.', 4.8, 1, '2025-01-16 14:30:00', 'P', 'ENCRYPTED_NOTES_PLACEHOLDER', 'iv_notes_001'),
 ('Lazy Loading nelle Relazioni', 'Il lazy loading è una tecnica per ottimizzare le performance caricando i dati solo quando necessario. Vediamo come SismaFramework lo implementa automaticamente.', 4.2, 0, '2025-01-17 09:15:00', 'P', NULL, NULL),
-('BackedEnum in PHP 8.1', 'Gli enum tipizzati di PHP 8.1 permettono di rappresentare valori fissi in modo type-safe. Un must-have per ogni applicazione moderna.', 4.6, 1, '2025-01-18 16:45:00', 'P', NULL, NULL),
+('BackedEnum in PHP 8.1+', 'Gli enum tipizzati di PHP 8.1+ permettono di rappresentare valori fissi in modo type-safe. Un must-have per ogni applicazione moderna.', 4.6, 1, '2025-01-18 16:45:00', 'P', NULL, NULL),
 ('Query Builder Avanzato', 'Costruire query complesse in modo programmatico e sicuro usando il Query Builder del framework.', 3.9, 0, '2025-01-19 11:20:00', 'P', NULL, NULL),
 ('Crittografia a Livello di Entity', 'Come proteggere dati sensibili crittografandoli automaticamente a livello di entity properties.', 4.7, 1, '2025-01-20 13:00:00', 'P', 'ENCRYPTED_NOTES_PLACEHOLDER', 'iv_notes_002'),
 ('Bozza: Dependency Injection', 'Articolo in lavorazione sulla dependency injection automatica nel framework...', 0.0, 0, '2025-01-21 08:00:00', 'D', NULL, NULL),

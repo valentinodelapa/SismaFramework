@@ -45,6 +45,7 @@ class SismaTime extends \DateTimeImmutable implements CustomDateTimeInterface
         return $this->format('H:i:s');
     }
 
+    #[\Override]
     public function equals(CustomDateTimeInterface $other): bool
     {
         return $this->format('H:i:s') === $other->format('H:i:s');

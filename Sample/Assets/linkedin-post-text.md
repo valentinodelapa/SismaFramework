@@ -20,7 +20,7 @@ Dopo anni di sviluppo e perfezionamento, sono orgoglioso di presentare SismaFram
 - XSS prevention automatica
 - SQL injection protection nativa
 
-✅ **PHP 8.1+ Type-Safe**
+✅ **PHP 8.3+ Type-Safe**
 - Typed properties ovunque
 - Strict types enforcement
 - Null safety garantita
@@ -51,7 +51,7 @@ Dopo anni di sviluppo e perfezionamento, sono orgoglioso di presentare SismaFram
 
 SISMA = **SI**mple **SMA**rt Framework
 
-Un framework PHP 8.1+ moderno che combina:
+Un framework PHP 8.3+ moderno che combina:
 ⚡ Potenza di un ORM completo
 🛡️ Sicurezza integrata
 🚀 Performance ottimizzate
@@ -107,7 +107,7 @@ Sicurezza by Design
 • Sistema di autenticazione MFA
 • Gestione permessi granulare
 
-PHP 8.1+ Type-Safe
+PHP 8.3+ Type-Safe
 • Typed properties ovunque
 • Strict types enforcement
 • Null safety garantita
@@ -129,7 +129,7 @@ Developer Experience Eccellente
 • Startup che vogliono fondamenta solide
 
 📊 CARATTERISTICHE TECNICHE
-• PHP 8.1+ richiesto
+• PHP 8.3+ richiesto
 • Pattern MVC + Data Mapper
 • >80% test coverage
 • Dipendenze minimali (solo PSR-3 per standard compliance)
@@ -153,7 +153,7 @@ Sviluppato e mantenuto da Valentino de Lapa
 
 SismaFramework - Simple Smart Framework
 
-SISMA è l'acronimo di Simple Smart: un framework PHP 8.1+ MVC che unisce semplicità d'uso con intelligenza architettural
+SISMA è l'acronimo di Simple Smart: un framework PHP 8.3+ MVC che unisce semplicità d'uso con intelligenza architettural
 
 🎯 Caratteristiche principali:
 
@@ -183,4 +183,4 @@ Nato dall'esperienza reale, per progetti reali.
 #MVC #ORM #BackendDevelopment #SoftwareEngineering #Coding #DeveloperTools #PHPFramework #WebDev #Programming #SoftwareDevelopment #CodeQuality #CleanCode #TypeSafety #API #ModernPHP
 
 ### Per raggiungere community specifiche:
-#PHP81 #PHPCommunity #PHPDevelopers #OpenSourceProject #GitHubProject
+#PHP83 #PHPCommunity #PHPDevelopers #OpenSourceProject #GitHubProject

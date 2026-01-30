@@ -47,7 +47,7 @@ class InstallationManager
         $this->force = $force;
         return $this;
     }
-    
+
     public function install(string $projectName, array $config = []): bool
     {
         try {
@@ -57,6 +57,7 @@ class InstallationManager
             $this->copyHtaccessFile();
             $this->createAdditionalFolders();
             $this->createOrUpdateComposerJson($projectName);
+            $this->initializeModule($projectName);
             if (!empty($config)) {
                 $this->updateConfigFile($config);
             }
@@ -65,7 +66,7 @@ class InstallationManager
             throw new \RuntimeException("Installation failed: " . $e->getMessage());
         }
     }
-    
+
     private function createProjectStructure(): void
     {
         $directories = ["Config", "Public", "Cache", "Logs", "filesystemMedia"];
@@ -79,11 +80,19 @@ class InstallationManager
             }
         }
     }
-    
+
     private function copyConfigFolder(string $projectName): void
     {
-        $sourceConfig = $this->frameworkPath . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
-        $destConfig = $this->projectRoot . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'configFramework.php';
+        $sourceConfig = $this->frameworkPath .
+                DIRECTORY_SEPARATOR .
+                "Config" .
+                DIRECTORY_SEPARATOR .
+                "config.php";
+        $destConfig = $this->projectRoot .
+                DIRECTORY_SEPARATOR .
+                "Config" .
+                DIRECTORY_SEPARATOR .
+                "configFramework.php";
         if (file_exists($destConfig) && !$this->force) {
             throw new \RuntimeException("Config file already exists. Use --force to overwrite.");
         }
@@ -91,48 +100,17 @@ class InstallationManager
             throw new \RuntimeException("Failed to copy config file.");
         }
         $content = file_get_contents($destConfig);
-        
-        $content = preg_replace(
-                "/(const\s+PROJECT\s*=\s*)(['\"])[^'\"]*\\2/",
-                "$1$2{$projectName}$2",
-                $content
-        );
-        
-        $content = preg_replace(
-                "/(const\s+APPLICATION\s*=\s*)(['\"])[^'\"]*\\2/",
-                "$1$2Application$2",
-                $content
-        );
-        
-        $content = str_replace(
-                "__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;",
-                "__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;",
-                $content
-        );
-        
-        $content = str_replace(
-                "const REFERENCE_CACHE_DIRECTORY = SYSTEM_PATH . APPLICATION_PATH . CACHE . DIRECTORY_SEPARATOR;",
-                "const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;",
-                $content
-        );
-        
-        $content = str_replace(
-                "const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . DIRECTORY_SEPARATOR;",
-                "const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;",
-                $content
-        );
-        
-        $content = preg_replace(
-                "/const\s+MODULE_FOLDERS\s*=\s*\[[^\]]*\];/s",
-                "const MODULE_FOLDERS = [];",
-                $content
-        );
-
+        $content = preg_replace("/(const\s+PROJECT\s*=\s*)(['\"])[^'\"]*\\2/", "$1$2{$projectName}$2", $content);
+        $content = preg_replace("/(const\s+APPLICATION\s*=\s*)(['\"])[^'\"]*\\2/", "$1$2Application$2", $content);
+        $content = str_replace("__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;", "__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;", $content);
+        $content = str_replace("const REFERENCE_CACHE_DIRECTORY = SYSTEM_PATH . APPLICATION_PATH . CACHE . DIRECTORY_SEPARATOR;", "const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;", $content);
+        $content = str_replace("const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . DIRECTORY_SEPARATOR;", "const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;", $content);
+        $content = preg_replace("/const\s+MODULE_FOLDERS\s*=\s*\[[^\]]*\];/s", "const MODULE_FOLDERS = [];", $content);
         if (!file_put_contents($destConfig, $content)) {
             throw new \RuntimeException("Failed to update project name in config file.");
         }
     }
-    
+
     private function copyPublicFolder(): void
     {
         $sourcePublic = $this->frameworkPath . DIRECTORY_SEPARATOR . "Public";
@@ -146,49 +124,33 @@ class InstallationManager
         $indexPath = $destPublic . DIRECTORY_SEPARATOR . "index.php";
         if (file_exists($indexPath)) {
             $content = file_get_contents($indexPath);
-            
-            $content = str_replace(
-                "'Config' . DIRECTORY_SEPARATOR . 'config.php'",
-                "'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'",
-                $content
-            );
-            
-            $content = str_replace(
-                "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload'",
-                "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'",
-                $content
-            );
-
+            $content = str_replace("'Config' . DIRECTORY_SEPARATOR . 'config.php'", "'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'", $content);
+            $content = str_replace("dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload'", "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'", $content);
             $vendorAutoload = "require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';\n";
             $autoloadLine = "require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';";
             $content = str_replace($autoloadLine, $vendorAutoload . $autoloadLine, $content);
-
             file_put_contents($indexPath, $content);
         }
     }
-    
+
     private function copyHtaccessFile(): void
     {
-        $sourceHtaccess = $this->frameworkPath . DIRECTORY_SEPARATOR . '.htaccess';
-        $destHtaccess = $this->projectRoot . DIRECTORY_SEPARATOR . '.htaccess';
-        
+        $sourceHtaccess = $this->frameworkPath . DIRECTORY_SEPARATOR . ".htaccess";
+        $destHtaccess = $this->projectRoot . DIRECTORY_SEPARATOR . ".htaccess";
         if (!file_exists($sourceHtaccess)) {
             throw new \RuntimeException("Source .htaccess file not found in framework.");
         }
-        
         if (file_exists($destHtaccess) && !$this->force) {
             return;
         }
-        
         if (!copy($sourceHtaccess, $destHtaccess)) {
             throw new \RuntimeException("Failed to copy .htaccess file.");
         }
     }
-    
+
     private function createAdditionalFolders(): void
     {
         $additionalDirs = ["Cache", "Logs", "filesystemMedia"];
-
         foreach ($additionalDirs as $dir) {
             $path = $this->projectRoot . DIRECTORY_SEPARATOR . $dir;
             if (!is_dir($path)) {
@@ -197,10 +159,10 @@ class InstallationManager
             }
         }
     }
-    
+
     private function updateConfigFile(array $config): void
     {
-        $configPath = $this->projectRoot . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'configFramework.php';
+        $configPath = $this->projectRoot . DIRECTORY_SEPARATOR . "Config" . DIRECTORY_SEPARATOR . "configFramework.php";
         if (!file_exists($configPath)) {
             throw new \RuntimeException("Config file not found.");
         }
@@ -213,7 +175,7 @@ class InstallationManager
             throw new \RuntimeException("Failed to update config file.");
         }
     }
-    
+
     private function recursiveCopy(string $source, string $dest): void
     {
         if (!is_dir($dest)) {
@@ -237,7 +199,7 @@ class InstallationManager
         }
         closedir($dir);
     }
-    
+
     public function initializeModule(string $moduleName): bool
     {
         $modulePath = $this->projectRoot . DIRECTORY_SEPARATOR . $moduleName;
@@ -271,27 +233,27 @@ class InstallationManager
 
     private function createOrUpdateComposerJson(string $projectName): void
     {
-        $composerPath = $this->projectRoot . DIRECTORY_SEPARATOR . 'composer.json';
+        $composerPath = $this->projectRoot . DIRECTORY_SEPARATOR . "composer.json";
 
         if (file_exists($composerPath)) {
             $composer = json_decode(file_get_contents($composerPath), true);
         } else {
-            $normalizedName = strtolower(str_replace(' ', '-', $projectName));
+            $normalizedName = strtolower(str_replace(" ", "-", $projectName));
             $composer = [
-                'name' => "vendor/{$normalizedName}",
-                'description' => 'Project built with SismaFramework',
-                'type' => 'project',
-                'require' => []
+                "name" => "vendor/{$normalizedName}",
+                "description" => "Project built with SismaFramework",
+                "type" => "project",
+                "require" => [],
             ];
         }
 
-        if (!isset($composer['require']['psr/log'])) {
-            $composer['require']['psr/log'] = '^3.0';
+        if (!isset($composer["require"]["psr/log"])) {
+            $composer["require"]["psr/log"] = "^3.0";
         }
 
         $json = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         if (!file_put_contents($composerPath, $json)) {
-            throw new \RuntimeException('Failed to create/update composer.json');
+            throw new \RuntimeException("Failed to create/update composer.json");
         }
     }
 }

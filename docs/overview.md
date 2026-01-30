@@ -2,7 +2,7 @@
 
 **SismaFramework** è un framework PHP moderno che ti permette di costruire applicazioni web complesse con una struttura chiara, sicura e facile da mantenere. Dimentica il codice "boilerplate" e concentrati su ciò che conta davvero: la logica della tua applicazione.
 
-Sfrutta appieno le funzionalità di PHP 8.1+ (come la tipizzazione forte e le `BackedEnum`) per garantire un codice di alta qualità, più sicuro e meno soggetto a errori.
+Sfrutta appieno le funzionalità di PHP 8.3+ (come la tipizzazione forte, le `BackedEnum` e l'attributo `#[\Override]`) per garantire un codice di alta qualità, più sicuro e meno soggetto a errori.
 
 ## La Nostra Filosofia
 

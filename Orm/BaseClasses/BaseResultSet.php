@@ -101,26 +101,31 @@ abstract class BaseResultSet implements \Iterator
         $this->currentRecord = $recordIndex;
     }
 
+    #[\Override]
     public function current(): null|StandardEntity|BaseEntity
     {
         return $this->fetch(false);
     }
 
+    #[\Override]
     public function next(): void
     {
         $this->currentRecord++;
     }
 
+    #[\Override]
     public function key(): int
     {
         return $this->currentRecord;
     }
 
+    #[\Override]
     public function rewind(): void
     {
         $this->currentRecord = 0;
     }
 
+    #[\Override]
     public function valid(): bool
     {
         if (($this->currentRecord >= 0) && ($this->currentRecord <= $this->maxRecord)) {

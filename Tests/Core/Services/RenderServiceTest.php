@@ -98,10 +98,10 @@ class RenderServiceTest extends TestCase
 
     public function testSetInstanceAllowsInjectingCustomInstance(): void
     {
-        $mockRender = $this->createMock(RenderService::class);
-        RenderService::setInstance($mockRender);
+        $stubRender = $this->createStub(RenderService::class);
+        RenderService::setInstance($stubRender);
         
-        $this->assertSame($mockRender, RenderService::getInstance());
+        $this->assertSame($stubRender, RenderService::getInstance());
     }
 
     public function testResetInstanceCreatesNewInstance(): void

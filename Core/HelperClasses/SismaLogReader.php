@@ -44,24 +44,28 @@ class SismaLogReader implements LogReaderInterface
         $this->config = $config ?? Config::getInstance();
     }
 
+    #[\Override]
     public function getLog(): string|false
     {
         $this->createLogStructure();
         return file_get_contents($this->config->logPath);
     }
 
+    #[\Override]
     public function getLogRowByRow(): array|false
     {
         $this->createLogStructure();
         return file($this->config->logPath);
     }
 
+    #[\Override]
     public function getLogRowNumber(): int
     {
         $this->createLogStructure();
         return count(file($this->config->logPath));
     }
 
+    #[\Override]
     public function clearLog(): void
     {
         $this->createLogStructure();

@@ -2,6 +2,185 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.2.0] - 2026-01-30 - Aggiornamento Requisiti PHP e PHPUnit
+
+Questa minor release aggiorna i requisiti minimi del framework a PHP 8.3 e PHPUnit 12, allineandosi con le versioni attivamente supportate e sfruttando le feature moderne del linguaggio già presenti nel codebase. Inoltre, il processo di installazione ora crea automaticamente la struttura del modulo applicativo.
+
+### ✨ Nuove Funzionalità
+
+#### Creazione Automatica Struttura Modulo durante Installazione
+
+Il comando `install` ora crea automaticamente la struttura completa del modulo applicativo:
+
+*   **Console/Services/Installation/InstallationManager.php**:
+    - Aggiunta chiamata a `initializeModule($projectName)` nel metodo `install()`
+    - La struttura del modulo viene creata automaticamente durante l'installazione
+
+*   **Console/Commands/InstallationCommand.php**:
+    - Aggiornato output per mostrare la nuova directory creata: `{$projectName}/Application/`
+
+**Struttura creata automaticamente**:
+```
+MyProject/
+├── Application/
+│   ├── Controllers/
+│   ├── Entities/
+│   ├── Enumerations/
+│   ├── Forms/
+│   ├── Models/
+│   └── Views/
+├── Config/
+│   └── configFramework.php
+├── Public/
+│   └── index.php
+├── Cache/
+├── Logs/
+├── filesystemMedia/
+├── .htaccess
+└── composer.json
+```
+
+**Vantaggi**:
+- Non è più necessario eseguire un secondo comando per creare il modulo applicativo
+- Il progetto è immediatamente pronto per lo sviluppo dopo l'installazione
+- Struttura MVC completa creata in un singolo passaggio
+
+### 🔧 Aggiornamenti Requisiti
+
+#### PHP 8.3 come Requisito Minimo
+
+*   **composer.json**:
+    - ❌ **Prima**: `"php": ">=8.1.0"`
+    - ✅ **Dopo**: `"php": ">=8.3.0"`
+
+**Motivazione**:
+- PHP 8.1 ha raggiunto End of Life il 31/12/2025
+- PHP 8.2 è in fase di solo supporto sicurezza (fino al 31/12/2026)
+- Il codebase utilizza già l'attributo `#[\Override]` (introdotto in PHP 8.3) in 97 file
+- Allineamento con le versioni attivamente supportate dalla community PHP
+
+#### PHPUnit 12 come Requisito per i Test
+
+*   **composer.json**:
+    - ❌ **Prima**: `"phpunit/phpunit": "^10.0"`
+    - ✅ **Dopo**: `"phpunit/phpunit": "^12.0"`
+
+**Motivazione**:
+- PHPUnit 10 non è più supportato (supporto terminato a febbraio 2025)
+- PHPUnit 12 richiede PHP 8.3+, allineato con il nuovo requisito del framework
+- Supporto garantito fino a febbraio 2027
+
+### 🔍 Miglioramenti Qualità Codice
+
+#### Completamento Attributi `#[\Override]`
+
+Aggiunti gli attributi `#[\Override]` mancanti ai metodi che sovrascrivono metodi di classi parent o implementano metodi di interfacce:
+
+*   **Core/CustomTypes/FormFilterErrorCollection.php**: `offsetGet()`
+*   **Orm/CustomTypes/SismaDate.php**: `equals()`
+*   **Orm/CustomTypes/SismaDateTime.php**: `equals()`
+*   **Orm/CustomTypes/SismaTime.php**: `equals()`
+*   **Orm/ExtendedClasses/SelfReferencedModel.php**: `__call()`
+*   **Orm/BaseClasses/BaseResultSet.php**: `current()`, `next()`, `key()`, `rewind()`, `valid()` (interfaccia `\Iterator`)
+*   **Core/HelperClasses/SismaLogger.php**: tutti i metodi PSR-3 (`emergency()`, `alert()`, `critical()`, `error()`, `warning()`, `notice()`, `info()`, `debug()`, `log()`)
+*   **Core/HelperClasses/SismaLogReader.php**: `getLog()`, `getLogRowByRow()`, `getLogRowNumber()`, `clearLog()` (interfaccia `LogReaderInterface`)
+*   **TestsApplication/Controllers/SampleController.php**: `error()`, `notify()` (interfaccia `DefaultControllerInterface`)
+
+**Vantaggi**:
+- PHP 8.3 segnala errori a runtime se un metodo marcato `#[\Override]` non sovrascrive effettivamente un metodo parent
+- Migliore documentazione dell'intenzione del codice
+- Prevenzione di bug dovuti a refactoring (es. rinomina di metodi in classi parent/interfacce)
+
+### 🧪 Miglioramenti Test Suite
+
+#### Conformità PHPUnit 12
+
+Aggiornati i test per conformarsi alle best practice di PHPUnit 12:
+
+*   **Sostituzione `createMock()` con `createStub()`**: Nei test dove non vengono configurate expectations sui mock objects, è stato utilizzato `createStub()` invece di `createMock()` per evitare PHPUnit notices:
+    - `BaseControllerTest.php`
+    - `ErrorHandlerTest.php`
+    - `RenderServiceTest.php`
+    - `RouterServiceTest.php`
+
+#### Riorganizzazione Configurazione PHPUnit
+
+*   **Rinominato e spostato file di configurazione**:
+    - ❌ **Prima**: `Tests/configuration.xml`
+    - ✅ **Dopo**: `phpunit.xml` (nella root del framework)
+
+*   **Aggiornamenti in `phpunit.xml`**:
+    - Schema aggiornato a PHPUnit 12.5
+    - Percorso bootstrap corretto: `Tests/bootstrap.php`
+    - Tutti i percorsi relativi aggiornati per riflettere la nuova posizione
+
+**Vantaggi**:
+- PHPUnit trova automaticamente `phpunit.xml` nella root senza necessità di specificare `-c`
+- Convenzione standard seguita dalla maggior parte dei progetti PHP
+- Esecuzione test semplificata: `./vendor/bin/phpunit` (senza parametri aggiuntivi)
+
+### 📖 Utilizzo
+
+```bash
+# Esecuzione test (PHPUnit trova automaticamente phpunit.xml)
+./vendor/bin/phpunit
+
+# Esecuzione test senza code coverage
+./vendor/bin/phpunit --no-coverage
+
+# Esecuzione test con coverage (richiede Xdebug)
+XDEBUG_MODE=coverage ./vendor/bin/phpunit
+```
+
+### ✅ Backward Compatibility
+
+*   **Breaking Change Requisiti Runtime**: Progetti che utilizzano PHP 8.1 o 8.2 devono aggiornare a PHP 8.3+
+*   **Nessun Breaking Change API**: Tutte le API pubbliche del framework rimangono invariate
+*   **Test Suite**: I test esistenti continuano a funzionare senza modifiche (a meno che non utilizzassero feature deprecate di PHPUnit 10)
+
+### 📚 Aggiornamento Documentazione e Materiali Promozionali
+
+Tutti i riferimenti alla versione PHP sono stati aggiornati da 8.1 a 8.3 nei seguenti file:
+
+*   **README.md**: Badge versione PHP, descrizione e requisiti
+*   **docs/*.md**: Documentazione tecnica (installation, overview, best-practices, api-reference, enumerations, traits)
+*   **.github/workflows/release.yml**: Versione PHP per CI/CD
+*   **Sample/Assets/linkedin-post-text.md**: Testi promozionali per LinkedIn
+*   **Sample/SITE_INFO.md**: Documentazione del sito di esempio
+*   **Sample/database_setup.sql**: Commenti nei dati di esempio
+*   **Sample/Assets/images/*.svg**: Immagini Open Graph e social cards
+*   **Sample/Locales/*.json**: File di localizzazione (en_US, it_IT)
+*   **Sample/Views/home/index.php**: Homepage del sito di esempio
+*   **Sample/Views/commonParts/siteLayout.php**: Meta tag SEO e structured data
+*   **Tests/Core/ValidateNewTestsTest.php**: Test di compatibilità versione PHP
+
+### 📊 File Modificati
+
+| File | Tipo | Descrizione |
+|------|------|-------------|
+| `composer.json` | Modificato | Requisiti PHP ≥8.3, PHPUnit ^12.0 |
+| `.gitignore` | Modificato | Aggiunto `composer.lock` |
+| `Console/Services/Installation/InstallationManager.php` | Modificato | Aggiunta chiamata a `initializeModule()` |
+| `Console/Commands/InstallationCommand.php` | Modificato | Aggiornato output installazione |
+| `Core/CustomTypes/FormFilterErrorCollection.php` | Modificato | Aggiunto `#[\Override]` |
+| `Core/HelperClasses/SismaLogger.php` | Modificato | Aggiunto `#[\Override]` ai metodi PSR-3 |
+| `Core/HelperClasses/SismaLogReader.php` | Modificato | Aggiunto `#[\Override]` |
+| `Orm/CustomTypes/SismaDate.php` | Modificato | Aggiunto `#[\Override]` |
+| `Orm/CustomTypes/SismaDateTime.php` | Modificato | Aggiunto `#[\Override]` |
+| `Orm/CustomTypes/SismaTime.php` | Modificato | Aggiunto `#[\Override]` |
+| `Orm/BaseClasses/BaseResultSet.php` | Modificato | Aggiunto `#[\Override]` ai metodi Iterator |
+| `Orm/ExtendedClasses/SelfReferencedModel.php` | Modificato | Aggiunto `#[\Override]` |
+| `phpunit.xml` | Nuovo (rinominato) | Configurazione PHPUnit spostata nella root |
+| `Tests/configuration.xml` | Rimosso | Sostituito da `phpunit.xml` |
+| `Tests/Console/Services/Installation/InstallationManagerTest.php` | Modificato | Aggiunto test per verifica creazione modulo |
+| `Tests/Core/BaseClasses/BaseControllerTest.php` | Modificato | `createMock` → `createStub` |
+| `Tests/Core/HelperClasses/ErrorHandlerTest.php` | Modificato | `createMock` → `createStub` |
+| `Tests/Core/Services/RenderServiceTest.php` | Modificato | `createMock` → `createStub` |
+| `Tests/Core/Services/RouterServiceTest.php` | Modificato | `createMock` → `createStub` |
+| `TestsApplication/Controllers/SampleController.php` | Modificato | Aggiunto `#[\Override]` |
+
+---
+
 ## [11.1.0] - 2026-01-21 - Input Interattivo per Configurazione Database
 
 Questa minor release aggiunge la possibilità di configurare i parametri del database in modo interattivo durante l'installazione del framework, migliorando l'esperienza utente senza compromettere la retrocompatibilità.

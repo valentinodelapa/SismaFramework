@@ -42,6 +42,7 @@ class SismaDate extends \DateTimeImmutable implements CustomDateTimeInterface
         parent::__construct($midnightDateTimeString, $timezone);
     }
 
+    #[\Override]
     public function equals(CustomDateTimeInterface $other): bool
     {
         return $this->getTimestamp() === $other->getTimestamp();

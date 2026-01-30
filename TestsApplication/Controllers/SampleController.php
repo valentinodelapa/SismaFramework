@@ -24,12 +24,14 @@ class SampleController extends BaseController implements DefaultControllerInterf
         return Render::generateView('sample/index', $this->vars);
     }
     
+    #[\Override]
     public function error(string $message, ResponseType $responseType): Response
     {
         $this->vars['message'] = urldecode($message);
         return Render::generateView('sample/error', $this->vars, $responseType);
     }
 
+    #[\Override]
     public function notify(string $message): Response
     {
         $this->vars['message'] = urldecode($message);

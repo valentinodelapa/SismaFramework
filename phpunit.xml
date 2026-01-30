@@ -22,24 +22,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="/bootstrap.php" colors="true" cacheResult="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.4/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false" failOnWarning="true" displayDetailsOnAllIssues ="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="Tests/bootstrap.php" colors="true" cacheResult="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false" failOnWarning="true" displayDetailsOnAllIssues="true">
     <testsuites>
         <testsuite name="Application Test Suite">
-            <directory suffix="Test.php">./Console</directory>
-            <directory suffix="Test.php">./Core</directory>
-            <directory suffix="Test.php">./Orm</directory>
-            <directory suffix="Test.php">./Security</directory>
+            <directory suffix="Test.php">./Tests/Console</directory>
+            <directory suffix="Test.php">./Tests/Core</directory>
+            <directory suffix="Test.php">./Tests/Orm</directory>
+            <directory suffix="Test.php">./Tests/Security</directory>
         </testsuite>
     </testsuites>
     <coverage pathCoverage="false" ignoreDeprecatedCodeUnits="true" disableCodeCoverageIgnore="true">
         <report>
-            <clover outputFile="coverage-report/clover.xml"/>
-            <cobertura outputFile="coverage-report/cobertura.xml"/>
-            <crap4j outputFile="coverage-report/crap4j.xml" threshold="50"/>
-            <html outputDirectory="coverage-report/html-coverage" lowUpperBound="50" highLowerBound="90"/>
-            <php outputFile="coverage-report/coverage.php"/>
-            <text outputFile="coverage-report/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
-            <xml outputDirectory="coverage-report/xml-coverage"/>
+            <clover outputFile="Tests/coverage-report/clover.xml"/>
+            <cobertura outputFile="Tests/coverage-report/cobertura.xml"/>
+            <crap4j outputFile="Tests/coverage-report/crap4j.xml" threshold="50"/>
+            <html outputDirectory="Tests/coverage-report/html-coverage" lowUpperBound="50" highLowerBound="90"/>
+            <php outputFile="Tests/coverage-report/coverage.php"/>
+            <text outputFile="Tests/coverage-report/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="Tests/coverage-report/xml-coverage"/>
         </report>
     </coverage>
     <php>
@@ -53,11 +53,11 @@ THE SOFTWARE.
     </php>
     <source>
         <include>
-            <directory suffix=".php">../Autoload</directory>
-            <directory suffix=".php">../Console</directory>
-            <directory suffix=".php">../Core</directory>
-            <directory suffix=".php">../Orm</directory>
-            <directory suffix=".php">../Security</directory>
+            <directory suffix=".php">./Autoload</directory>
+            <directory suffix=".php">./Console</directory>
+            <directory suffix=".php">./Core</directory>
+            <directory suffix=".php">./Orm</directory>
+            <directory suffix=".php">./Security</directory>
         </include>
     </source>
 </phpunit>

@@ -6,7 +6,7 @@ Questa guida ti accompagnerà passo dopo passo nell'installazione e nella config
 
 Prima di iniziare, assicurati che il tuo ambiente di sviluppo soddisfi i seguenti requisiti:
 
-* **PHP 8.1** o superiore.
+* **PHP 8.3** o superiore.
 * **Composer** per la gestione delle dipendenze.
 * Un web server come **Apache** o **Nginx**.
   * Per Apache, è necessario che il modulo `mod_rewrite` sia abilitato.

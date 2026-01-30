@@ -35,6 +35,7 @@ use SismaFramework\Console\Traits\InteractiveInputTrait;
  */
 class InstallationCommand extends BaseCommand
 {
+
     use InteractiveInputTrait;
 
     private InstallationManager $installationManager;
@@ -47,121 +48,128 @@ class InstallationCommand extends BaseCommand
     #[\Override]
     public function checkCompatibility(string $command): bool
     {
-        return $command === 'install';
+        return $command === "install";
     }
 
     #[\Override]
     protected function configure(): void
     {
-        $this->output(<<<OUTPUT
-Usage: php SismaFramework/Console/sisma install <projectName> [options]
+        $this->output(
+                <<<OUTPUT
+            Usage: php SismaFramework/Console/sisma install <projectName> [options]
 
-Arguments:
-  projectName    The name of the project to install
+            Arguments:
+              projectName    The name of the project to install
 
-Options:
-  --force            Force overwrite existing files
-  --skip-db          Skip database configuration
-  --db-host=HOST     Database host (default: 127.0.0.1)
-  --db-name=NAME     Database name
-  --db-user=USER     Database username
-  --db-pass=PASS     Database password
-  --db-port=PORT     Database port (default: 3306)
+            Options:
+              --force            Force overwrite existing files
+              --skip-db          Skip database configuration
+              --db-host=HOST     Database host (default: 127.0.0.1)
+              --db-name=NAME     Database name
+              --db-user=USER     Database username
+              --db-pass=PASS     Database password
+              --db-port=PORT     Database port (default: 3306)
 
-Example:
-  php SismaFramework/Console/sisma install MyProject
-  php SismaFramework/Console/sisma install MyProject --skip-db
-  php SismaFramework/Console/sisma install MyProject --db-name=mydb --db-user=root
-OUTPUT);
+            Example:
+              php SismaFramework/Console/sisma install MyProject
+              php SismaFramework/Console/sisma install MyProject --skip-db
+              php SismaFramework/Console/sisma install MyProject --db-name=mydb --db-user=root
+            OUTPUT,
+        );
     }
 
     #[\Override]
     protected function execute(): bool
     {
-        $projectName = $this->getArgument('0');
+        $projectName = $this->getArgument("0");
         if (!$projectName) {
-            $this->output('Error: Project name is required');
+            $this->output("Error: Project name is required");
             return false;
         }
-        
-        $force = $this->getOption('force') !== null;
-        $skipDb = $this->getOption('skip-db') !== null;
-        
+
+        $force = $this->getOption("force") !== null;
+        $skipDb = $this->getOption("skip-db") !== null;
+
         $this->installationManager->setForce($force);
-        
+
         $this->output("Installing SismaFramework project: {$projectName}");
-        $this->output('');
-        
+        $this->output("");
+
         $config = [];
-        
+
         if (!$skipDb) {
             $config = $this->collectDatabaseConfiguration();
         }
-        
-        $this->output('');
-        $this->output('Creating project structure...');
+
+        $this->output("");
+        $this->output("Creating project structure...");
         $this->installationManager->install($projectName, $config);
-        $this->output('');
-        $this->output('Installation completed successfully!');
-        $this->output('');
-        $this->output('Project structure created:');
-        $this->output('  - Config/configFramework.php');
-        $this->output('  - Public/index.php');
-        $this->output('  - .htaccess');
-        $this->output('  - composer.json');
-        $this->output('  - Cache/');
-        $this->output('  - Logs/');
-        $this->output('  - filesystemMedia/');
-        $this->output('');
-        $this->output('Next steps:');
+        $this->output("");
+        $this->output("Installation completed successfully!");
+        $this->output("");
+        $this->output("Project structure created:");
+        $this->output("  - Config/configFramework.php");
+        $this->output("  - Public/index.php");
+        $this->output("  - .htaccess");
+        $this->output("  - composer.json");
+        $this->output("  - Cache/");
+        $this->output("  - Logs/");
+        $this->output("  - filesystemMedia/");
+        $this->output("  - {$projectName}/Application/  (module structure)");
+        $this->output("");
+        $this->output("Next steps:");
         $this->output('  1. Run "composer install" to install dependencies');
-        $this->output('  2. Review and update Config/configFramework.php with your settings');
-        $this->output('  3. Configure your web server to point to the Public directory');
-        $this->output('  4. Start building your application!');
+        $this->output(
+                "  2. Review and update Config/configFramework.php with your settings",
+        );
+        $this->output(
+                "  3. Configure your web server to point to the Public directory",
+        );
+        $this->output("  4. Start building your application!");
         return true;
     }
 
     private function collectDatabaseConfiguration(): array
     {
         $config = [];
-        
+
         if ($this->hasDbOptionsFromCommandLine()) {
             return $this->getDbConfigFromOptions();
         }
 
-        $this->output('Database Configuration (optional)');
-        $this->output('Press Enter to skip each field or use defaults.');
-        $this->output('');
+        $this->output("Database Configuration (optional)");
+        $this->output("Press Enter to skip each field or use defaults.");
+        $this->output("");
 
-        $configureDb = $this->askConfirmation('Do you want to configure database settings?', false);
-        
+        $configureDb = $this->askConfirmation("Do you want to configure database settings?", false);
+
         if (!$configureDb) {
             return [];
         }
 
-        $dbHost = $this->ask('Database Host', '127.0.0.1');
+        $dbHost = $this->ask("Database Host", "127.0.0.1");
         if (!empty($dbHost)) {
-            $config['DATABASE_HOST'] = $dbHost;
+            $config["DATABASE_HOST"] = $dbHost;
         }
 
-        $dbPort = $this->ask('Database Port', '3306');
+        $dbPort = $this->ask("Database Port", "3306");
         if (!empty($dbPort)) {
-            $config['DATABASE_PORT'] = $dbPort;
+            $config["DATABASE_PORT"] = $dbPort;
         }
 
-        $dbName = $this->ask('Database Name', '');
+        $dbName = $this->ask("Database Name", "");
         if (!empty($dbName)) {
-            $config['DATABASE_NAME'] = $dbName;
+            $config["DATABASE_NAME"] = $dbName;
         }
 
-        $dbUser = $this->ask('Database Username', '');
+        $dbUser = $this->ask("Database Username", "");
         if (!empty($dbUser)) {
-            $config['DATABASE_USERNAME'] = $dbUser;
+            $config["DATABASE_USERNAME"] = $dbUser;
         }
 
-        $dbPass = $this->askSecret('Database Password');
+        $dbPass = $this->askSecret("Database Password");
         if (!empty($dbPass)) {
-            $config['DATABASE_PASSWORD'] = $dbPass;
+            $config["DATABASE_PASSWORD"] = $dbPass;
         }
 
         return $config;
@@ -169,37 +177,37 @@ OUTPUT);
 
     private function hasDbOptionsFromCommandLine(): bool
     {
-        $dbOptions = ['db-host', 'db-name', 'db-user', 'db-pass', 'db-port'];
-        
+        $dbOptions = ["db-host", "db-name", "db-user", "db-pass", "db-port"];
+
         foreach ($dbOptions as $option) {
             if ($this->getOption($option) !== null) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     private function getDbConfigFromOptions(): array
     {
         $config = [];
-        
-        if ($dbHost = $this->getOption('db-host')) {
-            $config['DATABASE_HOST'] = $dbHost;
+
+        if ($dbHost = $this->getOption("db-host")) {
+            $config["DATABASE_HOST"] = $dbHost;
         }
-        if ($dbName = $this->getOption('db-name')) {
-            $config['DATABASE_NAME'] = $dbName;
+        if ($dbName = $this->getOption("db-name")) {
+            $config["DATABASE_NAME"] = $dbName;
         }
-        if ($dbUser = $this->getOption('db-user')) {
-            $config['DATABASE_USERNAME'] = $dbUser;
+        if ($dbUser = $this->getOption("db-user")) {
+            $config["DATABASE_USERNAME"] = $dbUser;
         }
-        if ($dbPass = $this->getOption('db-pass')) {
-            $config['DATABASE_PASSWORD'] = $dbPass;
+        if ($dbPass = $this->getOption("db-pass")) {
+            $config["DATABASE_PASSWORD"] = $dbPass;
         }
-        if ($dbPort = $this->getOption('db-port')) {
-            $config['DATABASE_PORT'] = $dbPort;
+        if ($dbPort = $this->getOption("db-port")) {
+            $config["DATABASE_PORT"] = $dbPort;
         }
-        
+
         return $config;
     }
 }

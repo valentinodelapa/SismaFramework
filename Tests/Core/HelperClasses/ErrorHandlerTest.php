@@ -98,8 +98,8 @@ class ErrorHandlerTest extends TestCase
 
     public function testErrorHandlerAcceptsLoggerInterface()
     {
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $errorHandler = new ErrorHandler($loggerMock);
+        $loggerStub = $this->createStub(LoggerInterface::class);
+        $errorHandler = new ErrorHandler($loggerStub);
 
         $this->assertInstanceOf(ErrorHandler::class, $errorHandler);
     }
@@ -125,14 +125,14 @@ class ErrorHandlerTest extends TestCase
                 })
             );
 
-        $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
-        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+        $defaultControllerStub = $this->createStub(DefaultControllerInterface::class);
+        $structuralControllerStub = $this->createStub(StructuralControllerInterface::class);
 
         $errorHandler = new ErrorHandler($loggerMock, $configStub);
         $exception = new TestLoggableException('Test loggable exception', 500);
 
         try {
-            $errorHandler->handleBaseException($exception, $defaultControllerMock, $structuralControllerMock);
+            $errorHandler->handleBaseException($exception, $defaultControllerStub, $structuralControllerStub);
         } catch (\Exception $e) {
         }
     }
@@ -150,14 +150,14 @@ class ErrorHandlerTest extends TestCase
         $loggerMock->expects($this->never())
             ->method('error');
 
-        $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
-        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+        $defaultControllerStub = $this->createStub(DefaultControllerInterface::class);
+        $structuralControllerStub = $this->createStub(StructuralControllerInterface::class);
 
         $errorHandler = new ErrorHandler($loggerMock, $configStub);
         $exception = new TestNonLoggableException('Test non-loggable exception', 400);
 
         try {
-            $errorHandler->handleBaseException($exception, $defaultControllerMock, $structuralControllerMock);
+            $errorHandler->handleBaseException($exception, $defaultControllerStub, $structuralControllerStub);
         } catch (\Exception $e) {
         }
     }
@@ -183,13 +183,13 @@ class ErrorHandlerTest extends TestCase
                 })
             );
 
-        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+        $structuralControllerStub = $this->createStub(StructuralControllerInterface::class);
 
         $errorHandler = new ErrorHandler($loggerMock, $configStub);
         $throwable = new \Exception('Generic throwable', 999);
 
         try {
-            $errorHandler->handleThrowableError($throwable, $structuralControllerMock);
+            $errorHandler->handleThrowableError($throwable, $structuralControllerStub);
         } catch (\Exception $e) {
         }
     }
@@ -213,14 +213,14 @@ class ErrorHandlerTest extends TestCase
                 })
             );
 
-        $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
-        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+        $defaultControllerStub = $this->createStub(DefaultControllerInterface::class);
+        $structuralControllerStub = $this->createStub(StructuralControllerInterface::class);
 
         $errorHandler = new ErrorHandler($loggerMock, $configStub);
         $exception = new TestLoggableException('Test with trace', 500);
 
         try {
-            $errorHandler->handleBaseException($exception, $defaultControllerMock, $structuralControllerMock);
+            $errorHandler->handleBaseException($exception, $defaultControllerStub, $structuralControllerStub);
         } catch (\Exception $e) {
         }
     }
@@ -244,14 +244,14 @@ class ErrorHandlerTest extends TestCase
                 })
             );
 
-        $defaultControllerMock = $this->createMock(DefaultControllerInterface::class);
-        $structuralControllerMock = $this->createMock(StructuralControllerInterface::class);
+        $defaultControllerStub = $this->createStub(DefaultControllerInterface::class);
+        $structuralControllerStub = $this->createStub(StructuralControllerInterface::class);
 
         $errorHandler = new ErrorHandler($loggerMock, $configStub);
         $exception = new TestLoggableException('Test without trace', 500);
 
         try {
-            $errorHandler->handleBaseException($exception, $defaultControllerMock, $structuralControllerMock);
+            $errorHandler->handleBaseException($exception, $defaultControllerStub, $structuralControllerStub);
         } catch (\Exception $e) {
         }
     }

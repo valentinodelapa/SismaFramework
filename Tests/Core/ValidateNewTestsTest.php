@@ -80,7 +80,7 @@ class ValidateNewTestsTest extends TestCase
     public function testPHPVersionCompatibility()
     {
         // Test that we're running on compatible PHP version
-        $this->assertTrue(version_compare(PHP_VERSION, '8.1.0', '>='), 'PHP 8.1+ required');
-        $this->assertTrue(function_exists('enum_exists'), 'Enum support required (PHP 8.1+)');
+        $this->assertTrue(version_compare(PHP_VERSION, '8.3.0', '>='), 'PHP 8.3+ required');
+        $this->assertTrue(function_exists('enum_exists'), 'Enum support required (PHP 8.3+)');
     }
 }

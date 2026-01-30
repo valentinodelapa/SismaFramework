@@ -17,7 +17,7 @@
       "index": {
         "title": "SismaFramework",
         "tagline": "Framework PHP MVC moderno, robusto e manutenibile",
-        "description": "Sfrutta le potenzialità di PHP 8.1+ con tipizzazione forte, ORM potente e sicurezza integrata.",
+        "description": "Sfrutta le potenzialità di PHP 8.3+ con tipizzazione forte, ORM potente e sicurezza integrata.",
         "quickStart": "Quick Start",
         "installation": "Installazione",
         "firstExample": "Primo Esempio",

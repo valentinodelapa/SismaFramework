@@ -90,6 +90,7 @@ class InstallationManagerTest extends TestCase
         $this->assertDirectoryExists($this->testProjectRoot . '/Cache');
         $this->assertDirectoryExists($this->testProjectRoot . '/Logs');
         $this->assertDirectoryExists($this->testProjectRoot . '/filesystemMedia');
+        $this->assertDirectoryExists($this->testProjectRoot . '/' . $projectName . '/Application');
     }
 
     public function testInstallCopiesConfigFile(): void
