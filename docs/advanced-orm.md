@@ -604,7 +604,180 @@ class PostModel extends DependentModel
 2. **Usa nomi di proprietà chiari** nelle entità
 3. **Testa i metodi magici** con unit tests
 4. **Considera metodi espliciti** per logiche complesse
+
+### Metodi Magici in ReferencedEntity (Gestione Collezioni)
+
+Le entità che estendono `ReferencedEntity` hanno accesso a metodi magici aggiuntivi per gestire le **collezioni inverse** (one-to-many). Questi metodi sono generati dinamicamente tramite `__call()` e permettono di manipolare le entità figlie senza scrivere codice boilerplate.
+
+#### Come Funzionano le Collezioni
+
+Quando un'entità è referenziata da altre entità (es. `User` referenziato da `Post.author`), la `ReferencedEntity` espone automaticamente una collezione inversa accessibile tramite una naming convention:
+
+```php
+// Naming convention per le collezioni:
+// {nomeEntitàFiglia}Collection{NomeProprietàForeignKey}
+
+// Esempio: User ha molti Post tramite Post.author
+$user->postCollectionAuthor; // SismaCollection di Post
+
+// Se c'è una sola foreign key, il suffisso può essere omesso:
+$user->postCollection; // Equivalente se Post ha solo 'author' come FK verso User
 ```
+
+#### Metodi Magici Disponibili
+
+Il metodo `__call()` in `ReferencedEntity` intercetta tre pattern di chiamata:
+
+**1. `set{CollectionName}(SismaCollection $collection)` - Sostituisce la collezione**
+
+```php
+$user = $userModel->getEntityById(1);
+
+// Crea una nuova collezione di post
+$newPosts = new SismaCollection(Post::class);
+$newPosts->append($post1);
+$newPosts->append($post2);
+
+// Sostituisce tutti i post dell'utente
+$user->setPostCollectionAuthor($newPosts);
+
+// Internamente:
+// - La collezione viene assegnata
+// - Per ogni post nella collezione, $post->author = $user viene impostato automaticamente
+```
+
+**2. `add{EntityName}(BaseEntity $entity)` - Aggiunge un'entità alla collezione**
+
+```php
+$user = $userModel->getEntityById(1);
+$newPost = new Post();
+$newPost->title = "Nuovo articolo";
+
+// Aggiunge il post alla collezione dell'utente
+$user->addPost($newPost);
+
+// Internamente:
+// - Se esiste già un post con lo stesso ID, viene sostituito
+// - Altrimenti viene aggiunto alla collezione
+// - $newPost->author = $user viene impostato automaticamente
+```
+
+**3. `count{CollectionName}()` - Conta le entità nella collezione**
+
+```php
+$user = $userModel->getEntityById(1);
+
+// Conta i post dell'utente (esegue una query COUNT)
+$postCount = $user->countPostCollectionAuthor();
+
+// Internamente:
+// - Viene creato il Model corrispondente (PostModel)
+// - Viene chiamato countEntityCollectionByEntity()
+// - Ritorna il numero intero di risultati
+```
+
+#### Accesso Diretto alle Collezioni
+
+Oltre ai metodi magici, le collezioni sono accessibili anche tramite `__get()` e `__set()`:
+
+```php
+// Lettura (trigger lazy loading se necessario)
+$posts = $user->postCollectionAuthor;
+
+// Scrittura diretta
+$user->postCollectionAuthor = $newPostsCollection;
+
+// Verifica esistenza
+if (isset($user->postCollectionAuthor)) {
+    foreach ($user->postCollectionAuthor as $post) {
+        echo $post->title;
+    }
+}
+```
+
+#### Esempio Completo
+
+```php
+class UserService
+{
+    public function demonstrateCollectionMethods(int $userId): void
+    {
+        $userModel = new UserModel($this->dataMapper);
+        $user = $userModel->getEntityById($userId);
+
+        // 1. Conta i post (query COUNT, efficiente)
+        $totalPosts = $user->countPostCollectionAuthor();
+        echo "L'utente ha {$totalPosts} post";
+
+        // 2. Accedi alla collezione (lazy loading)
+        $posts = $user->postCollectionAuthor;
+        foreach ($posts as $post) {
+            echo $post->title;
+        }
+
+        // 3. Aggiungi un nuovo post
+        $newPost = new Post();
+        $newPost->title = "Post aggiunto tramite metodo magico";
+        $newPost->content = "Contenuto...";
+        $user->addPost($newPost);
+        // $newPost->author è ora automaticamente $user
+
+        // 4. Sostituisci l'intera collezione
+        $selectedPosts = new SismaCollection(Post::class);
+        $selectedPosts->append($posts[0]);
+        $user->setPostCollectionAuthor($selectedPosts);
+
+        // 5. Salva le modifiche
+        $this->dataMapper->save($user);
+    }
+
+    public function getAuthorWithPostCount(int $userId): array
+    {
+        $userModel = new UserModel($this->dataMapper);
+        $user = $userModel->getEntityById($userId);
+
+        return [
+            'user' => $user,
+            'post_count' => $user->countPostCollectionAuthor(),
+            'comment_count' => $user->countCommentCollectionAuthor(),
+        ];
+    }
+}
+```
+
+#### Validazione Automatica
+
+Il sistema valida automaticamente i tipi:
+
+```php
+// ✅ VALIDO
+$user->setPostCollectionAuthor(new SismaCollection(Post::class));
+
+// ❌ INVALIDO - Tipo errato
+$user->setPostCollectionAuthor(new SismaCollection(Comment::class));
+// Lancia InvalidArgumentException
+
+// ✅ VALIDO
+$user->addPost(new Post());
+
+// ❌ INVALIDO - Non è un'entità
+$user->addPost("stringa");
+// Lancia InvalidArgumentException
+```
+
+#### Differenza tra `count` e `->count()`
+
+```php
+// countPostCollectionAuthor() - Query COUNT sul database
+// Efficiente, non carica le entità in memoria
+$count = $user->countPostCollectionAuthor();
+
+// postCollectionAuthor->count() - Conta elementi già caricati
+// Richiede prima il lazy loading di tutte le entità
+$count = $user->postCollectionAuthor->count();
+```
+
+Per grandi collezioni, preferire sempre `count{CollectionName}()` per evitare di caricare tutte le entità in memoria.
 
 ### Lazy Loading: Come Funziona Internamente
 
@@ -628,7 +801,7 @@ Una foreign key può trovarsi in tre stati:
 
 ```php
 // Stato 1: ID non convertito (lazy loading pronto)
-$post->authorId = 5;
+$post->author = 5; // Assegna l'ID intero
 // Internamente: $foreignKeyIndexes['author'] = 5
 
 // Stato 2: Entità caricata
@@ -636,7 +809,7 @@ $author = $post->author; // Trigger del lazy loading
 // Internamente: $author è ora un'istanza di User, foreignKeyIndexes['author'] rimosso
 
 // Stato 3: Cache hit
-$post->authorId = 5; // Stesso ID già in cache
+$post->author = 5; // Stesso ID già in cache
 // L'entità viene recuperata dalla cache invece che dal database
 ```
 
@@ -721,11 +894,12 @@ class LazyLoadingExample
         // Carica tutti i post
         $posts = $postModel->getEntityCollection();
 
-        // Estrae IDs degli autori
+        // Estrae IDs degli autori dai foreignKeyIndexes
         $authorIds = [];
         foreach ($posts as $post) {
-            if (isset($post->authorId)) {
-                $authorIds[] = $post->authorId;
+            $foreignKeyIndexes = $post->getForeignKeyIndexes();
+            if (isset($foreignKeyIndexes['author'])) {
+                $authorIds[] = $foreignKeyIndexes['author'];
             }
         }
         $authorIds = array_unique($authorIds);
@@ -739,12 +913,17 @@ class LazyLoadingExample
             $authorMap[$author->id] = $author;
         }
 
-        // Usa i dati pre-caricati
+        // Assegna gli autori pre-caricati ai post
         foreach ($posts as $post) {
-            if (isset($post->authorId) && isset($authorMap[$post->authorId])) {
-                $author = $authorMap[$post->authorId];
-                echo $author->name; // Nessuna query aggiuntiva
+            $foreignKeyIndexes = $post->getForeignKeyIndexes();
+            if (isset($foreignKeyIndexes['author']) && isset($authorMap[$foreignKeyIndexes['author']])) {
+                $post->author = $authorMap[$foreignKeyIndexes['author']];
             }
+        }
+
+        // Ora l'accesso all'autore non genera query
+        foreach ($posts as $post) {
+            echo $post->author->name; // Nessuna query aggiuntiva
         }
     }
 }
