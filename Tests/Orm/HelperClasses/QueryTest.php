@@ -387,7 +387,7 @@ class QueryTest extends TestCase
         $queryTwo = new Query($baseAdapterMock);
         $queryTwo->setTable('tableName')
                 ->setWhere()
-                ->setFulltextIndexColumn(['fulltextColumn'], 'value', 'columnAlias', true)
+                ->setFulltextIndexColumn(['fulltextColumn'], 'value', TextSearchMode::inNaturaLanguageMode, 'columnAlias', true)
                 ->appendFulltextCondition(['fulltextColumn'], 'value')
                 ->close();
         $this->assertEquals('', $queryTwo->getCommandToExecute());
