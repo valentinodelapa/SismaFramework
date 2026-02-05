@@ -314,19 +314,19 @@ class QueryTest extends TestCase
         $matcherOne = $this->exactly(2);
         $baseAdapterMock->expects($matcherOne)
                 ->method('opFulltextIndex')
-                ->willReturnCallback(function ($columns, $value, $columnAlias, $textSearchMode) use ($matcherOne) {
+                ->willReturnCallback(function ($columns, $value, $textSearchMode, $columnAlias) use ($matcherOne) {
                     switch ($matcherOne->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals(['fulltextColumn'], $columns);
                             $this->assertEquals(Placeholder::placeholder, $value);
-                            $this->assertNull($columnAlias);
                             $this->assertEquals(TextSearchMode::inNaturaLanguageMode, $textSearchMode);
+                            $this->assertNull($columnAlias);
                             return 'MATCH (filltext_column) AGAINST ?';
                         case 2:
                             $this->assertEquals(['fulltextColumn'], $columns);
                             $this->assertEquals('value', $value);
-                            $this->assertEquals('columnAlias', $columnAlias);
                             $this->assertEquals(TextSearchMode::inNaturaLanguageMode, $textSearchMode);
+                            $this->assertEquals('columnAlias', $columnAlias);
                             return 'MATCH (filltext_column) AGAINST value as column_alias';
                     }
                 });
