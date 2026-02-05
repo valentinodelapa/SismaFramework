@@ -34,6 +34,7 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\Statement;
+use SismaFramework\Orm\Enumerations\TextSearchMode;
 
 /**
  * Description of QueryTest
@@ -313,32 +314,36 @@ class QueryTest extends TestCase
         $matcherOne = $this->exactly(2);
         $baseAdapterMock->expects($matcherOne)
                 ->method('opFulltextIndex')
-                ->willReturnCallback(function ($columns, $value, $columnAlias) use ($matcherOne) {
+                ->willReturnCallback(function ($columns, $value, $columnAlias, $textSearchMode) use ($matcherOne) {
                     switch ($matcherOne->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals(['fulltextColumn'], $columns);
                             $this->assertEquals(Placeholder::placeholder, $value);
                             $this->assertNull($columnAlias);
+                            $this->assertEquals(TextSearchMode::inNaturaLanguageMode, $textSearchMode);
                             return 'MATCH (filltext_column) AGAINST ?';
                         case 2:
                             $this->assertEquals(['fulltextColumn'], $columns);
                             $this->assertEquals('value', $value);
                             $this->assertEquals('columnAlias', $columnAlias);
+                            $this->assertEquals(TextSearchMode::inNaturaLanguageMode, $textSearchMode);
                             return 'MATCH (filltext_column) AGAINST value as column_alias';
                     }
                 });
         $matcherTwo = $this->exactly(2);
         $baseAdapterMock->expects($matcherTwo)
                 ->method('fulltextConditionSintax')
-                ->willReturnCallback(function ($columns, $value) use ($matcherTwo) {
+                ->willReturnCallback(function ($columns, $value, $textSearchMode) use ($matcherTwo) {
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
                             $this->assertEquals(['fulltextColumn'], $columns);
                             $this->assertEquals(Placeholder::placeholder, $value);
+                            $this->assertEquals(TextSearchMode::inNaturaLanguageMode, $textSearchMode);
                             return 'MATCH (filltext_column) AGAINST ?';
                         case 2:
                             $this->assertEquals(['fulltextColumn'], $columns);
                             $this->assertEquals('value', $value);
+                            $this->assertEquals(TextSearchMode::inNaturaLanguageMode, $textSearchMode);
                             return 'MATCH (filltext_column) AGAINST value';
                     }
                 });

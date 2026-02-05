@@ -174,13 +174,13 @@ class Query
         return $this;
     }
 
-    public function &setFulltextIndexColumn(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null, bool $append = false): self
+    public function &setFulltextIndexColumn(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null, bool $append = false, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): self
     {
         if ($append) {
             $this->initializeColumn();
-            $this->columns[] = $this->adapter->opFulltextIndex($columns, $value, $columnAlias);
+            $this->columns[] = $this->adapter->opFulltextIndex($columns, $value, $textSearchMode, $columnAlias);
         } else {
-            $this->columns = [$this->adapter->opFulltextIndex($columns, $value, $columnAlias)];
+            $this->columns = [$this->adapter->opFulltextIndex($columns, $value, $textSearchMode, $columnAlias)];
         }
         return $this;
     }

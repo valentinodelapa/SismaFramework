@@ -56,7 +56,7 @@ use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 
 /**
- *
+ * @internal
  * @author Valentino de Lapa
  */
 class AdapterMysql extends BaseAdapter
@@ -309,13 +309,13 @@ class AdapterMysql extends BaseAdapter
     }
 
     #[\Override]
-    public function opFulltextIndex(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null): string
+    public function opFulltextIndex(array $columns, Placeholder|string $value, TextSearchMode $textSearchMode, ?string $columnAlias): string
     {
-        return $this->fulltextConditionSintax($columns, $value) . ' as ' . ($columnAlias ?? '_relevance');
+        return $this->fulltextConditionSintax($columns, $value, $textSearchMode) . ' as ' . ($columnAlias ?? '_relevance');
     }
 
     #[\Override]
-    public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): string
+    public function fulltextConditionSintax(array $columns, Placeholder|string $value, TextSearchMode $textSearchMode): string
     {
         foreach ($columns as &$column) {
             $column = $this->escapeColumn($column);

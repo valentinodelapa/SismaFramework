@@ -70,7 +70,7 @@ use SismaFramework\Orm\BaseClasses\BaseResultSet;
 use SismaFramework\Orm\HelperClasses\Query;
 
 /**
- *
+ * @internal
  * @author Valentino de Lapa
  */
 abstract class BaseAdapter
@@ -417,11 +417,11 @@ abstract class BaseAdapter
 
     abstract protected function executeToDelegateAdapter(string $cmd, array $bindValues = [], array $bindTypes = []): bool;
 
-    abstract public function opFulltextIndex(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null): string;
+    abstract public function opFulltextIndex(array $columns, Placeholder|string $value, TextSearchMode $textSearchMode, ?string $columnAlias): string;
 
     abstract public function opDecryptFunction(string $column, string $initializationVectorColumn): string;
 
-    abstract public function fulltextConditionSintax(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): string;
+    abstract public function fulltextConditionSintax(array $columns, Placeholder|string $value, TextSearchMode $textSearchMode): string;
 
     public function lastInsertId(): int
     {
