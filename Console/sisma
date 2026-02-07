@@ -4,6 +4,7 @@ namespace SismaFramework\Console;
 
 use SismaFramework\Console\Commands\InstallationCommand;
 use SismaFramework\Console\Commands\ScaffoldCommand;
+use SismaFramework\Console\Commands\UpgradeCommand;
 use SismaFramework\Console\HelperClasses\CommandDispatcher;
 use SismaFramework\Console\HelperClasses\CommandLineInterfaceSettingsChecker;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
@@ -23,6 +24,7 @@ try {
     $commandDispatcher = new CommandDispatcher(array_slice($argv, 1));
     $commandDispatcher->addCommandStrategy(new InstallationCommand());
     $commandDispatcher->addCommandStrategy(new ScaffoldCommand());
+    $commandDispatcher->addCommandStrategy(new UpgradeCommand());
     $commandDispatcher->run();
 } catch (\Throwable $e) {
     echo "Error: " . $e->getMessage() . PHP_EOL;

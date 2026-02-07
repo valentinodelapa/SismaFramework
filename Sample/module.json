@@ -1,0 +1,13 @@
+{
+  "name": "Sample",
+  "version": "1.0.0",
+  "framework_version": "11.0.0",
+  "description": "Sample module demonstrating SismaFramework capabilities",
+  "authors": [
+    "Valentino de Lapa <valentino.delapa@gmail.com>"
+  ],
+  "requires": {
+    "sismaframework": ">=11.0.0"
+  },
+  "license": "MIT"
+}
