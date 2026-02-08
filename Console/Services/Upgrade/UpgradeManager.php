@@ -33,8 +33,8 @@ use SismaFramework\Console\Services\Upgrade\Strategies\Upgrade10to11Strategy;
 use SismaFramework\Console\Services\Upgrade\Strategies\UpgradeStrategyInterface;
 use SismaFramework\Console\Services\Upgrade\Utils\BackupManager;
 use SismaFramework\Console\Services\Upgrade\Utils\FileScanner;
-use SismaFramework\Console\Services\Upgrade\Utils\ReportGenerator;
 use SismaFramework\Console\Services\Upgrade\Utils\VersionDetector;
+use SismaFramework\Core\HelperClasses\Config;
 
 /**
  * Main orchestrator for module upgrades
@@ -43,63 +43,38 @@ use SismaFramework\Console\Services\Upgrade\Utils\VersionDetector;
  */
 class UpgradeManager
 {
+
+    private Config $config;
     private bool $dryRun = false;
     private bool $skipCritical = false;
     private bool $skipBackup = false;
 
-    public function __construct(
-        private VersionDetector $versionDetector = new VersionDetector(),
-        private FileScanner $fileScanner = new FileScanner(),
-        private BackupManager $backupManager = new BackupManager(),
-        private ReportGenerator $reportGenerator = new ReportGenerator()
-    ) {
+    public function __construct(?Config $config = null,
+            private VersionDetector $versionDetector = new VersionDetector(),
+            private FileScanner $fileScanner = new FileScanner(),
+            private BackupManager $backupManager = new BackupManager())
+    {
+        $this->config = $config ?? Config::getInstance();
     }
-
-    /**
-     * Set dry-run mode
-     *
-     * @param bool $dryRun Enable dry-run mode
-     * @return self
-     */
+    
     public function setDryRun(bool $dryRun): self
     {
         $this->dryRun = $dryRun;
         return $this;
     }
-
-    /**
-     * Set skip critical files mode
-     *
-     * @param bool $skipCritical Enable skip critical files
-     * @return self
-     */
+    
     public function setSkipCritical(bool $skipCritical): self
     {
         $this->skipCritical = $skipCritical;
         return $this;
     }
-
-    /**
-     * Set skip backup mode
-     *
-     * @param bool $skipBackup Enable skip backup
-     * @return self
-     */
+    
     public function setSkipBackup(bool $skipBackup): self
     {
         $this->skipBackup = $skipBackup;
         return $this;
     }
-
-    /**
-     * Perform module upgrade
-     *
-     * @param string $moduleName Module name
-     * @param string $targetVersion Target framework version
-     * @param string|null $sourceVersion Source version (null = auto-detect)
-     * @return UpgradeReport Upgrade report
-     * @throws UpgradeException If upgrade fails
-     */
+    
     public function upgrade(string $moduleName, string $targetVersion, ?string $sourceVersion = null): UpgradeReport
     {
         $modulePath = $this->getModulePath($moduleName);
@@ -156,11 +131,11 @@ class UpgradeManager
                     $filesModified++;
                     $warningsCount += count($fileWarnings);
                     $fileResults[] = (object) [
-                        'filePath' => $filePath,
-                        'changesCount' => $fileChangesCount,
-                        'confidence' => $this->calculateAverageConfidence($strategy->getTransformers()),
-                        'warnings' => $fileWarnings,
-                        'transformations' => $fileTransformations
+                                'filePath' => $filePath,
+                                'changesCount' => $fileChangesCount,
+                                'confidence' => $this->calculateAverageConfidence($strategy->getTransformers()),
+                                'warnings' => $fileWarnings,
+                                'transformations' => $fileTransformations
                     ];
                 } else {
                     $filesSkipped++;
@@ -176,16 +151,16 @@ class UpgradeManager
             }
             $status = $this->dryRun ? 'DRY-RUN' : 'SUCCESS';
             return new UpgradeReport(
-                moduleName: $moduleName,
-                fromVersion: $sourceVersion,
-                toVersion: $targetVersion,
-                status: $status,
-                filesModified: $filesModified,
-                filesSkipped: $filesSkipped,
-                warningsCount: $warningsCount,
-                fileResults: $fileResults,
-                manualActions: array_unique($manualActions),
-                backupPath: $backupPath
+                    moduleName: $moduleName,
+                    fromVersion: $sourceVersion,
+                    toVersion: $targetVersion,
+                    status: $status,
+                    filesModified: $filesModified,
+                    filesSkipped: $filesSkipped,
+                    warningsCount: $warningsCount,
+                    fileResults: $fileResults,
+                    manualActions: array_unique($manualActions),
+                    backupPath: $backupPath
             );
         } catch (\Exception $e) {
             if ($backupPath && !$this->dryRun) {
@@ -194,32 +169,17 @@ class UpgradeManager
             throw new UpgradeException("Upgrade failed: " . $e->getMessage(), 0, $e);
         }
     }
-
-    /**
-     * Get module path from module name
-     *
-     * @param string $moduleName Module name
-     * @return string Module path
-     * @throws UpgradeException If module not found
-     */
+    
     private function getModulePath(string $moduleName): string
     {
-        $systemPath = defined('\Config\SYSTEM_PATH') ? \Config\SYSTEM_PATH : dirname(__DIR__, 4);
+        $systemPath = $this->config->systemPath;
         $modulePath = $systemPath . DIRECTORY_SEPARATOR . $moduleName;
         if (!is_dir($modulePath)) {
             throw new UpgradeException("Module not found: {$moduleName} at {$modulePath}");
         }
         return $modulePath;
     }
-
-    /**
-     * Select upgrade strategy based on versions
-     *
-     * @param string $sourceVersion Source version
-     * @param string $targetVersion Target version
-     * @return UpgradeStrategyInterface Upgrade strategy
-     * @throws VersionMismatchException If no strategy found
-     */
+    
     private function selectStrategy(string $sourceVersion, string $targetVersion): UpgradeStrategyInterface
     {
         $strategies = [
@@ -235,16 +195,10 @@ class UpgradeManager
             }
         }
         throw new VersionMismatchException(
-            "No upgrade strategy found for {$sourceVersion} → {$targetVersion}"
-        );
+                        "No upgrade strategy found for {$sourceVersion} → {$targetVersion}"
+                );
     }
-
-    /**
-     * Calculate average confidence from transformers
-     *
-     * @param array $transformers Array of transformers
-     * @return int Average confidence
-     */
+    
     private function calculateAverageConfidence(array $transformers): int
     {
         if (empty($transformers)) {
@@ -256,13 +210,7 @@ class UpgradeManager
         }
         return (int) round($total / count($transformers));
     }
-
-    /**
-     * Get relative path from absolute path
-     *
-     * @param string $filePath Absolute file path
-     * @return string Relative path
-     */
+    
     private function getRelativePath(string $filePath): string
     {
         $normalized = str_replace('\\', '/', $filePath);

@@ -36,6 +36,7 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\Query;
@@ -265,6 +266,144 @@ class AdapterMysqlTest extends TestCase
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('(subquery)', $adapterMysql->opSubquery($queryMock));
         $this->assertEquals('(subquery) as `alias`', $adapterMysql->opSubquery($queryMock, 'alias'));
+    }
+
+    public function testOpFulltextIndexWithNaturalLanguageMode(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->opFulltextIndex(
+            ['columnOne'],
+            Placeholder::placeholder,
+            TextSearchMode::inNaturaLanguageMode,
+            null
+        );
+
+        $this->assertStringContainsString('MATCH', $result);
+        $this->assertStringContainsString('IN NATURAL LANGUAGE MODE', $result);
+        $this->assertStringContainsString('_relevance', $result);
+    }
+
+    public function testOpFulltextIndexWithBooleanMode(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->opFulltextIndex(
+            ['columnOne'],
+            Placeholder::placeholder,
+            TextSearchMode::inBooleanMode,
+            null
+        );
+
+        $this->assertStringContainsString('MATCH', $result);
+        $this->assertStringContainsString('IN BOOLEAN MODE', $result);
+        $this->assertStringContainsString('_relevance', $result);
+    }
+
+    public function testOpFulltextIndexWithQueryExpansion(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->opFulltextIndex(
+            ['columnOne'],
+            Placeholder::placeholder,
+            TextSearchMode::withQueryExpansion,
+            null
+        );
+
+        $this->assertStringContainsString('MATCH', $result);
+        $this->assertStringContainsString('WITH QUERY EXPANSION', $result);
+        $this->assertStringContainsString('_relevance', $result);
+    }
+
+    public function testOpFulltextIndexWithColumnAlias(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->opFulltextIndex(
+            ['columnOne'],
+            Placeholder::placeholder,
+            TextSearchMode::inNaturaLanguageMode,
+            'myRelevance'
+        );
+
+        $this->assertStringContainsString('as myRelevance', $result);
+        $this->assertStringNotContainsString('_relevance', $result);
+    }
+
+    public function testOpFulltextIndexWithMultipleColumns(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->opFulltextIndex(
+            ['columnOne', 'columnTwo'],
+            Placeholder::placeholder,
+            TextSearchMode::inNaturaLanguageMode,
+            null
+        );
+
+        $this->assertStringContainsString('`column_one`', $result);
+        $this->assertStringContainsString('`column_two`', $result);
+    }
+
+    public function testFulltextConditionSintaxWithNaturalLanguageMode(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->fulltextConditionSintax(
+            ['columnOne'],
+            Placeholder::placeholder,
+            TextSearchMode::inNaturaLanguageMode
+        );
+
+        $this->assertStringContainsString('MATCH', $result);
+        $this->assertStringContainsString('AGAINST', $result);
+        $this->assertStringContainsString('IN NATURAL LANGUAGE MODE', $result);
+    }
+
+    public function testFulltextConditionSintaxWithBooleanMode(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->fulltextConditionSintax(
+            ['columnOne'],
+            Placeholder::placeholder,
+            TextSearchMode::inBooleanMode
+        );
+
+        $this->assertStringContainsString('IN BOOLEAN MODE', $result);
+    }
+
+    public function testFulltextConditionSintaxWithQueryExpansion(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->fulltextConditionSintax(
+            ['columnOne'],
+            Placeholder::placeholder,
+            TextSearchMode::withQueryExpansion
+        );
+
+        $this->assertStringContainsString('WITH QUERY EXPANSION', $result);
+    }
+
+    public function testFulltextConditionSintaxWithExplicitValue(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->fulltextConditionSintax(
+            ['columnOne'],
+            'searchTerm',
+            TextSearchMode::inNaturaLanguageMode
+        );
+
+        $this->assertStringContainsString('MATCH', $result);
+        $this->assertStringContainsString('AGAINST', $result);
+        $this->assertStringContainsString('searchTerm', $result);
+    }
+
+    public function testFulltextConditionSintaxWithMultipleColumns(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        $result = $adapterMysql->fulltextConditionSintax(
+            ['columnOne', 'columnTwo'],
+            Placeholder::placeholder,
+            TextSearchMode::inNaturaLanguageMode
+        );
+
+        $this->assertStringContainsString('`column_one`', $result);
+        $this->assertStringContainsString('`column_two`', $result);
     }
 
     public function testParseSelect()

@@ -33,29 +33,18 @@ namespace SismaFramework\Console\Services\Upgrade\DTO;
  */
 class UpgradeReport
 {
-    /**
-     * @param string $moduleName Module name
-     * @param string $fromVersion Source version
-     * @param string $toVersion Target version
-     * @param string $status Status (SUCCESS, DRY-RUN, FAILED)
-     * @param int $filesModified Number of files modified
-     * @param int $filesSkipped Number of files skipped
-     * @param int $warningsCount Total warnings count
-     * @param array $fileResults Array of file transformation results
-     * @param array $manualActions Array of manual actions required
-     * @param string|null $backupPath Path to backup file (if created)
-     */
-    public function __construct(
-        public readonly string $moduleName,
-        public readonly string $fromVersion,
-        public readonly string $toVersion,
-        public readonly string $status,
-        public readonly int $filesModified,
-        public readonly int $filesSkipped,
-        public readonly int $warningsCount,
-        public readonly array $fileResults = [],
-        public readonly array $manualActions = [],
-        public readonly ?string $backupPath = null
-    ) {
+
+    public function __construct(public readonly string $moduleName,
+            public readonly string $fromVersion,
+            public readonly string $toVersion,
+            public readonly string $status,
+            public readonly int $filesModified,
+            public readonly int $filesSkipped,
+            public readonly int $warningsCount,
+            public readonly array $fileResults = [],
+            public readonly array $manualActions = [],
+            public readonly ?string $backupPath = null)
+    {
+        
     }
 }

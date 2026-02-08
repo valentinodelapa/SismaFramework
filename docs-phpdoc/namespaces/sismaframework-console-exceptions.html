@@ -82,10 +82,6 @@
             </li>
             </ul>
 
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="namespaces/config.html" class="">Config</a>
-</h4>
-
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
             <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
@@ -134,7 +130,7 @@
 
     </h4>
     <dl class="phpdocumentor-table-of-contents">
-                    <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-ApplicationPathException.html"><abbr title="\SismaFramework\Console\Exceptions\ApplicationPathException">ApplicationPathException</abbr></a></dt><dd>Description of ApplicationException</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-EntityPathException.html"><abbr title="\SismaFramework\Console\Exceptions\EntityPathException">EntityPathException</abbr></a></dt><dd>Description of EntityPathException</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-ModulePathException.html"><abbr title="\SismaFramework\Console\Exceptions\ModulePathException">ModulePathException</abbr></a></dt><dd>Description of ModuleException</dd>    </dl>
+                    <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-ApplicationPathException.html"><abbr title="\SismaFramework\Console\Exceptions\ApplicationPathException">ApplicationPathException</abbr></a></dt><dd>Description of ApplicationException</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-BackupFailedException.html"><abbr title="\SismaFramework\Console\Exceptions\BackupFailedException">BackupFailedException</abbr></a></dt><dd>Exception thrown when backup or rollback operations fail</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-EntityPathException.html"><abbr title="\SismaFramework\Console\Exceptions\EntityPathException">EntityPathException</abbr></a></dt><dd>Description of EntityPathException</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-ModulePathException.html"><abbr title="\SismaFramework\Console\Exceptions\ModulePathException">ModulePathException</abbr></a></dt><dd>Description of ModuleException</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-UpgradeException.html"><abbr title="\SismaFramework\Console\Exceptions\UpgradeException">UpgradeException</abbr></a></dt><dd>Exception thrown when an upgrade operation fails</dd>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Exceptions-VersionMismatchException.html"><abbr title="\SismaFramework\Console\Exceptions\VersionMismatchException">VersionMismatchException</abbr></a></dt><dd>Exception thrown when module version detection or validation fails</dd>    </dl>
 
 
 
@@ -182,6 +178,8 @@
                         if (xhr.status < 400 && xhr.responseText) {
                             code.textContent = xhr.responseText;
                             Prism.highlightElement(code);
+                            d=document.getElementsByClassName("line-numbers");
+                            d[0].scrollTop = d[0].children[1].offsetTop;
                             return;
                         }
 

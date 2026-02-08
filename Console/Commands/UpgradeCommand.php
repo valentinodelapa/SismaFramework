@@ -37,10 +37,11 @@ use SismaFramework\Console\Services\Upgrade\Utils\ReportGenerator;
  */
 class UpgradeCommand extends BaseCommand
 {
-    public function __construct(
-        private UpgradeManager $upgradeManager = new UpgradeManager(),
-        private ReportGenerator $reportGenerator = new ReportGenerator()
-    ) {
+
+    public function __construct(private UpgradeManager $upgradeManager = new UpgradeManager(),
+            private ReportGenerator $reportGenerator = new ReportGenerator())
+    {
+        
     }
 
     #[\Override]
@@ -111,9 +112,9 @@ OUTPUT);
         }
         try {
             $this->upgradeManager
-                ->setDryRun($dryRun)
-                ->setSkipCritical($skipCritical)
-                ->setSkipBackup($skipBackup);
+                    ->setDryRun($dryRun)
+                    ->setSkipCritical($skipCritical)
+                    ->setSkipBackup($skipBackup);
             if ($dryRun && !$quiet) {
                 $this->output('');
                 $this->output('=== DRY-RUN MODE ===');

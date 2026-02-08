@@ -82,10 +82,6 @@
             </li>
             </ul>
 
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="namespaces/config.html" class="">Config</a>
-</h4>
-
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
             <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
@@ -142,9 +138,9 @@
     </aside>
 
         
-
-
-
+        
+        
+        
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
         <a href="classes/SismaFramework-Core-Enumerations-CommunicationProtocol.html#tags" class="headerlink"><i class="fas fa-link"></i></a>
@@ -163,9 +159,7 @@
                                             </dl>
 
 
-
-
-
+        
 <h3 id="toc">
     Table of Contents
     <a href="classes/SismaFramework-Core-Enumerations-CommunicationProtocol.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
@@ -203,7 +197,6 @@
 
 
 
-
             <section class="phpdocumentor-cases">
         <h3 class="phpdocumentor-elements__header" id="cases">
             Cases
@@ -234,9 +227,8 @@
     
     
 
-    
-
-</article>
+        
+    </article>
                     <article
         class="
             phpdocumentor-element
@@ -261,9 +253,8 @@
     
     
 
-    
-
-</article>
+        
+    </article>
             </section>
 
         
@@ -303,6 +294,8 @@
                         if (xhr.status < 400 && xhr.responseText) {
                             code.textContent = xhr.responseText;
                             Prism.highlightElement(code);
+                            d=document.getElementsByClassName("line-numbers");
+                            d[0].scrollTop = d[0].children[1].offsetTop;
                             return;
                         }
 

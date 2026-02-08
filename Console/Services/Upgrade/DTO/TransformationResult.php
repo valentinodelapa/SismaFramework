@@ -33,12 +33,13 @@ namespace SismaFramework\Console\Services\Upgrade\DTO;
  */
 class TransformationResult
 {
-    public function __construct(
-        public readonly string $transformedContent,
-        public readonly int $changesCount,
-        public readonly int $confidence,
-        public readonly array $warnings = [],
-        public readonly bool $requiresManualReview = false
-    ) {
+
+    public function __construct(public readonly string $transformedContent,
+            public readonly int $changesCount,
+            public readonly int $confidence,
+            public readonly array $warnings = [],
+            public readonly bool $requiresManualReview = false)
+    {
+        
     }
 }

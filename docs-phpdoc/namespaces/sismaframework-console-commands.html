@@ -82,10 +82,6 @@
             </li>
             </ul>
 
-                                    <h4 class="phpdocumentor-sidebar__root-namespace">
-    <a href="namespaces/config.html" class="">Config</a>
-</h4>
-
                         </section>
                 <section class="phpdocumentor-sidebar__category -packages">
             <h2 class="phpdocumentor-sidebar__category-header">Packages</h2>
@@ -134,7 +130,7 @@
 
     </h4>
     <dl class="phpdocumentor-table-of-contents">
-                    <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html"><abbr title="\SismaFramework\Console\Commands\InstallationCommand">InstallationCommand</abbr></a></dt>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Commands-ScaffoldCommand.html"><abbr title="\SismaFramework\Console\Commands\ScaffoldCommand">ScaffoldCommand</abbr></a></dt>    </dl>
+                    <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html"><abbr title="\SismaFramework\Console\Commands\InstallationCommand">InstallationCommand</abbr></a></dt>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Commands-ScaffoldCommand.html"><abbr title="\SismaFramework\Console\Commands\ScaffoldCommand">ScaffoldCommand</abbr></a></dt>            <dt class="phpdocumentor-table-of-contents__entry -class"><a href="classes/SismaFramework-Console-Commands-UpgradeCommand.html"><abbr title="\SismaFramework\Console\Commands\UpgradeCommand">UpgradeCommand</abbr></a></dt><dd>Command for upgrading modules between framework versions</dd>    </dl>
 
 
 
@@ -182,6 +178,8 @@
                         if (xhr.status < 400 && xhr.responseText) {
                             code.textContent = xhr.responseText;
                             Prism.highlightElement(code);
+                            d=document.getElementsByClassName("line-numbers");
+                            d[0].scrollTop = d[0].children[1].offsetTop;
                             return;
                         }
 

@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [11.3.0] - 2025-12-31 - Sistema di Upgrade Automatico tra Major Release
+## [11.3.0] - 2026-02-08 - Sistema di Upgrade Automatico e Miglioramenti ORM Fulltext
 
-Questa release introduce un sistema completo di upgrade automatico che consente di migrare moduli tra versioni major del framework applicando automaticamente le trasformazioni necessarie per i breaking changes.
+Questa release introduce un sistema completo di upgrade automatico che consente di migrare moduli tra versioni major del framework applicando automaticamente le trasformazioni necessarie per i breaking changes. Inoltre, viene aggiunto il parametro `TextSearchMode` ai metodi di ricerca fulltext dell'ORM, consentendo un controllo esplicito sulla modalità di ricerca testuale.
 
 ### ✨ Nuove Funzionalità
 
@@ -123,6 +123,29 @@ Il sistema è progettato per essere facilmente estensibile:
 1. **Nuova Major Version**: Creare `Upgrade11to12Strategy.php` implementando `UpgradeStrategyInterface`
 2. **Nuove Trasformazioni**: Creare transformer implementando `TransformerInterface`
 3. **Custom Strategies**: Sistema a plugin completamente estensibile
+
+### 🔧 Miglioramenti ORM
+
+#### Aggiunta parametro `TextSearchMode` alla ricerca fulltext
+
+Aggiunto il parametro `TextSearchMode` ai metodi di ricerca fulltext per consentire un controllo esplicito sulla modalità di ricerca testuale:
+
+*   **Orm/HelperClasses/Query.php** (`setFulltextIndexColumn()`):
+    - Aggiunto parametro `TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode`
+    - Il parametro consente di specificare la modalità di ricerca fulltext direttamente dalla query
+
+*   **Orm/BaseClasses/BaseAdapter.php**:
+    - `opFulltextIndex()`: aggiunto parametro obbligatorio `TextSearchMode $textSearchMode`, rimossi valori di default dai parametri `$value` e `$columnAlias`
+    - `fulltextConditionSintax()`: rimosso valore di default dal parametro `TextSearchMode $textSearchMode`, rendendolo obbligatorio
+
+*   **Orm/Adapters/AdapterMysql.php**:
+    - Aggiornate le implementazioni di `opFulltextIndex()` e `fulltextConditionSintax()` per propagare il parametro `TextSearchMode`
+    - Aggiunta annotazione `@internal` alla classe
+
+**Motivazione**:
+- Consente di specificare la modalità di ricerca fulltext (es. Natural Language Mode, Boolean Mode) a livello di query
+- Rende esplicita la dipendenza dalla modalità di ricerca, migliorando la leggibilità del codice
+- L'adapter non assume più un valore di default per `TextSearchMode`, delegando la scelta al livello superiore (`Query`)
 
 ### ⚠️ Limitazioni
 
