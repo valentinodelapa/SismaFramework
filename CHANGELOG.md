@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.3.1] - 2026-02-11 - Correzione Percorsi Cross-Platform nell'Autoloader
+
+Questa patch release corregge un bug nell'Autoloader che impediva il caricamento delle classi mappate tramite `AUTOLOAD_NAMESPACE_MAPPER` e `AUTOLOAD_CLASS_MAPPER` su sistemi Linux/macOS.
+
+### 🐛 Bug Fixes
+
+#### Correzione Conversione Separatori di Directory nei Mapper dell'Autoloader
+
+Corretti i metodi `mapNamespace()` e `mapClass()` in `Autoloader.php` per convertire correttamente i backslash nei percorsi provenienti dalle costanti di configurazione:
+
+*   **Core/HelperClasses/Autoloader.php (`mapNamespace()`)**:
+    - ❌ **Prima**: `$this->config->rootPath . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php'`
+    - ✅ **Dopo**: `$this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $value . $actualClassName) . '.php'`
+    - La conversione `str_replace('\\', DIRECTORY_SEPARATOR, ...)` veniva applicata solo a `$actualClassName`, ma non a `$value` (il percorso dalla configurazione)
+
+*   **Core/HelperClasses/Autoloader.php (`mapClass()`)**:
+    - ❌ **Prima**: `$this->config->rootPath . $this->config->autoloadClassMapper[$this->className] . '.php'`
+    - ✅ **Dopo**: `$this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $this->config->autoloadClassMapper[$this->className]) . '.php'`
+    - Il percorso dalla configurazione non veniva convertito affatto
+
+**Scenario del bug**:
+1. La configurazione `AUTOLOAD_NAMESPACE_MAPPER` contiene percorsi con backslash (es. `"plugins\PHPMailer\src"`)
+2. Su Windows, i backslash funzionano come separatori di directory, mascherando il problema
+3. Su Linux/macOS (es. dentro un container Docker), `DIRECTORY_SEPARATOR` è `/`
+4. Il percorso risultante conteneva backslash letterali: `/var/www/html/plugins\PHPMailer\src/PHPMailer.php`
+5. `file_exists()` falliva perché il percorso non era valido su Linux
+
+**Dopo la correzione**:
+- I backslash nei valori di `AUTOLOAD_NAMESPACE_MAPPER` e `AUTOLOAD_CLASS_MAPPER` vengono convertiti in `DIRECTORY_SEPARATOR`
+- Le classi vengono caricate correttamente su tutti i sistemi operativi
+- Il percorso risultante è corretto: `/var/www/html/plugins/PHPMailer/src/PHPMailer.php`
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: La correzione estende il supporto cross-platform senza modificare il comportamento su Windows
+*   **Configurazioni Esistenti**: Funzionano correttamente senza modifiche
+
+### 📊 Impatto
+
+*   **Cross-Platform**: L'autoloader funziona correttamente su Windows, Linux e macOS
+*   **Docker**: Risolto il problema del caricamento di classi di terze parti (es. PHPMailer) in ambienti containerizzati
+
+---
+
 ## [11.3.0] - 2026-02-08 - Sistema di Upgrade Automatico e Miglioramenti ORM Fulltext
 
 Questa release introduce un sistema completo di upgrade automatico che consente di migrare moduli tra versioni major del framework applicando automaticamente le trasformazioni necessarie per i breaking changes. Inoltre, viene aggiunto il parametro `TextSearchMode` ai metodi di ricerca fulltext dell'ORM, consentendo un controllo esplicito sulla modalità di ricerca testuale.

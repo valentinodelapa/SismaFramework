@@ -160,8 +160,10 @@
                                     </dd>
                                             </dl>
 
-    
-    
+
+
+
+
 <h3 id="toc">
     Table of Contents
     <a href="classes/SismaFramework-Core-HttpClasses-Response.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
@@ -220,14 +222,14 @@
             phpdocumentor-element
             -property
             -private
-                                                -read-only                    "
+                                                -read-only        "
 >
     <h4 class="phpdocumentor-element__name" id="property_responseType">
         $responseType
         <a href="classes/SismaFramework-Core-HttpClasses-Response.html#property_responseType" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                        <small class="phpdocumentor-element__modifier">read-only</small>                    </span>
+                        <small class="phpdocumentor-element__modifier">read-only</small>        </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HttpClasses/Response.php"><a href="files/core-httpclasses-response.html"><abbr title="Core/HttpClasses/Response.php">Response.php</abbr></a></abbr>
@@ -239,8 +241,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">private</span>
-            <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-Enumerations-ResponseType.html"><abbr title="\SismaFramework\Core\Enumerations\ResponseType">ResponseType</abbr></a></span>
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Core-Enumerations-ResponseType.html"><abbr title="\SismaFramework\Core\Enumerations\ResponseType">ResponseType</abbr></a></span>
     <span class="phpdocumentor-signature__name">$responseType</span>
     </code>
 
@@ -248,8 +250,7 @@
     
     
 
-        
-        
+    
 
 </article>
             </section>
@@ -281,7 +282,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Core-Enumerations-ResponseType.html"><abbr title="\SismaFramework\Core\Enumerations\ResponseType">ResponseType</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$responseType</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Enumerations-ResponseType.html"><abbr title="\SismaFramework\Core\Enumerations\ResponseType">ResponseType</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$responseType</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -290,9 +291,9 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$responseType</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Core-Enumerations-ResponseType.html"><abbr title="\SismaFramework\Core\Enumerations\ResponseType">ResponseType</abbr></a>|null</span>
-                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
+                <span class="phpdocumentor-signature__argument__name">$responseType</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Core-Enumerations-ResponseType.html"><abbr title="\SismaFramework\Core\Enumerations\ResponseType">ResponseType</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -300,8 +301,8 @@
 
     
 
-        
     
+
     
 </article>
             </section>
@@ -342,8 +343,6 @@
                         if (xhr.status < 400 && xhr.responseText) {
                             code.textContent = xhr.responseText;
                             Prism.highlightElement(code);
-                            d=document.getElementsByClassName("line-numbers");
-                            d[0].scrollTop = d[0].children[1].offsetTop;
                             return;
                         }
 

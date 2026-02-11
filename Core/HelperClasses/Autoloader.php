@@ -71,7 +71,7 @@ class Autoloader
         foreach ($this->config->autoloadNamespaceMapper as $key => $value) {
             if (str_contains($this->className, $key)) {
                 $actualClassName = str_replace($key, '', $this->className);
-                $actualClassPath = $this->config->rootPath . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php';
+                $actualClassPath = $this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $value . $actualClassName) . '.php';
                 if ($this->classExsist($actualClassPath)) {
                     return true;
                 }
@@ -83,7 +83,7 @@ class Autoloader
     private function mapClass(): bool
     {
         if (array_key_exists($this->className, $this->config->autoloadClassMapper)) {
-            $actualClassPath = $this->config->rootPath . $this->config->autoloadClassMapper[$this->className] . '.php';
+            $actualClassPath = $this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $this->config->autoloadClassMapper[$this->className]) . '.php';
             if ($this->classExsist($actualClassPath)) {
                 return true;
             }

@@ -150,10 +150,12 @@
 </section>
 
                                     </dd>
-                                            </dl>
+                                                                </dl>
 
-    
-    
+
+
+
+
 <h3 id="toc">
     Table of Contents
     <a href="classes/SismaFramework-Security-Interfaces-Wrappers-MultiFactorWrapperInterface.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
@@ -215,7 +217,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">testCodeForLogin</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Security-Interfaces-Entities-MultiFactorInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Entities\MultiFactorInterface">MultiFactorInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$multiFactorInterface</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$code</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">testCodeForLogin</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Security-Interfaces-Entities-MultiFactorInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Entities\MultiFactorInterface">MultiFactorInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$multiFactorInterface</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$code</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -224,15 +226,15 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$multiFactorInterface</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Security-Interfaces-Entities-MultiFactorInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Entities\MultiFactorInterface">MultiFactorInterface</abbr></a></span>
+                <span class="phpdocumentor-signature__argument__name">$multiFactorInterface</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Security-Interfaces-Entities-MultiFactorInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Entities\MultiFactorInterface">MultiFactorInterface</abbr></a></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$code</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$code</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -241,8 +243,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
@@ -287,8 +289,6 @@
                         if (xhr.status < 400 && xhr.responseText) {
                             code.textContent = xhr.responseText;
                             Prism.highlightElement(code);
-                            d=document.getElementsByClassName("line-numbers");
-                            d[0].scrollTop = d[0].children[1].offsetTop;
                             return;
                         }
 

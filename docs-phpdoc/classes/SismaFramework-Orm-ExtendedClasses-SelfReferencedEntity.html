@@ -165,8 +165,10 @@
                                     </dd>
                                             </dl>
 
-    
-    
+
+
+
+
 <h3 id="toc">
     Table of Contents
     <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
@@ -239,6 +241,18 @@
     <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_processedEntitesCollection">$processedEntitesCollection</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns">$encryptedColumns</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyIndexes">$foreignKeyIndexes</a>
+    <span>
+                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
 </dt>
 
     </dl>
@@ -460,9 +474,63 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkBuiltinOrEnumPropertyChange">checkBuiltinOrEnumPropertyChange()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkCustomDateTimeInterfacePropertyChange">checkCustomDateTimeInterfacePropertyChange()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method_getShortClassName">getShortClassName()</a>
     <span>
                                 &nbsp;: string    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_inizializeEntityCollection">inizializeEntityCollection()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setEntityProperty">setEntityProperty()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_switchAdditionType">switchAdditionType()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithIndexConvertedChanges">trackForeignKeyPropertyWithIndexConvertedChanges()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithIndexNotConvertedChanges">trackForeignKeyPropertyWithIndexNotConvertedChanges()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithNullValueChanges">trackForeignKeyPropertyWithNullValueChanges()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackOtherPropertyChanges">trackOtherPropertyChanges()</a>
+    <span>
+                                &nbsp;: void    </span>
 </dt>
 
     </dl>
@@ -483,14 +551,14 @@
             phpdocumentor-element
             -property
             -public
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_foreignKeys">
         $foreignKeys
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeys" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
@@ -502,8 +570,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
     <span class="phpdocumentor-signature__name">$foreignKeys</span>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
 
@@ -511,8 +579,7 @@
     
     
 
-        
-        
+    
 
 </article>
                     <article
@@ -520,14 +587,14 @@
             phpdocumentor-element
             -property
             -public
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_modified">
         $modified
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_modified" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
@@ -539,8 +606,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__type">bool</span>
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">bool</span>
     <span class="phpdocumentor-signature__name">$modified</span>
      = <span class="phpdocumentor-signature__default-value">false</span></code>
 
@@ -548,8 +615,7 @@
     
     
 
-        
-        
+    
 
 </article>
                     <article
@@ -557,14 +623,14 @@
             phpdocumentor-element
             -property
             -protected
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_collections">
         $collections
         <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collections" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/ReferencedEntity.php"><a href="files/orm-extendedclasses-referencedentity.html"><abbr title="Orm/ExtendedClasses/ReferencedEntity.php">ReferencedEntity.php</abbr></a></abbr>
@@ -576,8 +642,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">protected</span>
-            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
     <span class="phpdocumentor-signature__name">$collections</span>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
 
@@ -585,8 +651,7 @@
     
     
 
-        
-        
+    
 
 </article>
                     <article
@@ -594,14 +659,14 @@
             phpdocumentor-element
             -property
             -protected
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_config">
         $config
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_config" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
@@ -613,8 +678,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">protected</span>
-            <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></span>
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></span>
     <span class="phpdocumentor-signature__name">$config</span>
     </code>
 
@@ -622,8 +687,7 @@
     
     
 
-        
-        
+    
 
 </article>
                     <article
@@ -631,14 +695,14 @@
             phpdocumentor-element
             -property
             -protected
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_dataMapper">
         $dataMapper
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_dataMapper" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
@@ -650,8 +714,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">protected</span>
-            <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
     <span class="phpdocumentor-signature__name">$dataMapper</span>
     </code>
 
@@ -659,8 +723,7 @@
     
     
 
-        
-        
+    
 
 </article>
                     <article
@@ -668,14 +731,14 @@
             phpdocumentor-element
             -property
             -protected
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_initializationVectorPropertyName">
         $initializationVectorPropertyName
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_initializationVectorPropertyName" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
@@ -687,8 +750,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">protected</span>
-            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">string</span>
     <span class="phpdocumentor-signature__name">$initializationVectorPropertyName</span>
      = <span class="phpdocumentor-signature__default-value">&#039;initializationVector&#039;</span></code>
 
@@ -696,8 +759,7 @@
     
     
 
-        
-        
+    
 
 </article>
                     <article
@@ -705,14 +767,14 @@
             phpdocumentor-element
             -property
             -protected
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_isActiveTransaction">
         $isActiveTransaction
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_isActiveTransaction" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
@@ -724,8 +786,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">protected</span>
-            <span class="phpdocumentor-signature__type">bool</span>
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">bool</span>
     <span class="phpdocumentor-signature__name">$isActiveTransaction</span>
      = <span class="phpdocumentor-signature__default-value">false</span></code>
 
@@ -733,8 +795,7 @@
     
     
 
-        
-        
+    
 
 </article>
                     <article
@@ -742,14 +803,14 @@
             phpdocumentor-element
             -property
             -protected
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_primaryKeyPropertyName">
         $primaryKeyPropertyName
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKeyPropertyName" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
@@ -761,8 +822,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">protected</span>
-            <span class="phpdocumentor-signature__type">string</span>
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type">string</span>
     <span class="phpdocumentor-signature__name">$primaryKeyPropertyName</span>
     </code>
 
@@ -770,8 +831,7 @@
     
     
 
-        
-        
+    
 
 </article>
                     <article
@@ -779,14 +839,14 @@
             phpdocumentor-element
             -property
             -protected
-                                                                    "
+                                                        "
 >
     <h4 class="phpdocumentor-element__name" id="property_processedEntitesCollection">
         $processedEntitesCollection
         <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_processedEntitesCollection" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                            </span>
+                                </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
@@ -798,8 +858,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">protected</span>
-            <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a></span>
+    <span class="phpdocumentor-signature__visibility">protected</span>
+        <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a></span>
     <span class="phpdocumentor-signature__name">$processedEntitesCollection</span>
     </code>
 
@@ -807,8 +867,79 @@
     
     
 
-        
-        
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_encryptedColumns">
+        $encryptedColumns
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">64</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$encryptedColumns</span>
+     = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+    
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="property_foreignKeyIndexes">
+        $foreignKeyIndexes
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyIndexes" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">65</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$foreignKeyIndexes</span>
+     = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+    
 
 </article>
             </section>
@@ -840,7 +971,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__call</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$methodName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$arguments</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__call</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$methodName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$arguments</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -849,15 +980,15 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$methodName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$methodName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$arguments</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$arguments</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -866,8 +997,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -891,7 +1022,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$processedEntitesCollection</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$processedEntitesCollection</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -900,23 +1031,23 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$dataMapper</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
-                 = <span class="phpdocumentor-argument-list__argument__default-value">new <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>()</span>            </dt>
+                <span class="phpdocumentor-signature__argument__name">$dataMapper</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
+                 = <span class="phpdocumentor-signature__argument__default-value">new DataMapper()</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$processedEntitesCollection</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null</span>
-                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
+                <span class="phpdocumentor-signature__argument__name">$processedEntitesCollection</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-HelperClasses-ProcessedEntitiesCollection.html"><abbr title="\SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection">ProcessedEntitiesCollection</abbr></a>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$config</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null</span>
-                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
+                <span class="phpdocumentor-signature__argument__name">$config</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null</span>
+                 = <span class="phpdocumentor-signature__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -924,8 +1055,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -949,7 +1080,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__get</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__get</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -958,8 +1089,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$name</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -968,19 +1099,19 @@
 
     
 
-        
-            <section class="phpdocumentor-attributes">
-            <h5 class="phpdocumentor-elements__header" id="attributes">
-                Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method___get#attributes" class="headerlink"><i class="fas fa-link"></i></a>
+    
+    <section class="phpdocumentor-attributes">
+        <h5 class="phpdocumentor-elements__header" id="attributes">
+            Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method___get#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-            </h5>
-                            <dl class="phpdocumentor-argument-list">
+        </h5>
+                    <dl class="phpdocumentor-argument-list">
     <dt class="phpdocumentor-argument-list__entry">
         #[<abbr title="\Override">Override</abbr>]
     </dt>
     </dl>
-                    </section>
-    
+            </section>
+
     
 </article>
                     <article
@@ -1004,7 +1135,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__isset</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__isset</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1013,8 +1144,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$name</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1023,19 +1154,19 @@
 
     
 
-        
-            <section class="phpdocumentor-attributes">
-            <h5 class="phpdocumentor-elements__header" id="attributes">
-                Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method___isset#attributes" class="headerlink"><i class="fas fa-link"></i></a>
+    
+    <section class="phpdocumentor-attributes">
+        <h5 class="phpdocumentor-elements__header" id="attributes">
+            Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method___isset#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-            </h5>
-                            <dl class="phpdocumentor-argument-list">
+        </h5>
+                    <dl class="phpdocumentor-argument-list">
     <dt class="phpdocumentor-argument-list__entry">
         #[<abbr title="\Override">Override</abbr>]
     </dt>
     </dl>
-                    </section>
-    
+            </section>
+
     
 </article>
                     <article
@@ -1059,7 +1190,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__set</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__set</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1068,15 +1199,15 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$name</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$value</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1085,19 +1216,19 @@
 
     
 
-        
-            <section class="phpdocumentor-attributes">
-            <h5 class="phpdocumentor-elements__header" id="attributes">
-                Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method___set#attributes" class="headerlink"><i class="fas fa-link"></i></a>
+    
+    <section class="phpdocumentor-attributes">
+        <h5 class="phpdocumentor-elements__header" id="attributes">
+            Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method___set#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-            </h5>
-                            <dl class="phpdocumentor-argument-list">
+        </h5>
+                    <dl class="phpdocumentor-argument-list">
     <dt class="phpdocumentor-argument-list__entry">
         #[<abbr title="\Override">Override</abbr>]
     </dt>
     </dl>
-                    </section>
-    
+            </section>
+
     
 </article>
                     <article
@@ -1121,7 +1252,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">addEntityToEntityCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entity</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">addEntityToEntityCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entity</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1130,15 +1261,15 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$entity</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
+                <span class="phpdocumentor-signature__argument__name">$entity</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1147,8 +1278,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -1172,7 +1303,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">checkCollectionExists</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">checkCollectionExists</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1181,8 +1312,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$collectionName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$collectionName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1191,8 +1322,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
@@ -1220,7 +1351,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">checkFinalClassReflectionProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionProperty</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">checkFinalClassReflectionProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionProperty</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1229,8 +1360,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$reflectionProperty</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr></span>
+                <span class="phpdocumentor-signature__argument__name">$reflectionProperty</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1239,8 +1370,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
@@ -1268,7 +1399,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">collectionPropertyIsSetted</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">collectionPropertyIsSetted</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1277,8 +1408,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1287,8 +1418,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
@@ -1316,7 +1447,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">countEntityCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
+                    <span class="phpdocumentor-signature__name">countEntityCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1325,8 +1456,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1335,8 +1466,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
@@ -1364,7 +1495,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">getCollectionDataInformation</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+                    <span class="phpdocumentor-signature__name">getCollectionDataInformation</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1373,8 +1504,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$collectionName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$collectionName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1383,8 +1514,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
@@ -1421,8 +1552,8 @@
     
     
 
-        
     
+
     
 </article>
                     <article
@@ -1455,8 +1586,8 @@
     
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
@@ -1493,8 +1624,8 @@
     
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
@@ -1531,8 +1662,8 @@
     
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
@@ -1569,8 +1700,8 @@
     
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
@@ -1598,7 +1729,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">isEncryptedProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$columnName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">isEncryptedProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$columnName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1607,8 +1738,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$columnName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$columnName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1617,8 +1748,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
@@ -1646,7 +1777,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">isInitializationVector</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">isInitializationVector</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1655,8 +1786,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1665,8 +1796,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
@@ -1694,7 +1825,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">isPrimaryKey</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">isPrimaryKey</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1703,8 +1834,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1713,8 +1844,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
@@ -1742,7 +1873,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">setEntityCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaCollection.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaCollection">SismaCollection</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$sismaCollection</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">setEntityCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaCollection.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaCollection">SismaCollection</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$sismaCollection</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1751,15 +1882,15 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$sismaCollection</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaCollection.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaCollection">SismaCollection</abbr></a></span>
+                <span class="phpdocumentor-signature__argument__name">$sismaCollection</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaCollection.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaCollection">SismaCollection</abbr></a></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1768,8 +1899,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -1793,7 +1924,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">setPrimaryKeyAfterSave</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">setPrimaryKeyAfterSave</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1802,8 +1933,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$value</span>
-                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">int</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1812,8 +1943,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -1837,7 +1968,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">setPrimaryKeyPropertyName</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">setPrimaryKeyPropertyName</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1846,8 +1977,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1856,8 +1987,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -1890,19 +2021,19 @@
     
     
 
-        
-            <section class="phpdocumentor-attributes">
-            <h5 class="phpdocumentor-elements__header" id="attributes">
-                Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_toArray#attributes" class="headerlink"><i class="fas fa-link"></i></a>
+    
+    <section class="phpdocumentor-attributes">
+        <h5 class="phpdocumentor-elements__header" id="attributes">
+            Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_toArray#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-            </h5>
-                            <dl class="phpdocumentor-argument-list">
+        </h5>
+                    <dl class="phpdocumentor-argument-list">
     <dt class="phpdocumentor-argument-list__entry">
         #[<abbr title="\Override">Override</abbr>]
     </dt>
     </dl>
-                    </section>
-    
+            </section>
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">array&lt;string|int, mixed&gt;</span>
@@ -1939,8 +2070,8 @@
     
     
 
-        
     
+
     
 </article>
                     <article
@@ -1964,7 +2095,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">addEncryptedProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$columnName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
+                    <span class="phpdocumentor-signature__name">addEncryptedProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$columnName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">self</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -1973,8 +2104,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$columnName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$columnName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -1983,8 +2114,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">self</span>
@@ -2012,7 +2143,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">checkCollectionTypeConsistency</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaCollection.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaCollection">SismaCollection</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">checkCollectionTypeConsistency</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaCollection.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaCollection">SismaCollection</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2021,15 +2152,15 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$collectionName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$collectionName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$value</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaCollection.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaCollection">SismaCollection</abbr></a></span>
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-CustomTypes-SismaCollection.html"><abbr title="\SismaFramework\Orm\CustomTypes\SismaCollection">SismaCollection</abbr></a></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -2038,8 +2169,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -2063,7 +2194,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">checkFinalClassProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">checkFinalClassProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2072,8 +2203,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -2082,8 +2213,8 @@
 
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
@@ -2111,7 +2242,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">forceCollectionPropertySet</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">forceCollectionPropertySet</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2120,8 +2251,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -2130,8 +2261,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -2155,7 +2286,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">forceForeignKeyPropertySet</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">forceForeignKeyPropertySet</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2164,8 +2295,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$propertyName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -2174,8 +2305,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -2199,7 +2330,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">getForeignKeyName</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|null</span></code>
+                    <span class="phpdocumentor-signature__name">getForeignKeyName</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|null</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2208,8 +2339,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$collectionName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$collectionName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -2218,19 +2349,19 @@
 
     
 
-        
-            <section class="phpdocumentor-attributes">
-            <h5 class="phpdocumentor-elements__header" id="attributes">
-                Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method_getForeignKeyName#attributes" class="headerlink"><i class="fas fa-link"></i></a>
+    
+    <section class="phpdocumentor-attributes">
+        <h5 class="phpdocumentor-elements__header" id="attributes">
+            Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method_getForeignKeyName#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-            </h5>
-                            <dl class="phpdocumentor-argument-list">
+        </h5>
+                    <dl class="phpdocumentor-argument-list">
     <dt class="phpdocumentor-argument-list__entry">
         #[<abbr title="\Override">Override</abbr>]
     </dt>
     </dl>
-                    </section>
-    
+            </section>
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string|null</span>
@@ -2258,7 +2389,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">getForeignKeyReference</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+                    <span class="phpdocumentor-signature__name">getForeignKeyReference</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$collectionName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2267,8 +2398,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$collectionName</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$collectionName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -2277,19 +2408,19 @@
 
     
 
-        
-            <section class="phpdocumentor-attributes">
-            <h5 class="phpdocumentor-elements__header" id="attributes">
-                Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method_getForeignKeyReference#attributes" class="headerlink"><i class="fas fa-link"></i></a>
+    
+    <section class="phpdocumentor-attributes">
+        <h5 class="phpdocumentor-elements__header" id="attributes">
+            Attributes <a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method_getForeignKeyReference#attributes" class="headerlink"><i class="fas fa-link"></i></a>
 
-            </h5>
-                            <dl class="phpdocumentor-argument-list">
+        </h5>
+                    <dl class="phpdocumentor-argument-list">
     <dt class="phpdocumentor-argument-list__entry">
         #[<abbr title="\Override">Override</abbr>]
     </dt>
     </dl>
-                    </section>
-    
+            </section>
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
@@ -2317,7 +2448,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">parsePropterty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionProperty</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">parsePropterty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionProperty</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2326,8 +2457,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$reflectionProperty</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr></span>
+                <span class="phpdocumentor-signature__argument__name">$reflectionProperty</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionProperty">ReflectionProperty</abbr></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -2336,8 +2467,8 @@
 
     
 
-        
     
+
     
 </article>
                     <article
@@ -2370,8 +2501,8 @@
     
     
 
-        
     
+
     
 </article>
                     <article
@@ -2404,8 +2535,8 @@
     
     
 
-        
     
+
     
 </article>
                     <article
@@ -2429,7 +2560,7 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">protected</span>
-                    <span class="phpdocumentor-signature__name">switchSettingType</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">switchSettingType</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -2438,15 +2569,15 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$name</span>
-                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$value</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -2455,9 +2586,133 @@
 
     
 
-        
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_checkBuiltinOrEnumPropertyChange">
+        checkBuiltinOrEnumPropertyChange()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkBuiltinOrEnumPropertyChange" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">201</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">checkBuiltinOrEnumPropertyChange</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
     
     
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_checkCustomDateTimeInterfacePropertyChange">
+        checkCustomDateTimeInterfacePropertyChange()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkCustomDateTimeInterfacePropertyChange" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">208</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">checkCustomDateTimeInterfacePropertyChange</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
@@ -2489,13 +2744,363 @@
     
     
 
-        
     
+
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
             </section>
 
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_inizializeEntityCollection">
+        inizializeEntityCollection()
+        <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_inizializeEntityCollection" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/ReferencedEntity.php"><a href="files/orm-extendedclasses-referencedentity.html"><abbr title="Orm/ExtendedClasses/ReferencedEntity.php">ReferencedEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">190</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">inizializeEntityCollection</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_setEntityProperty">
+        setEntityProperty()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setEntityProperty" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">168</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">setEntityProperty</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_switchAdditionType">
+        switchAdditionType()
+        <a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_switchAdditionType" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/ExtendedClasses/ReferencedEntity.php"><a href="files/orm-extendedclasses-referencedentity.html"><abbr title="Orm/ExtendedClasses/ReferencedEntity.php">ReferencedEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">204</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">switchAdditionType</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$propertyName</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$entity</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$propertyName</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$entity</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html"><abbr title="\SismaFramework\Orm\BaseClasses\BaseEntity">BaseEntity</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_trackForeignKeyPropertyWithIndexConvertedChanges">
+        trackForeignKeyPropertyWithIndexConvertedChanges()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithIndexConvertedChanges" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">175</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">trackForeignKeyPropertyWithIndexConvertedChanges</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_trackForeignKeyPropertyWithIndexNotConvertedChanges">
+        trackForeignKeyPropertyWithIndexNotConvertedChanges()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithIndexNotConvertedChanges" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">159</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">trackForeignKeyPropertyWithIndexNotConvertedChanges</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_trackForeignKeyPropertyWithNullValueChanges">
+        trackForeignKeyPropertyWithNullValueChanges()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithNullValueChanges" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">184</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">trackForeignKeyPropertyWithNullValueChanges</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_trackOtherPropertyChanges">
+        trackOtherPropertyChanges()
+        <a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackOtherPropertyChanges" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Orm/BaseClasses/BaseEntity.php"><a href="files/orm-baseclasses-baseentity.html"><abbr title="Orm/BaseClasses/BaseEntity.php">BaseEntity.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">192</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">trackOtherPropertyChanges</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$name</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__return-type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$value</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$reflectionNamedType</span>
+                : <span class="phpdocumentor-signature__argument__return-type"><abbr title="\ReflectionNamedType">ReflectionNamedType</abbr></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$name</span>
+                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-signature__argument__name">$value</span>
+                : <span class="phpdocumentor-signature__argument__return-type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+    
+
+    
 </article>
             </section>
 
@@ -2535,8 +3140,6 @@
                         if (xhr.status < 400 && xhr.responseText) {
                             code.textContent = xhr.responseText;
                             Prism.highlightElement(code);
-                            d=document.getElementsByClassName("line-numbers");
-                            d[0].scrollTop = d[0].children[1].offsetTop;
                             return;
                         }
 
@@ -2621,6 +3224,8 @@
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_isActiveTransaction">$isActiveTransaction</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKeyPropertyName">$primaryKeyPropertyName</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_processedEntitesCollection">$processedEntitesCollection</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_encryptedColumns">$encryptedColumns</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyIndexes">$foreignKeyIndexes</a></li>
                                             </ul>
                 </li>
             
@@ -2662,7 +3267,16 @@
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setEncryptedProperties">setEncryptedProperties()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setPropertyDefaultValue">setPropertyDefaultValue()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_switchSettingType">switchSettingType()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkBuiltinOrEnumPropertyChange">checkBuiltinOrEnumPropertyChange()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkCustomDateTimeInterfacePropertyChange">checkCustomDateTimeInterfacePropertyChange()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method_getShortClassName">getShortClassName()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_inizializeEntityCollection">inizializeEntityCollection()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_setEntityProperty">setEntityProperty()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#method_switchAdditionType">switchAdditionType()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithIndexConvertedChanges">trackForeignKeyPropertyWithIndexConvertedChanges()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithIndexNotConvertedChanges">trackForeignKeyPropertyWithIndexNotConvertedChanges()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackForeignKeyPropertyWithNullValueChanges">trackForeignKeyPropertyWithNullValueChanges()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_trackOtherPropertyChanges">trackOtherPropertyChanges()</a></li>
                                     </ul>
             </li>
                     </ul>
