@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.1.11] - 2026-02-11 - Correzione Conversione Separatori di Directory nell'Autoloader
+
+Questa patch release corregge un bug nell'Autoloader dove i backslash dei namespace non venivano convertiti in separatori di directory nei metodi `mapNamespace()` e `mapClass()`, causando potenziali errori nel caricamento delle classi su sistemi operativi diversi.
+
+### 🐛 Bug Fixes
+
+#### Correzione Conversione Backslash in mapNamespace() e mapClass()
+
+Corretto il metodo di costruzione dei percorsi nei metodi di mapping dell'Autoloader per applicare correttamente `str_replace('\\', DIRECTORY_SEPARATOR, ...)` a tutti i componenti del path:
+
+*   **Autoloader.php (mapNamespace)**:
+    - ❌ **Prima**: `$actualClassPath = $this->config->rootPath . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php';`
+    - ✅ **Dopo**: `$actualClassPath = $this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $value . $actualClassName) . '.php';`
+    - La conversione dei backslash ora include anche il valore `$value` proveniente dal namespace mapper, non solo il nome della classe
+
+*   **Autoloader.php (mapClass)**:
+    - ❌ **Prima**: `$actualClassPath = $this->config->rootPath . $this->config->autoloadClassMapper[$this->className] . '.php';`
+    - ✅ **Dopo**: `$actualClassPath = $this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $this->config->autoloadClassMapper[$this->className]) . '.php';`
+    - Aggiunta la conversione dei backslash al valore del class mapper, che prima non veniva convertito affatto
+
+**Scenario del bug**:
+1. I valori nel `autoloadNamespaceMapper` e `autoloadClassMapper` potevano contenere backslash (notazione namespace PHP)
+2. Nel metodo `mapNamespace()`, solo `$actualClassName` veniva convertito con `str_replace()`, ma il `$value` del mapper manteneva eventuali backslash
+3. Nel metodo `mapClass()`, il valore del mapper non veniva convertito affatto
+4. Su sistemi Linux/macOS, i backslash nei path causavano il mancato ritrovamento dei file
+
+**Dopo la correzione**:
+- In `mapNamespace()`, la conversione avvolge sia `$value` che `$actualClassName` insieme, garantendo che l'intero path relativo sia correttamente convertito
+- In `mapClass()`, il valore del class mapper viene convertito prima di essere utilizzato come path
+- Il caricamento delle classi funziona correttamente su tutti i sistemi operativi
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: La correzione non modifica l'API pubblica
+*   **Sistemi Windows**: Su Windows `DIRECTORY_SEPARATOR` è `\`, quindi il comportamento era già corretto. La correzione è comunque applicata per coerenza e portabilità
+*   **Sistemi Linux/macOS**: La correzione risolve potenziali problemi di caricamento classi quando i mapper contengono backslash
+
+### 📊 Impatto
+
+*   **Portabilità**: L'Autoloader funziona ora correttamente su tutti i sistemi operativi
+*   **Coerenza**: Tutti i metodi di risoluzione dei path applicano la stessa logica di conversione dei separatori
+*   **Correttezza**: Eliminati potenziali errori di file not found causati da separatori di directory errati
+
+---
+
 ## [10.1.10] - 2026-01-17 - Correzione Percorso File di Log
 
 Questa patch release corregge un bug nel file di configurazione del framework dove la costante `LOG_PATH` puntava a un percorso errato.

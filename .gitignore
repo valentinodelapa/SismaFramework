@@ -10,4 +10,5 @@
 /TestsApplication/Cache/
 /TestsApplication/Logs/
 /vendor/
+.phpunit.cache/
 .scannerwork/
