@@ -2,6 +2,211 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.3.1] - 2026-02-11 - Correzione Percorsi Cross-Platform nell'Autoloader
+
+Questa patch release corregge un bug nell'Autoloader che impediva il caricamento delle classi mappate tramite `AUTOLOAD_NAMESPACE_MAPPER` e `AUTOLOAD_CLASS_MAPPER` su sistemi Linux/macOS.
+
+### 🐛 Bug Fixes
+
+#### Correzione Conversione Separatori di Directory nei Mapper dell'Autoloader
+
+Corretti i metodi `mapNamespace()` e `mapClass()` in `Autoloader.php` per convertire correttamente i backslash nei percorsi provenienti dalle costanti di configurazione:
+
+*   **Core/HelperClasses/Autoloader.php (`mapNamespace()`)**:
+    - ❌ **Prima**: `$this->config->rootPath . $value . str_replace('\\', DIRECTORY_SEPARATOR, $actualClassName) . '.php'`
+    - ✅ **Dopo**: `$this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $value . $actualClassName) . '.php'`
+    - La conversione `str_replace('\\', DIRECTORY_SEPARATOR, ...)` veniva applicata solo a `$actualClassName`, ma non a `$value` (il percorso dalla configurazione)
+
+*   **Core/HelperClasses/Autoloader.php (`mapClass()`)**:
+    - ❌ **Prima**: `$this->config->rootPath . $this->config->autoloadClassMapper[$this->className] . '.php'`
+    - ✅ **Dopo**: `$this->config->rootPath . str_replace('\\', DIRECTORY_SEPARATOR, $this->config->autoloadClassMapper[$this->className]) . '.php'`
+    - Il percorso dalla configurazione non veniva convertito affatto
+
+**Scenario del bug**:
+1. La configurazione `AUTOLOAD_NAMESPACE_MAPPER` contiene percorsi con backslash (es. `"plugins\PHPMailer\src"`)
+2. Su Windows, i backslash funzionano come separatori di directory, mascherando il problema
+3. Su Linux/macOS (es. dentro un container Docker), `DIRECTORY_SEPARATOR` è `/`
+4. Il percorso risultante conteneva backslash letterali: `/var/www/html/plugins\PHPMailer\src/PHPMailer.php`
+5. `file_exists()` falliva perché il percorso non era valido su Linux
+
+**Dopo la correzione**:
+- I backslash nei valori di `AUTOLOAD_NAMESPACE_MAPPER` e `AUTOLOAD_CLASS_MAPPER` vengono convertiti in `DIRECTORY_SEPARATOR`
+- Le classi vengono caricate correttamente su tutti i sistemi operativi
+- Il percorso risultante è corretto: `/var/www/html/plugins/PHPMailer/src/PHPMailer.php`
+
+### ✅ Backward Compatibility
+
+*   **Nessun Breaking Change**: La correzione estende il supporto cross-platform senza modificare il comportamento su Windows
+*   **Configurazioni Esistenti**: Funzionano correttamente senza modifiche
+
+### 📊 Impatto
+
+*   **Cross-Platform**: L'autoloader funziona correttamente su Windows, Linux e macOS
+*   **Docker**: Risolto il problema del caricamento di classi di terze parti (es. PHPMailer) in ambienti containerizzati
+
+---
+
+## [11.3.0] - 2026-02-08 - Sistema di Upgrade Automatico e Miglioramenti ORM Fulltext
+
+Questa release introduce un sistema completo di upgrade automatico che consente di migrare moduli tra versioni major del framework applicando automaticamente le trasformazioni necessarie per i breaking changes. Inoltre, viene aggiunto il parametro `TextSearchMode` ai metodi di ricerca fulltext dell'ORM, consentendo un controllo esplicito sulla modalità di ricerca testuale.
+
+### ✨ Nuove Funzionalità
+
+* **Sistema di Upgrade Automatico**: Nuovo comando CLI `upgrade` per automatizzare la migrazione dei moduli tra versioni major
+
+  - **UpgradeCommand** (`Console/Commands/UpgradeCommand.php`): Entry point CLI con supporto completo per opzioni
+    - `--to=VERSION`: Versione target (obbligatorio)
+    - `--from=VERSION`: Versione sorgente (auto-rilevata da module.json se omesso)
+    - `--dry-run`: Preview delle modifiche senza applicarle (raccomandato)
+    - `--skip-critical`: Salta file critici (Public/index.php, Config)
+    - `--skip-backup`: Salta backup automatico (non raccomandato)
+    - `--quiet`: Output minimale
+
+  - **UpgradeManager** (`Console/Services/Upgrade/UpgradeManager.php`): Orchestrator principale
+    - Fluent Interface per configurazione
+    - Gestione completa del ciclo di upgrade: validazione → backup → trasformazione → report
+    - Rollback automatico su errore
+    - Selezione automatica della strategia di upgrade in base alle versioni
+
+  - **Sistema a Plugin con Strategy Pattern**:
+    - `UpgradeStrategyInterface`: Interfaccia per strategie di upgrade
+    - `Upgrade10to11Strategy`: Implementazione per migrazione 10.x → 11.0.0
+    - Estensibile per future versioni (11.x → 12.0, etc.)
+
+  - **Transformers Chain of Responsibility**:
+    - `TransformerInterface`: Interfaccia base per trasformatori di codice
+    - `StaticToInstanceTransformer`: Converte chiamate statiche a istanze (ErrorHandler, Debugger)
+    - `ReturnTypeTransformer`: Aggiorna signature customFilter() da void a bool + return statements
+    - `ResponseConstructorTransformer`: Converte setResponseType() a constructor injection
+    - `MethodRenameTransformer`: Rinomina metodi deprecati
+
+  - **Utilities**:
+    - `VersionDetector`: Rilevamento e aggiornamento versione framework in module.json
+    - `FileScanner`: Scansione intelligente dei file del modulo con categorizzazione
+    - `BackupManager`: Creazione backup ZIP + git commit (se disponibile)
+    - `ReportGenerator`: Report dettagliati con confidence score e warning
+
+  - **DTO (Data Transfer Objects)**:
+    - `TransformationResult`: Risultato di una trasformazione con confidence, warning, modifiche
+    - `UpgradeReport`: Report completo di upgrade con statistiche e azioni manuali richieste
+
+* **Sistema di Versionamento Moduli**: Introdotto file `module.json` per tracciare la versione framework di ogni modulo
+
+  ```json
+  {
+    "name": "ModuleName",
+    "version": "1.0.0",
+    "framework_version": "11.0.0",
+    "description": "Module description",
+    "authors": ["Author Name"],
+    "requires": {
+      "sismaframework": ">=11.0.0"
+    }
+  }
+  ```
+
+* **Approccio Regex-Based Zero-Dependency**: Sistema di trasformazione basato su pattern Regex avanzati senza dipendenze esterne
+
+  | Trasformazione | Confidence | Note |
+  |----------------|------------|------|
+  | Static→Instance | 70-75% | Alta per index.php, warning per altri file |
+  | ReturnType void→bool | 80-85% | Rilevamento automatico indentazione |
+  | Response constructor | 65-70% | Warning per pattern complessi |
+  | Method renaming | 90% | Alta affidabilità |
+
+### 🛡️ Sicurezza e Affidabilità
+
+* **Backup Automatico**: Creazione automatica di backup ZIP prima di ogni upgrade
+* **Git Integration**: Commit automatico pre-upgrade se il progetto usa Git
+* **Dry-run Obbligatorio**: Preview sicura prima di applicare modifiche
+* **Rollback Automatico**: Ripristino da backup in caso di errore
+* **Confidence Scoring**: Ogni trasformazione ha un punteggio di affidabilità
+* **Warning System**: Segnalazione esplicita di pattern non riconosciuti
+
+### 📊 Report e Trasparenza
+
+* **Report Dettagliato**: 
+  - File modificati con conteggio modifiche
+  - Confidence score per file
+  - Warning dettagliati
+  - Lista azioni manuali richieste
+  
+* **Report Minimo** (--quiet):
+  - Status (✓/◯/✗)
+  - File modificati e warning count
+
+### 🔧 Exceptions
+
+* `UpgradeException`: Eccezione generica per errori di upgrade
+* `VersionMismatchException`: Versione non valida o strategia non trovata
+* `BackupFailedException`: Errore durante backup o rollback
+
+### 📋 Esempi di Utilizzo
+
+```bash
+# Preview upgrade (raccomandato come primo step)
+php Console/sisma upgrade Blog --to=11.0.0 --dry-run
+
+# Applicazione upgrade dopo review
+php Console/sisma upgrade Blog --to=11.0.0
+
+# Upgrade da versione specifica
+php Console/sisma upgrade Blog --from=10.1.7 --to=11.0.0
+
+# Salta file critici per review manuale
+php Console/sisma upgrade Blog --to=11.0.0 --skip-critical
+
+# Output minimale
+php Console/sisma upgrade Blog --to=11.0.0 --quiet
+```
+
+### 🔄 Estensibilità
+
+Il sistema è progettato per essere facilmente estensibile:
+
+1. **Nuova Major Version**: Creare `Upgrade11to12Strategy.php` implementando `UpgradeStrategyInterface`
+2. **Nuove Trasformazioni**: Creare transformer implementando `TransformerInterface`
+3. **Custom Strategies**: Sistema a plugin completamente estensibile
+
+### 🔧 Miglioramenti ORM
+
+#### Aggiunta parametro `TextSearchMode` alla ricerca fulltext
+
+Aggiunto il parametro `TextSearchMode` ai metodi di ricerca fulltext per consentire un controllo esplicito sulla modalità di ricerca testuale:
+
+*   **Orm/HelperClasses/Query.php** (`setFulltextIndexColumn()`):
+    - Aggiunto parametro `TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode`
+    - Il parametro consente di specificare la modalità di ricerca fulltext direttamente dalla query
+
+*   **Orm/BaseClasses/BaseAdapter.php**:
+    - `opFulltextIndex()`: aggiunto parametro obbligatorio `TextSearchMode $textSearchMode`, rimossi valori di default dai parametri `$value` e `$columnAlias`
+    - `fulltextConditionSintax()`: rimosso valore di default dal parametro `TextSearchMode $textSearchMode`, rendendolo obbligatorio
+
+*   **Orm/Adapters/AdapterMysql.php**:
+    - Aggiornate le implementazioni di `opFulltextIndex()` e `fulltextConditionSintax()` per propagare il parametro `TextSearchMode`
+    - Aggiunta annotazione `@internal` alla classe
+
+**Motivazione**:
+- Consente di specificare la modalità di ricerca fulltext (es. Natural Language Mode, Boolean Mode) a livello di query
+- Rende esplicita la dipendenza dalla modalità di ricerca, migliorando la leggibilità del codice
+- L'adapter non assume più un valore di default per `TextSearchMode`, delegando la scelta al livello superiore (`Query`)
+
+### ⚠️ Limitazioni
+
+* **Confidence 65-85% vs 90%+ con AST**: Approccio Regex ha accuracy inferiore rispetto a parsing AST
+* **Pattern Complessi**: Può non riconoscere casi edge (multilinea, commenti, stringhe)
+* **Review Manuale**: Sempre necessaria dopo upgrade automatico
+
+### 🛠️ Mitigazioni
+
+* **Dry-run Preview**: Visualizza modifiche prima di applicarle
+* **Backup Automatico**: Rollback sempre disponibile
+* **Confidence Transparency**: Report chiaro su cosa è stato modificato
+* **Warning Espliciti**: Segnala pattern non riconosciuti
+* **Manual Actions List**: Lista chiara di cosa richiede intervento manuale
+
+---
+
 ## [11.2.0] - 2026-01-30 - Aggiornamento Requisiti PHP e PHPUnit
 
 Questa minor release aggiorna i requisiti minimi del framework a PHP 8.3 e PHPUnit 12, allineandosi con le versioni attivamente supportate e sfruttando le feature moderne del linguaggio già presenti nel codebase. Inoltre, il processo di installazione ora crea automaticamente la struttura del modulo applicativo.

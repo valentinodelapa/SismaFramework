@@ -393,6 +393,86 @@ class QueryTest extends TestCase
         $this->assertEquals('', $queryTwo->getCommandToExecute());
     }
 
+    public function testSelectSetFullIndexColumnWithBooleanMode()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('escapeTable', null)
+                ->with('tableName')
+                ->willReturn('table_name');
+        $baseAdapterMock->expects($this->once())
+                ->method('opFulltextIndex')
+                ->willReturnCallback(function ($columns, $value, $textSearchMode, $columnAlias) {
+                    $this->assertEquals(['fulltextColumn'], $columns);
+                    $this->assertEquals(Placeholder::placeholder, $value);
+                    $this->assertEquals(TextSearchMode::inBooleanMode, $textSearchMode);
+                    $this->assertNull($columnAlias);
+                    return 'MATCH (filltext_column) AGAINST ? IN BOOLEAN MODE';
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('fulltextConditionSintax')
+                ->willReturnCallback(function ($columns, $value, $textSearchMode) {
+                    $this->assertEquals(['fulltextColumn'], $columns);
+                    $this->assertEquals(Placeholder::placeholder, $value);
+                    $this->assertEquals(TextSearchMode::inBooleanMode, $textSearchMode);
+                    return 'MATCH (filltext_column) AGAINST ? IN BOOLEAN MODE';
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->willReturnCallback(function ($distinct, $select, $from, $where, $groupby, $having, $orderby, $offset, $limit) {
+                    $this->assertEquals(['MATCH (filltext_column) AGAINST ? IN BOOLEAN MODE'], $select);
+                    $this->assertEquals(['MATCH (filltext_column) AGAINST ? IN BOOLEAN MODE'], $where);
+                    return '';
+                });
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName')
+                ->setWhere()
+                ->setFulltextIndexColumn(['fulltextColumn'], textSearchMode: TextSearchMode::inBooleanMode)
+                ->appendFulltextCondition(['fulltextColumn'], textSearchMode: TextSearchMode::inBooleanMode)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectSetFullIndexColumnWithQueryExpansionMode()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(1))
+                ->method('escapeTable', null)
+                ->with('tableName')
+                ->willReturn('table_name');
+        $baseAdapterMock->expects($this->once())
+                ->method('opFulltextIndex')
+                ->willReturnCallback(function ($columns, $value, $textSearchMode, $columnAlias) {
+                    $this->assertEquals(['fulltextColumn'], $columns);
+                    $this->assertEquals(Placeholder::placeholder, $value);
+                    $this->assertEquals(TextSearchMode::withQueryExpansion, $textSearchMode);
+                    $this->assertNull($columnAlias);
+                    return 'MATCH (filltext_column) AGAINST ? WITH QUERY EXPANSION';
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('fulltextConditionSintax')
+                ->willReturnCallback(function ($columns, $value, $textSearchMode) {
+                    $this->assertEquals(['fulltextColumn'], $columns);
+                    $this->assertEquals(Placeholder::placeholder, $value);
+                    $this->assertEquals(TextSearchMode::withQueryExpansion, $textSearchMode);
+                    return 'MATCH (filltext_column) AGAINST ? WITH QUERY EXPANSION';
+                });
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->willReturnCallback(function ($distinct, $select, $from, $where, $groupby, $having, $orderby, $offset, $limit) {
+                    $this->assertEquals(['MATCH (filltext_column) AGAINST ? WITH QUERY EXPANSION'], $select);
+                    $this->assertEquals(['MATCH (filltext_column) AGAINST ? WITH QUERY EXPANSION'], $where);
+                    return '';
+                });
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName')
+                ->setWhere()
+                ->setFulltextIndexColumn(['fulltextColumn'], textSearchMode: TextSearchMode::withQueryExpansion)
+                ->appendFulltextCondition(['fulltextColumn'], textSearchMode: TextSearchMode::withQueryExpansion)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
     public function testSelectSetSubqueryColumn()
     {
         $baseAdapterMock = $this->createMock(BaseAdapter::class);

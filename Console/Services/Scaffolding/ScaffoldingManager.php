@@ -43,6 +43,7 @@ use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
 class ScaffoldingManager
 {
 
+    private Config $config;
     private string $templatesPath;
     private array $placeholders;
     private bool $force = false;
@@ -52,13 +53,12 @@ class ScaffoldingManager
     private \ReflectionClass $entityReflection;
     private ?string $customType = null;
     private ?string $customTemplatePath = null;
-    private Config $config;
 
-    public function __construct(Config $config = new Config())
+    public function __construct(?Config $config = null)
     {
+        $this->config = $config ?? Config::getInstance();
         $this->templatesPath = __DIR__ . '/Templates/';
         $this->placeholders = [];
-        $this->config = $config;
     }
 
     public function setForce(bool $force): self

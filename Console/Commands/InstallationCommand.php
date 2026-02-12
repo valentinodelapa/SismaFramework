@@ -38,11 +38,9 @@ class InstallationCommand extends BaseCommand
 
     use InteractiveInputTrait;
 
-    private InstallationManager $installationManager;
-
-    public function __construct(InstallationManager $installationManager = new InstallationManager())
+    public function __construct(private InstallationManager $installationManager = new InstallationManager())
     {
-        $this->installationManager = $installationManager;
+        
     }
 
     #[\Override]

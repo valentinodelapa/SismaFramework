@@ -8,14 +8,14 @@
     <title>SismaFramework</title>
 
     <paths>
-        <output>docs/api</output>
+        <output>docs-phpdoc</output>
         <cache>build/cache</cache>
     </paths>
 
     <version number="1.0.0">
         <api>
             <source dsn=".">
-                <path>src</path> 
+                <path>.</path>
             </source>
 
             <ignore>
@@ -23,6 +23,12 @@
                 <path>Sample</path>
                 <path>Tests</path>
                 <path>TestsApplication</path>
+                <path>Config</path>
+                <path>docs</path>
+                <path>docs-phpdoc</path>
+                <path>nbproject</path>
+                <path>third-party-licenses</path>
+                <path>build</path>
             </ignore>
         </api>
     </version>
