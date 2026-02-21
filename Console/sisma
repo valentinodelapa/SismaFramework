@@ -2,6 +2,7 @@
 
 namespace SismaFramework\Console;
 
+use SismaFramework\Console\Commands\FixturesCommand;
 use SismaFramework\Console\Commands\InstallationCommand;
 use SismaFramework\Console\Commands\ScaffoldCommand;
 use SismaFramework\Console\Commands\UpgradeCommand;
@@ -22,6 +23,7 @@ try {
     CommandLineInterfaceSettingsChecker::checkIsCommandLineInterfaceMode(php_sapi_name());
     CommandLineInterfaceSettingsChecker::checkIsProjectDirectory(\Config\SYSTEM_PATH);
     $commandDispatcher = new CommandDispatcher(array_slice($argv, 1));
+    $commandDispatcher->addCommandStrategy(new FixturesCommand());
     $commandDispatcher->addCommandStrategy(new InstallationCommand());
     $commandDispatcher->addCommandStrategy(new ScaffoldCommand());
     $commandDispatcher->addCommandStrategy(new UpgradeCommand());

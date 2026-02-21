@@ -24,16 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\HelperClasses\Dispatcher;
+namespace SismaFramework\Console\Services\Fixtures;
 
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\ModuleManager;
-use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
- * @internal
- *
  * @author Valentino de Lapa
  */
 class FixturesManager
@@ -50,20 +47,10 @@ class FixturesManager
         $this->config = $customConfig ?? Config::getInstance();
     }
 
-    public function isFixtures(array $pathParts): bool
-    {
-        if (count($pathParts) === 1) {
-            return ($pathParts[0] === strtolower($this->config->fixtures)) && $this->config->developmentEnvironment;
-        } else {
-            return false;
-        }
-    }
-
-    public function run(): Response
+    public function run(): void
     {
         $this->getFixturesArray();
         $this->executeFixturesArray(array_keys($this->fixturesArray));
-        return new Response();
     }
 
     public function extecuted(): bool

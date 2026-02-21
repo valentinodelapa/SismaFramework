@@ -31,7 +31,6 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Router;
-use SismaFramework\Core\HttpClasses\Response;
 
 /**
  * @internal
@@ -43,7 +42,6 @@ class RouteResolver
 
     private Config $config;
     private ResourceMaker $resourceMaker;
-    private FixturesManager $fixturesManager;
     private string $originalPath;
     private string $path;
     private array $pathParts;
@@ -59,10 +57,9 @@ class RouteResolver
     private string $parsedAction = '';
     private array $actionArguments = [];
 
-    public function __construct(ResourceMaker $resourceMaker = new ResourceMaker(), FixturesManager $fixturesManager = new FixturesManager(), ?Config $config = null)
+    public function __construct(ResourceMaker $resourceMaker = new ResourceMaker(), ?Config $config = null)
     {
         $this->resourceMaker = $resourceMaker;
-        $this->fixturesManager = $fixturesManager;
         $this->config = $config ?? Config::getInstance();
     }
 
@@ -113,16 +110,6 @@ class RouteResolver
         }
     }
 
-    public function isFixturesRequest(array $cleanPathParts): bool
-    {
-        return $this->fixturesManager->isFixtures($cleanPathParts);
-    }
-
-    public function runFixtures(): Response
-    {
-        return $this->fixturesManager->run();
-    }
-
     private function parsePath(): void
     {
         $this->pathParts = explode('/', rtrim($this->path, '/'));
@@ -145,8 +132,7 @@ class RouteResolver
         if ($cleanPathPartsNumber === 1) {
             $this->pathAction = $this->config->defaultAction;
             $this->parsedAction = NotationManager::convertToCamelCase($this->config->defaultAction);
-            if (($this->resourceMaker->isAcceptedResourceFile($this->path) === false) &&
-                    ($this->fixturesManager->isFixtures($this->pathParts) === false)) {
+            if ($this->resourceMaker->isAcceptedResourceFile($this->path) === false) {
                 $this->defaultActionInjected = true;
             }
         } else {

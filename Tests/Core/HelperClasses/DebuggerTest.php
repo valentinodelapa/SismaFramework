@@ -37,7 +37,6 @@ use SismaFramework\Core\HelperClasses\Debugger;
  *
  * @author Valentino de Lapa
  */
-#[RunTestsInSeparateProcesses]
 class DebuggerTest extends TestCase
 {
 

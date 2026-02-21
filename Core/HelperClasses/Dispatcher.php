@@ -97,8 +97,6 @@ class Dispatcher
             return $this->resourceHandler->handleResourceFile($this->routeResolver->getRouteInfo()->cleanPathParts) ?? $this->handleNotFound();
         } elseif (class_exists($this->routeResolver->getRouteInfo()->controllerClassName)) {
             return $this->dispatchToController();
-        } elseif ($this->routeResolver->isFixturesRequest($this->routeResolver->getRouteInfo()->cleanPathParts)) {
-            return $this->routeResolver->runFixtures();
         } else {
             return $this->handleNotFound();
         }
