@@ -61,6 +61,36 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-BaseClasses-BaseCommand.html#property_options"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand",
+            "name": "FixturesCommand",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand\u003A\u003AcheckCompatibility\u0028\u0029",
+            "name": "checkCompatibility",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html#method_checkCompatibility"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand\u003A\u003Aconfigure\u0028\u0029",
+            "name": "configure",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html#method_configure"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand\u003A\u003Aexecute\u0028\u0029",
+            "name": "execute",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html#method_execute"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand\u003A\u003A\u0024fixturesManager",
+            "name": "fixturesManager",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html#property_fixturesManager"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand",
             "name": "InstallationCommand",
             "summary": "",
@@ -330,6 +360,61 @@ Search.appendIndex(
             "name": "checkIsProjectDirectory",
             "summary": "",
             "url": "classes/SismaFramework-Console-HelperClasses-CommandLineInterfaceSettingsChecker.html#method_checkIsProjectDirectory"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager",
+            "name": "FixturesManager",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003Arun\u0028\u0029",
+            "name": "run",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_run"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003Aextecuted\u0028\u0029",
+            "name": "extecuted",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_extecuted"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003AgetFixturesArray\u0028\u0029",
+            "name": "getFixturesArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_getFixturesArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003AexecuteFixturesArray\u0028\u0029",
+            "name": "executeFixturesArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_executeFixturesArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003AexecuteFixture\u0028\u0029",
+            "name": "executeFixture",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_executeFixture"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003A\u0024config",
+            "name": "config",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_config"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003A\u0024fixturesArray",
+            "name": "fixturesArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_fixturesArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003A\u0024entitiesArray",
+            "name": "entitiesArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_entitiesArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager\u003A\u003A\u0024dataMapper",
+            "name": "dataMapper",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_dataMapper"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Installation\\InstallationManager",
             "name": "InstallationManager",
@@ -6286,15 +6371,20 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-console-helperclasses.html"
         },                {
-            "fqsen": "\\SismaFramework\\Console\\Services\\Installation",
-            "name": "Installation",
+            "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures",
+            "name": "Fixtures",
             "summary": "",
-            "url": "namespaces/sismaframework-console-services-installation.html"
+            "url": "namespaces/sismaframework-console-services-fixtures.html"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services",
             "name": "Services",
             "summary": "",
             "url": "namespaces/sismaframework-console-services.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Installation",
+            "name": "Installation",
+            "summary": "",
+            "url": "namespaces/sismaframework-console-services-installation.html"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Scaffolding",
             "name": "Scaffolding",

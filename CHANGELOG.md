@@ -2,6 +2,73 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.3.2] - 2026-02-21 - Spostamento Fixtures nella Console
+
+Questa patch release rifattorizza il sistema di esecuzione delle fixtures, spostandolo dal contesto HTTP (Dispatcher) al contesto CLI (Console). Il comportamento delle fixtures resta invariato: cambiano solo il punto di invocazione e la collocazione del codice. Include inoltre la documentazione del sistema di Upgrade introdotto nella versione 11.3.0.
+
+### 🔧 Refactoring
+
+#### Migrazione delle Fixtures dal Dispatcher alla Console
+
+Le fixtures erano una funzionalità nata quando il framework non disponeva di una console CLI. Venivano eseguite tramite un endpoint HTTP (`/fixtures`), integrato nel Dispatcher e nel RouteResolver. Con l'introduzione della console, questa collocazione risultava architetturalmente inadeguata.
+
+**Nuovo comando CLI**:
+```bash
+php SismaFramework/Console/sisma fixtures
+```
+
+**File creati**:
+- **`Console/Commands/FixturesCommand.php`**: Nuovo comando che estende `BaseCommand`, registrato nel file `sisma`
+- **`Console/Services/Fixtures/FixturesManager.php`**: Logica di gestione fixtures spostata dal Dispatcher alla Console
+
+**File modificati**:
+- **`Console/sisma`**: Registrato `FixturesCommand` tra le strategie del `CommandDispatcher`
+- **`Core/HelperClasses/Dispatcher.php`**: Rimosso il branch `elseif` per le fixtures nel metodo `handle()`
+- **`Core/HelperClasses/Dispatcher/RouteResolver.php`**:
+  - Rimossa la dipendenza da `FixturesManager` nel costruttore
+  - Rimossi i metodi `isFixturesRequest()` e `runFixtures()`
+  - Rimosso il check `isFixtures()` in `parsePathWithMultipleCleanParts()`
+- **`Core/HelperClasses/Config.php`**: Rimossa la proprietà `$fixtures` (nome della route HTTP, non più necessario)
+
+**File eliminati**:
+- **`Core/HelperClasses/Dispatcher/FixturesManager.php`**: Sostituito dalla versione in `Console/Services/Fixtures/`
+
+**Modifiche al FixturesManager**:
+- Il metodo `run()` ora restituisce `void` invece di `Response` (non essendo più in contesto HTTP)
+- Rimosso il metodo `isFixtures()` (non più necessario senza routing HTTP)
+- Il namespace cambia da `SismaFramework\Core\HelperClasses\Dispatcher` a `SismaFramework\Console\Services\Fixtures`
+
+#### Pulizia proprietà orfane nella classe Config
+
+Rimosse 10 proprietà dalla classe `Config` che non venivano mai lette a runtime tramite `$config->proprietà`. Queste proprietà esistevano come mapping delle corrispondenti costanti in `config.php`, ma nessun codice PHP le accedeva — le costanti servono esclusivamente come building block per la composizione di altre costanti e restano invariate.
+
+**Proprietà rimosse**: `$adapters`, `$assets`, `$cache`, `$core`, `$defaultController`, `$logs`, `$project`, `$resources`, `$thisDirectory`, `$directoryUp`
+
+### ✅ Test
+
+- **`Tests/Console/Services/Fixtures/FixturesManagerTest.php`**: Test spostato dal contesto Core al contesto Console
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: Rimosso `testRunFixture` e tutti i riferimenti a `FixturesManager`
+- **`Tests/Core/HelperClasses/DebuggerTest.php`**: Rimosso l'attributo `#[RunTestsInSeparateProcesses]` per incompatibilità con PHPUnit 12
+- **`Tests/Core/HelperClasses/ConfigTest.php`**: Aggiornati i test di reflection per riflettere la rimozione delle proprietà orfane
+
+### 📖 Documentazione
+
+- **`docs/upgrade.md`**: Aggiunta guida completa al sistema di Upgrade automatico introdotto nella versione 11.3.0
+- **`docs/index.md`**: Aggiunto riferimento alla nuova pagina di documentazione
+- **`docs/data-fixtures.md`**: Aggiornata la sezione "Eseguire le Fixtures" da URL browser a comando CLI
+- **`docs/helper-classes.md`**: Rimossa la sezione FixturesManager e il relativo riferimento nella tabella panoramica
+- **`docs/getting-started.md`**: Aggiornate le istruzioni di esecuzione fixtures da URL a comando CLI
+- **`docs/testing.md`**: Aggiornato il namespace di FixturesManager e rimosso l'uso del metodo `isFixtures()` nell'esempio
+- **`docs/configuration-reference.md`**: Rimosso il riferimento alle fixtures dalla descrizione di `DEVELOPMENT_ENVIRONMENT`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Le classi fixture degli utenti (`BaseFixture`, `setEntity()`, `setDependencies()`) restano invariate
+- **Nessuna modifica ai file fixture**: La posizione, il namespace e il contratto delle fixture applicative non cambiano
+- **Solo il punto di invocazione cambia**: Da `GET /fixtures` (browser) a `php sisma fixtures` (terminale)
+
+---
+
 ## [11.3.1] - 2026-02-11 - Correzione Percorsi Cross-Platform nell'Autoloader
 
 Questa patch release corregge un bug nell'Autoloader che impediva il caricamento delle classi mappate tramite `AUTOLOAD_NAMESPACE_MAPPER` e `AUTOLOAD_CLASS_MAPPER` su sistemi Linux/macOS.

@@ -85,12 +85,13 @@ class PostFixture extends BaseFixture
 
 ## Eseguire le Fixtures
 
-Il modo più semplice per eseguire le fixtures durante lo sviluppo è tramite un URL dedicato.
+Le fixtures si eseguono tramite il comando CLI della console:
 
-1. Assicurati che `DEVELOPMENT_ENVIRONMENT` sia impostato su `true` nel tuo file `Config/config.php`.
-2. Visita l'URL `/fixtures` nel tuo browser.
+```bash
+php SismaFramework/Console/sisma fixtures
+```
 
-Il framework troverà ed eseguirà automaticamente tutte le classi `Fixture` presenti nei moduli registrati.
+Il framework troverà ed eseguirà automaticamente tutte le classi `Fixture` presenti nei moduli registrati, rispettando l'ordine delle dipendenze dichiarate.
 
 * * *
 

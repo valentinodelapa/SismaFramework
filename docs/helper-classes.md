@@ -1,6 +1,6 @@
 # Helper Classes
 
-Le Helper Classes di SismaFramework forniscono funzionalità di supporto essenziali per il funzionamento del framework. Queste classi contengono metodi statici e utility che semplificano operazioni comuni come la gestione dei moduli, conversioni di nomenclatura, routing e gestione delle fixtures.
+Le Helper Classes di SismaFramework forniscono funzionalità di supporto essenziali per il funzionamento del framework. Queste classi contengono metodi statici e utility che semplificano operazioni comuni come la gestione dei moduli, conversioni di nomenclatura e routing.
 
 ## Panoramica delle Helper Classes
 
@@ -10,7 +10,7 @@ Le Helper Classes di SismaFramework forniscono funzionalità di supporto essenzi
 | [NotationManager](#notationmanager) | Conversioni nomenclatura | Conversioni camelCase ↔ kebab-case ↔ snake_case |
 | [Router](#router) | Gestione routing | URL generation e redirection |
 | [BufferManager](#buffermanager) | Gestione output buffer | Controllo dell'output PHP |
-| [FixturesManager](#fixturesmanager) | Gestione fixtures | Caricamento dati di test |
+
 
 ---
 
@@ -308,70 +308,6 @@ class DebugOutput {
         BufferManager::clear(); // Pulisce senza inviare
 
         return $debugInfo;
-    }
-}
-```
-
----
-
-## FixturesManager
-
-Il `FixturesManager` gestisce il caricamento automatico di dati di test (fixtures) durante lo sviluppo. È integrato con il sistema di moduli e supporta l'esecuzione batch di fixtures.
-
-### Caratteristiche
-
-- **Sicurezza**: Funziona solo in ambiente di sviluppo
-- **Multi-modulo**: Carica fixtures da tutti i moduli registrati
-- **Tracking**: Tiene traccia dell'esecuzione delle fixtures
-
-### Utilizzi Comuni
-
-#### Configurazione Base
-```php
-// Nel file di configurazione, abilitare le fixtures
-const DEVELOPMENT_ENVIRONMENT = true;
-const FIXTURES = 'fixtures'; // URL per trigger delle fixtures
-```
-
-#### Accesso via URL
-```
-# Caricamento automatico via browser
-https://your-app.com/fixtures
-
-# Questo trigger il FixturesManager se in ambiente di sviluppo
-```
-
-#### Utilizzo Programmatico
-```php
-$dataMapper = new DataMapper();
-$fixturesManager = new FixturesManager($dataMapper);
-
-// Verificare se l'URL corrisponde a fixtures
-$pathParts = ['fixtures'];
-if ($fixturesManager->isFixtures($pathParts)) {
-    $response = $fixturesManager->run();
-
-    // Verificare se tutte le fixtures sono state eseguite
-    if ($fixturesManager->executed()) {
-        echo "Tutte le fixtures caricate con successo!";
-    }
-}
-```
-
-### Integrazione con Workflow di Sviluppo
-
-#### Script di Setup Ambiente
-```php
-class DevSetup {
-    public static function setupDevelopmentData(): void {
-        if (!Config::getInstance()->developmentEnvironment) {
-            throw new Exception("Fixtures disponibili solo in sviluppo");
-        }
-
-        $fixturesManager = new FixturesManager();
-        $response = $fixturesManager->run();
-
-        echo "Ambiente di sviluppo configurato!\n";
     }
 }
 ```
