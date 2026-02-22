@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.3.3] - 2026-02-22 - Ripristino Proprietà project nella Classe Config
+
+Questa patch release corregge un errore introdotto nella versione 11.3.2, dove la proprietà `$project` era stata erroneamente rimossa dalla classe `Config` nonostante venisse ancora utilizzata dal `FrameworkController`.
+
+### 🐛 Bug Fixes
+
+#### Ripristino di `Config::$project`
+
+La proprietà `$project` era stata inclusa per errore nell'elenco delle proprietà "orfane" rimosse nella versione 11.3.2. In realtà viene letta a runtime in `FrameworkController::throwableError()` e `FrameworkController::nonThrowableError()` per popolare la variabile di template `$vars['project']` nella pagina di errore visibile.
+
+**File modificati**:
+- **`Core/HelperClasses/Config.php`**: Ripristinata la proprietà `protected readonly string $project`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Ripristino di una proprietà rimossa per errore; nessuna modifica all'interfaccia pubblica.
+
+---
+
 ## [11.3.2] - 2026-02-21 - Spostamento Fixtures nella Console
 
 Questa patch release rifattorizza il sistema di esecuzione delle fixtures, spostandolo dal contesto HTTP (Dispatcher) al contesto CLI (Console). Il comportamento delle fixtures resta invariato: cambiano solo il punto di invocazione e la collocazione del codice. Include inoltre la documentazione del sistema di Upgrade introdotto nella versione 11.3.0.

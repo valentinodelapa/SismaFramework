@@ -48,6 +48,7 @@ class Config
     protected readonly string $locales;
     protected readonly string $models;
     protected readonly string $orm;
+    protected readonly string $project;
     protected readonly string $system;
     protected readonly string $structural;
     protected readonly string $templates;
