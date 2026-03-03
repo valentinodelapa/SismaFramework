@@ -13,11 +13,11 @@ class BackupManagerTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->testDir = sys_get_temp_dir() . '/sisma_backup_test_' . uniqid();
         if (!extension_loaded('zip')) {
             $this->markTestSkipped('ZIP extension is not available');
         }
         $this->manager = new BackupManager();
-        $this->testDir = sys_get_temp_dir() . '/sisma_backup_test_' . uniqid();
         mkdir($this->testDir, 0755, true);
     }
 

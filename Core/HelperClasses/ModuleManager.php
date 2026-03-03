@@ -31,13 +31,13 @@ use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\ModuleException;
 
 /**
- * 
+ *
  * @author Valentino de Lapa
  */
 class ModuleManager
 {
 
-    private static string $applicationModule = '';
+    private static string $applicationModule = "";
     private static ?string $customVisualizationModule = null;
     private static bool $customVisualizationFileExists = false;
 
@@ -49,7 +49,7 @@ class ModuleManager
 
     public static function initializeApplicationModule()
     {
-        self::$applicationModule = '';
+        self::$applicationModule = "";
     }
 
     public static function setApplicationModule(string $module): void
@@ -60,8 +60,7 @@ class ModuleManager
     public static function setApplicationModuleByClassName(string $className): void
     {
         $classNameParts = explode("\\", $className);
-        $module = $classNameParts[0];
-        self::setApplicationModule($module);
+        self::setApplicationModule(array_first($classNameParts));
     }
 
     public static function getApplicationModule(): string
