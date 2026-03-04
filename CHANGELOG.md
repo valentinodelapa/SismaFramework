@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.1.12] - 2026-03-04 - Impostazione Modulo nella Classe ErrorHandler
+
+Questa patch release corregge un bug per cui la classe `ErrorHandler` non impostava il modulo applicativo prima di invocare i controller di errore, causando un fallimento nella risoluzione delle view di errore.
+
+### 🐛 Bug Fixes
+
+#### Impostazione del modulo nei metodi di gestione errori
+
+I metodi statici di `ErrorHandler` chiamavano i controller di errore senza prima impostare il modulo tramite `ModuleManager`, a differenza di quanto avviene nel `Dispatcher`. Il sistema di rendering non riusciva quindi a individuare il percorso corretto delle view.
+
+**Modifiche applicate**:
+
+- **`handleNonThrowableError()`**: Aggiunta chiamata `ModuleManager::setApplicationModuleByClassName(get_class($controller))` all'inizio della shutdown function, prima di invocare il controller di errore non-throwable.
+- **`handleBaseException()`**: Aggiunta chiamata `ModuleManager::setApplicationModuleByClassName()` in entrambi i branch (`developmentEnvironment` e produzione), rispettivamente con `$structuralController` e `$defaultController` come sorgente del modulo.
+- **`handleThrowableError()`**: Aggiunta chiamata `ModuleManager::setApplicationModuleByClassName(get_class($structuralController))` dopo `BufferManager::clear()`, prima del log e dell'invocazione del controller.
+
+**File modificati**:
+- **`Core/HelperClasses/ErrorHandler.php`**: Aggiunto import di `ModuleManager` e aggiunte 4 chiamate a `ModuleManager::setApplicationModuleByClassName()` nei metodi di gestione errori
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Le firme dei metodi pubblici restano invariate; la modifica aggiunge solo la corretta inizializzazione del modulo prima delle chiamate esistenti.
+
+---
+
 ## [10.1.11] - 2026-02-11 - Correzione Conversione Separatori di Directory nell'Autoloader
 
 Questa patch release corregge un bug nell'Autoloader dove i backslash dei namespace non venivano convertiti in separatori di directory nei metodi `mapNamespace()` e `mapClass()`, causando potenziali errori nel caricamento delle classi su sistemi operativi diversi.

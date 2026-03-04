@@ -29,6 +29,7 @@ namespace SismaFramework\Core\HelperClasses;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\BufferManager;
 use SismaFramework\Core\HelperClasses\Logger;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
@@ -59,6 +60,7 @@ class ErrorHandler
     {
         $config = $customConfig ?? Config::getInstance();
         register_shutdown_function(function () use ($controller, $config) {
+            ModuleManager::setApplicationModuleByClassName(get_class($controller));
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error)) {
@@ -95,8 +97,10 @@ class ErrorHandler
     {
         $config = $customConfig ?? Config::getInstance();
         if ($config->developmentEnvironment) {
+            ModuleManager::setApplicationModuleByClassName(get_class($structuralController));
             return self::callThrowableErrorAction($structuralController, $exception);
         } else {
+            ModuleManager::setApplicationModuleByClassName(get_class($defaultController));
             return self::callDefaultControllerError($defaultController, $exception);
         }
     }
@@ -121,6 +125,7 @@ class ErrorHandler
     {
         $config = $customConfig ?? Config::getInstance();
         BufferManager::clear();
+        ModuleManager::setApplicationModuleByClassName(get_class($structuralController));
         Logger::saveLog($throwable->getMessage(), $throwable->getCode(), $throwable->getFile(), $throwable->getLine());
         if ($config->logVerboseActive) {
             Logger::saveTrace($throwable->getTrace());
@@ -131,7 +136,7 @@ class ErrorHandler
             return self::callInternalServerErrorAction($structuralController);
         }
     }
-		
+
     public static function showErrorInDevelopementEnvironment(?Config $customConfig = null): void
     {
         $config = $customConfig ?? Config::getInstance();
@@ -141,12 +146,12 @@ class ErrorHandler
             error_reporting(E_ALL & ~E_DEPRECATED);
         }
     }
-	
+
     public static function handleCommandLineInterfaceNonThrowableError(): void
     {
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             echo "Error ($errno): $errstr in $errfile on line $errline" . PHP_EOL;
             exit(1);
         });
-	}
+    }
 }
