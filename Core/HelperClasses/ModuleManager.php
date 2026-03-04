@@ -60,7 +60,8 @@ class ModuleManager
     public static function setApplicationModuleByClassName(string $className): void
     {
         $classNameParts = explode("\\", $className);
-        self::setApplicationModule(array_first($classNameParts));
+        $module = $classNameParts[0];
+        self::setApplicationModule($module);
     }
 
     public static function getApplicationModule(): string

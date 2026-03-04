@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.3.5] - 2026-03-04 - Ripristino Compatibilità PHP in ModuleManager
+
+Questa patch ripristina il codice precedente nel metodo `setApplicationModuleByClassName()` della classe `ModuleManager`, rimuovendo l'uso di `array_first()` introdotto involontariamente nella versione 11.3.4. La funzione `array_first()` è disponibile solo a partire da PHP 8.5, incompatibile con il requisito minimo del framework (PHP 8.3).
+
+### 🐛 Bug Fixes
+
+#### Ripristino accesso diretto all'array in `ModuleManager::setApplicationModuleByClassName()`
+
+Il commit della versione 11.3.4 aveva sostituito `$classNameParts[0]` con `array_first($classNameParts)`, funzione introdotta in PHP 8.5 e non disponibile in PHP 8.3 e 8.4.
+
+**Ripristino**:
+
+- ❌ **11.3.4**: `self::setApplicationModule(array_first($classNameParts));`
+- ✅ **11.3.5**: `$module = $classNameParts[0];` / `self::setApplicationModule($module);`
+
+**File modificati**:
+- **`Core/HelperClasses/ModuleManager.php`**: Ripristinato accesso tramite indice array
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: La firma del metodo e il comportamento restano invariati.
+
+---
+
 ## [11.3.4] - 2026-03-03 - Impostazione Modulo nella Classe ErrorHandler
 
 Questa patch release corregge un bug per cui la classe `ErrorHandler` non impostava il modulo applicativo prima di invocare i controller di errore, causando un fallimento nella risoluzione delle view di errore.
