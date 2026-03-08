@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.1.13] - 2026-03-08 - Correzione Rollback Transazione e Script sisma
+
+Questa patch release corregge due bug: il metodo `rollback()` di `TransactionManager` eseguiva incondizionatamente il rollback senza verificare se una transazione fosse attiva; lo script `sisma` usava separatori di percorso hardcoded (`/`) e non caricava il `configFramework.php` del progetto se presente.
+
+### 🐛 Bug Fixes
+
+#### Correzione guard in TransactionManager::rollback()
+
+Il metodo `rollback()` chiamava `rollbackTransaction()` sull'adapter senza verificare se `$isActiveTransaction` fosse `true`, causando potenziali errori quando non era attiva alcuna transazione.
+
+**Modifiche applicate**:
+
+- **`Orm/HelperClasses/DataMapper/TransactionManager.php`**: Aggiunto controllo `if (self::$isActiveTransaction)` nel metodo `rollback()` con reset di `$isActiveTransaction = false` dopo l'esecuzione del rollback.
+
+#### Correzione separatori di percorso e caricamento config progetto nello script sisma
+
+Lo script `sisma` usava il carattere `/` come separatore di percorso nelle chiamate `require_once`, causando potenziali problemi su sistemi Windows. Inoltre lo script caricava sempre il `config.php` del framework, ignorando il `configFramework.php` del progetto generato dalla procedura di installazione.
+
+**Modifiche applicate**:
+
+- **`Console/sisma`**: Sostituiti i separatori hardcoded `/` con `DIRECTORY_SEPARATOR`; aggiunto caricamento prioritario del `Config/configFramework.php` del progetto (`dirname(__DIR__, 2)`) con fallback al `config.php` del framework (`dirname(__DIR__, 1)`).
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Le firme dei metodi pubblici restano invariate.
+
+---
+
 ## [10.1.12] - 2026-03-04 - Impostazione Modulo nella Classe ErrorHandler
 
 Questa patch release corregge un bug per cui la classe `ErrorHandler` non impostava il modulo applicativo prima di invocare i controller di errore, causando un fallimento nella risoluzione delle view di errore.
