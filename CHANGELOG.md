@@ -2,6 +2,57 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.3.6] - 2026-03-08 - Transazione Atomica nell'Esecuzione delle Fixtures e Fix Rollback
+
+Questa patch introduce l'esecuzione atomica delle fixtures tramite una transazione globale nel `FixturesManager`, e corregge il comportamento del `TransactionManager::rollback()` che non verificava lo stato attivo della transazione prima di eseguire il rollback sul database.
+
+### 🐛 Bug Fixes
+
+#### `TransactionManager::rollback()` — Guardia su transazione attiva
+
+Il metodo `rollback()` eseguiva `$this->adapter->rollbackTransaction()` incondizionatamente, senza verificare se una transazione fosse effettivamente aperta. Questo poteva causare un errore del driver database in caso di chiamata su connessione senza transazione attiva.
+
+**Modifica**:
+
+- ❌ **11.3.5**: `$this->adapter->rollbackTransaction();` (incondizionato)
+- ✅ **11.3.6**: esecuzione solo se `self::$isActiveTransaction === true`, con reset del flag dopo il rollback
+
+**File modificati**:
+- **`Orm/HelperClasses/DataMapper/TransactionManager.php`**: Aggiunta guardia `if (self::$isActiveTransaction)` e reset di `$isActiveTransaction = false` in `rollback()`
+
+### ✨ Miglioramenti
+
+#### `FixturesManager::run()` — Esecuzione atomica tramite transazione globale
+
+L'esecuzione delle fixtures avveniva senza una transazione globale: ogni `save()` apriva e chiudeva la propria transazione autonomamente. In caso di errore a metà esecuzione, i record già inseriti dai fixture precedenti rimanevano nel database.
+
+Ora `run()` apre una transazione prima di eseguire i fixture e la committa solo al termine di tutti. Se un `save()` fallisce internamente, esegue il rollback dell'intera transazione e rilancia l'eccezione, che propaga naturalmente al `sisma` script.
+
+**File modificati**:
+- **`Console/Services/Fixtures/FixturesManager.php`**: Aggiunte chiamate `startTransaction()` prima di `executeFixturesArray()` e `commitTransaction()` dopo
+
+#### `Console/sisma` — Path con `DIRECTORY_SEPARATOR`
+
+Il file di avvio della console usava `/` hardcoded per costruire i path di configurazione e autoload, causando potenziali problemi su sistemi Windows.
+
+**File modificati**:
+- **`Console/sisma`**: Sostituiti i separatori `/` hardcoded con `DIRECTORY_SEPARATOR` nei path di `configFramework.php`, `config.php` e `autoload.php`
+
+### 🧪 Test
+
+#### `ScaffoldingManagerTest::testDoubleExecution` — Path con `DIRECTORY_SEPARATOR`
+
+Il messaggio di eccezione atteso nel test usava `\` hardcoded per il path, causando il fallimento del test su sistemi Linux/macOS dove il separatore è `/`.
+
+**File modificati**:
+- **`Tests/Console/Services/Scaffolding/ScaffoldingManagerTest.php`**: Sostituiti i separatori `\` hardcoded con `DIRECTORY_SEPARATOR` nei messaggi di eccezione attesi
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Le firme dei metodi pubblici restano invariate.
+
+---
+
 ## [11.3.5] - 2026-03-04 - Ripristino Compatibilità PHP in ModuleManager
 
 Questa patch ripristina il codice precedente nel metodo `setApplicationModuleByClassName()` della classe `ModuleManager`, rimuovendo l'uso di `array_first()` introdotto involontariamente nella versione 11.3.4. La funzione `array_first()` è disponibile solo a partire da PHP 8.5, incompatibile con il requisito minimo del framework (PHP 8.3).

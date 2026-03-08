@@ -295,14 +295,14 @@ PHP);
         $this->assertEquals('', file_get_contents($formPath));
         $this->assertEquals('', file_get_contents($controllerPath));
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("File already exists: " . $this->tempDir . "TestModule\Application\Models\OtherSimpleEntityModel.php. Use --force to overwrite.");
+        $this->expectExceptionMessage("File already exists: " . $this->tempDir . "TestModule" . DIRECTORY_SEPARATOR . "Application" . DIRECTORY_SEPARATOR . "Models" . DIRECTORY_SEPARATOR . "OtherSimpleEntityModel.php. Use --force to overwrite.");
         $this->scaffoldingManager->setForce(true);
         $this->scaffoldingManager->generateScaffolding('OtherSimpleEntity', 'TestModule');
         $this->assertEquals(Templater::parseTemplate($this->templatesPath . 'Model.tpl', $vars), file_get_contents($modelPath));
         $this->assertEquals(Templater::parseTemplate($this->templatesPath . 'Form.tpl', $vars), file_get_contents($formPath));
         $this->assertEquals(Templater::parseTemplate($this->templatesPath . 'Controller.tpl', $vars), file_get_contents($controllerPath));
         $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("File already exists: " . $this->tempDir . "TestModule\Application\Models\OtherSimpleEntityModel.php. Use --force to overwrite.");
+        $this->expectExceptionMessage("File already exists: " . $this->tempDir . "TestModule" . DIRECTORY_SEPARATOR . "Application" . DIRECTORY_SEPARATOR . "Models" . DIRECTORY_SEPARATOR . "OtherSimpleEntityModel.php. Use --force to overwrite.");
         $this->scaffoldingManager->setForce(false);
         $this->scaffoldingManager->generateScaffolding('OtherSimpleEntity', 'TestModule');
     }

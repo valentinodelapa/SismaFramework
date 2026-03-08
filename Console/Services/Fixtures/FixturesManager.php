@@ -50,7 +50,9 @@ class FixturesManager
     public function run(): void
     {
         $this->getFixturesArray();
+        $this->dataMapper->startTransaction();
         $this->executeFixturesArray(array_keys($this->fixturesArray));
+        $this->dataMapper->commitTransaction();
     }
 
     public function extecuted(): bool

@@ -10,8 +10,9 @@ use SismaFramework\Console\HelperClasses\CommandDispatcher;
 use SismaFramework\Console\HelperClasses\CommandLineInterfaceSettingsChecker;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
 
-require_once dirname(__DIR__, 1) . '/Config/config.php';
-require_once dirname(__DIR__, 1) . '/Autoload/autoload.php';
+$projectConfig = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'configFramework.php';
+require_once file_exists($projectConfig) ? $projectConfig : dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
+require_once dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
