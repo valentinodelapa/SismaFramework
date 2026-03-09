@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.4.0] - 2026-03-09 - Auto-discovery dei Comandi Console tramite Factory Pattern
+
+Questa minor introduce l'auto-discovery automatico dei comandi console tramite il pattern factory nel `CommandDispatcher`, allineando l'architettura della console a quella del `Dispatcher` HTTP. I comandi non devono più essere registrati manualmente nello script `sisma`: vengono scoperti automaticamente sia nel framework che in tutti i moduli configurati.
+
+### ✨ Nuove Funzionalità
+
+#### `CommandDispatcher` — Auto-discovery dei comandi via factory
+
+Il `CommandDispatcher` registrava i comandi esclusivamente tramite chiamate esplicite ad `addCommandStrategy()` nello script di avvio. Questo approccio richiedeva la modifica manuale del file `sisma` ad ogni aggiunta di un nuovo comando, sia nel framework che nei moduli applicativi.
+
+Ora il costruttore invoca internamente `discoverCommands()`, che scansiona via reflection le directory `Console/Commands/` del framework e di tutti i moduli presenti in `Config::$moduleFolders`, istanziando automaticamente ogni classe concreta che estende `BaseCommand` tramite la nuova classe `CommandFactory`.
+
+**Modifica**:
+
+- ❌ **11.3.x**: I comandi venivano registrati manualmente con `$commandDispatcher->addCommandStrategy(new FooCommand())`
+- ✅ **11.4.0**: I comandi vengono scoperti e istanziati automaticamente alla costruzione del `CommandDispatcher`
+
+**File modificati**:
+- **`Console/HelperClasses/CommandDispatcher.php`**: Aggiunta dipendenza opzionale `Config`, aggiunti i metodi privati `discoverCommands()` e `discoverFromDirectory()`; il costruttore accetta ora un secondo parametro opzionale `?Config $config = null`
+- **`Console/HelperClasses/Dispatcher/CommandFactory.php`**: Nuova classe factory che istanzia comandi tramite reflection, con risoluzione automatica delle dipendenze non primitive del costruttore
+
+#### `Console/sisma` — Rimozione registrazione manuale dei comandi
+
+Lo script di avvio della console registrava esplicitamente tutti i comandi del framework (`FixturesCommand`, `InstallationCommand`, `ScaffoldCommand`, `UpgradeCommand`) tramite `addCommandStrategy()`. Con l'auto-discovery queste chiamate sono ridondanti e sono state rimosse.
+
+Sostituito inoltre il blocco `error_reporting` / `ini_set` con l'utilizzo di `ErrorHandler::showErrorInDevelopmentEnvironment()`, in linea con il resto del framework.
+
+**File modificati**:
+- **`Console/sisma`**: Rimossi i `use` e le chiamate `addCommandStrategy()` per i quattro comandi nativi; rimosso blocco `error_reporting`/`ini_set` sostituito da `$errorHandler->showErrorInDevelopmentEnvironment()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Il metodo `addCommandStrategy()` è ancora disponibile per la registrazione manuale di comandi aggiuntivi. Il parametro `$config` del costruttore è opzionale e retrocompatibile.
+
+---
+
 ## [11.3.6] - 2026-03-08 - Transazione Atomica nell'Esecuzione delle Fixtures e Fix Rollback
 
 Questa patch introduce l'esecuzione atomica delle fixtures tramite una transazione globale nel `FixturesManager`, e corregge il comportamento del `TransactionManager::rollback()` che non verificava lo stato attivo della transazione prima di eseguire il rollback sul database.

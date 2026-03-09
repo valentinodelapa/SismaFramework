@@ -311,6 +311,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_run"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003AdiscoverCommands\u0028\u0029",
+            "name": "discoverCommands",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverCommands"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003AdiscoverFromDirectory\u0028\u0029",
+            "name": "discoverFromDirectory",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverFromDirectory"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003AsortCommandParts\u0028\u0029",
             "name": "sortCommandParts",
             "summary": "",
@@ -320,6 +330,11 @@ Search.appendIndex(
             "name": "parseOption",
             "summary": "",
             "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_parseOption"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003A\u0024config",
+            "name": "config",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_config"
         },                {
             "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003A\u0024command",
             "name": "command",
@@ -360,6 +375,26 @@ Search.appendIndex(
             "name": "checkIsProjectDirectory",
             "summary": "",
             "url": "classes/SismaFramework-Console-HelperClasses-CommandLineInterfaceSettingsChecker.html#method_checkIsProjectDirectory"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\Dispatcher\\CommandFactory",
+            "name": "CommandFactory",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-Dispatcher-CommandFactory.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\Dispatcher\\CommandFactory\u003A\u003AcreateCommand\u0028\u0029",
+            "name": "createCommand",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-Dispatcher-CommandFactory.html#method_createCommand"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\Dispatcher\\CommandFactory\u003A\u003AallParametersHaveDefaults\u0028\u0029",
+            "name": "allParametersHaveDefaults",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-Dispatcher-CommandFactory.html#method_allParametersHaveDefaults"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\Dispatcher\\CommandFactory\u003A\u003AresolveConstructorArguments\u0028\u0029",
+            "name": "resolveConstructorArguments",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-Dispatcher-CommandFactory.html#method_resolveConstructorArguments"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures\\FixturesManager",
             "name": "FixturesManager",
@@ -6370,6 +6405,11 @@ Search.appendIndex(
             "name": "HelperClasses",
             "summary": "",
             "url": "namespaces/sismaframework-console-helperclasses.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\Dispatcher",
+            "name": "Dispatcher",
+            "summary": "",
+            "url": "namespaces/sismaframework-console-helperclasses-dispatcher.html"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Fixtures",
             "name": "Fixtures",
