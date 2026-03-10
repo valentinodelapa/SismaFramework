@@ -74,7 +74,7 @@ class BaseControllerTest extends TestCase
         
         $reflection = new \ReflectionClass($controller);
         $routerProperty = $reflection->getProperty('router');
-        $routerProperty->setAccessible(true);
+
         
         $this->assertInstanceOf(RouterService::class, $routerProperty->getValue($controller));
     }
@@ -85,7 +85,7 @@ class BaseControllerTest extends TestCase
         
         $reflection = new \ReflectionClass($controller);
         $renderProperty = $reflection->getProperty('render');
-        $renderProperty->setAccessible(true);
+
         
         $this->assertInstanceOf(RenderService::class, $renderProperty->getValue($controller));
     }
@@ -115,7 +115,7 @@ class BaseControllerTest extends TestCase
         
         $reflection = new \ReflectionClass($controller);
         $varsProperty = $reflection->getProperty('vars');
-        $varsProperty->setAccessible(true);
+
         $vars = $varsProperty->getValue($controller);
         
         $this->assertEquals('test-controller', $vars['controllerUrl']);
@@ -138,10 +138,10 @@ class BaseControllerTest extends TestCase
         $reflection = new \ReflectionClass($controller);
         
         $routerProperty = $reflection->getProperty('router');
-        $routerProperty->setAccessible(true);
+
         
         $renderProperty = $reflection->getProperty('render');
-        $renderProperty->setAccessible(true);
+
         
         $this->assertSame($mockRouter, $routerProperty->getValue($controller));
         $this->assertSame($mockRender, $renderProperty->getValue($controller));
@@ -154,10 +154,10 @@ class BaseControllerTest extends TestCase
         $reflection = new \ReflectionClass($controller);
         
         $dataMapperProperty = $reflection->getProperty('dataMapper');
-        $dataMapperProperty->setAccessible(true);
+
         
         $debuggerProperty = $reflection->getProperty('debugger');
-        $debuggerProperty->setAccessible(true);
+
         
         $this->assertInstanceOf(DataMapper::class, $dataMapperProperty->getValue($controller));
         $this->assertInstanceOf(Debugger::class, $debuggerProperty->getValue($controller));
@@ -173,10 +173,10 @@ class BaseControllerTest extends TestCase
         $reflection = new \ReflectionClass($controller);
         
         $dataMapperProperty = $reflection->getProperty('dataMapper');
-        $dataMapperProperty->setAccessible(true);
+
         
         $debuggerProperty = $reflection->getProperty('debugger');
-        $debuggerProperty->setAccessible(true);
+
         
         $this->assertSame($customDataMapper, $dataMapperProperty->getValue($controller));
         $this->assertSame($customDebugger, $debuggerProperty->getValue($controller));

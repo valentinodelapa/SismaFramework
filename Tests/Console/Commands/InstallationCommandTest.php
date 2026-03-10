@@ -2,20 +2,22 @@
 
 namespace SismaFramework\Tests\Console\Commands;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Console\Commands\InstallationCommand;
 use SismaFramework\Console\Services\Installation\InstallationManager;
 use SismaFramework\Console\Traits\InteractiveInputTrait;
 
+#[AllowMockObjectsWithoutExpectations]
 class InstallationCommandTest extends TestCase
 {
     private InstallationCommand $command;
-    private InstallationManager $installationManagerStub;
+    private InstallationManager $installationManagerMock;
 
     protected function setUp(): void
     {
-        $this->installationManagerStub = $this->createStub(InstallationManager::class);
-        $this->command = new InstallationCommand($this->installationManagerStub);
+        $this->installationManagerMock = $this->createMock(InstallationManager::class);
+        $this->command = new InstallationCommand($this->installationManagerMock);
     }
 
     public function testCheckCompatibility(): void
@@ -82,12 +84,14 @@ class InstallationCommandTest extends TestCase
         ]);
         $this->command->setOptions(['skip-db' => true]);
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('setForce')
             ->with(false)
             ->willReturnSelf();
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('install')
             ->with('MyProject', [])
             ->willReturn(true);
@@ -107,12 +111,14 @@ class InstallationCommandTest extends TestCase
         ]);
         $this->command->setOptions(['force' => true, 'skip-db' => true]);
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('setForce')
             ->with(true)
             ->willReturnSelf();
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('install')
             ->with('MyProject', [])
             ->willReturn(true);
@@ -146,12 +152,14 @@ class InstallationCommandTest extends TestCase
             'DATABASE_PORT' => '3306'
         ];
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('setForce')
             ->with(false)
             ->willReturnSelf();
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('install')
             ->with('MyProject', $expectedConfig)
             ->willReturn(true);
@@ -178,12 +186,14 @@ class InstallationCommandTest extends TestCase
             'DATABASE_NAME' => 'mydb'
         ];
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('setForce')
             ->with(false)
             ->willReturnSelf();
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('install')
             ->with('MyProject', $expectedConfig)
             ->willReturn(true);
@@ -202,11 +212,13 @@ class InstallationCommandTest extends TestCase
         ]);
         $this->command->setOptions(['skip-db' => true]);
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('setForce')
             ->willReturnSelf();
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('install')
             ->willThrowException(new \RuntimeException('Installation failed'));
 
@@ -248,11 +260,13 @@ class InstallationCommandTest extends TestCase
         ]);
         $this->command->setOptions(['skip-db' => true]);
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('setForce')
             ->willReturnSelf();
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('install')
             ->willReturn(true);
 
@@ -282,11 +296,13 @@ class InstallationCommandTest extends TestCase
         ]);
         $this->command->setOptions(['skip-db' => true]);
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('setForce')
             ->willReturnSelf();
 
-        $this->installationManagerStub
+        $this->installationManagerMock
+            ->expects($this->once())
             ->method('install')
             ->willReturn(true);
 

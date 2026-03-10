@@ -124,8 +124,7 @@ class ResultSetMysqlTest extends TestCase
     public function testFetchWithBaseEntity()
     {
         $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $PDOStatementMock->method('rowCount')
                 ->willReturnCallback(function () {
                     $rowsNum = 1;
                     $actualRowsNum = $rowsNum;
@@ -151,8 +150,7 @@ class ResultSetMysqlTest extends TestCase
     public function testFetchWithEntityWithEncryptedProperty()
     {
         $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $PDOStatementMock->method('rowCount')
                 ->willReturnCallback(function () {
                     $rowsNum = 1;
                     $actualRowsNum = $rowsNum;
@@ -187,8 +185,7 @@ class ResultSetMysqlTest extends TestCase
     public function testFetchWithMultipleBaseEntity()
     {
         $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $PDOStatementMock->method('rowCount')
                 ->willReturnCallback(function () {
                     $rowsNum = 2;
                     $actualRowsNum = $rowsNum;
@@ -255,8 +252,7 @@ class ResultSetMysqlTest extends TestCase
     public function testWithForeach()
     {
         $PDOStatementMock = $this->createMock(\PDOStatement::class);
-        $PDOStatementMock->expects($this->any())
-                ->method('rowCount')
+        $PDOStatementMock->method('rowCount')
                 ->willReturn(10);
         $result = new \stdClass();
         $result->id = 1;
