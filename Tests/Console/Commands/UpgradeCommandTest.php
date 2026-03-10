@@ -2,6 +2,7 @@
 
 namespace SismaFramework\Tests\Console\Commands;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Console\Commands\UpgradeCommand;
 use SismaFramework\Console\Exceptions\UpgradeException;
@@ -9,17 +10,18 @@ use SismaFramework\Console\Services\Upgrade\DTO\UpgradeReport;
 use SismaFramework\Console\Services\Upgrade\UpgradeManager;
 use SismaFramework\Console\Services\Upgrade\Utils\ReportGenerator;
 
+#[AllowMockObjectsWithoutExpectations]
 class UpgradeCommandTest extends TestCase
 {
     private UpgradeCommand $command;
-    private UpgradeManager $upgradeManagerStub;
+    private UpgradeManager $upgradeManagerMock;
     private ReportGenerator $reportGeneratorStub;
 
     protected function setUp(): void
     {
-        $this->upgradeManagerStub = $this->createStub(UpgradeManager::class);
+        $this->upgradeManagerMock = $this->createMock(UpgradeManager::class);
         $this->reportGeneratorStub = $this->createStub(ReportGenerator::class);
-        $this->command = new UpgradeCommand($this->upgradeManagerStub, $this->reportGeneratorStub);
+        $this->command = new UpgradeCommand($this->upgradeManagerMock, $this->reportGeneratorStub);
     }
 
     public function testCheckCompatibility(): void
@@ -92,10 +94,10 @@ class UpgradeCommandTest extends TestCase
             warningsCount: 0
         );
 
-        $this->upgradeManagerStub->method('setDryRun')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipCritical')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipBackup')->willReturnSelf();
-        $this->upgradeManagerStub->method('upgrade')->willReturn($report);
+        $this->upgradeManagerMock->expects($this->once())->method('setDryRun')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipCritical')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipBackup')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('upgrade')->willReturn($report);
         $this->reportGeneratorStub->method('generate')->willReturn('Report output');
 
         $this->command->setArguments(['0' => 'Blog']);
@@ -121,10 +123,10 @@ class UpgradeCommandTest extends TestCase
             warningsCount: 0
         );
 
-        $this->upgradeManagerStub->method('setDryRun')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipCritical')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipBackup')->willReturnSelf();
-        $this->upgradeManagerStub->method('upgrade')->willReturn($report);
+        $this->upgradeManagerMock->expects($this->once())->method('setDryRun')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipCritical')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipBackup')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('upgrade')->willReturn($report);
         $this->reportGeneratorStub->method('generate')->willReturn('Report');
 
         $this->command->setArguments(['0' => 'Blog']);
@@ -152,10 +154,10 @@ class UpgradeCommandTest extends TestCase
             warningsCount: 0
         );
 
-        $this->upgradeManagerStub->method('setDryRun')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipCritical')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipBackup')->willReturnSelf();
-        $this->upgradeManagerStub->method('upgrade')->willReturn($report);
+        $this->upgradeManagerMock->expects($this->once())->method('setDryRun')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipCritical')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipBackup')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('upgrade')->willReturn($report);
         $this->reportGeneratorStub->method('generate')->willReturn('Quiet report');
 
         $this->command->setArguments(['0' => 'Blog']);
@@ -171,10 +173,10 @@ class UpgradeCommandTest extends TestCase
 
     public function testUpgradeFailureShowsErrorMessage(): void
     {
-        $this->upgradeManagerStub->method('setDryRun')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipCritical')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipBackup')->willReturnSelf();
-        $this->upgradeManagerStub->method('upgrade')->willThrowException(
+        $this->upgradeManagerMock->expects($this->once())->method('setDryRun')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipCritical')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipBackup')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('upgrade')->willThrowException(
             new UpgradeException('Module not found')
         );
 
@@ -202,10 +204,10 @@ class UpgradeCommandTest extends TestCase
             warningsCount: 0
         );
 
-        $this->upgradeManagerStub->method('setDryRun')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipCritical')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipBackup')->willReturnSelf();
-        $this->upgradeManagerStub->method('upgrade')
+        $this->upgradeManagerMock->expects($this->once())->method('setDryRun')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipCritical')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipBackup')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('upgrade')
             ->with('Blog', '11.0.0', '10.0.0')
             ->willReturn($report);
         $this->reportGeneratorStub->method('generate')->willReturn('Report');
@@ -225,10 +227,10 @@ class UpgradeCommandTest extends TestCase
         $previous = new \RuntimeException('Detailed cause');
         $exception = new UpgradeException('Upgrade failed', 0, $previous);
 
-        $this->upgradeManagerStub->method('setDryRun')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipCritical')->willReturnSelf();
-        $this->upgradeManagerStub->method('setSkipBackup')->willReturnSelf();
-        $this->upgradeManagerStub->method('upgrade')->willThrowException($exception);
+        $this->upgradeManagerMock->expects($this->once())->method('setDryRun')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipCritical')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('setSkipBackup')->willReturnSelf();
+        $this->upgradeManagerMock->expects($this->once())->method('upgrade')->willThrowException($exception);
 
         $this->command->setArguments(['0' => 'Blog']);
         $this->command->setOptions(['to' => '11.0.0']);

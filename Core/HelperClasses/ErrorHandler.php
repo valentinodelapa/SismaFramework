@@ -67,6 +67,7 @@ class ErrorHandler
     public function registerNonThrowableErrorHandler(StructuralControllerInterface $controller = new FrameworkController()): void
     {
         register_shutdown_function(function () use ($controller) {
+            ModuleManager::setApplicationModuleByClassName(get_class($controller));
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error)) {
@@ -105,10 +106,11 @@ class ErrorHandler
         if ($exception instanceof ShouldBeLoggedException) {
             $this->logException($exception);
         }
-        
         if ($this->config->developmentEnvironment) {
+            ModuleManager::setApplicationModuleByClassName(get_class($structuralController));
             return $this->callThrowableErrorAction($structuralController, $exception);
         } else {
+            ModuleManager::setApplicationModuleByClassName(get_class($defaultController));
             return $this->callDefaultControllerError($defaultController, $exception);
         }
     }
@@ -131,9 +133,8 @@ class ErrorHandler
             StructuralControllerInterface $structuralController = new FrameworkController()): Response
     {
         BufferManager::clear();
-        
+        ModuleManager::setApplicationModuleByClassName(get_class($structuralController));
         $this->logException($throwable);
-        
         if ($this->config->developmentEnvironment) {
             return $this->callThrowableErrorAction($structuralController, $throwable);
         } else {
@@ -148,14 +149,12 @@ class ErrorHandler
             'file' => $exception->getFile(),
             'line' => $exception->getLine()
         ];
-        
         if ($this->config->logVerboseActive) {
             $context['trace'] = $exception->getTrace();
         }
-        
         $this->logger->error($exception->getMessage(), $context);
     }
-		
+
     public function showErrorInDevelopmentEnvironment(): void
     {
         if ($this->config->developmentEnvironment) {
@@ -164,12 +163,12 @@ class ErrorHandler
             error_reporting(E_ALL & ~E_DEPRECATED);
         }
     }
-	
+
     public static function handleCommandLineInterfaceNonThrowableError(): void
     {
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             echo "Error ($errno): $errstr in $errfile on line $errline" . PHP_EOL;
             exit(1);
         });
-	}
+    }
 }

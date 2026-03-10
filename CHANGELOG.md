@@ -2,6 +2,239 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.4.0] - 2026-03-09 - Auto-discovery dei Comandi Console tramite Factory Pattern
+
+Questa minor introduce l'auto-discovery automatico dei comandi console tramite il pattern factory nel `CommandDispatcher`, allineando l'architettura della console a quella del `Dispatcher` HTTP. I comandi non devono più essere registrati manualmente nello script `sisma`: vengono scoperti automaticamente sia nel framework che in tutti i moduli configurati.
+
+### ✨ Nuove Funzionalità
+
+#### `CommandDispatcher` — Auto-discovery dei comandi via factory
+
+Il `CommandDispatcher` registrava i comandi esclusivamente tramite chiamate esplicite ad `addCommandStrategy()` nello script di avvio. Questo approccio richiedeva la modifica manuale del file `sisma` ad ogni aggiunta di un nuovo comando, sia nel framework che nei moduli applicativi.
+
+Ora il costruttore invoca internamente `discoverCommands()`, che scansiona via reflection le directory `Console/Commands/` del framework e di tutti i moduli presenti in `Config::$moduleFolders`, istanziando automaticamente ogni classe concreta che estende `BaseCommand` tramite la nuova classe `CommandFactory`.
+
+**Modifica**:
+
+- ❌ **11.3.x**: I comandi venivano registrati manualmente con `$commandDispatcher->addCommandStrategy(new FooCommand())`
+- ✅ **11.4.0**: I comandi vengono scoperti e istanziati automaticamente alla costruzione del `CommandDispatcher`
+
+**File modificati**:
+- **`Console/HelperClasses/CommandDispatcher.php`**: Aggiunta dipendenza opzionale `Config`, aggiunti i metodi privati `discoverCommands()` e `discoverFromDirectory()`; il costruttore accetta ora un secondo parametro opzionale `?Config $config = null`
+- **`Console/HelperClasses/Dispatcher/CommandFactory.php`**: Nuova classe factory che istanzia comandi tramite reflection, con risoluzione automatica delle dipendenze non primitive del costruttore
+
+#### `Console/sisma` — Rimozione registrazione manuale dei comandi
+
+Lo script di avvio della console registrava esplicitamente tutti i comandi del framework (`FixturesCommand`, `InstallationCommand`, `ScaffoldCommand`, `UpgradeCommand`) tramite `addCommandStrategy()`. Con l'auto-discovery queste chiamate sono ridondanti e sono state rimosse.
+
+Sostituito inoltre il blocco `error_reporting` / `ini_set` con l'utilizzo di `ErrorHandler::showErrorInDevelopmentEnvironment()`, in linea con il resto del framework.
+
+**File modificati**:
+- **`Console/sisma`**: Rimossi i `use` e le chiamate `addCommandStrategy()` per i quattro comandi nativi; rimosso blocco `error_reporting`/`ini_set` sostituito da `$errorHandler->showErrorInDevelopmentEnvironment()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Il metodo `addCommandStrategy()` è ancora disponibile per la registrazione manuale di comandi aggiuntivi. Il parametro `$config` del costruttore è opzionale e retrocompatibile.
+
+---
+
+## [11.3.6] - 2026-03-08 - Transazione Atomica nell'Esecuzione delle Fixtures e Fix Rollback
+
+Questa patch introduce l'esecuzione atomica delle fixtures tramite una transazione globale nel `FixturesManager`, e corregge il comportamento del `TransactionManager::rollback()` che non verificava lo stato attivo della transazione prima di eseguire il rollback sul database.
+
+### 🐛 Bug Fixes
+
+#### `TransactionManager::rollback()` — Guardia su transazione attiva
+
+Il metodo `rollback()` eseguiva `$this->adapter->rollbackTransaction()` incondizionatamente, senza verificare se una transazione fosse effettivamente aperta. Questo poteva causare un errore del driver database in caso di chiamata su connessione senza transazione attiva.
+
+**Modifica**:
+
+- ❌ **11.3.5**: `$this->adapter->rollbackTransaction();` (incondizionato)
+- ✅ **11.3.6**: esecuzione solo se `self::$isActiveTransaction === true`, con reset del flag dopo il rollback
+
+**File modificati**:
+- **`Orm/HelperClasses/DataMapper/TransactionManager.php`**: Aggiunta guardia `if (self::$isActiveTransaction)` e reset di `$isActiveTransaction = false` in `rollback()`
+
+### ✨ Miglioramenti
+
+#### `FixturesManager::run()` — Esecuzione atomica tramite transazione globale
+
+L'esecuzione delle fixtures avveniva senza una transazione globale: ogni `save()` apriva e chiudeva la propria transazione autonomamente. In caso di errore a metà esecuzione, i record già inseriti dai fixture precedenti rimanevano nel database.
+
+Ora `run()` apre una transazione prima di eseguire i fixture e la committa solo al termine di tutti. Se un `save()` fallisce internamente, esegue il rollback dell'intera transazione e rilancia l'eccezione, che propaga naturalmente al `sisma` script.
+
+**File modificati**:
+- **`Console/Services/Fixtures/FixturesManager.php`**: Aggiunte chiamate `startTransaction()` prima di `executeFixturesArray()` e `commitTransaction()` dopo
+
+#### `Console/sisma` — Path con `DIRECTORY_SEPARATOR`
+
+Il file di avvio della console usava `/` hardcoded per costruire i path di configurazione e autoload, causando potenziali problemi su sistemi Windows.
+
+**File modificati**:
+- **`Console/sisma`**: Sostituiti i separatori `/` hardcoded con `DIRECTORY_SEPARATOR` nei path di `configFramework.php`, `config.php` e `autoload.php`
+
+### 🧪 Test
+
+#### `ScaffoldingManagerTest::testDoubleExecution` — Path con `DIRECTORY_SEPARATOR`
+
+Il messaggio di eccezione atteso nel test usava `\` hardcoded per il path, causando il fallimento del test su sistemi Linux/macOS dove il separatore è `/`.
+
+**File modificati**:
+- **`Tests/Console/Services/Scaffolding/ScaffoldingManagerTest.php`**: Sostituiti i separatori `\` hardcoded con `DIRECTORY_SEPARATOR` nei messaggi di eccezione attesi
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Le firme dei metodi pubblici restano invariate.
+
+---
+
+## [11.3.5] - 2026-03-04 - Ripristino Compatibilità PHP in ModuleManager
+
+Questa patch ripristina il codice precedente nel metodo `setApplicationModuleByClassName()` della classe `ModuleManager`, rimuovendo l'uso di `array_first()` introdotto involontariamente nella versione 11.3.4. La funzione `array_first()` è disponibile solo a partire da PHP 8.5, incompatibile con il requisito minimo del framework (PHP 8.3).
+
+### 🐛 Bug Fixes
+
+#### Ripristino accesso diretto all'array in `ModuleManager::setApplicationModuleByClassName()`
+
+Il commit della versione 11.3.4 aveva sostituito `$classNameParts[0]` con `array_first($classNameParts)`, funzione introdotta in PHP 8.5 e non disponibile in PHP 8.3 e 8.4.
+
+**Ripristino**:
+
+- ❌ **11.3.4**: `self::setApplicationModule(array_first($classNameParts));`
+- ✅ **11.3.5**: `$module = $classNameParts[0];` / `self::setApplicationModule($module);`
+
+**File modificati**:
+- **`Core/HelperClasses/ModuleManager.php`**: Ripristinato accesso tramite indice array
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: La firma del metodo e il comportamento restano invariati.
+
+---
+
+## [11.3.4] - 2026-03-03 - Impostazione Modulo nella Classe ErrorHandler
+
+Questa patch release corregge un bug per cui la classe `ErrorHandler` non impostava il modulo applicativo prima di invocare i controller di errore, causando un fallimento nella risoluzione delle view di errore.
+
+### 🐛 Bug Fixes
+
+#### Impostazione del modulo nei metodi di gestione errori
+
+I metodi pubblici di `ErrorHandler` chiamavano i controller di errore senza prima impostare il modulo tramite `ModuleManager`, a differenza di quanto avviene nel `Dispatcher`. Il sistema di rendering non riusciva quindi a individuare il percorso corretto delle view.
+
+**Modifiche applicate**:
+
+- **`registerNonThrowableErrorHandler()`**: Aggiunta chiamata `ModuleManager::setApplicationModuleByClassName(get_class($controller))` all'inizio della shutdown function, prima di invocare il controller di errore non-throwable.
+- **`handleBaseException()`**: Aggiunta chiamata `ModuleManager::setApplicationModuleByClassName()` in entrambi i branch (`developmentEnvironment` e produzione), rispettivamente con `$structuralController` e `$defaultController` come sorgente del modulo.
+- **`handleThrowableError()`**: Aggiunta chiamata `ModuleManager::setApplicationModuleByClassName(get_class($structuralController))` dopo `BufferManager::clear()`, prima del log e dell'invocazione del controller.
+
+**File modificati**:
+- **`Core/HelperClasses/ErrorHandler.php`**: Aggiunte 4 chiamate a `ModuleManager::setApplicationModuleByClassName()` nei metodi di gestione errori
+
+### 🧪 Test
+
+#### Correzione `BackupManagerTest` con estensione ZIP non disponibile
+
+Il `tearDown()` accedeva alla proprietà tipizzata `$testDir` anche quando `setUp()` aveva chiamato `markTestSkipped()` prima di inizializzarla (assenza dell'estensione ZIP), causando un errore `Typed property must not be accessed before initialization`.
+
+**Fix**: l'assegnazione di `$testDir` è stata spostata prima del controllo sull'estensione, garantendo che la proprietà sia sempre inizializzata prima che `tearDown()` venga eseguito.
+
+**File modificati**:
+- **`Tests/Console/Services/Upgrade/Utils/BackupManagerTest.php`**: Spostata l'inizializzazione di `$testDir` prima di `markTestSkipped()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Le firme dei metodi pubblici restano invariate; la modifica aggiunge solo la corretta inizializzazione del modulo prima delle chiamate esistenti.
+
+---
+
+## [11.3.3] - 2026-02-22 - Ripristino Proprietà project nella Classe Config
+
+Questa patch release corregge un errore introdotto nella versione 11.3.2, dove la proprietà `$project` era stata erroneamente rimossa dalla classe `Config` nonostante venisse ancora utilizzata dal `FrameworkController`.
+
+### 🐛 Bug Fixes
+
+#### Ripristino di `Config::$project`
+
+La proprietà `$project` era stata inclusa per errore nell'elenco delle proprietà "orfane" rimosse nella versione 11.3.2. In realtà viene letta a runtime in `FrameworkController::throwableError()` e `FrameworkController::nonThrowableError()` per popolare la variabile di template `$vars['project']` nella pagina di errore visibile.
+
+**File modificati**:
+- **`Core/HelperClasses/Config.php`**: Ripristinata la proprietà `protected readonly string $project`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Ripristino di una proprietà rimossa per errore; nessuna modifica all'interfaccia pubblica.
+
+---
+
+## [11.3.2] - 2026-02-21 - Spostamento Fixtures nella Console
+
+Questa patch release rifattorizza il sistema di esecuzione delle fixtures, spostandolo dal contesto HTTP (Dispatcher) al contesto CLI (Console). Il comportamento delle fixtures resta invariato: cambiano solo il punto di invocazione e la collocazione del codice. Include inoltre la documentazione del sistema di Upgrade introdotto nella versione 11.3.0.
+
+### 🔧 Refactoring
+
+#### Migrazione delle Fixtures dal Dispatcher alla Console
+
+Le fixtures erano una funzionalità nata quando il framework non disponeva di una console CLI. Venivano eseguite tramite un endpoint HTTP (`/fixtures`), integrato nel Dispatcher e nel RouteResolver. Con l'introduzione della console, questa collocazione risultava architetturalmente inadeguata.
+
+**Nuovo comando CLI**:
+```bash
+php SismaFramework/Console/sisma fixtures
+```
+
+**File creati**:
+- **`Console/Commands/FixturesCommand.php`**: Nuovo comando che estende `BaseCommand`, registrato nel file `sisma`
+- **`Console/Services/Fixtures/FixturesManager.php`**: Logica di gestione fixtures spostata dal Dispatcher alla Console
+
+**File modificati**:
+- **`Console/sisma`**: Registrato `FixturesCommand` tra le strategie del `CommandDispatcher`
+- **`Core/HelperClasses/Dispatcher.php`**: Rimosso il branch `elseif` per le fixtures nel metodo `handle()`
+- **`Core/HelperClasses/Dispatcher/RouteResolver.php`**:
+  - Rimossa la dipendenza da `FixturesManager` nel costruttore
+  - Rimossi i metodi `isFixturesRequest()` e `runFixtures()`
+  - Rimosso il check `isFixtures()` in `parsePathWithMultipleCleanParts()`
+- **`Core/HelperClasses/Config.php`**: Rimossa la proprietà `$fixtures` (nome della route HTTP, non più necessario)
+
+**File eliminati**:
+- **`Core/HelperClasses/Dispatcher/FixturesManager.php`**: Sostituito dalla versione in `Console/Services/Fixtures/`
+
+**Modifiche al FixturesManager**:
+- Il metodo `run()` ora restituisce `void` invece di `Response` (non essendo più in contesto HTTP)
+- Rimosso il metodo `isFixtures()` (non più necessario senza routing HTTP)
+- Il namespace cambia da `SismaFramework\Core\HelperClasses\Dispatcher` a `SismaFramework\Console\Services\Fixtures`
+
+#### Pulizia proprietà orfane nella classe Config
+
+Rimosse 10 proprietà dalla classe `Config` che non venivano mai lette a runtime tramite `$config->proprietà`. Queste proprietà esistevano come mapping delle corrispondenti costanti in `config.php`, ma nessun codice PHP le accedeva — le costanti servono esclusivamente come building block per la composizione di altre costanti e restano invariate.
+
+**Proprietà rimosse**: `$adapters`, `$assets`, `$cache`, `$core`, `$defaultController`, `$logs`, `$project`, `$resources`, `$thisDirectory`, `$directoryUp`
+
+### ✅ Test
+
+- **`Tests/Console/Services/Fixtures/FixturesManagerTest.php`**: Test spostato dal contesto Core al contesto Console
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: Rimosso `testRunFixture` e tutti i riferimenti a `FixturesManager`
+- **`Tests/Core/HelperClasses/DebuggerTest.php`**: Rimosso l'attributo `#[RunTestsInSeparateProcesses]` per incompatibilità con PHPUnit 12
+- **`Tests/Core/HelperClasses/ConfigTest.php`**: Aggiornati i test di reflection per riflettere la rimozione delle proprietà orfane
+
+### 📖 Documentazione
+
+- **`docs/upgrade.md`**: Aggiunta guida completa al sistema di Upgrade automatico introdotto nella versione 11.3.0
+- **`docs/index.md`**: Aggiunto riferimento alla nuova pagina di documentazione
+- **`docs/data-fixtures.md`**: Aggiornata la sezione "Eseguire le Fixtures" da URL browser a comando CLI
+- **`docs/helper-classes.md`**: Rimossa la sezione FixturesManager e il relativo riferimento nella tabella panoramica
+- **`docs/getting-started.md`**: Aggiornate le istruzioni di esecuzione fixtures da URL a comando CLI
+- **`docs/testing.md`**: Aggiornato il namespace di FixturesManager e rimosso l'uso del metodo `isFixtures()` nell'esempio
+- **`docs/configuration-reference.md`**: Rimosso il riferimento alle fixtures dalla descrizione di `DEVELOPMENT_ENVIRONMENT`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Le classi fixture degli utenti (`BaseFixture`, `setEntity()`, `setDependencies()`) restano invariate
+- **Nessuna modifica ai file fixture**: La posizione, il namespace e il contratto delle fixture applicative non cambiano
+- **Solo il punto di invocazione cambia**: Da `GET /fixtures` (browser) a `php sisma fixtures` (terminale)
+
+---
+
 ## [11.3.1] - 2026-02-11 - Correzione Percorsi Cross-Platform nell'Autoloader
 
 Questa patch release corregge un bug nell'Autoloader che impediva il caricamento delle classi mappate tramite `AUTOLOAD_NAMESPACE_MAPPER` e `AUTOLOAD_CLASS_MAPPER` su sistemi Linux/macOS.

@@ -35,7 +35,7 @@ const CONFIGURATION_PASSWORD = '';
 - **Default**: `true`
 - **Descrizione**: Controlla l'ambiente dell'applicazione
 - **Effetti**:
-  - `true`: Mostra errori dettagliati, abilita debug bar, permette fixtures
+  - `true`: Mostra errori dettagliati, abilita debug bar
   - `false`: Nasconde errori, disabilita debug, ambiente produzione
 
 **Esempio**:

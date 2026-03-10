@@ -84,6 +84,9 @@ class TransactionManager
 
     public function rollback(): void
     {
-        $this->adapter->rollbackTransaction();
+        if (self::$isActiveTransaction) {
+            $this->adapter->rollbackTransaction();
+            self::$isActiveTransaction = false;
+        }
     }
 }

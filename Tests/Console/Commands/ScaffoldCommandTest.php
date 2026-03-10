@@ -2,6 +2,7 @@
 
 namespace SismaFramework\Tests\Console\Commands;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Console\Commands\ScaffoldCommand;
 use SismaFramework\Console\Services\Scaffolding\ScaffoldingManager;
@@ -34,15 +35,16 @@ class MockEntity extends BaseEntity
     }
 }
 
+#[AllowMockObjectsWithoutExpectations]
 class ScaffoldCommandTest extends TestCase
 {
     private ScaffoldCommand $command;
-    private ScaffoldingManager $scaffoldingManagerStub;
+    private ScaffoldingManager $scaffoldingManagerMock;
 
     protected function setUp(): void
     {        
-        $this->scaffoldingManagerStub = $this->createStub(ScaffoldingManager::class);
-        $this->command = new ScaffoldCommand($this->scaffoldingManagerStub);
+        $this->scaffoldingManagerMock = $this->createMock(ScaffoldingManager::class);
+        $this->command = new ScaffoldCommand($this->scaffoldingManagerMock);
     }
 
     public function testCheckCompatibility(): void
@@ -83,22 +85,26 @@ class ScaffoldCommandTest extends TestCase
         ]);
         $this->command->setOptions(['force' => true]);
 
-        $this->scaffoldingManagerStub
+        $this->scaffoldingManagerMock
+            ->expects($this->once())
             ->method('setForce')
             ->with(true)
             ->willReturnSelf();
 
-        $this->scaffoldingManagerStub
+        $this->scaffoldingManagerMock
+            ->expects($this->once())
             ->method('setCustomType')
             ->with(null)
             ->willReturnSelf();
 
-        $this->scaffoldingManagerStub
+        $this->scaffoldingManagerMock
+            ->expects($this->once())
             ->method('setCustomTemplatePath')
             ->with(null)
             ->willReturnSelf();
 
-        $this->scaffoldingManagerStub
+        $this->scaffoldingManagerMock
+            ->expects($this->once())
             ->method('generateScaffolding')
             ->with('MockEntity', 'TestModule')
             ->willReturn(true);

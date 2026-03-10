@@ -495,16 +495,18 @@ class SelfReferencedModelTest extends TestCase
     {
         $this->initializePartialMock();
         // Crea mock che simula il comportamento di __call per getSonCollection
-        $childEntity = $this->createStub(SelfReferencedSample::class);
-        $childEntity->method('__call')
+        $childEntity = $this->createMock(SelfReferencedSample::class);
+        $childEntity->expects($this->once())
+            ->method('__call')
             ->with('getSonCollection', [])
             ->willReturn(new SismaCollection(SelfReferencedSample::class));
 
-        $parentEntity = $this->createStub(SelfReferencedSample::class);
+        $parentEntity = $this->createMock(SelfReferencedSample::class);
         $childCollection = new SismaCollection(SelfReferencedSample::class);
         $childCollection->append($childEntity);
 
-        $parentEntity->method('__call')
+        $parentEntity->expects($this->once())
+            ->method('__call')
             ->with('getSonCollection', [])
             ->willReturn($childCollection);
 

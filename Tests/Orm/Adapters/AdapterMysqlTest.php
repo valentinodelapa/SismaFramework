@@ -439,8 +439,7 @@ class AdapterMysqlTest extends TestCase
         $baseSample->id = 1;
         $standardClass = new \stdClass();
         $pdoStatementMock = $this->createMock(\PDOStatement::class);
-        $pdoStatementMock->expects($this->any())
-                ->method('execute');
+        $pdoStatementMock->method('execute');
         $matcher = $this->exactly(18);
         $pdoStatementMock->expects($matcher)
                 ->method('bindParam')
@@ -548,8 +547,7 @@ class AdapterMysqlTest extends TestCase
         $baseSample->id = 1;
         $standardClass = new \stdClass();
         $pdoStatementMock = $this->createMock(\PDOStatement::class);
-        $pdoStatementMock->expects($this->any())
-                ->method('execute')
+        $pdoStatementMock->method('execute')
                 ->willReturn(true);
         $matcher = $this->exactly(18);
         $pdoStatementMock->expects($matcher)

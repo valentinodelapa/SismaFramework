@@ -236,7 +236,11 @@ class PostFixture extends BaseFixture
 }
 ```
 
-Per eseguire la fixture, visita l'URL `/fixtures` nel tuo browser (assicurati che `DEVELOPMENT_ENVIRONMENT` sia `true` in `config.php`).
+Per eseguire le fixtures, utilizza il comando CLI della console:
+
+```bash
+php SismaFramework/Console/sisma fixtures
+```
 
 Il framework eseguirà prima `UserFixture` e poi `PostFixture`, garantendo che l'utente esista prima di creare i post che lo referenziano.
 

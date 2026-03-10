@@ -803,7 +803,7 @@ class DatabaseIntegrationTest extends TestCase
 namespace SismaFramework\Tests\Fixtures;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\HelperClasses\Dispatcher\FixturesManager;
+use SismaFramework\Console\Services\Fixtures\FixturesManager;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 class FixtureTest extends TestCase
@@ -817,20 +817,12 @@ class FixtureTest extends TestCase
         $this->fixturesManager = new FixturesManager($this->dataMapper);
 
         // Caricare fixtures di test
-        $this->loadTestFixtures();
-    }
-
-    private function loadTestFixtures(): void
-    {
-        // Eseguire fixtures per popolare database di test
-        if ($this->fixturesManager->isFixtures(['fixtures'])) {
-            $this->fixturesManager->run();
-        }
+        $this->fixturesManager->run();
     }
 
     public function testFixturesLoaded(): void
     {
-        $this->assertTrue($this->fixturesManager->executed());
+        $this->assertTrue($this->fixturesManager->extecuted());
     }
 
     public function testDataFromFixtures(): void

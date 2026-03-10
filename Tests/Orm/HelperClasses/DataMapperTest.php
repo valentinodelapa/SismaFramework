@@ -1006,8 +1006,7 @@ class DataMapperTest extends TestCase
         $this->baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($this->baseAdapterMock);
         $this->queryMock = $this->createStub(Query::class);
-        $this->queryMock->method('setTable')
-                ->with('entity_name');
+        $this->queryMock->method('setTable');
         $dataMapper = $this->createDataMapperWithMockedAdapter();
         $this->assertInstanceOf(Query::class, $dataMapper->initQuery(BaseSample::class));
     }

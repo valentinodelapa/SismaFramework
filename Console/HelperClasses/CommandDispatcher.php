@@ -27,6 +27,8 @@
 namespace SismaFramework\Console\HelperClasses;
 
 use SismaFramework\Console\BaseClasses\BaseCommand;
+use SismaFramework\Console\HelperClasses\Dispatcher\CommandFactory;
+use SismaFramework\Core\HelperClasses\Config;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -34,13 +36,14 @@ use SismaFramework\Console\BaseClasses\BaseCommand;
 class CommandDispatcher
 {
 
+    private Config $config;
     private string $command;
     private array $commandParts;
     private array $commandList = [];
     private array $arguments = [];
     private array $options = [];
 
-    public function __construct(array $commandParts)
+    public function __construct(array $commandParts, ?Config $config = null)
     {
         if (empty($commandParts)) {
             throw new \RuntimeException(<<<ERROR
@@ -50,8 +53,10 @@ Available commands:
 Type 'php SismaFramework/Console/sisma <command>' for more information about a command
 ERROR);
         }
+        $this->config = $config ?? Config::getInstance();
         $this->command = array_shift($commandParts);
         $this->commandParts = $commandParts;
+        $this->discoverCommands();
     }
 
     public function addCommandStrategy(BaseCommand $command): void
@@ -70,6 +75,39 @@ ERROR);
             }
         }
         throw new \RuntimeException("Unknown command: " . $this->command . PHP_EOL);
+    }
+
+    private function discoverCommands(): void
+    {
+        $factory = new CommandFactory();
+        $this->discoverFromDirectory(
+            $this->config->systemPath . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
+            $this->config->system . '\\Console\\Commands',
+            $factory
+        );
+        foreach ($this->config->moduleFolders as $moduleFolder) {
+            $this->discoverFromDirectory(
+                $this->config->rootPath . $moduleFolder . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
+                $moduleFolder . '\\Console\\Commands',
+                $factory
+            );
+        }
+    }
+
+    private function discoverFromDirectory(string $directory, string $namespace, CommandFactory $factory): void
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+        foreach (glob($directory . DIRECTORY_SEPARATOR . '*.php') as $file) {
+            $fqcn = $namespace . '\\' . basename($file, '.php');
+            if (class_exists($fqcn)) {
+                $reflection = new \ReflectionClass($fqcn);
+                if (!$reflection->isAbstract() && $reflection->isSubclassOf(BaseCommand::class)) {
+                    $this->commandList[] = $factory->createCommand($fqcn);
+                }
+            }
+        }
     }
 
     private function sortCommandParts(): void

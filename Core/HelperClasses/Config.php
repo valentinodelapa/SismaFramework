@@ -39,19 +39,12 @@ use SismaFramework\Orm\Enumerations\AdapterType;
 class Config
 {
 
-    protected readonly string $adapters;
     protected readonly string $application;
-    protected readonly string $assets;
-    protected readonly string $cache;
     protected readonly string $controllers;
-    protected readonly string $core;
     protected readonly string $defaultPath;
     protected readonly string $defaultAction;
-    protected readonly string $defaultController;
     protected readonly string $entities;
-    protected readonly string $fixtures;
     protected readonly string $forms;
-    protected readonly string $logs;
     protected readonly string $locales;
     protected readonly string $models;
     protected readonly string $orm;
@@ -59,10 +52,7 @@ class Config
     protected readonly string $system;
     protected readonly string $structural;
     protected readonly string $templates;
-    protected readonly string $resources;
     protected readonly string $views;
-    protected readonly string $thisDirectory;
-    protected readonly string $directoryUp;
 
     /* Base Constant */
     protected readonly Language $language;

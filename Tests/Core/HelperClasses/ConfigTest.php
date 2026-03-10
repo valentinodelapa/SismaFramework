@@ -104,9 +104,7 @@ class ConfigTest extends TestCase
 
         // Test that essential properties are defined
         $properties = [
-            'adapters',
             'application',
-            'core',
             'developmentEnvironment',
             'databaseHost',
             'databaseName',
@@ -129,7 +127,6 @@ class ConfigTest extends TestCase
         $reflection = new \ReflectionClass($config);
 
         $readonlyProperties = [
-            'adapters',
             'application',
             'developmentEnvironment',
             'databaseHost'
@@ -150,7 +147,6 @@ class ConfigTest extends TestCase
         $reflection = new \ReflectionClass($config);
 
         $protectedProperties = [
-            'adapters',
             'application',
             'language',
             'developmentEnvironment'

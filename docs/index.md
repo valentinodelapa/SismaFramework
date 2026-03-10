@@ -32,6 +32,7 @@
 * **Strumenti di Sviluppo**
 
   * [Scaffolding](scaffolding.md)
+  * [Upgrade dei Moduli](upgrade.md)
   * [Barra di Debug](debug-bar.md)
   * [Data Fixtures](data-fixtures.md)
   * [Gestione Errori e Logging](error-handling-and-logging.md)

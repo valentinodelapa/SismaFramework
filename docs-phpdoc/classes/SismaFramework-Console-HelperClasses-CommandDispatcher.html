@@ -135,7 +135,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">34</span>
+    <span class="phpdocumentor-element-found-in__line">36</span>
 
     </aside>
 
@@ -160,10 +160,8 @@
                                     </dd>
                                             </dl>
 
-
-
-
-
+    
+    
 <h3 id="toc">
     Table of Contents
     <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
@@ -209,6 +207,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_config">$config</a>
+    <span>
+                        &nbsp;: <abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_options">$options</a>
     <span>
                         &nbsp;: array&lt;string|int, mixed&gt;            </span>
@@ -241,6 +245,18 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverCommands">discoverCommands()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverFromDirectory">discoverFromDirectory()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_parseOption">parseOption()</a>
     <span>
                                 &nbsp;: void    </span>
@@ -270,14 +286,51 @@
             phpdocumentor-element
             -property
             -private
-                                                        "
+                                                                    "
 >
     <h4 class="phpdocumentor-element__name" id="property_arguments">
         $arguments
         <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_arguments" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                </span>
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">43</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$arguments</span>
+     = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_command">
+        $command
+        <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_command" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
@@ -289,44 +342,8 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
-    <span class="phpdocumentor-signature__name">$arguments</span>
-     = <span class="phpdocumentor-signature__default-value">[]</span></code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="property_command">
-        $command
-        <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_command" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">37</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type">string</span>
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">string</span>
     <span class="phpdocumentor-signature__name">$command</span>
     </code>
 
@@ -334,7 +351,8 @@
     
     
 
-    
+        
+        
 
 </article>
                     <article
@@ -342,27 +360,27 @@
             phpdocumentor-element
             -property
             -private
-                                                        "
+                                                                    "
 >
     <h4 class="phpdocumentor-element__name" id="property_commandList">
         $commandList
         <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_commandList" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                </span>
+                                            </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">39</span>
+    <span class="phpdocumentor-element-found-in__line">42</span>
 
     </aside>
 
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
     <span class="phpdocumentor-signature__name">$commandList</span>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
 
@@ -370,7 +388,8 @@
     
     
 
-    
+        
+        
 
 </article>
                     <article
@@ -378,50 +397,14 @@
             phpdocumentor-element
             -property
             -private
-                                                        "
+                                                                    "
 >
     <h4 class="phpdocumentor-element__name" id="property_commandParts">
         $commandParts
         <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_commandParts" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
-                                </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">38</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
-    <span class="phpdocumentor-signature__name">$commandParts</span>
-    </code>
-
-    
-    
-    
-
-    
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="property_options">
-        $options
-        <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_options" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                </span>
+                                            </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
@@ -433,8 +416,82 @@
     
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-        <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
+    <span class="phpdocumentor-signature__name">$commandParts</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_config">
+        $config
+        <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_config" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">39</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></span>
+    <span class="phpdocumentor-signature__name">$config</span>
+    </code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_options">
+        $options
+        <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_options" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">44</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
     <span class="phpdocumentor-signature__name">$options</span>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
 
@@ -442,7 +499,8 @@
     
     
 
-    
+        
+        
 
 </article>
             </section>
@@ -467,14 +525,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">43</span>
+    <span class="phpdocumentor-element-found-in__line">46</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$commandParts</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$commandParts</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$config</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -483,9 +541,16 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$commandParts</span>
-                : <span class="phpdocumentor-signature__argument__return-type">array&lt;string|int, mixed&gt;</span>
+                <span class="phpdocumentor-argument-list__argument__name">$commandParts</span>
+                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
                             </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$config</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -493,8 +558,8 @@
 
     
 
+        
     
-
     
 </article>
                     <article
@@ -511,14 +576,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">57</span>
+    <span class="phpdocumentor-element-found-in__line">62</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">addCommandStrategy</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html"><abbr title="\SismaFramework\Console\BaseClasses\BaseCommand">BaseCommand</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$command</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">addCommandStrategy</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html"><abbr title="\SismaFramework\Console\BaseClasses\BaseCommand">BaseCommand</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$command</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -527,8 +592,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$command</span>
-                : <span class="phpdocumentor-signature__argument__return-type"><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html"><abbr title="\SismaFramework\Console\BaseClasses\BaseCommand">BaseCommand</abbr></a></span>
+                <span class="phpdocumentor-argument-list__argument__name">$command</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html"><abbr title="\SismaFramework\Console\BaseClasses\BaseCommand">BaseCommand</abbr></a></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -537,8 +602,8 @@
 
     
 
+        
     
-
     
 </article>
                     <article
@@ -555,7 +620,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">67</span>
 
     </aside>
 
@@ -571,13 +636,105 @@
     
     
 
+        
     
-
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
             </section>
 
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_discoverCommands">
+        discoverCommands()
+        <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverCommands" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">80</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">discoverCommands</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_discoverFromDirectory">
+        discoverFromDirectory()
+        <a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverFromDirectory" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">97</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">discoverFromDirectory</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$directory</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$namespace</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Console-HelperClasses-Dispatcher-CommandFactory.html"><abbr title="\SismaFramework\Console\HelperClasses\Dispatcher\CommandFactory">CommandFactory</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$factory</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$directory</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$namespace</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$factory</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Console-HelperClasses-Dispatcher-CommandFactory.html"><abbr title="\SismaFramework\Console\HelperClasses\Dispatcher\CommandFactory">CommandFactory</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
 </article>
                     <article
         class="phpdocumentor-element
@@ -593,14 +750,14 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">88</span>
+    <span class="phpdocumentor-element-found-in__line">126</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">parseOption</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__return-type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$option</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">parseOption</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$option</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -609,8 +766,8 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-signature__argument__name">$option</span>
-                : <span class="phpdocumentor-signature__argument__return-type">string</span>
+                <span class="phpdocumentor-argument-list__argument__name">$option</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -619,8 +776,8 @@
 
     
 
+        
     
-
     
 </article>
                     <article
@@ -637,7 +794,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/HelperClasses/CommandDispatcher.php"><a href="files/console-helperclasses-commanddispatcher.html"><abbr title="Console/HelperClasses/CommandDispatcher.php">CommandDispatcher.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">75</span>
+    <span class="phpdocumentor-element-found-in__line">113</span>
 
     </aside>
 
@@ -653,8 +810,8 @@
     
     
 
+        
     
-
     
 </article>
             </section>
@@ -695,6 +852,8 @@
                         if (xhr.status < 400 && xhr.responseText) {
                             code.textContent = xhr.responseText;
                             Prism.highlightElement(code);
+                            d=document.getElementsByClassName("line-numbers");
+                            d[0].scrollTop = d[0].children[1].offsetTop;
                             return;
                         }
 
@@ -774,6 +933,7 @@
                                                     <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_command">$command</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_commandList">$commandList</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_commandParts">$commandParts</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_config">$config</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_options">$options</a></li>
                                             </ul>
                 </li>
@@ -784,6 +944,8 @@
                                             <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method___construct">__construct()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_addCommandStrategy">addCommandStrategy()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_run">run()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverCommands">discoverCommands()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverFromDirectory">discoverFromDirectory()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_parseOption">parseOption()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_sortCommandParts">sortCommandParts()</a></li>
                                     </ul>

@@ -24,18 +24,16 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Tests\Core\HelperClasses;
+namespace SismaFramework\Tests\Console\Services\Fixtures;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\HelperClasses\Dispatcher\FixturesManager;
+use SismaFramework\Console\Services\Fixtures\FixturesManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
- * Description of FixturesManagerTest
- *
- * Copyright 2022 Valentino de Lapa.
+ * @author Valentino de Lapa
  */
 class FixturesManagerTest extends TestCase
 {
@@ -51,27 +49,16 @@ class FixturesManagerTest extends TestCase
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', true],
-                    ['fixtures', $fixtures],
                     ['fixtureNamespace', 'TestsApplication\\' . $fixtures . '\\'],
                     ['fixturePath', 'TestsApplication' . DIRECTORY_SEPARATOR . $fixtures],
                     ['moduleFolders', ['SismaFramework']],
                     ['ormCache', true],
-                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['rootPath', dirname(__DIR__, 5) . DIRECTORY_SEPARATOR],
         ]);
         Config::setInstance($this->configStub);
         $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
-    }
-
-    public function testIsFixtures()
-    {
-        $fixtureManager = new FixturesManager($this->dataMapperMock, $this->configStub);
-        $this->assertTrue($fixtureManager->isFixtures(['fixtures']));
-        $this->assertFalse($fixtureManager->isFixtures(['fixtures', 'fixtures']));
-        $this->assertFalse($fixtureManager->isFixtures(['cms', 'fixtures']));
-        $this->assertFalse($fixtureManager->isFixtures(['index']));
-        $this->assertFalse($fixtureManager->isFixtures([]));
     }
 
     public function testFixtureManager()

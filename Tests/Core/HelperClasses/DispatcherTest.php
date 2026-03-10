@@ -33,7 +33,6 @@ use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\Exceptions\PageNotFoundException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher;
-use SismaFramework\Core\HelperClasses\Dispatcher\FixturesManager;
 use SismaFramework\Core\HelperClasses\Dispatcher\ResourceHandler;
 use SismaFramework\Core\HelperClasses\Dispatcher\ResourceMaker;
 use SismaFramework\Core\HelperClasses\Dispatcher\RouteResolver;
@@ -55,7 +54,6 @@ class DispatcherTest extends TestCase
     private Config $configStub;
     private Request $requestMock;
     private ResourceMaker $resourceMakerMock;
-    private FixturesManager $fixturesManagerMock;
     private DataMapper $dataMapperMock;
     private RouteResolver $routeResolverMock;
     private ResourceHandler $resourceHandlerMock;
@@ -87,7 +85,6 @@ class DispatcherTest extends TestCase
         $this->requestMock->server['REQUEST_URI'] = '/';
         $this->requestMock->server['QUERY_STRING'] = '';
         $this->requestMock->request = [];
-        $this->fixturesManagerMock = $this->createStub(FixturesManager::class);
         $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
@@ -96,7 +93,7 @@ class DispatcherTest extends TestCase
     private function createDispatcherWithResourceMakerStub(): Dispatcher
     {
         $resourceMakerStub = $this->createStub(ResourceMaker::class);
-        $this->routeResolverMock = new RouteResolver($resourceMakerStub, $this->fixturesManagerMock, $this->configStub);
+        $this->routeResolverMock = new RouteResolver($resourceMakerStub, $this->configStub);
         $this->resourceHandlerMock = new ResourceHandler($resourceMakerStub, $this->configStub);
         return new Dispatcher($this->requestMock, $this->dataMapperMock, $this->routeResolverMock, $this->resourceHandlerMock, null, null);
     }
@@ -104,7 +101,7 @@ class DispatcherTest extends TestCase
     private function createDispatcherWithResourceMakerMock():Dispatcher
     {
         $this->resourceMakerMock = $this->createMock(ResourceMaker::class);
-        $this->routeResolverMock = new RouteResolver($this->resourceMakerMock, $this->fixturesManagerMock, $this->configStub);
+        $this->routeResolverMock = new RouteResolver($this->resourceMakerMock, $this->configStub);
         $this->resourceHandlerMock = new ResourceHandler($this->resourceMakerMock, $this->configStub);
         return new Dispatcher($this->requestMock, $this->dataMapperMock, $this->routeResolverMock, $this->resourceHandlerMock, null, null);
     }
@@ -215,22 +212,6 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $this->expectException(PageNotFoundException::class);
         $dispatcher->run();
-    }
-
-    public function testRunFixture()
-    {
-        $fixturesManagerMock = $this->createMock(FixturesManager::class);
-        $fixturesManagerMock->expects($this->exactly(2))
-                ->method('isFixtures')
-                ->willReturn(true);
-        $fixturesManagerMock->expects($this->once())
-                ->method('run');
-        $this->requestMock->server['REQUEST_URI'] = '/fixtures/';
-        $resourceMakerStub = $this->createStub(ResourceMaker::class);
-        $routeResolver = new RouteResolver($resourceMakerStub, $fixturesManagerMock, $this->configStub);
-        $resourceHandler = new ResourceHandler($resourceMakerStub, $this->configStub);
-        $dispatcher = new Dispatcher($this->requestMock, $this->dataMapperMock, $routeResolver, $resourceHandler, null, null);
-        $this->assertInstanceOf(Response::class, $dispatcher->run());
     }
 
     public function testCrawlComponentMaker()
