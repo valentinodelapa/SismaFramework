@@ -258,7 +258,7 @@ PHP
 
         $vendorAutoloadPos = strpos($content, "'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'");
         $frameworkAutoloadPos = strpos($content, "'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'");
-        $this->assertLessThan($frameworkAutoloadPos, $vendorAutoloadPos);
+        $this->assertLessThan($vendorAutoloadPos, $frameworkAutoloadPos);
     }
 
     public function testInstallCopiesHtaccessFile(): void

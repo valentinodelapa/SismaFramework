@@ -10,9 +10,8 @@ $projectConfig = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Config' . DIRECTOR
 require_once file_exists($projectConfig) ? $projectConfig : dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
 require_once dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
 
+ErrorHandler::enableErrorDisplay();
 date_default_timezone_set('Europe/Rome');
-$errorHandler = new ErrorHandler();
-$errorHandler->showErrorInDevelopmentEnvironment();
 
 try {
     ErrorHandler::handleCommandLineInterfaceNonThrowableError();
