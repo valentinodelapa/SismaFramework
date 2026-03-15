@@ -31,7 +31,6 @@ namespace SismaFramework\Console\Services\Installation;
  */
 class InstallationManager
 {
-
     private string $projectRoot;
     private string $frameworkPath;
     private bool $force = false;
@@ -83,16 +82,16 @@ class InstallationManager
 
     private function copyConfigFolder(string $projectName): void
     {
-        $sourceConfig = $this->frameworkPath .
-                DIRECTORY_SEPARATOR .
-                "Config" .
-                DIRECTORY_SEPARATOR .
-                "config.php";
-        $destConfig = $this->projectRoot .
-                DIRECTORY_SEPARATOR .
-                "Config" .
-                DIRECTORY_SEPARATOR .
-                "configFramework.php";
+        $sourceConfig = $this->frameworkPath
+                . DIRECTORY_SEPARATOR
+                . "Config"
+                . DIRECTORY_SEPARATOR
+                . "config.php";
+        $destConfig = $this->projectRoot
+                . DIRECTORY_SEPARATOR
+                . "Config"
+                . DIRECTORY_SEPARATOR
+                . "configFramework.php";
         if (file_exists($destConfig) && !$this->force) {
             throw new \RuntimeException("Config file already exists. Use --force to overwrite.");
         }

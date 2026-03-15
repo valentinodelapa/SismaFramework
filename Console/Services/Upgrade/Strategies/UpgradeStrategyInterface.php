@@ -33,7 +33,6 @@ namespace SismaFramework\Console\Services\Upgrade\Strategies;
  */
 interface UpgradeStrategyInterface
 {
-
     /**
      * Get the source version this strategy upgrades from
      *

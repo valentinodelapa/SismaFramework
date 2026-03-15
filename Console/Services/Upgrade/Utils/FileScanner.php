@@ -75,7 +75,7 @@ class FileScanner
         }
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::LEAVES_ONLY
+            \RecursiveIteratorIterator::LEAVES_ONLY,
         );
         foreach ($iterator as $file) {
             if ($file->isFile() && $file->getExtension() === 'php') {

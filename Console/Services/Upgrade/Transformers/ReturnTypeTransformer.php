@@ -37,8 +37,8 @@ class ReturnTypeTransformer implements TransformerInterface
 {
     public function canTransform(string $filePath, string $content): bool
     {
-        return str_contains($filePath, '/Forms/') &&
-               preg_match('/protected\s+function\s+customFilter\s*\(\s*\)\s*:\s*void/s', $content);
+        return str_contains($filePath, '/Forms/')
+               && preg_match('/protected\s+function\s+customFilter\s*\(\s*\)\s*:\s*void/s', $content);
     }
 
     public function transform(string $content, string $filePath): TransformationResult
@@ -51,7 +51,7 @@ class ReturnTypeTransformer implements TransformerInterface
             'protected function customFilter(): bool',
             $transformedContent,
             -1,
-            $count
+            $count,
         );
         $changesCount += $count;
         $pattern = '/(protected\s+function\s+customFilter\s*\(\s*\)\s*:\s*bool\s*\{)(.*?)(\n\s*\})/s';
@@ -68,7 +68,7 @@ class ReturnTypeTransformer implements TransformerInterface
                     "$1\n{$indent}{$indent}return false;",
                     $body,
                     -1,
-                    $count
+                    $count,
                 );
                 $changesCount += $count;
             }
@@ -86,7 +86,7 @@ class ReturnTypeTransformer implements TransformerInterface
             changesCount: $changesCount,
             confidence: $this->getConfidence(),
             warnings: $warnings,
-            requiresManualReview: !empty($warnings)
+            requiresManualReview: !empty($warnings),
         );
     }
 

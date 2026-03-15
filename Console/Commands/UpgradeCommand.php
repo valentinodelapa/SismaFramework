@@ -37,12 +37,10 @@ use SismaFramework\Console\Services\Upgrade\Utils\ReportGenerator;
  */
 class UpgradeCommand extends BaseCommand
 {
-
-    public function __construct(private UpgradeManager $upgradeManager = new UpgradeManager(),
-            private ReportGenerator $reportGenerator = new ReportGenerator())
-    {
-        
-    }
+    public function __construct(
+        private UpgradeManager $upgradeManager = new UpgradeManager(),
+        private ReportGenerator $reportGenerator = new ReportGenerator(),
+    ) {}
 
     #[\Override]
     public function checkCompatibility(string $command): bool

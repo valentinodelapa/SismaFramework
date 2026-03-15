@@ -43,38 +43,38 @@ use SismaFramework\Core\HelperClasses\Config;
  */
 class UpgradeManager
 {
-
     private Config $config;
     private bool $dryRun = false;
     private bool $skipCritical = false;
     private bool $skipBackup = false;
 
-    public function __construct(?Config $config = null,
-            private VersionDetector $versionDetector = new VersionDetector(),
-            private FileScanner $fileScanner = new FileScanner(),
-            private BackupManager $backupManager = new BackupManager())
-    {
+    public function __construct(
+        ?Config $config = null,
+        private VersionDetector $versionDetector = new VersionDetector(),
+        private FileScanner $fileScanner = new FileScanner(),
+        private BackupManager $backupManager = new BackupManager(),
+    ) {
         $this->config = $config ?? Config::getInstance();
     }
-    
+
     public function setDryRun(bool $dryRun): self
     {
         $this->dryRun = $dryRun;
         return $this;
     }
-    
+
     public function setSkipCritical(bool $skipCritical): self
     {
         $this->skipCritical = $skipCritical;
         return $this;
     }
-    
+
     public function setSkipBackup(bool $skipBackup): self
     {
         $this->skipBackup = $skipBackup;
         return $this;
     }
-    
+
     public function upgrade(string $moduleName, string $targetVersion, ?string $sourceVersion = null): UpgradeReport
     {
         $modulePath = $this->getModulePath($moduleName);
@@ -131,11 +131,11 @@ class UpgradeManager
                     $filesModified++;
                     $warningsCount += count($fileWarnings);
                     $fileResults[] = (object) [
-                                'filePath' => $filePath,
-                                'changesCount' => $fileChangesCount,
-                                'confidence' => $this->calculateAverageConfidence($strategy->getTransformers()),
-                                'warnings' => $fileWarnings,
-                                'transformations' => $fileTransformations
+                        'filePath' => $filePath,
+                        'changesCount' => $fileChangesCount,
+                        'confidence' => $this->calculateAverageConfidence($strategy->getTransformers()),
+                        'warnings' => $fileWarnings,
+                        'transformations' => $fileTransformations,
                     ];
                 } else {
                     $filesSkipped++;
@@ -151,16 +151,16 @@ class UpgradeManager
             }
             $status = $this->dryRun ? 'DRY-RUN' : 'SUCCESS';
             return new UpgradeReport(
-                    moduleName: $moduleName,
-                    fromVersion: $sourceVersion,
-                    toVersion: $targetVersion,
-                    status: $status,
-                    filesModified: $filesModified,
-                    filesSkipped: $filesSkipped,
-                    warningsCount: $warningsCount,
-                    fileResults: $fileResults,
-                    manualActions: array_unique($manualActions),
-                    backupPath: $backupPath
+                moduleName: $moduleName,
+                fromVersion: $sourceVersion,
+                toVersion: $targetVersion,
+                status: $status,
+                filesModified: $filesModified,
+                filesSkipped: $filesSkipped,
+                warningsCount: $warningsCount,
+                fileResults: $fileResults,
+                manualActions: array_unique($manualActions),
+                backupPath: $backupPath,
             );
         } catch (\Exception $e) {
             if ($backupPath && !$this->dryRun) {
@@ -169,7 +169,7 @@ class UpgradeManager
             throw new UpgradeException("Upgrade failed: " . $e->getMessage(), 0, $e);
         }
     }
-    
+
     private function getModulePath(string $moduleName): string
     {
         $systemPath = $this->config->systemPath;
@@ -179,11 +179,11 @@ class UpgradeManager
         }
         return $modulePath;
     }
-    
+
     private function selectStrategy(string $sourceVersion, string $targetVersion): UpgradeStrategyInterface
     {
         $strategies = [
-            new Upgrade10to11Strategy()
+            new Upgrade10to11Strategy(),
         ];
         foreach ($strategies as $strategy) {
             $sourceMajor = (int) explode('.', $sourceVersion)[0];
@@ -195,10 +195,10 @@ class UpgradeManager
             }
         }
         throw new VersionMismatchException(
-                        "No upgrade strategy found for {$sourceVersion} → {$targetVersion}"
-                );
+            "No upgrade strategy found for {$sourceVersion} → {$targetVersion}",
+        );
     }
-    
+
     private function calculateAverageConfidence(array $transformers): int
     {
         if (empty($transformers)) {
@@ -210,7 +210,7 @@ class UpgradeManager
         }
         return (int) round($total / count($transformers));
     }
-    
+
     private function getRelativePath(string $filePath): string
     {
         $normalized = str_replace('\\', '/', $filePath);

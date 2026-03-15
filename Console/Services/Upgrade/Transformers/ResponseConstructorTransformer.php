@@ -61,7 +61,7 @@ class ResponseConstructorTransformer implements TransformerInterface
             changesCount: $changesCount,
             confidence: $this->getConfidence(),
             warnings: $warnings,
-            requiresManualReview: !empty($warnings)
+            requiresManualReview: !empty($warnings),
         );
     }
 

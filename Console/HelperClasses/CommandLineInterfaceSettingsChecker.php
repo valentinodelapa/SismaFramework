@@ -33,7 +33,6 @@ namespace SismaFramework\Console\HelperClasses;
  */
 class CommandLineInterfaceSettingsChecker
 {
-
     public static function checkIsCommandLineInterfaceMode(string $interfaceName): void
     {
         if ($interfaceName !== 'cli') {

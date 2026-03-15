@@ -35,7 +35,6 @@ use SismaFramework\Core\HelperClasses\Config;
  */
 class CommandDispatcher
 {
-
     private Config $config;
     private string $command;
     private array $commandParts;
@@ -83,13 +82,13 @@ ERROR);
         $this->discoverFromDirectory(
             $this->config->systemPath . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
             $this->config->system . '\\Console\\Commands',
-            $factory
+            $factory,
         );
         foreach ($this->config->moduleFolders as $moduleFolder) {
             $this->discoverFromDirectory(
                 $this->config->rootPath . $moduleFolder . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
                 $moduleFolder . '\\Console\\Commands',
-                $factory
+                $factory,
             );
         }
     }

@@ -33,7 +33,6 @@ use SismaFramework\Console\BaseClasses\BaseCommand;
  */
 class CommandFactory
 {
-
     public function createCommand(string $commandClassName): BaseCommand
     {
         $reflection = new \ReflectionClass($commandClassName);

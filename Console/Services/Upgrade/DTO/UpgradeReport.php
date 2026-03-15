@@ -33,18 +33,16 @@ namespace SismaFramework\Console\Services\Upgrade\DTO;
  */
 class UpgradeReport
 {
-
-    public function __construct(public readonly string $moduleName,
-            public readonly string $fromVersion,
-            public readonly string $toVersion,
-            public readonly string $status,
-            public readonly int $filesModified,
-            public readonly int $filesSkipped,
-            public readonly int $warningsCount,
-            public readonly array $fileResults = [],
-            public readonly array $manualActions = [],
-            public readonly ?string $backupPath = null)
-    {
-        
-    }
+    public function __construct(
+        public readonly string $moduleName,
+        public readonly string $fromVersion,
+        public readonly string $toVersion,
+        public readonly string $status,
+        public readonly int $filesModified,
+        public readonly int $filesSkipped,
+        public readonly int $warningsCount,
+        public readonly array $fileResults = [],
+        public readonly array $manualActions = [],
+        public readonly ?string $backupPath = null,
+    ) {}
 }

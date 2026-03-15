@@ -104,7 +104,7 @@ class BackupManager
         $source = realpath($source);
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::SELF_FIRST
+            \RecursiveIteratorIterator::SELF_FIRST,
         );
         foreach ($files as $file) {
             $file = realpath($file);
@@ -186,7 +186,7 @@ class BackupManager
         }
         $files = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($directory, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
+            \RecursiveIteratorIterator::CHILD_FIRST,
         );
         foreach ($files as $file) {
             if ($file->isDir()) {

@@ -152,4 +152,3 @@ const DATABASE_NAME = "";
 const DATABASE_PASSWORD = "";
 const DATABASE_PORT = "";
 const DATABASE_USERNAME = "";
-

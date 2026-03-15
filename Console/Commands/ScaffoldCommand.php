@@ -34,13 +34,9 @@ use SismaFramework\Console\Services\Scaffolding\ScaffoldingManager;
  */
 class ScaffoldCommand extends BaseCommand
 {
-
     private array $validTypes = ['BaseModel', 'DependentModel', 'SelfReferencedModel'];
 
-    public function __construct(private ScaffoldingManager $scaffoldingManager = new ScaffoldingManager())
-    {
-        
-    }
+    public function __construct(private ScaffoldingManager $scaffoldingManager = new ScaffoldingManager()) {}
 
     #[\Override]
     public function checkCompatibility(string $command): bool

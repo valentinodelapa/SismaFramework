@@ -28,7 +28,7 @@ namespace SismaFramework\Console\Traits;
 
 /**
  * Trait for handling interactive console input
- * 
+ *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
 trait InteractiveInputTrait
@@ -37,15 +37,15 @@ trait InteractiveInputTrait
     {
         $defaultText = $default !== null ? " [{$default}]" : '';
         echo $question . $defaultText . ': ';
-        
+
         $handle = fopen('php://stdin', 'r');
         $input = trim(fgets($handle));
         fclose($handle);
-        
+
         if ($input === '' && $default !== null) {
             return $default;
         }
-        
+
         return $input;
     }
 
@@ -53,36 +53,36 @@ trait InteractiveInputTrait
     {
         $defaultText = $default ? '[Y/n]' : '[y/N]';
         echo $question . ' ' . $defaultText . ': ';
-        
+
         $handle = fopen('php://stdin', 'r');
         $input = strtolower(trim(fgets($handle)));
         fclose($handle);
-        
+
         if ($input === '') {
             return $default;
         }
-        
+
         return in_array($input, ['y', 'yes', 'si', 's'], true);
     }
 
     protected function askSecret(string $question): string
     {
         echo $question . ': ';
-        
+
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $handle = fopen('php://stdin', 'r');
             $input = trim(fgets($handle));
             fclose($handle);
             return $input;
         }
-        
+
         system('stty -echo');
         $handle = fopen('php://stdin', 'r');
         $input = trim(fgets($handle));
         fclose($handle);
         system('stty echo');
         echo PHP_EOL;
-        
+
         return $input;
     }
 }

@@ -31,10 +31,9 @@ namespace SismaFramework\Console\BaseClasses;
  */
 abstract class BaseCommand
 {
-
     protected array $arguments = [];
     protected array $options = [];
-    
+
     abstract public function checkCompatibility(string $command): bool;
 
     abstract protected function configure(): void;

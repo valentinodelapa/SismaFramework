@@ -42,7 +42,6 @@ use SismaFramework\Orm\ExtendedClasses\SelfReferencedEntity;
  */
 class ScaffoldingManager
 {
-
     private Config $config;
     private string $templatesPath;
     private array $placeholders;
@@ -175,8 +174,8 @@ class ScaffoldingManager
     public function checkDependencies(): bool
     {
         foreach ($this->entityReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-            if (BaseEntity::checkFinalClassReflectionProperty($property) &&
-                    is_subclass_of($property->getType()->getName(), BaseEntity::class)) {
+            if (BaseEntity::checkFinalClassReflectionProperty($property)
+                    && is_subclass_of($property->getType()->getName(), BaseEntity::class)) {
                 return true;
             }
         }

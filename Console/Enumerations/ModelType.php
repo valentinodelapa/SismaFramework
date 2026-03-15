@@ -32,7 +32,6 @@ namespace SismaFramework\Console\Enumerations;
  */
 enum ModelType: string
 {
-
     case baseModel = "BaseModel";
     case dependentModel = "DependentModel";
     case selfReferencedModel = "SelfReferencedModel";

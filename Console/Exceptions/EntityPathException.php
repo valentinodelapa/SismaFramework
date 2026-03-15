@@ -35,14 +35,13 @@ use SismaFramework\Core\HelperClasses\Templater;
  */
 class EntityPathException extends \RuntimeException
 {
-
     public function __construct(string $entityClass, string $entityNamespace, string $entityShortName, string $module, int $code = 0, ?\Throwable $previous = null)
     {
         $message = Templater::generateStructuralTemplate('entityPathException', [
             'entityClass' => $entityClass,
             'entityNamespace' => $entityNamespace,
             'entityShortName' => $entityShortName,
-            'module' => $module
+            'module' => $module,
         ]);
         parent::__construct($message, $code, $previous);
     }

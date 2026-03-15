@@ -35,7 +35,6 @@ use SismaFramework\Console\Services\Upgrade\DTO\TransformationResult;
  */
 interface TransformerInterface
 {
-
     /**
      * Check if this transformer can transform the given file
      *

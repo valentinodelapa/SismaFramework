@@ -55,8 +55,8 @@ class Upgrade10to11Strategy implements UpgradeStrategyInterface
             new ReturnTypeTransformer(),
             new ResponseConstructorTransformer(),
             new MethodRenameTransformer([
-                'handleNonThrowableError' => 'registerNonThrowableErrorHandler'
-            ])
+                'handleNonThrowableError' => 'registerNonThrowableErrorHandler',
+            ]),
         ];
     }
 

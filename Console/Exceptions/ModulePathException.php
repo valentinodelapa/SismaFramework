@@ -40,5 +40,5 @@ class ModulePathException extends \RuntimeException
         $message = Templater::generateStructuralTemplate('modulePathException', ['module' => $module]);
         parent::__construct($message, $code, $previous);
     }
-    
+
 }

@@ -34,11 +34,7 @@ use SismaFramework\Console\Services\Fixtures\FixturesManager;
  */
 class FixturesCommand extends BaseCommand
 {
-
-    public function __construct(private FixturesManager $fixturesManager = new FixturesManager())
-    {
-        
-    }
+    public function __construct(private FixturesManager $fixturesManager = new FixturesManager()) {}
 
     #[\Override]
     public function checkCompatibility(string $command): bool

@@ -13,3 +13,4 @@
 composer.lock
 .phpunit.cache/
 .scannerwork/
+.php-cs-fixer.cache

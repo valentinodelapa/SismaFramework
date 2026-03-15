@@ -35,13 +35,9 @@ use SismaFramework\Console\Traits\InteractiveInputTrait;
  */
 class InstallationCommand extends BaseCommand
 {
-
     use InteractiveInputTrait;
 
-    public function __construct(private InstallationManager $installationManager = new InstallationManager())
-    {
-        
-    }
+    public function __construct(private InstallationManager $installationManager = new InstallationManager()) {}
 
     #[\Override]
     public function checkCompatibility(string $command): bool
@@ -53,7 +49,7 @@ class InstallationCommand extends BaseCommand
     protected function configure(): void
     {
         $this->output(
-                <<<OUTPUT
+            <<<OUTPUT
             Usage: php SismaFramework/Console/sisma install <projectName> [options]
 
             Arguments:
@@ -118,10 +114,10 @@ class InstallationCommand extends BaseCommand
         $this->output("Next steps:");
         $this->output('  1. Run "composer install" to install dependencies');
         $this->output(
-                "  2. Review and update Config/configFramework.php with your settings",
+            "  2. Review and update Config/configFramework.php with your settings",
         );
         $this->output(
-                "  3. Configure your web server to point to the Public directory",
+            "  3. Configure your web server to point to the Public directory",
         );
         $this->output("  4. Start building your application!");
         return true;

@@ -37,8 +37,8 @@ use SismaFramework\Core\HttpClasses\Response;
  */
 class RouterService
 {
+
     private static ?RouterService $instance = null;
-    
     private string $metaUrl = "";
     private ?string $controllerUrl = null;
     private ?string $actionUrl = null;
@@ -47,6 +47,7 @@ class RouterService
 
     private function __construct()
     {
+        
     }
 
     public static function getInstance(): RouterService

@@ -74,7 +74,7 @@ class MethodRenameTransformer implements TransformerInterface
             changesCount: $changesCount,
             confidence: $this->getConfidence(),
             warnings: $warnings,
-            requiresManualReview: false
+            requiresManualReview: false,
         );
     }
 

@@ -47,18 +47,18 @@ class VersionDetector
         $moduleJsonPath = $modulePath . DIRECTORY_SEPARATOR . 'module.json';
         if (!file_exists($moduleJsonPath)) {
             throw new VersionMismatchException(
-                "module.json not found in {$modulePath}. Please create it with version information."
+                "module.json not found in {$modulePath}. Please create it with version information.",
             );
         }
         $content = file_get_contents($moduleJsonPath);
         $data = json_decode($content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new VersionMismatchException(
-                "Invalid JSON in module.json: " . json_last_error_msg()
+                "Invalid JSON in module.json: " . json_last_error_msg(),
             );
         }
         return $data['framework_version'] ?? $data['version'] ?? throw new VersionMismatchException(
-            "No 'framework_version' or 'version' field found in module.json"
+            "No 'framework_version' or 'version' field found in module.json",
         );
     }
 
@@ -75,14 +75,14 @@ class VersionDetector
         $moduleJsonPath = $modulePath . DIRECTORY_SEPARATOR . 'module.json';
         if (!file_exists($moduleJsonPath)) {
             throw new VersionMismatchException(
-                "module.json not found in {$modulePath}"
+                "module.json not found in {$modulePath}",
             );
         }
         $content = file_get_contents($moduleJsonPath);
         $data = json_decode($content, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new VersionMismatchException(
-                "Invalid JSON in module.json: " . json_last_error_msg()
+                "Invalid JSON in module.json: " . json_last_error_msg(),
             );
         }
         $data['framework_version'] = $newVersion;

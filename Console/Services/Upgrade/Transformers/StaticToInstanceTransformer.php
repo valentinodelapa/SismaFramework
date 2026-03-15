@@ -37,11 +37,11 @@ class StaticToInstanceTransformer implements TransformerInterface
 {
     private const STATIC_CLASSES = [
         'ErrorHandler' => 'errorHandler',
-        'Debugger' => 'debugger'
+        'Debugger' => 'debugger',
     ];
 
     private const METHOD_RENAMES = [
-        'handleNonThrowableError' => 'registerNonThrowableErrorHandler'
+        'handleNonThrowableError' => 'registerNonThrowableErrorHandler',
     ];
 
     public function canTransform(string $filePath, string $content): bool
@@ -79,7 +79,7 @@ class StaticToInstanceTransformer implements TransformerInterface
             changesCount: $changesCount,
             confidence: $isIndexFile ? 75 : 60,
             warnings: $warnings,
-            requiresManualReview: !$isIndexFile
+            requiresManualReview: !$isIndexFile,
         );
     }
 
@@ -123,7 +123,7 @@ class StaticToInstanceTransformer implements TransformerInterface
                 "$1\n\n{$instanceCode}\n",
                 $transformedContent,
                 1,
-                $count
+                $count,
             );
             if ($count > 0) {
                 $changesCount++;
@@ -137,7 +137,7 @@ class StaticToInstanceTransformer implements TransformerInterface
                 '$errorHandler->',
                 $transformedContent,
                 -1,
-                $count
+                $count,
             );
             $changesCount += $count;
         }
@@ -147,7 +147,7 @@ class StaticToInstanceTransformer implements TransformerInterface
                 '$debugger->',
                 $transformedContent,
                 -1,
-                $count
+                $count,
             );
             $changesCount += $count;
         }
@@ -157,7 +157,7 @@ class StaticToInstanceTransformer implements TransformerInterface
                 $newMethod,
                 $transformedContent,
                 -1,
-                $count
+                $count,
             );
             $changesCount += $count;
         }
@@ -168,7 +168,7 @@ class StaticToInstanceTransformer implements TransformerInterface
                 '$1debugger: $debugger)',
                 $transformedContent,
                 -1,
-                $count
+                $count,
             );
             $changesCount += $count;
         }

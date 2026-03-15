@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+The MIT License
+
+Copyright 2022 Valentino de Lapa.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+<psalm
+    errorLevel="4"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    phpVersion="8.3"
+    findUnusedVariablesAndParams="true"
+>
+    <projectFiles>
+        <directory name="Autoload" />
+        <directory name="Config" />
+        <directory name="Console" />
+        <directory name="Core" />
+        <directory name="Orm" />
+        <directory name="Security" />
+        <directory name="Structural" />
+        <directory name="Tests" />
+        <ignoreFiles>
+            <directory name="vendor" />
+            <directory name="build" />
+            <directory name="docs" />
+            <directory name="docs-phpdoc" />
+            <directory name="Sample" />
+            <directory name="TestsApplication" />
+            <directory name="nbproject" />
+            <directory name=".tools" />
+            <directory name=".github" />
+            <directory name="third-party-licenses" />
+            <directory name="Tests/coverage-report" />
+        </ignoreFiles>
+    </projectFiles>
+</psalm>
