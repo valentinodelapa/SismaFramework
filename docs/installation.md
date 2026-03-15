@@ -49,8 +49,18 @@ Questo comando installerà le dipendenze necessarie, inclusa la libreria PSR-3 p
 
 ### Passo 3: Esegui il comando di installazione
 
+> **Nota sul comando `sisma`**
+> A partire dalla versione 11.5.0, lo script include lo shebang `#!/usr/bin/env php` ed è affiancato da un wrapper `sisma.bat` per Windows. Questo consente di invocarlo direttamente come:
+> ```bash
+> sisma install NomeDelProgetto
+> ```
+> Se il comando non è nel `PATH` o i permessi di esecuzione non sono stati impostati, usa la forma esplicita:
+> ```bash
+> php SismaFramework/Console/sisma install NomeDelProgetto
+> ```
+
 ```bash
-php SismaFramework/Console/sisma install NomeDelProgetto
+sisma install NomeDelProgetto
 ```
 
 Questo comando creerà automaticamente:
@@ -88,7 +98,7 @@ Creating project structure...
 Se preferisci evitare la configurazione interattiva, puoi passare i parametri direttamente da riga di comando:
 
 ```bash
-php SismaFramework/Console/sisma install NomeDelProgetto \
+sisma install NomeDelProgetto \
   --db-host=localhost \
   --db-name=mio_database \
   --db-user=root \
@@ -109,13 +119,13 @@ php SismaFramework/Console/sisma install NomeDelProgetto \
 
 ```bash
 # Installazione con configurazione interattiva (default)
-php SismaFramework/Console/sisma install BlogPersonale
+sisma install BlogPersonale
 
 # Installazione senza configurazione database
-php SismaFramework/Console/sisma install BlogPersonale --skip-db
+sisma install BlogPersonale --skip-db
 
 # Installazione con parametri da riga di comando
-php SismaFramework/Console/sisma install BlogPersonale \
+sisma install BlogPersonale \
   --db-host=localhost \
   --db-name=blog_db \
   --db-user=root \
@@ -127,7 +137,7 @@ php SismaFramework/Console/sisma install BlogPersonale \
 Se esegui il comando `install` in una directory dove `Config/configFramework.php` esiste già, il comando **fallirà** per proteggere da sovrascritture accidentali. Per forzare la sovrascrittura, usa l'opzione `--force`:
 
 ```bash
-php SismaFramework/Console/sisma install MyProject --force
+sisma install MyProject --force
 ```
 
 ⚠️ **Attenzione:** L'opzione `--force` sovrascriverà tutti i file di configurazione esistenti. Usala solo se sei sicuro.

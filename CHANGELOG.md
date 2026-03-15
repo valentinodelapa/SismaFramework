@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.5.0] - 2026-03-15 - Supporto Cross-Platform per il Comando `sisma`
+
+Questa minor aggiunge il supporto nativo al comando `sisma` su Windows e semplifica l'avvio su Linux/macOS tramite shebang.
+
+### ✨ Nuove Funzionalità
+
+#### `Console/sisma` — Aggiunto shebang `#!/usr/bin/env php`
+
+Lo script `sisma` può ora essere invocato direttamente da terminale su Linux e macOS (es. `sisma fixtures`) senza anteporre `php`, grazie alla riga shebang. PHP ignora la riga `#!` quando il file viene eseguito tramite `php sisma`, garantendo piena retrocompatibilità.
+
+**File modificati**:
+- **`Console/sisma`**: Aggiunta riga `#!/usr/bin/env php` come prima riga del file
+
+#### `Console/sisma.bat` — Nuovo wrapper per Windows
+
+Aggiunto file `sisma.bat` nella stessa directory di `sisma`, che consente di invocare il comando come `sisma fixtures` anche su Windows nativo (senza Docker). Windows riconosce automaticamente l'estensione `.bat` quando il nome del comando è nel `PATH`.
+
+**File aggiunti**:
+- **`Console/sisma.bat`**: Wrapper `@php "%~dp0sisma" %*`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `php sisma <comando>` continua a funzionare invariato su qualsiasi piattaforma.
+
+---
+
 ## [11.4.1] - 2026-03-11 - Consolidamento Bootstrap e Estrazione `enableErrorDisplay()` in `ErrorHandler`
 
 Questa patch consolida la gestione del bootstrap nei due entry point del framework. Il `require_once` dell'autoload di Composer viene spostato direttamente nello skeleton di `index.php`, semplificando la procedura d'installazione. La logica di abilitazione degli errori viene estratta in un metodo statico di `ErrorHandler`, eliminando la dipendenza da `LoggerInterface` nel contesto di bootstrap della console.

@@ -35,7 +35,6 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class FixturesManager
 {
-
     private Config $config;
     private array $fixturesArray;
     private array $entitiesArray = [];
