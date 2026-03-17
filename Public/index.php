@@ -37,6 +37,7 @@ use SismaFramework\Security\ExtendedClasses\RedirectException;
 
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 date_default_timezone_set('Europe/Rome');
 $errorHandler = new ErrorHandler();

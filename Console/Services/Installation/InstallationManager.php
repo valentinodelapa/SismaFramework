@@ -126,9 +126,6 @@ class InstallationManager
             $content = file_get_contents($indexPath);
             $content = str_replace("'Config' . DIRECTORY_SEPARATOR . 'config.php'", "'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'", $content);
             $content = str_replace("dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload'", "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'", $content);
-            $vendorAutoload = "require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';\n";
-            $autoloadLine = "require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';";
-            $content = str_replace($autoloadLine, $vendorAutoload . $autoloadLine, $content);
             file_put_contents($indexPath, $content);
         }
     }

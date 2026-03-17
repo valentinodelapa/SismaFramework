@@ -2,6 +2,65 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.5.0] - 2026-03-15 - Supporto Cross-Platform per il Comando `sisma`
+
+Questa minor aggiunge il supporto nativo al comando `sisma` su Windows e semplifica l'avvio su Linux/macOS tramite shebang.
+
+### ✨ Nuove Funzionalità
+
+#### `Console/sisma` — Aggiunto shebang `#!/usr/bin/env php`
+
+Lo script `sisma` può ora essere invocato direttamente da terminale su Linux e macOS (es. `sisma fixtures`) senza anteporre `php`, grazie alla riga shebang. PHP ignora la riga `#!` quando il file viene eseguito tramite `php sisma`, garantendo piena retrocompatibilità.
+
+**File modificati**:
+- **`Console/sisma`**: Aggiunta riga `#!/usr/bin/env php` come prima riga del file
+
+#### `Console/sisma.bat` — Nuovo wrapper per Windows
+
+Aggiunto file `sisma.bat` nella stessa directory di `sisma`, che consente di invocare il comando come `sisma fixtures` anche su Windows nativo (senza Docker). Windows riconosce automaticamente l'estensione `.bat` quando il nome del comando è nel `PATH`.
+
+**File aggiunti**:
+- **`Console/sisma.bat`**: Wrapper `@php "%~dp0sisma" %*`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `php sisma <comando>` continua a funzionare invariato su qualsiasi piattaforma.
+
+---
+
+## [11.4.1] - 2026-03-11 - Consolidamento Bootstrap e Estrazione `enableErrorDisplay()` in `ErrorHandler`
+
+Questa patch consolida la gestione del bootstrap nei due entry point del framework. Il `require_once` dell'autoload di Composer viene spostato direttamente nello skeleton di `index.php`, semplificando la procedura d'installazione. La logica di abilitazione degli errori viene estratta in un metodo statico di `ErrorHandler`, eliminando la dipendenza da `LoggerInterface` nel contesto di bootstrap della console.
+
+### ♻️ Refactoring
+
+#### `ErrorHandler` — Estrazione di `enableErrorDisplay()` come metodo statico
+
+La versione 11.4.0 aveva introdotto `showErrorInDevelopmentEnvironment()` come metodo d'istanza, usato anche nello script `sisma`. Questo richiedeva l'istanziazione di `ErrorHandler` e quindi la dipendenza da `Psr\Log\LoggerInterface` (via vendor autoload) già in fase di bootstrap della console, prima ancora di qualsiasi comando. Il blocco `ini_set` è stato estratto nel nuovo metodo statico `enableErrorDisplay()`, senza dipendenze esterne, riutilizzabile sia da `sisma` che internamente da `showErrorInDevelopmentEnvironment()`.
+
+**Modifica**:
+
+- ❌ **11.4.0**: `$errorHandler = new ErrorHandler(); $errorHandler->showErrorInDevelopmentEnvironment();` in `sisma` (richiede vendor autoload)
+- ✅ **11.4.1**: `ErrorHandler::enableErrorDisplay();` in `sisma` (metodo statico, nessuna istanza, nessuna dipendenza vendor); `showErrorInDevelopmentEnvironment()` delega internamente a `self::enableErrorDisplay()`
+
+**File modificati**:
+- **`Core/HelperClasses/ErrorHandler.php`**: Aggiunto metodo statico `enableErrorDisplay()`; `showErrorInDevelopmentEnvironment()` ora chiama `self::enableErrorDisplay()` al posto del blocco `ini_set` inline
+- **`Console/sisma`**: Sostituito blocco `ini_set` con `ErrorHandler::enableErrorDisplay()`; rimosso `require_once vendor/autoload.php`
+
+#### `Public/index.php` — `vendor/autoload.php` incluso nello skeleton
+
+Il `require_once` dell'autoload di Composer veniva iniettato dinamicamente da `InstallationManager::copyPublicFolder()` tramite manipolazione di stringa sul file copiato. Poiché il percorso relativo `dirname(__DIR__) . '/vendor/autoload.php'` è invariante sia nello skeleton (`SismaFramework/vendor/`) sia nel progetto installato (`projectRoot/vendor/`), la riga è ora inclusa direttamente nel file sorgente. L'ordine di caricamento è: autoload SismaFramework prima, autoload vendor dopo.
+
+**File modificati**:
+- **`Public/index.php`**: Aggiunto `require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';` dopo il require dell'autoload interno
+- **`Console/Services/Installation/InstallationManager.php`**: Rimossa la logica di iniezione dinamica della riga `vendor/autoload.php` in `copyPublicFolder()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Il comportamento runtime di entrambi gli entry point rimane identico. `showErrorInDevelopmentEnvironment()` mantiene la stessa firma e semantica.
+
+---
+
 ## [11.4.0] - 2026-03-09 - Auto-discovery dei Comandi Console tramite Factory Pattern
 
 Questa minor introduce l'auto-discovery automatico dei comandi console tramite il pattern factory nel `CommandDispatcher`, allineando l'architettura della console a quella del `Dispatcher` HTTP. I comandi non devono più essere registrati manualmente nello script `sisma`: vengono scoperti automaticamente sia nel framework che in tutti i moduli configurati.
