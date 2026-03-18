@@ -12,13 +12,13 @@ class ModelTypeTest extends TestCase
     {
         $this->assertEquals('SismaFramework\\Orm\\BaseClasses', ModelType::baseModel->getNamespace());
         $this->assertEquals('SismaFramework\\Orm\\ExtendedClasses', ModelType::dependentModel->getNamespace());
-        $this->assertEquals('SismaFramework\\Orm\\ExtendedClasses', ModelType::selfReferencedModel->getNamespace());
+        $this->assertEquals('SismaFramework\\Orm\\ExtendedClasses', ModelType::selfDependentModel->getNamespace());
     }
 
     public function testEnumValues(): void
     {
         $this->assertEquals('BaseModel', ModelType::baseModel->value);
         $this->assertEquals('DependentModel', ModelType::dependentModel->value);
-        $this->assertEquals('SelfReferencedModel', ModelType::selfReferencedModel->value);
+        $this->assertEquals('SelfDependentModel', ModelType::selfDependentModel->value);
     }
 }

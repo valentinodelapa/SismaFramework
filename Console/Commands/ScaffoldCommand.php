@@ -35,7 +35,7 @@ use SismaFramework\Console\Services\Scaffolding\ScaffoldingManager;
 class ScaffoldCommand extends BaseCommand
 {
 
-    private array $validTypes = ['BaseModel', 'DependentModel', 'SelfReferencedModel'];
+    private array $validTypes = ['BaseModel', 'DependentModel', 'SelfDependentModel'];
 
     public function __construct(private ScaffoldingManager $scaffoldingManager = new ScaffoldingManager())
     {
@@ -60,7 +60,7 @@ Arguments:
 
 Options:
   --force         Force overwrite of existing files
-  --type=TYPE     Force a specific model type (BaseModel, DependentModel, SelfReferencedModel)
+  --type=TYPE     Force a specific model type (BaseModel, DependentModel, SelfDependentModel)
   --template=PATH  Use custom templates from the specified path
 
 Example:

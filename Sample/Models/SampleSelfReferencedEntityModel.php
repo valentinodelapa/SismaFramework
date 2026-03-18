@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Sample\Models;
 
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
+use SismaFramework\Orm\ExtendedClasses\SelfDependentModel;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
 
@@ -35,7 +35,7 @@ use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
  *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleSelfReferencedEntityModel extends SelfDependentModel
 {
 
     #[\Override]

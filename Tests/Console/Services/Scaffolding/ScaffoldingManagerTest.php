@@ -124,7 +124,7 @@ PHP);
             ->addFilterFieldMode("parentCategoryEntity", FilterType::isEntity, [], true);',
             'formNamespace' => 'TestModule\Application\Forms',
             'modelNamespace' => 'TestModule\Application\Models',
-            'modelType' => 'SelfReferencedModel',
+            'modelType' => 'SelfDependentModel',
             'modelTypeNamespace' => 'SismaFramework\Orm\ExtendedClasses',
         ];
         $this->assertEquals(Templater::parseTemplate($this->templatesPath . 'Model.tpl', $vars), $modelContent);
@@ -197,7 +197,7 @@ PHP);
 
     public function testGenerateScaffoldingWithBaseEntityWithCustomModelType(): void
     {
-        $this->scaffoldingManager->setCustomType('SelfReferencedModel');
+        $this->scaffoldingManager->setCustomType('SelfDependentModel');
         $entityFile = $this->tempDir . '/TestModule/Application/Entities/CustomEntity.php';
         file_put_contents($entityFile, <<<'PHP'
 <?php
@@ -234,7 +234,7 @@ PHP);
             ->addFilterFieldMode("age", FilterType::isInteger, [], true);',
             'formNamespace' => 'TestModule\Application\Forms',
             'modelNamespace' => 'TestModule\Application\Models',
-            'modelType' => 'SelfReferencedModel',
+            'modelType' => 'SelfDependentModel',
             'modelTypeNamespace' => 'SismaFramework\Orm\ExtendedClasses',
         ];
         $this->assertEquals(Templater::parseTemplate($this->templatesPath . 'Model.tpl', $vars), $modelContent);

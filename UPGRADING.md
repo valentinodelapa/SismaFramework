@@ -4,8 +4,120 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 ## Indice
 
+- [Da 11.x a 12.x](#da-11x-a-12x)
 - [Da 10.x a 11.x](#da-10x-a-11x)
 - [Da 9.x a 10.x](#da-9x-a-10x)
+
+---
+
+## Da 11.x a 12.x
+
+La versione 12.0.0 introduce due breaking changes nella nomenclatura dei model e nella firma di un metodo di `Query`.
+
+### Breaking Changes
+
+#### 1. `SelfReferencedModel` rinominato in `SelfDependentModel`
+
+**Impatto**: Alto
+**Componenti interessati**: Tutti i model che estendono `SelfReferencedModel`
+
+La classe è stata rinominata per allineare la nomenclatura del layer model al concetto di **dipendenza** (la presenza di chiavi esterne nell'entità gestita) anziché di referenziazione (essere puntati da altre entità, concetto proprio del layer entity). L'autoreferenziazione è bidirezionale e implica l'autodipendenza; `SelfDependentModel` rispecchia correttamente la prospettiva del layer model.
+
+**Prima (11.x)**:
+```php
+use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
+
+class CategoryModel extends SelfReferencedModel
+{
+    // ...
+}
+```
+
+**Dopo (12.x)**:
+```php
+use SismaFramework\Orm\ExtendedClasses\SelfDependentModel;
+
+class CategoryModel extends SelfDependentModel
+{
+    // ...
+}
+```
+
+L'enum `ModelType` è stato aggiornato di conseguenza:
+
+**Prima (11.x)**:
+```php
+ModelType::selfReferencedModel // valore: "SelfReferencedModel"
+```
+
+**Dopo (12.x)**:
+```php
+ModelType::selfDependentModel // valore: "SelfDependentModel"
+```
+
+**Azione richiesta**:
+- Cercare tutte le occorrenze di `SelfReferencedModel` nel codebase del progetto
+- Nei `use` statement sostituire `SelfReferencedModel` con `SelfDependentModel`
+- Nelle dichiarazioni `extends` sostituire `SelfReferencedModel` con `SelfDependentModel`
+- Se si utilizza `ModelType::selfReferencedModel`, sostituire con `ModelType::selfDependentModel`
+- Se si confronta il valore stringa `"SelfReferencedModel"` (es. configurazioni, scaffold), sostituire con `"SelfDependentModel"`
+
+---
+
+#### 2. `Query::setFulltextIndexColumn()` — Riordinamento parametri
+
+**Impatto**: Medio
+**Componenti interessati**: Codice che chiama `setFulltextIndexColumn` con argomenti posizionali oltre il secondo
+
+I parametri sono stati riordinati per garantire coerenza con gli altri metodi della classe: `$textSearchMode` è stato spostato prima di `$columnAlias` e `$append`.
+
+**Prima (11.x)**:
+```php
+// firma: (array $columns, $value, ?string $columnAlias, bool $append, TextSearchMode $textSearchMode)
+$query->setFulltextIndexColumn(
+    ['title', 'body'],
+    Placeholder::placeholder,
+    'relevance',
+    false,
+    TextSearchMode::inBooleanMode
+);
+```
+
+**Dopo (12.x)**:
+```php
+// firma: (array $columns, $value, TextSearchMode $textSearchMode, ?string $columnAlias, bool $append)
+$query->setFulltextIndexColumn(
+    ['title', 'body'],
+    Placeholder::placeholder,
+    TextSearchMode::inBooleanMode,
+    'relevance',
+    false
+);
+```
+
+**Azione richiesta**:
+- Cercare tutte le chiamate a `setFulltextIndexColumn` nel codebase
+- Per ogni chiamata che passa più di due argomenti, verificare e aggiornare l'ordine degli argomenti posizionali secondo la nuova firma
+- Le chiamate con soli i primi due argomenti (`$columns` e `$value`) non richiedono modifiche
+
+---
+
+### Checklist di Migrazione
+
+- [ ] **Model che estendono `SelfReferencedModel`**
+  - [ ] Aggiornati tutti i `use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel`
+  - [ ] Aggiornati tutti gli `extends SelfReferencedModel`
+  - [ ] Aggiornati eventuali riferimenti a `ModelType::selfReferencedModel`
+  - [ ] Aggiornate eventuali stringhe `"SelfReferencedModel"` in configurazioni o scaffold
+
+- [ ] **Chiamate a `Query::setFulltextIndexColumn()`**
+  - [ ] Cercate tutte le chiamate nel codebase
+  - [ ] Verificato l'ordine degli argomenti posizionali per ogni chiamata con più di 2 argomenti
+
+- [ ] **Testing**
+  - [ ] Eseguiti tutti i test unitari
+  - [ ] Verificato funzionamento dei model autoreferenziati in ambiente di sviluppo
+  - [ ] Verificato funzionamento delle query fulltext
 
 ---
 

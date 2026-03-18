@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.0] - 2026-07-02 - Breaking Changes: Rinomina `SelfReferencedModel` e Riordinamento Parametri `Query`
+
+### 💥 Breaking Changes
+
+#### `SelfReferencedModel` → `SelfDependentModel`
+
+La classe `SelfReferencedModel` è stata rinominata in `SelfDependentModel` per allineare la nomenclatura del layer model al concetto di **dipendenza** (anziché referenziazione). Nel layer model la chiave classificatoria è la presenza di chiavi esterne nell'entità gestita (dipendenza), non il fatto di essere referenziata da altre entità (referenziazione, concetto proprio del layer entity). L'autoreferenziazione è bidirezionale, quindi un'entità autoreferenziata è anche autodipendente; il nome `SelfDependentModel` riflette correttamente la prospettiva del layer model.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/SelfDependentModel.php`**: Rinominato da `SelfReferencedModel.php`; classe rinominata da `SelfReferencedModel` a `SelfDependentModel`
+- **`Console/Enumerations/ModelType.php`**: Case `selfReferencedModel` → `selfDependentModel`, valore `"SelfReferencedModel"` → `"SelfDependentModel"`
+- **`Console/Commands/ScaffoldCommand.php`**: Aggiornati i riferimenti stringa
+- **`Sample/Models/SampleSelfReferencedEntityModel.php`**: `use` e `extends` aggiornati
+- **`Tests/Orm/ExtendedClasses/SelfDependentModelTest.php`**: Rinominato da `SelfReferencedModelTest.php`; aggiornati `use` e nome classe
+
+**Migrazione**: Sostituire ogni occorrenza di `SelfReferencedModel` con `SelfDependentModel` nei `use` statement e nelle dichiarazioni `extends` dei propri model.
+
+#### `Query::setFulltextIndexColumn()` — Riordinamento parametri
+
+I parametri del metodo `setFulltextIndexColumn` della classe `Query` sono stati riordinati per garantire coerenza con la firma degli altri metodi della classe.
+
+**File modificati**:
+- **`Orm/HelperClasses/Query.php`**: Riordinati i parametri di `setFulltextIndexColumn`
+- **`Tests/Orm/HelperClasses/QueryTest.php`**: Aggiornate le chiamate di test
+
+**Migrazione**: Verificare e aggiornare l'ordine degli argomenti in ogni chiamata a `setFulltextIndexColumn`.
+
+---
+
 ## [11.5.0] - 2026-03-15 - Supporto Cross-Platform per il Comando `sisma`
 
 Questa minor aggiunge il supporto nativo al comando `sisma` su Windows e semplifica l'avvio su Linux/macOS tramite shebang.

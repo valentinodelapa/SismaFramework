@@ -42,7 +42,7 @@ use SismaFramework\Orm\ExtendedClasses\DependentModel;
  *
  * @author Valentino de Lapa
  */
-abstract class SelfReferencedModel extends DependentModel
+abstract class SelfDependentModel extends DependentModel
 {
 
     private string $parentForeignKey;

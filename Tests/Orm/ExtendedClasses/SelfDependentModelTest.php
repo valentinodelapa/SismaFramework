@@ -34,15 +34,15 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
+use SismaFramework\Orm\ExtendedClasses\SelfDependentModel;
 use SismaFramework\TestsApplication\Models\SelfReferencedSampleModel;
 use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
 
 /**
- * Test for SelfReferencedModel class
+ * Test for SelfDependentModel class
  * @author Valentino de Lapa
  */
-class SelfReferencedModelTest extends TestCase
+class SelfDependentModelTest extends TestCase
 {
     private Config $configStub;
     private DataMapper $dataMapperMock;
@@ -111,7 +111,7 @@ class SelfReferencedModelTest extends TestCase
     public function testConstructorSetParentForeignKey()
     {
         $this->initializeStub();
-        $this->assertInstanceOf(SelfReferencedModel::class, $this->model);
+        $this->assertInstanceOf(SelfDependentModel::class, $this->model);
     }
 
     public function testMagicMethodCallWithParentAndEntity()

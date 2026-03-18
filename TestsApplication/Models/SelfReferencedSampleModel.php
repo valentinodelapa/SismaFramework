@@ -27,7 +27,7 @@
 namespace SismaFramework\TestsApplication\Models;
 
 use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
+use SismaFramework\Orm\ExtendedClasses\SelfDependentModel;
 use SismaFramework\Orm\HelperClasses\Query;
 
 /**
@@ -35,7 +35,7 @@ use SismaFramework\Orm\HelperClasses\Query;
  *
  * @author Valentino de Lapa
  */
-class SelfReferencedSampleModel extends SelfReferencedModel
+class SelfReferencedSampleModel extends SelfDependentModel
 {
 
     protected function getEntityName(): string
