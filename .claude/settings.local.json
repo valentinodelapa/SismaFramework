@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find C:UsersvalenOneDriveworkspacesisma-module-systemwwwSismaFrameworkConsoleServicesUpgrade -type f -name *.php)"
+    ]
+  }
+}

@@ -29,6 +29,35 @@ I parametri del metodo `setFulltextIndexColumn` della classe `Query` sono stati 
 
 **Migrazione**: Verificare e aggiornare l'ordine degli argomenti in ogni chiamata a `setFulltextIndexColumn`.
 
+### ✨ Nuove Funzionalità
+
+#### Supporto upgrade automatico 11.x → 12.x nel comando `sisma upgrade`
+
+Il sistema di upgrade automatico dei moduli ora copre anche la migrazione dalla versione 11 alla 12. Le due breaking change di questa versione vengono gestite tramite due nuovi transformer, integrati nella nuova strategy `Upgrade11to12Strategy`.
+
+**Transformer `ClassRenameTransformer`** (confidence: 95%):
+- Rinomina identificatori (classi, enum case, stringhe letterali) usando word boundary
+- Gestisce `use` statement, dichiarazioni `extends` e riferimenti a enum case
+- Usato per `SelfReferencedModel` → `SelfDependentModel` e `selfReferencedModel` → `selfDependentModel`
+- Nessun intervento manuale richiesto
+
+**Transformer `FulltextIndexColumnTransformer`** (confidence: 70%):
+- Riordina automaticamente i 5 argomenti posizionali di `setFulltextIndexColumn()` alla nuova firma
+- Chiama con ≤ 2 argomenti: nessuna modifica
+- Chiama con 5 argomenti: reorder automatico
+- Chiama con 3 o 4 argomenti: nessuna modifica automatica, flag `requiresManualReview` con warning
+
+**File aggiunti**:
+- **`Console/Services/Upgrade/Transformers/ClassRenameTransformer.php`**: Nuovo transformer generico per rinominare identificatori
+- **`Console/Services/Upgrade/Transformers/FulltextIndexColumnTransformer.php`**: Nuovo transformer per il riordino parametri di `setFulltextIndexColumn()`
+- **`Console/Services/Upgrade/Strategies/Upgrade11to12Strategy.php`**: Nuova strategy per l'upgrade 11.x → 12.0.0
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade11to12StrategyTest.php`**: Test della nuova strategy
+- **`Tests/Console/Services/Upgrade/Transformers/ClassRenameTransformerTest.php`**: Test del `ClassRenameTransformer`
+- **`Tests/Console/Services/Upgrade/Transformers/FulltextIndexColumnTransformerTest.php`**: Test del `FulltextIndexColumnTransformer`
+
+**File modificati**:
+- **`Console/Services/Upgrade/UpgradeManager.php`**: Aggiunta `Upgrade11to12Strategy` all'array delle strategy in `selectStrategy()`
+
 ---
 
 ## [11.5.0] - 2026-03-15 - Supporto Cross-Platform per il Comando `sisma`

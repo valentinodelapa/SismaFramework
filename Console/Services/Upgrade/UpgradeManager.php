@@ -30,6 +30,7 @@ use SismaFramework\Console\Exceptions\UpgradeException;
 use SismaFramework\Console\Exceptions\VersionMismatchException;
 use SismaFramework\Console\Services\Upgrade\DTO\UpgradeReport;
 use SismaFramework\Console\Services\Upgrade\Strategies\Upgrade10to11Strategy;
+use SismaFramework\Console\Services\Upgrade\Strategies\Upgrade11to12Strategy;
 use SismaFramework\Console\Services\Upgrade\Strategies\UpgradeStrategyInterface;
 use SismaFramework\Console\Services\Upgrade\Utils\BackupManager;
 use SismaFramework\Console\Services\Upgrade\Utils\FileScanner;
@@ -183,7 +184,8 @@ class UpgradeManager
     private function selectStrategy(string $sourceVersion, string $targetVersion): UpgradeStrategyInterface
     {
         $strategies = [
-            new Upgrade10to11Strategy()
+            new Upgrade10to11Strategy(),
+            new Upgrade11to12Strategy(),
         ];
         foreach ($strategies as $strategy) {
             $sourceMajor = (int) explode('.', $sourceVersion)[0];
