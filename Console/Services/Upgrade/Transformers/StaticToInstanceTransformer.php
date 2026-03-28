@@ -96,7 +96,6 @@ class StaticToInstanceTransformer implements TransformerInterface
     /**
      * Transform index.php file
      *
-     * @param string $content File content
      * @return array{content: string, changes: int, warnings: array}
      */
     private function transformIndexFile(string $content): array
@@ -178,7 +177,6 @@ class StaticToInstanceTransformer implements TransformerInterface
     /**
      * Transform regular (non-index) file
      *
-     * @param string $content File content
      * @return array{content: string, changes: int, warnings: array}
      */
     private function transformRegularFile(string $content): array

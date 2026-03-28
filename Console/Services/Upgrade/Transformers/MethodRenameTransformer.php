@@ -36,17 +36,9 @@ use SismaFramework\Console\Services\Upgrade\DTO\TransformationResult;
 class MethodRenameTransformer implements TransformerInterface
 {
     /**
-     * @var array<string, string> Map of old method names to new method names
-     */
-    private array $renames;
-
-    /**
      * @param array<string, string> $renames Map of old method names to new method names
      */
-    public function __construct(array $renames = [])
-    {
-        $this->renames = $renames;
-    }
+    public function __construct(private array $renames = []) {}
 
     public function canTransform(string $filePath, string $content): bool
     {
@@ -74,7 +66,7 @@ class MethodRenameTransformer implements TransformerInterface
             changesCount: $changesCount,
             confidence: $this->getConfidence(),
             warnings: $warnings,
-            requiresManualReview: false
+            requiresManualReview: false,
         );
     }
 

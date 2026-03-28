@@ -33,38 +33,14 @@ use SismaFramework\Console\Services\Upgrade\DTO\TransformationResult;
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
+
 interface TransformerInterface
 {
-
-    /**
-     * Check if this transformer can transform the given file
-     *
-     * @param string $filePath Path to the file
-     * @param string $content File content
-     * @return bool True if can transform
-     */
     public function canTransform(string $filePath, string $content): bool;
 
-    /**
-     * Transform the content
-     *
-     * @param string $content Content to transform
-     * @param string $filePath Path to the file being transformed
-     * @return TransformationResult Transformation result
-     */
     public function transform(string $content, string $filePath): TransformationResult;
 
-    /**
-     * Get the confidence level of this transformer (0-100)
-     *
-     * @return int Confidence percentage
-     */
     public function getConfidence(): int;
 
-    /**
-     * Get a description of what this transformer does
-     *
-     * @return string Description
-     */
     public function getDescription(): string;
 }
