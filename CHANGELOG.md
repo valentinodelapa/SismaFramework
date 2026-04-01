@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [10.1.14] - 2026-04-01 - Correzione Template Controller nello Scaffolding
+
+Questa patch corregge due bug nel template del controller generato dal comando di scaffolding.
+
+### 🐛 Bug Fixes
+
+#### `Console/Services/Scaffolding/Templates/Controller.tpl` — Namespace modello errato e metodo form scorretto
+
+**Bug 1 — Namespace `use` del modello con segmento `Models` duplicato**
+
+Il namespace nell'istruzione `use` includeva un segmento `\Models\` ridondante: poiché `{{modelNamespace}}` contiene già il segmento `Models`, il risultato era una duplicazione (es. `…\Models\Models\{{entityShortName}}Model`), producendo un'istruzione non valida nel controller generato.
+
+- ❌ **10.1.13**: `use {{modelNamespace}}\Models\{{entityShortName}}Model;`
+- ✅ **10.1.14**: `use {{modelNamespace}}\{{entityShortName}}Model;`
+
+**Bug 2 — Uso di `getEntity()` al posto di `resolveEntity()` nelle azioni `create` ed `edit`**
+
+Il salvataggio dell'entità nelle azioni `create` ed `edit` chiamava `getEntity()`, che non risolve correttamente le relazioni del form. Il metodo corretto è `resolveEntity()`.
+
+- ❌ **10.1.13**: `$this->dataMapper->save(${{entityShortNameLower}}Form->getEntity());`
+- ✅ **10.1.14**: `$this->dataMapper->save(${{entityShortNameLower}}Form->resolveEntity());`
+
+**File modificati**:
+- **`Console/Services/Scaffolding/Templates/Controller.tpl`**: Corretto namespace `use` del modello; sostituito `getEntity()` con `resolveEntity()` nelle azioni `create` ed `edit`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: La modifica impatta esclusivamente il codice generato dallo scaffolding per nuovi controller. I controller già generati non sono influenzati.
+
+---
+
 ## [10.1.13] - 2026-03-08 - Correzione Rollback Transazione e Script sisma
 
 Questa patch release corregge due bug: il metodo `rollback()` di `TransactionManager` eseguiva incondizionatamente il rollback senza verificare se una transazione fosse attiva; lo script `sisma` usava separatori di percorso hardcoded (`/`) e non caricava il `configFramework.php` del progetto se presente.

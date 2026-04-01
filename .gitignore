@@ -12,3 +12,4 @@
 /vendor/
 .phpunit.cache/
 .scannerwork/
+.php-cs-fixer.cache
