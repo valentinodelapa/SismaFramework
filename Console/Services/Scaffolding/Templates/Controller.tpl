@@ -9,7 +9,7 @@ use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
 use {{entityNamespace}}\{{entityShortName}};
 use {{formNamespace}}\{{entityShortName}}Form;
-use {{modelNamespace}}\Models\{{entityShortName}}Model;
+use {{modelNamespace}}\{{entityShortName}}Model;
 
 class {{entityShortName}}Controller extends BaseController
 {
@@ -27,7 +27,7 @@ class {{entityShortName}}Controller extends BaseController
         ${{entityShortNameLower}}Form = new {{entityShortName}}Form();
         ${{entityShortNameLower}}Form->handleRequest($request);
         if (${{entityShortNameLower}}Form->isSubmitted() && ${{entityShortNameLower}}Form->isValid()) {
-            $this->dataMapper->save(${{entityShortNameLower}}Form->getEntity());
+            $this->dataMapper->save(${{entityShortNameLower}}Form->resolveEntity());
             return Router::redirect('{{controllerRoute}}/index');
         }
         $this->vars['{{entityShortNameLower}}'] = ${{entityShortNameLower}}Form->getEntityDataToStandardEntity();
@@ -40,7 +40,7 @@ class {{entityShortName}}Controller extends BaseController
         ${{entityShortNameLower}}Form = new {{entityShortName}}Form(${{entityShortNameLower}});
         ${{entityShortNameLower}}Form->handleRequest($request);
         if (${{entityShortNameLower}}Form->isSubmitted() && ${{entityShortNameLower}}Form->isValid()) {
-            $this->dataMapper->save(${{entityShortNameLower}}Form->getEntity());
+            $this->dataMapper->save(${{entityShortNameLower}}Form->resolveEntity());
             return Router::redirect('{{controllerRoute}}/index');
         }
         $this->vars['{{entityShortNameLower}}'] = ${{entityShortNameLower}}Form->isSubmitted() ? ${{entityShortNameLower}}Form->getEntityDataToStandardEntity() : ${{entityShortNameLower}};
