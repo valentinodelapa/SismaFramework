@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.5.2] - 2026-04-04 - Rifattorizzazione Template Controller nello Scaffolding
+
+Piccola rifattorizzazione del template del controller generato dal comando di scaffolding, per semplificare eventuali personalizzazioni post-generazione.
+
+### ♻️ Refactoring
+
+#### `Console/Services/Scaffolding/Templates/Controller.tpl` — Estrazione variabile entità prima del salvataggio
+
+Nelle azioni `create` e `update`, la chiamata a `resolveEntity()` era concatenata direttamente come argomento di `$this->dataMapper->save()` su un'unica riga. L'entità risolta viene ora assegnata a una variabile dedicata prima di essere passata al DataMapper.
+
+- ❌ **11.5.1**: `$this->dataMapper->save(${{entityShortNameLower}}Form->resolveEntity());`
+- ✅ **11.5.2**:
+  ```php
+  ${{entityShortNameLower}} = ${{entityShortNameLower}}Form->resolveEntity();
+  $this->dataMapper->save(${{entityShortNameLower}});
+  ```
+
+Questo rende il codice generato più leggibile e facilita eventuali personalizzazioni (es. manipolare l'entità tra `resolveEntity()` e `save()`), senza alcuna modifica al comportamento a runtime.
+
+Rimossi inoltre i trailing whitespace sulle righe vuote tra i metodi della classe.
+
+**File modificati**:
+- **`Console/Services/Scaffolding/Templates/Controller.tpl`**: Estrazione variabile entità nelle azioni `create` e `update`; pulizia trailing whitespace
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: La modifica impatta esclusivamente il codice generato dallo scaffolding per nuovi controller. I controller già generati non sono influenzati.
+
+---
+
 ## [11.5.1] - 2026-04-01 - Correzione Template Controller nello Scaffolding
 
 Questa patch corregge due bug nel template del controller generato dal comando di scaffolding.
