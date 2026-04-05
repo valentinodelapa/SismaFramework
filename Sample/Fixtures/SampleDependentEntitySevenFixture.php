@@ -24,34 +24,33 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Models;
+namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Placeholder;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
+use SismaFramework\Core\BaseClasses\BaseFixture;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Sample\Entities\SampleDependentEntity;
+use SismaFramework\Sample\Enumerations\ArticleStatus;
 
 /**
- * Description of SampleSelfReferencedEntityModel
- *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleDependentEntitySevenFixture extends BaseFixture
 {
 
-    #[\Override]
-    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    protected function setDependencies(): void
     {
-        $query->appendCondition('name', ComparisonOperator::like, Placeholder::placeholder);
-        $bindValues[] = '%' . $searchKey . '%';
-        $bindTypes[] = DataType::typeString;
+        $this->addDependency(SampleReferencedEntityFiveFixture::class);
     }
 
-    #[\Override]
-    protected function getEntityName(): string
+    public function setEntity(): void
     {
-        return SampleSelfReferencedEntity::class;
+        $entity = new SampleDependentEntity($this->dataMapper);
+        $entity->title = 'CI/CD per PHP';
+        $entity->content = 'Paolo Ferrari presenta una pipeline completa per continuous integration e deployment.';
+        $entity->createdAt = new SismaDateTime('2025-01-16 13:30:00');
+        $entity->status = ArticleStatus::PUBLISHED;
+        $entity->views = 420;
+        $entity->sampleReferencedEntity = $this->getEntityByFixtureName(SampleReferencedEntityFiveFixture::class);
+        $this->addEntity($entity);
     }
 }

@@ -148,6 +148,26 @@ ob_start();
                     </div>
                 </a>
             </div>
+            <div class="col-md-6">
+                <a href="/sample/categories" class="card text-decoration-none shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning">
+                            <i class="bi bi-diagram-3"></i> SelfReferencedEntity
+                        </h5>
+                        <p class="card-text text-muted">Albero categorie gerarchiche</p>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="/sample/collaborations" class="card text-decoration-none shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary">
+                            <i class="bi bi-people"></i> Multiple FK
+                        </h5>
+                        <p class="card-text text-muted">Due foreign key verso la stessa entity</p>
+                    </div>
+                </a>
+            </div>
         </div>
     </section>
 

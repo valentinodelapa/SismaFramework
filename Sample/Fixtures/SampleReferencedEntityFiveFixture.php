@@ -24,34 +24,28 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Models;
+namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Placeholder;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
+use SismaFramework\Core\BaseClasses\BaseFixture;
+use SismaFramework\Sample\Entities\SampleReferencedEntity;
 
 /**
- * Description of SampleSelfReferencedEntityModel
- *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleReferencedEntityFiveFixture extends BaseFixture
 {
 
-    #[\Override]
-    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    protected function setDependencies(): void
     {
-        $query->appendCondition('name', ComparisonOperator::like, Placeholder::placeholder);
-        $bindValues[] = '%' . $searchKey . '%';
-        $bindTypes[] = DataType::typeString;
     }
 
-    #[\Override]
-    protected function getEntityName(): string
+    public function setEntity(): void
     {
-        return SampleSelfReferencedEntity::class;
+        $entity = new SampleReferencedEntity($this->dataMapper);
+        $entity->fullName = 'Paolo Ferrari';
+        $entity->email = 'paolo.ferrari@example.com';
+        $entity->bio = 'DevOps engineer con focus su CI/CD e cloud infrastructure.';
+        $entity->verified = true;
+        $this->addEntity($entity);
     }
 }

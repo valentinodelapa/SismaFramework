@@ -24,34 +24,31 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Models;
+namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Placeholder;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
+use SismaFramework\Core\BaseClasses\BaseFixture;
+use SismaFramework\Sample\Entities\SampleMultipleDependentEntity;
 
 /**
- * Description of SampleSelfReferencedEntityModel
+ * Review Giuseppe Verdi - Paolo Ferrari
  *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleMultipleDependentEntityTwoFixture extends BaseFixture
 {
 
-    #[\Override]
-    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    protected function setDependencies(): void
     {
-        $query->appendCondition('name', ComparisonOperator::like, Placeholder::placeholder);
-        $bindValues[] = '%' . $searchKey . '%';
-        $bindTypes[] = DataType::typeString;
+        $this->addDependency(SampleReferencedEntityThreeFixture::class)
+             ->addDependency(SampleReferencedEntityFiveFixture::class);
     }
 
-    #[\Override]
-    protected function getEntityName(): string
+    public function setEntity(): void
     {
-        return SampleSelfReferencedEntity::class;
+        $entity = new SampleMultipleDependentEntity($this->dataMapper);
+        $entity->name = 'Review Giuseppe-Paolo';
+        $entity->sampleReferencedEntityOne = $this->getEntityByFixtureName(SampleReferencedEntityThreeFixture::class);
+        $entity->sampleReferencedEntityTwo = $this->getEntityByFixtureName(SampleReferencedEntityFiveFixture::class);
+        $this->addEntity($entity);
     }
 }

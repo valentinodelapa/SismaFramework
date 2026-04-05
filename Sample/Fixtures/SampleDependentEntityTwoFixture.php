@@ -24,34 +24,33 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Models;
+namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Placeholder;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
+use SismaFramework\Core\BaseClasses\BaseFixture;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Sample\Entities\SampleDependentEntity;
+use SismaFramework\Sample\Enumerations\ArticleStatus;
 
 /**
- * Description of SampleSelfReferencedEntityModel
- *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleDependentEntityTwoFixture extends BaseFixture
 {
 
-    #[\Override]
-    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    protected function setDependencies(): void
     {
-        $query->appendCondition('name', ComparisonOperator::like, Placeholder::placeholder);
-        $bindValues[] = '%' . $searchKey . '%';
-        $bindTypes[] = DataType::typeString;
+        $this->addDependency(SampleReferencedEntityTwoFixture::class);
     }
 
-    #[\Override]
-    protected function getEntityName(): string
+    public function setEntity(): void
     {
-        return SampleSelfReferencedEntity::class;
+        $entity = new SampleDependentEntity($this->dataMapper);
+        $entity->title = 'Pattern MVC Spiegato';
+        $entity->content = 'Una guida completa al pattern Model-View-Controller scritta da Laura Bianchi.';
+        $entity->createdAt = new SismaDateTime('2025-01-11 14:00:00');
+        $entity->status = ArticleStatus::PUBLISHED;
+        $entity->views = 320;
+        $entity->sampleReferencedEntity = $this->getEntityByFixtureName(SampleReferencedEntityTwoFixture::class);
+        $this->addEntity($entity);
     }
 }

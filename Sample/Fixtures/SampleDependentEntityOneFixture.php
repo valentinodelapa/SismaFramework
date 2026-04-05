@@ -24,34 +24,33 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Models;
+namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Placeholder;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
+use SismaFramework\Core\BaseClasses\BaseFixture;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Sample\Entities\SampleDependentEntity;
+use SismaFramework\Sample\Enumerations\ArticleStatus;
 
 /**
- * Description of SampleSelfReferencedEntityModel
- *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleDependentEntityOneFixture extends BaseFixture
 {
 
-    #[\Override]
-    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    protected function setDependencies(): void
     {
-        $query->appendCondition('name', ComparisonOperator::like, Placeholder::placeholder);
-        $bindValues[] = '%' . $searchKey . '%';
-        $bindTypes[] = DataType::typeString;
+        $this->addDependency(SampleReferencedEntityOneFixture::class);
     }
 
-    #[\Override]
-    protected function getEntityName(): string
+    public function setEntity(): void
     {
-        return SampleSelfReferencedEntity::class;
+        $entity = new SampleDependentEntity($this->dataMapper);
+        $entity->title = 'Il mio primo articolo';
+        $entity->content = 'Contenuto del primo articolo scritto da Mario Rossi. Parla di architettura software e best practices.';
+        $entity->createdAt = new SismaDateTime('2025-01-10 10:00:00');
+        $entity->status = ArticleStatus::PUBLISHED;
+        $entity->views = 150;
+        $entity->sampleReferencedEntity = $this->getEntityByFixtureName(SampleReferencedEntityOneFixture::class);
+        $this->addEntity($entity);
     }
 }

@@ -37,6 +37,7 @@ class SampleMultipleDependentEntity extends BaseEntity
 {
 
     protected int $id;
+    protected string $name;
     protected SampleReferencedEntity $sampleReferencedEntityOne;
     protected SampleReferencedEntity $sampleReferencedEntityTwo;
 

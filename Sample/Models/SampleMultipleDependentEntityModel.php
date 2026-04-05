@@ -26,21 +26,22 @@
 
 namespace SismaFramework\Sample\Models;
 
+use SismaFramework\Orm\BaseClasses\BaseModel;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Placeholder;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
 use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
+use SismaFramework\Sample\Entities\SampleMultipleDependentEntity;
 
 /**
- * Description of SampleSelfReferencedEntityModel
+ * Model per SampleMultipleDependentEntity - Esempio di Multiple FK
+ *
+ * Dimostra come gestire un'entità con due foreign key verso la stessa tabella.
  *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleMultipleDependentEntityModel extends BaseModel
 {
-
     #[\Override]
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
@@ -52,6 +53,6 @@ class SampleSelfReferencedEntityModel extends SelfReferencedModel
     #[\Override]
     protected function getEntityName(): string
     {
-        return SampleSelfReferencedEntity::class;
+        return SampleMultipleDependentEntity::class;
     }
 }

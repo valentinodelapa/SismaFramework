@@ -24,34 +24,33 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Models;
+namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Placeholder;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
+use SismaFramework\Core\BaseClasses\BaseFixture;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Sample\Entities\SampleDependentEntity;
+use SismaFramework\Sample\Enumerations\ArticleStatus;
 
 /**
- * Description of SampleSelfReferencedEntityModel
- *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleDependentEntitySixFixture extends BaseFixture
 {
 
-    #[\Override]
-    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    protected function setDependencies(): void
     {
-        $query->appendCondition('name', ComparisonOperator::like, Placeholder::placeholder);
-        $bindValues[] = '%' . $searchKey . '%';
-        $bindTypes[] = DataType::typeString;
+        $this->addDependency(SampleReferencedEntityThreeFixture::class);
     }
 
-    #[\Override]
-    protected function getEntityName(): string
+    public function setEntity(): void
     {
-        return SampleSelfReferencedEntity::class;
+        $entity = new SampleDependentEntity($this->dataMapper);
+        $entity->title = 'Bozza: Performance Tuning';
+        $entity->content = 'Articolo in bozza di Giuseppe Verdi su come migliorare le performance.';
+        $entity->createdAt = new SismaDateTime('2025-01-15 08:00:00');
+        $entity->status = ArticleStatus::DRAFT;
+        $entity->views = 5;
+        $entity->sampleReferencedEntity = $this->getEntityByFixtureName(SampleReferencedEntityThreeFixture::class);
+        $this->addEntity($entity);
     }
 }

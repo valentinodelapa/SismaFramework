@@ -24,34 +24,29 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Sample\Models;
+namespace SismaFramework\Sample\Fixtures;
 
-use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\DataType;
-use SismaFramework\Orm\Enumerations\Placeholder;
-use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
-use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\Core\BaseClasses\BaseFixture;
 use SismaFramework\Sample\Entities\SampleSelfReferencedEntity;
 
 /**
- * Description of SampleSelfReferencedEntityModel
+ * Categoria: Vue.js (parent: Frontend)
  *
  * @author Valentino de Lapa
  */
-class SampleSelfReferencedEntityModel extends SelfReferencedModel
+class SampleSelfReferencedEntityTenFixture extends BaseFixture
 {
 
-    #[\Override]
-    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    protected function setDependencies(): void
     {
-        $query->appendCondition('name', ComparisonOperator::like, Placeholder::placeholder);
-        $bindValues[] = '%' . $searchKey . '%';
-        $bindTypes[] = DataType::typeString;
+        $this->addDependency(SampleSelfReferencedEntityEightFixture::class);
     }
 
-    #[\Override]
-    protected function getEntityName(): string
+    public function setEntity(): void
     {
-        return SampleSelfReferencedEntity::class;
+        $entity = new SampleSelfReferencedEntity($this->dataMapper);
+        $entity->name = 'Vue.js';
+        $entity->parentSampleSelfReferencedEntity = $this->getEntityByFixtureName(SampleSelfReferencedEntityEightFixture::class);
+        $this->addEntity($entity);
     }
 }

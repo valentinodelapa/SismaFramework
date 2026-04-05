@@ -15,7 +15,9 @@ use SismaFramework\Sample\Entities\SampleBaseEntity;
 use SismaFramework\Sample\Enumerations\ArticleStatus;
 use SismaFramework\Sample\Models\SampleBaseEntityModel;
 use SismaFramework\Sample\Models\SampleDependentEntityModel;
+use SismaFramework\Sample\Models\SampleMultipleDependentEntityModel;
 use SismaFramework\Sample\Models\SampleReferencedEntityModel;
+use SismaFramework\Sample\Models\SampleSelfReferencedEntityModel;
 use SismaFramework\Security\HttpClasses\Authentication;
 
 /**
@@ -172,6 +174,30 @@ class SampleController extends BaseController implements DefaultControllerInterf
         $this->vars['formattedDate'] = $date->format('d/m/Y H:i');
 
         return Render::generateView('sample/articlesByDate', $this->vars);
+    }
+
+    /**
+     * Albero categorie - Esempio di SELF-REFERENCED ENTITY e getEntityTree()
+     *
+     * URL: /sample/categories
+     */
+    public function categories(): Response
+    {
+        $model = new SampleSelfReferencedEntityModel($this->dataMapper);
+        $this->vars['categoryTree'] = $model->getEntityTree(null, ['name' => 'ASC']);
+        return Render::generateView('sample/categories', $this->vars);
+    }
+
+    /**
+     * Collaborazioni - Esempio di MULTIPLE FK verso la stessa Entity
+     *
+     * URL: /sample/collaborations
+     */
+    public function collaborations(): Response
+    {
+        $model = new SampleMultipleDependentEntityModel($this->dataMapper);
+        $this->vars['collaborations'] = $model->getEntityCollection();
+        return Render::generateView('sample/collaborations', $this->vars);
     }
 
     #[\Override]

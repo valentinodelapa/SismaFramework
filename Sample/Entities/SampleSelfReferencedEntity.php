@@ -35,6 +35,7 @@ class SampleSelfReferencedEntity extends SelfReferencedEntity
 {
 
     protected int $id;
+    protected string $name;
     protected ?SampleSelfReferencedEntity $parentSampleSelfReferencedEntity = null;
 
     #[\Override]
