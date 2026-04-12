@@ -25,6 +25,10 @@
   * [Funzionalità Avanzate dell'ORM](orm-additional-features.md)
   * [JOIN ed Eager Loading](join-eager-loading.md)
 
+* **Database e ODM**
+
+  * [Introduzione all'ODM (Object Document Mapper)](odm.md)
+
 * **Sicurezza**
 
   * [Sicurezza](security.md)
