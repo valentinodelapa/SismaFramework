@@ -36,6 +36,7 @@ use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\Interfaces\Controllers\CallableController;
 use SismaFramework\Core\Interfaces\Services\CrawlComponentMakerInterface;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
@@ -52,6 +53,7 @@ class Dispatcher
     private ActionArgumentsParser $actionArgumentsParser;
     private ResourceHandler $resourceHandler;
     private DataMapper $dataMapper;
+    private DocumentMapper $documentMapper;
     private Debugger $debugger;
     private array $crawlComponentMakerList = [];
     private CrawlComponentMakerInterface $currentCrawlComponentMaker;
@@ -62,14 +64,16 @@ class Dispatcher
             ResourceHandler $resourceHandler = new ResourceHandler(),
             ?ControllerFactory $controllerFactory = null,
             ?ActionArgumentsParser $actionArgumentsParser = null,
-            Debugger $debugger = new Debugger())
+            Debugger $debugger = new Debugger(),
+            DocumentMapper $documentMapper = new DocumentMapper())
     {
         $this->request = $request;
         $this->dataMapper = $dataMapper;
+        $this->documentMapper = $documentMapper;
         $this->debugger = $debugger;
         $this->routeResolver = $routeResolver;
         $this->controllerFactory = $controllerFactory ?? new ControllerFactory($this->dataMapper, $this->debugger);
-        $this->actionArgumentsParser = $actionArgumentsParser ?? new ActionArgumentsParser($this->request, $this->dataMapper);
+        $this->actionArgumentsParser = $actionArgumentsParser ?? new ActionArgumentsParser($this->request, $this->dataMapper, $this->documentMapper);
         $this->resourceHandler = $resourceHandler;
     }
 

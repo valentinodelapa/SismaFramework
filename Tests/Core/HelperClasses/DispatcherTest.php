@@ -40,6 +40,7 @@ use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\Interfaces\Services\CrawlComponentMakerInterface;
+use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -87,6 +88,8 @@ class DispatcherTest extends TestCase
         $this->requestMock->request = [];
         $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $baseOdmAdapterMock = $this->createStub(BaseOdmAdapter::class);
+        BaseOdmAdapter::setDefault($baseOdmAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
     }
 

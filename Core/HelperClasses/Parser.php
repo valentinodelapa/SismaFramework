@@ -26,13 +26,15 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Odm\BaseClasses\BaseDocument;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
-use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
-use SismaFramework\Core\Exceptions\InvalidArgumentException;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
  * @internal
@@ -46,13 +48,17 @@ class Parser
             null|string|array $value,
             $parseEntity = true,
             DataMapper $dataMapper = new DataMapper(),
-            ?Config $customConfig = null): mixed
+            ?Config $customConfig = null,
+            ?DocumentMapper $documentMapper = null): mixed
     {
         if (($value === null) || ($reflectionNamedType->allowsNull() && ($value === ''))) {
             return null;
         } elseif ($reflectionNamedType->isBuiltin()) {
             settype($value, $reflectionNamedType->getName());
             return $value;
+        } elseif (is_subclass_of($reflectionNamedType->getName(), BaseDocument::class)) {
+            $config = $customConfig ?? Config::getInstance();
+            return self::parseDocument($reflectionNamedType->getName(), (string) $value, $documentMapper ?? new DocumentMapper(), $config);
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             if ($parseEntity) {
                 $config = $customConfig ?? Config::getInstance();
@@ -85,6 +91,19 @@ class Parser
             return $entity;
         } else {
             throw new InvalidArgumentException($entityName);
+        }
+    }
+
+    public static function parseDocument(string $documentName, string $value, DocumentMapper $documentMapper = new DocumentMapper(), ?Config $customConfig = null): BaseDocument
+    {
+        $config = $customConfig ?? Config::getInstance();
+        $modelName = str_replace($config->documentNamespace, $config->documentModelNamespace, $documentName) . 'Model';
+        $modelInstance = new $modelName($documentMapper);
+        $document = $modelInstance->getDocumentById($value);
+        if ($document instanceof BaseDocument) {
+            return $document;
+        } else {
+            throw new InvalidArgumentException($documentName);
         }
     }
 

@@ -153,3 +153,17 @@ const DATABASE_PASSWORD = "";
 const DATABASE_PORT = "";
 const DATABASE_USERNAME = "";
 
+/* Object Document Mapper Constant */
+const DEFAULT_ODM_ADAPTER_TYPE = "mongodb";
+const ODM_DATABASE_HOST = "";
+const ODM_DATABASE_NAME = "";
+const ODM_DATABASE_PASSWORD = "";
+const ODM_DATABASE_PORT = "";
+const ODM_DATABASE_USERNAME = "";
+
+/* Documents Constant */
+const DOCUMENT_NAMESPACE = APPLICATION_NAMESPACE . "Documents\\";
+
+/* Document Models Constant */
+const DOCUMENT_MODEL_NAMESPACE = APPLICATION_NAMESPACE . "DocumentModels\\";
+

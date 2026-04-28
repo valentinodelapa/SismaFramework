@@ -30,6 +30,7 @@ use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Security\HttpClasses\Authentication;
 
@@ -43,11 +44,13 @@ class ActionArgumentsParser
 
     private Request $request;
     private DataMapper $dataMapper;
+    private DocumentMapper $documentMapper;
 
-    public function __construct(Request $request, DataMapper $dataMapper)
+    public function __construct(Request $request, DataMapper $dataMapper, DocumentMapper $documentMapper = new DocumentMapper())
     {
         $this->request = $request;
         $this->dataMapper = $dataMapper;
+        $this->documentMapper = $documentMapper;
     }
 
     public function parseActionArguments(array $urlArguments, array $reflectionParameters): array
@@ -108,7 +111,7 @@ class ActionArgumentsParser
             } elseif ($paramType === Authentication::class) {
                 $result[$paramName] = new Authentication($this->request);
             } elseif (array_key_exists($paramName, $associativeArguments)) {
-                $result[$paramName] = Parser::parseValue($parameter->getType(), $associativeArguments[$paramName], true, $this->dataMapper);
+                $result[$paramName] = Parser::parseValue($parameter->getType(), $associativeArguments[$paramName], true, $this->dataMapper, null, $this->documentMapper);
             } elseif ($parameter->isDefaultValueAvailable()) {
                 $result[$paramName] = $parameter->getDefaultValue();
             } else {

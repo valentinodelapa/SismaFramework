@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Odm\Enumerations\OdmAdapterType;
 use SismaFramework\Orm\Enumerations\AdapterType;
 
 /**
@@ -153,6 +154,20 @@ class Config
     protected readonly string $databasePassword;
     protected readonly string $databasePort;
     protected readonly string $databaseUsername;
+
+    /* Object Document Mapper Constant */
+    protected readonly OdmAdapterType $defaultOdmAdapterType;
+    protected readonly string $odmDatabaseHost;
+    protected readonly string $odmDatabaseName;
+    protected readonly string $odmDatabasePassword;
+    protected readonly string $odmDatabasePort;
+    protected readonly string $odmDatabaseUsername;
+
+    /* Documents Constant */
+    protected readonly string $documentNamespace;
+
+    /* Document Models Constant */
+    protected readonly string $documentModelNamespace;
 
     /* internal properties */
     private static Config $instance;

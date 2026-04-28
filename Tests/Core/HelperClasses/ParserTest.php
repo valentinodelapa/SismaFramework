@@ -30,11 +30,16 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
+use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Odm\BaseClasses\BaseDocument;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
+use SismaFramework\TestsApplication\DocumentModels\SampleDocumentModel;
+use SismaFramework\TestsApplication\Documents\SampleDocument;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
@@ -46,6 +51,7 @@ class ParserTest extends TestCase
 
     private Config $configStub;
     private DataMapper $dataMapperMock;
+    private DocumentMapper $documentMapperMock;
 
     #[\Override]
     public function setUp(): void
@@ -56,6 +62,8 @@ class ParserTest extends TestCase
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
+                    ['documentModelNamespace', 'TestsApplication\\DocumentModels\\'],
+                    ['documentNamespace', 'TestsApplication\\Documents\\'],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
@@ -68,7 +76,10 @@ class ParserTest extends TestCase
         Config::setInstance($this->configStub);
         $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $baseOdmAdapterMock = $this->createStub(BaseOdmAdapter::class);
+        BaseOdmAdapter::setDefault($baseOdmAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $this->documentMapperMock = $this->createStub(DocumentMapper::class);
     }
 
     public function testParseValueWithEmpty()
@@ -226,6 +237,37 @@ class ParserTest extends TestCase
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn('array');
         Parser::parseValue($reflectionNamedTypeMock, '', true, $this->dataMapperMock);
+    }
+
+    public function testParseValueWithDocument()
+    {
+        $document = new SampleDocument();
+        $document->hydrate(['_id' => 'abc123', 'title' => 'Test']);
+        $this->documentMapperMock->method('findFirst')->willReturn($document);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock->method('allowsNull')->willReturn(false);
+        $reflectionNamedTypeMock->method('isBuiltin')->willReturn(false);
+        $reflectionNamedTypeMock->method('getName')->willReturn(SampleDocument::class);
+        $result = Parser::parseValue($reflectionNamedTypeMock, 'abc123', true, $this->dataMapperMock, $this->configStub, $this->documentMapperMock);
+        $this->assertInstanceOf(BaseDocument::class, $result);
+        $this->assertInstanceOf(SampleDocument::class, $result);
+    }
+
+    public function testParseDocument()
+    {
+        $document = new SampleDocument();
+        $document->hydrate(['_id' => 'doc-1', 'title' => 'Direct']);
+        $this->documentMapperMock->method('findFirst')->willReturn($document);
+        $result = Parser::parseDocument(SampleDocument::class, 'doc-1', $this->documentMapperMock, $this->configStub);
+        $this->assertInstanceOf(SampleDocument::class, $result);
+        $this->assertEquals('doc-1', $result->_id);
+    }
+
+    public function testParseDocumentThrowsWhenNotFound()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->documentMapperMock->method('findFirst')->willReturn(null);
+        Parser::parseDocument(SampleDocument::class, 'missing', $this->documentMapperMock, $this->configStub);
     }
 
     public function testParseEnumerationWithException()

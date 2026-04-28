@@ -40,6 +40,11 @@ abstract class BaseOdmAdapter
     protected static mixed $connection = null;
     protected bool $isConnected = false;
 
+    public static function setDefault(BaseOdmAdapter $adapter): void
+    {
+        static::$adapter = $adapter;
+    }
+
     public static function getDefault(?Config $config = null): static
     {
         if (static::$adapter === null) {
