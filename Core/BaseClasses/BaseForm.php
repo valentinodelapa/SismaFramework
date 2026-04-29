@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Core\BaseClasses;
 
-use SismaFramework\Core\AbstractClasses\Submittable;
 use SismaFramework\Core\BaseClasses\BaseForm\EntityResolver;
 use SismaFramework\Core\BaseClasses\BaseForm\FilterManager;
 use SismaFramework\Core\BaseClasses\BaseForm\FormValidator;
@@ -36,6 +35,7 @@ use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\Traits\SubmittableTrait;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
@@ -46,9 +46,11 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  *
  * @author Valentino de Lapa
  */
-abstract class BaseForm extends Submittable
+abstract class BaseForm
 {
+    use SubmittableTrait;
 
+    protected Request $request;
     protected BaseEntity $entity;
     protected StandardEntity $entityData;
     protected array $entityFromForm = [];
@@ -68,7 +70,7 @@ abstract class BaseForm extends Submittable
             EntityResolver $entityResolver = new EntityResolver(),
             Debugger $debugger = new Debugger())
     {
-        parent::__construct();
+        $this->initSubmittable();
         $this->dataMapper = $dataMapper;
         $this->filterManager = $filterManager;
         $this->formValidator = $formValidator ?? new FormValidator($dataMapper, $filterManager);

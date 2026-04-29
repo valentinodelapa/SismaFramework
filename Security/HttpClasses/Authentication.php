@@ -26,45 +26,42 @@
 
 namespace SismaFramework\Security\HttpClasses;
 
-use SismaFramework\Core\AbstractClasses\Submittable;
 use SismaFramework\Core\Enumerations\RequestType;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\Traits\SubmittableTrait;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\Security\Exceptions\AuthenticationException;
+use SismaFramework\Security\BaseClasses\BaseAuthentication;
 use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
 use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
 use SismaFramework\Security\Interfaces\Entities\PasswordInterface;
+use SismaFramework\Security\Interfaces\Models\AuthenticableModelInterface;
 use SismaFramework\Security\Interfaces\Models\MultiFactorModelInterface;
 use SismaFramework\Security\Interfaces\Models\MultiFactorRecoveryModelInterface;
 use SismaFramework\Security\Interfaces\Models\PasswordModelInterface;
-use SismaFramework\Security\Interfaces\Models\AuthenticableModelInterface;
 use SismaFramework\Security\Interfaces\Wrappers\MultiFactorWrapperInterface;
-use SismaFramework\Core\HelperClasses\Session;
 
 /**
  *
  * @author Valentino de Lapa
  */
-class Authentication extends Submittable
+class Authentication extends BaseAuthentication
 {
+    use SubmittableTrait;
+
     private MultiFactorModelInterface $multiFactorModelInterface;
     private MultiFactorRecoveryModelInterface $multiFactorRecoveryModelInterface;
     private MultiFactorWrapperInterface $multiFactorWrapperInterface;
     private RequestType $requestType;
     private PasswordModelInterface $passwordModelInterface;
-    private ?AuthenticableInterface $authenticableInterface;
     private AuthenticableModelInterface $authenticableModelInterface;
-    private Filter $filter;
-    private Session $session;
 
     public function __construct(Request $request, Filter $filter = new Filter(), Session $session = new Session())
     {
-        parent::__construct();
-        $this->request = $request;
-        $this->filter = $filter;
-        $this->session = $session;
+        parent::__construct($request, $filter, $session);
+        $this->initSubmittable();
         $this->requestType = RequestType::from($request->server['REQUEST_METHOD']);
     }
 
@@ -171,14 +168,5 @@ class Authentication extends Submittable
             }
         }
         return $result;
-    }
-
-    public function getAuthenticableInterface(): AuthenticableInterface
-    {
-        if (isset($this->authenticableInterface) && ($this->authenticableInterface instanceof AuthenticableInterface)) {
-            return $this->authenticableInterface;
-        } else {
-            throw new AuthenticationException();
-        }
     }
 }
