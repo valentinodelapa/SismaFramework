@@ -858,22 +858,22 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\MethodRenameTransformer\u003A\u003AcanTransform\u0028\u0029",
             "name": "canTransform",
-            "summary": "Check\u0020if\u0020this\u0020transformer\u0020can\u0020transform\u0020the\u0020given\u0020file",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-MethodRenameTransformer.html#method_canTransform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\MethodRenameTransformer\u003A\u003Atransform\u0028\u0029",
             "name": "transform",
-            "summary": "Transform\u0020the\u0020content",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-MethodRenameTransformer.html#method_transform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\MethodRenameTransformer\u003A\u003AgetConfidence\u0028\u0029",
             "name": "getConfidence",
-            "summary": "Get\u0020the\u0020confidence\u0020level\u0020of\u0020this\u0020transformer\u0020\u00280\u002D100\u0029",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-MethodRenameTransformer.html#method_getConfidence"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\MethodRenameTransformer\u003A\u003AgetDescription\u0028\u0029",
             "name": "getDescription",
-            "summary": "Get\u0020a\u0020description\u0020of\u0020what\u0020this\u0020transformer\u0020does",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-MethodRenameTransformer.html#method_getDescription"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\MethodRenameTransformer\u003A\u003A\u0024renames",
@@ -888,22 +888,22 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ResponseConstructorTransformer\u003A\u003AcanTransform\u0028\u0029",
             "name": "canTransform",
-            "summary": "Check\u0020if\u0020this\u0020transformer\u0020can\u0020transform\u0020the\u0020given\u0020file",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ResponseConstructorTransformer.html#method_canTransform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ResponseConstructorTransformer\u003A\u003Atransform\u0028\u0029",
             "name": "transform",
-            "summary": "Transform\u0020the\u0020content",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ResponseConstructorTransformer.html#method_transform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ResponseConstructorTransformer\u003A\u003AgetConfidence\u0028\u0029",
             "name": "getConfidence",
-            "summary": "Get\u0020the\u0020confidence\u0020level\u0020of\u0020this\u0020transformer\u0020\u00280\u002D100\u0029",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ResponseConstructorTransformer.html#method_getConfidence"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ResponseConstructorTransformer\u003A\u003AgetDescription\u0028\u0029",
             "name": "getDescription",
-            "summary": "Get\u0020a\u0020description\u0020of\u0020what\u0020this\u0020transformer\u0020does",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ResponseConstructorTransformer.html#method_getDescription"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ReturnTypeTransformer",
@@ -913,27 +913,27 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ReturnTypeTransformer\u003A\u003AcanTransform\u0028\u0029",
             "name": "canTransform",
-            "summary": "Check\u0020if\u0020this\u0020transformer\u0020can\u0020transform\u0020the\u0020given\u0020file",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ReturnTypeTransformer.html#method_canTransform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ReturnTypeTransformer\u003A\u003Atransform\u0028\u0029",
             "name": "transform",
-            "summary": "Transform\u0020the\u0020content",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ReturnTypeTransformer.html#method_transform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ReturnTypeTransformer\u003A\u003AgetConfidence\u0028\u0029",
             "name": "getConfidence",
-            "summary": "Get\u0020the\u0020confidence\u0020level\u0020of\u0020this\u0020transformer\u0020\u00280\u002D100\u0029",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ReturnTypeTransformer.html#method_getConfidence"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ReturnTypeTransformer\u003A\u003AgetDescription\u0028\u0029",
             "name": "getDescription",
-            "summary": "Get\u0020a\u0020description\u0020of\u0020what\u0020this\u0020transformer\u0020does",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ReturnTypeTransformer.html#method_getDescription"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ReturnTypeTransformer\u003A\u003AdetectIndentation\u0028\u0029",
             "name": "detectIndentation",
-            "summary": "Detect\u0020the\u0020indentation\u0020used\u0020in\u0020the\u0020code",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ReturnTypeTransformer.html#method_detectIndentation"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\StaticToInstanceTransformer",
@@ -943,22 +943,22 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\StaticToInstanceTransformer\u003A\u003AcanTransform\u0028\u0029",
             "name": "canTransform",
-            "summary": "Check\u0020if\u0020this\u0020transformer\u0020can\u0020transform\u0020the\u0020given\u0020file",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-StaticToInstanceTransformer.html#method_canTransform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\StaticToInstanceTransformer\u003A\u003Atransform\u0028\u0029",
             "name": "transform",
-            "summary": "Transform\u0020the\u0020content",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-StaticToInstanceTransformer.html#method_transform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\StaticToInstanceTransformer\u003A\u003AgetConfidence\u0028\u0029",
             "name": "getConfidence",
-            "summary": "Get\u0020the\u0020confidence\u0020level\u0020of\u0020this\u0020transformer\u0020\u00280\u002D100\u0029",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-StaticToInstanceTransformer.html#method_getConfidence"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\StaticToInstanceTransformer\u003A\u003AgetDescription\u0028\u0029",
             "name": "getDescription",
-            "summary": "Get\u0020a\u0020description\u0020of\u0020what\u0020this\u0020transformer\u0020does",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-StaticToInstanceTransformer.html#method_getDescription"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\StaticToInstanceTransformer\u003A\u003AtransformIndexFile\u0028\u0029",
@@ -988,22 +988,22 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\TransformerInterface\u003A\u003AcanTransform\u0028\u0029",
             "name": "canTransform",
-            "summary": "Check\u0020if\u0020this\u0020transformer\u0020can\u0020transform\u0020the\u0020given\u0020file",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-TransformerInterface.html#method_canTransform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\TransformerInterface\u003A\u003Atransform\u0028\u0029",
             "name": "transform",
-            "summary": "Transform\u0020the\u0020content",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-TransformerInterface.html#method_transform"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\TransformerInterface\u003A\u003AgetConfidence\u0028\u0029",
             "name": "getConfidence",
-            "summary": "Get\u0020the\u0020confidence\u0020level\u0020of\u0020this\u0020transformer\u0020\u00280\u002D100\u0029",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-TransformerInterface.html#method_getConfidence"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\TransformerInterface\u003A\u003AgetDescription\u0028\u0029",
             "name": "getDescription",
-            "summary": "Get\u0020a\u0020description\u0020of\u0020what\u0020this\u0020transformer\u0020does",
+            "summary": "",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-TransformerInterface.html#method_getDescription"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\UpgradeManager",
@@ -1231,36 +1231,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askSecret"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\AbstractClasses\\Submittable",
-            "name": "Submittable",
-            "summary": "Description\u0020of\u0020Submittable",
-            "url": "classes/SismaFramework-Core-AbstractClasses-Submittable.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\AbstractClasses\\Submittable\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-AbstractClasses-Submittable.html#method___construct"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\AbstractClasses\\Submittable\u003A\u003AisSubmitted\u0028\u0029",
-            "name": "isSubmitted",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-AbstractClasses-Submittable.html#method_isSubmitted"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\AbstractClasses\\Submittable\u003A\u003AgetFilterErrors\u0028\u0029",
-            "name": "getFilterErrors",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-AbstractClasses-Submittable.html#method_getFilterErrors"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\AbstractClasses\\Submittable\u003A\u003A\u0024request",
-            "name": "request",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-AbstractClasses-Submittable.html#property_request"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\AbstractClasses\\Submittable\u003A\u003A\u0024formFilterError",
-            "name": "formFilterError",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-AbstractClasses-Submittable.html#property_formFilterError"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController",
             "name": "BaseController",
             "summary": "",
@@ -1363,7 +1333,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseForm",
             "name": "BaseForm",
-            "summary": "Description\u0020of\u0020Submittable",
+            "summary": "",
             "url": "classes/SismaFramework-Core-BaseClasses-BaseForm.html"
         },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseForm\u003A\u003A__construct\u0028\u0029",
@@ -1470,6 +1440,11 @@ Search.appendIndex(
             "name": "getResponseType",
             "summary": "",
             "url": "classes/SismaFramework-Core-BaseClasses-BaseForm.html#method_getResponseType"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseForm\u003A\u003A\u0024request",
+            "name": "request",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-BaseClasses-BaseForm.html#property_request"
         },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseForm\u003A\u003A\u0024entity",
             "name": "entity",
@@ -6148,7 +6123,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication",
             "name": "Authentication",
-            "summary": "Description\u0020of\u0020Submittable",
+            "summary": "",
             "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html"
         },                {
             "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003A__construct\u0028\u0029",
@@ -6211,11 +6186,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#method_checkMultiFactorRecovery"
         },                {
-            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003AgetAuthenticableInterface\u0028\u0029",
-            "name": "getAuthenticableInterface",
-            "summary": "",
-            "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#method_getAuthenticableInterface"
-        },                {
             "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003A\u0024multiFactorModelInterface",
             "name": "multiFactorModelInterface",
             "summary": "",
@@ -6241,25 +6211,55 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_passwordModelInterface"
         },                {
-            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003A\u0024authenticableInterface",
-            "name": "authenticableInterface",
-            "summary": "",
-            "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_authenticableInterface"
-        },                {
             "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003A\u0024authenticableModelInterface",
             "name": "authenticableModelInterface",
             "summary": "",
             "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_authenticableModelInterface"
         },                {
-            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003A\u0024filter",
-            "name": "filter",
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication",
+            "name": "OAuthAuthentication",
             "summary": "",
-            "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_filter"
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html"
         },                {
-            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003A\u0024session",
-            "name": "session",
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
             "summary": "",
-            "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_session"
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003AsetAuthenticableModelInterface\u0028\u0029",
+            "name": "setAuthenticableModelInterface",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_setAuthenticableModelInterface"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003AsetOAuthWrapperInterface\u0028\u0029",
+            "name": "setOAuthWrapperInterface",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_setOAuthWrapperInterface"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003AgetAuthorizationUrl\u0028\u0029",
+            "name": "getAuthorizationUrl",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_getAuthorizationUrl"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003AcheckCallback\u0028\u0029",
+            "name": "checkCallback",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_checkCallback"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003AcheckOAuthState\u0028\u0029",
+            "name": "checkOAuthState",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_checkOAuthState"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003A\u0024authenticableModelInterface",
+            "name": "authenticableModelInterface",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_authenticableModelInterface"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003A\u0024oauthWrapperInterface",
+            "name": "oauthWrapperInterface",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_oauthWrapperInterface"
         },                {
             "fqsen": "\\SismaFramework\\Security\\Interfaces\\Entities\\AuthenticableInterface",
             "name": "AuthenticableInterface",
@@ -6335,6 +6335,21 @@ Search.appendIndex(
             "name": "testCodeForLogin",
             "summary": "",
             "url": "classes/SismaFramework-Security-Interfaces-Wrappers-MultiFactorWrapperInterface.html#method_testCodeForLogin"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\Interfaces\\Wrappers\\OAuthWrapperInterface",
+            "name": "OAuthWrapperInterface",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-Interfaces-Wrappers-OAuthWrapperInterface.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\Interfaces\\Wrappers\\OAuthWrapperInterface\u003A\u003AgetAuthorizationUrl\u0028\u0029",
+            "name": "getAuthorizationUrl",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-Interfaces-Wrappers-OAuthWrapperInterface.html#method_getAuthorizationUrl"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\Interfaces\\Wrappers\\OAuthWrapperInterface\u003A\u003AgetAuthenticableIdentifier\u0028\u0029",
+            "name": "getAuthenticableIdentifier",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-Interfaces-Wrappers-OAuthWrapperInterface.html#method_getAuthenticableIdentifier"
         },                {
             "fqsen": "\\SismaFramework\\Structural\\Controllers\\FrameworkController",
             "name": "FrameworkController",
@@ -6461,20 +6476,15 @@ Search.appendIndex(
             "summary": "",
             "url": "namespaces/sismaframework-console-traits.html"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\AbstractClasses",
-            "name": "AbstractClasses",
+            "fqsen": "\\SismaFramework\\Core\\BaseClasses",
+            "name": "BaseClasses",
             "summary": "",
-            "url": "namespaces/sismaframework-core-abstractclasses.html"
+            "url": "namespaces/sismaframework-core-baseclasses.html"
         },                {
             "fqsen": "\\SismaFramework\\Core",
             "name": "Core",
             "summary": "",
             "url": "namespaces/sismaframework-core.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\BaseClasses",
-            "name": "BaseClasses",
-            "summary": "",
-            "url": "namespaces/sismaframework-core-baseclasses.html"
         },                {
             "fqsen": "\\SismaFramework\\Core\\CustomTypes",
             "name": "CustomTypes",

@@ -108,15 +108,17 @@
                                 <section>
                                         <ul class="phpdocumentor-breadcrumbs">
             <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework.html">SismaFramework</a></li>
-            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-console.html">Console</a></li>
-            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-console-services.html">Services</a></li>
-            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-console-services-fixtures.html">Fixtures</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-security.html">Security</a></li>
+            <li class="phpdocumentor-breadcrumb"><a href="namespaces/sismaframework-security-httpclasses.html">HttpClasses</a></li>
     </ul>
 
     <article class="phpdocumentor-element -class">
         <h2 class="phpdocumentor-content__title">
-    FixturesManager
+    OAuthAuthentication
 
+        <span class="phpdocumentor-element__extends">
+        extends <abbr title="\SismaFramework\Security\BaseClasses\BaseAuthentication">BaseAuthentication</abbr>
+    </span>
     
             <div class="phpdocumentor-element__package">
             in package
@@ -134,9 +136,9 @@
 </div>
 
         <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">36</span>
+    <span class="phpdocumentor-element-found-in__line">40</span>
 
     </aside>
 
@@ -146,7 +148,7 @@
 
     <h5 class="phpdocumentor-tag-list__heading" id="tags">
         Tags
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#tags" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#tags" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h5>
     <dl class="phpdocumentor-tag-list">
@@ -165,7 +167,7 @@
     
 <h3 id="toc">
     Table of Contents
-    <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#toc" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h3>
 
@@ -179,76 +181,64 @@
 
 <h4 id="toc-properties">
     Properties
-    <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#toc-properties" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_config">$config</a>
+    <a class="" href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_authenticableModelInterface">$authenticableModelInterface</a>
     <span>
-                        &nbsp;: <abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>            </span>
+                        &nbsp;: <a href="classes/SismaFramework-Security-Interfaces-Models-AuthenticableModelInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Models\AuthenticableModelInterface">AuthenticableModelInterface</abbr></a>            </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_dataMapper">$dataMapper</a>
+    <a class="" href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_oauthWrapperInterface">$oauthWrapperInterface</a>
     <span>
-                        &nbsp;: <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_entitiesArray">$entitiesArray</a>
-    <span>
-                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -property -private">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_fixturesArray">$fixturesArray</a>
-    <span>
-                        &nbsp;: array&lt;string|int, mixed&gt;            </span>
+                        &nbsp;: <a href="classes/SismaFramework-Security-Interfaces-Wrappers-OAuthWrapperInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Wrappers\OAuthWrapperInterface">OAuthWrapperInterface</abbr></a>            </span>
 </dt>
 
     </dl>
 
 <h4 id="toc-methods">
     Methods
-    <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
+    <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#toc-methods" class="headerlink"><i class="fas fa-link"></i></a>
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method___construct">__construct()</a>
+    <a class="" href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method___construct">__construct()</a>
     <span>
                                 &nbsp;: mixed    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_extecuted">extecuted()</a>
+    <a class="" href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_checkCallback">checkCallback()</a>
     <span>
                                 &nbsp;: bool    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_run">run()</a>
+    <a class="" href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_getAuthorizationUrl">getAuthorizationUrl()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_setAuthenticableModelInterface">setAuthenticableModelInterface()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_setOAuthWrapperInterface">setOAuthWrapperInterface()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_executeFixture">executeFixture()</a>
+    <a class="" href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_checkOAuthState">checkOAuthState()</a>
     <span>
-                                &nbsp;: void    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_executeFixturesArray">executeFixturesArray()</a>
-    <span>
-                                &nbsp;: void    </span>
-</dt>
-
-            <dt class="phpdocumentor-table-of-contents__entry -method -private">
-    <a class="" href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_getFixturesArray">getFixturesArray()</a>
-    <span>
-                                &nbsp;: void    </span>
+                                &nbsp;: bool    </span>
 </dt>
 
     </dl>
@@ -261,7 +251,7 @@
     <section class="phpdocumentor-properties">
         <h3 class="phpdocumentor-elements__header" id="properties">
             Properties
-            <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#properties" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article
@@ -271,17 +261,17 @@
             -private
                                                                     "
 >
-    <h4 class="phpdocumentor-element__name" id="property_config">
-        $config
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_config" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="property_authenticableModelInterface">
+        $authenticableModelInterface
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_authenticableModelInterface" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">38</span>
+    <span class="phpdocumentor-element-found-in__line">42</span>
 
     </aside>
 
@@ -289,8 +279,8 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
         <span class="phpdocumentor-signature__visibility">private</span>
-            <span class="phpdocumentor-signature__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr></span>
-    <span class="phpdocumentor-signature__name">$config</span>
+            <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Security-Interfaces-Models-AuthenticableModelInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Models\AuthenticableModelInterface">AuthenticableModelInterface</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$authenticableModelInterface</span>
     </code>
 
     
@@ -308,17 +298,17 @@
             -private
                                                                     "
 >
-    <h4 class="phpdocumentor-element__name" id="property_dataMapper">
-        $dataMapper
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_dataMapper" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="property_oauthWrapperInterface">
+        $oauthWrapperInterface
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_oauthWrapperInterface" class="headerlink"><i class="fas fa-link"></i></a>
 
         <span class="phpdocumentor-element__modifiers">
                                             </span>
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">41</span>
+    <span class="phpdocumentor-element-found-in__line">43</span>
 
     </aside>
 
@@ -326,82 +316,8 @@
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
         <span class="phpdocumentor-signature__visibility">private</span>
-            <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
-    <span class="phpdocumentor-signature__name">$dataMapper</span>
-    </code>
-
-    
-    
-    
-
-        
-        
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-                                                                    "
->
-    <h4 class="phpdocumentor-element__name" id="property_entitiesArray">
-        $entitiesArray
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_entitiesArray" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                            </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">40</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">private</span>
-            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
-    <span class="phpdocumentor-signature__name">$entitiesArray</span>
-     = <span class="phpdocumentor-signature__default-value">[]</span></code>
-
-    
-    
-    
-
-        
-        
-
-</article>
-                    <article
-        class="
-            phpdocumentor-element
-            -property
-            -private
-                                                                    "
->
-    <h4 class="phpdocumentor-element__name" id="property_fixturesArray">
-        $fixturesArray
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_fixturesArray" class="headerlink"><i class="fas fa-link"></i></a>
-
-        <span class="phpdocumentor-element__modifiers">
-                                            </span>
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">39</span>
-
-    </aside>
-
-    
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-        <span class="phpdocumentor-signature__visibility">private</span>
-            <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
-    <span class="phpdocumentor-signature__name">$fixturesArray</span>
+            <span class="phpdocumentor-signature__type"><a href="classes/SismaFramework-Security-Interfaces-Wrappers-OAuthWrapperInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Wrappers\OAuthWrapperInterface">OAuthWrapperInterface</abbr></a></span>
+    <span class="phpdocumentor-signature__name">$oauthWrapperInterface</span>
     </code>
 
     
@@ -417,7 +333,7 @@
             <section class="phpdocumentor-methods">
         <h3 class="phpdocumentor-elements__header" id="methods">
             Methods
-            <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
+            <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#methods" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
                     <article
@@ -428,20 +344,20 @@
 >
     <h4 class="phpdocumentor-element__name" id="method___construct">
         __construct()
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method___construct" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">43</span>
+    <span class="phpdocumentor-element-found-in__line">45</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span>[</span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$dataMapper</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null&nbsp;</span><span class="phpdocumentor-signature__argument__name">$customConfig</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">null</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+                    <span class="phpdocumentor-signature__name">__construct</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$request</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Core-HelperClasses-Filter.html"><abbr title="\SismaFramework\Core\HelperClasses\Filter">Filter</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$filter</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new <a href="classes/SismaFramework-Core-HelperClasses-Filter.html"><abbr title="\SismaFramework\Core\HelperClasses\Filter">Filter</abbr></a>()</span><span> ]</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Core-HelperClasses-Session.html"><abbr title="\SismaFramework\Core\HelperClasses\Session">Session</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$session</span><span> = </span><span class="phpdocumentor-signature__argument__default-value">new <a href="classes/SismaFramework-Core-HelperClasses-Session.html"><abbr title="\SismaFramework\Core\HelperClasses\Session">Session</abbr></a>()</span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -450,16 +366,23 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$dataMapper</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a></span>
-                 = <span class="phpdocumentor-argument-list__argument__default-value">new <a href="classes/SismaFramework-Orm-HelperClasses-DataMapper.html"><abbr title="\SismaFramework\Orm\HelperClasses\DataMapper">DataMapper</abbr></a>()</span>            </dt>
+                <span class="phpdocumentor-argument-list__argument__name">$request</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Core-HttpClasses-Request.html"><abbr title="\SismaFramework\Core\HttpClasses\Request">Request</abbr></a></span>
+                            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$customConfig</span>
-                : <span class="phpdocumentor-argument-list__argument__type"><abbr title="\SismaFramework\Core\HelperClasses\Config">Config</abbr>|null</span>
-                 = <span class="phpdocumentor-argument-list__argument__default-value">null</span>            </dt>
+                <span class="phpdocumentor-argument-list__argument__name">$filter</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Core-HelperClasses-Filter.html"><abbr title="\SismaFramework\Core\HelperClasses\Filter">Filter</abbr></a></span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">new <a href="classes/SismaFramework-Core-HelperClasses-Filter.html"><abbr title="\SismaFramework\Core\HelperClasses\Filter">Filter</abbr></a>()</span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$session</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Core-HelperClasses-Session.html"><abbr title="\SismaFramework\Core\HelperClasses\Session">Session</abbr></a></span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value">new <a href="classes/SismaFramework-Core-HelperClasses-Session.html"><abbr title="\SismaFramework\Core\HelperClasses\Session">Session</abbr></a>()</span>            </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
             </dd>
@@ -477,22 +400,22 @@
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_extecuted">
-        extecuted()
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_extecuted" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_checkCallback">
+        checkCallback()
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_checkCallback" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">57</span>
+    <span class="phpdocumentor-element-found-in__line">67</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">extecuted</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+                    <span class="phpdocumentor-signature__name">checkCallback</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -515,22 +438,22 @@
             -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_run">
-        run()
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_run" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_getAuthorizationUrl">
+        getAuthorizationUrl()
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_getAuthorizationUrl" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">49</span>
+    <span class="phpdocumentor-element-found-in__line">60</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
-                    <span class="phpdocumentor-signature__name">run</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">getAuthorizationUrl</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -541,30 +464,34 @@
 
         
     
-    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
 </article>
                     <article
         class="phpdocumentor-element
             -method
-            -private
+            -public
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_executeFixture">
-        executeFixture()
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_executeFixture" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_setAuthenticableModelInterface">
+        setAuthenticableModelInterface()
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_setAuthenticableModelInterface" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">88</span>
+    <span class="phpdocumentor-element-found-in__line">50</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">executeFixture</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fixture</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setAuthenticableModelInterface</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Security-Interfaces-Models-AuthenticableModelInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Models\AuthenticableModelInterface">AuthenticableModelInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$authenticableModelInterface</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -573,8 +500,52 @@
         <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
     <dl class="phpdocumentor-argument-list">
                     <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$fixture</span>
-                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                <span class="phpdocumentor-argument-list__argument__name">$authenticableModelInterface</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Security-Interfaces-Models-AuthenticableModelInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Models\AuthenticableModelInterface">AuthenticableModelInterface</abbr></a></span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
+    <h4 class="phpdocumentor-element__name" id="method_setOAuthWrapperInterface">
+        setOAuthWrapperInterface()
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_setOAuthWrapperInterface" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">55</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setOAuthWrapperInterface</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type"><a href="classes/SismaFramework-Security-Interfaces-Wrappers-OAuthWrapperInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Wrappers\OAuthWrapperInterface">OAuthWrapperInterface</abbr></a>&nbsp;</span><span class="phpdocumentor-signature__argument__name">$oauthWrapperInterface</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$oauthWrapperInterface</span>
+                : <span class="phpdocumentor-argument-list__argument__type"><a href="classes/SismaFramework-Security-Interfaces-Wrappers-OAuthWrapperInterface.html"><abbr title="\SismaFramework\Security\Interfaces\Wrappers\OAuthWrapperInterface">OAuthWrapperInterface</abbr></a></span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
                 
@@ -593,66 +564,22 @@
             -private
                                                         "
 >
-    <h4 class="phpdocumentor-element__name" id="method_executeFixturesArray">
-        executeFixturesArray()
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_executeFixturesArray" class="headerlink"><i class="fas fa-link"></i></a>
+    <h4 class="phpdocumentor-element__name" id="method_checkOAuthState">
+        checkOAuthState()
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_checkOAuthState" class="headerlink"><i class="fas fa-link"></i></a>
 
     </h4>
     <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
+    <abbr class="phpdocumentor-element-found-in__file" title="Security/HttpClasses/OAuthAuthentication.php"><a href="files/security-httpclasses-oauthauthentication.html"><abbr title="Security/HttpClasses/OAuthAuthentication.php">OAuthAuthentication.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">81</span>
+    <span class="phpdocumentor-element-found-in__line">83</span>
 
     </aside>
 
     
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">executeFixturesArray</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">array&lt;string|int, mixed&gt;&nbsp;</span><span class="phpdocumentor-signature__argument__name">$fixturesArray</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
-
-    <div class="phpdocumentor-label-line">
-        </div>
-    
-    
-        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
-    <dl class="phpdocumentor-argument-list">
-                    <dt class="phpdocumentor-argument-list__entry">
-                <span class="phpdocumentor-argument-list__argument__name">$fixturesArray</span>
-                : <span class="phpdocumentor-argument-list__argument__type">array&lt;string|int, mixed&gt;</span>
-                            </dt>
-            <dd class="phpdocumentor-argument-list__definition">
-                
-            </dd>
-            </dl>
-
-    
-
-        
-    
-    
-</article>
-                    <article
-        class="phpdocumentor-element
-            -method
-            -private
-                                                        "
->
-    <h4 class="phpdocumentor-element__name" id="method_getFixturesArray">
-        getFixturesArray()
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_getFixturesArray" class="headerlink"><i class="fas fa-link"></i></a>
-
-    </h4>
-    <aside class="phpdocumentor-element-found-in">
-    <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Fixtures/FixturesManager.php"><a href="files/console-services-fixtures-fixturesmanager.html"><abbr title="Console/Services/Fixtures/FixturesManager.php">FixturesManager.php</abbr></a></abbr>
-    :
-    <span class="phpdocumentor-element-found-in__line">68</span>
-
-    </aside>
-
-    
-    <code class="phpdocumentor-code phpdocumentor-signature ">
-    <span class="phpdocumentor-signature__visibility">private</span>
-                    <span class="phpdocumentor-signature__name">getFixturesArray</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+                    <span class="phpdocumentor-signature__name">checkOAuthState</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
 
     <div class="phpdocumentor-label-line">
         </div>
@@ -663,7 +590,11 @@
 
         
     
-    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
 </article>
             </section>
 
@@ -671,7 +602,7 @@
     <div class="phpdocumentor-modal-bg" data-exit-button></div>
     <div class="phpdocumentor-modal-container">
         <div class="phpdocumentor-modal-content">
-            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/Console/Services/Fixtures/FixturesManager.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
+            <pre style="max-height: 500px; overflow-y: scroll" data-src="files/Security/HttpClasses/OAuthAuthentication.php.txt" class="language-php line-numbers linkable-line-numbers"></pre>
         </div>
         <button data-exit-button class="phpdocumentor-modal__close">&times;</button>
     </div>
@@ -772,30 +703,28 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                                            <li><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#toc-properties">Properties</a></li>
-                                                            <li><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#toc-methods">Methods</a></li>
+                                                            <li><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#toc-properties">Properties</a></li>
+                                                            <li><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
             
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
-                                                    <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_config">$config</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_dataMapper">$dataMapper</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_entitiesArray">$entitiesArray</a></li>
-                                                    <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#property_fixturesArray">$fixturesArray</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_authenticableModelInterface">$authenticableModelInterface</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_oauthWrapperInterface">$oauthWrapperInterface</a></li>
                                             </ul>
                 </li>
             
                         <li class="phpdocumentor-on-this-page-section__title">Methods</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
-                                            <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method___construct">__construct()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_extecuted">extecuted()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_run">run()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_executeFixture">executeFixture()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_executeFixturesArray">executeFixturesArray()</a></li>
-                                            <li class=""><a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#method_getFixturesArray">getFixturesArray()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method___construct">__construct()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_checkCallback">checkCallback()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_getAuthorizationUrl">getAuthorizationUrl()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_setAuthenticableModelInterface">setAuthenticableModelInterface()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_setOAuthWrapperInterface">setOAuthWrapperInterface()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#method_checkOAuthState">checkOAuthState()</a></li>
                                     </ul>
             </li>
                     </ul>
@@ -815,7 +744,7 @@
     </section>
 </section>
         </div>
-        <a href="classes/SismaFramework-Console-Services-Fixtures-FixturesManager.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
+        <a href="classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#top" class="phpdocumentor-back-to-top"><i class="fas fa-chevron-circle-up"></i></a>
 
     </main>
 

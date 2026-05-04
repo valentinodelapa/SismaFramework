@@ -2,6 +2,108 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.6.0] - 2026-05-04 - Rifattorizzazione Gerarchia di Autenticazione, Introduzione SubmittableTrait e Supporto OAuth
+
+Rifattorizzazione interna del sistema di autenticazione: la classe astratta `Submittable` è stata convertita in un trait, e il comportamento comune a tutte le classi di autenticazione è stato estratto nella nuova classe astratta `BaseAuthentication`. Il refactoring ha abilitato l'implementazione di `OAuthAuthentication`, che supporta il flusso Authorization Code OAuth 2.0 senza `SubmittableTrait` poiché in OAuth non esiste un form da sottomettere né errori di validazione da riportare al template.
+
+### ♻️ Refactoring
+
+#### `Core/Traits/SubmittableTrait` — Conversione da classe astratta a trait
+
+`Submittable` era una classe astratta `@internal` usata come base sia da `Authentication` che da `BaseForm`, pur non rappresentando un tipo condiviso tra le due gerarchie, bensì un comportamento ortogonale (rilevamento form submission). È stata convertita in un trait e spostata in `Core/Traits/`.
+
+Il trait espone:
+- `protected FormFilterError $formFilterError`
+- `protected function initSubmittable(): void` — da chiamare nel costruttore della classe utilizzatrice
+- `public function isSubmitted(): bool`
+- `public function getFilterErrors(): FormFilterError`
+
+**File modificati**:
+- **`Core/Traits/SubmittableTrait.php`** *(nuovo)*: Implementazione del trait, marcato `@internal`
+- **`Core/AbstractClasses/Submittable.php`** *(eliminato)*
+
+#### `Security/BaseClasses/BaseAuthentication` — Nuova classe astratta base per l'autenticazione
+
+Estratta da `Authentication` la logica comune a qualsiasi flusso di autenticazione (form-based, OAuth, ecc.). La nuova classe astratta `BaseAuthentication`, marcata `@internal`, centralizza:
+
+- `protected Request $request`
+- `protected Filter $filter`
+- `protected Session $session`
+- `protected ?AuthenticableInterface $authenticableInterface`
+- `public function getAuthenticableInterface(): AuthenticableInterface`
+
+`SubmittableTrait` non è incluso in `BaseAuthentication` perché non tutti i flussi di autenticazione hanno un form: `Authentication` (form-based) lo usa, `OAuthAuthentication` no.
+
+**File modificati**:
+- **`Security/BaseClasses/BaseAuthentication.php`** *(nuovo)*: Classe astratta base, marcata `@internal`
+
+#### `Security/HttpClasses/Authentication` — Adeguamento alla nuova gerarchia
+
+`Authentication` passa da `extends Submittable` a `extends BaseAuthentication` con `use SubmittableTrait`. Le property `$filter`, `$session`, `$authenticableInterface` e il metodo `getAuthenticableInterface()` sono stati spostati in `BaseAuthentication`. Il costruttore chiama `parent::__construct()` e `$this->initSubmittable()`.
+
+**File modificati**:
+- **`Security/HttpClasses/Authentication.php`**: Aggiornamento gerarchia e rimozione membri ora in `BaseAuthentication`
+
+#### `Core/BaseClasses/BaseForm` — Adeguamento al SubmittableTrait
+
+`BaseForm` passa da `extends Submittable` a `use SubmittableTrait`, dichiarando `protected Request $request` direttamente nella classe. Il costruttore sostituisce `parent::__construct()` con `$this->initSubmittable()`.
+
+**File modificati**:
+- **`Core/BaseClasses/BaseForm.php`**: Sostituzione ereditarietà con trait; dichiarazione esplicita di `$request`
+
+### ✨ Nuove Funzionalità
+
+#### `Security/HttpClasses/OAuthAuthentication` — Autenticazione OAuth 2.0 Authorization Code Flow
+
+Nuova classe `OAuthAuthentication extends BaseAuthentication` che implementa il flusso Authorization Code OAuth 2.0. Non usa `SubmittableTrait` perché in OAuth non esiste un form da sottomettere: gli errori arrivano come parametri URL dal provider e vengono gestiti tramite valori di ritorno ed eccezioni, non tramite `FormFilterError`.
+
+Il flusso si articola in due fasi:
+
+**Fase 1 — Redirect al provider**:
+- `getAuthorizationUrl(): string` genera uno `state` casuale con `random_bytes`, lo persiste in sessione e delega la costruzione dell'URL a `OAuthWrapperInterface::getAuthorizationUrl()`.
+
+**Fase 2 — Callback dal provider**:
+- `checkCallback(): bool` verifica la presenza di errori del provider (`$request->query['error']`), convalida lo `state` in modo timing-safe tramite `hash_equals()`, scambia il `code` per un identificatore utente tramite `OAuthWrapperInterface::getAuthenticableIdentifier()` e recupera l'entità autenticabile tramite `AuthenticableModelInterface`.
+
+La protezione CSRF del callback segue lo stesso pattern difensivo di `Authentication::checkCsrfToken()`: verifica sequenziale con early return.
+
+**File modificati**:
+- **`Security/HttpClasses/OAuthAuthentication.php`** *(nuovo)*
+
+#### `Security/Interfaces/Wrappers/OAuthWrapperInterface` — Contratto per i provider OAuth
+
+Nuova interfaccia che astrae la comunicazione con il provider OAuth. Ogni provider (Google, GitHub, ecc.) implementa:
+- `getAuthorizationUrl(string $state): string` — costruisce l'URL di autorizzazione con il parametro `state`
+- `getAuthenticableIdentifier(string $code): string` — scambia il codice di autorizzazione per un identificatore utente (es. email); eventuali errori di rete o token invalidi propagano come eccezioni al chiamante
+
+**File modificati**:
+- **`Security/Interfaces/Wrappers/OAuthWrapperInterface.php`** *(nuovo)*
+
+### 🧪 Test
+
+#### `Tests/Security/HttpClasses/OAuthAuthenticationTest` — Copertura completa del flusso OAuth
+
+Sette test che coprono tutti i percorsi di `checkCallback()` e `getAuthorizationUrl()`:
+
+- `testGetAuthorizationUrl` — verifica che lo `state` venga scritto in sessione e che l'URL venga restituito dal wrapper
+- `testCheckCallbackWithProviderError` — early return `false` in presenza di `error` nella query string
+- `testCheckCallbackWithMissingSessionState` — `false` se lo `state` non è presente in sessione
+- `testCheckCallbackWithMissingRequestState` — `false` se lo `state` manca nella query string
+- `testCheckCallbackWithMismatchedState` — `false` se gli `state` non corrispondono
+- `testCheckCallbackWithMissingCode` — `false` se il `code` manca dalla query string
+- `testCheckCallbackWithUserNotFound` — `false` se il modello non trova l'utente
+- `testCheckCallbackSuccess` — `true` con verifica di `getAuthenticableInterface()`
+
+**File modificati**:
+- **`Tests/Security/HttpClasses/OAuthAuthenticationTest.php`** *(nuovo)*
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change sull'API pubblica**: Le firme pubbliche di `Authentication` e `BaseForm` sono invariate. `Submittable` era marcata `@internal` by design e non esposta come API consumabile dall'esterno del framework.
+- **`OAuthAuthentication` e `OAuthWrapperInterface`** sono addizioni pure: nessuna classe esistente è modificata dalla loro introduzione.
+
+---
+
 ## [11.5.2] - 2026-04-04 - Rifattorizzazione Template Controller nello Scaffolding
 
 Piccola rifattorizzazione del template del controller generato dal comando di scaffolding, per semplificare eventuali personalizzazioni post-generazione.

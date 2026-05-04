@@ -128,7 +128,7 @@
         <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Upgrade/Transformers/TransformerInterface.php"><a href="files/console-services-upgrade-transformers-transformerinterface.html"><abbr title="Console/Services/Upgrade/Transformers/TransformerInterface.php">TransformerInterface.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">36</span>
+    <span class="phpdocumentor-element-found-in__line">37</span>
 
     </aside>
 
@@ -182,28 +182,24 @@
     <span>
                                 &nbsp;: bool    </span>
 </dt>
-<dd>Check if this transformer can transform the given file</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Console-Services-Upgrade-Transformers-TransformerInterface.html#method_getConfidence">getConfidence()</a>
     <span>
                                 &nbsp;: int    </span>
 </dt>
-<dd>Get the confidence level of this transformer (0-100)</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Console-Services-Upgrade-Transformers-TransformerInterface.html#method_getDescription">getDescription()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
-<dd>Get a description of what this transformer does</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Console-Services-Upgrade-Transformers-TransformerInterface.html#method_transform">transform()</a>
     <span>
                                 &nbsp;: <a href="classes/SismaFramework-Console-Services-Upgrade-DTO-TransformationResult.html"><abbr title="\SismaFramework\Console\Services\Upgrade\DTO\TransformationResult">TransformationResult</abbr></a>    </span>
 </dt>
-<dd>Transform the content</dd>
 
     </dl>
 
@@ -232,12 +228,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Upgrade/Transformers/TransformerInterface.php"><a href="files/console-services-upgrade-transformers-transformerinterface.html"><abbr title="Console/Services/Upgrade/Transformers/TransformerInterface.php">TransformerInterface.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">46</span>
+    <span class="phpdocumentor-element-found-in__line">39</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Check if this transformer can transform the given file</p>
-
+    
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
                     <span class="phpdocumentor-signature__name">canTransform</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$filePath</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$content</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
@@ -253,18 +248,14 @@
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Path to the file</p>
-</section>
-
+                
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$content</span>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>File content</p>
-</section>
-
+                
             </dd>
             </dl>
 
@@ -275,10 +266,6 @@
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">bool</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>True if can transform</p>
-</section>
-
             </section>
 
 </article>
@@ -296,12 +283,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Upgrade/Transformers/TransformerInterface.php"><a href="files/console-services-upgrade-transformers-transformerinterface.html"><abbr title="Console/Services/Upgrade/Transformers/TransformerInterface.php">TransformerInterface.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">62</span>
+    <span class="phpdocumentor-element-found-in__line">43</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Get the confidence level of this transformer (0-100)</p>
-
+    
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
                     <span class="phpdocumentor-signature__name">getConfidence</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">int</span></code>
@@ -318,10 +304,6 @@
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">int</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>Confidence percentage</p>
-</section>
-
             </section>
 
 </article>
@@ -339,12 +321,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Upgrade/Transformers/TransformerInterface.php"><a href="files/console-services-upgrade-transformers-transformerinterface.html"><abbr title="Console/Services/Upgrade/Transformers/TransformerInterface.php">TransformerInterface.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">69</span>
+    <span class="phpdocumentor-element-found-in__line">45</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Get a description of what this transformer does</p>
-
+    
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
                     <span class="phpdocumentor-signature__name">getDescription</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
@@ -361,10 +342,6 @@
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type">string</span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>Description</p>
-</section>
-
             </section>
 
 </article>
@@ -382,12 +359,11 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Services/Upgrade/Transformers/TransformerInterface.php"><a href="files/console-services-upgrade-transformers-transformerinterface.html"><abbr title="Console/Services/Upgrade/Transformers/TransformerInterface.php">TransformerInterface.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">41</span>
 
     </aside>
 
-        <p class="phpdocumentor-summary">Transform the content</p>
-
+    
     <code class="phpdocumentor-code phpdocumentor-signature ">
     <span class="phpdocumentor-signature__visibility">public</span>
                     <span class="phpdocumentor-signature__name">transform</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$content</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$filePath</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Console-Services-Upgrade-DTO-TransformationResult.html"><abbr title="\SismaFramework\Console\Services\Upgrade\DTO\TransformationResult">TransformationResult</abbr></a></span></code>
@@ -403,18 +379,14 @@
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Content to transform</p>
-</section>
-
+                
             </dd>
                     <dt class="phpdocumentor-argument-list__entry">
                 <span class="phpdocumentor-argument-list__argument__name">$filePath</span>
                 : <span class="phpdocumentor-argument-list__argument__type">string</span>
                             </dt>
             <dd class="phpdocumentor-argument-list__definition">
-                    <section class="phpdocumentor-description"><p>Path to the file being transformed</p>
-</section>
-
+                
             </dd>
             </dl>
 
@@ -425,10 +397,6 @@
             <section>
         <h5 class="phpdocumentor-return-value__heading">Return values</h5>
         <span class="phpdocumentor-signature__response_type"><a href="classes/SismaFramework-Console-Services-Upgrade-DTO-TransformationResult.html"><abbr title="\SismaFramework\Console\Services\Upgrade\DTO\TransformationResult">TransformationResult</abbr></a></span>
-                    &mdash;
-                <section class="phpdocumentor-description"><p>Transformation result</p>
-</section>
-
             </section>
 
 </article>
