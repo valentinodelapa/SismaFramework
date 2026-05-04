@@ -27,6 +27,8 @@
 namespace SismaFramework\Tests\Security\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Security\BaseClasses\BaseAuthentication;
 use SismaFramework\Security\Exceptions\AuthenticationException;
@@ -40,6 +42,7 @@ class BaseAuthenticationTest extends TestCase
 
     private Request $requestMock;
     private AuthenticableInterface $authenticableInterfaceMock;
+    private Session $sessionStub;
 
     #[\Override]
     public function setUp(): void
@@ -48,11 +51,13 @@ class BaseAuthenticationTest extends TestCase
         $this->requestMock->server['REQUEST_METHOD'] = 'POST';
         $this->requestMock->input = [];
         $this->authenticableInterfaceMock = $this->createStub(AuthenticableInterface::class);
+        $this->sessionStub = $this->createStub(Session::class);
     }
 
     public function testGetAuthenticableInterfaceWithException(): void
     {
-        $baseAuthentication = new class($this->requestMock) extends BaseAuthentication {};
+        $sessionStub = $this->sessionStub;
+        $baseAuthentication = new class($this->requestMock, new Filter(), $sessionStub) extends BaseAuthentication {};
         $this->expectException(AuthenticationException::class);
         $baseAuthentication->getAuthenticableInterface();
     }
@@ -60,11 +65,12 @@ class BaseAuthenticationTest extends TestCase
     public function testGetAuthenticableInterface(): void
     {
         $authenticableMock = $this->authenticableInterfaceMock;
-        $baseAuthentication = new class($this->requestMock, $authenticableMock) extends BaseAuthentication {
+        $sessionStub = $this->sessionStub;
+        $baseAuthentication = new class($this->requestMock, $authenticableMock, $sessionStub) extends BaseAuthentication {
 
-            public function __construct(Request $request, AuthenticableInterface $authenticable)
+            public function __construct(Request $request, AuthenticableInterface $authenticable, Session $session)
             {
-                parent::__construct($request);
+                parent::__construct($request, new Filter(), $session);
                 $this->authenticableInterface = $authenticable;
             }
         };
