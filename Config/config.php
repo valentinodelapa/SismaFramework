@@ -147,11 +147,11 @@ const ENCRYPTION_ALGORITHM = "AES-256-CBC";
 const INITIALIZATION_VECTOR_BYTES = 16;
 
 /* Database Constant */
-const DATABASE_HOST = "";
-const DATABASE_NAME = "";
-const DATABASE_PASSWORD = "";
-const DATABASE_PORT = "";
-const DATABASE_USERNAME = "";
+const ORM_DATABASE_HOST = "";
+const ORM_DATABASE_NAME = "";
+const ORM_DATABASE_PASSWORD = "";
+const ORM_DATABASE_PORT = "";
+const ORM_DATABASE_USERNAME = "";
 
 /* Object Document Mapper Constant */
 const DEFAULT_ODM_ADAPTER_TYPE = "mongodb";

@@ -106,8 +106,8 @@ class ConfigTest extends TestCase
         $properties = [
             'application',
             'developmentEnvironment',
-            'databaseHost',
-            'databaseName',
+            'ormDatabaseHost',
+            'ormDatabaseName',
             'entityNamespace',
             'controllerNamespace',
             'language'
@@ -129,7 +129,7 @@ class ConfigTest extends TestCase
         $readonlyProperties = [
             'application',
             'developmentEnvironment',
-            'databaseHost'
+            'ormDatabaseHost'
         ];
 
         foreach ($readonlyProperties as $propertyName) {

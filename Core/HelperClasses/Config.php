@@ -149,11 +149,11 @@ class Config
     protected readonly int $initializationVectorBytes;
 
     /* Database Constant */
-    protected readonly string $databaseHost;
-    protected readonly string $databaseName;
-    protected readonly string $databasePassword;
-    protected readonly string $databasePort;
-    protected readonly string $databaseUsername;
+    protected readonly string $ormDatabaseHost;
+    protected readonly string $ormDatabaseName;
+    protected readonly string $ormDatabasePassword;
+    protected readonly string $ormDatabasePort;
+    protected readonly string $ormDatabaseUsername;
 
     /* Object Document Mapper Constant */
     protected readonly OdmAdapterType $defaultOdmAdapterType;

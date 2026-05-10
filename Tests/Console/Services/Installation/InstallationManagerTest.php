@@ -128,33 +128,32 @@ class InstallationManagerTest extends TestCase
     {
         $projectName = 'MyTestProject';
         $config = [
-            'DATABASE_HOST' => 'localhost',
-            'DATABASE_NAME' => 'mydb',
-            'DATABASE_USERNAME' => 'root',
-            'DATABASE_PASSWORD' => 'secret',
-            'DATABASE_PORT' => '3306'
+            'ORM_DATABASE_HOST' => 'localhost',
+            'ORM_DATABASE_NAME' => 'mydb',
+            'ORM_DATABASE_USERNAME' => 'root',
+            'ORM_DATABASE_PASSWORD' => 'secret',
+            'ORM_DATABASE_PORT' => '3306'
         ];
 
-        // Prima aggiungiamo queste costanti al file di configurazione del framework
         $configFile = $this->testFrameworkPath . '/Config/config.php';
         file_put_contents($configFile, <<<PHP
 <?php
 const PROJECT = 'TestProject';
-const DATABASE_HOST = '127.0.0.1';
-const DATABASE_NAME = 'test';
-const DATABASE_USERNAME = 'user';
-const DATABASE_PASSWORD = 'pass';
-const DATABASE_PORT = '3306';
+const ORM_DATABASE_HOST = '127.0.0.1';
+const ORM_DATABASE_NAME = 'test';
+const ORM_DATABASE_USERNAME = 'user';
+const ORM_DATABASE_PASSWORD = 'pass';
+const ORM_DATABASE_PORT = '3306';
 PHP
         );
 
         $this->manager->install($projectName, $config);
 
         $installedConfig = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
-        $this->assertMatchesRegularExpression("/const DATABASE_HOST = ['\"]localhost['\"]/", $installedConfig);
-        $this->assertMatchesRegularExpression("/const DATABASE_NAME = ['\"]mydb['\"]/", $installedConfig);
-        $this->assertMatchesRegularExpression("/const DATABASE_USERNAME = ['\"]root['\"]/", $installedConfig);
-        $this->assertMatchesRegularExpression("/const DATABASE_PASSWORD = ['\"]secret['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const ORM_DATABASE_HOST = ['\"]localhost['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const ORM_DATABASE_NAME = ['\"]mydb['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const ORM_DATABASE_USERNAME = ['\"]root['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const ORM_DATABASE_PASSWORD = ['\"]secret['\"]/", $installedConfig);
     }
 
     public function testInstallThrowsExceptionWhenConfigExists(): void
