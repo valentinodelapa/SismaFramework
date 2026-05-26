@@ -96,16 +96,20 @@ Alcuni oggetti di servizio possono essere "iniettati" automaticamente come param
 * `Authentication`: Fornisce metodi per la gestione dell'autenticazione utente.
 
 ```php
+use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Security\Authentication;
+use SismaFramework\Security\HttpClasses\Authentication;
+
 public function updateUser(Request $request, Authentication $auth): Response
 {
-    if (!$auth->isLogged()) {
-        // ... gestisci utente non autenticato
-    } 
+    // Verifica se l'utente è autenticato controllando la sessione
+    if (!Session::hasItem('user.id')) {
+        return $this->router->redirect('security/login');
+    }
 
     // Ottieni i dati dal form inviato via POST
-    $username = $request->request->get('username');
+    // Le proprietà di Request sono array puri: usa l'accesso con indice
+    $username = $request->input['username'] ?? '';
 
     // ... logica di aggiornamento ...
 }
