@@ -27,7 +27,7 @@ jobs:
         run: |
           TAG_NAME="${{ github.ref_name }}"
           ZIP_NAME="${{ github.event.repository.name }}-${TAG_NAME}.zip"
-          
+
           zip -r $ZIP_NAME . \
             --exclude="*.git*" \
             --exclude="*.github*" \
@@ -44,10 +44,10 @@ jobs:
             --exclude="ISSUE_TEMPLATE.md" \
             --exclude="PULL_REQUEST_TEMPLATE.md" \
             --exclude="FUNDING.yml"
-          
+
           echo "ARCHIVE_PATH=$ZIP_NAME" >> $GITHUB_ENV
           echo "zip_file_name=$ZIP_NAME" >> "${GITHUB_OUTPUT}"
-      
+
       - name: Upload archive as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -59,21 +59,28 @@ jobs:
           TAG_NAME="${{ github.ref_name }}"
           RELEASE_VERSION="${TAG_NAME//v/}"
           RELEASE_NOTES=$(awk "/^## \\[${RELEASE_VERSION}\\]/{flag=1;next}/^## \\[/{flag=0}flag" CHANGELOG.md)
-          
+
           if [ -z "$RELEASE_NOTES" ]; then
             echo "Nessuna nota di rilascio trovata per $TAG_NAME nel CHANGELOG.md."
             RELEASE_NOTES="**Release ${TAG_NAME}**\n\nNessuna nota di rilascio dettagliata trovata nel CHANGELOG.md per questa versione. Per favore, consulta il repository GitHub per il file CHANGELOG.md completo."
           fi
-          
+
           echo "release_body<<EOF" >> "${GITHUB_OUTPUT}"
           echo "$RELEASE_NOTES" >> "${GITHUB_OUTPUT}"
           echo "EOF" >> "${GITHUB_OUTPUT}"
+      - name: Verify archive exists
+        run: |
+          if [ ! -f "${{ env.ARCHIVE_PATH }}" ]; then
+            echo "ERROR: archive not found at ${{ env.ARCHIVE_PATH }}"
+            exit 1
+          fi
+          ls -lh "${{ env.ARCHIVE_PATH }}"
       - name: Generate subject for provenance
         id: hash
         run: |
           set -euo pipefail
-          ZIP_FILE=${{ env.ARCHIVE_PATH }}
-          echo "digests=$(sha256sum $ZIP_FILE | base64 -w0)" >> "${GITHUB_OUTPUT}"
+          ZIP_FILE="${{ env.ARCHIVE_PATH }}"
+          echo "digests=$(sha256sum "$ZIP_FILE" | base64 -w0)" >> "${GITHUB_OUTPUT}"
 
 
   provenance:
@@ -98,25 +105,27 @@ jobs:
         with:
           name: release-archive
           path: .
-      
+
       - name: Download attestation
         uses: actions/download-artifact@v4
         with:
           pattern: "*.intoto.jsonl"
           merge-multiple: true
           path: .
-      
+
       - name: List downloaded files (debug)
         run: |
           echo "All files in current directory:"
           ls -la .
-      
+
       - name: Create GitHub Release with attestation
         uses: softprops/action-gh-release@v1
+        env:
+          RELEASE_BODY: ${{ needs.build.outputs.release_body }}
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          body: ${{ needs.build.outputs.release_body }}
+          body: ${{ env.RELEASE_BODY }}
           draft: false
           prerelease: false
           files: |

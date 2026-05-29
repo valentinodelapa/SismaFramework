@@ -2,6 +2,102 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.6.1] - 2026-05-26 - Compatibilità phpDocumentor, Fix SismaLogger e Correzione Documentazione
+
+Patch di manutenzione che allarga il vincolo su `psr/log` per consentire l'installazione di phpDocumentor come dipendenza di sviluppo, corregge un potenziale `TypeError` in `SismaLogger::interpolate()` con messaggi `\Stringable`, aggiorna la documentazione Markdown (esempi API errati, sezione OAuth mancante) e rigenera la documentazione phpDocumentor allineandola alle classi introdotte in 11.6.0.
+
+### 🐛 Bug Fixes
+
+#### `Core/HelperClasses/SismaLogger` — Gestione `\Stringable` in `interpolate()`
+
+Il metodo privato `interpolate()` dichiarava `string $message` come tipo del parametro. Poiché `LoggerInterface` (psr/log 2.x/3.x) consente di passare oggetti `\Stringable` ai metodi di log, qualsiasi chiamata con un `\Stringable` avrebbe generato un `TypeError` prima di raggiungere il metodo. Il tipo è stato aggiornato a `\Stringable|string` e viene applicato un cast `(string)` all'inizio del metodo, garantendo la compatibilità con l'intera gamma di messaggi ammessi dall'interfaccia PSR-3.
+
+**File modificati**:
+- **`Core/HelperClasses/SismaLogger.php`**: Firma `interpolate()` aggiornata a `\Stringable|string $message`; aggiunto `$message = (string) $message` come prima istruzione
+
+#### `Console/Services/Installation/InstallationManager` — Vincolo `psr/log` nei nuovi progetti
+
+Il metodo che inietta la dipendenza `psr/log` nel `composer.json` dei nuovi progetti impostava il vincolo a `^3.0`. Aggiornato a `^2.0 || ^3.0` per allinearlo al vincolo del framework e consentire la coesistenza con phpDocumentor anche nei progetti installati.
+
+**File modificati**:
+- **`Console/Services/Installation/InstallationManager.php`**: Vincolo iniettato aggiornato da `^3.0` a `^2.0 || ^3.0`
+
+### 🔧 Dipendenze e Tooling
+
+#### `composer.json` — Allargamento vincolo `psr/log` e aggiunta phpDocumentor
+
+Il vincolo `"psr/log": "^3.0"` impediva l'installazione di phpDocumentor come `require-dev`, poiché le sue dipendenze indirette richiedono `psr/log ^2.0`. Il vincolo è stato allargato a `^2.0 || ^3.0`: il codice del framework non usa alcuna API specifica di psr/log 3.x (i metodi `LoggerInterface` sono implementati senza type hint espliciti su `$message`, compatibili con tutte e tre le major), quindi l'allargamento non introduce alcun rischio regressivo.
+
+Aggiunto inoltre `"config": {"platform": {"php": "8.4.99"}}` per permettere la risoluzione delle dipendenze su PHP 8.5 (dove `phpdocumentor/json-path` — dipendenza indiretta — non dichiara ancora supporto esplicito, pur funzionando correttamente). Aggiunto script `"phpdoc": "php vendor/bin/phpdoc --config phpdoc.xml"` per semplificare la rigenerazione della documentazione API.
+
+**File modificati**:
+- **`composer.json`**: `psr/log` aggiornato a `^2.0 || ^3.0`; aggiunto `phpdocumentor/phpdocumentor: ^3.10` in `require-dev`; aggiunte sezioni `config` e `scripts`
+
+### 🧪 Test
+
+#### `Tests/Console/Services/Installation/InstallationManagerTest` — Allineamento asserzioni
+
+Le due asserzioni che verificavano il valore del vincolo `psr/log` iniettato da `InstallationManager` sono state aggiornate da `'^3.0'` a `'^2.0 || ^3.0'`.
+
+**File modificati**:
+- **`Tests/Console/Services/Installation/InstallationManagerTest.php`**: Due `assertEquals('^3.0', ...)` aggiornati
+
+### 📖 Documentazione
+
+#### `docs/security.md` — Correzione esempi API e aggiunta sezione OAuth
+
+La sezione di esempio per l'autenticazione form-based conteneva riferimenti a metodi inesistenti nell'API pubblica (`isLogged()`, `login()`) e a un pattern logicamente scorretto (`checkAuthenticable() && checkPassword()`, dove `checkPassword()` è già chiamato internamente da `checkAuthenticable()`). Corretti anche gli accessi alle proprietà di `Request` (da notazione ad oggetto `->get()` a accesso array `['key']`, coerente con la definizione della classe) e il nome del metodo `getAuthenticable()` → `getAuthenticableInterface()`.
+
+Aggiunta sezione completa **Autenticazione OAuth 2.0** che documenta `OAuthAuthentication`, `OAuthWrapperInterface`, il flusso Authorization Code in due fasi e un esempio di implementazione di un wrapper provider.
+
+**File modificati**:
+- **`docs/security.md`**: Corretti esempi form-based; aggiunta sezione OAuth
+
+#### `docs/forms.md` — Correzione nome metodo `getFilterErrors()`
+
+L'esempio del controller utilizzava `$form->returnFilterErrors()`, metodo inesistente. Corretto in `$form->getFilterErrors()` (metodo ereditato da `SubmittableTrait`).
+
+**File modificati**:
+- **`docs/forms.md`**: `returnFilterErrors()` → `getFilterErrors()`
+
+#### `docs/controllers.md` — Correzione esempio autowiring `Authentication`
+
+L'esempio di autowiring utilizzava `$auth->isLogged()` (metodo inesistente), il namespace errato `SismaFramework\Security\Authentication` e l'accesso alle proprietà di `Request` tramite `->get()`. Corretti namespace, metodo di verifica sessione e accesso array.
+
+**File modificati**:
+- **`docs/controllers.md`**: Namespace, controllo sessione e accesso `Request` corretti
+
+#### `docs/api-reference.md` — Correzione firme `BaseForm` e aggiunta sezioni Security/HTTP
+
+`getErrors(): FormFilterErrorCollection` era il nome errato del metodo (corretto in `getFilterErrors(): FormFilterError`); la firma di `handleRequest()` mancava del parametro `Request $request`. Aggiunte le sezioni **Security Classes** (`Authentication`, `OAuthAuthentication`, `OAuthWrapperInterface`, `BaseVoter`, `BasePermission`) e **HTTP Classes** (`Response`), che erano elencate nell'indice del documento ma mai implementate nel corpo.
+
+**File modificati**:
+- **`docs/api-reference.md`**: Firme `BaseForm` corrette; sezioni Security e HTTP aggiunte
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+Rigenerata da zero tramite `composer phpdoc` per includere le nuove classi introdotte in 11.6.0 (`OAuthAuthentication`, `OAuthWrapperInterface`, `BaseAuthentication`, `SubmittableTrait`) ed eliminare il file orfano `SismaFramework-Core-AbstractClasses-Submittable.html`, rimasto dalla generazione precedente dopo la rimozione del file PHP sorgente.
+
+#### Correzione annotazioni `@deprecated` — versione di introduzione e rimozione
+
+Quattro classi/metodi presentavano annotazioni `@deprecated` incomplete o errate: mancavano la versione in cui la deprecazione era stata introdotta, la versione di rimozione pianificata, oppure il testo era in inglese anziché italiano, creando incoerenza con il resto della codebase.
+
+**`Orm/ExtendedClasses/DependentModel`** e **`Orm/ExtendedClasses/SelfReferencedModel`** — i tre metodi deprecati (`countEntityCollectionByEntity`, `getEntityCollectionByEntity`, `deleteEntityCollectionByEntity`) riportavano `dalla versione 11.0.0`, ma la deprecazione era stata introdotta in `v10.1.0` (commit `9c9f5ed4`, 2025-11-21). Corretto in `dalla versione 10.1.0`; aggiunta la versione di rimozione pianificata `12.0.0`.
+
+**`Security/ExtendedClasses/LogException`** e **`Security/ExtendedClasses/NoLogException`** — le annotazioni erano in inglese e prive di numeri di versione. La deprecazione è stata introdotta in `v11.0.0` (commit `87843e03`, 2025-12-18). Aggiunta versione di introduzione `11.0.0`, versione di rimozione `12.0.0`; testo armonizzato in italiano coerentemente con gli altri messaggi di deprecazione del framework.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/DependentModel.php`**: versione `@deprecated` corretta da `11.0.0` a `10.1.0`; aggiunto `sarà rimosso nella versione 12.0.0` (3 metodi)
+- **`Orm/ExtendedClasses/SelfReferencedModel.php`**: stessa correzione (3 metodi)
+- **`Security/ExtendedClasses/LogException.php`**: annotazione `@deprecated` riscritta con versioni e in italiano
+- **`Security/ExtendedClasses/NoLogException.php`**: annotazione `@deprecated` riscritta con versioni e in italiano
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: tutte le modifiche sono correzioni di bug, aggiornamenti di documentazione o aggiunta di tooling di sviluppo. Le firme pubbliche di `SismaLogger` rimangono invariate; il comportamento di `interpolate()` è identico per input di tipo `string` (il 100% dei casi d'uso interni).
+
+---
+
 ## [11.6.0] - 2026-05-04 - Rifattorizzazione Gerarchia di Autenticazione, Introduzione SubmittableTrait e Supporto OAuth
 
 Rifattorizzazione interna del sistema di autenticazione: la classe astratta `Submittable` è stata convertita in un trait, e il comportamento comune a tutte le classi di autenticazione è stato estratto nella nuova classe astratta `BaseAuthentication`. Il refactoring ha abilitato l'implementazione di `OAuthAuthentication`, che supporta il flusso Authorization Code OAuth 2.0 senza `SubmittableTrait` poiché in OAuth non esiste un form da sottomettere né errori di validazione da riportare al template.

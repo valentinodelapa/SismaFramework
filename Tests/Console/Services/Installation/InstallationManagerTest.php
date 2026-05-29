@@ -218,7 +218,7 @@ PHP
         $this->assertEquals('Project built with SismaFramework', $composer['description']);
         $this->assertEquals('project', $composer['type']);
         $this->assertArrayHasKey('psr/log', $composer['require']);
-        $this->assertEquals('^3.0', $composer['require']['psr/log']);
+        $this->assertEquals('^2.0 || ^3.0', $composer['require']['psr/log']);
     }
 
     public function testInstallUpdatesExistingComposerJson(): void
@@ -242,7 +242,7 @@ PHP
         $this->assertEquals('existing/project', $composer['name']);
         $this->assertArrayHasKey('php', $composer['require']);
         $this->assertArrayHasKey('psr/log', $composer['require']);
-        $this->assertEquals('^3.0', $composer['require']['psr/log']);
+        $this->assertEquals('^2.0 || ^3.0', $composer['require']['psr/log']);
     }
 
     public function testInstallAddsVendorAutoloadToIndexPhp(): void

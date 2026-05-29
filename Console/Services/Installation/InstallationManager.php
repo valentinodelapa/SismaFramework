@@ -245,7 +245,7 @@ class InstallationManager
         }
 
         if (!isset($composer["require"]["psr/log"])) {
-            $composer["require"]["psr/log"] = "^3.0";
+            $composer["require"]["psr/log"] = "^2.0 || ^3.0";
         }
 
         $json = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
