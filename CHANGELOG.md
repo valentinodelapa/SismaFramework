@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.6.2] - 2026-06-09 - Correzione Ordine di Discovery dei Comandi Console
+
+Patch che corregge un comportamento anomalo nel `CommandDispatcher`: i comandi dei moduli venivano scoperti dopo quelli del framework, impedendo ai moduli di estendere o sovrascrivere i comandi nativi. L'ordine è stato invertito — moduli prima (nell'ordine di `MODULE_FOLDERS`), framework come fallback — allineando il `CommandDispatcher` alla stessa logica di precedenza già adottata dal web `Dispatcher`.
+
+### 🐛 Bug Fixes
+
+#### `Console/HelperClasses/CommandDispatcher` — Ordine di discovery dei comandi
+
+Il metodo `discoverCommands()` scansionava prima la directory dei comandi del framework (`SismaFramework/Console/Commands/`) e poi quella dei moduli, nell'ordine inverso rispetto al comportamento atteso. Poiché `run()` si ferma al primo comando compatibile, qualsiasi comando di un modulo con lo stesso nome di un comando del framework veniva silenziosamente ignorato, rendendo impossibile estendere o sovrascrivere i comandi nativi dall'esterno del framework.
+
+L'ordine è stato corretto: i moduli vengono scansionati per primi, rispettando la sequenza dichiarata in `MODULE_FOLDERS`; il framework viene aggiunto per ultimo come fallback. Questo rispecchia esattamente la logica di precedenza del web `Dispatcher` e permette ai moduli di estendere i comandi del framework tramite ereditarietà, chiamando `parent::execute()` dopo aver aggiunto la propria logica.
+
+**File modificati**:
+- **`Console/HelperClasses/CommandDispatcher.php`**: in `discoverCommands()`, il `foreach ($this->config->moduleFolders ...)` spostato prima della chiamata a `discoverFromDirectory()` sul path di sistema
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: i progetti che non hanno comandi omonimi nei moduli non subiscono alcuna variazione di comportamento. I progetti che avevano un comando con lo stesso nome sia nel framework sia in un modulo vedranno ora eseguito quello del modulo anziché quello del framework — il che è il comportamento corretto e atteso.
+
+---
+
 ## [11.6.1] - 2026-05-26 - Compatibilità phpDocumentor, Fix SismaLogger e Correzione Documentazione
 
 Patch di manutenzione che allarga il vincolo su `psr/log` per consentire l'installazione di phpDocumentor come dipendenza di sviluppo, corregge un potenziale `TypeError` in `SismaLogger::interpolate()` con messaggi `\Stringable`, aggiorna la documentazione Markdown (esempi API errati, sezione OAuth mancante) e rigenera la documentazione phpDocumentor allineandola alle classi introdotte in 11.6.0.

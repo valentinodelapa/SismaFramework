@@ -80,11 +80,6 @@ ERROR);
     private function discoverCommands(): void
     {
         $factory = new CommandFactory();
-        $this->discoverFromDirectory(
-            $this->config->systemPath . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
-            $this->config->system . '\\Console\\Commands',
-            $factory
-        );
         foreach ($this->config->moduleFolders as $moduleFolder) {
             $this->discoverFromDirectory(
                 $this->config->rootPath . $moduleFolder . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
@@ -92,6 +87,11 @@ ERROR);
                 $factory
             );
         }
+        $this->discoverFromDirectory(
+            $this->config->systemPath . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
+            $this->config->system . '\\Console\\Commands',
+            $factory
+        );
     }
 
     private function discoverFromDirectory(string $directory, string $namespace, CommandFactory $factory): void

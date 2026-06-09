@@ -16,7 +16,7 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -49,7 +49,7 @@ jobs:
           echo "zip_file_name=$ZIP_NAME" >> "${GITHUB_OUTPUT}"
 
       - name: Upload archive as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-archive
           path: ${{ env.ARCHIVE_PATH }}
@@ -101,13 +101,13 @@ jobs:
       contents: write
     steps:
       - name: Download release archive
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-archive
           path: .
 
       - name: Download attestation
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: "*.intoto.jsonl"
           merge-multiple: true
@@ -119,7 +119,7 @@ jobs:
           ls -la .
 
       - name: Create GitHub Release with attestation
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         env:
           RELEASE_BODY: ${{ needs.build.outputs.release_body }}
         with:
