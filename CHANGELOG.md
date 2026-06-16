@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.6.3] - 2026-06-17 - Correzione Input Password e Sostituzione Valori Numerici nel File di Configurazione
+
+Patch che corregge due bug nel comando di installazione CLI: `askSecret()` emetteva un errore `stty` su ambienti senza TTY reale (IDE, pipe, container), e `updateConfigFile()` troncava i valori numerici come la porta del database a causa di un'ambiguità nelle backreference PCRE della stringa di sostituzione.
+
+### 🐛 Bug Fixes
+
+#### `Console/Traits/InteractiveInputTrait` — Errore `stty` su stdin non-TTY
+
+Il metodo `askSecret()` chiamava `system('stty -echo')` condizionato solo al check `PHP_OS === 'WIN'`, che non copre i casi in cui stdin non è un terminale reale anche su Linux/macOS (IDE come VS Code o PhpStorm, esecuzione via pipe, container Docker, ambienti CI). In questi contesti `stty` stampava l'errore `stty: 'standard input': Inappropriate ioctl for device` subito dopo il prompt della password.
+
+Il check è stato sostituito con `stream_isatty($handle)`, che verifica correttamente se il file descriptor è collegato a un TTY reale indipendentemente dal sistema operativo. Se stdin non è un TTY, la password viene letta senza tentare di disabilitare l'echo.
+
+**File modificati**:
+- **`Console/Traits/InteractiveInputTrait.php`**: `askSecret()` — rimosso il check `PHP_OS === 'WIN'`, sostituito con `stream_isatty($handle)`
+
+#### `Console/Services/Installation/InstallationManager` — Troncamento valori numerici in `updateConfigFile()`
+
+Il metodo `updateConfigFile()` costruiva la stringa di sostituzione per `preg_replace()` interpolando il valore direttamente in una stringa PHP: `"$1$2{$value}$2"`. Quando `$value` iniziava con una cifra (es. la porta `3306`), l'interpolazione produceva la stringa `$1$23306$2`, che PCRE interpretava come `$1` + `$23` (backreference al gruppo 23, inesistente → stringa vuota, consumando la prima cifra) + `306` (letterale) + `$2` (la virgoletta). Il risultato nel file di configurazione era `DATABASE_PORT = 306"` — valore troncato e virgoletta di chiusura mancante.
+
+Il metodo è stato riscritto usando `preg_replace_callback()`: il valore di sostituzione viene concatenato direttamente nella closure PHP, senza mai passare per il parser delle backreference PCRE. Questo risolve anche il caso analogo di password contenenti `$` o `\`.
+
+**File modificati**:
+- **`Console/Services/Installation/InstallationManager.php`**: `updateConfigFile()` — `preg_replace()` sostituito con `preg_replace_callback()`
+
+### 🧪 Test
+
+#### `Tests/Console/Services/Installation/InstallationManagerTest` — Copertura regressione valori numerici
+
+- `testInstallWithDatabaseConfig`: aggiunta asserzione su `DATABASE_PORT`; il template di config ora usa valori vuoti (`""`) per `DATABASE_PASSWORD` e `DATABASE_PORT`, replicando lo scenario reale che innescava il bug
+- `testUpdateConfigFileWithNumericValueDoesNotMangle` (nuovo, con data provider): verifica che il valore `DATABASE_PORT` non venga troncato sia con il valore di default (`3306`) sia con un valore inserito dall'utente (`5432`); include una negative assertion che esclude la presenza del valore troncato
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `askSecret()` mantiene la stessa firma e comportamento visibile; su TTY reale il comportamento (echo disabilitato) rimane invariato. `updateConfigFile()` è un metodo privato interno.
+
+---
+
 ## [11.6.2] - 2026-06-09 - Correzione Ordine di Discovery dei Comandi Console
 
 Patch che corregge un comportamento anomalo nel `CommandDispatcher`: i comandi dei moduli venivano scoperti dopo quelli del framework, impedendo ai moduli di estendere o sovrascrivere i comandi nativi. L'ordine è stato invertito — moduli prima (nell'ordine di `MODULE_FOLDERS`), framework come fallback — allineando il `CommandDispatcher` alla stessa logica di precedenza già adottata dal web `Dispatcher`.

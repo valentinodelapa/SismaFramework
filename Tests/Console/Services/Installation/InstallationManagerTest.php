@@ -135,7 +135,6 @@ class InstallationManagerTest extends TestCase
             'DATABASE_PORT' => '3306'
         ];
 
-        // Prima aggiungiamo queste costanti al file di configurazione del framework
         $configFile = $this->testFrameworkPath . '/Config/config.php';
         file_put_contents($configFile, <<<PHP
 <?php
@@ -143,8 +142,8 @@ const PROJECT = 'TestProject';
 const DATABASE_HOST = '127.0.0.1';
 const DATABASE_NAME = 'test';
 const DATABASE_USERNAME = 'user';
-const DATABASE_PASSWORD = 'pass';
-const DATABASE_PORT = '3306';
+const DATABASE_PASSWORD = '';
+const DATABASE_PORT = '';
 PHP
         );
 
@@ -155,6 +154,35 @@ PHP
         $this->assertMatchesRegularExpression("/const DATABASE_NAME = ['\"]mydb['\"]/", $installedConfig);
         $this->assertMatchesRegularExpression("/const DATABASE_USERNAME = ['\"]root['\"]/", $installedConfig);
         $this->assertMatchesRegularExpression("/const DATABASE_PASSWORD = ['\"]secret['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const DATABASE_PORT = ['\"]3306['\"]/", $installedConfig);
+    }
+
+    public static function numericPortProvider(): array
+    {
+        return [
+            'default port' => ['3306'],
+            'custom port'  => ['5432'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('numericPortProvider')]
+    public function testUpdateConfigFileWithNumericValueDoesNotMangle(string $port): void
+    {
+        $projectName = 'MyTestProject';
+
+        $configFile = $this->testFrameworkPath . '/Config/config.php';
+        file_put_contents($configFile, <<<PHP
+<?php
+const PROJECT = 'TestProject';
+const DATABASE_PORT = "";
+PHP
+        );
+
+        $this->manager->install($projectName, ['DATABASE_PORT' => $port]);
+
+        $installedConfig = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
+        $this->assertMatchesRegularExpression('/const DATABASE_PORT = [\'"]' . $port . '[\'"]/', $installedConfig);
+        $this->assertDoesNotMatchRegularExpression('/const DATABASE_PORT = [\'"]?' . substr($port, 1) . '[\'"]/', $installedConfig);
     }
 
     public function testInstallThrowsExceptionWhenConfigExists(): void

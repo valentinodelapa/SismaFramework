@@ -68,21 +68,19 @@ trait InteractiveInputTrait
     protected function askSecret(string $question): string
     {
         echo $question . ': ';
-        
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $handle = fopen('php://stdin', 'r');
-            $input = trim(fgets($handle));
-            fclose($handle);
-            return $input;
-        }
-        
-        system('stty -echo');
+
         $handle = fopen('php://stdin', 'r');
-        $input = trim(fgets($handle));
+
+        if (stream_isatty($handle)) {
+            system('stty -echo');
+            $input = trim(fgets($handle));
+            system('stty echo');
+            echo PHP_EOL;
+        } else {
+            $input = trim(fgets($handle));
+        }
+
         fclose($handle);
-        system('stty echo');
-        echo PHP_EOL;
-        
         return $input;
     }
 }
