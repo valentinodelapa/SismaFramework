@@ -40,6 +40,7 @@ class CommandDispatcher
     private string $command;
     private array $commandParts;
     private array $commandList = [];
+    private array $commandModules = [];
     private array $arguments = [];
     private array $options = [];
 
@@ -59,15 +60,20 @@ ERROR);
         $this->discoverCommands();
     }
 
-    public function addCommandStrategy(BaseCommand $command): void
+    public function addCommandStrategy(BaseCommand $command, string $module = ''): void
     {
         $this->commandList[] = $command;
+        $this->commandModules[] = $module;
     }
 
     public function run(): bool
     {
-        foreach ($this->commandList as $command) {
+        $moduleFilter = $this->extractModuleOption();
+        foreach ($this->commandList as $index => $command) {
             if ($command->checkCompatibility($this->command)) {
+                if ($moduleFilter !== null && $this->commandModules[$index] !== $moduleFilter) {
+                    continue;
+                }
                 $this->sortCommandParts();
                 $command->setArguments($this->arguments);
                 $command->setOptions($this->options);
@@ -77,6 +83,16 @@ ERROR);
         throw new \RuntimeException("Unknown command: " . $this->command . PHP_EOL);
     }
 
+    private function extractModuleOption(): ?string
+    {
+        foreach ($this->commandParts as $part) {
+            if (str_starts_with($part, '--module=')) {
+                return substr($part, 9);
+            }
+        }
+        return null;
+    }
+
     private function discoverCommands(): void
     {
         $factory = new CommandFactory();
@@ -84,17 +100,40 @@ ERROR);
             $this->discoverFromDirectory(
                 $this->config->rootPath . $moduleFolder . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
                 $moduleFolder . '\\Console\\Commands',
-                $factory
+                $factory,
+                $moduleFolder
+            );
+        }
+        foreach ($this->discoverUnconfiguredModules() as $moduleFolder) {
+            $this->discoverFromDirectory(
+                $this->config->rootPath . $moduleFolder . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
+                $moduleFolder . '\\Console\\Commands',
+                $factory,
+                $moduleFolder
             );
         }
         $this->discoverFromDirectory(
             $this->config->systemPath . 'Console' . DIRECTORY_SEPARATOR . 'Commands',
             $this->config->system . '\\Console\\Commands',
-            $factory
+            $factory,
+            $this->config->system
         );
     }
 
-    private function discoverFromDirectory(string $directory, string $namespace, CommandFactory $factory): void
+    private function discoverUnconfiguredModules(): array
+    {
+        $unconfigured = [];
+        $pattern = $this->config->rootPath . '*' . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands';
+        foreach (glob($pattern, GLOB_ONLYDIR) as $commandsDir) {
+            $moduleFolder = basename(dirname($commandsDir, 2));
+            if (!in_array($moduleFolder, $this->config->moduleFolders, true)) {
+                $unconfigured[] = $moduleFolder;
+            }
+        }
+        return $unconfigured;
+    }
+
+    private function discoverFromDirectory(string $directory, string $namespace, CommandFactory $factory, string $module): void
     {
         if (!is_dir($directory)) {
             return;
@@ -105,6 +144,7 @@ ERROR);
                 $reflection = new \ReflectionClass($fqcn);
                 if (!$reflection->isAbstract() && $reflection->isSubclassOf(BaseCommand::class)) {
                     $this->commandList[] = $factory->createCommand($fqcn);
+                    $this->commandModules[] = $module;
                 }
             }
         }

@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.7.0] - 2026-06-18 - Opzione `--module` e Discovery dei Moduli Non Configurati
+
+Introduce l'opzione `--module=NomeModulo` per selezionare esplicitamente quale modulo deve gestire un comando quando più moduli registrano lo stesso nome. Aggiunge contestualmente la discovery automatica dei moduli fisicamente presenti su filesystem ma non ancora dichiarati in `MODULE_FOLDERS`, risolvendo il problema di bootstrap circolare per cui un modulo non poteva registrarsi tramite il proprio comando di installazione perché non ancora configurato.
+
+### ✨ Nuove Funzionalità
+
+#### `Console/HelperClasses/CommandDispatcher` — Opzione `--module` per selezione esplicita del modulo
+
+Aggiunta l'opzione globale opzionale `--module=NomeModulo` al dispatcher dei comandi console. Quando specificata, il dispatcher filtra la lista dei comandi compatibili e ne esegue solo uno appartenente al modulo indicato; se nessun comando di quel modulo è compatibile, viene lanciata `RuntimeException` come per un comando sconosciuto. Senza l'opzione il comportamento rimane invariato (primo match vince, nell'ordine di priorità della discovery).
+
+Per supportare il filtro, ogni comando scoperto viene ora associato al proprio modulo di appartenenza tramite un array parallelo `$commandModules[]`. La firma di `discoverFromDirectory()` include il parametro `string $module` e `addCommandStrategy()` accetta un secondo parametro opzionale `string $module = ''` per retrocompatibilità con i chiamanti esistenti.
+
+**File modificati**:
+- **`Console/HelperClasses/CommandDispatcher.php`**: aggiunto `$commandModules[]`; `run()` chiama `extractModuleOption()` prima del loop; `discoverFromDirectory()` riceve e salva il modulo; `addCommandStrategy()` accetta `module` opzionale
+
+#### `Console/HelperClasses/CommandDispatcher` — Discovery automatica dei moduli non configurati
+
+Il metodo privato `discoverUnconfiguredModules()` esegue un glob su `{rootPath}/*/Console/Commands/` e restituisce le cartelle modulo che hanno quella struttura ma non sono ancora presenti in `MODULE_FOLDERS`. Questi moduli vengono scansionati dopo quelli configurati e prima del framework, con priorità inferiore rispetto ai moduli dichiarati nella configurazione. La combinazione con `--module=` permette di eseguire il comando di installazione di un modulo anche prima che sia stato aggiunto a `MODULE_FOLDERS`.
+
+**File modificati**:
+- **`Console/HelperClasses/CommandDispatcher.php`**: aggiunto `discoverUnconfiguredModules()`; `discoverCommands()` lo invoca tra il loop su `moduleFolders` e la discovery del framework
+
+### 🧪 Test
+
+#### `Tests/Console/HelperClasses/CommandDispatcherTest` — Copertura opzione `--module` e moduli non configurati
+
+- `testAddCommandStrategyWithModuleRunsNormally`: verifica che `addCommandStrategy()` con parametro modulo non alteri il comportamento di base
+- `testModuleFilterRunsOnlyMatchingModuleCommand`: due comandi compatibili da moduli diversi — con `--module=ModuleA` solo il primo viene eseguito
+- `testModuleFilterSkipsAllCommandsWhenModuleNotFound`: `--module=NonExistent` → `RuntimeException("Unknown command")`
+- `testModuleFilterWithoutModuleOptionIgnoresModuleOwnership`: senza `--module` la logica "primo match vince" rimane invariata
+- `testDiscoveryFindsCommandsInUnconfiguredModuleFolders`: crea su filesystem un modulo assente da `MODULE_FOLDERS` e verifica che il suo comando sia comunque scoperto ed eseguito
+- `testModuleFilterSelectsUnconfiguredModuleOverConfiguredOne`: con due moduli che espongono lo stesso comando, `--module=UnconfiguredModule` esegue il comando del modulo non configurato ignorando quello configurato
+
+**File modificati**:
+- **`Tests/Console/HelperClasses/CommandDispatcherTest.php`**: aggiunti sei test
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `addCommandStrategy()` aggiunge il parametro `module` con default `''` — tutti i chiamanti esistenti compilano senza modifiche. Senza `--module` il comportamento di `run()` è identico a prima. I comandi che non usano `--module` non ricevono l'opzione in modo diverso rispetto alle altre opzioni (finisce in `$options['module']` come qualsiasi altra opzione `--key=value`).
+
+---
+
 ## [11.6.3] - 2026-06-17 - Correzione Input Password e Sostituzione Valori Numerici nel File di Configurazione
 
 Patch che corregge due bug nel comando di installazione CLI: `askSecret()` emetteva un errore `stty` su ambienti senza TTY reale (IDE, pipe, container), e `updateConfigFile()` troncava i valori numerici come la porta del database a causa di un'ambiguità nelle backreference PCRE della stringa di sostituzione.
