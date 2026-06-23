@@ -29,7 +29,7 @@ namespace SismaFramework\Security\ExtendedClasses;
 use SismaFramework\Security\BaseClasses\BaseException;
 
 /**
- * @deprecated Use BaseException directly instead
+ * @deprecated dalla versione 11.0.0, sarà rimosso nella versione 12.0.0. Utilizzare BaseException direttamente
  * @author Valentino de Lapa
  */
 abstract class NoLogException extends BaseException

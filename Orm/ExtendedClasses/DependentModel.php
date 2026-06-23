@@ -45,7 +45,7 @@ abstract class DependentModel extends BaseModel
 {
 
     /**
-     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
      */
     public function countEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): int
     {
@@ -79,7 +79,7 @@ abstract class DependentModel extends BaseModel
     }
 
     /**
-     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
      */
     public function getEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
     {
@@ -103,7 +103,7 @@ abstract class DependentModel extends BaseModel
     }
 
     /**
-     * @deprecated dalla versione 11.0.0, verrà rimosso. Utilizzare la metaprogrammazione tramite __call()
+     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
      */
     public function deleteEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): bool
     {

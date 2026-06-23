@@ -36,16 +36,14 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 abstract class BaseController
 {
-    protected DataMapper $dataMapper;
-    protected Debugger $debugger;
     protected RouterService $router;
     protected RenderService $render;
     protected array $vars;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper(), Debugger $debugger = new Debugger())
-    {
-        $this->dataMapper = $dataMapper;
-        $this->debugger = $debugger;
+    public function __construct(
+        protected DataMapper $dataMapper = new DataMapper(),
+        protected Debugger $debugger = new Debugger(),
+    ) {
         $this->router = RouterService::getInstance();
         $this->render = RenderService::getInstance();
         $this->vars['controllerUrl'] = $this->router->getControllerUrl();

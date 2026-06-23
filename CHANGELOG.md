@@ -60,6 +60,443 @@ Il sistema di upgrade automatico dei moduli ora copre anche la migrazione dalla 
 
 ---
 
+## [11.8.0] - 2026-06-23 - Miglioramento Flessibilità `addRequest()` in BaseForm e Standardizzazione Formattazione
+
+Questa minor release estende la flessibilità del metodo `addRequest()` della classe `BaseForm` permettendo il controllo esplicito sulle sovrascritture di valori nella request. Inoltre, standardizza la formattazione del codice con miglior indentazione e trailing comma secondo le best practice PHP moderne.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/BaseClasses/BaseForm::addRequest()` — Controllo esplicito sulle sovrascritture
+
+Il metodo `addRequest()` è stato esteso con due miglioramenti:
+
+**Ampliamento tipi di `$value`**:
+- ❌ **Prima**: `string|array $value`
+- ✅ **Dopo**: `string|int|float|bool|array|null $value`
+
+Consente di iniettare nella request dati di diversi tipi primitivi, non solo stringhe e array.
+
+**Aggiunta parametro `$override` con controllo sulle sovrascritture**:
+- ❌ **Prima**: `protected function addRequest(string $propertyName, string|array $value): self` — sovrascrive sempre il valore
+- ✅ **Dopo**: `protected function addRequest(string $propertyName, string|int|float|bool|array|null $value, bool $override = true): self`
+
+Il parametro `$override = true` (default) mantiene il comportamento precedente: sovrascrive sempre. Passando `false`, il metodo scrive il valore **solo se** la proprietà non esiste ancora in `request->input`.
+
+**Caso d'uso**:
+```php
+// Inietta un valore di default che non sovrascrive l'input dell'utente
+$this->addRequest('email', 'default@example.com', override: false);
+```
+
+**File modificati**:
+- **`Core/BaseClasses/BaseForm.php`**: Firma di `addRequest()` aggiornata; logica di controllo sulla sovrascrittura implementata
+
+### 🎨 Miglioramenti Formattazione Codice
+
+#### Standardizzazione Indentazione e Trailing Comma
+
+Standardizzate le convenzioni di formattazione secondo PSR-12:
+
+**Costruttore di `BaseForm`**:
+- Apertura parentesi su nuova riga dopo `__construct(`
+- Indentazione coerente dei parametri (4 spazi)
+- Trailing comma dopo l'ultimo parametro
+- Chiusura parentesi e apertura brace sulla stessa riga
+
+**Metodi con parametri multipli**:
+- Aggiunta trailing comma dopo l'ultimo parametro anche in `validate()` e `resolveEntity()`
+
+**Vantaggi della trailing comma**:
+- Migliora la diff nei version control (meno noise su modifiche EOL)
+- Facilita l'aggiunta di nuovi parametri senza modificare la riga precedente
+- Stile coerente con il resto del codebase moderno
+
+**File modificati**:
+- **`Core/BaseClasses/BaseForm.php`**: Formattazione costruttore e indentazione parametri standardizzate
+
+### 🧪 Test
+
+#### `Tests/Core/BaseClasses/BaseFormTest` — Copertura nuovo parametro `$override`
+
+Aggiunti tre test per verificare il comportamento del nuovo parametro `$override` in `addRequest()`:
+
+- `testAddRequestWithOverrideTrueShouldOverwriteExistingValue()`: Verifica che con `override = true` (default), un valore esistente viene sovrascritto dalla logica di `injectRequest()`
+- `testAddRequestWithOverrideFalseShouldNotOverwriteExistingValue()`: Verifica che con `override = false`, un valore preesistente in `request->input` non viene sovrascritto
+- `testAddRequestWithOverrideFalseShouldInjectMissingValue()`: Verifica che con `override = false`, un valore mancante viene comunque iniettato
+
+**File creati**:
+- **`TestsApplication/Forms/SimpleEntityWithAddRequestOverrideFalseForm.php`**: Form di test che utilizza `addRequest(..., override: false)`
+
+**File modificati**:
+- **`Tests/Core/BaseClasses/BaseFormTest.php`**: Aggiunti tre nuovi test
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Il default `$override = true` mantiene il comportamento precedente per tutto il codice esistente
+- **API Estensibile**: Chi ha esigenze specifiche di controllo sulle sovrascritture può ora passare `false` per ottenere il comportamento conservativo
+- **Formattazione**: Le modifiche di formattazione non impattano il comportamento a runtime
+
+---
+
+## [11.7.0] - 2026-06-18 - Opzione `--module` e Discovery dei Moduli Non Configurati
+
+Introduce l'opzione `--module=NomeModulo` per selezionare esplicitamente quale modulo deve gestire un comando quando più moduli registrano lo stesso nome. Aggiunge contestualmente la discovery automatica dei moduli fisicamente presenti su filesystem ma non ancora dichiarati in `MODULE_FOLDERS`, risolvendo il problema di bootstrap circolare per cui un modulo non poteva registrarsi tramite il proprio comando di installazione perché non ancora configurato.
+
+### ✨ Nuove Funzionalità
+
+#### `Console/HelperClasses/CommandDispatcher` — Opzione `--module` per selezione esplicita del modulo
+
+Aggiunta l'opzione globale opzionale `--module=NomeModulo` al dispatcher dei comandi console. Quando specificata, il dispatcher filtra la lista dei comandi compatibili e ne esegue solo uno appartenente al modulo indicato; se nessun comando di quel modulo è compatibile, viene lanciata `RuntimeException` come per un comando sconosciuto. Senza l'opzione il comportamento rimane invariato (primo match vince, nell'ordine di priorità della discovery).
+
+Per supportare il filtro, ogni comando scoperto viene ora associato al proprio modulo di appartenenza tramite un array parallelo `$commandModules[]`. La firma di `discoverFromDirectory()` include il parametro `string $module` e `addCommandStrategy()` accetta un secondo parametro opzionale `string $module = ''` per retrocompatibilità con i chiamanti esistenti.
+
+**File modificati**:
+- **`Console/HelperClasses/CommandDispatcher.php`**: aggiunto `$commandModules[]`; `run()` chiama `extractModuleOption()` prima del loop; `discoverFromDirectory()` riceve e salva il modulo; `addCommandStrategy()` accetta `module` opzionale
+
+#### `Console/HelperClasses/CommandDispatcher` — Discovery automatica dei moduli non configurati
+
+Il metodo privato `discoverUnconfiguredModules()` esegue un glob su `{rootPath}/*/Console/Commands/` e restituisce le cartelle modulo che hanno quella struttura ma non sono ancora presenti in `MODULE_FOLDERS`. Questi moduli vengono scansionati dopo quelli configurati e prima del framework, con priorità inferiore rispetto ai moduli dichiarati nella configurazione. La combinazione con `--module=` permette di eseguire il comando di installazione di un modulo anche prima che sia stato aggiunto a `MODULE_FOLDERS`.
+
+**File modificati**:
+- **`Console/HelperClasses/CommandDispatcher.php`**: aggiunto `discoverUnconfiguredModules()`; `discoverCommands()` lo invoca tra il loop su `moduleFolders` e la discovery del framework
+
+### 🧪 Test
+
+#### `Tests/Console/HelperClasses/CommandDispatcherTest` — Copertura opzione `--module` e moduli non configurati
+
+- `testAddCommandStrategyWithModuleRunsNormally`: verifica che `addCommandStrategy()` con parametro modulo non alteri il comportamento di base
+- `testModuleFilterRunsOnlyMatchingModuleCommand`: due comandi compatibili da moduli diversi — con `--module=ModuleA` solo il primo viene eseguito
+- `testModuleFilterSkipsAllCommandsWhenModuleNotFound`: `--module=NonExistent` → `RuntimeException("Unknown command")`
+- `testModuleFilterWithoutModuleOptionIgnoresModuleOwnership`: senza `--module` la logica "primo match vince" rimane invariata
+- `testDiscoveryFindsCommandsInUnconfiguredModuleFolders`: crea su filesystem un modulo assente da `MODULE_FOLDERS` e verifica che il suo comando sia comunque scoperto ed eseguito
+- `testModuleFilterSelectsUnconfiguredModuleOverConfiguredOne`: con due moduli che espongono lo stesso comando, `--module=UnconfiguredModule` esegue il comando del modulo non configurato ignorando quello configurato
+
+**File modificati**:
+- **`Tests/Console/HelperClasses/CommandDispatcherTest.php`**: aggiunti sei test
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `addCommandStrategy()` aggiunge il parametro `module` con default `''` — tutti i chiamanti esistenti compilano senza modifiche. Senza `--module` il comportamento di `run()` è identico a prima. I comandi che non usano `--module` non ricevono l'opzione in modo diverso rispetto alle altre opzioni (finisce in `$options['module']` come qualsiasi altra opzione `--key=value`).
+
+---
+
+## [11.6.3] - 2026-06-17 - Correzione Input Password e Sostituzione Valori Numerici nel File di Configurazione
+
+Patch che corregge due bug nel comando di installazione CLI: `askSecret()` emetteva un errore `stty` su ambienti senza TTY reale (IDE, pipe, container), e `updateConfigFile()` troncava i valori numerici come la porta del database a causa di un'ambiguità nelle backreference PCRE della stringa di sostituzione.
+
+### 🐛 Bug Fixes
+
+#### `Console/Traits/InteractiveInputTrait` — Errore `stty` su stdin non-TTY
+
+Il metodo `askSecret()` chiamava `system('stty -echo')` condizionato solo al check `PHP_OS === 'WIN'`, che non copre i casi in cui stdin non è un terminale reale anche su Linux/macOS (IDE come VS Code o PhpStorm, esecuzione via pipe, container Docker, ambienti CI). In questi contesti `stty` stampava l'errore `stty: 'standard input': Inappropriate ioctl for device` subito dopo il prompt della password.
+
+Il check è stato sostituito con `stream_isatty($handle)`, che verifica correttamente se il file descriptor è collegato a un TTY reale indipendentemente dal sistema operativo. Se stdin non è un TTY, la password viene letta senza tentare di disabilitare l'echo.
+
+**File modificati**:
+- **`Console/Traits/InteractiveInputTrait.php`**: `askSecret()` — rimosso il check `PHP_OS === 'WIN'`, sostituito con `stream_isatty($handle)`
+
+#### `Console/Services/Installation/InstallationManager` — Troncamento valori numerici in `updateConfigFile()`
+
+Il metodo `updateConfigFile()` costruiva la stringa di sostituzione per `preg_replace()` interpolando il valore direttamente in una stringa PHP: `"$1$2{$value}$2"`. Quando `$value` iniziava con una cifra (es. la porta `3306`), l'interpolazione produceva la stringa `$1$23306$2`, che PCRE interpretava come `$1` + `$23` (backreference al gruppo 23, inesistente → stringa vuota, consumando la prima cifra) + `306` (letterale) + `$2` (la virgoletta). Il risultato nel file di configurazione era `DATABASE_PORT = 306"` — valore troncato e virgoletta di chiusura mancante.
+
+Il metodo è stato riscritto usando `preg_replace_callback()`: il valore di sostituzione viene concatenato direttamente nella closure PHP, senza mai passare per il parser delle backreference PCRE. Questo risolve anche il caso analogo di password contenenti `$` o `\`.
+
+**File modificati**:
+- **`Console/Services/Installation/InstallationManager.php`**: `updateConfigFile()` — `preg_replace()` sostituito con `preg_replace_callback()`
+
+### 🧪 Test
+
+#### `Tests/Console/Services/Installation/InstallationManagerTest` — Copertura regressione valori numerici
+
+- `testInstallWithDatabaseConfig`: aggiunta asserzione su `DATABASE_PORT`; il template di config ora usa valori vuoti (`""`) per `DATABASE_PASSWORD` e `DATABASE_PORT`, replicando lo scenario reale che innescava il bug
+- `testUpdateConfigFileWithNumericValueDoesNotMangle` (nuovo, con data provider): verifica che il valore `DATABASE_PORT` non venga troncato sia con il valore di default (`3306`) sia con un valore inserito dall'utente (`5432`); include una negative assertion che esclude la presenza del valore troncato
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `askSecret()` mantiene la stessa firma e comportamento visibile; su TTY reale il comportamento (echo disabilitato) rimane invariato. `updateConfigFile()` è un metodo privato interno.
+
+---
+
+## [11.6.2] - 2026-06-09 - Correzione Ordine di Discovery dei Comandi Console
+
+Patch che corregge un comportamento anomalo nel `CommandDispatcher`: i comandi dei moduli venivano scoperti dopo quelli del framework, impedendo ai moduli di estendere o sovrascrivere i comandi nativi. L'ordine è stato invertito — moduli prima (nell'ordine di `MODULE_FOLDERS`), framework come fallback — allineando il `CommandDispatcher` alla stessa logica di precedenza già adottata dal web `Dispatcher`.
+
+### 🐛 Bug Fixes
+
+#### `Console/HelperClasses/CommandDispatcher` — Ordine di discovery dei comandi
+
+Il metodo `discoverCommands()` scansionava prima la directory dei comandi del framework (`SismaFramework/Console/Commands/`) e poi quella dei moduli, nell'ordine inverso rispetto al comportamento atteso. Poiché `run()` si ferma al primo comando compatibile, qualsiasi comando di un modulo con lo stesso nome di un comando del framework veniva silenziosamente ignorato, rendendo impossibile estendere o sovrascrivere i comandi nativi dall'esterno del framework.
+
+L'ordine è stato corretto: i moduli vengono scansionati per primi, rispettando la sequenza dichiarata in `MODULE_FOLDERS`; il framework viene aggiunto per ultimo come fallback. Questo rispecchia esattamente la logica di precedenza del web `Dispatcher` e permette ai moduli di estendere i comandi del framework tramite ereditarietà, chiamando `parent::execute()` dopo aver aggiunto la propria logica.
+
+**File modificati**:
+- **`Console/HelperClasses/CommandDispatcher.php`**: in `discoverCommands()`, il `foreach ($this->config->moduleFolders ...)` spostato prima della chiamata a `discoverFromDirectory()` sul path di sistema
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: i progetti che non hanno comandi omonimi nei moduli non subiscono alcuna variazione di comportamento. I progetti che avevano un comando con lo stesso nome sia nel framework sia in un modulo vedranno ora eseguito quello del modulo anziché quello del framework — il che è il comportamento corretto e atteso.
+
+---
+
+## [11.6.1] - 2026-05-26 - Compatibilità phpDocumentor, Fix SismaLogger e Correzione Documentazione
+
+Patch di manutenzione che allarga il vincolo su `psr/log` per consentire l'installazione di phpDocumentor come dipendenza di sviluppo, corregge un potenziale `TypeError` in `SismaLogger::interpolate()` con messaggi `\Stringable`, aggiorna la documentazione Markdown (esempi API errati, sezione OAuth mancante) e rigenera la documentazione phpDocumentor allineandola alle classi introdotte in 11.6.0.
+
+### 🐛 Bug Fixes
+
+#### `Core/HelperClasses/SismaLogger` — Gestione `\Stringable` in `interpolate()`
+
+Il metodo privato `interpolate()` dichiarava `string $message` come tipo del parametro. Poiché `LoggerInterface` (psr/log 2.x/3.x) consente di passare oggetti `\Stringable` ai metodi di log, qualsiasi chiamata con un `\Stringable` avrebbe generato un `TypeError` prima di raggiungere il metodo. Il tipo è stato aggiornato a `\Stringable|string` e viene applicato un cast `(string)` all'inizio del metodo, garantendo la compatibilità con l'intera gamma di messaggi ammessi dall'interfaccia PSR-3.
+
+**File modificati**:
+- **`Core/HelperClasses/SismaLogger.php`**: Firma `interpolate()` aggiornata a `\Stringable|string $message`; aggiunto `$message = (string) $message` come prima istruzione
+
+#### `Console/Services/Installation/InstallationManager` — Vincolo `psr/log` nei nuovi progetti
+
+Il metodo che inietta la dipendenza `psr/log` nel `composer.json` dei nuovi progetti impostava il vincolo a `^3.0`. Aggiornato a `^2.0 || ^3.0` per allinearlo al vincolo del framework e consentire la coesistenza con phpDocumentor anche nei progetti installati.
+
+**File modificati**:
+- **`Console/Services/Installation/InstallationManager.php`**: Vincolo iniettato aggiornato da `^3.0` a `^2.0 || ^3.0`
+
+### 🔧 Dipendenze e Tooling
+
+#### `composer.json` — Allargamento vincolo `psr/log` e aggiunta phpDocumentor
+
+Il vincolo `"psr/log": "^3.0"` impediva l'installazione di phpDocumentor come `require-dev`, poiché le sue dipendenze indirette richiedono `psr/log ^2.0`. Il vincolo è stato allargato a `^2.0 || ^3.0`: il codice del framework non usa alcuna API specifica di psr/log 3.x (i metodi `LoggerInterface` sono implementati senza type hint espliciti su `$message`, compatibili con tutte e tre le major), quindi l'allargamento non introduce alcun rischio regressivo.
+
+Aggiunto inoltre `"config": {"platform": {"php": "8.4.99"}}` per permettere la risoluzione delle dipendenze su PHP 8.5 (dove `phpdocumentor/json-path` — dipendenza indiretta — non dichiara ancora supporto esplicito, pur funzionando correttamente). Aggiunto script `"phpdoc": "php vendor/bin/phpdoc --config phpdoc.xml"` per semplificare la rigenerazione della documentazione API.
+
+**File modificati**:
+- **`composer.json`**: `psr/log` aggiornato a `^2.0 || ^3.0`; aggiunto `phpdocumentor/phpdocumentor: ^3.10` in `require-dev`; aggiunte sezioni `config` e `scripts`
+
+### 🧪 Test
+
+#### `Tests/Console/Services/Installation/InstallationManagerTest` — Allineamento asserzioni
+
+Le due asserzioni che verificavano il valore del vincolo `psr/log` iniettato da `InstallationManager` sono state aggiornate da `'^3.0'` a `'^2.0 || ^3.0'`.
+
+**File modificati**:
+- **`Tests/Console/Services/Installation/InstallationManagerTest.php`**: Due `assertEquals('^3.0', ...)` aggiornati
+
+### 📖 Documentazione
+
+#### `docs/security.md` — Correzione esempi API e aggiunta sezione OAuth
+
+La sezione di esempio per l'autenticazione form-based conteneva riferimenti a metodi inesistenti nell'API pubblica (`isLogged()`, `login()`) e a un pattern logicamente scorretto (`checkAuthenticable() && checkPassword()`, dove `checkPassword()` è già chiamato internamente da `checkAuthenticable()`). Corretti anche gli accessi alle proprietà di `Request` (da notazione ad oggetto `->get()` a accesso array `['key']`, coerente con la definizione della classe) e il nome del metodo `getAuthenticable()` → `getAuthenticableInterface()`.
+
+Aggiunta sezione completa **Autenticazione OAuth 2.0** che documenta `OAuthAuthentication`, `OAuthWrapperInterface`, il flusso Authorization Code in due fasi e un esempio di implementazione di un wrapper provider.
+
+**File modificati**:
+- **`docs/security.md`**: Corretti esempi form-based; aggiunta sezione OAuth
+
+#### `docs/forms.md` — Correzione nome metodo `getFilterErrors()`
+
+L'esempio del controller utilizzava `$form->returnFilterErrors()`, metodo inesistente. Corretto in `$form->getFilterErrors()` (metodo ereditato da `SubmittableTrait`).
+
+**File modificati**:
+- **`docs/forms.md`**: `returnFilterErrors()` → `getFilterErrors()`
+
+#### `docs/controllers.md` — Correzione esempio autowiring `Authentication`
+
+L'esempio di autowiring utilizzava `$auth->isLogged()` (metodo inesistente), il namespace errato `SismaFramework\Security\Authentication` e l'accesso alle proprietà di `Request` tramite `->get()`. Corretti namespace, metodo di verifica sessione e accesso array.
+
+**File modificati**:
+- **`docs/controllers.md`**: Namespace, controllo sessione e accesso `Request` corretti
+
+#### `docs/api-reference.md` — Correzione firme `BaseForm` e aggiunta sezioni Security/HTTP
+
+`getErrors(): FormFilterErrorCollection` era il nome errato del metodo (corretto in `getFilterErrors(): FormFilterError`); la firma di `handleRequest()` mancava del parametro `Request $request`. Aggiunte le sezioni **Security Classes** (`Authentication`, `OAuthAuthentication`, `OAuthWrapperInterface`, `BaseVoter`, `BasePermission`) e **HTTP Classes** (`Response`), che erano elencate nell'indice del documento ma mai implementate nel corpo.
+
+**File modificati**:
+- **`docs/api-reference.md`**: Firme `BaseForm` corrette; sezioni Security e HTTP aggiunte
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+Rigenerata da zero tramite `composer phpdoc` per includere le nuove classi introdotte in 11.6.0 (`OAuthAuthentication`, `OAuthWrapperInterface`, `BaseAuthentication`, `SubmittableTrait`) ed eliminare il file orfano `SismaFramework-Core-AbstractClasses-Submittable.html`, rimasto dalla generazione precedente dopo la rimozione del file PHP sorgente.
+
+#### Correzione annotazioni `@deprecated` — versione di introduzione e rimozione
+
+Quattro classi/metodi presentavano annotazioni `@deprecated` incomplete o errate: mancavano la versione in cui la deprecazione era stata introdotta, la versione di rimozione pianificata, oppure il testo era in inglese anziché italiano, creando incoerenza con il resto della codebase.
+
+**`Orm/ExtendedClasses/DependentModel`** e **`Orm/ExtendedClasses/SelfReferencedModel`** — i tre metodi deprecati (`countEntityCollectionByEntity`, `getEntityCollectionByEntity`, `deleteEntityCollectionByEntity`) riportavano `dalla versione 11.0.0`, ma la deprecazione era stata introdotta in `v10.1.0` (commit `9c9f5ed4`, 2025-11-21). Corretto in `dalla versione 10.1.0`; aggiunta la versione di rimozione pianificata `12.0.0`.
+
+**`Security/ExtendedClasses/LogException`** e **`Security/ExtendedClasses/NoLogException`** — le annotazioni erano in inglese e prive di numeri di versione. La deprecazione è stata introdotta in `v11.0.0` (commit `87843e03`, 2025-12-18). Aggiunta versione di introduzione `11.0.0`, versione di rimozione `12.0.0`; testo armonizzato in italiano coerentemente con gli altri messaggi di deprecazione del framework.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/DependentModel.php`**: versione `@deprecated` corretta da `11.0.0` a `10.1.0`; aggiunto `sarà rimosso nella versione 12.0.0` (3 metodi)
+- **`Orm/ExtendedClasses/SelfReferencedModel.php`**: stessa correzione (3 metodi)
+- **`Security/ExtendedClasses/LogException.php`**: annotazione `@deprecated` riscritta con versioni e in italiano
+- **`Security/ExtendedClasses/NoLogException.php`**: annotazione `@deprecated` riscritta con versioni e in italiano
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: tutte le modifiche sono correzioni di bug, aggiornamenti di documentazione o aggiunta di tooling di sviluppo. Le firme pubbliche di `SismaLogger` rimangono invariate; il comportamento di `interpolate()` è identico per input di tipo `string` (il 100% dei casi d'uso interni).
+
+---
+
+## [11.6.0] - 2026-05-04 - Rifattorizzazione Gerarchia di Autenticazione, Introduzione SubmittableTrait e Supporto OAuth
+
+Rifattorizzazione interna del sistema di autenticazione: la classe astratta `Submittable` è stata convertita in un trait, e il comportamento comune a tutte le classi di autenticazione è stato estratto nella nuova classe astratta `BaseAuthentication`. Il refactoring ha abilitato l'implementazione di `OAuthAuthentication`, che supporta il flusso Authorization Code OAuth 2.0 senza `SubmittableTrait` poiché in OAuth non esiste un form da sottomettere né errori di validazione da riportare al template.
+
+### ♻️ Refactoring
+
+#### `Core/Traits/SubmittableTrait` — Conversione da classe astratta a trait
+
+`Submittable` era una classe astratta `@internal` usata come base sia da `Authentication` che da `BaseForm`, pur non rappresentando un tipo condiviso tra le due gerarchie, bensì un comportamento ortogonale (rilevamento form submission). È stata convertita in un trait e spostata in `Core/Traits/`.
+
+Il trait espone:
+- `protected FormFilterError $formFilterError`
+- `protected function initSubmittable(): void` — da chiamare nel costruttore della classe utilizzatrice
+- `public function isSubmitted(): bool`
+- `public function getFilterErrors(): FormFilterError`
+
+**File modificati**:
+- **`Core/Traits/SubmittableTrait.php`** *(nuovo)*: Implementazione del trait, marcato `@internal`
+- **`Core/AbstractClasses/Submittable.php`** *(eliminato)*
+
+#### `Security/BaseClasses/BaseAuthentication` — Nuova classe astratta base per l'autenticazione
+
+Estratta da `Authentication` la logica comune a qualsiasi flusso di autenticazione (form-based, OAuth, ecc.). La nuova classe astratta `BaseAuthentication`, marcata `@internal`, centralizza:
+
+- `protected Request $request`
+- `protected Filter $filter`
+- `protected Session $session`
+- `protected ?AuthenticableInterface $authenticableInterface`
+- `public function getAuthenticableInterface(): AuthenticableInterface`
+
+`SubmittableTrait` non è incluso in `BaseAuthentication` perché non tutti i flussi di autenticazione hanno un form: `Authentication` (form-based) lo usa, `OAuthAuthentication` no.
+
+**File modificati**:
+- **`Security/BaseClasses/BaseAuthentication.php`** *(nuovo)*: Classe astratta base, marcata `@internal`
+
+#### `Security/HttpClasses/Authentication` — Adeguamento alla nuova gerarchia
+
+`Authentication` passa da `extends Submittable` a `extends BaseAuthentication` con `use SubmittableTrait`. Le property `$filter`, `$session`, `$authenticableInterface` e il metodo `getAuthenticableInterface()` sono stati spostati in `BaseAuthentication`. Il costruttore chiama `parent::__construct()` e `$this->initSubmittable()`.
+
+**File modificati**:
+- **`Security/HttpClasses/Authentication.php`**: Aggiornamento gerarchia e rimozione membri ora in `BaseAuthentication`
+
+#### `Core/BaseClasses/BaseForm` — Adeguamento al SubmittableTrait
+
+`BaseForm` passa da `extends Submittable` a `use SubmittableTrait`, dichiarando `protected Request $request` direttamente nella classe. Il costruttore sostituisce `parent::__construct()` con `$this->initSubmittable()`.
+
+**File modificati**:
+- **`Core/BaseClasses/BaseForm.php`**: Sostituzione ereditarietà con trait; dichiarazione esplicita di `$request`
+
+### ✨ Nuove Funzionalità
+
+#### `Security/HttpClasses/OAuthAuthentication` — Autenticazione OAuth 2.0 Authorization Code Flow
+
+Nuova classe `OAuthAuthentication extends BaseAuthentication` che implementa il flusso Authorization Code OAuth 2.0. Non usa `SubmittableTrait` perché in OAuth non esiste un form da sottomettere: gli errori arrivano come parametri URL dal provider e vengono gestiti tramite valori di ritorno ed eccezioni, non tramite `FormFilterError`.
+
+Il flusso si articola in due fasi:
+
+**Fase 1 — Redirect al provider**:
+- `getAuthorizationUrl(): string` genera uno `state` casuale con `random_bytes`, lo persiste in sessione e delega la costruzione dell'URL a `OAuthWrapperInterface::getAuthorizationUrl()`.
+
+**Fase 2 — Callback dal provider**:
+- `checkCallback(): bool` verifica la presenza di errori del provider (`$request->query['error']`), convalida lo `state` in modo timing-safe tramite `hash_equals()`, scambia il `code` per un identificatore utente tramite `OAuthWrapperInterface::getAuthenticableIdentifier()` e recupera l'entità autenticabile tramite `AuthenticableModelInterface`.
+
+La protezione CSRF del callback segue lo stesso pattern difensivo di `Authentication::checkCsrfToken()`: verifica sequenziale con early return.
+
+**File modificati**:
+- **`Security/HttpClasses/OAuthAuthentication.php`** *(nuovo)*
+
+#### `Security/Interfaces/Wrappers/OAuthWrapperInterface` — Contratto per i provider OAuth
+
+Nuova interfaccia che astrae la comunicazione con il provider OAuth. Ogni provider (Google, GitHub, ecc.) implementa:
+- `getAuthorizationUrl(string $state): string` — costruisce l'URL di autorizzazione con il parametro `state`
+- `getAuthenticableIdentifier(string $code): string` — scambia il codice di autorizzazione per un identificatore utente (es. email); eventuali errori di rete o token invalidi propagano come eccezioni al chiamante
+
+**File modificati**:
+- **`Security/Interfaces/Wrappers/OAuthWrapperInterface.php`** *(nuovo)*
+
+### 🧪 Test
+
+#### `Tests/Security/HttpClasses/OAuthAuthenticationTest` — Copertura completa del flusso OAuth
+
+Sette test che coprono tutti i percorsi di `checkCallback()` e `getAuthorizationUrl()`:
+
+- `testGetAuthorizationUrl` — verifica che lo `state` venga scritto in sessione e che l'URL venga restituito dal wrapper
+- `testCheckCallbackWithProviderError` — early return `false` in presenza di `error` nella query string
+- `testCheckCallbackWithMissingSessionState` — `false` se lo `state` non è presente in sessione
+- `testCheckCallbackWithMissingRequestState` — `false` se lo `state` manca nella query string
+- `testCheckCallbackWithMismatchedState` — `false` se gli `state` non corrispondono
+- `testCheckCallbackWithMissingCode` — `false` se il `code` manca dalla query string
+- `testCheckCallbackWithUserNotFound` — `false` se il modello non trova l'utente
+- `testCheckCallbackSuccess` — `true` con verifica di `getAuthenticableInterface()`
+
+**File modificati**:
+- **`Tests/Security/HttpClasses/OAuthAuthenticationTest.php`** *(nuovo)*
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change sull'API pubblica**: Le firme pubbliche di `Authentication` e `BaseForm` sono invariate. `Submittable` era marcata `@internal` by design e non esposta come API consumabile dall'esterno del framework.
+- **`OAuthAuthentication` e `OAuthWrapperInterface`** sono addizioni pure: nessuna classe esistente è modificata dalla loro introduzione.
+
+---
+
+## [11.5.2] - 2026-04-04 - Rifattorizzazione Template Controller nello Scaffolding
+
+Piccola rifattorizzazione del template del controller generato dal comando di scaffolding, per semplificare eventuali personalizzazioni post-generazione.
+
+### ♻️ Refactoring
+
+#### `Console/Services/Scaffolding/Templates/Controller.tpl` — Estrazione variabile entità prima del salvataggio
+
+Nelle azioni `create` e `update`, la chiamata a `resolveEntity()` era concatenata direttamente come argomento di `$this->dataMapper->save()` su un'unica riga. L'entità risolta viene ora assegnata a una variabile dedicata prima di essere passata al DataMapper.
+
+- ❌ **11.5.1**: `$this->dataMapper->save(${{entityShortNameLower}}Form->resolveEntity());`
+- ✅ **11.5.2**:
+  ```php
+  ${{entityShortNameLower}} = ${{entityShortNameLower}}Form->resolveEntity();
+  $this->dataMapper->save(${{entityShortNameLower}});
+  ```
+
+Questo rende il codice generato più leggibile e facilita eventuali personalizzazioni (es. manipolare l'entità tra `resolveEntity()` e `save()`), senza alcuna modifica al comportamento a runtime.
+
+Rimossi inoltre i trailing whitespace sulle righe vuote tra i metodi della classe.
+
+**File modificati**:
+- **`Console/Services/Scaffolding/Templates/Controller.tpl`**: Estrazione variabile entità nelle azioni `create` e `update`; pulizia trailing whitespace
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: La modifica impatta esclusivamente il codice generato dallo scaffolding per nuovi controller. I controller già generati non sono influenzati.
+
+---
+
+## [11.5.1] - 2026-04-01 - Correzione Template Controller nello Scaffolding
+
+Questa patch corregge due bug nel template del controller generato dal comando di scaffolding.
+
+### 🐛 Bug Fixes
+
+#### `Console/Services/Scaffolding/Templates/Controller.tpl` — Namespace modello errato e metodo form scorretto
+
+**Bug 1 — Namespace `use` del modello con segmento `Models` duplicato**
+
+Il namespace nell'istruzione `use` includeva un segmento `\Models\` ridondante: poiché `{{modelNamespace}}` contiene già il segmento `Models`, il risultato era una duplicazione (es. `…\Models\Models\{{entityShortName}}Model`), producendo un'istruzione non valida nel controller generato.
+
+- ❌ **11.5.0**: `use {{modelNamespace}}\Models\{{entityShortName}}Model;`
+- ✅ **11.5.1**: `use {{modelNamespace}}\{{entityShortName}}Model;`
+
+**Bug 2 — Uso di `getEntity()` al posto di `resolveEntity()` nelle azioni `create` ed `edit`**
+
+Il salvataggio dell'entità nelle azioni `create` ed `edit` chiamava `getEntity()`, che non risolve correttamente le relazioni del form. Il metodo corretto è `resolveEntity()`.
+
+- ❌ **11.5.0**: `$this->dataMapper->save(${{entityShortNameLower}}Form->getEntity());`
+- ✅ **11.5.1**: `$this->dataMapper->save(${{entityShortNameLower}}Form->resolveEntity());`
+
+**File modificati**:
+- **`Console/Services/Scaffolding/Templates/Controller.tpl`**: Corretto namespace `use` del modello; sostituito `getEntity()` con `resolveEntity()` nelle azioni `create` ed `edit`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: La modifica impatta esclusivamente il codice generato dallo scaffolding per nuovi controller. I controller già generati non sono influenzati.
+
+---
+
 ## [11.5.0] - 2026-03-15 - Supporto Cross-Platform per il Comando `sisma`
 
 Questa minor aggiunge il supporto nativo al comando `sisma` su Windows e semplifica l'avvio su Linux/macOS tramite shebang.
