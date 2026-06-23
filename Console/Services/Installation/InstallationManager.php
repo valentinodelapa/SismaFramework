@@ -166,7 +166,9 @@ class InstallationManager
         $content = file_get_contents($configPath);
         foreach ($config as $key => $value) {
             $pattern = "/(const\s+{$key}\s*=\s*)(['\"])[^'\"]*\\2/";
-            $content = preg_replace($pattern, "$1$2{$value}$2", $content);
+            $content = preg_replace_callback($pattern, function (array $matches) use ($value): string {
+                return $matches[1] . $matches[2] . $value . $matches[2];
+            }, $content);
         }
         if (!file_put_contents($configPath, $content)) {
             throw new \RuntimeException("Failed to update config file.");
@@ -245,7 +247,7 @@ class InstallationManager
         }
 
         if (!isset($composer["require"]["psr/log"])) {
-            $composer["require"]["psr/log"] = "^3.0";
+            $composer["require"]["psr/log"] = "^2.0 || ^3.0";
         }
 
         $json = json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);

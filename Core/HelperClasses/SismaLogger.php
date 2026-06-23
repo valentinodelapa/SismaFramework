@@ -110,8 +110,9 @@ class SismaLogger implements LoggerInterface
         }
     }
 
-    private function interpolate(string $message, array $context): string
+    private function interpolate(\Stringable|string $message, array $context): string
     {
+        $message = (string) $message;
         $replace = [];
         foreach ($context as $key => $val) {
             if (in_array($key, ["code", "file", "line", "trace"])) {

@@ -24,33 +24,51 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\AbstractClasses;
+namespace SismaFramework\Tests\Core\Traits;
 
-use SismaFramework\Core\HttpClasses\Request;
+use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\CustomTypes\FormFilterError;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\Traits\SubmittableTrait;
 
 /**
- * Description of Submittable
- *
  * @author Valentino de Lapa
  */
-abstract class Submittable
+class SubmittableTraitTest extends TestCase
 {
-    protected Request $request;
-    protected FormFilterError $formFilterError;
-    
-    public function __construct()
+
+    private Request $requestMock;
+    private object $subject;
+
+    #[\Override]
+    public function setUp(): void
     {
-        $this->formFilterError = new FormFilterError();
+        $this->requestMock = $this->createStub(Request::class);
+        $this->requestMock->input = [];
+        $request = $this->requestMock;
+        $this->subject = new class($request) {
+
+            use SubmittableTrait;
+
+            protected Request $request;
+
+            public function __construct(Request $request)
+            {
+                $this->request = $request;
+                $this->initSubmittable();
+            }
+        };
     }
-    
-    public function isSubmitted(): bool
+
+    public function testIsSubmitted(): void
     {
-        return isset($this->request->input['submitted']);
+        $this->assertFalse($this->subject->isSubmitted());
+        $this->requestMock->input['submitted'] = 'on';
+        $this->assertTrue($this->subject->isSubmitted());
     }
-    
-    public function getFilterErrors(): FormFilterError
+
+    public function testGetFilterErrors(): void
     {
-        return $this->formFilterError;
+        $this->assertInstanceOf(FormFilterError::class, $this->subject->getFilterErrors());
     }
 }

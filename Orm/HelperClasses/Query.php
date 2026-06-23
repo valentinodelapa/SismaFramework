@@ -174,7 +174,7 @@ class Query
         return $this;
     }
 
-    public function &setFulltextIndexColumn(array $columns, Placeholder|string $value = Placeholder::placeholder, ?string $columnAlias = null, bool $append = false, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): self
+    public function &setFulltextIndexColumn(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode, ?string $columnAlias = null, bool $append = false): self
     {
         if ($append) {
             $this->initializeColumn();

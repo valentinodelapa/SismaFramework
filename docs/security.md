@@ -9,60 +9,207 @@ Questo documento descrive come implementare funzionalità di sicurezza enterpris
 
 ## Autenticazione e Autorizzazione
 
-Il cuore del sistema di autenticazione è la classe `SismaFramework\Security\HttpClasses\Authentication`. Questa classe, che può essere iniettata in un controller, fornisce i metodi necessari per gestire un processo di login in modo sicuro.
+### Gerarchia delle classi di autenticazione
 
-### Esempio: Creare una Pagina di Login
+Il sistema di autenticazione è fondato su una classe astratta base:
 
-Vediamo come implementare un'action del controller che gestisce sia la visualizzazione del form di login sia l'elaborazione dei dati inviati.
+- **`BaseAuthentication`** (`Security/BaseClasses/`) — classe `@internal` che centralizza le dipendenze comuni a tutti i flussi (request, filter, session, authenticable interface).
+- **`Authentication`** (`Security/HttpClasses/`) — flusso form-based classico; usa `SubmittableTrait` per la gestione di submission e degli errori di validazione.
+- **`OAuthAuthentication`** (`Security/HttpClasses/`) — flusso OAuth 2.0 Authorization Code; non usa `SubmittableTrait` perché non esiste un form da sottomettere.
+
+### Autenticazione Form-Based (`Authentication`)
+
+La classe `Authentication` può essere iniettata direttamente in un controller e fornisce i metodi per validare le credenziali utente in modo sicuro (inclusa la protezione CSRF).
+
+> **Nota sulla gestione della sessione**: La classe `Authentication` si occupa esclusivamente della *validazione* delle credenziali. La persistenza dello stato di autenticazione (login/logout) va gestita manualmente tramite la classe `Session`.
+
+#### Esempio: Creare una Pagina di Login
 
 ```php
 namespace MyModule\Application\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
-use SismaFramework\Core\HelperClasses\Render;
-use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Security\HttpClasses\Authentication;
-use MyModule\Application\Models\UserModel; // Il tuo modello utente
-use MyModule\Application\Models\PasswordModel; // Il tuo modello per le password
+use MyModule\Application\Models\UserModel;
+use MyModule\Application\Models\PasswordModel;
 
 class SecurityController extends BaseController
 {
     public function login(Request $request, Authentication $auth): Response
     {
-        // Se l'utente è già loggato, reindirizzalo alla dashboard
-        if ($auth->isLogged()) {
+        // Se l'utente è già loggato (sessione attiva), reindirizzalo
+        if (Session::hasItem('userId')) {
             return $this->router->redirect('dashboard/index');
         }
 
         // Se il form è stato inviato (metodo POST)
-        if ($request->server->get('REQUEST_METHOD') === 'POST') {
-            // 1. Inietta i modelli necessari per trovare utente e password
+        if ($request->server['REQUEST_METHOD'] === 'POST') {
+            // 1. Inietta i modelli necessari
             $auth->setAuthenticableModelInterface(new UserModel($this->dataMapper));
             $auth->setPasswordModelInterface(new PasswordModel($this->dataMapper));
 
-            // 2. Esegui i controlli in sequenza
-            if ($auth->checkAuthenticable() && $auth->checkPassword()) {
-                // 3. Se i controlli passano, recupera l'utente e loggalo
+            // 2. checkAuthenticable() verifica in sequenza: CSRF token,
+            //    identificatore utente e password. Restituisce true solo
+            //    se tutti i controlli passano.
+            if ($auth->checkAuthenticable()) {
+                // 3. Recupera l'entità autenticata e persisti l'ID in sessione
                 $user = $auth->getAuthenticableInterface();
-                $auth->login($user);
+                Session::setItem('userId', $user->getId());
 
                 return $this->router->redirect('dashboard/index');
-            } else {
-                // Se i controlli falliscono, imposta un messaggio di errore
-                $this->vars['error'] = 'Credenziali non valide.';
             }
+
+            // Se i controlli falliscono, gli errori sono disponibili tramite getFilterErrors()
+            $this->vars['errors'] = $auth->getFilterErrors();
         }
 
-        // Mostra la vista del form di login
+        // Genera il CSRF token per il form
+        $auth->checkCsrfToken(); // inizializza la sessione CSRF se non presente
+
         $this->vars['pageTitle'] = 'Login';
         return $this->render->generateView('security/login', $this->vars);
+    }
+
+    public function logout(): Response
+    {
+        Session::end();
+        return $this->router->redirect('security/login');
     }
 }
 ```
 
-> La classe `Authentication` si occupa anche di gestire la protezione da attacchi CSRF.
+> La classe `Authentication` gestisce automaticamente la protezione da attacchi CSRF tramite `checkCsrfToken()`, che viene chiamato internamente da `checkAuthenticable()`.
+
+### Autenticazione OAuth 2.0 (`OAuthAuthentication`)
+
+La classe `OAuthAuthentication` implementa il flusso **Authorization Code OAuth 2.0** ed è progettata per provider come Google, GitHub, ecc. Non usa `SubmittableTrait` perché non esiste un form da sottomettere: gli errori arrivano come parametri URL dal provider e vengono gestiti tramite valori di ritorno.
+
+#### `OAuthWrapperInterface`
+
+Per astrarre la comunicazione con il provider OAuth, il framework fornisce l'interfaccia `OAuthWrapperInterface` (`Security/Interfaces/Wrappers/`). Ogni provider deve implementare due metodi:
+
+```php
+namespace SismaFramework\Security\Interfaces\Wrappers;
+
+interface OAuthWrapperInterface
+{
+    // Costruisce l'URL di autorizzazione con il parametro state anti-CSRF
+    public function getAuthorizationUrl(string $state): string;
+
+    // Scambia il codice di autorizzazione per un identificatore utente (es. email).
+    // In caso di errore (token invalido, errore di rete), propaga un'eccezione.
+    public function getAuthenticableIdentifier(string $code): string;
+}
+```
+
+#### Esempio: Implementare un provider OAuth (Google)
+
+```php
+namespace MyModule\Application\Wrappers;
+
+use SismaFramework\Security\Interfaces\Wrappers\OAuthWrapperInterface;
+
+class GoogleOAuthWrapper implements OAuthWrapperInterface
+{
+    private string $clientId;
+    private string $clientSecret;
+    private string $redirectUri;
+
+    public function __construct(string $clientId, string $clientSecret, string $redirectUri)
+    {
+        $this->clientId = $clientId;
+        $this->clientSecret = $clientSecret;
+        $this->redirectUri = $redirectUri;
+    }
+
+    public function getAuthorizationUrl(string $state): string
+    {
+        $params = http_build_query([
+            'client_id'     => $this->clientId,
+            'redirect_uri'  => $this->redirectUri,
+            'response_type' => 'code',
+            'scope'         => 'openid email profile',
+            'state'         => $state,
+        ]);
+        return 'https://accounts.google.com/o/oauth2/v2/auth?' . $params;
+    }
+
+    public function getAuthenticableIdentifier(string $code): string
+    {
+        // Scambia il code per un access token, poi recupera l'email
+        // (implementazione specifica del provider)
+        $tokenResponse = $this->exchangeCodeForToken($code);
+        $userInfo = $this->getUserInfo($tokenResponse['access_token']);
+        return $userInfo['email'];
+    }
+
+    // ... metodi privati di supporto ...
+}
+```
+
+#### Esempio: Controller con flusso OAuth
+
+Il flusso OAuth si articola in due action: una che avvia il redirect verso il provider e una che gestisce il callback.
+
+```php
+namespace MyModule\Application\Controllers;
+
+use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HelperClasses\Session;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Core\HttpClasses\Response;
+use SismaFramework\Security\HttpClasses\OAuthAuthentication;
+use MyModule\Application\Models\UserModel;
+use MyModule\Application\Wrappers\GoogleOAuthWrapper;
+
+class OAuthController extends BaseController
+{
+    // Fase 1: Reindirizza l'utente al provider OAuth
+    public function redirectToProvider(OAuthAuthentication $auth): Response
+    {
+        $wrapper = new GoogleOAuthWrapper(
+            clientId: 'YOUR_CLIENT_ID',
+            clientSecret: 'YOUR_CLIENT_SECRET',
+            redirectUri: 'https://myapp.com/oauth/callback',
+        );
+        $auth->setOAuthWrapperInterface($wrapper);
+
+        // getAuthorizationUrl() genera lo state anti-CSRF, lo salva in sessione
+        // e restituisce l'URL completo del provider
+        $url = $auth->getAuthorizationUrl();
+
+        return $this->router->redirectToUrl($url);
+    }
+
+    // Fase 2: Gestisce il callback del provider
+    public function callback(Request $request, OAuthAuthentication $auth): Response
+    {
+        $wrapper = new GoogleOAuthWrapper(
+            clientId: 'YOUR_CLIENT_ID',
+            clientSecret: 'YOUR_CLIENT_SECRET',
+            redirectUri: 'https://myapp.com/oauth/callback',
+        );
+        $auth->setOAuthWrapperInterface($wrapper);
+        $auth->setAuthenticableModelInterface(new UserModel($this->dataMapper));
+
+        // checkCallback() verifica lo state anti-CSRF, scambia il code per
+        // un identificatore e recupera l'utente dal modello
+        if ($auth->checkCallback()) {
+            $user = $auth->getAuthenticableInterface();
+            Session::setItem('userId', $user->getId());
+            return $this->router->redirect('dashboard/index');
+        }
+
+        $this->vars['error'] = 'Autenticazione OAuth fallita.';
+        return $this->render->generateView('security/oauth-error', $this->vars);
+    }
+}
+```
+
+> **Protezione CSRF in OAuth**: `getAuthorizationUrl()` genera automaticamente uno `state` casuale con `random_bytes(16)` e lo persiste in sessione. `checkCallback()` lo verifica in modo timing-safe tramite `hash_equals()`, seguendo lo stesso pattern difensivo di `checkCsrfToken()` nella classe `Authentication`.
 
 ### Sistema di Autorizzazione (Voters e Permissions)
 
@@ -154,7 +301,7 @@ class PostController extends BaseController
         PostPermission::isAllowed(
             $post,                         // Il soggetto su cui decidere
             AccessControlEntry::check,     // Il tipo di controllo
-            $auth->getAuthenticable()      // L'utente attualmente loggato
+            $auth->getAuthenticableInterface() // L'utente attualmente loggato
         );
 
         // 2. Se il controllo passa, prosegui con la logica del form...
@@ -339,15 +486,15 @@ class AuthController extends BaseController
 {
     public function login(Request $request): Response
     {
-        $email = $request->request->get('email');
-        $password = $request->request->get('password');
+        $email = $request->input['email'] ?? '';
+        $password = $request->input['password'] ?? '';
 
         $user = $this->userModel->getByEmail($email);
 
         if ($user && Encryptor::verifyBlowfishHash($password, $user->getAuthPassword())) {
             // Login riuscito
-            $_SESSION['user_id'] = $user->getId();
-            $_SESSION['session_token'] = Encryptor::getSimpleRandomToken();
+            Session::setItem('userId', $user->getId());
+            Session::setItem('sessionToken', Encryptor::getSimpleRandomToken());
 
             return $this->router->redirect('dashboard');
         }
@@ -389,7 +536,7 @@ class PasswordResetController extends BaseController
 {
     public function requestReset(Request $request): Response
     {
-        $email = $request->request->get('email');
+        $email = $request->input['email'] ?? '';
         $user = $this->userModel->getByEmail($email);
 
         if ($user) {
@@ -408,8 +555,8 @@ class PasswordResetController extends BaseController
 
     public function resetPassword(Request $request): Response
     {
-        $token = $request->query->get('token');
-        $newPassword = $request->request->get('password');
+        $token = $request->query['token'] ?? '';
+        $newPassword = $request->input['password'] ?? '';
 
         $user = $this->userModel->getByResetToken($token);
 

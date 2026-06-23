@@ -164,7 +164,7 @@ class ScaffoldingManager
     private function determineModelType(): ModelType
     {
         if ($this->entityReflection->isSubclassOf(SelfReferencedEntity::class)) {
-            return ModelType::selfReferencedModel;
+            return ModelType::selfDependentModel;
         } elseif ($this->checkDependencies()) {
             return ModelType::dependentModel;
         } else {

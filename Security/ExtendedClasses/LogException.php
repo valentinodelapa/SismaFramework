@@ -30,7 +30,7 @@ use SismaFramework\Security\BaseClasses\BaseException;
 use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
 
 /**
- * @deprecated Use BaseException with ShouldBeLoggedException interface instead
+ * @deprecated dalla versione 11.0.0, sarà rimosso nella versione 12.0.0. Utilizzare BaseException implementando ShouldBeLoggedException
  * @author Valentino de Lapa
  */
 abstract class LogException extends BaseException implements ShouldBeLoggedException

@@ -132,11 +132,13 @@ class InstallationManagerTest extends TestCase
             'ORM_DATABASE_NAME' => 'mydb',
             'ORM_DATABASE_USERNAME' => 'root',
             'ORM_DATABASE_PASSWORD' => 'secret',
-            'ORM_DATABASE_PORT' => '3306'
+            'ORM_DATABASE_PORT' => '3306',
         ];
 
         $configFile = $this->testFrameworkPath . '/Config/config.php';
-        file_put_contents($configFile, <<<PHP
+        file_put_contents(
+            $configFile,
+            <<<PHP
 <?php
 const PROJECT = 'TestProject';
 const ORM_DATABASE_HOST = '127.0.0.1';
@@ -144,7 +146,7 @@ const ORM_DATABASE_NAME = 'test';
 const ORM_DATABASE_USERNAME = 'user';
 const ORM_DATABASE_PASSWORD = 'pass';
 const ORM_DATABASE_PORT = '3306';
-PHP
+PHP,
         );
 
         $this->manager->install($projectName, $config);
@@ -154,6 +156,37 @@ PHP
         $this->assertMatchesRegularExpression("/const ORM_DATABASE_NAME = ['\"]mydb['\"]/", $installedConfig);
         $this->assertMatchesRegularExpression("/const ORM_DATABASE_USERNAME = ['\"]root['\"]/", $installedConfig);
         $this->assertMatchesRegularExpression("/const ORM_DATABASE_PASSWORD = ['\"]secret['\"]/", $installedConfig);
+        $this->assertMatchesRegularExpression("/const ORM_DATABASE_PORT = ['\"]3306['\"]/", $installedConfig);
+    }
+
+    public static function numericPortProvider(): array
+    {
+        return [
+            'default port' => ['3306'],
+            'custom port'  => ['5432'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('numericPortProvider')]
+    public function testUpdateConfigFileWithNumericValueDoesNotMangle(string $port): void
+    {
+        $projectName = 'MyTestProject';
+
+        $configFile = $this->testFrameworkPath . '/Config/config.php';
+        file_put_contents(
+            $configFile,
+            <<<PHP
+<?php
+const PROJECT = 'TestProject';
+const DATABASE_PORT = "";
+PHP,
+        );
+
+        $this->manager->install($projectName, ['DATABASE_PORT' => $port]);
+
+        $installedConfig = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
+        $this->assertMatchesRegularExpression('/const DATABASE_PORT = [\'"]' . $port . '[\'"]/', $installedConfig);
+        $this->assertDoesNotMatchRegularExpression('/const DATABASE_PORT = [\'"]?' . substr($port, 1) . '[\'"]/', $installedConfig);
     }
 
     public function testInstallThrowsExceptionWhenConfigExists(): void
@@ -217,7 +250,7 @@ PHP
         $this->assertEquals('Project built with SismaFramework', $composer['description']);
         $this->assertEquals('project', $composer['type']);
         $this->assertArrayHasKey('psr/log', $composer['require']);
-        $this->assertEquals('^3.0', $composer['require']['psr/log']);
+        $this->assertEquals('^2.0 || ^3.0', $composer['require']['psr/log']);
     }
 
     public function testInstallUpdatesExistingComposerJson(): void
@@ -227,12 +260,12 @@ PHP
         $existingComposer = [
             'name' => 'existing/project',
             'require' => [
-                'php' => '>=8.1'
-            ]
+                'php' => '>=8.1',
+            ],
         ];
         file_put_contents(
             $this->testProjectRoot . '/composer.json',
-            json_encode($existingComposer, JSON_PRETTY_PRINT)
+            json_encode($existingComposer, JSON_PRETTY_PRINT),
         );
 
         $this->manager->install($projectName);
@@ -241,7 +274,7 @@ PHP
         $this->assertEquals('existing/project', $composer['name']);
         $this->assertArrayHasKey('php', $composer['require']);
         $this->assertArrayHasKey('psr/log', $composer['require']);
-        $this->assertEquals('^3.0', $composer['require']['psr/log']);
+        $this->assertEquals('^2.0 || ^3.0', $composer['require']['psr/log']);
     }
 
     public function testInstallAddsVendorAutoloadToIndexPhp(): void
@@ -326,7 +359,7 @@ const LOG_DIRECTORY_PATH = SYSTEM_PATH . APPLICATION_PATH . LOGS . LOG_DIRECTORY
 const MODULE_FOLDERS = [
     'SismaFramework',
 ];
-PHP
+PHP,
         );
 
         // Crea Public/index.php con il formato reale del framework
@@ -338,7 +371,7 @@ PHP
 <?php
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
-PHP
+PHP,
         );
 
         // Crea .htaccess
@@ -356,7 +389,7 @@ RewriteRule ^(.+/)?index\.php(.*)$ /$1$2 [R=301,L]
 RewriteCond %{REQUEST_URI} !^/Public/
 RewriteRule ^(.*)$ Public/ [L]
 </IfModule>
-HTACCESS
+HTACCESS,
         );
     }
 

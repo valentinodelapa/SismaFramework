@@ -35,13 +35,13 @@ enum ModelType: string
 
     case baseModel = "BaseModel";
     case dependentModel = "DependentModel";
-    case selfReferencedModel = "SelfReferencedModel";
+    case selfDependentModel = "SelfDependentModel";
 
     public function getNamespace(): string
     {
         return match ($this) {
             self::baseModel => 'SismaFramework\Orm\BaseClasses',
-            self::dependentModel, self::selfReferencedModel => 'SismaFramework\Orm\ExtendedClasses',
+            self::dependentModel, self::selfDependentModel => 'SismaFramework\Orm\ExtendedClasses',
         };
     }
 }

@@ -118,7 +118,7 @@ class PostController extends BaseController
         $this->vars['pageTitle'] = 'Modifica Articolo';
         // Passiamo l'entità per il ripopolamento e gli errori alla vista
         $this->vars['formEntity'] = $form->isSubmitted() ? $form->getEntityDataToStandardEntity() : $post;
-        $this->vars['errors'] = $form->returnFilterErrors();
+        $this->vars['errors'] = $form->getFilterErrors();
 
         return $this->render->generateView('post/form', $this->vars);
     }
