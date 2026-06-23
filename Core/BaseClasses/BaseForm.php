@@ -63,13 +63,14 @@ abstract class BaseForm
     private array $sismaCollectionToResolve = [];
     private ResponseType $responseType = ResponseType::httpOk;
 
-    public function __construct(?BaseEntity $baseEntity = null,
-            DataMapper $dataMapper = new DataMapper(),
-            FilterManager $filterManager = new FilterManager(),
-            ?FormValidator $formValidator = null,
-            EntityResolver $entityResolver = new EntityResolver(),
-            Debugger $debugger = new Debugger())
-    {
+    public function __construct(
+        ?BaseEntity $baseEntity = null,
+        DataMapper $dataMapper = new DataMapper(),
+        FilterManager $filterManager = new FilterManager(),
+        ?FormValidator $formValidator = null,
+        EntityResolver $entityResolver = new EntityResolver(),
+        Debugger $debugger = new Debugger(),
+    ) {
         $this->initSubmittable();
         $this->dataMapper = $dataMapper;
         $this->filterManager = $filterManager;
@@ -112,9 +113,11 @@ abstract class BaseForm
 
     abstract protected function injectRequest(): void;
 
-    protected function addRequest(string $propertyName, string|array $value): self
+    protected function addRequest(string $propertyName, string|int|float|bool|array|null $value, bool $override = true): self
     {
-        $this->request->input[$propertyName] = $value;
+        if ($override || (isset($this->request->input[$propertyName]) === false)) {
+            $this->request->input[$propertyName] = $value;
+        }
         return $this;
     }
 
@@ -213,7 +216,7 @@ abstract class BaseForm
             $this->entityFromForm,
             $this->formFilterError,
             $this->entityToResolve,
-            $this->sismaCollectionToResolve
+            $this->sismaCollectionToResolve,
         );
         $this->entityData = $result['entityData'];
         $filterResult = $result['filterResult'];
@@ -235,7 +238,7 @@ abstract class BaseForm
             $this->entityData,
             $this->entityFromForm,
             $this->entityToResolve,
-            $this->sismaCollectionToResolve
+            $this->sismaCollectionToResolve,
         );
     }
 

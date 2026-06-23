@@ -2,6 +2,84 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.8.0] - 2026-06-23 - Miglioramento Flessibilità `addRequest()` in BaseForm e Standardizzazione Formattazione
+
+Questa minor release estende la flessibilità del metodo `addRequest()` della classe `BaseForm` permettendo il controllo esplicito sulle sovrascritture di valori nella request. Inoltre, standardizza la formattazione del codice con miglior indentazione e trailing comma secondo le best practice PHP moderne.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/BaseClasses/BaseForm::addRequest()` — Controllo esplicito sulle sovrascritture
+
+Il metodo `addRequest()` è stato esteso con due miglioramenti:
+
+**Ampliamento tipi di `$value`**:
+- ❌ **Prima**: `string|array $value`
+- ✅ **Dopo**: `string|int|float|bool|array|null $value`
+
+Consente di iniettare nella request dati di diversi tipi primitivi, non solo stringhe e array.
+
+**Aggiunta parametro `$override` con controllo sulle sovrascritture**:
+- ❌ **Prima**: `protected function addRequest(string $propertyName, string|array $value): self` — sovrascrive sempre il valore
+- ✅ **Dopo**: `protected function addRequest(string $propertyName, string|int|float|bool|array|null $value, bool $override = true): self`
+
+Il parametro `$override = true` (default) mantiene il comportamento precedente: sovrascrive sempre. Passando `false`, il metodo scrive il valore **solo se** la proprietà non esiste ancora in `request->input`.
+
+**Caso d'uso**:
+```php
+// Inietta un valore di default che non sovrascrive l'input dell'utente
+$this->addRequest('email', 'default@example.com', override: false);
+```
+
+**File modificati**:
+- **`Core/BaseClasses/BaseForm.php`**: Firma di `addRequest()` aggiornata; logica di controllo sulla sovrascrittura implementata
+
+### 🎨 Miglioramenti Formattazione Codice
+
+#### Standardizzazione Indentazione e Trailing Comma
+
+Standardizzate le convenzioni di formattazione secondo PSR-12:
+
+**Costruttore di `BaseForm`**:
+- Apertura parentesi su nuova riga dopo `__construct(`
+- Indentazione coerente dei parametri (4 spazi)
+- Trailing comma dopo l'ultimo parametro
+- Chiusura parentesi e apertura brace sulla stessa riga
+
+**Metodi con parametri multipli**:
+- Aggiunta trailing comma dopo l'ultimo parametro anche in `validate()` e `resolveEntity()`
+
+**Vantaggi della trailing comma**:
+- Migliora la diff nei version control (meno noise su modifiche EOL)
+- Facilita l'aggiunta di nuovi parametri senza modificare la riga precedente
+- Stile coerente con il resto del codebase moderno
+
+**File modificati**:
+- **`Core/BaseClasses/BaseForm.php`**: Formattazione costruttore e indentazione parametri standardizzate
+
+### 🧪 Test
+
+#### `Tests/Core/BaseClasses/BaseFormTest` — Copertura nuovo parametro `$override`
+
+Aggiunti tre test per verificare il comportamento del nuovo parametro `$override` in `addRequest()`:
+
+- `testAddRequestWithOverrideTrueShouldOverwriteExistingValue()`: Verifica che con `override = true` (default), un valore esistente viene sovrascritto dalla logica di `injectRequest()`
+- `testAddRequestWithOverrideFalseShouldNotOverwriteExistingValue()`: Verifica che con `override = false`, un valore preesistente in `request->input` non viene sovrascritto
+- `testAddRequestWithOverrideFalseShouldInjectMissingValue()`: Verifica che con `override = false`, un valore mancante viene comunque iniettato
+
+**File creati**:
+- **`TestsApplication/Forms/SimpleEntityWithAddRequestOverrideFalseForm.php`**: Form di test che utilizza `addRequest(..., override: false)`
+
+**File modificati**:
+- **`Tests/Core/BaseClasses/BaseFormTest.php`**: Aggiunti tre nuovi test
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: Il default `$override = true` mantiene il comportamento precedente per tutto il codice esistente
+- **API Estensibile**: Chi ha esigenze specifiche di controllo sulle sovrascritture può ora passare `false` per ottenere il comportamento conservativo
+- **Formattazione**: Le modifiche di formattazione non impattano il comportamento a runtime
+
+---
+
 ## [11.7.0] - 2026-06-18 - Opzione `--module` e Discovery dei Moduli Non Configurati
 
 Introduce l'opzione `--module=NomeModulo` per selezionare esplicitamente quale modulo deve gestire un comando quando più moduli registrano lo stesso nome. Aggiunge contestualmente la discovery automatica dei moduli fisicamente presenti su filesystem ma non ancora dichiarati in `MODULE_FOLDERS`, risolvendo il problema di bootstrap circolare per cui un modulo non poteva registrarsi tramite il proprio comando di installazione perché non ancora configurato.

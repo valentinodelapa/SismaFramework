@@ -56,6 +56,7 @@ use SismaFramework\TestsApplication\Forms\OtherReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\ReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\SelfReferencedSampleForm;
 use SismaFramework\TestsApplication\Forms\SimpleEntityWithInjectRequestForm;
+use SismaFramework\TestsApplication\Forms\SimpleEntityWithAddRequestOverrideFalseForm;
 
 /**
  * Description of BaseFormTest
@@ -122,6 +123,35 @@ class BaseFormTest extends TestCase
         $this->assertTrue($simpleEntityWithInjectRequestForm->isSubmitted());
         $this->assertTrue($simpleEntityWithInjectRequestForm->isValid());
         $this->assertEquals('test string', $this->requestMock->input['string']);
+    }
+
+    public function testAddRequestWithOverrideTrueShouldOverwriteExistingValue()
+    {
+        $simpleEntityWithInjectRequestForm = new SimpleEntityWithInjectRequestForm();
+        $this->requestMock->input['string'] = 'original value';
+        $simpleEntityWithInjectRequestForm->handleRequest($this->requestMock);
+        $this->assertTrue($simpleEntityWithInjectRequestForm->isSubmitted());
+        $this->assertTrue($simpleEntityWithInjectRequestForm->isValid());
+        $this->assertEquals('test string', $this->requestMock->input['string']);
+    }
+
+    public function testAddRequestWithOverrideFalseShouldNotOverwriteExistingValue()
+    {
+        $simpleEntityWithAddRequestOverrideFalseForm = new SimpleEntityWithAddRequestOverrideFalseForm();
+        $this->requestMock->input['string'] = 'original value';
+        $simpleEntityWithAddRequestOverrideFalseForm->handleRequest($this->requestMock);
+        $this->assertTrue($simpleEntityWithAddRequestOverrideFalseForm->isSubmitted());
+        $this->assertTrue($simpleEntityWithAddRequestOverrideFalseForm->isValid());
+        $this->assertEquals('original value', $this->requestMock->input['string']);
+    }
+
+    public function testAddRequestWithOverrideFalseShouldInjectMissingValue()
+    {
+        $simpleEntityWithAddRequestOverrideFalseForm = new SimpleEntityWithAddRequestOverrideFalseForm();
+        $simpleEntityWithAddRequestOverrideFalseForm->handleRequest($this->requestMock);
+        $this->assertTrue($simpleEntityWithAddRequestOverrideFalseForm->isSubmitted());
+        $this->assertTrue($simpleEntityWithAddRequestOverrideFalseForm->isValid());
+        $this->assertEquals('injected string', $this->requestMock->input['string']);
     }
 
     public function testFormForBaseEntityNotSubmitted()
