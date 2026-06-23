@@ -75,7 +75,7 @@ Esistono anche metodi magici per manipolare queste collezioni: `set...()`, `add.
 
 ## I Modelli in Dettaglio
 
-Un modello è la porta d'accesso al database per una specifica entità. Deve estendere una delle classi base (`BaseModel`, `DependentModel`, `SelfReferencedModel`) e specificare a quale entità è associato.
+Un modello è la porta d'accesso al database per una specifica entità. Deve estendere una delle classi base (`BaseModel`, `DependentModel`, `SelfDependentModel`) e specificare a quale entità è associato.
 
 ```php
 namespace MyModule\App\Models;
@@ -127,7 +127,7 @@ $posts = $postModel->getEntityCollection('SismaFramework', ['publicationDate' =>
 
 Se un modello estende `DependentModel`, ottiene metodi per interrogare il database basandosi sulle relazioni.
 
-- `getEntityCollectionByEntity(array $referencedEntities, ...)`: Trova entità che corrispondono a una o più entità referenziate.
+- `getBy{PropertyName}(...)` (metodo magico, vedi sezione successiva): Trova entità che corrispondono a una o più entità referenziate.
 
 **Esempio:** Trova tutti i post di un certo utente.
 
@@ -138,7 +138,7 @@ $postModel = new PostModel($this->dataMapper);
 $user = $userModel->getEntityById(1);
 
 // Trova tutti i post dove 'author' è l'utente con ID 1
-$userPosts = $postModel->getEntityCollectionByEntity(['author' => $user]);
+$userPosts = $postModel->getByAuthor($user);
 ```
 
 ### Metodi Magici (Query Dinamiche)
@@ -219,7 +219,7 @@ $posts = $postModel->getByAuthor(
 $page2Posts = $postModel->getByCategory($category, null, null, 20, 10);
 ```
 
-#### Query Gerarchiche (SelfReferencedModel)
+#### Query Gerarchiche (SelfDependentModel)
 
 Per modelli auto-referenziati, le query dinamiche supportano anche il parametro `parent`:
 
@@ -245,16 +245,16 @@ $posts = $postModel->getByViewCount(1000); // int
 $posts = $postModel->getByViewCount('mille'); // InvalidArgumentException
 ```
 
-#### Metodi Legacy Deprecati
+#### Metodi Legacy Rimossi
 
-I seguenti metodi sono **deprecati dalla versione 10.1.0** e saranno rimossi nella **v11.0.0**. Utilizza invece le query dinamiche:
+I seguenti metodi erano deprecati dalla versione 10.1.0 e sono stati **rimossi nella v12.0.0**. Utilizza le query dinamiche:
 
 **DependentModel:**
 - ~~`getEntityCollectionByEntity()`~~ → `getBy{PropertyName}()`
 - ~~`countEntityCollectionByEntity()`~~ → `countBy{PropertyName}()`
 - ~~`deleteEntityCollectionByEntity()`~~ → `deleteBy{PropertyName}()`
 
-**SelfReferencedModel:**
+**SelfDependentModel:**
 - ~~`getEntityCollectionByParentAndEntity()`~~ → `getByParentAnd{PropertyName}()`
 - ~~`countEntityCollectionByParentAndEntity()`~~ → `countByParentAnd{PropertyName}()`
 - ~~`deleteEntityCollectionByParentAndEntity()`~~ → `deleteByParentAnd{PropertyName}()`
@@ -262,7 +262,7 @@ I seguenti metodi sono **deprecati dalla versione 10.1.0** e saranno rimossi nel
 **Esempio di migrazione:**
 
 ```php
-// VECCHIO (deprecato, rimosso in v11.0.0)
+// VECCHIO (rimosso in v12.0.0)
 $posts = $postModel->getEntityCollectionByEntity(['author' => $user, 'category' => $category]);
 
 // NUOVO (consigliato)

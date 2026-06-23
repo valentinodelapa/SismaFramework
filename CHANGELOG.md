@@ -29,6 +29,31 @@ I parametri del metodo `setFulltextIndexColumn` della classe `Query` sono stati 
 
 **Migrazione**: Verificare e aggiornare l'ordine degli argomenti in ogni chiamata a `setFulltextIndexColumn`.
 
+#### Rimozione metodi e classi deprecati
+
+Come pianificato, i metodi e le classi deprecati con rimozione prevista in questa versione sono stati eliminati.
+
+**`DependentModel`** — rimossi i metodi deprecati dalla v10.1.0:
+- `countEntityCollectionByEntity()`, `getEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()` → usare i metodi magici `countBy{PropertyName}()`, `getBy{PropertyName}()`, `deleteBy{PropertyName}()`
+
+**`SelfDependentModel`** — rimossi i metodi deprecati dalla v10.1.0:
+- `countEntityCollectionByParentAndEntity()`, `getEntityCollectionByParentAndEntity()`, `deleteEntityCollectionByParentAndEntity()` → usare i metodi magici `countByParentAnd{PropertyName}()`, `getByParentAnd{PropertyName}()`, `deleteByParentAnd{PropertyName}()`
+
+**`Security/ExtendedClasses/LogException`** e **`Security/ExtendedClasses/NoLogException`** — rimosse interamente, deprecate dalla v11.0.0. `AccessDeniedException` ora estende direttamente `BaseException` implementando `ShouldBeLoggedException`.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/DependentModel.php`**, **`Orm/ExtendedClasses/SelfDependentModel.php`**: rimossi i metodi deprecati
+- **`Orm/ExtendedClasses/ReferencedEntity.php`**: aggiornato l'uso interno dei metodi deprecati con chiamate dinamiche ai metodi magici corrispondenti
+- **`Core/Exceptions/AccessDeniedException.php`**: estende ora `BaseException` implementando `ShouldBeLoggedException` direttamente
+- **`Sample/Models/SampleDependentEntityModel.php`**: rimosso l'esempio basato sui metodi deprecati
+- **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**, **`Tests/Orm/ExtendedClasses/SelfDependentModelTest.php`**: test aggiornati per usare i metodi magici
+
+**File rimossi**:
+- **`Security/ExtendedClasses/LogException.php`**
+- **`Security/ExtendedClasses/NoLogException.php`**
+
+**Migrazione**: Sostituire ogni chiamata ai metodi rimossi con l'equivalente metodo magico; sostituire `extends LogException`/`extends NoLogException` con `extends BaseException` (implementando `ShouldBeLoggedException` se la classe deve essere loggata).
+
 ### ✨ Nuove Funzionalità
 
 #### Supporto upgrade automatico 11.x → 12.x nel comando `sisma upgrade`

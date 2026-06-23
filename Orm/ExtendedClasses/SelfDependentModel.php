@@ -100,31 +100,6 @@ abstract class SelfDependentModel extends DependentModel
         return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
     }
 
-    /**
-     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
-     */
-    public function countEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null): int
-    {
-        $query = $this->initQuery();
-        $query->setWhere();
-        $bindValues = $bindTypes = [];
-        if ($parentEntity === null) {
-            $query->appendCondition($this->parentForeignKey, ComparisonOperator::isNull, '', true);
-        } else {
-            $query->appendCondition($this->parentForeignKey, ComparisonOperator::equal, Placeholder::placeholder, true);
-            $bindValues[] = $parentEntity;
-            $bindTypes[] = DataType::typeEntity;
-        }
-        $query->appendAnd();
-        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
-        if ($searchKey !== null) {
-            $query->appendAnd();
-            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
-        }
-        $query->close();
-        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
-    }
-
     private function countEntityCollectionByParentAndProperties(array $properties, ?BaseEntity $parentEntity = null, ?string $searchKey = null): int
     {
         $query = $this->initQuery();
@@ -159,38 +134,6 @@ abstract class SelfDependentModel extends DependentModel
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
-        if ($searchKey !== null) {
-            $query->appendAnd();
-            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
-        }
-        $query->setOrderBy($order);
-        if ($offset !== null) {
-            $query->setOffset($offset);
-        }
-        if ($limit != null) {
-            $query->setLimit($limit);
-        }
-        $query->close();
-        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
-    }
-
-    /**
-     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
-     */
-    public function getEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
-    {
-        $query = $this->initQuery();
-        $query->setWhere();
-        $bindValues = $bindTypes = [];
-        if ($parentEntity === null) {
-            $query->appendCondition($this->parentForeignKey, ComparisonOperator::isNull, '', true);
-        } else {
-            $query->appendCondition($this->parentForeignKey, ComparisonOperator::equal, Placeholder::placeholder, true);
-            $bindValues[] = $parentEntity;
-            $bindTypes[] = DataType::typeEntity;
-        }
-        $query->appendAnd();
-        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -280,31 +223,6 @@ abstract class SelfDependentModel extends DependentModel
             $bindValues[] = $parentEntity;
             $bindTypes[] = DataType::typeEntity;
         }
-        if ($searchKey !== null) {
-            $query->appendAnd();
-            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
-        }
-        $query->close();
-        return $this->dataMapper->deleteBatch($query, $bindValues, $bindTypes);
-    }
-
-    /**
-     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
-     */
-    public function deleteEntityCollectionByParentAndEntity(array $referencedEntities, ?BaseEntity $parentEntity = null, ?string $searchKey = null): bool
-    {
-        $query = $this->initQuery();
-        $query->setWhere();
-        $bindValues = $bindTypes = [];
-        if ($parentEntity === null) {
-            $query->appendCondition($this->parentForeignKey, ComparisonOperator::isNull, '', true);
-        } else {
-            $query->appendCondition($this->parentForeignKey, ComparisonOperator::equal, Placeholder::placeholder, true);
-            $bindValues[] = $parentEntity;
-            $bindTypes[] = DataType::typeEntity;
-        }
-        $query->appendAnd();
-        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
         if ($searchKey !== null) {
             $query->appendAnd();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);

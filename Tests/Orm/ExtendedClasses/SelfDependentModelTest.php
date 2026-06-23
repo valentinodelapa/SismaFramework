@@ -248,7 +248,7 @@ class SelfDependentModelTest extends TestCase
         $this->assertEquals($expectedCount, $result);
     }
 
-    public function testCountEntityCollectionByParentAndEntity()
+    public function testMagicMethodCallCountByParentAndEntity()
     {
         $this->initializeMock();
         $parentEntity = $this->createStub(SelfReferencedSample::class);
@@ -275,7 +275,7 @@ class SelfDependentModelTest extends TestCase
             ->method('getCount')
             ->willReturn($expectedCount);
 
-        $result = $this->model->countEntityCollectionByParentAndEntity($referencedEntities, $parentEntity);
+        $result = $this->model->countByParentAndParentSelfReferencedSample($parentEntity, $referencedEntities['parentSelfReferencedSample']);
         $this->assertEquals($expectedCount, $result);
     }
 
@@ -322,40 +322,6 @@ class SelfDependentModelTest extends TestCase
             ->willReturn($expectedCollection);
 
         $result = $this->model->getEntityCollectionByParent($parentEntity, $searchKey, $order, $offset, $limit);
-        $this->assertInstanceOf(SismaCollection::class, $result);
-    }
-
-    public function testGetEntityCollectionByParentAndEntity()
-    {
-        $this->initializeMock();
-        $parentEntity = $this->createStub(SelfReferencedSample::class);
-        $referencedEntities = ['parentSelfReferencedSample' => $this->createStub(SelfReferencedSample::class)];
-        $expectedCollection = new SismaCollection(SelfReferencedSample::class);
-
-        $this->dataMapperMock->expects($this->once())
-            ->method('initQuery')
-            ->willReturn($this->queryMock);
-
-        $this->queryMock->expects($this->once())
-            ->method('setWhere');
-
-        $this->queryMock->expects($this->exactly(2))
-            ->method('appendCondition');
-
-        $this->queryMock->expects($this->once())
-            ->method('appendAnd');
-
-        $this->queryMock->expects($this->once())
-            ->method('setOrderBy');
-
-        $this->queryMock->expects($this->once())
-            ->method('close');
-
-        $this->dataMapperMock->expects($this->once())
-            ->method('find')
-            ->willReturn($expectedCollection);
-
-        $result = $this->model->getEntityCollectionByParentAndEntity($referencedEntities, $parentEntity);
         $this->assertInstanceOf(SismaCollection::class, $result);
     }
 
@@ -461,7 +427,7 @@ class SelfDependentModelTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testDeleteEntityCollectionByParentAndEntity()
+    public function testMagicMethodCallDeleteByParentAndEntity()
     {
         $this->initializeMock();
         $parentEntity = $this->createStub(SelfReferencedSample::class);
@@ -487,7 +453,7 @@ class SelfDependentModelTest extends TestCase
             ->method('deleteBatch')
             ->willReturn(true);
 
-        $result = $this->model->deleteEntityCollectionByParentAndEntity($referencedEntities, $parentEntity);
+        $result = $this->model->deleteByParentAndParentSelfReferencedSample($parentEntity, $referencedEntities['parentSelfReferencedSample']);
         $this->assertTrue($result);
     }
 
@@ -550,7 +516,7 @@ class SelfDependentModelTest extends TestCase
             ->method('getCount')
             ->willReturn($expectedCount);
 
-        $result = $this->model->countEntityCollectionByParentAndEntity($referencedEntities, $parentEntity);
+        $result = $this->model->countByParentAndBaseSampleAndText($parentEntity, $baseSampleEntity, 'test text');
         $this->assertEquals($expectedCount, $result);
     }
 
@@ -601,7 +567,7 @@ class SelfDependentModelTest extends TestCase
             ->method('find')
             ->willReturn($expectedCollection);
 
-        $result = $this->model->getEntityCollectionByParentAndEntity($referencedEntities, $parentEntity, $searchKey, $order, $offset, $limit);
+        $result = $this->model->getByParentAndBaseSampleAndText($parentEntity, $baseSampleEntity, 'sample text', $searchKey, $order, $offset, $limit);
         $this->assertInstanceOf(SismaCollection::class, $result);
     }
 
@@ -634,7 +600,7 @@ class SelfDependentModelTest extends TestCase
             ->method('deleteBatch')
             ->willReturn(true);
 
-        $result = $this->model->deleteEntityCollectionByParentAndEntity($referencedEntities, $parentEntity);
+        $result = $this->model->deleteByParentAndBaseSampleAndText($parentEntity, $referencedEntities['baseSample'], 'delete this');
         $this->assertTrue($result);
     }
 

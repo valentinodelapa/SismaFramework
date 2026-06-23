@@ -44,23 +44,6 @@ use SismaFramework\Orm\HelperClasses\Query;
 abstract class DependentModel extends BaseModel
 {
 
-    /**
-     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
-     */
-    public function countEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): int
-    {
-        $query = $this->initQuery();
-        $query->setWhere();
-        $bindValues = $bindTypes = [];
-        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
-        if ($searchKey !== null) {
-            $query->appendAnd();
-            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
-        }
-        $query->close();
-        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
-    }
-
     protected function buildPropertiesConditions(Query $query, array $properties, array &$bindValues, array &$bindTypes): void
     {
         foreach ($properties as $propertyName => $propertyValue) {
@@ -76,47 +59,6 @@ abstract class DependentModel extends BaseModel
                 $query->appendAnd();
             }
         }
-    }
-
-    /**
-     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
-     */
-    public function getEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
-    {
-        $query = $this->initQuery();
-        $query->setWhere();
-        $bindValues = $bindTypes = [];
-        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
-        if ($searchKey !== null) {
-            $query->appendAnd();
-            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
-        }
-        $query->setOrderBy($order);
-        if ($offset !== null) {
-            $query->setOffset($offset);
-        }
-        if ($limit != null) {
-            $query->setLimit($limit);
-        }
-        $query->close();
-        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
-    }
-
-    /**
-     * @deprecated dalla versione 10.1.0, sarà rimosso nella versione 12.0.0. Utilizzare la metaprogrammazione tramite __call()
-     */
-    public function deleteEntityCollectionByEntity(array $referencedEntities, ?string $searchKey = null): bool
-    {
-        $query = $this->initQuery();
-        $query->setWhere();
-        $bindValues = $bindTypes = [];
-        $this->buildPropertiesConditions($query, $referencedEntities, $bindValues, $bindTypes);
-        if ($searchKey !== null) {
-            $query->appendAnd();
-            $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
-        }
-        $query->close();
-        return $this->dataMapper->deleteBatch($query, $bindValues, $bindTypes);
     }
 
     public function getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, BaseEntity $baseEntity): SismaCollection

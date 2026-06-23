@@ -329,7 +329,7 @@ class EntityMagicMethodsDemo
 
 ### Metodi Magici dei Model (Dynamic Query Methods)
 
-I `DependentModel` e `SelfReferencedModel` di SismaFramework implementano il metodo magico `__call()` per generare **dinamicamente** metodi di query basati sulle relazioni tra entità. Questi metodi **non esistono fisicamente** nel codice ma vengono creati al volo interpretando il nome del metodo chiamato.
+I `DependentModel` e `SelfDependentModel` di SismaFramework implementano il metodo magico `__call()` per generare **dinamicamente** metodi di query basati sulle relazioni tra entità. Questi metodi **non esistono fisicamente** nel codice ma vengono creati al volo interpretando il nome del metodo chiamato.
 
 #### Come Funziona il Parsing
 
@@ -672,7 +672,7 @@ $postCount = $user->countPostCollectionAuthor();
 
 // Internamente:
 // - Viene creato il Model corrispondente (PostModel)
-// - Viene chiamato countEntityCollectionByEntity()
+// - Viene chiamato il metodo magico countBy{ForeignKey}() (es. countByAuthor())
 // - Ritorna il numero intero di risultati
 ```
 

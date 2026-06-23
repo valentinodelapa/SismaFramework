@@ -83,11 +83,7 @@ class SampleDependentEntityModel extends DependentModel
      */
     public function getArticlesByAuthor(SampleReferencedEntity $author): SismaCollection
     {
-        // Modo 1: Usando getEntityCollectionByEntity (metodo ereditato da DependentModel)
-        return $this->getEntityCollectionByEntity(['sampleReferencedEntity' => $author]);
-
-        // Modo 2 (equivalente): Usando il metodo magico
-        // return $this->getBySampleReferencedEntity($author);
+        return $this->getBySampleReferencedEntity($author);
     }
 
     /**
@@ -123,11 +119,7 @@ class SampleDependentEntityModel extends DependentModel
      */
     public function countArticlesByAuthor(SampleReferencedEntity $author): int
     {
-        // Modo 1: Usando countEntityCollectionByEntity
-        return $this->countEntityCollectionByEntity(['sampleReferencedEntity' => $author]);
-
-        // Modo 2 (equivalente): Usando il metodo magico
-        // return $this->countBySampleReferencedEntity($author);
+        return $this->countBySampleReferencedEntity($author);
     }
 
     /**
