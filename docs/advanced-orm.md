@@ -106,7 +106,15 @@ class AdvancedPostService
 
 ### Fulltext Search
 
+La ricerca fulltext utilizza l'enumerazione `TextSearchMode` (introdotta nella 11.3.0) per scegliere la modalità di ricerca MySQL:
+
+- `TextSearchMode::inNaturaLanguageMode` (default) → `IN NATURAL LANGUAGE MODE`
+- `TextSearchMode::withQueryExpansion` → `WITH QUERY EXPANSION`
+- `TextSearchMode::inBooleanMode` → `IN BOOLEAN MODE`
+
 ```php
+use SismaFramework\Orm\Enumerations\TextSearchMode;
+
 class PostSearchService
 {
     public function searchPosts(string $searchTerms): SismaCollection
@@ -115,7 +123,7 @@ class PostSearchService
 
         // Usa fulltext search su colonne indicizzate
         $query->setWhere()
-            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder);
+            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder, TextSearchMode::inBooleanMode);
 
         $bindValues = [$searchTerms];
         $bindTypes = [DataType::typeString];
@@ -129,9 +137,10 @@ class PostSearchService
         $query = $this->postModel->initQuery();
 
         // Aggiunge score di relevance come colonna
-        $query->setFulltextIndexColumn(['title', 'content'], Placeholder::placeholder, 'relevance_score', true)
+        // Firma: setFulltextIndexColumn(array $columns, $value, TextSearchMode $textSearchMode, ?string $columnAlias, bool $append)
+        $query->setFulltextIndexColumn(['title', 'content'], Placeholder::placeholder, TextSearchMode::inNaturaLanguageMode, 'relevance_score', true)
             ->setWhere()
-            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder);
+            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder, TextSearchMode::inNaturaLanguageMode);
 
         $bindValues = [$searchTerms, $searchTerms];
         $bindTypes = [DataType::typeString, DataType::typeString];
@@ -143,6 +152,8 @@ class PostSearchService
     }
 }
 ```
+
+> **Nota (12.0.0):** prima della 12.0.0 il parametro `$textSearchMode` era l'ultimo argomento di `setFulltextIndexColumn()`; da questa versione precede `$columnAlias` e `$append`. Il comando `sisma upgrade` corregge automaticamente le chiamate esistenti.
 
 ---
 
