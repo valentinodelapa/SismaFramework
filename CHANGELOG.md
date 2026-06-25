@@ -10,7 +10,7 @@ Patch che corregge il parser Markdown del sito di autopromozione/documentazione 
 
 #### `Sample/Controllers/DocsController::parseMarkdown()` — Code block annidati in blockquote
 
-La regex che estrae i fenced code block (` ``` `) cercava i marcatori ovunque nel testo, senza considerare un eventuale prefisso `> ` di blockquote. Quando un code block era annidato in una blockquote (es. `> \`\`\`bash`), il marcatore di chiusura — anch'esso prefissato da `> ` — non veniva riconosciuto come tale: la regex continuava ad espandersi non-greedy fino al primo ` ``` ` "nudo" successivo nel documento, inghiottendo tutto il contenuto intermedio (inclusi altri code block, header e liste) in un unico blocco corrotto con lingua errata.
+La regex che estrae i fenced code block (sequenza di tre backtick) cercava i marcatori ovunque nel testo, senza considerare un eventuale prefisso `> ` di blockquote. Quando un code block era annidato in una blockquote (es. una riga `> ` seguita dai tre backtick e dal nome del linguaggio), il marcatore di chiusura — anch'esso prefissato da `> ` — non veniva riconosciuto come tale: la regex continuava ad espandersi non-greedy fino ai successivi tre backtick "nudi" (non prefissati da `> `) nel documento, inghiottendo tutto il contenuto intermedio (inclusi altri code block, header e liste) in un unico blocco corrotto con lingua errata.
 
 Aggiunto un nuovo step, eseguito prima dell'estrazione dei code block "normali" e dello step delle blockquote, che riconosce specificamente i fenced code block prefissati da `> ` su ogni riga (apertura, contenuto e chiusura), rimuove il prefisso dal contenuto e li converte in `<pre><code>` esattamente come gli altri code block. Le righe di blockquote senza code block annidato continuano a essere gestite dallo step esistente.
 
@@ -19,7 +19,7 @@ Aggiunto un nuovo step, eseguito prima dell'estrazione dei code block "normali" 
 
 #### `docs/advanced-orm.md` — Fence di chiusura orfano
 
-Un marcatore ` ``` ` di chiusura senza apertura corrispondente era stato lasciato per errore dopo una lista (sezione "Best Practices" del capitolo sul lazy loading). Da quel punto in poi, l'alternanza apertura/chiusura dei fence successivi nel documento risultava sfasata, producendo blocchi di codice corrotti che inghiottivano header e sezioni successive.
+Un marcatore di chiusura (tre backtick) senza apertura corrispondente era stato lasciato per errore dopo una lista (sezione "Best Practices" del capitolo sul lazy loading). Da quel punto in poi, l'alternanza apertura/chiusura dei fence successivi nel documento risultava sfasata, producendo blocchi di codice corrotti che inghiottivano header e sezioni successive.
 
 **File modificati**:
 - **`docs/advanced-orm.md`**: rimosso il fence orfano
