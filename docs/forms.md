@@ -181,13 +181,18 @@ L'oggetto `$errors` (di tipo `FormFilterError`) restituito dal form utilizza i m
 
 Il metodo `injectRequest()` è un hook potente che viene eseguito dopo che il form ha ricevuto l'oggetto `Request`, ma **prima** che inizi il processo di validazione e mappatura dei dati sull'entità.
 
-All'interno di questo metodo, puoi usare il metodo helper `addRequest(string $propertyName, string|array $value)` per **aggiungere o sovrascrivere un singolo valore** nella richiesta del form.
+All'interno di questo metodo, puoi usare il metodo helper `addRequest(string $propertyName, string|int|float|bool|array|null $value, bool $override = true)` per **aggiungere o sovrascrivere un singolo valore** nella richiesta del form.
+
+Il parametro `$override` (introdotto nella 11.8.0) controlla cosa succede se la proprietà è già presente nella richiesta:
+
+*   `override: true` (default) → il valore passato sovrascrive sempre quello esistente.
+*   `override: false` → il valore viene impostato solo se la proprietà **non** è già presente nella richiesta; un valore già inviato dal form (es. tramite un campo `<input>`) non viene toccato.
 
 Questo approccio è estremamente utile per:
 
 *   **Popolare campi non presenti nel form HTML:** Il caso d'uso più comune è impostare l'ID dell'autore di un post con quello dell'utente attualmente loggato, senza doverlo inserire in un campo `<input type="hidden">`.
 *   **Pre-elaborare o modificare dati:** Puoi modificare i dati grezzi prima che vengano validati (es. convertire un formato data, pulire una stringa).
-*   **Impostare valori di default dinamici:** Fornire valori predefiniti che dipendono da logiche esterne al form.
+*   **Impostare valori di default dinamici senza sovrascrivere l'input dell'utente:** usando `override: false` puoi fornire un default solo quando il form non ha già fornito un valore.
 
 ### Esempio Pratico
 
@@ -204,6 +209,18 @@ protected function injectRequest(): void
     if ($this->session->has('user_id')) {        
         $this->addRequest('authorId', $this->session->get('user_id'));
     }
+}
+```
+
+### Esempio con `$override: false`
+
+Se vuoi impostare un valore di default solo quando il form non lo ha già fornito (ad esempio per non sovrascrivere un campo opzionale inviato dall'utente):
+
+```php
+protected function injectRequest(): void
+{
+    // Imposta 'status' a 'draft' solo se il form non ha già inviato un valore
+    $this->addRequest('status', 'draft', override: false);
 }
 ```
 

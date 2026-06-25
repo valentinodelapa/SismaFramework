@@ -60,6 +60,20 @@ const MODULE_FOLDERS = [
 
 L'autoloader del framework userà questo array per trovare e caricare automaticamente le classi da tutti i moduli registrati.
 
+### Comandi Console e Moduli (`--module`)
+
+Quando più moduli registrano un comando console con lo stesso nome (ad esempio un comando `install` proprio di un modulo), puoi selezionare esplicitamente quale modulo deve gestirlo con l'opzione globale `--module=NomeModulo`:
+
+```bash
+php SismaFramework/Console/sisma install --module=MyBlog
+```
+
+Senza `--module` il dispatcher esegue il primo comando compatibile trovato, seguendo l'ordine di discovery (moduli configurati in `MODULE_FOLDERS`, poi moduli non configurati, poi framework). Se nessun comando del modulo indicato risulta compatibile, viene lanciata una `RuntimeException` come per un comando inesistente.
+
+#### Discovery dei Moduli Non Configurati
+
+Il dispatcher rileva automaticamente anche i moduli presenti fisicamente sul filesystem (cartelle con struttura `<Modulo>/Console/Commands/`) ma non ancora dichiarati in `MODULE_FOLDERS`. Questo risolve il problema del "bootstrap circolare": un nuovo modulo può così esporre ed eseguire il proprio comando di installazione (es. tramite `--module=NuovoModulo`) ancora prima di essere aggiunto a `MODULE_FOLDERS`, che potrà avvenire come passo finale dell'installazione stessa.
+
 ## Interazione tra Moduli
 
 I moduli non sono isolati; possono e devono interagire tra loro.
