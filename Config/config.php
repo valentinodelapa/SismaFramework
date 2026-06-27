@@ -142,14 +142,14 @@ const LOG_DANGER_ROW = 50;
 /* Encryptor Constants */
 const SIMPLE_HASH_ALGORITHM = "sha256";
 const BLOWFISH_HASH_WORKLOAD = 12;
-const ENCRYPTION_PASSPHRASE = "";
+define(__NAMESPACE__ . '\ENCRYPTION_PASSPHRASE', getenv('ENCRYPTION_PASSPHRASE') ?: "");
 const ENCRYPTION_ALGORITHM = "AES-256-CBC";
 const INITIALIZATION_VECTOR_BYTES = 16;
 
 /* Database Constant */
-const DATABASE_HOST = "";
-const DATABASE_NAME = "";
-const DATABASE_PASSWORD = "";
-const DATABASE_PORT = "";
-const DATABASE_USERNAME = "";
+define(__NAMESPACE__ . '\DATABASE_HOST', getenv('DATABASE_HOST') ?: "");
+define(__NAMESPACE__ . '\DATABASE_NAME', getenv('DATABASE_NAME') ?: "");
+define(__NAMESPACE__ . '\DATABASE_PASSWORD', getenv('DATABASE_PASSWORD') ?: "");
+define(__NAMESPACE__ . '\DATABASE_PORT', getenv('DATABASE_PORT') ?: "");
+define(__NAMESPACE__ . '\DATABASE_USERNAME', getenv('DATABASE_USERNAME') ?: "");
 

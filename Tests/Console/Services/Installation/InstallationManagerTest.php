@@ -150,11 +150,11 @@ PHP
         $this->manager->install($projectName, $config);
 
         $installedConfig = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
-        $this->assertMatchesRegularExpression("/const DATABASE_HOST = ['\"]localhost['\"]/", $installedConfig);
-        $this->assertMatchesRegularExpression("/const DATABASE_NAME = ['\"]mydb['\"]/", $installedConfig);
-        $this->assertMatchesRegularExpression("/const DATABASE_USERNAME = ['\"]root['\"]/", $installedConfig);
-        $this->assertMatchesRegularExpression("/const DATABASE_PASSWORD = ['\"]secret['\"]/", $installedConfig);
-        $this->assertMatchesRegularExpression("/const DATABASE_PORT = ['\"]3306['\"]/", $installedConfig);
+        $this->assertStringContainsString("getenv('DATABASE_HOST') ?: \"localhost\")", $installedConfig);
+        $this->assertStringContainsString("getenv('DATABASE_NAME') ?: \"mydb\")", $installedConfig);
+        $this->assertStringContainsString("getenv('DATABASE_USERNAME') ?: \"root\")", $installedConfig);
+        $this->assertStringContainsString("getenv('DATABASE_PASSWORD') ?: \"secret\")", $installedConfig);
+        $this->assertStringContainsString("getenv('DATABASE_PORT') ?: \"3306\")", $installedConfig);
     }
 
     public static function numericPortProvider(): array
@@ -181,8 +181,8 @@ PHP
         $this->manager->install($projectName, ['DATABASE_PORT' => $port]);
 
         $installedConfig = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
-        $this->assertMatchesRegularExpression('/const DATABASE_PORT = [\'"]' . $port . '[\'"]/', $installedConfig);
-        $this->assertDoesNotMatchRegularExpression('/const DATABASE_PORT = [\'"]?' . substr($port, 1) . '[\'"]/', $installedConfig);
+        $this->assertStringContainsString("getenv('DATABASE_PORT') ?: \"{$port}\")", $installedConfig);
+        $this->assertStringNotContainsString("getenv('DATABASE_PORT') ?: \"" . substr($port, 1) . '")', $installedConfig);
     }
 
     public function testInstallThrowsExceptionWhenConfigExists(): void

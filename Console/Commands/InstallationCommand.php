@@ -68,6 +68,12 @@ class InstallationCommand extends BaseCommand
               --db-pass=PASS     Database password
               --db-port=PORT     Database port (default: 3306)
 
+            Note:
+              If DATABASE_* environment variables are already set (e.g. via
+              Docker env_file), the interactive/CLI database prompt is skipped:
+              Config/configFramework.php reads credentials from the environment
+              at runtime, so no value needs to be written into the file.
+
             Example:
               php SismaFramework/Console/sisma install MyProject
               php SismaFramework/Console/sisma install MyProject --skip-db
@@ -135,6 +141,12 @@ class InstallationCommand extends BaseCommand
             return $this->getDbConfigFromOptions();
         }
 
+        if ($this->hasDatabaseConfigFromEnvironment()) {
+            $this->output("Database environment variables detected (e.g. DATABASE_HOST).");
+            $this->output("Skipping interactive prompt: Config/configFramework.php already reads these values via getenv() at runtime.");
+            return [];
+        }
+
         $this->output("Database Configuration (optional)");
         $this->output("Press Enter to skip each field or use defaults.");
         $this->output("");
@@ -179,6 +191,24 @@ class InstallationCommand extends BaseCommand
 
         foreach ($dbOptions as $option) {
             if ($this->getOption($option) !== null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasDatabaseConfigFromEnvironment(): bool
+    {
+        // Config/configFramework.php resolves these constants via getenv() with an empty-string
+        // fallback (see Config/config.php). Baking a literal value here would write a secret into
+        // a committed file and would be silently overridden by the environment at runtime anyway,
+        // so the prompt is skipped whenever the environment already provides the configuration.
+        $dbEnvVars = ["DATABASE_HOST", "DATABASE_NAME", "DATABASE_USERNAME", "DATABASE_PASSWORD", "DATABASE_PORT"];
+
+        foreach ($dbEnvVars as $envVar) {
+            $value = getenv($envVar);
+            if ($value !== false && $value !== "") {
                 return true;
             }
         }
