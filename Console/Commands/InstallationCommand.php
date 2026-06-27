@@ -62,22 +62,29 @@ class InstallationCommand extends BaseCommand
             Options:
               --force            Force overwrite existing files
               --skip-db          Skip database configuration
-              --db-host=HOST     Database host (default: 127.0.0.1)
-              --db-name=NAME     Database name
-              --db-user=USER     Database username
-              --db-pass=PASS     Database password
-              --db-port=PORT     Database port (default: 3306)
+              --db-host=HOST     Relational (ORM) database host (default: 127.0.0.1)
+              --db-name=NAME     Relational (ORM) database name
+              --db-user=USER     Relational (ORM) database username
+              --db-pass=PASS     Relational (ORM) database password
+              --db-port=PORT     Relational (ORM) database port (default: 3306)
+              --odm-host=HOST    Non-relational (ODM) database host (default: 127.0.0.1)
+              --odm-name=NAME    Non-relational (ODM) database name
+              --odm-user=USER    Non-relational (ODM) database username
+              --odm-pass=PASS    Non-relational (ODM) database password
+              --odm-port=PORT    Non-relational (ODM) database port (default: 27017)
 
             Note:
-              If DATABASE_* environment variables are already set (e.g. via
-              Docker env_file), the interactive/CLI database prompt is skipped:
-              Config/configFramework.php reads credentials from the environment
-              at runtime, so no value needs to be written into the file.
+              If ORM_DATABASE_*/ODM_DATABASE_* environment variables are already
+              set (e.g. via Docker env_file), the corresponding interactive/CLI
+              database prompt is skipped: Config/configFramework.php reads
+              credentials from the environment at runtime, so no value needs to
+              be written into the file.
 
             Example:
               php SismaFramework/Console/sisma install MyProject
               php SismaFramework/Console/sisma install MyProject --skip-db
               php SismaFramework/Console/sisma install MyProject --db-name=mydb --db-user=root
+              php SismaFramework/Console/sisma install MyProject --odm-name=mydb --odm-user=root
             OUTPUT,
         );
     }
@@ -135,61 +142,96 @@ class InstallationCommand extends BaseCommand
 
     private function collectDatabaseConfiguration(): array
     {
-        $config = [];
+        $config = $this->collectOrmConfiguration();
+        $config += $this->collectOdmConfiguration();
+        return $config;
+    }
 
-        if ($this->hasDbOptionsFromCommandLine()) {
-            return $this->getDbConfigFromOptions();
+    private function collectOrmConfiguration(): array
+    {
+        if ($this->hasOptionsFromCommandLine(["db-host", "db-name", "db-user", "db-pass", "db-port"])) {
+            return $this->getConfigFromOptions("ORM", ["db-host" => "HOST", "db-name" => "NAME", "db-user" => "USERNAME", "db-pass" => "PASSWORD", "db-port" => "PORT"]);
         }
 
-        if ($this->hasDatabaseConfigFromEnvironment()) {
-            $this->output("Database environment variables detected (e.g. DATABASE_HOST).");
+        if ($this->hasConfigFromEnvironment("ORM")) {
+            $this->output("Relational database environment variables detected (e.g. ORM_DATABASE_HOST).");
             $this->output("Skipping interactive prompt: Config/configFramework.php already reads these values via getenv() at runtime.");
             return [];
         }
 
-        $this->output("Database Configuration (optional)");
+        $this->output("Relational Database Configuration (ORM, optional)");
         $this->output("Press Enter to skip each field or use defaults.");
         $this->output("");
 
-        $configureDb = $this->askConfirmation("Do you want to configure database settings?", false);
+        $configureOrm = $this->askConfirmation("Is there a relational database to configure?", false);
 
-        if (!$configureDb) {
+        if (!$configureOrm) {
             return [];
         }
 
-        $dbHost = $this->ask("Database Host", "127.0.0.1");
-        if (!empty($dbHost)) {
-            $config["DATABASE_HOST"] = $dbHost;
+        return $this->askDatabaseCredentials("ORM", "127.0.0.1", "3306");
+    }
+
+    private function collectOdmConfiguration(): array
+    {
+        if ($this->hasOptionsFromCommandLine(["odm-host", "odm-name", "odm-user", "odm-pass", "odm-port"])) {
+            return $this->getConfigFromOptions("ODM", ["odm-host" => "HOST", "odm-name" => "NAME", "odm-user" => "USERNAME", "odm-pass" => "PASSWORD", "odm-port" => "PORT"]);
         }
 
-        $dbPort = $this->ask("Database Port", "3306");
-        if (!empty($dbPort)) {
-            $config["DATABASE_PORT"] = $dbPort;
+        if ($this->hasConfigFromEnvironment("ODM")) {
+            $this->output("Non-relational database environment variables detected (e.g. ODM_DATABASE_HOST).");
+            $this->output("Skipping interactive prompt: Config/configFramework.php already reads these values via getenv() at runtime.");
+            return [];
         }
 
-        $dbName = $this->ask("Database Name", "");
-        if (!empty($dbName)) {
-            $config["DATABASE_NAME"] = $dbName;
+        $this->output("Non-Relational Database Configuration (ODM, optional)");
+        $this->output("Press Enter to skip each field or use defaults.");
+        $this->output("");
+
+        $configureOdm = $this->askConfirmation("Is there a non-relational database to configure?", false);
+
+        if (!$configureOdm) {
+            return [];
         }
 
-        $dbUser = $this->ask("Database Username", "");
-        if (!empty($dbUser)) {
-            $config["DATABASE_USERNAME"] = $dbUser;
+        return $this->askDatabaseCredentials("ODM", "127.0.0.1", "27017");
+    }
+
+    private function askDatabaseCredentials(string $prefix, string $defaultHost, string $defaultPort): array
+    {
+        $config = [];
+
+        $host = $this->ask("Database Host", $defaultHost);
+        if (!empty($host)) {
+            $config["{$prefix}_DATABASE_HOST"] = $host;
         }
 
-        $dbPass = $this->askSecret("Database Password");
-        if (!empty($dbPass)) {
-            $config["DATABASE_PASSWORD"] = $dbPass;
+        $port = $this->ask("Database Port", $defaultPort);
+        if (!empty($port)) {
+            $config["{$prefix}_DATABASE_PORT"] = $port;
+        }
+
+        $name = $this->ask("Database Name", "");
+        if (!empty($name)) {
+            $config["{$prefix}_DATABASE_NAME"] = $name;
+        }
+
+        $user = $this->ask("Database Username", "");
+        if (!empty($user)) {
+            $config["{$prefix}_DATABASE_USERNAME"] = $user;
+        }
+
+        $pass = $this->askSecret("Database Password");
+        if (!empty($pass)) {
+            $config["{$prefix}_DATABASE_PASSWORD"] = $pass;
         }
 
         return $config;
     }
 
-    private function hasDbOptionsFromCommandLine(): bool
+    private function hasOptionsFromCommandLine(array $options): bool
     {
-        $dbOptions = ["db-host", "db-name", "db-user", "db-pass", "db-port"];
-
-        foreach ($dbOptions as $option) {
+        foreach ($options as $option) {
             if ($this->getOption($option) !== null) {
                 return true;
             }
@@ -198,15 +240,11 @@ class InstallationCommand extends BaseCommand
         return false;
     }
 
-    private function hasDatabaseConfigFromEnvironment(): bool
+    private function hasConfigFromEnvironment(string $prefix): bool
     {
-        // Config/configFramework.php resolves these constants via getenv() with an empty-string
-        // fallback (see Config/config.php). Baking a literal value here would write a secret into
-        // a committed file and would be silently overridden by the environment at runtime anyway,
-        // so the prompt is skipped whenever the environment already provides the configuration.
-        $dbEnvVars = ["DATABASE_HOST", "DATABASE_NAME", "DATABASE_USERNAME", "DATABASE_PASSWORD", "DATABASE_PORT"];
+        $envVars = ["{$prefix}_DATABASE_HOST", "{$prefix}_DATABASE_NAME", "{$prefix}_DATABASE_USERNAME", "{$prefix}_DATABASE_PASSWORD", "{$prefix}_DATABASE_PORT"];
 
-        foreach ($dbEnvVars as $envVar) {
+        foreach ($envVars as $envVar) {
             $value = getenv($envVar);
             if ($value !== false && $value !== "") {
                 return true;
@@ -216,24 +254,14 @@ class InstallationCommand extends BaseCommand
         return false;
     }
 
-    private function getDbConfigFromOptions(): array
+    private function getConfigFromOptions(string $prefix, array $optionToSuffix): array
     {
         $config = [];
 
-        if ($dbHost = $this->getOption("db-host")) {
-            $config["DATABASE_HOST"] = $dbHost;
-        }
-        if ($dbName = $this->getOption("db-name")) {
-            $config["DATABASE_NAME"] = $dbName;
-        }
-        if ($dbUser = $this->getOption("db-user")) {
-            $config["DATABASE_USERNAME"] = $dbUser;
-        }
-        if ($dbPass = $this->getOption("db-pass")) {
-            $config["DATABASE_PASSWORD"] = $dbPass;
-        }
-        if ($dbPort = $this->getOption("db-port")) {
-            $config["DATABASE_PORT"] = $dbPort;
+        foreach ($optionToSuffix as $option => $suffix) {
+            if ($value = $this->getOption($option)) {
+                $config["{$prefix}_DATABASE_{$suffix}"] = $value;
+            }
         }
 
         return $config;

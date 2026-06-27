@@ -178,11 +178,11 @@ PHP,
             <<<PHP
 <?php
 const PROJECT = 'TestProject';
-const DATABASE_PORT = "";
+const ORM_DATABASE_PORT = "";
 PHP,
         );
 
-        $this->manager->install($projectName, ['DATABASE_PORT' => $port]);
+        $this->manager->install($projectName, ['ORM_DATABASE_PORT' => $port]);
 
         $installedConfig = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
         $this->assertStringContainsString("getenv('ORM_DATABASE_PORT') ?: \"{$port}\")", $installedConfig);

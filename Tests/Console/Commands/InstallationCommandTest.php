@@ -45,6 +45,11 @@ class InstallationCommandTest extends TestCase
             '--db-user=USER',
             '--db-pass=PASS',
             '--db-port=PORT',
+            '--odm-host=HOST',
+            '--odm-name=NAME',
+            '--odm-user=USER',
+            '--odm-pass=PASS',
+            '--odm-port=PORT',
             'Example:',
         ];
 
@@ -141,15 +146,25 @@ class InstallationCommandTest extends TestCase
             'db-name' => 'mydb',
             'db-user' => 'root',
             'db-pass' => 'secret',
-            'db-port' => '3306'
+            'db-port' => '3306',
+            'odm-host' => 'localhost',
+            'odm-name' => 'mongodb',
+            'odm-user' => 'mongoroot',
+            'odm-pass' => 'mongosecret',
+            'odm-port' => '27017'
         ]);
 
         $expectedConfig = [
-            'DATABASE_HOST' => 'localhost',
-            'DATABASE_NAME' => 'mydb',
-            'DATABASE_USERNAME' => 'root',
-            'DATABASE_PASSWORD' => 'secret',
-            'DATABASE_PORT' => '3306'
+            'ORM_DATABASE_HOST' => 'localhost',
+            'ORM_DATABASE_NAME' => 'mydb',
+            'ORM_DATABASE_USERNAME' => 'root',
+            'ORM_DATABASE_PASSWORD' => 'secret',
+            'ORM_DATABASE_PORT' => '3306',
+            'ODM_DATABASE_HOST' => 'localhost',
+            'ODM_DATABASE_NAME' => 'mongodb',
+            'ODM_DATABASE_USERNAME' => 'mongoroot',
+            'ODM_DATABASE_PASSWORD' => 'mongosecret',
+            'ODM_DATABASE_PORT' => '27017'
         ];
 
         $this->installationManagerMock
@@ -178,12 +193,60 @@ class InstallationCommandTest extends TestCase
         ]);
         $this->command->setOptions([
             'db-host' => 'localhost',
-            'db-name' => 'mydb'
+            'db-name' => 'mydb',
+            'odm-host' => 'localhost',
+            'odm-name' => 'mongodb'
         ]);
 
         $expectedConfig = [
-            'DATABASE_HOST' => 'localhost',
-            'DATABASE_NAME' => 'mydb'
+            'ORM_DATABASE_HOST' => 'localhost',
+            'ORM_DATABASE_NAME' => 'mydb',
+            'ODM_DATABASE_HOST' => 'localhost',
+            'ODM_DATABASE_NAME' => 'mongodb'
+        ];
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('setForce')
+            ->with(false)
+            ->willReturnSelf();
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('install')
+            ->with('MyProject', $expectedConfig)
+            ->willReturn(true);
+
+        ob_start();
+        $result = $this->command->run();
+        ob_get_clean();
+
+        $this->assertTrue($result);
+    }
+
+    public function testInstallationWithOnlyOdmOptions(): void
+    {
+        $this->command->setArguments([
+            '0' => 'MyProject'
+        ]);
+        $this->command->setOptions([
+            'db-host' => 'localhost',
+            'db-name' => 'mydb',
+            'odm-host' => 'localhost',
+            'odm-name' => 'mongodb',
+            'odm-user' => 'mongoroot',
+            'odm-pass' => 'mongosecret',
+            'odm-port' => '27017'
+        ]);
+
+        $expectedConfig = [
+            'ORM_DATABASE_HOST' => 'localhost',
+            'ORM_DATABASE_NAME' => 'mydb',
+            'ODM_DATABASE_HOST' => 'localhost',
+            'ODM_DATABASE_NAME' => 'mongodb',
+            'ODM_DATABASE_USERNAME' => 'mongoroot',
+            'ODM_DATABASE_PASSWORD' => 'mongosecret',
+            'ODM_DATABASE_PORT' => '27017'
         ];
 
         $this->installationManagerMock

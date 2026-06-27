@@ -147,19 +147,19 @@ const ENCRYPTION_ALGORITHM = "AES-256-CBC";
 const INITIALIZATION_VECTOR_BYTES = 16;
 
 /* Database Constant */
-define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('DATABASE_HOST') ?: "");
-define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('DATABASE_NAME') ?: "");
-define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('DATABASE_PASSWORD') ?: "");
-define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('DATABASE_PORT') ?: "");
-define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('DATABASE_USERNAME') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('ORM_DATABASE_NAME') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('ORM_DATABASE_PASSWORD') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('ORM_DATABASE_PORT') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('ORM_DATABASE_USERNAME') ?: "");
 
 /* Object Document Mapper Constant */
 const DEFAULT_ODM_ADAPTER_TYPE = "mongodb";
-const ODM_DATABASE_HOST = "";
-const ODM_DATABASE_NAME = "";
-const ODM_DATABASE_PASSWORD = "";
-const ODM_DATABASE_PORT = "";
-const ODM_DATABASE_USERNAME = "";
+define(__NAMESPACE__ . '\ODM_DATABASE_HOST', getenv('ODM_DATABASE_HOST') ?: "");
+define(__NAMESPACE__ . '\ODM_DATABASE_NAME', getenv('ODM_DATABASE_NAME') ?: "");
+define(__NAMESPACE__ . '\ODM_DATABASE_PASSWORD', getenv('ODM_DATABASE_PASSWORD') ?: "");
+define(__NAMESPACE__ . '\ODM_DATABASE_PORT', getenv('ODM_DATABASE_PORT') ?: "");
+define(__NAMESPACE__ . '\ODM_DATABASE_USERNAME', getenv('ODM_DATABASE_USERNAME') ?: "");
 
 /* Documents Constant */
 const DOCUMENT_NAMESPACE = APPLICATION_NAMESPACE . "Documents\\";
