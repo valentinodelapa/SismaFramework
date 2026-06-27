@@ -106,7 +106,15 @@ class AdvancedPostService
 
 ### Fulltext Search
 
+La ricerca fulltext utilizza l'enumerazione `TextSearchMode` (introdotta nella 11.3.0) per scegliere la modalità di ricerca MySQL:
+
+- `TextSearchMode::inNaturaLanguageMode` (default) → `IN NATURAL LANGUAGE MODE`
+- `TextSearchMode::withQueryExpansion` → `WITH QUERY EXPANSION`
+- `TextSearchMode::inBooleanMode` → `IN BOOLEAN MODE`
+
 ```php
+use SismaFramework\Orm\Enumerations\TextSearchMode;
+
 class PostSearchService
 {
     public function searchPosts(string $searchTerms): SismaCollection
@@ -115,7 +123,7 @@ class PostSearchService
 
         // Usa fulltext search su colonne indicizzate
         $query->setWhere()
-            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder);
+            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder, TextSearchMode::inBooleanMode);
 
         $bindValues = [$searchTerms];
         $bindTypes = [DataType::typeString];
@@ -129,9 +137,10 @@ class PostSearchService
         $query = $this->postModel->initQuery();
 
         // Aggiunge score di relevance come colonna
-        $query->setFulltextIndexColumn(['title', 'content'], Placeholder::placeholder, 'relevance_score', true)
+        // Firma: setFulltextIndexColumn(array $columns, $value, TextSearchMode $textSearchMode, ?string $columnAlias, bool $append)
+        $query->setFulltextIndexColumn(['title', 'content'], Placeholder::placeholder, TextSearchMode::inNaturaLanguageMode, 'relevance_score', true)
             ->setWhere()
-            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder);
+            ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder, TextSearchMode::inNaturaLanguageMode);
 
         $bindValues = [$searchTerms, $searchTerms];
         $bindTypes = [DataType::typeString, DataType::typeString];
@@ -143,6 +152,8 @@ class PostSearchService
     }
 }
 ```
+
+> **Nota (12.0.0):** prima della 12.0.0 il parametro `$textSearchMode` era l'ultimo argomento di `setFulltextIndexColumn()`; da questa versione precede `$columnAlias` e `$append`. Il comando `sisma upgrade` corregge automaticamente le chiamate esistenti.
 
 ---
 
@@ -329,7 +340,7 @@ class EntityMagicMethodsDemo
 
 ### Metodi Magici dei Model (Dynamic Query Methods)
 
-I `DependentModel` e `SelfReferencedModel` di SismaFramework implementano il metodo magico `__call()` per generare **dinamicamente** metodi di query basati sulle relazioni tra entità. Questi metodi **non esistono fisicamente** nel codice ma vengono creati al volo interpretando il nome del metodo chiamato.
+I `DependentModel` e `SelfDependentModel` di SismaFramework implementano il metodo magico `__call()` per generare **dinamicamente** metodi di query basati sulle relazioni tra entità. Questi metodi **non esistono fisicamente** nel codice ma vengono creati al volo interpretando il nome del metodo chiamato.
 
 #### Come Funziona il Parsing
 
@@ -672,7 +683,7 @@ $postCount = $user->countPostCollectionAuthor();
 
 // Internamente:
 // - Viene creato il Model corrispondente (PostModel)
-// - Viene chiamato countEntityCollectionByEntity()
+// - Viene chiamato il metodo magico countBy{ForeignKey}() (es. countByAuthor())
 // - Ritorna il numero intero di risultati
 ```
 
@@ -955,7 +966,6 @@ if (Cache::checkEntityPresenceInCache(User::class, 5)) {
 3. **Considera eager loading** per relazioni sempre necessarie
 4. **Monitora la cache** per ottimizzare il hit rate
 5. **Documenta le dipendenze** delle entità per il team
-```
 
 ---
 

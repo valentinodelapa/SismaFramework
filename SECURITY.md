@@ -100,14 +100,17 @@ La nostra politica è di fornire aggiornamenti di sicurezza per la versione stab
 
 | Versione | Supportata | Note |
 |---|---|---|
-| **11.x** | ✅ Supporto completo | Versione stabile corrente |
-| **10.x** | ⚠️ Solo patch di sicurezza critiche | Supporto fino al 2026-07-01 |
+| **12.x** | ✅ Supporto completo | Versione stabile corrente |
+| **11.x** | ⚠️ Solo patch di sicurezza critiche | Supporto fino al 2027-01-01 |
+| **10.x** | ❌ | Fine supporto dal 2026-07-01 |
 | **9.x** | ❌ | Fine supporto dal 2026-01-01 |
 | < 9.0.0 (Beta) | ❌ | Versioni di sviluppo non supportate |
 
-**Nota sulla versione 10.x:** Dopo il rilascio della versione 11.0.0, la serie 10.x riceverà solo patch di sicurezza per vulnerabilità critiche fino al 1° luglio 2026. Si raccomanda di pianificare la migrazione alla versione 11.x per beneficiare di tutte le correzioni di sicurezza, i miglioramenti e le nuove funzionalità.
+**Nota sulla versione 11.x:** Dopo il rilascio della versione 12.0.0, la serie 11.x riceverà solo patch di sicurezza per vulnerabilità critiche fino al 1° gennaio 2027. Si raccomanda di pianificare la migrazione alla versione 12.x per beneficiare di tutte le correzioni di sicurezza, i miglioramenti e le nuove funzionalità.
 
-**Nota sulla versione 9.x:** Il supporto per la serie 9.x è terminato il 1° gennaio 2026. Gli utenti che utilizzano ancora questa versione sono fortemente incoraggiati ad aggiornare immediatamente alla versione 11.x per ricevere le patch di sicurezza.
+**Nota sulla versione 10.x:** Il supporto per la serie 10.x è terminato il 1° luglio 2026. Gli utenti che utilizzano ancora questa versione sono fortemente incoraggiati ad aggiornare immediatamente alla versione 12.x per ricevere le patch di sicurezza.
+
+**Nota sulla versione 9.x:** Il supporto per la serie 9.x è terminato il 1° gennaio 2026. Gli utenti che utilizzano ancora questa versione sono fortemente incoraggiati ad aggiornare immediatamente alla versione 12.x per ricevere le patch di sicurezza.
 
 Tutte le versioni precedenti alla 9.0.0 sono considerate versioni di sviluppo (beta) e non sono supportate. Incoraggiamo tutti gli utenti ad aggiornare all'ultima versione stabile per ricevere le patch di sicurezza.
 

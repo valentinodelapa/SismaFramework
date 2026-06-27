@@ -138,8 +138,37 @@ class DocsController extends BaseController
      */
     private function parseMarkdown(string $markdown): string
     {
-        // Step 1: Proteggi i code blocks (non devono essere processati)
+        // Step 0: Proteggi i code blocks annidati in una blockquote (righe "> ```...```")
+        // Vanno gestiti separatamente perché il fence di chiusura è anch'esso prefissato
+        // da "> " e quindi non verrebbe riconosciuto dal pattern dello Step 1.
         $codeBlocks = [];
+        $html = preg_replace_callback(
+            '/^>[ \t]?```([^\r\n]*)\r?\n((?:^>.*\r?\n)*?)^>[ \t]?```[ \t]*$/m',
+            function ($matches) use (&$codeBlocks) {
+                $lang = trim($matches[1]) ?: "plaintext";
+                $lines = explode("\n", rtrim($matches[2], "\n"));
+                $code = implode(
+                    "\n",
+                    array_map(
+                        fn($line) => preg_replace('/^>[ \t]?/', "", $line),
+                        $lines,
+                    ),
+                );
+
+                $placeholder = "___CODEBLOCK_" . count($codeBlocks) . "___";
+                $codeBlocks[$placeholder] =
+                    '<pre><code class="language-' .
+                    htmlspecialchars($lang) .
+                    '">' .
+                    htmlspecialchars($code, ENT_QUOTES, "UTF-8") .
+                    "</code></pre>";
+
+                return "\n" . $placeholder . "\n";
+            },
+            $markdown,
+        );
+
+        // Step 1: Proteggi i code blocks (non devono essere processati)
         $html = preg_replace_callback(
             '/```([^\r\n]*)\r?\n(.*?)\r?\n[ \t]*```/s',
             function ($matches) use (&$codeBlocks) {
@@ -156,7 +185,7 @@ class DocsController extends BaseController
 
                 return "\n" . $placeholder . "\n";
             },
-            $markdown,
+            $html,
         );
 
         // Step 2: Proteggi inline code

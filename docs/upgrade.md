@@ -193,6 +193,42 @@ La strategia segnala le seguenti breaking changes che possono richiedere interve
 - `ErrorHandler::handleNonThrowableError()`: rinominato in `registerNonThrowableErrorHandler()`
 - `Public/index.php`: richiede aggiornamento per istanziare `ErrorHandler` e `Debugger`
 
+## Strategia di Upgrade 11.x -> 12.0.0
+
+La strategia `Upgrade11to12Strategy` gestisce le due breaking change della versione 12.0.0 tramite due transformer dedicati.
+
+### Rinomina di `SelfReferencedModel` in `SelfDependentModel`
+
+Il transformer `ClassRenameTransformer` (confidence: 95%) rinomina automaticamente ogni occorrenza dell'identificatore — dichiarazioni `extends`, statement `use`, riferimenti a enum case e stringhe letterali — usando un confronto a word boundary. Nessun intervento manuale richiesto.
+
+**Prima:**
+```php
+use SismaFramework\Orm\BaseClasses\SelfReferencedModel;
+
+class CategoryModel extends SelfReferencedModel
+```
+
+**Dopo:**
+```php
+use SismaFramework\Orm\BaseClasses\SelfDependentModel;
+
+class CategoryModel extends SelfDependentModel
+```
+
+### Riordino dei Parametri di `setFulltextIndexColumn()`
+
+Il transformer `FulltextIndexColumnTransformer` (confidence: 70%) riordina gli argomenti posizionali di `setFulltextIndexColumn()` per riflettere la nuova firma `(array $columns, $value, TextSearchMode $textSearchMode, ?string $columnAlias, bool $append)`:
+
+- Chiamate con 5 argomenti posizionali → reorder automatico.
+- Chiamate con ≤ 2 argomenti → nessuna modifica necessaria.
+- Chiamate con 3 o 4 argomenti → nessuna modifica automatica; il file viene segnalato con `requiresManualReview` perché l'ordine non è deducibile con certezza.
+
+### Breaking Changes della Versione 12.0.0
+
+- `SelfReferencedModel` → `SelfDependentModel` (classe rinominata)
+- `Query::setFulltextIndexColumn()`: il parametro `TextSearchMode` precede ora `$columnAlias` e `$append`
+- Rimozione dei metodi legacy già deprecati nella 10.1.0 (`getEntityCollectionByEntity()`, `countEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()` e le relative varianti `...ByParentAndEntity()` di `SelfDependentModel`) in favore delle query dinamiche `getBy{PropertyName}()`/`countBy{PropertyName}()`/`deleteBy{PropertyName}()`
+
 ## Il Report di Upgrade
 
 Al termine dell'esecuzione, il comando genera un report che include:

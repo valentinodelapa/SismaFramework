@@ -119,6 +119,11 @@ public function getEntityDataToStandardEntity(): StandardEntity
 ```
 Restituisce i dati del form come `StandardEntity`, utile per ripopolare il form in caso di errori.
 
+```php
+protected function addRequest(string $propertyName, string|int|float|bool|array|null $value, bool $override = true): self
+```
+Aggiunge o sovrascrive un valore nella richiesta del form, tipicamente da `injectRequest()`. Con `override: true` (default) il valore passato sovrascrive sempre quello esistente; con `override: false` il valore viene impostato solo se la proprietà non è già presente nella richiesta (introdotto nella 11.8.0).
+
 ---
 
 ### BaseFixture

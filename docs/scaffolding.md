@@ -4,7 +4,7 @@ La libreria è dotata di un meccanismo di scaffolding che, data un'entità, ne g
 
 - `Controller`: viene generato implementando il pattern CRUD con i metodi `index`, `create`, `update` e `delete`
 
-- `Model`: nel comando può essere indicata la tipologia della classe astratta che lo stesso dovrà estendere (`BaseModel`, `DependentModel` o `SelfReferencedModel`). Qualora la scelta non venga esplicitata, il sistema effettuerà un controllo tramite il quale stabilirà in autonomia la classe astratta da estendere.
+- `Model`: nel comando può essere indicata la tipologia della classe astratta che lo stesso dovrà estendere (`BaseModel`, `DependentModel` o `SelfDependentModel`). Qualora la scelta non venga esplicitata, il sistema effettuerà un controllo tramite il quale stabilirà in autonomia la classe astratta da estendere.
 
 - `Form`: nell'implementazione base, verranno implementati i filtri standard per tutte le proprietà dell'entità. Il sistema analizza automaticamente il tipo di ogni proprietà e genera il filtro appropriato (vedi sezione "Generazione Automatica dei Filtri" sotto).
 
@@ -132,8 +132,8 @@ Il comando richiede due argomenti obbligatori:
   
   - `BaseModel`
   - `DependentModel`
-  - `SelfReferencedModel`
-    Se questa opzione non viene fornita, il sistema analizzerà l'entità per determinare automaticamente il tipo di modello più appropriato. Ad esempio, se l'entità estende `SelfReferencedEntity`, verrà generato un `SelfReferencedModel`. Se ha proprietà che sono altre entità, verrà generato un `DependentModel`. Altrimenti, verrà generato un `BaseModel`.
+  - `SelfDependentModel`
+    Se questa opzione non viene fornita, il sistema analizzerà l'entità per determinare automaticamente il tipo di modello più appropriato. Ad esempio, se l'entità estende `SelfReferencedEntity`, verrà generato un `SelfDependentModel`. Se ha proprietà che sono altre entità, verrà generato un `DependentModel`. Altrimenti, verrà generato un `BaseModel`.
 
 - `--template=<PERCORSO>`: Permette di specificare un percorso a una cartella contenente template personalizzati per la generazione dei file. Se questa opzione non viene specificata, verranno utilizzati i template predefiniti del framework. La cartella deve avere la seguente struttura:
   

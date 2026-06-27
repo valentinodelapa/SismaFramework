@@ -142,16 +142,16 @@ const LOG_DANGER_ROW = 50;
 /* Encryptor Constants */
 const SIMPLE_HASH_ALGORITHM = "sha256";
 const BLOWFISH_HASH_WORKLOAD = 12;
-const ENCRYPTION_PASSPHRASE = "";
+define(__NAMESPACE__ . '\ENCRYPTION_PASSPHRASE', getenv('ENCRYPTION_PASSPHRASE') ?: "");
 const ENCRYPTION_ALGORITHM = "AES-256-CBC";
 const INITIALIZATION_VECTOR_BYTES = 16;
 
 /* Database Constant */
-const ORM_DATABASE_HOST = "";
-const ORM_DATABASE_NAME = "";
-const ORM_DATABASE_PASSWORD = "";
-const ORM_DATABASE_PORT = "";
-const ORM_DATABASE_USERNAME = "";
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('DATABASE_HOST') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('DATABASE_NAME') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('DATABASE_PASSWORD') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('DATABASE_PORT') ?: "");
+define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('DATABASE_USERNAME') ?: "");
 
 /* Object Document Mapper Constant */
 const DEFAULT_ODM_ADAPTER_TYPE = "mongodb";
@@ -166,4 +166,3 @@ const DOCUMENT_NAMESPACE = APPLICATION_NAMESPACE . "Documents\\";
 
 /* Document Models Constant */
 const DOCUMENT_MODEL_NAMESPACE = APPLICATION_NAMESPACE . "DocumentModels\\";
-

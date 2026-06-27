@@ -92,7 +92,8 @@ abstract class ReferencedEntity extends BaseEntity
             $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
             $foreignKeyName = $this->getForeignKeyName($propertyName);
             $model = new $modelName($this->dataMapper);
-            $entityCollection = isset($this->id) ? $model->getEntityCollectionByEntity([$foreignKeyName => $this]) : new SismaCollection($this->getCollectionDataInformation($propertyName));
+            $getterMethodName = 'getBy' . ucfirst($foreignKeyName);
+            $entityCollection = isset($this->id) ? $model->$getterMethodName($this) : new SismaCollection($this->getCollectionDataInformation($propertyName));
             $this->collections[$this->getForeignKeyReference($propertyName)][$this->getForeignKeyName($propertyName)] = $entityCollection;
         }
     }
@@ -221,7 +222,8 @@ abstract class ReferencedEntity extends BaseEntity
         $modelName = str_replace('Entities', 'Models', $this->getCollectionDataInformation($propertyName)) . 'Model';
         $foreignKeyName = $this->getForeignKeyName($propertyName);
         $model = new $modelName($this->dataMapper);
-        return $model->countEntityCollectionByEntity([$foreignKeyName => $this]);
+        $counterMethodName = 'countBy' . ucfirst($foreignKeyName);
+        return $model->$counterMethodName($this);
     }
 
     #[\Override]
