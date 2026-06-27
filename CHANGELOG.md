@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.0] - 2026-06-27 - Configurazione Database e Crittografia tramite Variabili d'Ambiente
+
+Questa minor release permette di configurare le credenziali del database e la passphrase di cifratura tramite variabili d'ambiente, evitando di doverle scrivere come valori letterali in `Config/configFramework.php` — file che, a differenza di `Config/config.php`, viene generato durante l'installazione e tipicamente committato nel progetto applicativo. L'installer rileva automaticamente quando queste variabili sono già presenti nell'ambiente e salta la richiesta interattiva/CLI corrispondente.
+
+### ✨ Nuove Funzionalità
+
+#### `Config/config.php` — Costanti database e cifratura risolte tramite `getenv()`
+
+Le costanti `DATABASE_HOST`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_PORT` ed `ENCRYPTION_PASSPHRASE` non sono più dichiarate con `const` ma con `define(__NAMESPACE__ . '\NOME_COSTANTE', getenv('NOME_COSTANTE') ?: "")`. Questo era necessario perché PHP non ammette chiamate a funzione (`getenv()`) all'interno di un'espressione costante dichiarata con `const`; `define()` accetta invece un'espressione valutata a runtime. Il namespace va qualificato esplicitamente (`__NAMESPACE__ . '\...'`) perché, a differenza di `const`, `define()` non eredita automaticamente il namespace del file.
+
+Se la variabile d'ambiente non è impostata, il fallback resta la stringa vuota `""`, identico al valore di default precedente: il comportamento per chi non adotta variabili d'ambiente è invariato.
+
+**File modificati**:
+- **`Config/config.php`**: le sei costanti elencate sopra convertite da `const` a `define()` con fallback a `getenv()`
+
+#### `Console/Commands/InstallationCommand::collectDatabaseConfiguration()` — Skip automatico con variabili d'ambiente già presenti
+
+Aggiunto il metodo privato `hasDatabaseConfigFromEnvironment()`, che verifica se almeno una tra `DATABASE_HOST`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_PORT` è già impostata nell'ambiente del processo. Il controllo viene eseguito dopo quello sulle opzioni CLI (`--db-host` e affini, che restano prioritarie se esplicitamente fornite) e prima del prompt interattivo: se l'ambiente fornisce già la configurazione, l'installer stampa un messaggio informativo e prosegue senza chiedere nulla, evitando di scrivere un fallback letterale — e quindi un potenziale segreto — in `Config/configFramework.php`.
+
+Aggiornato anche il testo di `--help` del comando per documentare il nuovo comportamento.
+
+**File modificati**:
+- **`Console/Commands/InstallationCommand.php`**: aggiunto `hasDatabaseConfigFromEnvironment()`; `collectDatabaseConfiguration()` lo invoca prima del prompt interattivo; aggiornato il testo di `configure()`
+
+#### `.env.example` — Documentazione delle variabili d'ambiente consultate dal framework
+
+Aggiunto un file `.env.example` nella root del framework che elenca le sei variabili d'ambiente lette via `getenv()` in `Config/config.php`. Il file è puramente documentale: il framework non effettua alcun parsing di file `.env` (nessuna nuova dipendenza, nessun loader interno) — le variabili devono essere rese disponibili come variabili d'ambiente del processo PHP da chi gestisce il deployment (Docker `env_file`, direttive del web server, `systemd EnvironmentFile`, export manuale, ecc.).
+
+**File creati**:
+- **`.env.example`**
+
+### 🔧 Modifiche Interne
+
+#### `Console/Services/Installation/InstallationManager::updateConfigFile()` — Supporto al nuovo pattern `define()+getenv()`
+
+La sostituzione dei valori raccolti da CLI/prompt interattivo in `Config/configFramework.php` riconosceva solo il pattern `const NOME = "valore";`. Aggiunto un secondo pattern che riconosce `define(__NAMESPACE__ . '\NOME', getenv('NOME') ?: "valore")` e aggiorna soltanto il valore di fallback dopo `?:`, lasciando intatta la chiamata a `getenv()` — così l'ambiente continua ad avere priorità anche su un valore scritto in fase di installazione.
+
+**File modificati**:
+- **`Console/Services/Installation/InstallationManager.php`**: `updateConfigFile()` applica entrambi i pattern (`const` e `define()+getenv()`) per ciascuna chiave di configurazione
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: il nome, il namespace e le modalità di utilizzo delle costanti (`Config\DATABASE_HOST`, ecc.) restano identici per chi le consulta; cambia solo il meccanismo interno di dichiarazione (`define()` invece di `const`).
+- **Comportamento di default invariato**: senza variabili d'ambiente impostate, il fallback è la stessa stringa vuota `""` di prima — installazioni standalone esistenti non notano differenze.
+- **Funzionalità opt-in**: il rilevamento automatico in fase di installazione si attiva solo se l'ambiente fornisce già la configurazione; il flusso CLI/interattivo esistente resta invariato in tutti gli altri casi.
+
+---
+
 ## [11.8.1] - 2026-06-25 - Correzione Parsing Code Block Annidati nelle Blockquote (Sample)
 
 Patch che corregge il parser Markdown del sito di autopromozione/documentazione (`Sample/Controllers/DocsController.php`): i fenced code block annidati in una blockquote venivano interpretati in modo scorretto, corrompendo il rendering di tutto il contenuto successivo del documento. Corretto anche un fence orfano nel file `docs/advanced-orm.md`.
