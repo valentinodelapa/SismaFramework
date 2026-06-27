@@ -126,6 +126,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDbOptionsFromCommandLine"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003AhasDatabaseConfigFromEnvironment\u0028\u0029",
+            "name": "hasDatabaseConfigFromEnvironment",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDatabaseConfigFromEnvironment"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003AgetDbConfigFromOptions\u0028\u0029",
             "name": "getDbConfigFromOptions",
             "summary": "",
@@ -311,10 +316,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_run"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003AextractModuleOption\u0028\u0029",
+            "name": "extractModuleOption",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_extractModuleOption"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003AdiscoverCommands\u0028\u0029",
             "name": "discoverCommands",
             "summary": "",
             "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverCommands"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003AdiscoverUnconfiguredModules\u0028\u0029",
+            "name": "discoverUnconfiguredModules",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#method_discoverUnconfiguredModules"
         },                {
             "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003AdiscoverFromDirectory\u0028\u0029",
             "name": "discoverFromDirectory",
@@ -350,6 +365,11 @@ Search.appendIndex(
             "name": "commandList",
             "summary": "",
             "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_commandList"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003A\u0024commandModules",
+            "name": "commandModules",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-HelperClasses-CommandDispatcher.html#property_commandModules"
         },                {
             "fqsen": "\\SismaFramework\\Console\\HelperClasses\\CommandDispatcher\u003A\u003A\u0024arguments",
             "name": "arguments",
@@ -1241,16 +1261,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#method___construct"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController\u003A\u003A\u0024dataMapper",
-            "name": "dataMapper",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_dataMapper"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController\u003A\u003A\u0024debugger",
-            "name": "debugger",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_debugger"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController\u003A\u003A\u0024router",
             "name": "router",
             "summary": "",
@@ -1265,6 +1275,16 @@ Search.appendIndex(
             "name": "vars",
             "summary": "",
             "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_vars"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController\u003A\u003A\u0024dataMapper",
+            "name": "dataMapper",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_dataMapper"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController\u003A\u003A\u0024debugger",
+            "name": "debugger",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_debugger"
         },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseFixture",
             "name": "BaseFixture",

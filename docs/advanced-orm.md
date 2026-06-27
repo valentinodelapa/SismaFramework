@@ -966,7 +966,6 @@ if (Cache::checkEntityPresenceInCache(User::class, 5)) {
 3. **Considera eager loading** per relazioni sempre necessarie
 4. **Monitora la cache** per ottimizzare il hit rate
 5. **Documenta le dipendenze** delle entità per il team
-```
 
 ---
 
