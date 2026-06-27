@@ -70,18 +70,28 @@ Questo comando creerà automaticamente:
 
 #### Configurazione Interattiva del Database
 
-A partire dalla versione 11.1.0, il comando di installazione supporta la **configurazione interattiva** dei parametri del database. Se non vengono passati parametri da riga di comando, il sistema chiederà interattivamente se si desidera configurare il database:
+Il comando di installazione supporta la **configurazione interattiva** dei parametri del database relazionale (ORM) e di quello non relazionale (ODM), gestiti tramite due domande indipendenti: puoi configurare uno, l'altro, entrambi o nessuno, in base a cosa usa effettivamente il tuo progetto. Se non vengono passati parametri da riga di comando né rilevate variabili d'ambiente già impostate, il sistema chiede interattivamente:
 
 ```
 Installing SismaFramework project: MyProject
 
-Database Configuration (optional)
+Relational Database Configuration (ORM, optional)
 Press Enter to skip each field or use defaults.
 
-Do you want to configure database settings? [y/N]: y
+Is there a relational database to configure? [y/N]: y
 Database Host [127.0.0.1]: localhost
 Database Port [3306]: 3306
 Database Name []: myproject_db
+Database Username []: root
+Database Password: ********
+
+Non-Relational Database Configuration (ODM, optional)
+Press Enter to skip each field or use defaults.
+
+Is there a non-relational database to configure? [y/N]: y
+Database Host [127.0.0.1]: localhost
+Database Port [27017]: 27017
+Database Name []: myproject_documents
 Database Username []: root
 Database Password: ********
 
@@ -91,11 +101,13 @@ Creating project structure...
 **Note sulla configurazione interattiva:**
 - La password viene inserita in modo nascosto (su Linux/macOS)
 - È possibile premere Invio per accettare i valori predefiniti
-- Per saltare completamente la configurazione database, rispondere "N" alla domanda iniziale
+- Rispondere "N" a una delle due domande salta solo quella configurazione (es. puoi configurare solo l'ODM se non usi un database relazionale)
+- Se vengono rilevate variabili d'ambiente `ORM_DATABASE_*` e/o `ODM_DATABASE_*` già impostate (es. da un `env_file` Docker), la rispettiva domanda viene saltata automaticamente: `Config/configFramework.php` legge quei valori tramite `getenv()` a runtime, quindi non serve scriverli nel file
+- `--skip-db` salta completamente entrambe le configurazioni (nessuna richiesta interattiva)
 
 #### Opzioni da Riga di Comando
 
-Se preferisci evitare la configurazione interattiva, puoi passare i parametri direttamente da riga di comando:
+Se preferisci evitare la configurazione interattiva, puoi passare i parametri direttamente da riga di comando, separatamente per ORM e ODM:
 
 ```bash
 sisma install NomeDelProgetto \
@@ -103,17 +115,29 @@ sisma install NomeDelProgetto \
   --db-name=mio_database \
   --db-user=root \
   --db-pass=password \
-  --db-port=3306
+  --db-port=3306 \
+  --odm-host=localhost \
+  --odm-name=mio_database \
+  --odm-user=root \
+  --odm-pass=password \
+  --odm-port=27017
 ```
 
 **Opzioni:**
 - `--force` - Forza la sovrascrittura di file esistenti
 - `--skip-db` - Salta completamente la configurazione database (nessuna richiesta interattiva)
-- `--db-host=HOST` - Host del database (default: 127.0.0.1)
-- `--db-name=NAME` - Nome del database
-- `--db-user=USER` - Username del database
-- `--db-pass=PASS` - Password del database
-- `--db-port=PORT` - Porta del database (default: 3306)
+- `--db-host=HOST` - Host del database relazionale/ORM (default: 127.0.0.1)
+- `--db-name=NAME` - Nome del database relazionale/ORM
+- `--db-user=USER` - Username del database relazionale/ORM
+- `--db-pass=PASS` - Password del database relazionale/ORM
+- `--db-port=PORT` - Porta del database relazionale/ORM (default: 3306)
+- `--odm-host=HOST` - Host del database non relazionale/ODM (default: 127.0.0.1)
+- `--odm-name=NAME` - Nome del database non relazionale/ODM
+- `--odm-user=USER` - Username del database non relazionale/ODM
+- `--odm-pass=PASS` - Password del database non relazionale/ODM
+- `--odm-port=PORT` - Porta del database non relazionale/ODM (default: 27017)
+
+Le due configurazioni sono indipendenti: puoi passare solo le opzioni `--db-*` (progetto solo ORM), solo le `--odm-*` (progetto solo ODM/MongoDB), entrambe, o nessuna (in tal caso, se non ci sono variabili d'ambiente rilevate, verrà comunque chiesta la configurazione interattiva per la parte mancante, salvo `--skip-db`).
 
 **Esempi:**
 
@@ -124,12 +148,18 @@ sisma install BlogPersonale
 # Installazione senza configurazione database
 sisma install BlogPersonale --skip-db
 
-# Installazione con parametri da riga di comando
+# Installazione con solo database relazionale (MySQL/MariaDB)
 sisma install BlogPersonale \
   --db-host=localhost \
   --db-name=blog_db \
   --db-user=root \
   --db-pass=mypassword
+
+# Installazione con solo database non relazionale (MongoDB)
+sisma install BlogPersonale \
+  --odm-name=blog_documents \
+  --odm-user=root \
+  --odm-pass=mypassword
 ```
 
 #### Comportamento con File Esistenti
@@ -272,15 +302,26 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
      // ROOT_PATH viene calcolato automaticamente
      ```
 
-   * **Impostazioni del Database:**
+   * **Impostazioni del Database Relazionale (ORM):**
 
      ```php
-     const DATABASE_ADAPTER_TYPE = 'mysql'; // o 'mariadb'
-     const DATABASE_HOST = '127.0.0.1';
-     const DATABASE_NAME = 'nome_database';
-     const DATABASE_USERNAME = 'utente_db';
-     const DATABASE_PASSWORD = 'password_db';
-     const DATABASE_PORT = '3306';
+     const DEFAULT_ADAPTER_TYPE = 'mysql'; // o 'mariadb'
+     define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: '127.0.0.1');
+     define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('ORM_DATABASE_NAME') ?: 'nome_database');
+     define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('ORM_DATABASE_USERNAME') ?: 'utente_db');
+     define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('ORM_DATABASE_PASSWORD') ?: 'password_db');
+     define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('ORM_DATABASE_PORT') ?: '3306');
+     ```
+
+   * **Impostazioni del Database Non Relazionale (ODM, opzionale):** se il tuo progetto usa anche MongoDB, configura analogamente le costanti `ODM_DATABASE_*`. Vedi la guida [ODM](odm.md) per i dettagli.
+
+     ```php
+     const DEFAULT_ODM_ADAPTER_TYPE = 'mongodb';
+     define(__NAMESPACE__ . '\ODM_DATABASE_HOST', getenv('ODM_DATABASE_HOST') ?: '127.0.0.1');
+     define(__NAMESPACE__ . '\ODM_DATABASE_NAME', getenv('ODM_DATABASE_NAME') ?: 'nome_database');
+     define(__NAMESPACE__ . '\ODM_DATABASE_USERNAME', getenv('ODM_DATABASE_USERNAME') ?: 'utente_db');
+     define(__NAMESPACE__ . '\ODM_DATABASE_PASSWORD', getenv('ODM_DATABASE_PASSWORD') ?: 'password_db');
+     define(__NAMESPACE__ . '\ODM_DATABASE_PORT', getenv('ODM_DATABASE_PORT') ?: '27017');
      ```
 
    * **Chiave di Cifratura:** Genera una chiave sicura e inseriscila qui. È fondamentale per la crittografia dei dati.

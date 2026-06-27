@@ -34,7 +34,7 @@ Questo errore indica che l'autoloader non riesce a trovare una classe che stai c
 
 Se l'applicazione non riesce a connettersi al database:
 
-1.  **Credenziali errate:** Verifica che le costanti `DATABASE_HOST`, `DATABASE_NAME`, `DATABASE_USERNAME` e `DATABASE_PASSWORD` in `Config/config.php` siano corrette.
+1.  **Credenziali errate:** Verifica che le costanti `ORM_DATABASE_HOST`, `ORM_DATABASE_NAME`, `ORM_DATABASE_USERNAME` e `ORM_DATABASE_PASSWORD` (o, per un database documentale, le omologhe `ODM_DATABASE_*`) in `Config/configFramework.php` siano corrette, oppure che le relative variabili d'ambiente siano impostate correttamente nel processo PHP.
 2.  **Server non raggiungibile:** Assicurati che il server del database sia in esecuzione e accessibile dalla macchina su cui gira l'applicazione.
 
 ## Problemi con l'ORM o le Relazioni

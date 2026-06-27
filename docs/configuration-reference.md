@@ -92,41 +92,74 @@ const MAX_RELOAD_ATTEMPTS = 3;
 
 ## Configurazione Database
 
+SismaFramework distingue due famiglie di credenziali database, indipendenti tra loro: quelle del database relazionale usato dall'**ORM** (`ORM_DATABASE_*`) e quelle del database documentale usato dall'**ODM** (`ODM_DATABASE_*`, vedi [Configurazione ODM](#configurazione-odm)). Entrambe sono definite tramite `getenv()` con fallback a stringa vuota, così possono essere impostate da variabili d'ambiente senza modificare il file:
+
 ```php
-// Connessione database
-const DATABASE_HOST = 'localhost';
-const DATABASE_NAME = 'my_database';
-const DATABASE_USERNAME = 'db_user';
-const DATABASE_PASSWORD = 'db_password';
-const DATABASE_PORT = '3306';
+// Connessione database relazionale (ORM)
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: '');
+define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('ORM_DATABASE_NAME') ?: '');
+define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('ORM_DATABASE_USERNAME') ?: '');
+define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('ORM_DATABASE_PASSWORD') ?: '');
+define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('ORM_DATABASE_PORT') ?: '');
 ```
 
-### Parametri Database
+### Parametri Database (ORM)
 
 | Costante | Descrizione | Esempio |
 |----------|-------------|---------|
-| `DATABASE_HOST` | Host del database | `'localhost'`, `'127.0.0.1'` |
-| `DATABASE_NAME` | Nome del database | `'my_app_db'` |
-| `DATABASE_USERNAME` | Username per connessione | `'db_user'` |
-| `DATABASE_PASSWORD` | Password per connessione | `'secure_password'` |
-| `DATABASE_PORT` | Porta del database | `'3306'` (MySQL), `'5432'` (PostgreSQL) |
+| `ORM_DATABASE_HOST` | Host del database | `'localhost'`, `'127.0.0.1'` |
+| `ORM_DATABASE_NAME` | Nome del database | `'my_app_db'` |
+| `ORM_DATABASE_USERNAME` | Username per connessione | `'db_user'` |
+| `ORM_DATABASE_PASSWORD` | Password per connessione | `'secure_password'` |
+| `ORM_DATABASE_PORT` | Porta del database | `'3306'` (MySQL), `'5432'` (PostgreSQL) |
 
-**Configurazione di Esempio**:
-```php
-// MySQL/MariaDB
-const DATABASE_HOST = 'localhost';
-const DATABASE_NAME = 'sisma_app';
-const DATABASE_USERNAME = 'sisma_user';
-const DATABASE_PASSWORD = 'MySecurePassword123!';
-const DATABASE_PORT = '3306';
+**Configurazione di Esempio** (tramite variabili d'ambiente, es. file `.env` caricato come `env_file` Docker — vedi `.env.example` nella root del framework):
+```bash
+# MySQL/MariaDB
+ORM_DATABASE_HOST=localhost
+ORM_DATABASE_NAME=sisma_app
+ORM_DATABASE_USERNAME=sisma_user
+ORM_DATABASE_PASSWORD=MySecurePassword123!
+ORM_DATABASE_PORT=3306
 
-// PostgreSQL
-const DATABASE_HOST = 'localhost';
-const DATABASE_NAME = 'sisma_app';
-const DATABASE_USERNAME = 'postgres';
-const DATABASE_PASSWORD = 'postgres_password';
-const DATABASE_PORT = '5432';
+# PostgreSQL
+ORM_DATABASE_HOST=localhost
+ORM_DATABASE_NAME=sisma_app
+ORM_DATABASE_USERNAME=postgres
+ORM_DATABASE_PASSWORD=postgres_password
+ORM_DATABASE_PORT=5432
 ```
+
+In alternativa, il comando `sisma install` può chiedere queste credenziali interattivamente o riceverle da riga di comando (`--db-host`, `--db-name`, `--db-user`, `--db-pass`, `--db-port`) e scriverle direttamente in `Config/configFramework.php`. Vedi la guida [Installazione](installation.md).
+
+---
+
+## Configurazione ODM
+
+Il database documentale (es. MongoDB) usato dall'**ODM** è configurato in modo analogo all'ORM, con costanti separate e indipendenti:
+
+```php
+// Tipo di adapter ODM
+const DEFAULT_ODM_ADAPTER_TYPE = 'mongodb';
+
+// Connessione database documentale (ODM)
+define(__NAMESPACE__ . '\ODM_DATABASE_HOST', getenv('ODM_DATABASE_HOST') ?: '');
+define(__NAMESPACE__ . '\ODM_DATABASE_NAME', getenv('ODM_DATABASE_NAME') ?: '');
+define(__NAMESPACE__ . '\ODM_DATABASE_USERNAME', getenv('ODM_DATABASE_USERNAME') ?: '');
+define(__NAMESPACE__ . '\ODM_DATABASE_PASSWORD', getenv('ODM_DATABASE_PASSWORD') ?: '');
+define(__NAMESPACE__ . '\ODM_DATABASE_PORT', getenv('ODM_DATABASE_PORT') ?: '');
+```
+
+| Costante | Descrizione | Esempio |
+|----------|-------------|---------|
+| `DEFAULT_ODM_ADAPTER_TYPE` | Adapter ODM predefinito (case di `OdmAdapterType`) | `'mongodb'` |
+| `ODM_DATABASE_HOST` | Host del database documentale | `'localhost'`, `'127.0.0.1'` |
+| `ODM_DATABASE_NAME` | Nome del database documentale | `'my_app_documents'` |
+| `ODM_DATABASE_USERNAME` | Username per connessione | `'db_user'` |
+| `ODM_DATABASE_PASSWORD` | Password per connessione | `'secure_password'` |
+| `ODM_DATABASE_PORT` | Porta del database documentale | `'27017'` (MongoDB) |
+
+ORM e ODM sono **completamente indipendenti**: un progetto può usare solo l'uno, solo l'altro, o entrambi insieme. Per i dettagli su documenti, modelli e query builder dell'ODM vedi la guida [ODM](odm.md).
 
 ---
 
@@ -394,7 +427,7 @@ require_once __DIR__ . "/config.{$env}.php";
 **config.development.php**:
 ```php
 const DEVELOPMENT_ENVIRONMENT = true;
-const DATABASE_HOST = 'localhost';
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'localhost');
 const LOG_VERBOSE_ACTIVE = true;
 const ORM_CACHE = false;  // Disabilita cache in sviluppo
 ```
@@ -402,7 +435,7 @@ const ORM_CACHE = false;  // Disabilita cache in sviluppo
 **config.production.php**:
 ```php
 const DEVELOPMENT_ENVIRONMENT = false;
-const DATABASE_HOST = 'prod-db-server';
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'prod-db-server');
 const LOG_VERBOSE_ACTIVE = false;
 const ORM_CACHE = true;
 const HTTPS_IS_FORCED = true;
@@ -423,12 +456,12 @@ const DEVELOPMENT_ENVIRONMENT = true;
 const LANGUAGE = 'it_IT';
 const DEFAULT_META_URL = '';
 
-// === DATABASE ===
-const DATABASE_HOST = 'localhost';
-const DATABASE_NAME = 'my_app';
-const DATABASE_USERNAME = 'user';
-const DATABASE_PASSWORD = 'password';
-const DATABASE_PORT = '3306';
+// === DATABASE (ORM) ===
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'localhost');
+define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('ORM_DATABASE_NAME') ?: 'my_app');
+define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('ORM_DATABASE_USERNAME') ?: 'user');
+define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('ORM_DATABASE_PASSWORD') ?: 'password');
+define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('ORM_DATABASE_PORT') ?: '3306');
 
 // === MODULI ===
 const MODULE_FOLDERS = [
@@ -458,12 +491,12 @@ const CONFIGURATION_PASSWORD = 'admin-access-password';
 const LANGUAGE = 'en_US';
 const DEFAULT_META_URL = '/app';
 
-// === DATABASE ===
-const DATABASE_HOST = 'db.example.com';
-const DATABASE_NAME = 'production_db';
-const DATABASE_USERNAME = 'prod_user';
-const DATABASE_PASSWORD = 'secure-password-from-env';
-const DATABASE_PORT = '3306';
+// === DATABASE (ORM) ===
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'db.example.com');
+define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('ORM_DATABASE_NAME') ?: 'production_db');
+define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('ORM_DATABASE_USERNAME') ?: 'prod_user');
+define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('ORM_DATABASE_PASSWORD') ?: '');
+define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('ORM_DATABASE_PORT') ?: '3306');
 
 // === ORM ===
 const ORM_CACHE = true;
@@ -501,12 +534,12 @@ require_once 'config.defaults.php';
 
 ```php
 // ❌ MAI fare questo
-const DATABASE_PASSWORD = 'password123';
+define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', 'password123');
 const ENCRYPTION_PASSPHRASE = 'secret';
 
-// ✅ Usa variabili ambiente
-const DATABASE_PASSWORD = $_ENV['DB_PASSWORD'] ?? '';
-const ENCRYPTION_PASSPHRASE = $_ENV['ENCRYPTION_KEY'] ?? '';
+// ✅ Usa variabili ambiente (già il default generato da Config/config.php)
+define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('ORM_DATABASE_PASSWORD') ?: '');
+define(__NAMESPACE__ . '\ENCRYPTION_PASSPHRASE', getenv('ENCRYPTION_PASSPHRASE') ?: '');
 ```
 
 ### 2. Configurazione per Performance
@@ -548,10 +581,10 @@ const PRIMARY_KEY_PASS_ACCEPTED = false;
 
 #### 1. Database Connection Failed
 ```php
-// Verifica configurazione database
-const DATABASE_HOST = 'localhost';    // ✓ Corretto
-const DATABASE_HOST = '127.0.0.1';    // ✓ Alternativo
-const DATABASE_HOST = 'localhost:3306'; // ❌ Porta va in DATABASE_PORT
+// Verifica configurazione database (vale sia per ORM_DATABASE_HOST che per ODM_DATABASE_HOST)
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'localhost');    // ✓ Corretto
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: '127.0.0.1');    // ✓ Alternativo
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'localhost:3306'); // ❌ Porta va in ORM_DATABASE_PORT
 ```
 
 #### 2. Moduli Non Trovati

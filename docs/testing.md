@@ -57,11 +57,11 @@ Creare un file di configurazione specifico per i test:
 <?php
 // Tests/Config/config.php
 
-// Database di test
-const DATABASE_HOST = 'localhost';
-const DATABASE_NAME = 'sisma_test';
-const DATABASE_USERNAME = 'test_user';
-const DATABASE_PASSWORD = 'test_password';
+// Database di test (ORM)
+define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'localhost');
+define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('ORM_DATABASE_NAME') ?: 'sisma_test');
+define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('ORM_DATABASE_USERNAME') ?: 'test_user');
+define(__NAMESPACE__ . '\ORM_DATABASE_PASSWORD', getenv('ORM_DATABASE_PASSWORD') ?: 'test_password');
 
 // Ambiente di test
 const DEVELOPMENT_ENVIRONMENT = true;

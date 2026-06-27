@@ -36,19 +36,27 @@ L'ODM si basa su tre tipi di classi principali:
 
 ## Configurazione
 
-Aggiungi le seguenti costanti al tuo file di configurazione PHP:
+`Config/config.php` (e quindi `Config/configFramework.php` generato in installazione) definisce già le costanti ODM, lette tramite `getenv()` con fallback a stringa vuota, esattamente come le omologhe ORM:
 
 ```php
-// Tipo di adapter ODM da usare
-define('DEFAULT_ODM_ADAPTER_TYPE', \SismaFramework\Odm\Enumerations\OdmAdapterType::mongodb);
+// Tipo di adapter ODM da usare (valore stringa del case di OdmAdapterType)
+const DEFAULT_ODM_ADAPTER_TYPE = "mongodb";
 
 // Credenziali MongoDB
-define('ODM_DATABASE_HOST',     'localhost');
-define('ODM_DATABASE_PORT',     '27017');
-define('ODM_DATABASE_NAME',     'my_database');
-define('ODM_DATABASE_USERNAME', 'my_user');
-define('ODM_DATABASE_PASSWORD', 'my_password');
+define(__NAMESPACE__ . '\ODM_DATABASE_HOST', getenv('ODM_DATABASE_HOST') ?: "");
+define(__NAMESPACE__ . '\ODM_DATABASE_NAME', getenv('ODM_DATABASE_NAME') ?: "");
+define(__NAMESPACE__ . '\ODM_DATABASE_PASSWORD', getenv('ODM_DATABASE_PASSWORD') ?: "");
+define(__NAMESPACE__ . '\ODM_DATABASE_PORT', getenv('ODM_DATABASE_PORT') ?: "");
+define(__NAMESPACE__ . '\ODM_DATABASE_USERNAME', getenv('ODM_DATABASE_USERNAME') ?: "");
 ```
+
+Puoi impostare questi valori in tre modi, dal più al meno indicato:
+
+1. **Variabili d'ambiente** (`ODM_DATABASE_HOST`, `ODM_DATABASE_PORT`, `ODM_DATABASE_NAME`, `ODM_DATABASE_USERNAME`, `ODM_DATABASE_PASSWORD`), ad esempio tramite un `env_file` Docker o `SetEnv` del web server. È l'approccio consigliato perché non scrive credenziali in un file versionato. Vedi `.env.example` nella root del framework.
+2. **Comando di installazione**: `sisma install NomeProgetto --odm-host=... --odm-name=... --odm-user=... --odm-pass=... --odm-port=...` oppure rispondendo "sì" al prompt interattivo dedicato al database non relazionale (vedi [Installazione](installation.md)).
+3. **Modifica manuale** di `Config/configFramework.php` dopo l'installazione.
+
+Se non viene configurato nulla, le costanti restano stringhe vuote e l'adapter MongoDB non potrà connettersi.
 
 ---
 
