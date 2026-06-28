@@ -205,6 +205,39 @@ class InstallationCommandTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testInstallationSkipsPromptWhenEnvironmentVariablesDetected(): void
+    {
+        putenv('DATABASE_HOST=localhost');
+
+        try {
+            $this->command->setArguments([
+                '0' => 'MyProject'
+            ]);
+            $this->command->setOptions([]);
+
+            $this->installationManagerMock
+                ->expects($this->once())
+                ->method('setForce')
+                ->with(false)
+                ->willReturnSelf();
+
+            $this->installationManagerMock
+                ->expects($this->once())
+                ->method('install')
+                ->with('MyProject', [])
+                ->willReturn(true);
+
+            ob_start();
+            $result = $this->command->run();
+            $output = ob_get_clean();
+
+            $this->assertTrue($result);
+            $this->assertStringContainsString('Database environment variables detected', $output);
+        } finally {
+            putenv('DATABASE_HOST');
+        }
+    }
+
     public function testInstallationFailure(): void
     {
         $this->command->setArguments([
