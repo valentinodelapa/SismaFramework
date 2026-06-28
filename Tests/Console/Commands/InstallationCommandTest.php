@@ -205,6 +205,77 @@ class InstallationCommandTest extends TestCase
         $this->assertTrue($result);
     }
 
+    private function setSimulatedInput(string $content): void
+    {
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, $content);
+        rewind($stream);
+        $this->command->setInputStream($stream);
+    }
+
+    public function testInteractivePromptDeclinesDatabaseConfigurationByDefault(): void
+    {
+        $this->command->setArguments([
+            '0' => 'MyProject'
+        ]);
+        $this->command->setOptions([]);
+        $this->setSimulatedInput("\n");
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('setForce')
+            ->with(false)
+            ->willReturnSelf();
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('install')
+            ->with('MyProject', [])
+            ->willReturn(true);
+
+        ob_start();
+        $result = $this->command->run();
+        $output = ob_get_clean();
+
+        $this->assertTrue($result);
+        $this->assertStringContainsString('Do you want to configure database settings?', $output);
+    }
+
+    public function testInteractivePromptConfiguresDatabaseWhenConfirmed(): void
+    {
+        $this->command->setArguments([
+            '0' => 'MyProject'
+        ]);
+        $this->command->setOptions([]);
+        $this->setSimulatedInput("y\nlocalhost\n3306\nmydb\nroot\nsecret\n");
+
+        $expectedConfig = [
+            'DATABASE_HOST' => 'localhost',
+            'DATABASE_PORT' => '3306',
+            'DATABASE_NAME' => 'mydb',
+            'DATABASE_USERNAME' => 'root',
+            'DATABASE_PASSWORD' => 'secret',
+        ];
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('setForce')
+            ->with(false)
+            ->willReturnSelf();
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('install')
+            ->with('MyProject', $expectedConfig)
+            ->willReturn(true);
+
+        ob_start();
+        $result = $this->command->run();
+        ob_get_clean();
+
+        $this->assertTrue($result);
+    }
+
     public function testInstallationSkipsPromptWhenEnvironmentVariablesDetected(): void
     {
         putenv('DATABASE_HOST=localhost');
