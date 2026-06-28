@@ -268,6 +268,189 @@ class InstallationCommandTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testInstallationSkipsOrmPromptWhenEnvironmentVariablesDetected(): void
+    {
+        putenv('ORM_DATABASE_HOST=localhost');
+        putenv('ODM_DATABASE_HOST=localhost');
+
+        try {
+            $this->command->setArguments([
+                '0' => 'MyProject'
+            ]);
+            $this->command->setOptions([]);
+
+            $this->installationManagerMock
+                ->expects($this->once())
+                ->method('setForce')
+                ->with(false)
+                ->willReturnSelf();
+
+            $this->installationManagerMock
+                ->expects($this->once())
+                ->method('install')
+                ->with('MyProject', [])
+                ->willReturn(true);
+
+            ob_start();
+            $result = $this->command->run();
+            $output = ob_get_clean();
+
+            $this->assertTrue($result);
+            $this->assertStringContainsString('Relational database environment variables detected', $output);
+            $this->assertStringContainsString('Non-relational database environment variables detected', $output);
+        } finally {
+            putenv('ORM_DATABASE_HOST');
+            putenv('ODM_DATABASE_HOST');
+        }
+    }
+
+    private function setSimulatedInput(string $content): void
+    {
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, $content);
+        rewind($stream);
+        $this->command->setInputStream($stream);
+    }
+
+    public function testInteractivePromptDeclinesBothOrmAndOdmByDefault(): void
+    {
+        $this->command->setArguments([
+            '0' => 'MyProject'
+        ]);
+        $this->command->setOptions([]);
+        $this->setSimulatedInput("\n\n");
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('setForce')
+            ->with(false)
+            ->willReturnSelf();
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('install')
+            ->with('MyProject', [])
+            ->willReturn(true);
+
+        ob_start();
+        $result = $this->command->run();
+        $output = ob_get_clean();
+
+        $this->assertTrue($result);
+        $this->assertStringContainsString('Is there a relational database to configure?', $output);
+        $this->assertStringContainsString('Is there a non-relational database to configure?', $output);
+    }
+
+    public function testInteractivePromptConfiguresOnlyOrmWhenConfirmed(): void
+    {
+        $this->command->setArguments([
+            '0' => 'MyProject'
+        ]);
+        $this->command->setOptions([]);
+        $this->setSimulatedInput("y\nlocalhost\n3306\nmydb\nroot\nsecret\nn\n");
+
+        $expectedConfig = [
+            'ORM_DATABASE_HOST' => 'localhost',
+            'ORM_DATABASE_PORT' => '3306',
+            'ORM_DATABASE_NAME' => 'mydb',
+            'ORM_DATABASE_USERNAME' => 'root',
+            'ORM_DATABASE_PASSWORD' => 'secret',
+        ];
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('setForce')
+            ->with(false)
+            ->willReturnSelf();
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('install')
+            ->with('MyProject', $expectedConfig)
+            ->willReturn(true);
+
+        ob_start();
+        $result = $this->command->run();
+        ob_get_clean();
+
+        $this->assertTrue($result);
+    }
+
+    public function testInteractivePromptConfiguresOnlyOdmWhenConfirmed(): void
+    {
+        $this->command->setArguments([
+            '0' => 'MyProject'
+        ]);
+        $this->command->setOptions([]);
+        $this->setSimulatedInput("n\ny\nlocalhost\n27017\nmydocs\nroot\nsecret\n");
+
+        $expectedConfig = [
+            'ODM_DATABASE_HOST' => 'localhost',
+            'ODM_DATABASE_PORT' => '27017',
+            'ODM_DATABASE_NAME' => 'mydocs',
+            'ODM_DATABASE_USERNAME' => 'root',
+            'ODM_DATABASE_PASSWORD' => 'secret',
+        ];
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('setForce')
+            ->with(false)
+            ->willReturnSelf();
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('install')
+            ->with('MyProject', $expectedConfig)
+            ->willReturn(true);
+
+        ob_start();
+        $result = $this->command->run();
+        ob_get_clean();
+
+        $this->assertTrue($result);
+    }
+
+    public function testInteractivePromptConfiguresBothOrmAndOdmWhenConfirmed(): void
+    {
+        $this->command->setArguments([
+            '0' => 'MyProject'
+        ]);
+        $this->command->setOptions([]);
+        $this->setSimulatedInput("y\nlocalhost\n3306\nmydb\nroot\nsecret\ny\nlocalhost\n27017\nmydocs\nroot\nmongosecret\n");
+
+        $expectedConfig = [
+            'ORM_DATABASE_HOST' => 'localhost',
+            'ORM_DATABASE_PORT' => '3306',
+            'ORM_DATABASE_NAME' => 'mydb',
+            'ORM_DATABASE_USERNAME' => 'root',
+            'ORM_DATABASE_PASSWORD' => 'secret',
+            'ODM_DATABASE_HOST' => 'localhost',
+            'ODM_DATABASE_PORT' => '27017',
+            'ODM_DATABASE_NAME' => 'mydocs',
+            'ODM_DATABASE_USERNAME' => 'root',
+            'ODM_DATABASE_PASSWORD' => 'mongosecret',
+        ];
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('setForce')
+            ->with(false)
+            ->willReturnSelf();
+
+        $this->installationManagerMock
+            ->expects($this->once())
+            ->method('install')
+            ->with('MyProject', $expectedConfig)
+            ->willReturn(true);
+
+        ob_start();
+        $result = $this->command->run();
+        ob_get_clean();
+
+        $this->assertTrue($result);
+    }
+
     public function testInstallationFailure(): void
     {
         $this->command->setArguments([

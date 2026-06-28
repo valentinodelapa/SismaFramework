@@ -159,6 +159,27 @@ PHP,
         $this->assertStringContainsString("getenv('ORM_DATABASE_PORT') ?: \"3306\")", $installedConfig);
     }
 
+    public function testInstallWithOdmDatabaseConfig(): void
+    {
+        $projectName = 'MyTestProject';
+        $config = [
+            'ODM_DATABASE_HOST' => 'localhost',
+            'ODM_DATABASE_NAME' => 'mydb',
+            'ODM_DATABASE_USERNAME' => 'root',
+            'ODM_DATABASE_PASSWORD' => 'secret',
+            'ODM_DATABASE_PORT' => '27017',
+        ];
+
+        $this->manager->install($projectName, $config);
+
+        $installedConfig = file_get_contents($this->testProjectRoot . '/Config/configFramework.php');
+        $this->assertStringContainsString("getenv('ODM_DATABASE_HOST') ?: \"localhost\")", $installedConfig);
+        $this->assertStringContainsString("getenv('ODM_DATABASE_NAME') ?: \"mydb\")", $installedConfig);
+        $this->assertStringContainsString("getenv('ODM_DATABASE_USERNAME') ?: \"root\")", $installedConfig);
+        $this->assertStringContainsString("getenv('ODM_DATABASE_PASSWORD') ?: \"secret\")", $installedConfig);
+        $this->assertStringContainsString("getenv('ODM_DATABASE_PORT') ?: \"27017\")", $installedConfig);
+    }
+
     public static function numericPortProvider(): array
     {
         return [

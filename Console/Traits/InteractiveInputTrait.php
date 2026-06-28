@@ -33,19 +33,29 @@ namespace SismaFramework\Console\Traits;
  */
 trait InteractiveInputTrait
 {
+    private mixed $inputStream = null;
+
+    public function setInputStream(mixed $inputStream): void
+    {
+        $this->inputStream = $inputStream;
+    }
+
+    private function getInputStream(): mixed
+    {
+        return $this->inputStream ??= fopen('php://stdin', 'r');
+    }
+
     protected function ask(string $question, ?string $default = null): string
     {
         $defaultText = $default !== null ? " [{$default}]" : '';
         echo $question . $defaultText . ': ';
-        
-        $handle = fopen('php://stdin', 'r');
-        $input = trim(fgets($handle));
-        fclose($handle);
-        
+
+        $input = trim(fgets($this->getInputStream()));
+
         if ($input === '' && $default !== null) {
             return $default;
         }
-        
+
         return $input;
     }
 
@@ -53,15 +63,13 @@ trait InteractiveInputTrait
     {
         $defaultText = $default ? '[Y/n]' : '[y/N]';
         echo $question . ' ' . $defaultText . ': ';
-        
-        $handle = fopen('php://stdin', 'r');
-        $input = strtolower(trim(fgets($handle)));
-        fclose($handle);
-        
+
+        $input = strtolower(trim(fgets($this->getInputStream())));
+
         if ($input === '') {
             return $default;
         }
-        
+
         return in_array($input, ['y', 'yes', 'si', 's'], true);
     }
 
@@ -69,7 +77,7 @@ trait InteractiveInputTrait
     {
         echo $question . ': ';
 
-        $handle = fopen('php://stdin', 'r');
+        $handle = $this->getInputStream();
 
         if (stream_isatty($handle)) {
             system('stty -echo');
@@ -80,7 +88,6 @@ trait InteractiveInputTrait
             $input = trim(fgets($handle));
         }
 
-        fclose($handle);
         return $input;
     }
 }
