@@ -29,6 +29,7 @@ namespace SismaFramework\Core\HelperClasses\Dispatcher;
 use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Exceptions\BadRequestException;
 use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
@@ -40,11 +41,13 @@ class ControllerFactory
 {
 
     private DataMapper $dataMapper;
+    private DocumentMapper $documentMapper;
     private Debugger $debugger;
 
-    public function __construct(DataMapper $dataMapper, Debugger $debugger = new Debugger())
+    public function __construct(DataMapper $dataMapper, DocumentMapper $documentMapper = new DocumentMapper(), Debugger $debugger = new Debugger())
     {
         $this->dataMapper = $dataMapper;
+        $this->documentMapper = $documentMapper;
         $this->debugger = $debugger;
     }
 
@@ -55,7 +58,7 @@ class ControllerFactory
         $reflectionConstructorArguments = $reflectionConstructor->getParameters();
         if ((count($reflectionConstructorArguments) == 0) ||
                 (is_a($reflectionConstructorArguments[0]->getType()->getName(), DataMapper::class, true))) {
-            return new $controllerClassName($this->dataMapper, $this->debugger);
+            return new $controllerClassName($this->dataMapper, $this->documentMapper, $this->debugger);
         } else {
             $constructorArguments = $this->resolveConstructorArguments($reflectionConstructorArguments);
             return $reflectionController->newInstanceArgs($constructorArguments);
@@ -69,6 +72,8 @@ class ControllerFactory
             $argumentType = $argument->getType();
             if (is_a($argumentType->getName(), DataMapper::class, true)) {
                 $arguments[] = $this->dataMapper;
+            } elseif (is_a($argumentType->getName(), DocumentMapper::class, true)) {
+                $arguments[] = $this->documentMapper;
             } elseif (is_a($argumentType->getName(), Debugger::class, true)) {
                 $arguments[] = $this->debugger;
             } elseif ($argumentType->isBuiltin() === false) {

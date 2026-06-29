@@ -72,7 +72,7 @@ class Dispatcher
         $this->documentMapper = $documentMapper;
         $this->debugger = $debugger;
         $this->routeResolver = $routeResolver;
-        $this->controllerFactory = $controllerFactory ?? new ControllerFactory($this->dataMapper, $this->debugger);
+        $this->controllerFactory = $controllerFactory ?? new ControllerFactory($this->dataMapper, $this->documentMapper, $this->debugger);
         $this->actionArgumentsParser = $actionArgumentsParser ?? new ActionArgumentsParser($this->request, $this->dataMapper, $this->documentMapper);
         $this->resourceHandler = $resourceHandler;
     }

@@ -29,6 +29,7 @@ namespace SismaFramework\Core\BaseClasses;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\Services\RouterService;
 use SismaFramework\Core\Services\RenderService;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
@@ -42,6 +43,7 @@ abstract class BaseController
 
     public function __construct(
         protected DataMapper $dataMapper = new DataMapper(),
+        protected DocumentMapper $documentMapper = new DocumentMapper(),
         protected Debugger $debugger = new Debugger(),
     ) {
         $this->router = RouterService::getInstance();

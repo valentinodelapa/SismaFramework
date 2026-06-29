@@ -31,6 +31,8 @@ use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Services\RouterService;
 use SismaFramework\Core\Services\RenderService;
 use SismaFramework\Core\HelperClasses\Debugger;
+use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -59,6 +61,8 @@ class BaseControllerTest extends TestCase
         
         $baseAdapterStub = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterStub);
+        $baseOdmAdapterStub = $this->createStub(BaseOdmAdapter::class);
+        BaseOdmAdapter::setDefault($baseOdmAdapterStub);
     }
 
     #[\Override]
@@ -168,7 +172,7 @@ class BaseControllerTest extends TestCase
         $customDataMapper = $this->createStub(DataMapper::class);
         $customDebugger = $this->createStub(Debugger::class);
         
-        $controller = new TestController($customDataMapper, $customDebugger);
+        $controller = new TestController($customDataMapper, debugger: $customDebugger);
         
         $reflection = new \ReflectionClass($controller);
         
