@@ -27,7 +27,6 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
-use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Odm\BaseClasses\BaseDocument;
 use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
@@ -43,29 +42,27 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class Parser
 {
-
-    public static function parseValue(\ReflectionNamedType $reflectionNamedType,
-            null|string|array $value,
-            $parseEntity = true,
-            DataMapper $dataMapper = new DataMapper(),
-            ?Config $customConfig = null,
-            ?DocumentMapper $documentMapper = null): mixed
-    {
+    public static function parseValue(
+        \ReflectionNamedType $reflectionNamedType,
+        string|array|null $value,
+        $parseEntity = true,
+        DataMapper $dataMapper = new DataMapper(),
+        DocumentMapper $documentMapper = new DocumentMapper(),
+        ?Config $customConfig = null,
+    ): mixed {
         if (($value === null) || ($reflectionNamedType->allowsNull() && ($value === ''))) {
             return null;
         } elseif ($reflectionNamedType->isBuiltin()) {
             settype($value, $reflectionNamedType->getName());
             return $value;
-        } elseif (is_subclass_of($reflectionNamedType->getName(), BaseDocument::class)) {
-            $config = $customConfig ?? Config::getInstance();
-            return self::parseDocument($reflectionNamedType->getName(), (string) $value, $documentMapper ?? new DocumentMapper(), $config);
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             if ($parseEntity) {
-                $config = $customConfig ?? Config::getInstance();
-                return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper, $config);
+                return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper, $customConfig);
             } else {
                 return intval($value);
             }
+        } elseif (is_subclass_of($reflectionNamedType->getName(), BaseDocument::class)) {
+            return self::parseDocument($reflectionNamedType->getName(), (string) $value, $documentMapper, $customConfig);
         } elseif (enum_exists($reflectionNamedType->getName())) {
             return self::parseEnumeration($reflectionNamedType->getName(), $value);
         } elseif (is_a($reflectionNamedType->getName(), SismaDate::class, true)) {
@@ -124,10 +121,12 @@ class Parser
         }
     }
 
-    public static function unparseValue(mixed $value): null|int|float|string
+    public static function unparseValue(mixed $value): int|float|string|null
     {
         if ($value instanceof BaseEntity) {
             return $value->id;
+        } elseif ($value instanceof BaseDocument) {
+            return $value->_id;
         } elseif ($value instanceof \UnitEnum) {
             return $value->value;
         } elseif ($value instanceof SismaDate) {
@@ -141,9 +140,10 @@ class Parser
         }
     }
 
-    public static function simpleParseValue(\ReflectionNamedType $reflectionNamedType,
-            null|string|array $value): mixed
-    {
+    public static function simpleParseValue(
+        \ReflectionNamedType $reflectionNamedType,
+        string|array|null $value,
+    ): mixed {
         if ($reflectionNamedType->isBuiltin()) {
             settype($value, $reflectionNamedType->getName());
             return $value;

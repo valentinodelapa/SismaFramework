@@ -156,12 +156,12 @@ class ParserTest extends TestCase
                 ->willReturn(false);
         $reflectionNamedTypeMock->method('getName')
                 ->willReturn(BaseSample::class);
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock, $this->configStub));
-        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock, $this->configStub));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->configStub));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->configStub));
-        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->configStub));
-        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->configStub));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, 1, true, $this->dataMapperMock, $this->documentMapperMock, $this->configStub));
+        $this->assertInstanceOf(BaseSample::class, Parser::parseValue($reflectionNamedTypeMock, '1', true, $this->dataMapperMock, $this->documentMapperMock, $this->configStub));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->documentMapperMock, $this->configStub));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, 1, false, $this->dataMapperMock, $this->documentMapperMock, $this->configStub));
+        $this->assertIsInt(Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->documentMapperMock, $this->configStub));
+        $this->assertEquals(1, Parser::parseValue($reflectionNamedTypeMock, '1', false, $this->dataMapperMock, $this->documentMapperMock, $this->configStub));
     }
 
     public function testParseValueWithEnumeration()
@@ -248,7 +248,7 @@ class ParserTest extends TestCase
         $reflectionNamedTypeMock->method('allowsNull')->willReturn(false);
         $reflectionNamedTypeMock->method('isBuiltin')->willReturn(false);
         $reflectionNamedTypeMock->method('getName')->willReturn(SampleDocument::class);
-        $result = Parser::parseValue($reflectionNamedTypeMock, 'abc123', true, $this->dataMapperMock, $this->configStub, $this->documentMapperMock);
+        $result = Parser::parseValue($reflectionNamedTypeMock, 'abc123', true, $this->dataMapperMock, $this->documentMapperMock, $this->configStub);
         $this->assertInstanceOf(BaseDocument::class, $result);
         $this->assertInstanceOf(SampleDocument::class, $result);
     }
@@ -280,12 +280,15 @@ class ParserTest extends TestCase
     {
         $baseSample = new BaseSample($this->dataMapperMock);
         $baseSample->id = 1;
+        $sampleDocument = new SampleDocument();
+        $sampleDocument->hydrate(['_id' => 'doc-1', 'title' => 'Direct']);
         $sampleType = SampleType::one;
         $sismaDate = new SismaDate();
         $sismaDateTime = new SismaDateTime();
         $sismaTime = SismaTime::createFromStandardTimeFormat('1:00:00');
         $array = [
             'baseSample' => $baseSample,
+            'sampleDocument' => $sampleDocument,
             'sampleType' => $sampleType,
             'sismaDate' => $sismaDate,
             'sismaDateTime' => $sismaDateTime,
@@ -293,6 +296,7 @@ class ParserTest extends TestCase
         ];
         Parser::unparseValues($array);
         $this->assertEquals(1, $array['baseSample']);
+        $this->assertEquals('doc-1', $array['sampleDocument']);
         $this->assertEquals($sampleType->value, $array['sampleType']);
         $this->assertEquals($sismaDate->format('Y-m-d'), $array['sismaDate']);
         $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $array['sismaDateTime']);

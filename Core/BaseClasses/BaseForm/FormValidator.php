@@ -36,6 +36,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -49,6 +50,7 @@ class FormValidator
 
     private Config $config;
     private DataMapper $dataMapper;
+    private DocumentMapper $documentMapper;
     private FilterManager $filterManager;
     private BaseEntity $entity;
     private Request $request;
@@ -59,9 +61,10 @@ class FormValidator
     private array $sismaCollectionToResolve;
     private bool $filterResult;
 
-    public function __construct(DataMapper $dataMapper, FilterManager $filterManager, ?Config $config = null)
+    public function __construct(DataMapper $dataMapper, FilterManager $filterManager, DocumentMapper $documentMapper = new DocumentMapper(), ?Config $config = null)
     {
         $this->dataMapper = $dataMapper;
+        $this->documentMapper = $documentMapper;
         $this->filterManager = $filterManager;
         $this->config = $config ?? Config::getInstance();
     }
@@ -185,7 +188,7 @@ class FormValidator
     {
         if (array_key_exists($property->name, $this->request->input) && ($this->request->input[$property->name] !== '')) {
             $reflectionType = $property->getType();
-            $this->entityData->{$property->name} = Parser::parseValue($reflectionType, $this->request->input[$property->name], true, $this->dataMapper);
+            $this->entityData->{$property->name} = Parser::parseValue($reflectionType, $this->request->input[$property->name], true, $this->dataMapper, $this->documentMapper);
         } elseif (array_key_exists($property->name, $this->request->files)) {
             $this->entityData->{$property->name} = $this->request->files[$property->name];
         } elseif ($this->filterManager->hasFilter($property->name)) {

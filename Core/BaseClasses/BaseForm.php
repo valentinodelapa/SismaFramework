@@ -36,6 +36,7 @@ use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\Traits\SubmittableTrait;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
@@ -55,6 +56,7 @@ abstract class BaseForm
     protected StandardEntity $entityData;
     protected array $entityFromForm = [];
     private DataMapper $dataMapper;
+    private DocumentMapper $documentMapper;
     private FilterManager $filterManager;
     private FormValidator $formValidator;
     private EntityResolver $entityResolver;
@@ -67,14 +69,16 @@ abstract class BaseForm
         ?BaseEntity $baseEntity = null,
         DataMapper $dataMapper = new DataMapper(),
         FilterManager $filterManager = new FilterManager(),
+        DocumentMapper $documentMapper = new DocumentMapper(),
         ?FormValidator $formValidator = null,
         EntityResolver $entityResolver = new EntityResolver(),
         Debugger $debugger = new Debugger(),
     ) {
         $this->initSubmittable();
         $this->dataMapper = $dataMapper;
+        $this->documentMapper = $documentMapper;
         $this->filterManager = $filterManager;
-        $this->formValidator = $formValidator ?? new FormValidator($dataMapper, $filterManager);
+        $this->formValidator = $formValidator ?? new FormValidator($dataMapper, $filterManager, $documentMapper);
         $this->entityResolver = $entityResolver;
         $this->debugger = $debugger;
         $this->checkEntityName();

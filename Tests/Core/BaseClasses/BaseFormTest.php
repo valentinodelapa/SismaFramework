@@ -35,6 +35,8 @@ use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -68,6 +70,7 @@ class BaseFormTest extends TestCase
 
     private Config $configStub;
     private DataMapper $dataMapperMock;
+    private DocumentMapper $documentMapperMock;
     private Request $requestMock;
     private FilterManager $filterManager;
     private FormValidator $formValidator;
@@ -102,9 +105,12 @@ class BaseFormTest extends TestCase
         Config::setInstance($this->configStub);
         $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $baseOdmAdapterMock = $this->createStub(BaseOdmAdapter::class);
+        BaseOdmAdapter::setDefault($baseOdmAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $this->documentMapperMock = $this->createStub(DocumentMapper::class);
         $this->filterManager = new FilterManager();
-        $this->formValidator = new FormValidator($this->dataMapperMock, $this->filterManager, $this->configStub);
+        $this->formValidator = new FormValidator($this->dataMapperMock, $this->filterManager, $this->documentMapperMock, $this->configStub);
         $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->query = $this->requestMock->input = $this->requestMock->cookie = $this->requestMock->files = $this->requestMock->server = $this->requestMock->headers = [];
     }
@@ -112,7 +118,7 @@ class BaseFormTest extends TestCase
     public function testAddEntityFromFormWithException()
     {
         $this->expectException(FormException::class);
-        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->filterManager, $this->formValidator);
+        $baseSampleFormWithFakeEntityFromForm = new BaseSampleFormWithFakeEntityFromForm(null, $this->dataMapperMock, $this->filterManager, formValidator: $this->formValidator);
         $baseSampleFormWithFakeEntityFromForm->handleRequest($this->requestMock);
     }
 
@@ -156,7 +162,7 @@ class BaseFormTest extends TestCase
 
     public function testFormForBaseEntityNotSubmitted()
     {
-        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->filterManager, $this->formValidator);
+        $baseSampleForm = new BaseSampleForm(null, $this->dataMapperMock, $this->filterManager, formValidator: $this->formValidator);
         $baseSampleForm->handleRequest($this->requestMock);
         $this->assertFalse($baseSampleForm->isSubmitted());
         $this->assertFalse($baseSampleForm->isValid());

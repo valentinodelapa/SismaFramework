@@ -111,7 +111,7 @@ class ActionArgumentsParser
             } elseif ($paramType === Authentication::class) {
                 $result[$paramName] = new Authentication($this->request);
             } elseif (array_key_exists($paramName, $associativeArguments)) {
-                $result[$paramName] = Parser::parseValue($parameter->getType(), $associativeArguments[$paramName], true, $this->dataMapper, null, $this->documentMapper);
+                $result[$paramName] = Parser::parseValue($parameter->getType(), $associativeArguments[$paramName], true, $this->dataMapper, $this->documentMapper);
             } elseif ($parameter->isDefaultValueAvailable()) {
                 $result[$paramName] = $parameter->getDefaultValue();
             } else {
