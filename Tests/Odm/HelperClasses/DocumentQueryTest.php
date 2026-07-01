@@ -29,7 +29,7 @@ namespace SismaFramework\Tests\Odm\HelperClasses;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Odm\Enumerations\FilterOperator;
 use SismaFramework\Odm\Enumerations\LogicalOperator;
-use SismaFramework\Odm\Enumerations\OdmIndexing;
+use SismaFramework\Odm\Enumerations\Indexing;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
 
 /**
@@ -113,22 +113,22 @@ class DocumentQueryTest extends TestCase
 
     public function testOrderByStoresField(): void
     {
-        $query = (new DocumentQuery())->orderBy('createdAt', OdmIndexing::desc);
+        $query = (new DocumentQuery())->orderBy('createdAt', Indexing::desc);
         $sort = $query->getSort();
         $this->assertArrayHasKey('createdAt', $sort);
-        $this->assertSame(OdmIndexing::desc, $sort['createdAt']);
+        $this->assertSame(Indexing::desc, $sort['createdAt']);
     }
 
     public function testOrderByDefaultIsAsc(): void
     {
-        $this->assertSame(OdmIndexing::asc, (new DocumentQuery())->orderBy('title')->getSort()['title']);
+        $this->assertSame(Indexing::asc, (new DocumentQuery())->orderBy('title')->getSort()['title']);
     }
 
     public function testMultipleOrderByFields(): void
     {
         $sort = (new DocumentQuery())
-            ->orderBy('createdAt', OdmIndexing::desc)
-            ->orderBy('title', OdmIndexing::asc)
+            ->orderBy('createdAt', Indexing::desc)
+            ->orderBy('title', Indexing::asc)
             ->getSort();
         $this->assertCount(2, $sort);
         $this->assertArrayHasKey('createdAt', $sort);

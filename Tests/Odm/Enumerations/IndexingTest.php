@@ -24,20 +24,41 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Odm\Exceptions;
+namespace SismaFramework\Tests\Odm\Enumerations;
 
-use SismaFramework\Core\Enumerations\ResponseType;
-use SismaFramework\Security\BaseClasses\BaseException;
-use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Odm\Enumerations\Indexing;
 
 /**
  * @author Valentino de Lapa
  */
-class OdmAdapterException extends BaseException implements ShouldBeLoggedException
+class IndexingTest extends TestCase
 {
-    #[\Override]
-    protected function setResponseType(): ResponseType
+    public function testEnumExists(): void
     {
-        return ResponseType::httpInternalServerError;
+        $this->assertTrue(enum_exists(Indexing::class));
+    }
+
+    public function testAscValue(): void
+    {
+        $this->assertEquals(1, Indexing::asc->value);
+    }
+
+    public function testDescValue(): void
+    {
+        $this->assertEquals(-1, Indexing::desc->value);
+    }
+
+    public function testFromValue(): void
+    {
+        $this->assertSame(Indexing::asc, Indexing::from(1));
+        $this->assertSame(Indexing::desc, Indexing::from(-1));
+    }
+
+    public function testValuesAreNativeMongodbSortDirections(): void
+    {
+        // MongoDB usa 1 per ASC e -1 per DESC nativamente
+        $this->assertSame(1, Indexing::asc->value);
+        $this->assertSame(-1, Indexing::desc->value);
     }
 }

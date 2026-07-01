@@ -62,7 +62,7 @@ class AdapterMysqlTest extends TestCase
         $this->configStub = $this->createStub(Config::class);
         $this->configStub->method('__get')
                 ->willReturnMap([
-                    ['defaultAdapterType', AdapterType::mysql],
+                    ['defaultOrmAdapterType', AdapterType::mysql],
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
                     ['logDevelopmentMaxRow', 100],

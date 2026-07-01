@@ -26,13 +26,13 @@
 
 namespace SismaFramework\TestsApplication\DocumentModels;
 
-use SismaFramework\Odm\BaseClasses\BaseDocumentModel;
+use SismaFramework\Odm\BaseClasses\BaseModel;
 use SismaFramework\TestsApplication\Documents\SampleDocument;
 
 /**
  * @author Valentino de Lapa
  */
-class SampleDocumentModel extends BaseDocumentModel
+class SampleDocumentModel extends BaseModel
 {
     #[\Override]
     public function getDocumentName(): string

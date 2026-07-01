@@ -29,7 +29,7 @@ namespace SismaFramework\Odm\Enumerations;
 /**
  * @author Valentino de Lapa
  */
-enum OdmIndexing: int
+enum Indexing: int
 {
     case asc  = 1;
     case desc = -1;

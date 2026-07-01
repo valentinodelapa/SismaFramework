@@ -38,17 +38,17 @@ enum LogicalOperator
     case not;
 
     #[\Override]
-    public function getAdapterVersion(OdmAdapterType $adapterType): string
+    public function getAdapterVersion(AdapterType $adapterType): string
     {
         return match ($this) {
             self::and => match ($adapterType) {
-                OdmAdapterType::mongodb => '$and',
+                AdapterType::mongodb => '$and',
             },
             self::or => match ($adapterType) {
-                OdmAdapterType::mongodb => '$or',
+                AdapterType::mongodb => '$or',
             },
             self::not => match ($adapterType) {
-                OdmAdapterType::mongodb => '$nor',
+                AdapterType::mongodb => '$nor',
             },
         };
     }

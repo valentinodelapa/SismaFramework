@@ -27,20 +27,20 @@
 namespace SismaFramework\Odm\BaseClasses;
 
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Odm\Enumerations\OdmAdapterType;
-use SismaFramework\Odm\Exceptions\OdmAdapterException;
+use SismaFramework\Odm\Enumerations\AdapterType;
+use SismaFramework\Odm\Exceptions\AdapterException;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
 
 /**
  * @author Valentino de Lapa
  */
-abstract class BaseOdmAdapter
+abstract class BaseAdapter
 {
-    protected static ?BaseOdmAdapter $adapter = null;
+    protected static ?BaseAdapter $adapter = null;
     protected static mixed $connection = null;
     protected bool $isConnected = false;
 
-    public static function setDefault(BaseOdmAdapter $adapter): void
+    public static function setDefault(BaseAdapter $adapter): void
     {
         static::$adapter = $adapter;
     }
@@ -67,11 +67,11 @@ abstract class BaseOdmAdapter
 
     abstract public function close(): void;
 
-    abstract public function getAdapterType(): OdmAdapterType;
+    abstract public function getAdapterType(): AdapterType;
 
     abstract public function compileQuery(DocumentQuery $query): mixed;
 
-    abstract public function find(string $collection, DocumentQuery $query): BaseDocumentResultSet;
+    abstract public function find(string $collection, DocumentQuery $query): BaseResultSet;
 
     abstract public function insert(string $collection, array $data): string;
 

@@ -28,7 +28,7 @@ namespace SismaFramework\Odm\HelperClasses;
 
 use SismaFramework\Odm\Enumerations\FilterOperator;
 use SismaFramework\Odm\Enumerations\LogicalOperator;
-use SismaFramework\Odm\Enumerations\OdmIndexing;
+use SismaFramework\Odm\Enumerations\Indexing;
 
 /**
  * @author Valentino de Lapa
@@ -61,7 +61,7 @@ class DocumentQuery
         return $this;
     }
 
-    public function orderBy(string $field, OdmIndexing $direction = OdmIndexing::asc): static
+    public function orderBy(string $field, Indexing $direction = Indexing::asc): static
     {
         $this->sort[$field] = $direction;
         return $this;

@@ -305,7 +305,7 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
    * **Impostazioni del Database Relazionale (ORM):**
 
      ```php
-     const DEFAULT_ADAPTER_TYPE = 'mysql'; // o 'mariadb'
+     const DEFAULT_ORM_ADAPTER_TYPE = 'mysql'; // o 'mariadb'
      define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: '127.0.0.1');
      define(__NAMESPACE__ . '\ORM_DATABASE_NAME', getenv('ORM_DATABASE_NAME') ?: 'nome_database');
      define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('ORM_DATABASE_USERNAME') ?: 'utente_db');

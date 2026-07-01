@@ -24,69 +24,55 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Odm\BaseClasses;
+namespace SismaFramework\Tests\Odm\Enumerations;
+
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Odm\Adapters\AdapterMongodb;
+use SismaFramework\Odm\Enumerations\AdapterType;
 
 /**
  * @author Valentino de Lapa
  */
-abstract class BaseDocumentResultSet implements \Iterator
+class AdapterTypeTest extends TestCase
 {
-    private int $position = 0;
-    private ?BaseDocument $current = null;
-    private bool $valid = true;
-    private string $returnType;
-
-    public function setReturnType(string $documentClass): void
+    public function testEnumExists(): void
     {
-        $this->returnType = $documentClass;
+        $this->assertTrue(enum_exists(AdapterType::class));
     }
 
-    public function rewind(): void
+    public function testMongodbCaseExists(): void
     {
-        $this->position = 0;
-        $this->rewindCursor();
-        $this->advance();
+        $cases = AdapterType::cases();
+        $caseNames = array_map(fn($case) => $case->name, $cases);
+        $this->assertContains('mongodb', $caseNames);
     }
 
-    public function current(): ?BaseDocument
+    public function testMongodbValue(): void
     {
-        return $this->current;
+        $this->assertEquals('mongodb', AdapterType::mongodb->value);
     }
 
-    public function key(): int
+    public function testGetAdapterClassMongodb(): void
     {
-        return $this->position;
+        $this->assertEquals(AdapterMongodb::class, AdapterType::mongodb->getAdapterClass());
     }
 
-    public function next(): void
+    public function testFromValue(): void
     {
-        $this->position++;
-        $this->advance();
+        $type = AdapterType::from('mongodb');
+        $this->assertSame(AdapterType::mongodb, $type);
     }
 
-    public function valid(): bool
+    public function testTryFromValidValue(): void
     {
-        return $this->valid;
+        $type = AdapterType::tryFrom('mongodb');
+        $this->assertNotNull($type);
+        $this->assertSame(AdapterType::mongodb, $type);
     }
 
-    private function advance(): void
+    public function testTryFromInvalidValue(): void
     {
-        $raw = $this->fetchNextRaw();
-        if ($raw === null) {
-            $this->valid = false;
-            $this->current = null;
-            return;
-        }
-        $document = new $this->returnType();
-        $document->hydrate($raw);
-        $this->current = $document;
+        $type = AdapterType::tryFrom('nonexistent');
+        $this->assertNull($type);
     }
-
-    abstract protected function rewindCursor(): void;
-
-    abstract protected function fetchNextRaw(): ?array;
-
-    abstract public function numRows(): int;
-
-    abstract public function release(): void;
 }

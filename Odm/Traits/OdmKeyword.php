@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Odm\Traits;
 
-use SismaFramework\Odm\Enumerations\OdmAdapterType;
+use SismaFramework\Odm\Enumerations\AdapterType;
 
 /**
  * @author Valentino de Lapa
  */
 trait OdmKeyword
 {
-    abstract public function getAdapterVersion(OdmAdapterType $adapterType): string;
+    abstract public function getAdapterVersion(AdapterType $adapterType): string;
 }

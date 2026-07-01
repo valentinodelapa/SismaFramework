@@ -27,7 +27,7 @@
 namespace SismaFramework\Odm\BaseClasses;
 
 use SismaFramework\Odm\Enumerations\FilterOperator;
-use SismaFramework\Odm\Enumerations\OdmIndexing;
+use SismaFramework\Odm\Enumerations\Indexing;
 use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -35,7 +35,7 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
 /**
  * @author Valentino de Lapa
  */
-abstract class BaseDocumentModel
+abstract class BaseModel
 {
     public function __construct(
         protected DocumentMapper $documentMapper = new DocumentMapper()
@@ -46,7 +46,7 @@ abstract class BaseDocumentModel
     public function getDocumentCollection(
         ?DocumentQuery $query = null,
         ?string $orderField = null,
-        OdmIndexing $orderDirection = OdmIndexing::asc,
+        Indexing $orderDirection = Indexing::asc,
         ?int $offset = null,
         ?int $limit = null
     ): SismaCollection {

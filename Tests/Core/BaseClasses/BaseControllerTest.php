@@ -31,7 +31,7 @@ use SismaFramework\Core\BaseClasses\BaseController;
 use SismaFramework\Core\Services\RouterService;
 use SismaFramework\Core\Services\RenderService;
 use SismaFramework\Core\HelperClasses\Debugger;
-use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
+use SismaFramework\Odm\BaseClasses\BaseAdapter as BaseOdmAdapter;
 use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;

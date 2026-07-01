@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Odm\Enumerations;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Odm\Enumerations\LogicalOperator;
-use SismaFramework\Odm\Enumerations\OdmAdapterType;
+use SismaFramework\Odm\Enumerations\AdapterType;
 
 /**
  * @author Valentino de Lapa
@@ -60,15 +60,15 @@ class LogicalOperatorTest extends TestCase
 
     public function testGetAdapterVersionMongodb(): void
     {
-        $this->assertEquals('$and', LogicalOperator::and->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$or', LogicalOperator::or->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$nor', LogicalOperator::not->getAdapterVersion(OdmAdapterType::mongodb));
+        $this->assertEquals('$and', LogicalOperator::and->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$or', LogicalOperator::or->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$nor', LogicalOperator::not->getAdapterVersion(AdapterType::mongodb));
     }
 
     public function testAllOperatorsReturnNonEmptyStringForMongodb(): void
     {
         foreach (LogicalOperator::cases() as $operator) {
-            $version = $operator->getAdapterVersion(OdmAdapterType::mongodb);
+            $version = $operator->getAdapterVersion(AdapterType::mongodb);
             $this->assertIsString($version);
             $this->assertNotEmpty($version);
         }

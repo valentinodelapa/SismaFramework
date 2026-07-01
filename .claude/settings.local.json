@@ -7,7 +7,11 @@
       "Bash(git stash *)",
       "Bash(vendor/bin/phpunit -c phpunit.xml --no-coverage --filter \"DependentModelTest|SelfDependentModelTest\")",
       "Bash(grep -n \"class Authentication\\\\|class OAuthAuthentication\\\\|class BaseAuthentication\\\\|use SismaFramework\\\\\\\\\\\\\\\\Core\\\\\\\\\\\\\\\\Traits\\\\\\\\\\\\\\\\SubmittableTrait\\\\|abstract class\" Security/HttpClasses/Authentication.php Security/HttpClasses/OAuthAuthentication.php Security/BaseClasses/BaseAuthentication.php)",
-      "Bash(grep -rn \"sisma.bat\\\\|sisma\\\\\\\\\\\\\\\\sisma\\\\|Console/sisma\" docs/*.md)"
+      "Bash(grep -rn \"sisma.bat\\\\|sisma\\\\\\\\\\\\\\\\sisma\\\\|Console/sisma\" docs/*.md)",
+      "Bash(git mv *)",
+      "Bash(php -l Odm/BaseClasses/BaseModel.php)",
+      "Bash(php -l Odm/BaseClasses/BaseResultSet.php)",
+      "Bash(php -l Odm/BaseClasses/BaseAdapter.php)"
     ]
   }
 }

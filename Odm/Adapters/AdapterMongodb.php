@@ -29,20 +29,20 @@ namespace SismaFramework\Odm\Adapters;
 use MongoDB\Client;
 use MongoDB\BSON\ObjectId;
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Odm\BaseClasses\BaseDocumentResultSet;
-use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
+use SismaFramework\Odm\BaseClasses\BaseAdapter;
+use SismaFramework\Odm\BaseClasses\BaseResultSet;
 use SismaFramework\Odm\Enumerations\FilterOperator;
 use SismaFramework\Odm\Enumerations\LogicalOperator;
-use SismaFramework\Odm\Enumerations\OdmAdapterType;
-use SismaFramework\Odm\Enumerations\OdmIndexing;
-use SismaFramework\Odm\Exceptions\OdmAdapterException;
+use SismaFramework\Odm\Enumerations\AdapterType;
+use SismaFramework\Odm\Enumerations\Indexing;
+use SismaFramework\Odm\Exceptions\AdapterException;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
 use SismaFramework\Odm\ResultSets\ResultSetMongodb;
 
 /**
  * @author Valentino de Lapa
  */
-class AdapterMongodb extends BaseOdmAdapter
+class AdapterMongodb extends BaseAdapter
 {
     private ?Client $client = null;
     private string $databaseName = '';
@@ -53,7 +53,7 @@ class AdapterMongodb extends BaseOdmAdapter
     protected function connect(): void
     {
         if (!extension_loaded('mongodb')) {
-            throw new OdmAdapterException('L\'estensione PHP ext-mongodb è necessaria per usare AdapterMongodb.');
+            throw new AdapterException('L\'estensione PHP ext-mongodb è necessaria per usare AdapterMongodb.');
         }
 
         $config = Config::getInstance();
@@ -72,7 +72,7 @@ class AdapterMongodb extends BaseOdmAdapter
         } catch (\Exception $e) {
             $this->lastErrorMsg = $e->getMessage();
             $this->lastErrorCode = $e->getCode();
-            throw new OdmAdapterException('Connessione MongoDB fallita: ' . $e->getMessage(), $e->getCode(), $e);
+            throw new AdapterException('Connessione MongoDB fallita: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -84,9 +84,9 @@ class AdapterMongodb extends BaseOdmAdapter
     }
 
     #[\Override]
-    public function getAdapterType(): OdmAdapterType
+    public function getAdapterType(): AdapterType
     {
-        return OdmAdapterType::mongodb;
+        return AdapterType::mongodb;
     }
 
     #[\Override]
@@ -139,10 +139,10 @@ class AdapterMongodb extends BaseOdmAdapter
 
         $filter = [];
         if (!empty($andClauses)) {
-            $filter[LogicalOperator::and->getAdapterVersion(OdmAdapterType::mongodb)] = $andClauses;
+            $filter[LogicalOperator::and->getAdapterVersion(AdapterType::mongodb)] = $andClauses;
         }
         if (!empty($orClauses)) {
-            $filter[LogicalOperator::or->getAdapterVersion(OdmAdapterType::mongodb)] = $orClauses;
+            $filter[LogicalOperator::or->getAdapterVersion(AdapterType::mongodb)] = $orClauses;
         }
 
         return $filter;
@@ -153,7 +153,7 @@ class AdapterMongodb extends BaseOdmAdapter
         $field    = $node['field'];
         $operator = $node['operator'];
         $value    = $node['value'];
-        $mongoOp  = $operator->getAdapterVersion(OdmAdapterType::mongodb);
+        $mongoOp  = $operator->getAdapterVersion(AdapterType::mongodb);
 
         return match ($operator) {
             FilterOperator::isNull    => [$field => null],
@@ -174,7 +174,7 @@ class AdapterMongodb extends BaseOdmAdapter
     }
 
     #[\Override]
-    public function find(string $collection, DocumentQuery $query): BaseDocumentResultSet
+    public function find(string $collection, DocumentQuery $query): BaseResultSet
     {
         $filter  = $this->compileQuery($query);
         $options = ['sort' => $this->compileSortOptions($query)];
@@ -197,7 +197,7 @@ class AdapterMongodb extends BaseOdmAdapter
             }
             return new ResultSetMongodb($rows);
         } catch (\Exception $e) {
-            throw new OdmAdapterException('Errore find MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
+            throw new AdapterException('Errore find MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -212,7 +212,7 @@ class AdapterMongodb extends BaseOdmAdapter
 
             return (string) $result->getInsertedId();
         } catch (\Exception $e) {
-            throw new OdmAdapterException('Errore insert MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
+            throw new AdapterException('Errore insert MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -225,7 +225,7 @@ class AdapterMongodb extends BaseOdmAdapter
                 ->selectCollection($collection)
                 ->updateOne(['_id' => new ObjectId($id)], ['$set' => $data]);
         } catch (\Exception $e) {
-            throw new OdmAdapterException('Errore update MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
+            throw new AdapterException('Errore update MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -238,7 +238,7 @@ class AdapterMongodb extends BaseOdmAdapter
                 ->selectCollection($collection)
                 ->deleteOne(['_id' => new ObjectId($id)]);
         } catch (\Exception $e) {
-            throw new OdmAdapterException('Errore delete MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
+            throw new AdapterException('Errore delete MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -252,7 +252,7 @@ class AdapterMongodb extends BaseOdmAdapter
                 ->selectCollection($collection)
                 ->countDocuments($filter);
         } catch (\Exception $e) {
-            throw new OdmAdapterException('Errore count MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
+            throw new AdapterException('Errore count MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
         }
     }
 

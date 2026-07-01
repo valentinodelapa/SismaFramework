@@ -31,7 +31,7 @@ use SismaFramework\Odm\Adapters\AdapterMongodb;
 /**
  * @author Valentino de Lapa
  */
-enum OdmAdapterType: string
+enum AdapterType: string
 {
     case mongodb = 'mongodb';
 

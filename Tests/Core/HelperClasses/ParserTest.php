@@ -30,7 +30,7 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Parser;
-use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
+use SismaFramework\Odm\BaseClasses\BaseAdapter as BaseOdmAdapter;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;

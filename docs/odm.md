@@ -28,7 +28,7 @@ L'ODM si basa su tre tipi di classi principali:
 
 1. **Documento (`BaseDocument`):** rappresenta un documento del database. A differenza delle Entità dell'ORM, non ha proprietà PHP dichiarate staticamente: i campi sono flessibili e vengono gestiti tramite un array interno, rispecchiando la natura schema-less dei database documentali.
 
-2. **Modello (`BaseDocumentModel`):** il repository che costruisce le query e coordina le operazioni di lettura/scrittura. Equivalente di `BaseModel` nell'ORM.
+2. **Modello (`BaseModel`, namespace `Odm\BaseClasses`):** il repository che costruisce le query e coordina le operazioni di lettura/scrittura. Equivalente di `BaseModel` nell'ORM (namespace `Orm\BaseClasses`).
 
 3. **DocumentMapper:** il coordinatore della persistenza. Decide se eseguire un insert o un update, e delega all'adapter concreto.
 
@@ -39,7 +39,7 @@ L'ODM si basa su tre tipi di classi principali:
 `Config/config.php` (e quindi `Config/configFramework.php` generato in installazione) definisce già le costanti ODM, lette tramite `getenv()` con fallback a stringa vuota, esattamente come le omologhe ORM:
 
 ```php
-// Tipo di adapter ODM da usare (valore stringa del case di OdmAdapterType)
+// Tipo di adapter ODM da usare (valore stringa del case di Odm\Enumerations\AdapterType)
 const DEFAULT_ODM_ADAPTER_TYPE = "mongodb";
 
 // Credenziali MongoDB
@@ -111,15 +111,15 @@ $article->author = [
 
 ## Creare un Modello
 
-Il modello espone i metodi di accesso al database. Estende `BaseDocumentModel` e implementa `getDocumentName()` per indicare quale documento gestisce.
+Il modello espone i metodi di accesso al database. Estende `SismaFramework\Odm\BaseClasses\BaseModel` e implementa `getDocumentName()` per indicare quale documento gestisce.
 
 ```php
 namespace MyModule\App\DocumentModels;
 
-use SismaFramework\Odm\BaseClasses\BaseDocumentModel;
+use SismaFramework\Odm\BaseClasses\BaseModel;
 use MyModule\App\Documents\ArticleDocument;
 
-class ArticleDocumentModel extends BaseDocumentModel
+class ArticleDocumentModel extends BaseModel
 {
     #[\Override]
     public function getDocumentName(): string
@@ -132,7 +132,7 @@ class ArticleDocumentModel extends BaseDocumentModel
     {
         $query = (new \SismaFramework\Odm\HelperClasses\DocumentQuery())
             ->where('status', \SismaFramework\Odm\Enumerations\FilterOperator::equal, 'published')
-            ->orderBy('publishedAt', \SismaFramework\Odm\Enumerations\OdmIndexing::desc);
+            ->orderBy('publishedAt', \SismaFramework\Odm\Enumerations\Indexing::desc);
         return $this->getDocumentCollection($query);
     }
 }
@@ -167,7 +167,7 @@ $articles = $model->getDocumentCollection();
 // Con filtro, ordinamento e paginazione
 $query = (new DocumentQuery())
     ->where('status', FilterOperator::equal, 'published')
-    ->orderBy('publishedAt', OdmIndexing::desc)
+    ->orderBy('publishedAt', Indexing::desc)
     ->limit(10)
     ->offset(20);
 $articles = $model->getDocumentCollection($query);
@@ -236,8 +236,8 @@ $query = (new DocumentQuery())
 
 ```php
 $query = (new DocumentQuery())
-    ->orderBy('publishedAt', OdmIndexing::desc)
-    ->orderBy('title', OdmIndexing::asc)
+    ->orderBy('publishedAt', Indexing::desc)
+    ->orderBy('title', Indexing::asc)
     ->limit(10)
     ->offset(0);
 ```
@@ -248,26 +248,26 @@ $query = (new DocumentQuery())
 
 L'ODM è progettato per essere **agnostico rispetto al database documentale**. Aggiungere il supporto per un nuovo store (es. Firestore, DynamoDB) richiede solo:
 
-1. Aggiungere un case a `OdmAdapterType` (es. `case firestore = 'firestore'`)
+1. Aggiungere un case a `AdapterType` (es. `case firestore = 'firestore'`)
 2. Aggiungere la traduzione degli operatori nei `match` di `FilterOperator` e `LogicalOperator`
-3. Creare `AdapterFirestore` che estende `BaseOdmAdapter`
-4. Creare `ResultSetFirestore` che estende `BaseDocumentResultSet`
+3. Creare `AdapterFirestore` che estende `Odm\BaseClasses\BaseAdapter`
+4. Creare `ResultSetFirestore` che estende `Odm\BaseClasses\BaseResultSet`
 
-Nessuna modifica a `BaseDocument`, `DocumentMapper`, `DocumentQuery` o `BaseDocumentModel`.
+Nessuna modifica a `BaseDocument`, `DocumentMapper`, `DocumentQuery` o `BaseModel`.
 
 ```
 Odm/
 ├── Traits/OdmKeyword.php              — forza ogni enum a tradursi per ogni adapter
 ├── Enumerations/
-│   ├── OdmAdapterType.php             — mongodb (+ futuri adapter)
+│   ├── AdapterType.php                — mongodb (+ futuri adapter)
 │   ├── FilterOperator.php             — operatori di filtro neutri
 │   ├── LogicalOperator.php            — and, or, not
-│   └── OdmIndexing.php                — asc=1, desc=-1
+│   └── Indexing.php                   — asc=1, desc=-1
 ├── BaseClasses/
 │   ├── BaseDocument.php               — documento base con change tracking
-│   ├── BaseDocumentResultSet.php      — iteratore risultati, agnostico dal driver
-│   ├── BaseOdmAdapter.php             — contratto astratto per tutti gli adapter
-│   └── BaseDocumentModel.php          — repository base
+│   ├── BaseResultSet.php              — iteratore risultati, agnostico dal driver
+│   ├── BaseAdapter.php                — contratto astratto per tutti gli adapter
+│   └── BaseModel.php                  — repository base
 ├── HelperClasses/
 │   ├── DocumentQuery.php              — AST neutro (non SQL, non MongoDB)
 │   └── DocumentMapper.php             — coordinatore della persistenza

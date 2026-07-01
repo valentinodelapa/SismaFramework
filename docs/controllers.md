@@ -163,9 +163,9 @@ $emailBody = Templater::generateTemplate('emails/welcome', ['username' => 'Mario
 
 Normalmente non è necessario modificare queste impostazioni. Se hai bisogno di personalizzare la struttura delle cartelle, puoi modificare le seguenti costanti nel file `Config/config.php`:
 
-* `DEFAULT_CONTROLLER`, `DEFAULT_ACTION`: Definiscono il controller e l'action da eseguire se l'URL è vuoto.
+* `DEFAULT_PATH`, `DEFAULT_ACTION`: Definiscono il controller (per convenzione) e l'action da eseguire se l'URL è vuoto.
 * `CONTROLLERS`: Cambia il nome della cartella dei controller (default: `Controllers`).
-* `CONTROLLERS_PATH`, `CONTROLLERS_NAMESPACE`: Permettono di ridefinire completamente il percorso e il namespace dei controller.
+* `CONTROLLER_NAMESPACE`: Permette di ridefinire completamente il namespace dei controller.
 
 ---
 

@@ -174,7 +174,7 @@ class ConfigTest extends TestCase
     {
         $config = new Config();
         $reflection = new \ReflectionClass($config);
-        $property = $reflection->getProperty('defaultAdapterType');
+        $property = $reflection->getProperty('defaultOrmAdapterType');
 
         $this->assertEquals('SismaFramework\Orm\Enumerations\AdapterType', $property->getType()->getName());
     }

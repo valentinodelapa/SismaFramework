@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Odm\HelperClasses;
 
+use SismaFramework\Odm\BaseClasses\BaseAdapter;
 use SismaFramework\Odm\BaseClasses\BaseDocument;
-use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
 use SismaFramework\Odm\Exceptions\DocumentMapperException;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
 
@@ -37,9 +37,9 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
 class DocumentMapper
 {
     public function __construct(
-        protected ?BaseOdmAdapter $adapter = null
+        protected ?BaseAdapter $adapter = null
     ) {
-        $this->adapter ??= BaseOdmAdapter::getDefault();
+        $this->adapter ??= BaseAdapter::getDefault();
     }
 
     public function save(BaseDocument $document): void

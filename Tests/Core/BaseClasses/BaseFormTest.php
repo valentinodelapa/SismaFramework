@@ -35,7 +35,7 @@ use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
+use SismaFramework\Odm\BaseClasses\BaseAdapter as BaseOdmAdapter;
 use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;

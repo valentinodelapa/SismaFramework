@@ -26,12 +26,12 @@
 
 namespace SismaFramework\Odm\ResultSets;
 
-use SismaFramework\Odm\BaseClasses\BaseDocumentResultSet;
+use SismaFramework\Odm\BaseClasses\BaseResultSet;
 
 /**
  * @author Valentino de Lapa
  */
-class ResultSetMongodb extends BaseDocumentResultSet
+class ResultSetMongodb extends BaseResultSet
 {
     private array $rows = [];
     private int $pointer = 0;

@@ -25,9 +25,6 @@ const DEVELOPMENT_ENVIRONMENT = true;
 
 // Forza l'uso di HTTPS
 const HTTPS_IS_FORCED = false;
-
-// Password per accesso configurazione avanzata
-const CONFIGURATION_PASSWORD = '';
 ```
 
 #### DEVELOPMENT_ENVIRONMENT
@@ -58,9 +55,6 @@ const DEVELOPMENT_ENVIRONMENT = false;
 ```php
 // Lingua predefinita dell'applicazione
 const LANGUAGE = 'it_IT';
-
-// Meta URL per l'applicazione
-const DEFAULT_META_URL = '';
 ```
 
 #### LANGUAGE
@@ -152,7 +146,7 @@ define(__NAMESPACE__ . '\ODM_DATABASE_PORT', getenv('ODM_DATABASE_PORT') ?: '');
 
 | Costante | Descrizione | Esempio |
 |----------|-------------|---------|
-| `DEFAULT_ODM_ADAPTER_TYPE` | Adapter ODM predefinito (case di `OdmAdapterType`) | `'mongodb'` |
+| `DEFAULT_ODM_ADAPTER_TYPE` | Adapter ODM predefinito (case di `Odm\Enumerations\AdapterType`) | `'mongodb'` |
 | `ODM_DATABASE_HOST` | Host del database documentale | `'localhost'`, `'127.0.0.1'` |
 | `ODM_DATABASE_NAME` | Nome del database documentale | `'my_app_documents'` |
 | `ODM_DATABASE_USERNAME` | Username per connessione | `'db_user'` |
@@ -172,7 +166,7 @@ ORM e ODM sono **completamente indipendenti**: un progetto può usare solo l'uno
 const ORM_CACHE = true;
 
 // Tipo adapter predefinito
-const DEFAULT_ADAPTER_TYPE = 'mysql';
+const DEFAULT_ORM_ADAPTER_TYPE = 'mysql';
 
 // Cache riferimenti entità
 const REFERENCE_CACHE_DIRECTORY = 'path/to/cache/';
@@ -241,26 +235,24 @@ const PRIMARY_KEY_PASS_ACCEPTED = false;
 // Percorso e azione predefiniti
 const DEFAULT_PATH = 'sample';
 const DEFAULT_ACTION = 'index';
-const DEFAULT_CONTROLLER = 'SampleController';
 
-// Namespace e percorsi controller
+// Namespace controller
 const CONTROLLER_NAMESPACE = APPLICATION_NAMESPACE . CONTROLLERS . '\\';
-const CONTROLLER_PATH = APPLICATION_PATH . CONTROLLERS . DIRECTORY_SEPARATOR;
 ```
+
+Il controller da usare per la route predefinita non è una costante a sé: viene risolto per convenzione a partire da `DEFAULT_PATH`, come qualsiasi altro controller (`StudlyCaps(DEFAULT_PATH . 'Controller')` dentro `CONTROLLER_NAMESPACE`).
 
 #### Configurazione Routing Personalizzata
 
 **Esempio**:
 ```php
-// Homepage personalizzata
+// Homepage personalizzata (risolve in HomeController)
 const DEFAULT_PATH = 'home';
 const DEFAULT_ACTION = 'index';
-const DEFAULT_CONTROLLER = 'HomeController';
 
-// API come default
+// API come default (risolve in ApiController)
 const DEFAULT_PATH = 'api';
 const DEFAULT_ACTION = 'index';
-const DEFAULT_CONTROLLER = 'ApiController';
 ```
 
 ### Tipi di Risorsa Personalizzati
@@ -367,8 +359,6 @@ const LOG_PATH = 'path/to/logs/log.txt';
 const LOG_VERBOSE_ACTIVE = true;
 const LOG_DEVELOPMENT_MAX_ROW = 1000;
 const LOG_PRODUCTION_MAX_ROW = 100;
-const LOG_WARNING_ROW = 10;
-const LOG_DANGER_ROW = 50;
 ```
 
 #### Configurazione Log per Ambiente
@@ -385,13 +375,6 @@ const LOG_VERBOSE_ACTIVE = false;
 const LOG_PRODUCTION_MAX_ROW = 500;    // Log essenziali
 ```
 
-### Livelli di Log
-
-| Costante | Descrizione | Soglia Raccomandada |
-|----------|-------------|-------------------|
-| `LOG_WARNING_ROW` | Soglia per warning | 10-50 |
-| `LOG_DANGER_ROW` | Soglia per errori critici | 50-100 |
-
 ---
 
 ## Configurazione Avanzata
@@ -405,11 +388,9 @@ const APPLICATION_NAMESPACE = APPLICATION . '\\';
 
 // Path sistema
 const SYSTEM_PATH = ROOT_PATH . SYSTEM . DIRECTORY_SEPARATOR;
-const CORE_PATH = SYSTEM_PATH . CORE . DIRECTORY_SEPARATOR;
 
 // Path specifici componenti
 const ENTITY_PATH = APPLICATION_PATH . ENTITIES . DIRECTORY_SEPARATOR;
-const MODEL_PATH = APPLICATION_PATH . MODELS . DIRECTORY_SEPARATOR;
 const VIEWS_PATH = APPLICATION_PATH . VIEWS . DIRECTORY_SEPARATOR;
 ```
 
@@ -454,7 +435,6 @@ namespace Config;
 // === CONFIGURAZIONE BASE ===
 const DEVELOPMENT_ENVIRONMENT = true;
 const LANGUAGE = 'it_IT';
-const DEFAULT_META_URL = '';
 
 // === DATABASE (ORM) ===
 define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'localhost');
@@ -485,11 +465,9 @@ namespace Config;
 // === AMBIENTE ===
 const DEVELOPMENT_ENVIRONMENT = false;
 const HTTPS_IS_FORCED = true;
-const CONFIGURATION_PASSWORD = 'admin-access-password';
 
 // === LOCALIZZAZIONE ===
 const LANGUAGE = 'en_US';
-const DEFAULT_META_URL = '/app';
 
 // === DATABASE (ORM) ===
 define(__NAMESPACE__ . '\ORM_DATABASE_HOST', getenv('ORM_DATABASE_HOST') ?: 'db.example.com');
@@ -500,7 +478,7 @@ define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('ORM_DATABASE_PORT') ?: '330
 
 // === ORM ===
 const ORM_CACHE = true;
-const DEFAULT_ADAPTER_TYPE = 'mysql';
+const DEFAULT_ORM_ADAPTER_TYPE = 'mysql';
 
 // === MODULI ===
 const MODULE_FOLDERS = [
@@ -519,8 +497,6 @@ const ENCRYPTION_ALGORITHM = 'AES-256-GCM';
 // === LOGGING ===
 const LOG_VERBOSE_ACTIVE = false;
 const LOG_PRODUCTION_MAX_ROW = 200;
-const LOG_WARNING_ROW = 20;
-const LOG_DANGER_ROW = 50;
 
 // Include configurazioni base
 require_once 'config.defaults.php';

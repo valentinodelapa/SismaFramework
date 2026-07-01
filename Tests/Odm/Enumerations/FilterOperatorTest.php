@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Odm\Enumerations;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Odm\Enumerations\FilterOperator;
-use SismaFramework\Odm\Enumerations\OdmAdapterType;
+use SismaFramework\Odm\Enumerations\AdapterType;
 
 /**
  * @author Valentino de Lapa
@@ -64,36 +64,36 @@ class FilterOperatorTest extends TestCase
 
     public function testGetAdapterVersionMongodbComparisonOperators(): void
     {
-        $this->assertEquals('$eq', FilterOperator::equal->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$ne', FilterOperator::notEqual->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$gt', FilterOperator::greater->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$gte', FilterOperator::greaterOrEqual->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$lt', FilterOperator::less->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$lte', FilterOperator::lessOrEqual->getAdapterVersion(OdmAdapterType::mongodb));
+        $this->assertEquals('$eq', FilterOperator::equal->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$ne', FilterOperator::notEqual->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$gt', FilterOperator::greater->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$gte', FilterOperator::greaterOrEqual->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$lt', FilterOperator::less->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$lte', FilterOperator::lessOrEqual->getAdapterVersion(AdapterType::mongodb));
     }
 
     public function testGetAdapterVersionMongodbListOperators(): void
     {
-        $this->assertEquals('$in', FilterOperator::in->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$nin', FilterOperator::notIn->getAdapterVersion(OdmAdapterType::mongodb));
+        $this->assertEquals('$in', FilterOperator::in->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$nin', FilterOperator::notIn->getAdapterVersion(AdapterType::mongodb));
     }
 
     public function testGetAdapterVersionMongodbPatternOperators(): void
     {
-        $this->assertEquals('$regex', FilterOperator::like->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$not', FilterOperator::notLike->getAdapterVersion(OdmAdapterType::mongodb));
+        $this->assertEquals('$regex', FilterOperator::like->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$not', FilterOperator::notLike->getAdapterVersion(AdapterType::mongodb));
     }
 
     public function testGetAdapterVersionMongodbNullOperators(): void
     {
-        $this->assertEquals('$eq', FilterOperator::isNull->getAdapterVersion(OdmAdapterType::mongodb));
-        $this->assertEquals('$ne', FilterOperator::isNotNull->getAdapterVersion(OdmAdapterType::mongodb));
+        $this->assertEquals('$eq', FilterOperator::isNull->getAdapterVersion(AdapterType::mongodb));
+        $this->assertEquals('$ne', FilterOperator::isNotNull->getAdapterVersion(AdapterType::mongodb));
     }
 
     public function testAllOperatorsReturnNonEmptyStringForMongodb(): void
     {
         foreach (FilterOperator::cases() as $operator) {
-            $version = $operator->getAdapterVersion(OdmAdapterType::mongodb);
+            $version = $operator->getAdapterVersion(AdapterType::mongodb);
             $this->assertIsString($version);
             $this->assertNotEmpty($version);
         }

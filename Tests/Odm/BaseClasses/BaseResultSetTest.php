@@ -33,7 +33,7 @@ use SismaFramework\TestsApplication\Documents\SampleDocument;
 /**
  * @author Valentino de Lapa
  */
-class BaseDocumentResultSetTest extends TestCase
+class BaseResultSetTest extends TestCase
 {
     private function buildResultSet(array $rows): ResultSetMongodb
     {

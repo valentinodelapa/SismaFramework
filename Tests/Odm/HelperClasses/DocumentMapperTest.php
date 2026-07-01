@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Odm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Odm\BaseClasses\BaseOdmAdapter;
+use SismaFramework\Odm\BaseClasses\BaseAdapter;
 use SismaFramework\Odm\Exceptions\DocumentMapperException;
 use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
@@ -40,13 +40,13 @@ use SismaFramework\TestsApplication\Documents\SampleDocument;
  */
 class DocumentMapperTest extends TestCase
 {
-    private BaseOdmAdapter $adapterMock;
+    private BaseAdapter $adapterMock;
     private DocumentMapper $mapper;
 
     #[\Override]
     public function setUp(): void
     {
-        $this->adapterMock = $this->createMock(BaseOdmAdapter::class);
+        $this->adapterMock = $this->createMock(BaseAdapter::class);
         $this->mapper = new DocumentMapper($this->adapterMock);
     }
 

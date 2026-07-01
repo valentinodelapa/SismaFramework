@@ -47,44 +47,44 @@ enum FilterOperator
     case isNotNull;
 
     #[\Override]
-    public function getAdapterVersion(OdmAdapterType $adapterType): string
+    public function getAdapterVersion(AdapterType $adapterType): string
     {
         return match ($this) {
             self::equal => match ($adapterType) {
-                OdmAdapterType::mongodb => '$eq',
+                AdapterType::mongodb => '$eq',
             },
             self::notEqual => match ($adapterType) {
-                OdmAdapterType::mongodb => '$ne',
+                AdapterType::mongodb => '$ne',
             },
             self::greater => match ($adapterType) {
-                OdmAdapterType::mongodb => '$gt',
+                AdapterType::mongodb => '$gt',
             },
             self::greaterOrEqual => match ($adapterType) {
-                OdmAdapterType::mongodb => '$gte',
+                AdapterType::mongodb => '$gte',
             },
             self::less => match ($adapterType) {
-                OdmAdapterType::mongodb => '$lt',
+                AdapterType::mongodb => '$lt',
             },
             self::lessOrEqual => match ($adapterType) {
-                OdmAdapterType::mongodb => '$lte',
+                AdapterType::mongodb => '$lte',
             },
             self::in => match ($adapterType) {
-                OdmAdapterType::mongodb => '$in',
+                AdapterType::mongodb => '$in',
             },
             self::notIn => match ($adapterType) {
-                OdmAdapterType::mongodb => '$nin',
+                AdapterType::mongodb => '$nin',
             },
             self::like => match ($adapterType) {
-                OdmAdapterType::mongodb => '$regex',
+                AdapterType::mongodb => '$regex',
             },
             self::notLike => match ($adapterType) {
-                OdmAdapterType::mongodb => '$not',
+                AdapterType::mongodb => '$not',
             },
             self::isNull => match ($adapterType) {
-                OdmAdapterType::mongodb => '$eq',
+                AdapterType::mongodb => '$eq',
             },
             self::isNotNull => match ($adapterType) {
-                OdmAdapterType::mongodb => '$ne',
+                AdapterType::mongodb => '$ne',
             },
         };
     }

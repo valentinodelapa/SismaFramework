@@ -115,7 +115,7 @@ abstract class BaseAdapter
     {
         $config = $customConfig ?? Config::getInstance();
         if (static::$adapter === null) {
-            $defaultAdapter = static::create($config->defaultAdapterType->getAdapterClass(), [
+            $defaultAdapter = static::create($config->defaultOrmAdapterType->getAdapterClass(), [
                 'database' => $config->ormDatabaseName,
                 'hostname' => $config->ormDatabaseHost,
                 'password' => $config->ormDatabasePassword,

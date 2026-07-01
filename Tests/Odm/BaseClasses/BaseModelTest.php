@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Odm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Odm\Enumerations\FilterOperator;
-use SismaFramework\Odm\Enumerations\OdmIndexing;
+use SismaFramework\Odm\Enumerations\Indexing;
 use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -38,7 +38,7 @@ use SismaFramework\TestsApplication\Documents\SampleDocument;
 /**
  * @author Valentino de Lapa
  */
-class BaseDocumentModelTest extends TestCase
+class BaseModelTest extends TestCase
 {
     private DocumentMapper $mapperMock;
     private SampleDocumentModel $model;
@@ -76,10 +76,10 @@ class BaseDocumentModelTest extends TestCase
                 return new SismaCollection($class);
             });
 
-        $this->model->getDocumentCollection(null, 'createdAt', OdmIndexing::desc);
+        $this->model->getDocumentCollection(null, 'createdAt', Indexing::desc);
 
         $this->assertArrayHasKey('createdAt', $capturedQuery->getSort());
-        $this->assertSame(OdmIndexing::desc, $capturedQuery->getSort()['createdAt']);
+        $this->assertSame(Indexing::desc, $capturedQuery->getSort()['createdAt']);
     }
 
     public function testGetDocumentCollectionWithLimitAppliesLimit(): void
@@ -91,7 +91,7 @@ class BaseDocumentModelTest extends TestCase
                 return new SismaCollection($class);
             });
 
-        $this->model->getDocumentCollection(null, null, OdmIndexing::asc, null, 10);
+        $this->model->getDocumentCollection(null, null, Indexing::asc, null, 10);
 
         $this->assertEquals(10, $capturedQuery->getLimit());
     }
@@ -105,7 +105,7 @@ class BaseDocumentModelTest extends TestCase
                 return new SismaCollection($class);
             });
 
-        $this->model->getDocumentCollection(null, null, OdmIndexing::asc, 20);
+        $this->model->getDocumentCollection(null, null, Indexing::asc, 20);
 
         $this->assertEquals(20, $capturedQuery->getOffset());
     }
