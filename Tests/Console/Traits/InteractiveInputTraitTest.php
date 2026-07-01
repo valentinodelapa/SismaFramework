@@ -29,6 +29,12 @@ class InteractiveInputTraitTest extends TestCase
                 return $this->askSecret($question);
             }
         };
+        ob_start();
+    }
+
+    protected function tearDown(): void
+    {
+        ob_end_clean();
     }
 
     public function testTraitCanBeUsed(): void
@@ -118,5 +124,107 @@ class InteractiveInputTraitTest extends TestCase
         $this->assertEquals('string', $parameters[0]->getType()->getName());
         
         $this->assertEquals('string', $method->getReturnType()->getName());
+    }
+
+    private function withInjectedInput(string $content): void
+    {
+        $stream = fopen('php://memory', 'r+');
+        fwrite($stream, $content);
+        rewind($stream);
+        $this->traitObject->setInputStream($stream);
+    }
+
+    public function testAskReturnsTrimmedInput(): void
+    {
+        $this->withInjectedInput("localhost\n");
+
+        $result = $this->traitObject->publicAsk('Host');
+
+        $this->assertEquals('localhost', $result);
+    }
+
+    public function testAskReturnsDefaultWhenInputEmpty(): void
+    {
+        $this->withInjectedInput("\n");
+
+        $result = $this->traitObject->publicAsk('Host', '127.0.0.1');
+
+        $this->assertEquals('127.0.0.1', $result);
+    }
+
+    public function testAskReturnsEmptyStringWhenInputEmptyAndNoDefault(): void
+    {
+        $this->withInjectedInput("\n");
+
+        $result = $this->traitObject->publicAsk('Name');
+
+        $this->assertEquals('', $result);
+    }
+
+    public function testAskConfirmationReturnsDefaultWhenInputEmpty(): void
+    {
+        $this->withInjectedInput("\n");
+
+        $this->assertTrue($this->traitObject->publicAskConfirmation('Continue?', true));
+    }
+
+    public function testAskConfirmationReturnsFalseDefaultWhenInputEmpty(): void
+    {
+        $this->withInjectedInput("\n");
+
+        $this->assertFalse($this->traitObject->publicAskConfirmation('Continue?', false));
+    }
+
+    public static function affirmativeAnswerProvider(): array
+    {
+        return [
+            ['y'],
+            ['Y'],
+            ['yes'],
+            ['YES'],
+            ['si'],
+            ['s'],
+        ];
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('affirmativeAnswerProvider')]
+    public function testAskConfirmationReturnsTrueForAffirmativeAnswers(string $answer): void
+    {
+        $this->withInjectedInput($answer . "\n");
+
+        $this->assertTrue($this->traitObject->publicAskConfirmation('Continue?', false));
+    }
+
+    public function testAskConfirmationReturnsFalseForNegativeAnswer(): void
+    {
+        $this->withInjectedInput("n\n");
+
+        $this->assertFalse($this->traitObject->publicAskConfirmation('Continue?', true));
+    }
+
+    public function testAskSecretReadsInputWhenStreamIsNotATty(): void
+    {
+        $this->withInjectedInput("my-secret\n");
+
+        $result = $this->traitObject->publicAskSecret('Password');
+
+        $this->assertEquals('my-secret', $result);
+    }
+
+    public function testMultipleAsksShareTheSameInjectedStream(): void
+    {
+        $this->withInjectedInput("y\nlocalhost\n3306\n");
+
+        $this->assertTrue($this->traitObject->publicAskConfirmation('Configure?', false));
+        $this->assertEquals('localhost', $this->traitObject->publicAsk('Host'));
+        $this->assertEquals('3306', $this->traitObject->publicAsk('Port'));
+    }
+
+    public function testSetInputStreamIsPublic(): void
+    {
+        $traitReflection = new \ReflectionClass(InteractiveInputTrait::class);
+        $method = $traitReflection->getMethod('setInputStream');
+
+        $this->assertTrue($method->isPublic());
     }
 }
