@@ -116,13 +116,13 @@ class InteractiveInputTraitTest extends TestCase
     {
         $traitReflection = new \ReflectionClass(InteractiveInputTrait::class);
         $method = $traitReflection->getMethod('askSecret');
-        
+
         $parameters = $method->getParameters();
         $this->assertCount(1, $parameters);
-        
+
         $this->assertEquals('question', $parameters[0]->getName());
         $this->assertEquals('string', $parameters[0]->getType()->getName());
-        
+
         $this->assertEquals('string', $method->getReturnType()->getName());
     }
 

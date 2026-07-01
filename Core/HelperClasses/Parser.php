@@ -55,8 +55,7 @@ class Parser
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             if ($parseEntity) {
-                $config = $customConfig ?? Config::getInstance();
-                return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper, $config);
+                return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper, $customConfig);
             } else {
                 return intval($value);
             }
