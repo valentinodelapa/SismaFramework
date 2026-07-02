@@ -47,7 +47,6 @@ class Config
     protected readonly string $forms;
     protected readonly string $locales;
     protected readonly string $models;
-    protected readonly string $orm;
     protected readonly string $project;
     protected readonly string $system;
     protected readonly string $structural;
@@ -56,22 +55,17 @@ class Config
 
     /* Base Constant */
     protected readonly Language $language;
-    protected readonly string $defaultMetaUrl;
     protected readonly int $minimumMajorPhpVersion;
     protected readonly int $minimumMinorPhpVersion;
     protected readonly int $minimumReleasePhpVersion;
     protected readonly int $maxReloadAttempts;
-    protected readonly string $configurationPassword;
     protected readonly string $rootPath;
     protected readonly string $applicationPath;
     protected readonly string $applicationNamespace;
     protected readonly string $applicationAssetsPath;
     protected readonly string $systemPath;
-    protected readonly string $corePath;
-    protected readonly string $coreNamespace;
     protected readonly string $structuralPath;
     protected readonly string $structuralAssetsPath;
-    protected readonly string $publicPath;
     protected readonly bool $developmentEnvironment;
     protected readonly bool $httpsIsForced;
     protected readonly array $moduleFolders;
@@ -83,15 +77,11 @@ class Config
     protected readonly string $fixtureNamespace;
 
     /* Object Relational Mapper Constant */
-    protected readonly string $ormPath;
-    protected readonly string $ormNamespace;
     protected readonly bool $ormCache;
     protected readonly string $referenceCacheDirectory;
     protected readonly string $referenceCachePath;
 
     /* Adapter Constant */
-    protected readonly string $adapterPath;
-    protected readonly string $adapterNamespace;
     protected readonly AdapterType $defaultAdapterType;
 
     /* Entities Constant */
@@ -103,7 +93,6 @@ class Config
     protected readonly string $sonCollectionPropertyName;
 
     /* Models Constant */
-    protected readonly string $modelPath;
     protected readonly string $modelNamespace;
     protected readonly string $sonCollectionGetterMethod;
 
@@ -111,10 +100,7 @@ class Config
     protected readonly bool $primaryKeyPassAccepted;
 
     /* Dispatcher Constant */
-    protected readonly string $controllerPath;
     protected readonly string $controllerNamespace;
-    protected readonly string $defaultControllerPath;
-    protected readonly string $defaultControllerNamespace;
     protected readonly array $customRenderableResourceTypes;
     protected readonly array $customDownloadableResourceTypes;
 
@@ -129,7 +115,6 @@ class Config
 
     /* Resource Constant */
     protected readonly string $resourcesPath;
-    protected readonly string $structuralResourcesPath;
 
     /* Log Constants */
     protected readonly string $logDirectoryPath;
@@ -137,8 +122,6 @@ class Config
     protected readonly bool $logVerboseActive;
     protected readonly int $logDevelopmentMaxRow;
     protected readonly int $logProductionMaxRow;
-    protected readonly int $logWarningRow;
-    protected readonly int $logDangerRow;
 
     /* Encryptor Constants */
     protected readonly string $simpleHashAlgorithm;

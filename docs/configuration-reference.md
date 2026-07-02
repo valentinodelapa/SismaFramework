@@ -25,9 +25,6 @@ const DEVELOPMENT_ENVIRONMENT = true;
 
 // Forza l'uso di HTTPS
 const HTTPS_IS_FORCED = false;
-
-// Password per accesso configurazione avanzata
-const CONFIGURATION_PASSWORD = '';
 ```
 
 #### DEVELOPMENT_ENVIRONMENT
@@ -58,9 +55,6 @@ const DEVELOPMENT_ENVIRONMENT = false;
 ```php
 // Lingua predefinita dell'applicazione
 const LANGUAGE = 'it_IT';
-
-// Meta URL per l'applicazione
-const DEFAULT_META_URL = '';
 ```
 
 #### LANGUAGE
@@ -208,11 +202,9 @@ const PRIMARY_KEY_PASS_ACCEPTED = false;
 // Percorso e azione predefiniti
 const DEFAULT_PATH = 'sample';
 const DEFAULT_ACTION = 'index';
-const DEFAULT_CONTROLLER = 'SampleController';
 
-// Namespace e percorsi controller
+// Namespace controller
 const CONTROLLER_NAMESPACE = APPLICATION_NAMESPACE . CONTROLLERS . '\\';
-const CONTROLLER_PATH = APPLICATION_PATH . CONTROLLERS . DIRECTORY_SEPARATOR;
 ```
 
 #### Configurazione Routing Personalizzata
@@ -222,12 +214,10 @@ const CONTROLLER_PATH = APPLICATION_PATH . CONTROLLERS . DIRECTORY_SEPARATOR;
 // Homepage personalizzata
 const DEFAULT_PATH = 'home';
 const DEFAULT_ACTION = 'index';
-const DEFAULT_CONTROLLER = 'HomeController';
 
 // API come default
 const DEFAULT_PATH = 'api';
 const DEFAULT_ACTION = 'index';
-const DEFAULT_CONTROLLER = 'ApiController';
 ```
 
 ### Tipi di Risorsa Personalizzati
@@ -334,8 +324,6 @@ const LOG_PATH = 'path/to/logs/log.txt';
 const LOG_VERBOSE_ACTIVE = true;
 const LOG_DEVELOPMENT_MAX_ROW = 1000;
 const LOG_PRODUCTION_MAX_ROW = 100;
-const LOG_WARNING_ROW = 10;
-const LOG_DANGER_ROW = 50;
 ```
 
 #### Configurazione Log per Ambiente
@@ -352,13 +340,6 @@ const LOG_VERBOSE_ACTIVE = false;
 const LOG_PRODUCTION_MAX_ROW = 500;    // Log essenziali
 ```
 
-### Livelli di Log
-
-| Costante | Descrizione | Soglia Raccomandada |
-|----------|-------------|-------------------|
-| `LOG_WARNING_ROW` | Soglia per warning | 10-50 |
-| `LOG_DANGER_ROW` | Soglia per errori critici | 50-100 |
-
 ---
 
 ## Configurazione Avanzata
@@ -372,11 +353,9 @@ const APPLICATION_NAMESPACE = APPLICATION . '\\';
 
 // Path sistema
 const SYSTEM_PATH = ROOT_PATH . SYSTEM . DIRECTORY_SEPARATOR;
-const CORE_PATH = SYSTEM_PATH . CORE . DIRECTORY_SEPARATOR;
 
 // Path specifici componenti
 const ENTITY_PATH = APPLICATION_PATH . ENTITIES . DIRECTORY_SEPARATOR;
-const MODEL_PATH = APPLICATION_PATH . MODELS . DIRECTORY_SEPARATOR;
 const VIEWS_PATH = APPLICATION_PATH . VIEWS . DIRECTORY_SEPARATOR;
 ```
 
@@ -421,7 +400,6 @@ namespace Config;
 // === CONFIGURAZIONE BASE ===
 const DEVELOPMENT_ENVIRONMENT = true;
 const LANGUAGE = 'it_IT';
-const DEFAULT_META_URL = '';
 
 // === DATABASE ===
 const DATABASE_HOST = 'localhost';
@@ -452,11 +430,9 @@ namespace Config;
 // === AMBIENTE ===
 const DEVELOPMENT_ENVIRONMENT = false;
 const HTTPS_IS_FORCED = true;
-const CONFIGURATION_PASSWORD = 'admin-access-password';
 
 // === LOCALIZZAZIONE ===
 const LANGUAGE = 'en_US';
-const DEFAULT_META_URL = '/app';
 
 // === DATABASE ===
 const DATABASE_HOST = 'db.example.com';
@@ -486,8 +462,6 @@ const ENCRYPTION_ALGORITHM = 'AES-256-GCM';
 // === LOGGING ===
 const LOG_VERBOSE_ACTIVE = false;
 const LOG_PRODUCTION_MAX_ROW = 200;
-const LOG_WARNING_ROW = 20;
-const LOG_DANGER_ROW = 50;
 
 // Include configurazioni base
 require_once 'config.defaults.php';
