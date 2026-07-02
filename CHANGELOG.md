@@ -83,6 +83,30 @@ Il sistema di upgrade automatico dei moduli ora copre anche la migrazione dalla 
 **File modificati**:
 - **`Console/Services/Upgrade/UpgradeManager.php`**: Aggiunta `Upgrade11to12Strategy` all'array delle strategy in `selectStrategy()`
 
+#### `Console/Traits/InteractiveInputTrait` — Iniezione dello stream di input per i test
+
+Il trait espone ora il metodo pubblico `setInputStream()`, che permette di sostituire lo stream `php://stdin` usato da `ask()`, `askConfirmation()` e `askSecret()` con uno stream arbitrario (es. `php://memory`), rendendo testabili i comandi interattivi senza dover simulare un vero input da terminale. Lo stream, se non iniettato esplicitamente, viene aperto una sola volta e riutilizzato tra le chiamate successive (in precedenza veniva aperto e richiuso ad ogni singola richiesta).
+
+**File modificati**:
+- **`Console/Traits/InteractiveInputTrait.php`**: aggiunti i metodi `setInputStream()` e `getInputStream()`; lo stream è ora conservato nella proprietà `$inputStream` invece di essere aperto/chiuso ad ogni chiamata
+- **`Tests/Console/Traits/InteractiveInputTraitTest.php`**: nuovi test basati su stream di input iniettati
+- **`Tests/Console/Commands/InstallationCommandTest.php`**: nuovi test del flusso di configurazione interattiva del database basati su stream di input iniettati
+
+### 🔧 Pulizia Configurazione
+
+#### `Config/config.php` e `Core/HelperClasses/Config.php` — Rimozione costanti non utilizzate
+
+Rimosse le costanti dichiarate in `Config/config.php` (e le relative proprietà esposte da `Core/HelperClasses/Config.php`) non più referenziate da alcuna classe del framework: `ADAPTERS`, `ADAPTER_NAMESPACE`, `ADAPTER_PATH`, `CONFIGURATION_PASSWORD`, `CORE`, `CORE_NAMESPACE`, `CORE_PATH`, `DEFAULT_CONTROLLER`, `DEFAULT_CONTROLLER_NAMESPACE`, `DEFAULT_CONTROLLER_PATH`, `DEFAULT_META_URL`, `MODEL_PATH`, `ORM`, `ORM_NAMESPACE`, `ORM_PATH`, `PUBLIC_PATH`, `STRUCTURAL_RESOURCES_PATH`, `THIS_DIRECTORY`.
+
+Rimosse anche `LOG_WARNING_ROW` e `LOG_DANGER_ROW`: non erano lette da alcuna classe del framework (che usa invece `LOG_VERBOSE_ACTIVE`, `LOG_DEVELOPMENT_MAX_ROW` e `LOG_PRODUCTION_MAX_ROW` per la rotazione dei log), ma solo da moduli applicativi esterni per colorare un indicatore nella dashboard di back-end. La loro dichiarazione va spostata nel file di configurazione del modulo consumatore, secondo il pattern già seguito da costanti equivalenti (es. soglie di warning/danger per la dimensione dei media).
+
+**File modificati**:
+- **`Config/config.php`**: rimosse le costanti sopra elencate
+- **`Core/HelperClasses/Config.php`**: rimosse le proprietà `readonly` corrispondenti
+- **`docs/configuration-reference.md`**, **`docs/controllers.md`**: aggiornati i riferimenti alle costanti rimosse
+
+**Migrazione**: chi facesse riferimento diretto a una di queste costanti tramite `\Config\NOME_COSTANTE` in un modulo applicativo deve dichiararla nel file di configurazione del proprio modulo.
+
 ---
 
 ## [11.9.0] - 2026-06-27 - Configurazione Database e Crittografia tramite Variabili d'Ambiente
