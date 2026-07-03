@@ -7,6 +7,7 @@ use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Sample\Services\FrameworkInfoService;
 
 /**
  * Controller per la visualizzazione della documentazione
@@ -19,10 +20,14 @@ class DocsController extends BaseController
 {
     private string $docsPath;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper())
-    {
+    public function __construct(
+        DataMapper $dataMapper = new DataMapper(),
+        FrameworkInfoService $frameworkInfoService = new FrameworkInfoService(),
+    ) {
         parent::__construct($dataMapper);
         $this->vars["metaUrl"] = $this->router->getMetaUrl();
+        $this->vars["frameworkVersion"] = $frameworkInfoService->getVersion();
+        $this->vars["frameworkReleaseDate"] = $frameworkInfoService->getReleaseDate();
         $this->docsPath =
             dirname(__DIR__, 2) .
             DIRECTORY_SEPARATOR .
@@ -43,38 +48,6 @@ class DocsController extends BaseController
         $this->vars["docsSections"] = $this->getDocsStructure();
 
         return $this->render->generateView("docs/index", $this->vars);
-    }
-
-    /**
-     * Debug temporaneo per testare il regex
-     */
-    public function debugRegex(): Response
-    {
-        $markdown = file_get_contents($this->docsPath . "forms.md");
-
-        // Chiama il vero parseMarkdown
-        $html = $this->parseMarkdown($markdown);
-
-        $output = "=== RISULTATO PARSEMARKDOWN ===\n";
-        $output .= "Numero di <pre>: " . substr_count($html, "<pre>") . "\n";
-        $output .=
-            "Numero di 'language-': " . substr_count($html, "language-") . "\n";
-        $output .=
-            "Numero di <code>: " . substr_count($html, "<code>") . "\n\n";
-
-        // Trova tutti i tag <pre> e mostra i primi 200 char di ognuno
-        preg_match_all("/<pre>(.*?)<\/pre>/s", $html, $matches);
-        $output .= "=== BLOCCHI <PRE> TROVATI ===\n";
-        $output .= "Totale: " . count($matches[0]) . "\n\n";
-
-        for ($i = 0; $i < count($matches[0]); $i++) {
-            $output .= "Blocco $i:\n";
-            $output .= substr($matches[0][$i], 0, 200) . "...\n\n";
-        }
-
-        header("Content-Type: text/plain");
-        echo $output;
-        exit();
     }
 
     /**

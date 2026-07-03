@@ -16,6 +16,7 @@ use SismaFramework\Sample\Enumerations\ArticleStatus;
 use SismaFramework\Sample\Models\SampleBaseEntityModel;
 use SismaFramework\Sample\Models\SampleDependentEntityModel;
 use SismaFramework\Sample\Models\SampleReferencedEntityModel;
+use SismaFramework\Sample\Services\FrameworkInfoService;
 use SismaFramework\Security\HttpClasses\Authentication;
 
 /**
@@ -33,10 +34,14 @@ use SismaFramework\Security\HttpClasses\Authentication;
  */
 class SampleController extends BaseController implements DefaultControllerInterface
 {
-    public function __construct(DataMapper $dataMapper = new DataMapper())
-    {
+    public function __construct(
+        DataMapper $dataMapper = new DataMapper(),
+        FrameworkInfoService $frameworkInfoService = new FrameworkInfoService(),
+    ) {
         parent::__construct($dataMapper);
         $this->vars['metaUrl'] = $this->router->getMetaUrl();
+        $this->vars['frameworkVersion'] = $frameworkInfoService->getVersion();
+        $this->vars['frameworkReleaseDate'] = $frameworkInfoService->getReleaseDate();
     }
 
     /**

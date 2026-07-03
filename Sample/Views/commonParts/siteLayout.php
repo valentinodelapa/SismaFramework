@@ -1,3 +1,7 @@
+<?php
+$frameworkVersion ??= "";
+$frameworkReleaseDate ??= "";
+?>
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -267,7 +271,7 @@
             "name": "PHP",
             "version": "8.3"
         },
-        "softwareVersion": "10.0.3",
+        "softwareVersion": "<?= htmlspecialchars($frameworkVersion) ?>",
         "datePublished": "2020",
         "codeRepository": "https://github.com/valentinodelapa/SismaFramework"
     }
@@ -320,6 +324,11 @@
                 </svg>
                 <span>SismaFramework</span>
             </a>
+            <?php if ($frameworkVersion !== ""): ?>
+            <a href="/docs/changelog" class="badge bg-light text-dark border text-decoration-none ms-n2" style="font-size: 0.65rem;">
+                v<?= htmlspecialchars($frameworkVersion) ?>
+            </a>
+            <?php endif; ?>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -364,6 +373,16 @@
                     <p style="color: rgba(255,255,255,0.7)">
                         <i class="bi bi-globe"></i> <a href="https://www.sisma-framework.dev/" target="_blank">www.sisma-framework.dev</a>
                     </p>
+                    <?php if ($frameworkVersion !== ""): ?>
+                    <p style="color: rgba(255,255,255,0.7)">
+                        <i class="bi bi-tag"></i> <a href="/docs/changelog">Versione <?= htmlspecialchars(
+                            $frameworkVersion,
+                        ) ?></a><?= $frameworkReleaseDate !== ""
+                            ? " &mdash; rilasciata il " .
+                                htmlspecialchars($frameworkReleaseDate)
+                            : "" ?>
+                    </p>
+                    <?php endif; ?>
                 </div>
                 <div class="col-md-4">
                     <h6 class="text-uppercase" style="color: rgba(255,255,255,0.9)">Link Utili</h6>

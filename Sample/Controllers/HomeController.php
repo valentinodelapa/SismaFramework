@@ -7,6 +7,7 @@ use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
 use SismaFramework\Orm\HelperClasses\DataMapper;
+use SismaFramework\Sample\Services\FrameworkInfoService;
 
 /**
  * Controller per la homepage e presentazione del framework
@@ -15,10 +16,14 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class HomeController extends BaseController
 {
-    public function __construct(DataMapper $dataMapper = new DataMapper())
-    {
+    public function __construct(
+        DataMapper $dataMapper = new DataMapper(),
+        FrameworkInfoService $frameworkInfoService = new FrameworkInfoService(),
+    ) {
         parent::__construct($dataMapper);
         $this->vars["metaUrl"] = $this->router->getMetaUrl();
+        $this->vars["frameworkVersion"] = $frameworkInfoService->getVersion();
+        $this->vars["frameworkReleaseDate"] = $frameworkInfoService->getReleaseDate();
     }
 
     /**
