@@ -2,6 +2,132 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.1] - 2026-07-03 - Fix: Copertura Incompleta Comando `sisma upgrade` (11.x → 12.0.0) e Miglioramenti al Sito di Autopromozione
+
+### 🐛 Bug Fix
+
+#### Estensione copertura comando `sisma upgrade` (11.x → 12.0.0)
+
+La strategy `Upgrade11to12Strategy` copriva solo 2 delle 3 breaking change della 12.0.0 (rinomina `SelfReferencedModel` e riordino parametri di `setFulltextIndexColumn`), lasciando silenziosa la rimozione dei metodi deprecati e delle classi `LogException`/`NoLogException`.
+
+**File aggiunti**:
+- **`Console/Services/Upgrade/Transformers/ExceptionBaseClassTransformer.php`**: Riscrive `extends LogException`/`extends NoLogException` in `extends BaseException` (aggiungendo `implements ShouldBeLoggedException` per `LogException`) e aggiorna gli `use` statement corrispondenti; segnala per revisione manuale i casi non gestibili automaticamente (riferimento senza `extends`, `use` mancante)
+- **`Console/Services/Upgrade/Transformers/DeprecatedMethodUsageTransformer.php`**: Rileva le chiamate ai metodi rimossi da `DependentModel`/`SelfDependentModel` (`countEntityCollectionByEntity()`, `getEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()`, e le controparti `...ByParentAndEntity()`) e le segnala per la migrazione manuale ai metodi magici, poiché il nome del metodo di destinazione dipende dal nome della proprietà usato a runtime e non può essere riscritto in modo sicuro con una trasformazione testuale
+
+**File modificati**:
+- **`Console/Services/Upgrade/Strategies/Upgrade11to12Strategy.php`**: Aggiunti i due nuovi transformer e ampliato `getBreakingChanges()` con la rimozione dei metodi deprecati, la rimozione di `LogException`/`NoLogException` e la rimozione delle costanti inutilizzate da `Config/config.php`
+- **`Console/Services/Upgrade/UpgradeManager.php`**: I warning raccolti dai transformer vengono ora inclusi nel report anche per i file che non hanno subito modifiche automatiche di contenuto (prima erano scartati se `changesCount` restava a 0, es. per un transformer di sola rilevazione)
+
+#### `robots.txt` e `sitemap.xml` non raggiungibili (404) sul sito di autopromozione
+
+Le richieste a `/robots.txt` e `/sitemap.xml` restituivano la pagina di errore generica del sito (`Errore` seguito dal path grezzo) invece del contenuto atteso. I due file erano posizionati nella root del modulo `Sample/`, ma `ResourceHandler::handleResourceFile()` risolve i file statici solo in tre percorsi: la root di progetto, gli assets strutturali del framework e la cartella `Assets/` del modulo applicativo (`Sample/Assets/`) — mai la root del modulo stesso, che è riservata all'albero di classi/viste (`Controllers/`, `Models/`, `Views/`, ecc.). Non trovando il file in nessuno dei tre percorsi, il dispatcher lanciava una `PageNotFoundException` con il path richiesto come messaggio, gestita da `SampleController::error()` come una pagina di errore qualsiasi.
+
+**File spostati**:
+- **`Sample/robots.txt`** → **`Sample/Assets/robots.txt`**
+- **`Sample/sitemap.xml`** → **`Sample/Assets/sitemap.xml`**
+
+#### `Config/config.php` — La root del sito (`/`) serviva la pagina degli esempi invece della homepage
+
+`DEFAULT_PATH` era impostato su `sample`: `RouteResolver::parsePath()` lo usa come controller quando l'URL è vuoto, quindi ogni richiesta a `/` risolveva a `SampleController::index()` (la lista di articoli demo) invece che a `HomeController::index()` (la landing page del framework). `HomeController::welcome()`, il cui docblock dichiara `URL: /`, era di fatto irraggiungibile da quel path — mentre `sitemap.xml` e `robots.txt` indicavano `/` come homepage con priorità massima.
+
+**File modificati**:
+- **`Config/config.php`**: `DEFAULT_PATH` da `"sample"` a `"home"` — la root ora risolve direttamente a `HomeController::index()`
+
+#### `Core/HelperClasses/Dispatcher/ControllerFactory.php` — Istanziazione errata dei controller con parametri di costruttore aggiuntivi dopo `DataMapper`
+
+`createController()` decideva se usare la "fast path" di istanziazione (`new $controllerClassName($this->dataMapper, $this->debugger)`) controllando solo che il primo parametro del costruttore fosse di tipo `DataMapper`, senza verificare che il secondo fosse effettivamente `Debugger`. Per un controller con firma `__construct(DataMapper $dataMapper, XxxService $xxxService)` — come `Sample/Controllers/HomeController.php`, `DocsController.php` e `SampleController.php`, che accettano `FrameworkInfoService` come secondo parametro — veniva comunque intrapresa la fast path, passando un'istanza di `Debugger` al posto del servizio atteso: il dispatcher reale falliva con un `TypeError` all'istanziazione del controller.
+
+Il controllo ora enumera esplicitamente i soli casi ammessi per la fast path: costruttore senza parametri, un solo parametro di tipo `DataMapper`, oppure esattamente due parametri rispettivamente `DataMapper` e `Debugger`. Qualsiasi altra combinazione (inclusi eventuali costruttori con tre o più parametri) passa sempre dalla risoluzione generica `resolveConstructorArguments()`, che istanzia ogni parametro in base al proprio tipo — più robusta anche di un controllo basato solo su "il secondo parametro è `Debugger`?", che avrebbe comunque richiamato la fast path (con soli due argomenti posizionali) anche in presenza di un eventuale terzo parametro obbligatorio.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher/ControllerFactory.php`**
+
+#### `Sample/Controllers/SampleController::protected()` — Metodi inesistenti su `Authentication`
+
+L'azione chiamava `$auth->isLogged()`, `$auth->getAuthenticatedUser()` e `$auth->getUserIdentifier()` su `Security\HttpClasses\Authentication`: nessuno di questi tre metodi esiste, né su quella classe né sulla base `BaseAuthentication` (che espone solo `getAuthenticableInterface()`, utilizzabile esclusivamente nella stessa richiesta in cui `checkAuthenticable()` ha già validato le credenziali). Qualunque richiesta a `/sample/protected` falliva con un `Error: Call to undefined method`. Mancava inoltre la view `sample/protected.php`, mai creata.
+
+Come documentato in `docs/security.md`, `Authentication` si occupa solo della *validazione* delle credenziali in fase di login; la persistenza dello stato di autenticazione tra richieste va gestita tramite `Session`. Riscritta l'azione per verificare `Session::hasItem('userId')`, coerente con l'esempio di login già presente nella documentazione. Il modulo demo non include un flusso di login (nessuna entity implementa `AuthenticableInterface`), quindi l'azione dimostra il pattern di guardia ma reindirizza sempre alla pagina di errore in assenza di sessione.
+
+**File aggiunti**:
+- **`Sample/Views/sample/protected.php`**
+
+**File modificati**:
+- **`Sample/Controllers/SampleController.php`**: `protected()` non richiede più `Authentication` come parametro, usa `Session::hasItem()`/`Session::getItem()`
+
+#### `Core/HelperClasses/BufferManager` — `clear()`/`flush()` non gestivano output buffer annidati
+
+`clear()` e `flush()` operavano solo sul livello di output buffer più interno (`ob_clean()`/`ob_flush()` agiscono su un singolo livello), mentre diverse view che si appoggiano a `siteLayout.php` aprono un proprio buffer annidato (`ob_start()` per catturare `$content` prima di includere il layout condiviso) dentro quello già aperto da `RenderService::assemblesComponents()`. Se un'eccezione (ogni `BaseException`, incluse tutte le eccezioni HTTP del framework, chiama `BufferManager::clear()` nel proprio costruttore) veniva sollevata mentre il buffer della view era ancora aperto, `clear()` ripuliva solo quel livello interno, lasciando aperto e non azzerato il livello esterno del framework — una correttezza che si è retta finora solo sul fatto che quel livello esterno risultava sempre vuoto in pratica, non su una garanzia del codice.
+
+`clear()`/`flush()` ora svuotano in loop tutti i livelli di buffer aperti dal framework, tramite `ob_end_clean()`/`ob_end_flush()`. Per evitare di richiudere buffer non di proprietà del framework (es. quello di PHPUnit durante i test, o un eventuale buffer aperto dal server prima dell'avvio della richiesta), la classe memorizza ora un livello di base (`$baseLevel`), rilevato al primo utilizzo, sotto il quale i due metodi non scendono mai. Una prima versione che svuotava incondizionatamente fino al livello 0 assoluto è stata scartata perché rompeva l'isolamento dei buffer di PHPUnit (57 test segnalati come "risky" nella suite completa).
+
+**File modificati**:
+- **`Core/HelperClasses/BufferManager.php`**
+
+### 📖 Documentazione
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+Rigenerata tramite `composer phpdoc` per includere le nuove classi introdotte in questa release (`ExceptionBaseClassTransformer`, `DeprecatedMethodUsageTransformer`) e riflettere le modifiche a `Upgrade11to12Strategy` e `UpgradeManager`. `Sample/`, `Config/` e `Tests/` restano esclusi dalla generazione (`phpdoc.xml`), quindi le modifiche al sito di autopromozione e alla configurazione di questa release non compaiono in questa documentazione API.
+
+### 🎨 Miglioramenti Sito di Autopromozione (Sample)
+
+#### Rimosso l'uso di `ob_start()`/`ob_get_clean()` dalle view (`commonParts/siteLayout.php` sostituito da header/footer)
+
+Le view basate sul layout condiviso (`home/*`, `docs/*`, quasi tutte le `sample/*`) catturavano il proprio contenuto con `ob_start()`/`ob_get_clean()` in una variabile `$content`, poi interpolata a metà di `siteLayout.php` tra navbar e footer — un buffer annidato dentro quello già aperto da `RenderService::assemblesComponents()`. Non è il pattern documentato dal framework: `docs/views.md` indica esplicitamente di dividere il layout in `header.php`/`footer.php` e usare `require` sequenziali, proprio per evitare qualunque trucco di output buffering nelle view. Le view più vecchie del sito (`error.php`, `notify.php`) seguivano già correttamente questo pattern.
+
+`Sample/Views/commonParts/siteLayout.php` è stato sostituito da `siteLayoutHeader.php` (tutto fino alla chiusura della navbar) e `siteLayoutFooter.php` (dal footer alla chiusura di `</html>`). Le 12 view interessate ora fanno `require` del primo prima del contenuto e del secondo dopo, senza alcun output buffering proprio. Verificato con rendering reale (PHP built-in server) di tutte le pagine coinvolte, oltre alla suite PHPUnit completa.
+
+**File aggiunti**:
+- **`Sample/Views/commonParts/siteLayoutHeader.php`**, **`Sample/Views/commonParts/siteLayoutFooter.php`**
+
+**File rimossi**:
+- **`Sample/Views/commonParts/siteLayout.php`**
+
+**File modificati**:
+- **`Sample/Views/home/index.php`**, **`home/privacy.php`**, **`home/cookies.php`**, **`docs/index.php`**, **`docs/changelog.php`**, **`docs/viewer.php`**, **`sample/index.php`**, **`sample/articlesByAuthor.php`**, **`sample/filterByStatus.php`**, **`sample/search.php`**, **`sample/showArticle.php`**, **`sample/protected.php`**
+- **`Sample/README.md`**, **`Sample/SITE_INFO.md`**: riferimenti a `siteLayout.php` aggiornati
+
+#### Versione e data di rilascio visibili nel sito
+
+La versione corrente del framework e la data di rilascio non erano visibili in nessuna pagina del sito di autopromozione (`Sample`), se non nel `CHANGELOG.md`. Aggiunto un badge versione in navbar (linkato a `/docs/changelog`) e una riga "Versione X.Y.Z — rilasciata il ..." nel footer; corretto anche il campo `softwareVersion` nel JSON-LD della homepage, rimasto hardcoded a `10.0.3` per diverse major.
+
+Le informazioni vengono ricavate automaticamente da `composer.json` (versione) e dal primo blocco datato del `CHANGELOG.md` (data di rilascio corrispondente), tramite un nuovo Service iniettato nei controller — coerente con il pattern di dependency injection già usato per `DataMapper`/`Debugger` — evitando così di doverle allineare manualmente ad ogni rilascio.
+
+**File aggiunti**:
+- **`Sample/Services/FrameworkInfoService.php`**: legge la versione da `composer.json` e la data di rilascio corrispondente dal `CHANGELOG.md`
+
+**File modificati**:
+- **`Sample/Controllers/HomeController.php`**, **`Sample/Controllers/DocsController.php`**, **`Sample/Controllers/SampleController.php`**: iniettato `FrameworkInfoService` e valorizzate le var `frameworkVersion`/`frameworkReleaseDate`
+- **`Sample/Views/commonParts/siteLayout.php`**: badge versione in navbar, riga versione/data nel footer, `softwareVersion` dinamico nel JSON-LD
+
+#### Rimozione codice di debug residuo
+
+Rimossi gli script usati per diagnosticare il bug del parser Markdown risolto in 11.8.1, mai ripuliti dopo il fix, incluso un metodo di controller raggiungibile pubblicamente via URL.
+
+**File rimossi**:
+- **`Sample/test_parser.php`**, **`Sample/test_regex.php`**, **`Sample/debug_markdown.php`**
+
+**File modificati**:
+- **`Sample/Controllers/DocsController.php`**: rimosso il metodo `debugRegex()` (azione pubblica non referenziata da alcuna vista o link)
+
+#### `Sample/module.json` — Allineamento versione
+
+`framework_version` e `requires.sismaframework` erano rimasti fermi a `11.0.0`; allineati a `12.0.1`.
+
+**File modificati**:
+- **`Sample/module.json`**
+
+#### `Sample/Assets/sitemap.xml` — Allineamento con le pagine reali del sito
+
+La sitemap indicizzava solo 2 delle 31 pagine di documentazione (`getting-started`, `api-reference`), non includeva `/docs/changelog`, ed elencava tutte le pagine con `<lastmod>` fermo al `2025-01-15`. Riscritta per includere l'intero albero di `docs/index.md`, raggruppato per sezione con priorità decrescente, e aggiornate le date.
+
+**File modificati**:
+- **`Sample/Assets/sitemap.xml`**
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: tutte le modifiche di questa sezione riguardano esclusivamente il sito demo/autopromozione (`Sample`); non toccano alcuna API pubblica del framework.
+
 ## [12.0.0] - 2026-07-02 - Breaking Changes: Rinomina `SelfReferencedModel` e Riordinamento Parametri `Query`
 
 ### 💥 Breaking Changes
