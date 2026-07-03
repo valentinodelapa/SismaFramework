@@ -7,7 +7,7 @@
     <!-- Homepage -->
     <url>
         <loc>https://www.sisma-framework.dev/</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
@@ -15,64 +15,260 @@
     <!-- Documentazione -->
     <url>
         <loc>https://www.sisma-framework.dev/docs/index</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
+    </url>
+
+    <!-- Changelog -->
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/changelog</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
     </url>
 
     <!-- Esempi -->
     <url>
         <loc>https://www.sisma-framework.dev/sample/index</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.9</priority>
+        <priority>0.8</priority>
     </url>
 
-    <!-- Getting Started -->
+    <!-- Tutorial -->
     <url>
         <loc>https://www.sisma-framework.dev/docs/view/file/getting-started</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
 
-    <!-- API Reference -->
+    <!-- Concetti Fondamentali -->
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/overview</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/installation</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/module-architecture</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/conventions</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Le Basi -->
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/controllers</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/views</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/forms</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/internationalization</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/static-assets</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Database e ORM -->
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/orm</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/orm-additional-features</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/join-eager-loading</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Sicurezza -->
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/security</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Strumenti di Sviluppo -->
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/scaffolding</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/upgrade</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/debug-bar</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/data-fixtures</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/error-handling-and-logging</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/testing</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Guide Avanzate -->
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/best-practices</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/deployment</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/troubleshooting</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- API e Riferimenti Tecnici -->
     <url>
         <loc>https://www.sisma-framework.dev/docs/view/file/api-reference</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/helper-classes</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/custom-types</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/enumerations</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/traits</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/configuration-reference</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/advanced-orm</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://www.sisma-framework.dev/docs/view/file/performance</loc>
+        <lastmod>2026-07-03</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
     </url>
 
     <!-- Esempi specifici -->
     <url>
         <loc>https://www.sisma-framework.dev/sample/show-article/article/1</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
+        <priority>0.5</priority>
     </url>
 
     <url>
         <loc>https://www.sisma-framework.dev/sample/filter-by-status/status/P</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
+        <priority>0.5</priority>
     </url>
 
     <url>
         <loc>https://www.sisma-framework.dev/sample/articles-by-author/authorId/1</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
+        <priority>0.5</priority>
     </url>
 
     <url>
         <loc>https://www.sisma-framework.dev/sample/search</loc>
-        <lastmod>2025-01-15</lastmod>
+        <lastmod>2026-07-03</lastmod>
         <changefreq>monthly</changefreq>
-        <priority>0.6</priority>
+        <priority>0.5</priority>
     </url>
 
     <!-- Privacy Policy e Cookie Policy sono escluse dalla sitemap (noindex) -->
+    <!-- /sample/protected escluso: richiede autenticazione -->
+    <!-- /sample/articles-by-date escluso: pagina demo con parametro arbitrario, non un contenuto canonico -->
 
 </urlset>
