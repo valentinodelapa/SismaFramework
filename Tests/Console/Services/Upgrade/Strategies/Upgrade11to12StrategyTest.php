@@ -6,6 +6,8 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Console\Services\Upgrade\Strategies\Upgrade11to12Strategy;
 use SismaFramework\Console\Services\Upgrade\Strategies\UpgradeStrategyInterface;
 use SismaFramework\Console\Services\Upgrade\Transformers\ClassRenameTransformer;
+use SismaFramework\Console\Services\Upgrade\Transformers\DeprecatedMethodUsageTransformer;
+use SismaFramework\Console\Services\Upgrade\Transformers\ExceptionBaseClassTransformer;
 use SismaFramework\Console\Services\Upgrade\Transformers\FulltextIndexColumnTransformer;
 use SismaFramework\Console\Services\Upgrade\Transformers\TransformerInterface;
 
@@ -38,7 +40,7 @@ class Upgrade11to12StrategyTest extends TestCase
     {
         $transformers = $this->strategy->getTransformers();
 
-        $this->assertCount(2, $transformers);
+        $this->assertCount(4, $transformers);
     }
 
     public function testGetTransformersReturnsCorrectTypes(): void
@@ -47,6 +49,8 @@ class Upgrade11to12StrategyTest extends TestCase
 
         $this->assertInstanceOf(ClassRenameTransformer::class, $transformers[0]);
         $this->assertInstanceOf(FulltextIndexColumnTransformer::class, $transformers[1]);
+        $this->assertInstanceOf(ExceptionBaseClassTransformer::class, $transformers[2]);
+        $this->assertInstanceOf(DeprecatedMethodUsageTransformer::class, $transformers[3]);
     }
 
     public function testGetTransformersAllImplementInterface(): void
@@ -63,7 +67,7 @@ class Upgrade11to12StrategyTest extends TestCase
         $breakingChanges = $this->strategy->getBreakingChanges();
 
         $this->assertNotEmpty($breakingChanges);
-        $this->assertCount(3, $breakingChanges);
+        $this->assertCount(7, $breakingChanges);
     }
 
     public function testGetBreakingChangesContainsExpectedItems(): void
@@ -76,6 +80,11 @@ class Upgrade11to12StrategyTest extends TestCase
         $this->assertStringContainsString('selfReferencedModel', $joined);
         $this->assertStringContainsString('selfDependentModel', $joined);
         $this->assertStringContainsString('setFulltextIndexColumn', $joined);
+        $this->assertStringContainsString('countEntityCollectionByEntity', $joined);
+        $this->assertStringContainsString('countEntityCollectionByParentAndEntity', $joined);
+        $this->assertStringContainsString('LogException', $joined);
+        $this->assertStringContainsString('NoLogException', $joined);
+        $this->assertStringContainsString('Config/config.php', $joined);
     }
 
     public function testRequiresManualIntervention(): void

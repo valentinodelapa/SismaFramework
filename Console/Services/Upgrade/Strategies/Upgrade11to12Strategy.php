@@ -27,6 +27,8 @@
 namespace SismaFramework\Console\Services\Upgrade\Strategies;
 
 use SismaFramework\Console\Services\Upgrade\Transformers\ClassRenameTransformer;
+use SismaFramework\Console\Services\Upgrade\Transformers\DeprecatedMethodUsageTransformer;
+use SismaFramework\Console\Services\Upgrade\Transformers\ExceptionBaseClassTransformer;
 use SismaFramework\Console\Services\Upgrade\Transformers\FulltextIndexColumnTransformer;
 
 /**
@@ -55,6 +57,15 @@ class Upgrade11to12Strategy implements UpgradeStrategyInterface
                 'selfReferencedModel' => 'selfDependentModel',
             ]),
             new FulltextIndexColumnTransformer(),
+            new ExceptionBaseClassTransformer(),
+            new DeprecatedMethodUsageTransformer([
+                'countEntityCollectionByEntity' => 'Replace with the magic method countBy{PropertyName}($value) provided by DependentModel::__call()',
+                'getEntityCollectionByEntity' => 'Replace with the magic method getBy{PropertyName}($value, $order, $offset, $limit) provided by DependentModel::__call()',
+                'deleteEntityCollectionByEntity' => 'Replace with the magic method deleteBy{PropertyName}($value) provided by DependentModel::__call()',
+                'countEntityCollectionByParentAndEntity' => 'Replace with the magic method countByParentAnd{PropertyName}($parent, $value) provided by SelfDependentModel::__call()',
+                'getEntityCollectionByParentAndEntity' => 'Replace with the magic method getByParentAnd{PropertyName}($parent, $value, $order, $offset, $limit) provided by SelfDependentModel::__call()',
+                'deleteEntityCollectionByParentAndEntity' => 'Replace with the magic method deleteByParentAnd{PropertyName}($parent, $value) provided by SelfDependentModel::__call()',
+            ]),
         ];
     }
 
@@ -64,6 +75,10 @@ class Upgrade11to12Strategy implements UpgradeStrategyInterface
             'SelfReferencedModel: Renamed to SelfDependentModel (class, use statements, extends declarations)',
             'ModelType::selfReferencedModel: Enum case renamed to ModelType::selfDependentModel',
             'Query::setFulltextIndexColumn(): Parameters reordered — $textSearchMode moved before $columnAlias and $append',
+            'DependentModel: countEntityCollectionByEntity(), getEntityCollectionByEntity(), deleteEntityCollectionByEntity() removed — use the magic methods countBy{PropertyName}(), getBy{PropertyName}(), deleteBy{PropertyName}()',
+            'SelfDependentModel: countEntityCollectionByParentAndEntity(), getEntityCollectionByParentAndEntity(), deleteEntityCollectionByParentAndEntity() removed — use the magic methods countByParentAnd{PropertyName}(), getByParentAnd{PropertyName}(), deleteByParentAnd{PropertyName}()',
+            'Security\\ExtendedClasses\\LogException and NoLogException: Classes removed — extend BaseException directly, implementing ShouldBeLoggedException if the exception must be logged',
+            'Config/config.php: Unused constants removed (ADAPTERS, ADAPTER_NAMESPACE, ADAPTER_PATH, CONFIGURATION_PASSWORD, CORE, CORE_NAMESPACE, CORE_PATH, DEFAULT_CONTROLLER, DEFAULT_CONTROLLER_NAMESPACE, DEFAULT_CONTROLLER_PATH, DEFAULT_META_URL, MODEL_PATH, ORM, ORM_NAMESPACE, ORM_PATH, PUBLIC_PATH, STRUCTURAL_RESOURCES_PATH, THIS_DIRECTORY, LOG_WARNING_ROW, LOG_DANGER_ROW) — declare any constant your module still references directly via \\Config\\NAME in your own module config file',
         ];
     }
 

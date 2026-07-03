@@ -125,11 +125,7 @@ class UpgradeManager
                         $manualActions[] = "Review {$this->getRelativePath($filePath)}: {$transformer->getDescription()}";
                     }
                 }
-                if ($fileChangesCount > 0) {
-                    if (!$this->dryRun) {
-                        file_put_contents($filePath, $transformedContent);
-                    }
-                    $filesModified++;
+                if ($fileChangesCount > 0 || !empty($fileWarnings)) {
                     $warningsCount += count($fileWarnings);
                     $fileResults[] = (object) [
                                 'filePath' => $filePath,
@@ -138,6 +134,12 @@ class UpgradeManager
                                 'warnings' => $fileWarnings,
                                 'transformations' => $fileTransformations
                     ];
+                }
+                if ($fileChangesCount > 0) {
+                    if (!$this->dryRun) {
+                        file_put_contents($filePath, $transformedContent);
+                    }
+                    $filesModified++;
                 } else {
                     $filesSkipped++;
                 }
