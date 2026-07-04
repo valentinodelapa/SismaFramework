@@ -88,8 +88,9 @@ class RenderService
         $debugger->setVars($vars);
         $this->assemblesComponents($view, $localizator, $vars, $config);
         echo $this->generateDebugBar($debugger, $config);
+        $response = new Response($responseType);
         BufferManager::flush();
-        return new Response($responseType);
+        return $response;
     }
 
     private function assemblesComponents(string $view, Localizator $localizator, array $vars, Config $config): void
@@ -144,8 +145,9 @@ class RenderService
     ): Response {
         $config = $customConfig ?? Config::getInstance();
         $this->assemblesComponents($view, $localizator, $vars, $config);
+        $response = new Response($responseType);
         BufferManager::flush();
-        return new Response($responseType);
+        return $response;
     }
 
     public function generateJson(array $vars, ResponseType $responseType = ResponseType::httpOk): Response
@@ -160,8 +162,9 @@ class RenderService
         header("Content-Disposition: inline");
         header("Content-Length: " . strlen($encodedJsonData));
         echo $encodedJsonData;
+        $response = new Response($responseType);
         BufferManager::flush();
-        return new Response($responseType);
+        return $response;
     }
 
     public function setStructural(bool $isStructural = true): void

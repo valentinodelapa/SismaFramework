@@ -2,6 +2,57 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.3] - 2026-07-04 - Correzione Ordine `http_response_code()`/Flush e Cascata di Pagine d'Errore Duplicate
+
+Patch che corregge due difetti resi visibili dalla chiusura esplicita del buffer introdotta in 12.0.2: impostare il codice di risposta HTTP dopo aver già scaricato l'output al client, e una shutdown function che non distingueva un errore fatale reale da un semplice warning residuo né verificava se una risposta fosse già stata inviata.
+
+### 🐛 Bug Fix
+
+#### `Core/Services/RenderService` — `http_response_code()` impostato dopo l'invio dell'output
+
+Da quando `BufferManager::flush()` chiude realmente tutti i livelli di buffer del framework fino al floor (12.0.2), invocarlo durante il rendering scarica per davvero il contenuto al client, gli header compresi. `generateView()`, `generateData()` e `generateJson()` costruivano però l'oggetto `Response` — il cui costruttore chiama `http_response_code()` per impostare il codice desiderato (es. `500` per una pagina d'errore) — solo *dopo* aver chiamato `BufferManager::flush()`. A quel punto gli header erano già stati inviati, e PHP generava il warning `http_response_code(): Cannot set response code - headers already sent (output started at .../BufferManager.php:55)`.
+
+Spostata la costruzione di `Response` prima di `BufferManager::flush()` in tutti e tre i metodi: il codice di stato viene ora impostato mentre l'output è ancora bufferizzato, prima che gli header vengano effettivamente inviati.
+
+**File modificati**:
+- **`Core/Services/RenderService.php`**: `generateView()`, `generateData()`, `generateJson()`
+
+#### `Core/HelperClasses/ErrorHandler::registerNonThrowableErrorHandler()` — cascata di pagine d'errore duplicate
+
+Il warning descritto sopra, in quanto ultimo errore PHP della richiesta, veniva intercettato da `error_get_last()` nella shutdown function registrata da `registerNonThrowableErrorHandler()`. Questa si limitava a verificare `is_array($error)`, senza distinguere un errore realmente fatale da un semplice warning né controllare se una risposta fosse già stata inviata per la richiesta corrente: trattava quindi il warning come un crash non catturato e tentava di renderizzare un'ulteriore pagina d'errore completa, la quale — generando a sua volta lo stesso warning — poteva ripetere la cascata una terza volta, questa volta mostrata "nuda" da PHP perché `display_errors` era già stato riattivato da `showErrorInDevelopmentEnvironment()` (chiamato nel blocco `finally` di `Public/index.php`, eseguito prima della shutdown function).
+
+Aggiunte due guardie alla shutdown function:
+- se gli header sono già stati inviati (`headers_sent()`), l'errore viene solo loggato, senza tentare di renderizzare un'altra pagina che si limiterebbe ad accodarsi all'output già in volo;
+- in produzione, la pagina generica d'errore (`callInternalServerErrorAction()`) viene ora invocata solo se l'errore appartiene ai livelli realmente fatali (`E_ERROR`, `E_PARSE`, `E_CORE_ERROR`, `E_COMPILE_ERROR`, `E_USER_ERROR`, `E_RECOVERABLE_ERROR`), tramite il nuovo metodo privato `isFatalError()`; un warning residuo viene loggato ma non genera più una pagina di errore al posto della risposta già prodotta.
+
+In ambiente di sviluppo il comportamento resta volutamente invariato: qualsiasi errore residuo, warning incluso, continua a generare la pagina di dettaglio (`nonThrowableError()`), scelta progettuale per rendere visibile ogni anomalia durante lo sviluppo.
+
+**File modificati**:
+- **`Core/HelperClasses/ErrorHandler.php`**: `registerNonThrowableErrorHandler()`, aggiunto il metodo privato `isFatalError()`
+
+### ♻️ Pulizia Codice
+
+#### `Core/HelperClasses/Dispatcher/ControllerFactory::createController()` — rimossa condizione "fast path" ridondante
+
+Il metodo selezionava un "fast path" (`new $controllerClassName($this->dataMapper, $this->debugger)`) per i costruttori senza parametri, con un solo parametro `DataMapper`, o con `DataMapper` seguito da `Debugger`. Per tutti e tre i casi, il percorso generico `resolveConstructorArguments()` produce però esattamente lo stesso risultato: PHP ignora silenziosamente gli argomenti posizionali passati in eccesso rispetto ai parametri dichiarati da un costruttore, quindi passare sempre `$dataMapper`/`$debugger` a un costruttore che ne dichiara meno (o nessuno) equivaleva già a quanto fa `resolveConstructorArguments()` valutando i tipi dichiarati uno per uno. La condizione non copriva inoltre alcun caso non già gestito dal percorso generico: era codice morto.
+
+Rimossa la condizione: `createController()` passa ora sempre attraverso `resolveConstructorArguments()`.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher/ControllerFactory.php`**
+
+### 📖 Documentazione
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+Rigenerata tramite `composer phpdoc`. Nessuna modifica di rilievo: le correzioni di questa release non toccano segnature pubbliche né aggiungono classi, l'unico file con differenze (`SismaFramework-Core-Services-RenderService.html`) riflette esclusivamente lo spostamento dei numeri di riga dovuto al riordino del codice in `RenderService.php`.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le firme pubbliche di `RenderService`, `ErrorHandler` e `ControllerFactory` restano invariate; tutte le correzioni intervengono solo sulla logica interna.
+
+---
+
 ## [12.0.2] - 2026-07-04 - Chiusura Esplicita del Buffer di Rendering in RenderService
 
 Patch che rende esplicita la chiusura del buffer di output aperto da `RenderService` durante il rendering, invece di fare affidamento sullo scaricamento implicito a fine script. La correzione ha permesso di eliminare un workaround diventato necessario nella suite di test e ha reso visibili due difetti preesistenti che il workaround mascherava.
