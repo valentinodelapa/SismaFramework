@@ -1236,6 +1236,16 @@ Search.appendIndex(
             "summary": "Trait\u0020for\u0020handling\u0020interactive\u0020console\u0020input",
             "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003AsetInputStream\u0028\u0029",
+            "name": "setInputStream",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_setInputStream"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003AgetInputStream\u0028\u0029",
+            "name": "getInputStream",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_getInputStream"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003Aask\u0028\u0029",
             "name": "ask",
             "summary": "",
@@ -1250,6 +1260,11 @@ Search.appendIndex(
             "name": "askSecret",
             "summary": "",
             "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askSecret"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003A\u0024inputStream",
+            "name": "inputStream",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#property_inputStream"
         },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController",
             "name": "BaseController",
@@ -2740,6 +2755,16 @@ Search.appendIndex(
             "name": "flush",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_flush"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003AensureBaseLevel\u0028\u0029",
+            "name": "ensureBaseLevel",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_ensureBaseLevel"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003A\u0024baseLevel",
+            "name": "baseLevel",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#property_baseLevel"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor",
             "name": "Encryptor",

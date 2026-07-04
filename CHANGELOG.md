@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.1] - 2026-07-04 - Correzione Dispatcher e Gestione Livelli di Buffer
+
+Patch che corregge tre problemi: uno nella risoluzione dei parametri del costruttore in `ControllerFactory`, uno nella pulizia dei livelli di output buffering in `BufferManager`, e uno nella chiusura esplicita del buffer di rendering in `RenderService`. Quest'ultima correzione ha permesso di eliminare un workaround diventato necessario nella suite di test e ha reso visibili due difetti preesistenti che il workaround mascherava.
+
+### 🐛 Bug Fixes
+
+#### `Core/HelperClasses/Dispatcher/ControllerFactory::createController()` — Risoluzione errata dei parametri del costruttore
+
+La condizione che decide se istanziare il controller iniettando direttamente `DataMapper` e `Debugger` verificava solo che il primo parametro del costruttore fosse di tipo `DataMapper`, senza controllare né il numero complessivo di parametri né il tipo del secondo. Un controller con un solo parametro `DataMapper` veniva quindi trattato come se accettasse anche un secondo parametro `Debugger` (passato comunque da `new $controllerClassName($this->dataMapper, $this->debugger)`), causando un `ArgumentCountError` a runtime; viceversa un costruttore con `DataMapper` seguito da un parametro di tipo diverso da `Debugger` veniva iniettato in modo scorretto.
+
+La condizione ora distingue esplicitamente tre casi validi per l'iniezione diretta: nessun parametro, un solo parametro di tipo `DataMapper`, oppure esattamente due parametri di tipo `DataMapper` e `Debugger` in quest'ordine. In ogni altro caso i parametri vengono risolti tramite `resolveConstructorArguments()`, come già avveniva.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher/ControllerFactory.php`**: `createController()` verifica numero e tipo dei parametri prima di procedere all'iniezione diretta
+
+#### `Core/HelperClasses/BufferManager` — Livelli di buffer non ripuliti in caso di errore
+
+`clear()` e `flush()` agivano su un solo livello di buffering (`ob_clean()`/`ob_flush()`), assumendo implicitamente che ne fosse stato aperto al massimo uno con `start()`. Quando più livelli di buffer risultavano attivi contemporaneamente (ad esempio in seguito a un errore che aveva impedito la chiusura di un livello precedente), solo il livello più interno veniva ripulito, lasciando gli altri livelli — con il relativo contenuto residuo — attivi.
+
+Aggiunta la proprietà statica `$baseLevel`, che memorizza il livello di `ob_get_level()` rilevato al primo utilizzo della classe (`ensureBaseLevel()`, invocato da `start()`, `clear()` e `flush()`). `clear()` e `flush()` ora iterano con `ob_end_clean()`/`ob_end_flush()` finché il livello corrente resta superiore a questo livello di base, ripulendo tutti i livelli di buffer aperti dal framework senza intaccare eventuale buffering preesistente all'esterno (es. quello del web server).
+
+**File modificati**:
+- **`Core/HelperClasses/BufferManager.php`**: aggiunta `$baseLevel` e `ensureBaseLevel()`; `clear()` e `flush()` ripuliscono tutti i livelli di buffer sopra il livello di base tramite `ob_end_clean()`/`ob_end_flush()`
+
+#### `Core/Services/RenderService` — Buffer di rendering non chiuso esplicitamente
+
+`assemblesComponents()` (usato da `generateView()` e `generateData()`) e `generateJson()` aprono un livello di buffer tramite `BufferManager::start()` ma non lo richiudevano mai esplicitamente: il contenuto renderizzato restava bufferizzato fino alla chiusura naturale dello script PHP, che scarica automaticamente i buffer residui a fine richiesta. Questo comportamento implicito funziona in un normale ciclo richiesta/risposta (un processo per richiesta), ma lascia il buffer indefinitamente "in sospeso" in qualunque contesto che riutilizzi lo stesso processo per più cicli logici — come la suite di test, dove PHPUnit esegue centinaia di test nello stesso processo.
+
+Aggiunta una chiamata esplicita a `BufferManager::flush()` al termine di `generateView()`, `generateData()` e `generateJson()`, subito prima di restituire la `Response`: il buffer aperto da ciascuna chiamata viene ora sempre chiuso nello stesso punto logico in cui viene aperto, senza fare affidamento sullo scaricamento implicito di fine script. Valutata anche l'aggiunta della stessa chiamata in `Dispatcher::run()`: verificato che è superflua, perché `BufferManager::start()` viene invocato solo da `RenderService`, che ora si chiude sempre da solo.
+
+**File modificati**:
+- **`Core/Services/RenderService.php`**: `generateView()`, `generateData()` e `generateJson()` chiudono il proprio buffer con `BufferManager::flush()` prima di ritornare
+
+### 🧪 Test
+
+#### Allineamento della suite dei test alla nuova gestione del buffer
+
+Con `BufferManager::flush()` ora invocato esplicitamente da `RenderService`, la suite di test ha smesso di richiedere il workaround manuale (`\ob_end_clean()` a inizio test) precedentemente necessario per compensare il buffer di rendering mai chiuso. Rimosse le chiamate manuali a `\ob_end_clean()` in `DispatcherTest`, `RenderTest` e `RenderServiceTest`, e unificate le chiamate multiple a `expectOutputRegex()` per singolo test (non supportate da PHPUnit oltre la prima) in un'unica regex con lookahead.
+
+La correzione ha inoltre reso visibili due difetti preesistenti, prima mascherati dal workaround:
+- le view di test (`TestsApplication/Views/**/*.php`) includevano i partial comuni (`baseHead.php`, `menu.php`, `footer.php`, `header.php`) con `require_once`: nel processo unico condiviso da PHPUnit, solo il primo render dell'intera suite li includeva realmente, lasciando `<head>` vuoto in tutti i render successivi. Cambiato in `require`.
+- `DispatcherTest::testNotifyPath` verificava un titolo di pagina errato (`sample - index` invece di `sample - notify`, azione effettivamente instradata).
+
+**File modificati**:
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**, **`Tests/Core/HelperClasses/RenderTest.php`**, **`Tests/Core/Services/RenderServiceTest.php`**: rimossi gli `\ob_end_clean()` manuali, unificate le `expectOutputRegex()` multiple, corretta l'asserzione di `testNotifyPath`
+- **`TestsApplication/Views/controllerWithSlug/index.php`**, **`TestsApplication/Views/other/*.php`**, **`TestsApplication/Views/sample/*.php`**: `require_once` → `require` per l'inclusione dei partial comuni
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le firme pubbliche di `ControllerFactory::createController()`, `BufferManager` e `RenderService` restano invariate; le correzioni intervengono solo sulla logica interna.
+
+---
+
 ## [11.9.0] - 2026-06-27 - Configurazione Database e Crittografia tramite Variabili d'Ambiente
 
 Questa minor release permette di configurare le credenziali del database e la passphrase di cifratura tramite variabili d'ambiente, evitando di doverle scrivere come valori letterali in `Config/configFramework.php` — file che, a differenza di `Config/config.php`, viene generato durante l'installazione e tipicamente committato nel progetto applicativo. L'installer rileva automaticamente quando queste variabili sono già presenti nell'ambiente e salta la richiesta interattiva/CLI corrispondente.

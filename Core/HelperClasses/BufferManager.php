@@ -32,22 +32,35 @@ namespace SismaFramework\Core\HelperClasses;
 class BufferManager
 {
 
+    private static ?int $baseLevel = null;
+
     public static function start(): void
     {
+        self::ensureBaseLevel();
         \ob_start();
     }
 
     public static function clear(): void
     {
-        if(\ob_get_level() > 0){
-            \ob_clean();
+        $floor = self::ensureBaseLevel();
+        while (\ob_get_level() > $floor) {
+            \ob_end_clean();
         }
     }
 
     public static function flush(): void
     {
-        if(\ob_get_level() > 0){
-            \ob_flush();
+        $floor = self::ensureBaseLevel();
+        while (\ob_get_level() > $floor) {
+            \ob_end_flush();
         }
+    }
+
+    private static function ensureBaseLevel(): int
+    {
+        if (self::$baseLevel === null) {
+            self::$baseLevel = \ob_get_level();
+        }
+        return self::$baseLevel;
     }
 }

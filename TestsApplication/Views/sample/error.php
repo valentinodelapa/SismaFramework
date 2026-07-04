@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="it">
     <head>
-        <?php require_once __DIR__ . '/../commonParts/baseHead.php'; ?>
+        <?php require __DIR__ . '/../commonParts/baseHead.php'; ?>
     </head>
     <body>
         <header>Errore</header>
@@ -14,7 +14,7 @@
             </article>     
         </div>
         <footer>
-            <?php require_once __DIR__ . '/../commonParts/footer.php'; ?>
+            <?php require __DIR__ . '/../commonParts/footer.php'; ?>
         </footer>
     </body>
 </html>
