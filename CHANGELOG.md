@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.2] - 2026-07-04 - Chiusura Esplicita del Buffer di Rendering in RenderService
+
+Patch che rende esplicita la chiusura del buffer di output aperto da `RenderService` durante il rendering, invece di fare affidamento sullo scaricamento implicito a fine script. La correzione ha permesso di eliminare un workaround diventato necessario nella suite di test e ha reso visibili due difetti preesistenti che il workaround mascherava.
+
+### 🐛 Bug Fix
+
+#### `Core/Services/RenderService` — Buffer di rendering non chiuso esplicitamente
+
+`assemblesComponents()` (usato da `generateView()` e `generateData()`) e `generateJson()` aprono un livello di buffer tramite `BufferManager::start()` ma non lo richiudevano mai esplicitamente: il contenuto renderizzato restava bufferizzato fino alla chiusura naturale dello script PHP, che scarica automaticamente i buffer residui a fine richiesta. Questo comportamento implicito funziona in un normale ciclo richiesta/risposta (un processo per richiesta), ma lascia il buffer indefinitamente "in sospeso" in qualunque contesto che riutilizzi lo stesso processo per più cicli logici — come la suite di test, dove PHPUnit esegue centinaia di test nello stesso processo.
+
+Aggiunta una chiamata esplicita a `BufferManager::flush()` al termine di `generateView()`, `generateData()` e `generateJson()`, subito prima di restituire la `Response`: il buffer aperto da ciascuna chiamata viene ora sempre chiuso nello stesso punto logico in cui viene aperto, senza fare affidamento sullo scaricamento implicito di fine script. Valutata anche l'aggiunta della stessa chiamata in `Dispatcher::run()`: verificato che è superflua, perché `BufferManager::start()` viene invocato solo da `RenderService`, che ora si chiude sempre da solo.
+
+**File modificati**:
+- **`Core/Services/RenderService.php`**: `generateView()`, `generateData()` e `generateJson()` chiudono il proprio buffer con `BufferManager::flush()` prima di ritornare
+
+### 🧪 Test
+
+#### Allineamento della suite dei test alla nuova gestione del buffer
+
+Con `BufferManager::flush()` ora invocato esplicitamente da `RenderService`, la suite di test ha smesso di richiedere il workaround manuale (`\ob_end_clean()` a inizio test) precedentemente necessario per compensare il buffer di rendering mai chiuso. Rimosse le chiamate manuali a `\ob_end_clean()` in `DispatcherTest`, `RenderTest` e `RenderServiceTest`, e unificate le chiamate multiple a `expectOutputRegex()` per singolo test (non supportate da PHPUnit oltre la prima) in un'unica regex con lookahead.
+
+La correzione ha inoltre reso visibili due difetti preesistenti, prima mascherati dal workaround:
+- le view di test (`TestsApplication/Views/**/*.php`) includevano i partial comuni (`baseHead.php`, `menu.php`, `footer.php`, `header.php`) con `require_once`: nel processo unico condiviso da PHPUnit, solo il primo render dell'intera suite li includeva realmente, lasciando `<head>` vuoto in tutti i render successivi. Cambiato in `require`.
+- `DispatcherTest::testNotifyPath` verificava un titolo di pagina errato (`sample - index` invece di `sample - notify`, azione effettivamente instradata).
+
+**File modificati**:
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**, **`Tests/Core/HelperClasses/RenderTest.php`**, **`Tests/Core/Services/RenderServiceTest.php`**: rimossi gli `\ob_end_clean()` manuali, unificate le `expectOutputRegex()` multiple, corretta l'asserzione di `testNotifyPath`
+- **`TestsApplication/Views/controllerWithSlug/index.php`**, **`TestsApplication/Views/other/*.php`**, **`TestsApplication/Views/sample/*.php`**: `require_once` → `require` per l'inclusione dei partial comuni
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la firma pubblica di `RenderService` resta invariata; la correzione interviene solo sulla logica interna.
+
+---
+
 ## [12.0.1] - 2026-07-03 - Fix: Copertura Incompleta Comando `sisma upgrade` (11.x → 12.0.0) e Miglioramenti al Sito di Autopromozione
 
 ### 🐛 Bug Fix

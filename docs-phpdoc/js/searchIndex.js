@@ -2931,6 +2931,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_flush"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003AensureBaseLevel\u0028\u0029",
+            "name": "ensureBaseLevel",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_ensureBaseLevel"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003A\u0024baseLevel",
+            "name": "baseLevel",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#property_baseLevel"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor",
             "name": "Encryptor",
             "summary": "",

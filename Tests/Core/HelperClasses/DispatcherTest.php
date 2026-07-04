@@ -61,25 +61,9 @@ class DispatcherTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
-        $systemPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR;
         $this->configStub = $this->createStub(Config::class);
         $this->configStub->method('__get')
-                ->willReturnMap([
-                    ['applicationAssetsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR],
-                    ['controllerNamespace', 'TestsApplication\\Controllers\\'],
-                    ['defaultAction', 'index'],
-                    ['defaultPath', 'sample'],
-                    ['developmentEnvironment', false],
-                    ['httpsIsForced', false],
-                    ['language', Language::italian],
-                    ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
-                    ['maxReloadAttempts', 3],
-                    ['moduleFolders', ['SismaFramework']],
-                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
-                    ['systemPath', $systemPath],
-                    ['structuralAssetsPath', $systemPath . 'Structural' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR],
-                    ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
-        ]);
+                ->willReturnMap($this->buildConfigMap(dirname(__DIR__, 4) . DIRECTORY_SEPARATOR));
         Config::setInstance($this->configStub);
         $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->server['REQUEST_URI'] = '/';
@@ -90,6 +74,27 @@ class DispatcherTest extends TestCase
         $this->dataMapperMock = $this->createStub(DataMapper::class);
     }
 
+    private function buildConfigMap(string $rootPath): array
+    {
+        $systemPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR;
+        return [
+            ['applicationAssetsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR],
+            ['controllerNamespace', 'TestsApplication\\Controllers\\'],
+            ['defaultAction', 'index'],
+            ['defaultPath', 'sample'],
+            ['developmentEnvironment', false],
+            ['httpsIsForced', false],
+            ['language', Language::italian],
+            ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
+            ['maxReloadAttempts', 3],
+            ['moduleFolders', ['SismaFramework']],
+            ['rootPath', $rootPath],
+            ['systemPath', $systemPath],
+            ['structuralAssetsPath', $systemPath . 'Structural' . DIRECTORY_SEPARATOR . 'Assets' . DIRECTORY_SEPARATOR],
+            ['viewsPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR],
+        ];
+    }
+
     private function createDispatcherWithResourceMakerStub(): Dispatcher
     {
         $resourceMakerStub = $this->createStub(ResourceMaker::class);
@@ -97,12 +102,13 @@ class DispatcherTest extends TestCase
         $this->resourceHandlerMock = new ResourceHandler($resourceMakerStub, $this->configStub);
         return new Dispatcher($this->requestMock, $this->dataMapperMock, $this->routeResolverMock, $this->resourceHandlerMock, null, null);
     }
-    
-    private function createDispatcherWithResourceMakerMock():Dispatcher
+
+    private function createDispatcherWithResourceMakerMock(?Config $configStub = null):Dispatcher
     {
+        $configStub ??= $this->configStub;
         $this->resourceMakerMock = $this->createMock(ResourceMaker::class);
-        $this->routeResolverMock = new RouteResolver($this->resourceMakerMock, $this->configStub);
-        $this->resourceHandlerMock = new ResourceHandler($this->resourceMakerMock, $this->configStub);
+        $this->routeResolverMock = new RouteResolver($this->resourceMakerMock, $configStub);
+        $this->resourceHandlerMock = new ResourceHandler($this->resourceMakerMock, $configStub);
         return new Dispatcher($this->requestMock, $this->dataMapperMock, $this->routeResolverMock, $this->resourceHandlerMock, null, null);
     }
 
@@ -178,7 +184,10 @@ class DispatcherTest extends TestCase
 
     public function testDirectAccessToFileInRoot()
     {
-        $dispatcher = $this->createDispatcherWithResourceMakerMock();
+        $rootPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR;
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')->willReturnMap($this->buildConfigMap($rootPath));
+        $dispatcher = $this->createDispatcherWithResourceMakerMock($configStub);
         $this->requestMock->server['REQUEST_URI'] = 'composer.json';
         $this->requestMock->server['QUERY_STRING'] = '';
         $this->resourceMakerMock->expects($this->exactly(3))
@@ -186,7 +195,7 @@ class DispatcherTest extends TestCase
                 ->willReturn(true);
         $this->resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with($this->configStub->rootPath . 'composer.json');
+                ->with($rootPath . 'composer.json');
         $this->assertInstanceOf(Response::class, $dispatcher->run());
     }
 
@@ -229,9 +238,7 @@ class DispatcherTest extends TestCase
 
     public function testRootPath()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)/s');
         $this->requestMock->server['REQUEST_URI'] = '/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -239,9 +246,7 @@ class DispatcherTest extends TestCase
 
     public function testIndexPath()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)/s');
         $this->requestMock->server['REQUEST_URI'] = '/sample/index/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -249,9 +254,7 @@ class DispatcherTest extends TestCase
 
     public function testIndexPathTwo()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)/s');
         $this->requestMock->server['REQUEST_URI'] = '/index/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -259,9 +262,7 @@ class DispatcherTest extends TestCase
 
     public function testIndexPathThree()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)/s');
         $this->requestMock->server['REQUEST_URI'] = '/sample/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -269,9 +270,7 @@ class DispatcherTest extends TestCase
 
     public function testNotifyPath()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/test message/');
+        $this->expectOutputRegex('/(?=.*sample - notify)(?=.*test message)/s');
         $this->requestMock->server['REQUEST_URI'] = '/notify/message/test+message/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -279,9 +278,7 @@ class DispatcherTest extends TestCase
 
     public function testOtherIndexPath()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/other - index/');
-        $this->expectOutputRegex('/test message/');
+        $this->expectOutputRegex('/(?=.*other - index)(?=.*test message)/s');
         $this->requestMock->server['REQUEST_URI'] = '/other/parameter/test+message/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -289,9 +286,7 @@ class DispatcherTest extends TestCase
 
     public function testPathWithReload()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/other - index/');
-        $this->expectOutputRegex('/other test message/');
+        $this->expectOutputRegex('/(?=.*other - index)(?=.*other test message)/s');
         $this->requestMock->server['REQUEST_URI'] = '/fake/other/index/parameter/other+test+message/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -299,9 +294,7 @@ class DispatcherTest extends TestCase
 
     public function testPathWithRequestParameter()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/other - action-with-request/');
-        $this->expectOutputRegex('/test parameter/');
+        $this->expectOutputRegex('/(?=.*other - action-with-request)(?=.*test parameter)/s');
         $this->requestMock->request['parameter'] = 'test parameter';
         $this->requestMock->server['REQUEST_URI'] = '/other/action-with-request/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
@@ -310,9 +303,7 @@ class DispatcherTest extends TestCase
 
     public function testPathWithAuthenticationParameter()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/other - action-with-authentication/');
-        $this->expectOutputRegex('/is not submitted/');
+        $this->expectOutputRegex('/(?=.*other - action-with-authentication)(?=.*is not submitted)/s');
         $_POST['username'] = 'username';
         $this->requestMock->server['REQUEST_URI'] = '/other/action-with-authentication/';
         $this->requestMock->server['REQUEST_METHOD'] = 'GET';
@@ -322,9 +313,7 @@ class DispatcherTest extends TestCase
 
     public function testPathWithDefaultValueParameter()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/other - action-with-default-value/');
-        $this->expectOutputRegex('/is default/');
+        $this->expectOutputRegex('/(?=.*other - action-with-default-value)(?=.*is default)/s');
         $this->requestMock->server['REQUEST_URI'] = '/other/action-with-default-value/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -332,11 +321,7 @@ class DispatcherTest extends TestCase
 
     public function testPathWithArrayParameter()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/other - action-with-array/');
-        $this->expectOutputRegex('/0: first/');
-        $this->expectOutputRegex('/1: second/');
-        $this->expectOutputRegex('/2: third/');
+        $this->expectOutputRegex('/(?=.*other - action-with-array)(?=.*0: first)(?=.*1: second)(?=.*2: third)/s');
         $this->requestMock->server['REQUEST_URI'] = '/other/action-with-array/array/first/array/second/array/third/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -360,7 +345,6 @@ class DispatcherTest extends TestCase
 
     public function testSimpleSlug()
     {
-        \ob_end_clean();
         $this->expectOutputString('slug/singlePageSlug/');
         $this->requestMock->server['REQUEST_URI'] = '/slug/single-page-slug/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
@@ -369,7 +353,6 @@ class DispatcherTest extends TestCase
 
     public function testGerarchicSlug()
     {
-        \ob_end_clean();
         $this->expectOutputString('slug/categorySlug/child-page-slug');
         $this->requestMock->server['REQUEST_URI'] = '/slug/category-slug/child-page-slug/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
@@ -378,7 +361,6 @@ class DispatcherTest extends TestCase
 
     public function testMultipleGerarchicSlug()
     {
-        \ob_end_clean();
         $this->expectOutputString('slug/categorySlug/subcategory-slug/child-page-slug');
         $this->requestMock->server['REQUEST_URI'] = '/slug/category-slug/subcategory-slug/child-page-slug/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();

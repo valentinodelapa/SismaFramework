@@ -88,6 +88,7 @@ class RenderService
         $debugger->setVars($vars);
         $this->assemblesComponents($view, $localizator, $vars, $config);
         echo $this->generateDebugBar($debugger, $config);
+        BufferManager::flush();
         return new Response($responseType);
     }
 
@@ -143,6 +144,7 @@ class RenderService
     ): Response {
         $config = $customConfig ?? Config::getInstance();
         $this->assemblesComponents($view, $localizator, $vars, $config);
+        BufferManager::flush();
         return new Response($responseType);
     }
 
@@ -158,6 +160,7 @@ class RenderService
         header("Content-Disposition: inline");
         header("Content-Length: " . strlen($encodedJsonData));
         echo $encodedJsonData;
+        BufferManager::flush();
         return new Response($responseType);
     }
 
