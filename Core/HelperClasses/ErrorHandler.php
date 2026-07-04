@@ -70,21 +70,30 @@ class ErrorHandler
             ModuleManager::setApplicationModuleByClassName(get_class($controller));
             $error = error_get_last();
             $backtrace = debug_backtrace();
-            if (is_array($error)) {
-                BufferManager::clear();
-                $this->logger->error($error['message'], [
-                    'code' => $error['type'],
-                    'file' => $error['file'],
-                    'line' => $error['line'],
-                    'trace' => $this->config->logVerboseActive ? $backtrace : null
-                ]);
-                if ($this->config->developmentEnvironment) {
-                    $this->callNonThrowableErrorAction($controller, $error, $backtrace);
-                } else {
-                    $this->callInternalServerErrorAction($controller);
-                }
+            if (is_array($error) === false) {
+                return;
+            }
+            $this->logger->error($error['message'], [
+                'code' => $error['type'],
+                'file' => $error['file'],
+                'line' => $error['line'],
+                'trace' => $this->config->logVerboseActive ? $backtrace : null
+            ]);
+            if (\headers_sent()) {
+                return;
+            }
+            BufferManager::clear();
+            if ($this->config->developmentEnvironment) {
+                $this->callNonThrowableErrorAction($controller, $error, $backtrace);
+            } elseif (self::isFatalError($error['type'])) {
+                $this->callInternalServerErrorAction($controller);
             }
         });
+    }
+
+    private static function isFatalError(int $type): bool
+    {
+        return ($type & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR)) !== 0;
     }
 
     private function callNonThrowableErrorAction(StructuralControllerInterface $controller, array $error, array $backtrace): Response
