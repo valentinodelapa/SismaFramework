@@ -56,12 +56,6 @@ class BufferManager
         }
     }
 
-    /**
-     * Discards every open buffer level, including any wrapper opened outside
-     * the tracked floor (e.g. by ErrorHandler), and resets the floor so it is
-     * recomputed on next use. Only meant for full-response replacement (error
-     * recovery), never for regular request handling.
-     */
     public static function discardAll(): void
     {
         while (\ob_get_level() > 0) {

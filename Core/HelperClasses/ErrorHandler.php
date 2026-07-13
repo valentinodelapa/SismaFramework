@@ -66,10 +66,6 @@ class ErrorHandler
 
     public function registerNonThrowableErrorHandler(StructuralControllerInterface $controller = new FrameworkController()): void
     {
-        // Wrapper buffer kept outside BufferManager's own floor: PHP keeps output
-        // buffers open while shutdown functions run and flushes them only
-        // afterwards, so as long as the whole response stays trapped in here,
-        // discardAll() below can still replace it entirely with the error page.
         \ob_start();
         register_shutdown_function(function () use ($controller) {
             ModuleManager::setApplicationModuleByClassName(get_class($controller));
