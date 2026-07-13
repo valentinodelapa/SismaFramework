@@ -2756,6 +2756,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_flush"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003AdiscardAll\u0028\u0029",
+            "name": "discardAll",
+            "summary": "Discards\u0020every\u0020open\u0020buffer\u0020level,\u0020including\u0020any\u0020wrapper\u0020opened\u0020outside\nthe\u0020tracked\u0020floor\u0020\u0028e.g.\u0020by\u0020ErrorHandler\u0029,\u0020and\u0020resets\u0020the\u0020floor\u0020so\u0020it\u0020is\nrecomputed\u0020on\u0020next\u0020use.\u0020Only\u0020meant\u0020for\u0020full\u002Dresponse\u0020replacement\u0020\u0028error\nrecovery\u0029,\u0020never\u0020for\u0020regular\u0020request\u0020handling.",
+            "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_discardAll"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003AensureBaseLevel\u0028\u0029",
             "name": "ensureBaseLevel",
             "summary": "",

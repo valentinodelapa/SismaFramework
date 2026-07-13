@@ -27,10 +27,6 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use Psr\Log\LoggerInterface;
-use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\HelperClasses\BufferManager;
-use SismaFramework\Core\HelperClasses\Router;
-use SismaFramework\Core\HelperClasses\SismaLogger;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
 use SismaFramework\Core\Interfaces\Controllers\StructuralControllerInterface;
@@ -47,7 +43,6 @@ use Throwable;
  */
 class ErrorHandler
 {
-
     private LoggerInterface $logger;
     private Config $config;
 
@@ -66,6 +61,8 @@ class ErrorHandler
 
     public function registerNonThrowableErrorHandler(StructuralControllerInterface $controller = new FrameworkController()): void
     {
+
+        \ob_start();
         register_shutdown_function(function () use ($controller) {
             ModuleManager::setApplicationModuleByClassName(get_class($controller));
             $error = error_get_last();
@@ -77,12 +74,12 @@ class ErrorHandler
                 'code' => $error['type'],
                 'file' => $error['file'],
                 'line' => $error['line'],
-                'trace' => $this->config->logVerboseActive ? $backtrace : null
+                'trace' => $this->config->logVerboseActive ? $backtrace : null,
             ]);
             if (\headers_sent()) {
                 return;
             }
-            BufferManager::clear();
+            BufferManager::discardAll();
             if ($this->config->developmentEnvironment) {
                 $this->callNonThrowableErrorAction($controller, $error, $backtrace);
             } elseif (self::isFatalError($error['type'])) {
@@ -108,10 +105,11 @@ class ErrorHandler
         return $structuralController->internalServerError();
     }
 
-    public function handleBaseException(BaseException $exception,
-            DefaultControllerInterface $defaultController = new SampleController(),
-            StructuralControllerInterface $structuralController = new FrameworkController()): Response
-    {
+    public function handleBaseException(
+        BaseException $exception,
+        DefaultControllerInterface $defaultController = new SampleController(),
+        StructuralControllerInterface $structuralController = new FrameworkController(),
+    ): Response {
         if ($exception instanceof ShouldBeLoggedException) {
             $this->logException($exception);
         }
@@ -138,9 +136,10 @@ class ErrorHandler
         return $controller->error($exception->getMessage(), $exception->getResponseType());
     }
 
-    public function handleThrowableError(Throwable $throwable,
-            StructuralControllerInterface $structuralController = new FrameworkController()): Response
-    {
+    public function handleThrowableError(
+        Throwable $throwable,
+        StructuralControllerInterface $structuralController = new FrameworkController(),
+    ): Response {
         BufferManager::clear();
         ModuleManager::setApplicationModuleByClassName(get_class($structuralController));
         $this->logException($throwable);
@@ -156,7 +155,7 @@ class ErrorHandler
         $context = [
             'code' => $exception->getCode(),
             'file' => $exception->getFile(),
-            'line' => $exception->getLine()
+            'line' => $exception->getLine(),
         ];
         if ($this->config->logVerboseActive) {
             $context['trace'] = $exception->getTrace();

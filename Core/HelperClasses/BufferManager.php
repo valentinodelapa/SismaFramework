@@ -31,7 +31,6 @@ namespace SismaFramework\Core\HelperClasses;
  */
 class BufferManager
 {
-
     private static ?int $baseLevel = null;
 
     public static function start(): void
@@ -54,6 +53,14 @@ class BufferManager
         while (\ob_get_level() > $floor) {
             \ob_end_flush();
         }
+    }
+
+    public static function discardAll(): void
+    {
+        while (\ob_get_level() > 0) {
+            \ob_end_clean();
+        }
+        self::$baseLevel = null;
     }
 
     private static function ensureBaseLevel(): int
