@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.4] - 2026-07-14 - Buffer-Involucro per il Recovery degli Errori Residui in Sviluppo
+
+Patch che completa la correzione avviata in 12.0.3. La guardia `headers_sent()` introdotta in quella release per evitare la cascata di pagine d'errore duplicate in produzione impediva, come effetto collaterale non voluto, anche la visualizzazione della pagina di dettaglio per i warning residui in ambiente di sviluppo: da quando `RenderService` scarica realmente l'output a fine rendering (12.0.2), all'avvio della shutdown function registrata da `registerNonThrowableErrorHandler()` (che PHP esegue solo alla terminazione effettiva dello script) gli header risultavano ormai quasi sempre già inviati per qualunque richiesta completata con successo, facendo uscire la guardia prima ancora di controllare l'ambiente. Il risultato era la contraddizione esplicitamente esclusa dal changelog 12.0.3: un warning residuo, anche in sviluppo, non generava più `visibleError`.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/ErrorHandler::registerNonThrowableErrorHandler()` — warning residui non mostravano più la pagina di dettaglio in sviluppo
+
+La causa non era l'ordine dei controlli nella shutdown function, ma il fatto che il contenuto della risposta fosse già stato scaricato per davvero (quindi irrecuperabile) ben prima che la shutdown function avesse la possibilità di intervenire. PHP mantiene invece aperti i buffer di output durante l'esecuzione delle shutdown function, scaricandoli automaticamente solo al termine di tutte — la stessa proprietà su cui si basava implicitamente il comportamento (corretto) precedente alla chiusura esplicita del buffer introdotta in 12.0.2.
+
+`registerNonThrowableErrorHandler()` apre ora un buffer-involucro (`ob_start()` grezzo, non tracciato da `BufferManager`) non appena viene invocato, prima ancora di registrare la shutdown function: essendo aperto fuori dal livello base tracciato da `BufferManager`, i normali cicli `start()`/`flush()` di `RenderService` — inclusi quelli innescati da rendering completati con successo — vi trasferiscono il contenuto senza mai scaricarlo realmente all'esterno, lasciandolo recuperabile fino alla reale terminazione dello script. Quando la shutdown function deve sostituire integralmente la risposta (sempre in sviluppo; solo per errori realmente fatali in produzione, dopo la consueta verifica `headers_sent()`), il nuovo metodo `BufferManager::discardAll()` scarta anche questo involucro — cosa che il precedente `clear()`, vincolato a non retrocedere sotto il livello base per non toccare buffer esterni al framework, non poteva fare — e resetta il livello base, cosicché il rendering della pagina d'errore che segue venga effettivamente consegnato come unico output della richiesta.
+
+**File modificati**:
+- **`Core/HelperClasses/BufferManager.php`**: aggiunto il metodo statico `discardAll()`
+- **`Core/HelperClasses/ErrorHandler.php`**: `registerNonThrowableErrorHandler()` apre il buffer-involucro; sostituito `BufferManager::clear()` con `BufferManager::discardAll()` nel ramo di sostituzione della risposta
+
+#### `Core/HelperClasses/Dispatcher::run()` — warning di deprecazione residuo su `QUERY_STRING` assente
+
+Portato alla luce testando la correzione precedente: `strlen($this->request->server['QUERY_STRING'])` generava un warning di deprecazione (`strlen(): Passing null...`) ogni volta che la richiesta non aveva query string e la chiave non risultava valorizzata nell'array `$_SERVER` (caso riscontrato con il server PHP integrato). Il warning, residuo a fine richiesta, veniva finora silenziato dal difetto descritto sopra; una volta corretto quest'ultimo, avrebbe fatto scattare la pagina di dettaglio ad ogni richiesta priva di query string.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher.php`**: `run()`, `strlen($this->request->server['QUERY_STRING'] ?? '')`
+
+### 📖 Documentazione
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+Rigenerata tramite `composer phpdoc` per riflettere il nuovo metodo `BufferManager::discardAll()`.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le firme pubbliche esistenti restano invariate; `BufferManager::discardAll()` è una nuova aggiunta puramente additiva.
+
+---
+
 ## [12.0.3] - 2026-07-04 - Correzione Ordine `http_response_code()`/Flush e Cascata di Pagine d'Errore Duplicate
 
 Patch che corregge due difetti resi visibili dalla chiusura esplicita del buffer introdotta in 12.0.2: impostare il codice di risposta HTTP dopo aver già scaricato l'output al client, e una shutdown function che non distingueva un errore fatale reale da un semplice warning residuo né verificava se una risposta fosse già stata inviata.

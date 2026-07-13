@@ -81,7 +81,7 @@ class Dispatcher
     public function run($router = new Router()): Response
     {
         $requestUri = $this->request->server['REQUEST_URI'];
-        if ((strlen($this->request->server['QUERY_STRING']) > 0) &&
+        if ((strlen($this->request->server['QUERY_STRING'] ?? '') > 0) &&
                 ($this->resourceHandler->isResourceFile(explode('?', $requestUri, 2)[0]) === false)) {
             return $router->reloadWithParsedQueryString();
         }
