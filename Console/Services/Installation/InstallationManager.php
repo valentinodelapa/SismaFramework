@@ -69,7 +69,7 @@ class InstallationManager
 
     private function createProjectStructure(): void
     {
-        $directories = ["Config", "Public", "Cache", "Logs", "filesystemMedia"];
+        $directories = ["Config", "Public"];
 
         foreach ($directories as $dir) {
             $path = $this->projectRoot . DIRECTORY_SEPARATOR . $dir;
