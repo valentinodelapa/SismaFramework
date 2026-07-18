@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.4] - 2026-07-18 - Correzione Permessi Cache/Logs/filesystemMedia Mai Applicati in Installazione
+
+Patch che corregge un difetto della procedura di installazione (`sisma install`) per cui le cartelle scrivibili a runtime (`Cache`, `Logs`, `filesystemMedia`) non ricevevano mai i permessi di scrittura previsti dal codice, lasciando l'applicazione priva di accesso in scrittura subito dopo l'installazione.
+
+### 🐛 Bug Fix
+
+#### `Console/Services/Installation/InstallationManager` — permessi `0777` su `Cache`, `Logs`, `filesystemMedia` mai applicati
+
+`install()` chiama `createProjectStructure()`, che creava già tutte e cinque le cartelle previste (`Config`, `Public`, `Cache`, `Logs`, `filesystemMedia`) con `mkdir(..., 0755, true)`. La successiva chiamata a `createAdditionalFolders()` — pensata apposta per portare `Cache`, `Logs` e `filesystemMedia` a `0777`, le uniche tre che l'applicazione deve poter scrivere a runtime, a differenza di `Config` e `Public` — eseguiva `mkdir()`/`chmod()` solo `if (!is_dir($path))`: condizione sempre falsa, perché le tre cartelle esistevano già per effetto di `createProjectStructure()`. Il blocco pensato per garantire la scrittura era quindi sempre inattivo, codice morto fin dalla sua introduzione.
+
+L'effetto pratico: subito dopo l'installazione, `Cache`/`Logs`/`filesystemMedia` restavano a `0755`, di proprietà dell'utente che ha eseguito `sisma install` — tipicamente diverso dall'utente sotto cui gira il server web — impedendo a quest'ultimo di scrivere cache, log e media fino a un eventuale intervento correttivo esterno alla procedura di installazione stessa.
+
+`createProjectStructure()` ora crea solo `Config` e `Public`; la creazione di `Cache`, `Logs` e `filesystemMedia` resta di esclusiva competenza di `createAdditionalFolders()`, che a questo punto le trova sempre assenti ed esegue realmente `mkdir(0777, true)` + `chmod(0777)`.
+
+**File modificati**:
+- **`Console/Services/Installation/InstallationManager.php`**: `createProjectStructure()`, rimosse `Cache`, `Logs`, `filesystemMedia` dall'elenco delle directory create
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica modificata; l'unico effetto osservabile è che `Cache`, `Logs` e `filesystemMedia` risultano ora scrivibili (`0777`) subito dopo l'installazione, come già previsto — ma mai applicato — dal codice preesistente.
+
+---
+
 ## [11.9.3] - 2026-07-13 - Buffer-Involucro per il Recovery degli Errori Residui in Sviluppo
 
 Patch che completa la correzione avviata in 11.9.2. La guardia `headers_sent()` introdotta in quella release per evitare la cascata di pagine d'errore duplicate in produzione impediva, come effetto collaterale non voluto, anche la visualizzazione della pagina di dettaglio per i warning residui in ambiente di sviluppo: da quando `RenderService` scarica realmente l'output a fine rendering (11.9.1), all'avvio della shutdown function registrata da `registerNonThrowableErrorHandler()` (che PHP esegue solo alla terminazione effettiva dello script) gli header risultavano ormai quasi sempre già inviati per qualunque richiesta completata con successo, facendo uscire la guardia prima ancora di controllare l'ambiente. Il risultato era la contraddizione esplicitamente esclusa dal changelog 11.9.2: un warning residuo, anche in sviluppo, non generava più `visibleError`.
