@@ -345,7 +345,7 @@ class DispatcherTest extends TestCase
 
     public function testSimpleSlug()
     {
-        $this->expectOutputString('slug/singlePageSlug/');
+        $this->expectOutputString('slug/single-page-slug/');
         $this->requestMock->server['REQUEST_URI'] = '/slug/single-page-slug/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -353,7 +353,7 @@ class DispatcherTest extends TestCase
 
     public function testGerarchicSlug()
     {
-        $this->expectOutputString('slug/categorySlug/child-page-slug');
+        $this->expectOutputString('slug/category-slug/child-page-slug');
         $this->requestMock->server['REQUEST_URI'] = '/slug/category-slug/child-page-slug/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
@@ -361,8 +361,24 @@ class DispatcherTest extends TestCase
 
     public function testMultipleGerarchicSlug()
     {
-        $this->expectOutputString('slug/categorySlug/subcategory-slug/child-page-slug');
+        $this->expectOutputString('slug/category-slug/subcategory-slug/child-page-slug');
         $this->requestMock->server['REQUEST_URI'] = '/slug/category-slug/subcategory-slug/child-page-slug/';
+        $dispatcher = $this->createDispatcherWithResourceMakerStub();
+        $this->assertInstanceOf(Response::class, $dispatcher->run());
+    }
+
+    public function testSlugWhithNumericPart()
+    {
+        $this->expectOutputString('slug/slug-with-2000-01-01-day/');
+        $this->requestMock->server['REQUEST_URI'] = '/slug/slug-with-2000-01-01-day/';
+        $dispatcher = $this->createDispatcherWithResourceMakerStub();
+        $this->assertInstanceOf(Response::class, $dispatcher->run());
+    }
+
+    public function testRealMethodWithNumericPart()
+    {
+        $this->expectOutputString('/slug/real-action-with-1-number-in-name/');
+        $this->requestMock->server['REQUEST_URI'] = '/slug/real-action-with-1-number-in-name/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
     }

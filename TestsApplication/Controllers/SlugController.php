@@ -42,7 +42,7 @@ class SlugController extends BaseController implements CallableController
 
     public function index(): Response
     {
-        return Render::generateData('controllerWithSlug/index', $this->vars);
+        return Render::generateData('slug/index', $this->vars);
     }
 
     #[\Override]
@@ -50,7 +50,7 @@ class SlugController extends BaseController implements CallableController
     {
         $stringArguments = implode('/', $arguments);
         $this->vars['slug'] = Router::getControllerUrl() . '/' . $name . '/' . $stringArguments;
-        return Render::generateView('controllerWithSlug/call', $this->vars);
+        return Render::generateView('slug/call', $this->vars);
     }
 
     #[\Override]
@@ -62,8 +62,15 @@ class SlugController extends BaseController implements CallableController
             return true;
         } elseif ((count($arguments) === 3) && ($arguments[0] === 'category-slug') && ($arguments[1] === 'subcategory-slug') && ($arguments[2] === 'child-page-slug')) {
             return true;
+        } elseif ((count($arguments) === 1) && ($arguments[0] === 'slug-with-2000-01-01-day')) {
+            return true;
         } else {
             return false;
         }
+    }
+
+    public function realActionWith1NumberInName():Response
+    {
+        return Render::generateData('slug/realActionWith1NumberInName', $this->vars);
     }
 }

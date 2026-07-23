@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.5] - 2026-07-23 - Correzione Corruzione Slug Numerici nel Dispatch verso CallableController
+
+Patch che corregge un difetto nell'inoltro delle richieste verso i controller che implementano `CallableController` (routing dinamico via `__call()`), per cui la porzione di slug numerica-con-trattini di un URL veniva irrimediabilmente corrotta prima di raggiungere il metodo magico del controller.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Dispatcher::executeCallableController()` — slug con parti numeriche separate da trattino decodificati in modo errato
+
+`executeCallableController()` invocava sempre il controller usando `parsedAction`, la versione dello slug convertita in camelCase da `NotationManager::convertToCamelCase()` (pensata per i nomi di metodo reali, non per i segmenti di uno slug arbitrario). Per uno slug come `slug-with-2000-01-01-day`, la conversione produce `slugWith20000101Day`: i trattini tra cifre vengono rimossi senza lasciare alcun separatore, rendendo impossibile ricostruire a valle il valore originale (`2000-01-01` diventa indistinguibile da `20000101`). Poiché il controller non definisce un metodo reale con quel nome, la chiamata ricadeva su `__call()`, che riceveva quindi il nome già corrotto.
+
+`executeCallableController()` ora chiama il controller con `parsedAction` solo se corrisponde a un metodo realmente definito sulla classe (`ReflectionClass::hasMethod()`); altrimenti utilizza `pathAction`, il segmento di URL originale, non trasformato — lo stesso valore già usato da `isCallableController()` per la verifica di compatibilità tramite `checkCompatibility()`, ripristinando la coerenza tra i due controlli.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher.php`**: `executeCallableController()` sceglie tra `parsedAction` e `pathAction` in base a `ReflectionClass::hasMethod()`
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: aggiornate le asserzioni di `testSimpleSlug`, `testGerarchicSlug`, `testMultipleGerarchicSlug` sul valore atteso (slug non più convertito in camelCase); aggiunto `testSlugWhithNumericPart` a copertura della regressione
+- **`TestsApplication/Controllers/SlugController.php`**: `checkCompatibility()`, aggiunto il caso di slug con parte numerica
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica modificata. Per i `CallableController` che si affidano a `__call()`, il valore ricevuto come nome del metodo cambia da una versione camelCase corrotta al segmento di URL originale — un fix di comportamento, non una modifica di contratto pubblico.
+
+---
+
 ## [11.9.4] - 2026-07-18 - Correzione Permessi Cache/Logs/filesystemMedia Mai Applicati in Installazione
 
 Patch che corregge un difetto della procedura di installazione (`sisma install`) per cui le cartelle scrivibili a runtime (`Cache`, `Logs`, `filesystemMedia`) non ricevevano mai i permessi di scrittura previsti dal codice, lasciando l'applicazione priva di accesso in scrittura subito dopo l'installazione.
