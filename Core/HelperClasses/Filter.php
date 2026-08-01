@@ -45,7 +45,7 @@ class Filter
 
     public function customFilter(mixed $value, string $regularExpression): bool
     {
-        return preg_match($regularExpression, $value);
+        return is_string($value) && (preg_match($regularExpression, $value) === 1);
     }
 
     public function isNotNull($value): bool

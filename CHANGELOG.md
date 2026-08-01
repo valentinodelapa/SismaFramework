@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.7] - 2026-08-01 - Correzione Gestione Valori Non Stringa in Filter::customFilter()
+
+Patch che corregge un difetto di `Filter::customFilter()`, l'unico metodo della classe `Filter` che passava il valore da validare direttamente a una funzione nativa di stringa (`preg_match()`) senza verificarne preventivamente il tipo, a differenza di tutti gli altri metodi (`isString()`, `isEmail()`, `isSecurePassword()`, ecc.) che già gestiscono in modo uniforme i valori non stringa restituendo `false`.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Filter::customFilter()` — valori non stringa passati direttamente a `preg_match()`
+
+`customFilter()` dichiara `$value` come `mixed` ma lo passa senza controlli al parametro `$subject` di `preg_match()`, tipizzato internamente come `string` non nullable. Quando questo filtro viene collegato tramite `FilterType::customFilter` a un campo opzionale di un `BaseForm` (ad esempio uno slug che rispetta un pattern di caratteri consentiti), `FormValidator` valorizza il dato a validare con `null` per un campo lasciato vuoto e lo passa comunque al filtro: `preg_match()` riceve quindi direttamente `null`, che PHP 8.1+ segnala come deprecato e può risultare in un comportamento non controllato, invece del fallimento di validazione pulito (`false`) che ci si aspetterebbe in analogia con gli altri metodi della classe.
+
+`customFilter()` ora verifica esplicitamente `is_string($value)` prima di invocare `preg_match()`, e confronta l'esito con `=== 1` invece di affidarsi alla conversione implicita int→bool del valore restituito da `preg_match()` (che vale anche `false` in caso di espressione regolare non valida). Qualunque valore non stringa, incluso `null`, produce ora un fallimento di validazione esplicito e coerente con il resto della classe.
+
+**File modificati**:
+- **`Core/HelperClasses/Filter.php`**: `customFilter()`, aggiunta guardia `is_string($value)` e confronto stretto `=== 1` sul risultato di `preg_match()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la firma del metodo resta invariata (`mixed $value, string $regularExpression`). L'unico cambiamento di comportamento osservabile riguarda i valori non stringa passati a `customFilter()`: prima raggiungevano `preg_match()` così come sono, ora restituiscono `false` in modo esplicito, coerentemente con `isString()` e gli altri metodi di validazione della classe.
+
+---
+
 ## [12.0.6] - 2026-07-23 - Correzione Corruzione Slug Numerici nel Dispatch verso CallableController
 
 Patch che corregge un difetto nell'inoltro delle richieste verso i controller che implementano `CallableController` (routing dinamico via `__call()`), per cui la porzione di slug numerica-con-trattini di un URL veniva irrimediabilmente corrotta prima di raggiungere il metodo magico del controller.
