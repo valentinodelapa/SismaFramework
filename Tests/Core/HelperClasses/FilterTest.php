@@ -406,6 +406,10 @@ class FilterTest extends TestCase
         $this->assertFalse($this->filter->customFilter('prova uno', '/^[a-zA-Z0-9_.]+$/'));
         $this->assertFalse($this->filter->customFilter('?rova', '/^[a-zA-Z0-9_.]+$/'));
         $this->assertFalse($this->filter->customFilter('provà', '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse($this->filter->customFilter(null, '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse($this->filter->customFilter(1, '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse($this->filter->customFilter(true, '/^[a-zA-Z0-9_.]+$/'));
+        $this->assertFalse($this->filter->customFilter([], '/^[a-zA-Z0-9_.]+$/'));
     }
 
 }
