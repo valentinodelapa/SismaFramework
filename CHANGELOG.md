@@ -16,6 +16,7 @@ Patch che corregge un difetto di `Filter::customFilter()`, l'unico metodo della 
 
 **File modificati**:
 - **`Core/HelperClasses/Filter.php`**: `customFilter()`, aggiunta guardia `is_string($value)` e confronto stretto `=== 1` sul risultato di `preg_match()`
+- **`Tests/Core/HelperClasses/FilterTest.php`**: `testCustomFilter()`, aggiunta copertura per valori non stringa (`null`, `int`, `bool`, `array`)
 
 ### ✅ Backward Compatibility
 
