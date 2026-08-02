@@ -37,7 +37,6 @@ use SismaFramework\Orm\CustomTypes\SismaTime;
  */
 class Filter
 {
-
     public function noFilter($value): bool
     {
         return true;
@@ -48,17 +47,17 @@ class Filter
         return is_string($value) && (preg_match($regularExpression, $value) === 1);
     }
 
-    public function isNotNull($value): bool
+    public function isNotNull(mixed $value): bool
     {
         return is_null($value) ? false : true;
     }
 
-    public function isNotFalse($value): bool
+    public function isNotFalse(mixed $value): bool
     {
         return ($value === false) ? false : true;
     }
 
-    public function isNotEmpty($value): bool
+    public function isNotEmpty(mixed $value): bool
     {
         if ((is_object($value) === false) && ($value == 0)) {
             return true;
@@ -67,7 +66,7 @@ class Filter
         }
     }
 
-    public function isString($value): bool
+    public function isString(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
@@ -75,22 +74,22 @@ class Filter
         return $result;
     }
 
-    public function isMinLimitString($value, int $minLimit): bool
+    public function isMinLimitString(mixed $value, int $minLimit): bool
     {
         return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isString($v));
     }
 
-    public function isMaxLimitString($value, int $maxLimit): bool
+    public function isMaxLimitString(mixed $value, int $maxLimit): bool
     {
         return $this->isMaxLengthForValidator($value, $maxLimit, fn($v) => $this->isString($v));
     }
 
-    public function isLimitString($value, int $minLimit, int $maxLimit): bool
+    public function isLimitString(mixed $value, int $minLimit, int $maxLimit): bool
     {
         return $this->isLengthRangeForValidator($value, $minLimit, $maxLimit, fn($v) => $this->isString($v));
     }
 
-    public function isAlphabeticString($value): bool
+    public function isAlphabeticString(mixed $value): bool
     {
         $result = true;
         $result = ($this->isString($value)) ? $result : false;
@@ -98,22 +97,22 @@ class Filter
         return $result;
     }
 
-    public function isMinLimitAlphabeticString($value, int $minLimit): bool
+    public function isMinLimitAlphabeticString(mixed $value, int $minLimit): bool
     {
         return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isAlphabeticString($v));
     }
 
-    public function isMaxLimitAlphabeticString($value, int $maxLimit): bool
+    public function isMaxLimitAlphabeticString(mixed $value, int $maxLimit): bool
     {
         return $this->isMaxLengthForValidator($value, $maxLimit, fn($v) => $this->isAlphabeticString($v));
     }
 
-    public function isLimitAlphabeticString($value, int $minLimit, int $maxLimit): bool
+    public function isLimitAlphabeticString(mixed $value, int $minLimit, int $maxLimit): bool
     {
         return $this->isLengthRangeForValidator($value, $minLimit, $maxLimit, fn($v) => $this->isAlphabeticString($v));
     }
 
-    public function isAlphanumericString($value): bool
+    public function isAlphanumericString(mixed $value): bool
     {
         $result = true;
         $result = ($this->isString($value)) ? $result : false;
@@ -121,22 +120,22 @@ class Filter
         return $result;
     }
 
-    public function isMinLimitAlphanumericString($value, int $minLimit): bool
+    public function isMinLimitAlphanumericString(mixed $value, int $minLimit): bool
     {
         return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isAlphanumericString($v));
     }
 
-    public function isMaxLimitAlphanumericString($value, int $maxLimit): bool
+    public function isMaxLimitAlphanumericString(mixed $value, int $maxLimit): bool
     {
         return $this->isMaxLengthForValidator($value, $maxLimit, fn($v) => $this->isAlphanumericString($v));
     }
 
-    public function isLimitAlphanumericString($value, int $minLimit, int $maxLimit): bool
+    public function isLimitAlphanumericString(mixed $value, int $minLimit, int $maxLimit): bool
     {
         return $this->isLengthRangeForValidator($value, $minLimit, $maxLimit, fn($v) => $this->isAlphanumericString($v));
     }
 
-    public function isStrictAlphanumericString($value): bool
+    public function isStrictAlphanumericString(mixed $value): bool
     {
         $result = true;
         $result = ($this->isAlphanumericString($value)) ? $result : false;
@@ -145,22 +144,22 @@ class Filter
         return $result;
     }
 
-    public function isMinLimitStrictAlphanumericString($value, int $minLimit): bool
+    public function isMinLimitStrictAlphanumericString(mixed $value, int $minLimit): bool
     {
         return $this->isMinLengthForValidator($value, $minLimit, fn($v) => $this->isStrictAlphanumericString($v));
     }
 
-    public function isMaxLimitStrictAlphanumericString($value, int $maxLimit): bool
+    public function isMaxLimitStrictAlphanumericString(mixed $value, int $maxLimit): bool
     {
         return $this->isMaxLengthForValidator($value, $maxLimit, fn($v) => $this->isStrictAlphanumericString($v));
     }
 
-    public function isLimitStrictAlphanumericString($value, int $minLimit, int $maxLimit): bool
+    public function isLimitStrictAlphanumericString(mixed $value, int $minLimit, int $maxLimit): bool
     {
         return $this->isLengthRangeForValidator($value, $minLimit, $maxLimit, fn($v) => $this->isStrictAlphanumericString($v));
     }
 
-    public function isSecurePassword($value): bool
+    public function isSecurePassword(mixed $value): bool
     {
         $result = true;
         $result = ($this->isString($value)) ? $result : false;
@@ -170,7 +169,7 @@ class Filter
         return $result;
     }
 
-    public function isEmail($value): bool
+    public function isEmail(mixed $value): bool
     {
         $result = true;
         $result = ($this->isString($value)) ? $result : false;
@@ -180,7 +179,7 @@ class Filter
         return $result;
     }
 
-    public function isNumeric($value): bool
+    public function isNumeric(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
@@ -188,7 +187,7 @@ class Filter
         return $result;
     }
 
-    public function isInteger($value): bool
+    public function isInteger(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNumeric($value)) ? $result : false;
@@ -196,7 +195,7 @@ class Filter
         return $result;
     }
 
-    public function isFloat($value): bool
+    public function isFloat(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNumeric($value)) ? $result : false;
@@ -204,12 +203,12 @@ class Filter
         return $result;
     }
 
-    public function isBoolean($value): bool
+    public function isBoolean(mixed $value): bool
     {
         return is_bool($value);
     }
 
-    public function isArray($value): bool
+    public function isArray(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
@@ -217,7 +216,7 @@ class Filter
         return $result;
     }
 
-    public function isDate($value): bool
+    public function isDate(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
@@ -227,7 +226,7 @@ class Filter
         return $result;
     }
 
-    public function isDatetime($value): bool
+    public function isDatetime(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
@@ -237,7 +236,7 @@ class Filter
         return $result;
     }
 
-    public function isTime($value): bool
+    public function isTime(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
@@ -247,7 +246,7 @@ class Filter
         return $result;
     }
 
-    public function isUploadedFile($value): bool
+    public function isUploadedFile(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
@@ -260,7 +259,7 @@ class Filter
         return $result;
     }
 
-    public function isEntity($value): bool
+    public function isEntity(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
@@ -268,7 +267,7 @@ class Filter
         return $result;
     }
 
-    public function isEnumeration($value): bool
+    public function isEnumeration(mixed $value): bool
     {
         $result = true;
         $result = ($this->isNotEmpty($value)) ? $result : false;
