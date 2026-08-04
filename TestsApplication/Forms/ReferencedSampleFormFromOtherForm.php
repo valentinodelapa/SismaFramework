@@ -26,9 +26,9 @@
 
 namespace SismaFramework\TestsApplication\Forms;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Orm\BaseClasses\BaseForm;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
-use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Orm\Enumerations\FilterType;
 
 /**
  * @author Valentino de Lapa

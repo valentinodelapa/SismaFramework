@@ -30,7 +30,7 @@ use SismaFramework\Console\Enumerations\ModelType;
 use SismaFramework\Console\Exceptions\ApplicationPathException;
 use SismaFramework\Console\Exceptions\EntityPathException;
 use SismaFramework\Console\Exceptions\ModulePathException;
-use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Orm\Enumerations\FilterType;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Core\HelperClasses\Templater;

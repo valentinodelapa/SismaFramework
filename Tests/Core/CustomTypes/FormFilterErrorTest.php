@@ -27,7 +27,7 @@
 namespace SismaFramework\Tests\Core\CustomTypes;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Orm\BaseClasses\BaseForm;
 use SismaFramework\Core\CustomTypes\FormFilterError;
 
 /**

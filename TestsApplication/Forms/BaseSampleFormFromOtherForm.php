@@ -2,8 +2,8 @@
 
 namespace SismaFramework\TestsApplication\Forms;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Orm\BaseClasses\BaseForm;
+use SismaFramework\Orm\Enumerations\FilterType;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 
 class BaseSampleFormFromOtherForm extends BaseForm

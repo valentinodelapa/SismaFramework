@@ -28,7 +28,7 @@ namespace SismaFramework\Tests\Security\HttpClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Orm\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HelperClasses\Encryptor;

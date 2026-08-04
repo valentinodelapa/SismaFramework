@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Tests\Core\BaseClasses;
+namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseForm\FilterManager;
-use SismaFramework\Core\BaseClasses\BaseForm\FormValidator;
+use SismaFramework\Orm\BaseClasses\BaseForm\FilterManager;
+use SismaFramework\Orm\BaseClasses\BaseForm\FormValidator;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;

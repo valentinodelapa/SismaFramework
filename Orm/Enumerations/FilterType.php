@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\Enumerations;
+namespace SismaFramework\Orm\Enumerations;
 
-use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Orm\HelperClasses\Filter;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
