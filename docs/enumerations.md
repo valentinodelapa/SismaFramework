@@ -296,7 +296,7 @@ class ContentNegotiator {
 
 ### FilterType
 
-**Namespace:** `SismaFramework\Core\Enumerations\FilterType`
+**Namespace:** `SismaFramework\Orm\Enumerations\FilterType`
 **Tipo:** `string` enum
 
 Definisce i tipi di filtri disponibili per la validazione dei form e dei dati input.
@@ -321,7 +321,7 @@ enum FilterType: string
 #### Utilizzi Comuni
 
 ```php
-use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Orm\Enumerations\FilterType;
 
 // Configurazione validazione form
 class UserRegistrationForm extends BaseForm {

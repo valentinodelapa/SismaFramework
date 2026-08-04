@@ -19,8 +19,8 @@ Per prima cosa, crea una classe Form nella cartella `Forms` del tuo modulo. Ques
 ```php
 namespace MyBlog\Application\Forms;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Orm\BaseClasses\BaseForm;
+use SismaFramework\Orm\Enumerations\FilterType;
 use MyBlog\Application\Entities\Post;
 
 class PostForm extends BaseForm

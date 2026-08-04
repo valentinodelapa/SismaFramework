@@ -26,7 +26,7 @@
 
 namespace SismaFramework\Security\HttpClasses;
 
-use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Orm\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Security\BaseClasses\BaseAuthentication;

@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses\BaseForm;
+namespace SismaFramework\Orm\BaseClasses\BaseForm;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;

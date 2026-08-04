@@ -26,7 +26,7 @@
 
 namespace SismaFramework\TestsApplication\Forms;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Orm\BaseClasses\BaseForm;
 use SismaFramework\TestsApplication\Entities\FakeReferencedSample;
 
 /**

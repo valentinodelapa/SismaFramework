@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Tests\Core\Enumerations;
+namespace SismaFramework\Tests\Orm\Enumerations;
 
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\Enumerations\FilterType;
-use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Orm\Enumerations\FilterType;
+use SismaFramework\Orm\HelperClasses\Filter;
 use SismaFramework\Sample\Entities\SampleBaseEntity;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 use SismaFramework\Orm\CustomTypes\SismaDate;

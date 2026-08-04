@@ -24,11 +24,11 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Tests\Core\HelperClasses;
+namespace SismaFramework\Tests\Orm\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Orm\HelperClasses\Filter;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;

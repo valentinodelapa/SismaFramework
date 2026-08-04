@@ -2,8 +2,8 @@
 
 namespace {{formNamespace}};
 
-use SismaFramework\Core\BaseClasses\BaseForm;
-use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Orm\BaseClasses\BaseForm;
+use SismaFramework\Orm\Enumerations\FilterType;
 use {{entityNamespace}}\{{entityShortName}};
 
 class {{entityShortName}}Form extends BaseForm

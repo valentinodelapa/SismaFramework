@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses\BaseForm;
+namespace SismaFramework\Orm\BaseClasses\BaseForm;
 
-use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Orm\BaseClasses\BaseForm;
 use SismaFramework\Core\CustomTypes\FormFilterError;
 use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 use SismaFramework\Core\HelperClasses\Config;

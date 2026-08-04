@@ -83,7 +83,7 @@ class PostController extends BaseController
 
 ### BaseForm
 
-**Namespace:** `SismaFramework\Core\BaseClasses\BaseForm`
+**Namespace:** `SismaFramework\Orm\BaseClasses\BaseForm`
 
 Classe base per la gestione dei form con validazione automatica e protezione CSRF. Utilizza `SubmittableTrait` per la gestione della submission e degli errori.
 

@@ -24,9 +24,9 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses\BaseForm;
+namespace SismaFramework\Orm\BaseClasses\BaseForm;
 
-use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Orm\Enumerations\FilterType;
 
 /**
  * @internal

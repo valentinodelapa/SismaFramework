@@ -24,12 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Core\BaseClasses;
+namespace SismaFramework\Orm\BaseClasses;
 
-use SismaFramework\Core\BaseClasses\BaseForm\EntityResolver;
-use SismaFramework\Core\BaseClasses\BaseForm\FilterManager;
-use SismaFramework\Core\BaseClasses\BaseForm\FormValidator;
-use SismaFramework\Core\Enumerations\FilterType;
+use SismaFramework\Orm\BaseClasses\BaseForm\EntityResolver;
+use SismaFramework\Orm\BaseClasses\BaseForm\FilterManager;
+use SismaFramework\Orm\BaseClasses\BaseForm\FormValidator;
+use SismaFramework\Orm\Enumerations\FilterType;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;

@@ -27,7 +27,7 @@
 namespace SismaFramework\TestsApplication\Forms;
 
 use SismaFramework\TestsApplication\Entities\SimpleEntity;
-use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Orm\BaseClasses\BaseForm;
 
 /**
  * Description of FormWithCustomFilterFalse
