@@ -1,7 +1,7 @@
 <?php
 $pageTitle = 'Esempi SismaFramework - Funzionalità ORM, MVC e Security';
 $pageDescription = 'Esempi pratici di SismaFramework: ORM con Data Mapper, Entity Injection, Enum Binding, relazioni tra entità, lazy loading e gestione sicura dei form.';
-ob_start();
+require __DIR__ . '/../commonParts/siteLayoutHeader.php';
 ?>
 
 <!-- Hero Section -->
@@ -186,6 +186,4 @@ ob_start();
     </section>
 </div>
 
-<?php
-$content = ob_get_clean();
-require __DIR__ . '/../commonParts/siteLayout.php';
+<?php require __DIR__ . '/../commonParts/siteLayoutFooter.php'; ?>

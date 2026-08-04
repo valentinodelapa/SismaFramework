@@ -103,8 +103,8 @@ Esempi tecnici con autowiring, entity injection, ecc.
 - Prev/Next buttons automatici
 - GitHub edit/report links
 
-#### **commonParts/siteLayout.php**
-Layout master con:
+#### **commonParts/siteLayoutHeader.php + siteLayoutFooter.php**
+Layout master (diviso in header/footer, secondo il pattern documentato in `docs/views.md`) con:
 - Navbar responsive con menu
 - Footer completo con link
 - CSS custom per docs, cards, code
@@ -172,7 +172,7 @@ Il sito funziona già senza configurazione! Ma puoi personalizzare:
 
 **Cambia logo/brand nel layout:**
 ```php
-// In Views/commonParts/siteLayout.php
+// In Views/commonParts/siteLayoutHeader.php
 <a class="navbar-brand" href="/home/index">
     <i class="bi bi-hexagon-fill"></i> TuoFramework
 </a>

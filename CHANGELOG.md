@@ -2,6 +2,321 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.0.7] - 2026-08-01 - Correzione Gestione Valori Non Stringa in Filter::customFilter()
+
+Patch che corregge un difetto di `Filter::customFilter()`, l'unico metodo della classe `Filter` che passava il valore da validare direttamente a una funzione nativa di stringa (`preg_match()`) senza verificarne preventivamente il tipo, a differenza di tutti gli altri metodi (`isString()`, `isEmail()`, `isSecurePassword()`, ecc.) che già gestiscono in modo uniforme i valori non stringa restituendo `false`.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Filter::customFilter()` — valori non stringa passati direttamente a `preg_match()`
+
+`customFilter()` dichiara `$value` come `mixed` ma lo passa senza controlli al parametro `$subject` di `preg_match()`, tipizzato internamente come `string` non nullable. Quando questo filtro viene collegato tramite `FilterType::customFilter` a un campo opzionale di un `BaseForm` (ad esempio uno slug che rispetta un pattern di caratteri consentiti), `FormValidator` valorizza il dato a validare con `null` per un campo lasciato vuoto e lo passa comunque al filtro: `preg_match()` riceve quindi direttamente `null`, che PHP 8.1+ segnala come deprecato e può risultare in un comportamento non controllato, invece del fallimento di validazione pulito (`false`) che ci si aspetterebbe in analogia con gli altri metodi della classe.
+
+`customFilter()` ora verifica esplicitamente `is_string($value)` prima di invocare `preg_match()`, e confronta l'esito con `=== 1` invece di affidarsi alla conversione implicita int→bool del valore restituito da `preg_match()` (che vale anche `false` in caso di espressione regolare non valida). Qualunque valore non stringa, incluso `null`, produce ora un fallimento di validazione esplicito e coerente con il resto della classe.
+
+**File modificati**:
+- **`Core/HelperClasses/Filter.php`**: `customFilter()`, aggiunta guardia `is_string($value)` e confronto stretto `=== 1` sul risultato di `preg_match()`
+- **`Tests/Core/HelperClasses/FilterTest.php`**: `testCustomFilter()`, aggiunta copertura per valori non stringa (`null`, `int`, `bool`, `array`)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la firma del metodo resta invariata (`mixed $value, string $regularExpression`). L'unico cambiamento di comportamento osservabile riguarda i valori non stringa passati a `customFilter()`: prima raggiungevano `preg_match()` così come sono, ora restituiscono `false` in modo esplicito, coerentemente con `isString()` e gli altri metodi di validazione della classe.
+
+---
+
+## [12.0.6] - 2026-07-23 - Correzione Corruzione Slug Numerici nel Dispatch verso CallableController
+
+Patch che corregge un difetto nell'inoltro delle richieste verso i controller che implementano `CallableController` (routing dinamico via `__call()`), per cui la porzione di slug numerica-con-trattini di un URL veniva irrimediabilmente corrotta prima di raggiungere il metodo magico del controller.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Dispatcher::executeCallableController()` — slug con parti numeriche separate da trattino decodificati in modo errato
+
+`executeCallableController()` invocava sempre il controller usando `parsedAction`, la versione dello slug convertita in camelCase da `NotationManager::convertToCamelCase()` (pensata per i nomi di metodo reali, non per i segmenti di uno slug arbitrario). Per uno slug come `slug-with-2000-01-01-day`, la conversione produce `slugWith20000101Day`: i trattini tra cifre vengono rimossi senza lasciare alcun separatore, rendendo impossibile ricostruire a valle il valore originale (`2000-01-01` diventa indistinguibile da `20000101`). Poiché il controller non definisce un metodo reale con quel nome, la chiamata ricadeva su `__call()`, che riceveva quindi il nome già corrotto.
+
+`executeCallableController()` ora chiama il controller con `parsedAction` solo se corrisponde a un metodo realmente definito sulla classe (`ReflectionClass::hasMethod()`); altrimenti utilizza `pathAction`, il segmento di URL originale, non trasformato — lo stesso valore già usato da `isCallableController()` per la verifica di compatibilità tramite `checkCompatibility()`, ripristinando la coerenza tra i due controlli.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher.php`**: `executeCallableController()` sceglie tra `parsedAction` e `pathAction` in base a `ReflectionClass::hasMethod()`
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: aggiornate le asserzioni di `testSimpleSlug`, `testGerarchicSlug`, `testMultipleGerarchicSlug` sul valore atteso (slug non più convertito in camelCase); aggiunto `testSlugWhithNumericPart` a copertura della regressione
+- **`TestsApplication/Controllers/SlugController.php`**: `checkCompatibility()`, aggiunto il caso di slug con parte numerica
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica modificata. Per i `CallableController` che si affidano a `__call()`, il valore ricevuto come nome del metodo cambia da una versione camelCase corrotta al segmento di URL originale — un fix di comportamento, non una modifica di contratto pubblico.
+
+---
+
+## [12.0.5] - 2026-07-17 - Correzione Permessi Cache/Logs/filesystemMedia Mai Applicati in Installazione
+
+Patch che corregge un difetto della procedura di installazione (`sisma install`) per cui le cartelle scrivibili a runtime (`Cache`, `Logs`, `filesystemMedia`) non ricevevano mai i permessi di scrittura previsti dal codice, lasciando l'applicazione priva di accesso in scrittura subito dopo l'installazione.
+
+### 🐛 Bug Fix
+
+#### `Console/Services/Installation/InstallationManager` — permessi `0777` su `Cache`, `Logs`, `filesystemMedia` mai applicati
+
+`install()` chiama `createProjectStructure()`, che creava già tutte e cinque le cartelle previste (`Config`, `Public`, `Cache`, `Logs`, `filesystemMedia`) con `mkdir(..., 0755, true)`. La successiva chiamata a `createAdditionalFolders()` — pensata apposta per portare `Cache`, `Logs` e `filesystemMedia` a `0777`, le uniche tre che l'applicazione deve poter scrivere a runtime, a differenza di `Config` e `Public` — eseguiva `mkdir()`/`chmod()` solo `if (!is_dir($path))`: condizione sempre falsa, perché le tre cartelle esistevano già per effetto di `createProjectStructure()`. Il blocco pensato per garantire la scrittura era quindi sempre inattivo, codice morto fin dalla sua introduzione.
+
+L'effetto pratico: subito dopo l'installazione, `Cache`/`Logs`/`filesystemMedia` restavano a `0755`, di proprietà dell'utente che ha eseguito `sisma install` — tipicamente diverso dall'utente sotto cui gira il server web — impedendo a quest'ultimo di scrivere cache, log e media fino a un eventuale intervento correttivo esterno alla procedura di installazione stessa.
+
+`createProjectStructure()` ora crea solo `Config` e `Public`; la creazione di `Cache`, `Logs` e `filesystemMedia` resta di esclusiva competenza di `createAdditionalFolders()`, che a questo punto le trova sempre assenti ed esegue realmente `mkdir(0777, true)` + `chmod(0777)`.
+
+**File modificati**:
+- **`Console/Services/Installation/InstallationManager.php`**: `createProjectStructure()`, rimosse `Cache`, `Logs`, `filesystemMedia` dall'elenco delle directory create
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica modificata; l'unico effetto osservabile è che `Cache`, `Logs` e `filesystemMedia` risultano ora scrivibili (`0777`) subito dopo l'installazione, come già previsto — ma mai applicato — dal codice preesistente.
+
+---
+
+## [12.0.4] - 2026-07-14 - Buffer-Involucro per il Recovery degli Errori Residui in Sviluppo
+
+Patch che completa la correzione avviata in 12.0.3. La guardia `headers_sent()` introdotta in quella release per evitare la cascata di pagine d'errore duplicate in produzione impediva, come effetto collaterale non voluto, anche la visualizzazione della pagina di dettaglio per i warning residui in ambiente di sviluppo: da quando `RenderService` scarica realmente l'output a fine rendering (12.0.2), all'avvio della shutdown function registrata da `registerNonThrowableErrorHandler()` (che PHP esegue solo alla terminazione effettiva dello script) gli header risultavano ormai quasi sempre già inviati per qualunque richiesta completata con successo, facendo uscire la guardia prima ancora di controllare l'ambiente. Il risultato era la contraddizione esplicitamente esclusa dal changelog 12.0.3: un warning residuo, anche in sviluppo, non generava più `visibleError`.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/ErrorHandler::registerNonThrowableErrorHandler()` — warning residui non mostravano più la pagina di dettaglio in sviluppo
+
+La causa non era l'ordine dei controlli nella shutdown function, ma il fatto che il contenuto della risposta fosse già stato scaricato per davvero (quindi irrecuperabile) ben prima che la shutdown function avesse la possibilità di intervenire. PHP mantiene invece aperti i buffer di output durante l'esecuzione delle shutdown function, scaricandoli automaticamente solo al termine di tutte — la stessa proprietà su cui si basava implicitamente il comportamento (corretto) precedente alla chiusura esplicita del buffer introdotta in 12.0.2.
+
+`registerNonThrowableErrorHandler()` apre ora un buffer-involucro (`ob_start()` grezzo, non tracciato da `BufferManager`) non appena viene invocato, prima ancora di registrare la shutdown function: essendo aperto fuori dal livello base tracciato da `BufferManager`, i normali cicli `start()`/`flush()` di `RenderService` — inclusi quelli innescati da rendering completati con successo — vi trasferiscono il contenuto senza mai scaricarlo realmente all'esterno, lasciandolo recuperabile fino alla reale terminazione dello script. Quando la shutdown function deve sostituire integralmente la risposta (sempre in sviluppo; solo per errori realmente fatali in produzione, dopo la consueta verifica `headers_sent()`), il nuovo metodo `BufferManager::discardAll()` scarta anche questo involucro — cosa che il precedente `clear()`, vincolato a non retrocedere sotto il livello base per non toccare buffer esterni al framework, non poteva fare — e resetta il livello base, cosicché il rendering della pagina d'errore che segue venga effettivamente consegnato come unico output della richiesta.
+
+**File modificati**:
+- **`Core/HelperClasses/BufferManager.php`**: aggiunto il metodo statico `discardAll()`
+- **`Core/HelperClasses/ErrorHandler.php`**: `registerNonThrowableErrorHandler()` apre il buffer-involucro; sostituito `BufferManager::clear()` con `BufferManager::discardAll()` nel ramo di sostituzione della risposta
+
+#### `Core/HelperClasses/Dispatcher::run()` — warning di deprecazione residuo su `QUERY_STRING` assente
+
+Portato alla luce testando la correzione precedente: `strlen($this->request->server['QUERY_STRING'])` generava un warning di deprecazione (`strlen(): Passing null...`) ogni volta che la richiesta non aveva query string e la chiave non risultava valorizzata nell'array `$_SERVER` (caso riscontrato con il server PHP integrato). Il warning, residuo a fine richiesta, veniva finora silenziato dal difetto descritto sopra; una volta corretto quest'ultimo, avrebbe fatto scattare la pagina di dettaglio ad ogni richiesta priva di query string.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher.php`**: `run()`, `strlen($this->request->server['QUERY_STRING'] ?? '')`
+
+### 📖 Documentazione
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+Rigenerata tramite `composer phpdoc` per riflettere il nuovo metodo `BufferManager::discardAll()`.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le firme pubbliche esistenti restano invariate; `BufferManager::discardAll()` è una nuova aggiunta puramente additiva.
+
+---
+
+## [12.0.3] - 2026-07-04 - Correzione Ordine `http_response_code()`/Flush e Cascata di Pagine d'Errore Duplicate
+
+Patch che corregge due difetti resi visibili dalla chiusura esplicita del buffer introdotta in 12.0.2: impostare il codice di risposta HTTP dopo aver già scaricato l'output al client, e una shutdown function che non distingueva un errore fatale reale da un semplice warning residuo né verificava se una risposta fosse già stata inviata.
+
+### 🐛 Bug Fix
+
+#### `Core/Services/RenderService` — `http_response_code()` impostato dopo l'invio dell'output
+
+Da quando `BufferManager::flush()` chiude realmente tutti i livelli di buffer del framework fino al floor (12.0.2), invocarlo durante il rendering scarica per davvero il contenuto al client, gli header compresi. `generateView()`, `generateData()` e `generateJson()` costruivano però l'oggetto `Response` — il cui costruttore chiama `http_response_code()` per impostare il codice desiderato (es. `500` per una pagina d'errore) — solo *dopo* aver chiamato `BufferManager::flush()`. A quel punto gli header erano già stati inviati, e PHP generava il warning `http_response_code(): Cannot set response code - headers already sent (output started at .../BufferManager.php:55)`.
+
+Spostata la costruzione di `Response` prima di `BufferManager::flush()` in tutti e tre i metodi: il codice di stato viene ora impostato mentre l'output è ancora bufferizzato, prima che gli header vengano effettivamente inviati.
+
+**File modificati**:
+- **`Core/Services/RenderService.php`**: `generateView()`, `generateData()`, `generateJson()`
+
+#### `Core/HelperClasses/ErrorHandler::registerNonThrowableErrorHandler()` — cascata di pagine d'errore duplicate
+
+Il warning descritto sopra, in quanto ultimo errore PHP della richiesta, veniva intercettato da `error_get_last()` nella shutdown function registrata da `registerNonThrowableErrorHandler()`. Questa si limitava a verificare `is_array($error)`, senza distinguere un errore realmente fatale da un semplice warning né controllare se una risposta fosse già stata inviata per la richiesta corrente: trattava quindi il warning come un crash non catturato e tentava di renderizzare un'ulteriore pagina d'errore completa, la quale — generando a sua volta lo stesso warning — poteva ripetere la cascata una terza volta, questa volta mostrata "nuda" da PHP perché `display_errors` era già stato riattivato da `showErrorInDevelopmentEnvironment()` (chiamato nel blocco `finally` di `Public/index.php`, eseguito prima della shutdown function).
+
+Aggiunte due guardie alla shutdown function:
+- se gli header sono già stati inviati (`headers_sent()`), l'errore viene solo loggato, senza tentare di renderizzare un'altra pagina che si limiterebbe ad accodarsi all'output già in volo;
+- in produzione, la pagina generica d'errore (`callInternalServerErrorAction()`) viene ora invocata solo se l'errore appartiene ai livelli realmente fatali (`E_ERROR`, `E_PARSE`, `E_CORE_ERROR`, `E_COMPILE_ERROR`, `E_USER_ERROR`, `E_RECOVERABLE_ERROR`), tramite il nuovo metodo privato `isFatalError()`; un warning residuo viene loggato ma non genera più una pagina di errore al posto della risposta già prodotta.
+
+In ambiente di sviluppo il comportamento resta volutamente invariato: qualsiasi errore residuo, warning incluso, continua a generare la pagina di dettaglio (`nonThrowableError()`), scelta progettuale per rendere visibile ogni anomalia durante lo sviluppo.
+
+**File modificati**:
+- **`Core/HelperClasses/ErrorHandler.php`**: `registerNonThrowableErrorHandler()`, aggiunto il metodo privato `isFatalError()`
+
+### ♻️ Pulizia Codice
+
+#### `Core/HelperClasses/Dispatcher/ControllerFactory::createController()` — rimossa condizione "fast path" ridondante
+
+Il metodo selezionava un "fast path" (`new $controllerClassName($this->dataMapper, $this->debugger)`) per i costruttori senza parametri, con un solo parametro `DataMapper`, o con `DataMapper` seguito da `Debugger`. Per tutti e tre i casi, il percorso generico `resolveConstructorArguments()` produce però esattamente lo stesso risultato: PHP ignora silenziosamente gli argomenti posizionali passati in eccesso rispetto ai parametri dichiarati da un costruttore, quindi passare sempre `$dataMapper`/`$debugger` a un costruttore che ne dichiara meno (o nessuno) equivaleva già a quanto fa `resolveConstructorArguments()` valutando i tipi dichiarati uno per uno. La condizione non copriva inoltre alcun caso non già gestito dal percorso generico: era codice morto.
+
+Rimossa la condizione: `createController()` passa ora sempre attraverso `resolveConstructorArguments()`.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher/ControllerFactory.php`**
+
+### 📖 Documentazione
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+Rigenerata tramite `composer phpdoc`. Nessuna modifica di rilievo: le correzioni di questa release non toccano segnature pubbliche né aggiungono classi, l'unico file con differenze (`SismaFramework-Core-Services-RenderService.html`) riflette esclusivamente lo spostamento dei numeri di riga dovuto al riordino del codice in `RenderService.php`.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le firme pubbliche di `RenderService`, `ErrorHandler` e `ControllerFactory` restano invariate; tutte le correzioni intervengono solo sulla logica interna.
+
+---
+
+## [12.0.2] - 2026-07-04 - Chiusura Esplicita del Buffer di Rendering in RenderService
+
+Patch che rende esplicita la chiusura del buffer di output aperto da `RenderService` durante il rendering, invece di fare affidamento sullo scaricamento implicito a fine script. La correzione ha permesso di eliminare un workaround diventato necessario nella suite di test e ha reso visibili due difetti preesistenti che il workaround mascherava.
+
+### 🐛 Bug Fix
+
+#### `Core/Services/RenderService` — Buffer di rendering non chiuso esplicitamente
+
+`assemblesComponents()` (usato da `generateView()` e `generateData()`) e `generateJson()` aprono un livello di buffer tramite `BufferManager::start()` ma non lo richiudevano mai esplicitamente: il contenuto renderizzato restava bufferizzato fino alla chiusura naturale dello script PHP, che scarica automaticamente i buffer residui a fine richiesta. Questo comportamento implicito funziona in un normale ciclo richiesta/risposta (un processo per richiesta), ma lascia il buffer indefinitamente "in sospeso" in qualunque contesto che riutilizzi lo stesso processo per più cicli logici — come la suite di test, dove PHPUnit esegue centinaia di test nello stesso processo.
+
+Aggiunta una chiamata esplicita a `BufferManager::flush()` al termine di `generateView()`, `generateData()` e `generateJson()`, subito prima di restituire la `Response`: il buffer aperto da ciascuna chiamata viene ora sempre chiuso nello stesso punto logico in cui viene aperto, senza fare affidamento sullo scaricamento implicito di fine script. Valutata anche l'aggiunta della stessa chiamata in `Dispatcher::run()`: verificato che è superflua, perché `BufferManager::start()` viene invocato solo da `RenderService`, che ora si chiude sempre da solo.
+
+**File modificati**:
+- **`Core/Services/RenderService.php`**: `generateView()`, `generateData()` e `generateJson()` chiudono il proprio buffer con `BufferManager::flush()` prima di ritornare
+
+### 🧪 Test
+
+#### Allineamento della suite dei test alla nuova gestione del buffer
+
+Con `BufferManager::flush()` ora invocato esplicitamente da `RenderService`, la suite di test ha smesso di richiedere il workaround manuale (`\ob_end_clean()` a inizio test) precedentemente necessario per compensare il buffer di rendering mai chiuso. Rimosse le chiamate manuali a `\ob_end_clean()` in `DispatcherTest`, `RenderTest` e `RenderServiceTest`, e unificate le chiamate multiple a `expectOutputRegex()` per singolo test (non supportate da PHPUnit oltre la prima) in un'unica regex con lookahead.
+
+La correzione ha inoltre reso visibili due difetti preesistenti, prima mascherati dal workaround:
+- le view di test (`TestsApplication/Views/**/*.php`) includevano i partial comuni (`baseHead.php`, `menu.php`, `footer.php`, `header.php`) con `require_once`: nel processo unico condiviso da PHPUnit, solo il primo render dell'intera suite li includeva realmente, lasciando `<head>` vuoto in tutti i render successivi. Cambiato in `require`.
+- `DispatcherTest::testNotifyPath` verificava un titolo di pagina errato (`sample - index` invece di `sample - notify`, azione effettivamente instradata).
+
+**File modificati**:
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**, **`Tests/Core/HelperClasses/RenderTest.php`**, **`Tests/Core/Services/RenderServiceTest.php`**: rimossi gli `\ob_end_clean()` manuali, unificate le `expectOutputRegex()` multiple, corretta l'asserzione di `testNotifyPath`
+- **`TestsApplication/Views/controllerWithSlug/index.php`**, **`TestsApplication/Views/other/*.php`**, **`TestsApplication/Views/sample/*.php`**: `require_once` → `require` per l'inclusione dei partial comuni
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la firma pubblica di `RenderService` resta invariata; la correzione interviene solo sulla logica interna.
+
+---
+
+## [12.0.1] - 2026-07-03 - Fix: Copertura Incompleta Comando `sisma upgrade` (11.x → 12.0.0) e Miglioramenti al Sito di Autopromozione
+
+### 🐛 Bug Fix
+
+#### Estensione copertura comando `sisma upgrade` (11.x → 12.0.0)
+
+La strategy `Upgrade11to12Strategy` copriva solo 2 delle 3 breaking change della 12.0.0 (rinomina `SelfReferencedModel` e riordino parametri di `setFulltextIndexColumn`), lasciando silenziosa la rimozione dei metodi deprecati e delle classi `LogException`/`NoLogException`.
+
+**File aggiunti**:
+- **`Console/Services/Upgrade/Transformers/ExceptionBaseClassTransformer.php`**: Riscrive `extends LogException`/`extends NoLogException` in `extends BaseException` (aggiungendo `implements ShouldBeLoggedException` per `LogException`) e aggiorna gli `use` statement corrispondenti; segnala per revisione manuale i casi non gestibili automaticamente (riferimento senza `extends`, `use` mancante)
+- **`Console/Services/Upgrade/Transformers/DeprecatedMethodUsageTransformer.php`**: Rileva le chiamate ai metodi rimossi da `DependentModel`/`SelfDependentModel` (`countEntityCollectionByEntity()`, `getEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()`, e le controparti `...ByParentAndEntity()`) e le segnala per la migrazione manuale ai metodi magici, poiché il nome del metodo di destinazione dipende dal nome della proprietà usato a runtime e non può essere riscritto in modo sicuro con una trasformazione testuale
+
+**File modificati**:
+- **`Console/Services/Upgrade/Strategies/Upgrade11to12Strategy.php`**: Aggiunti i due nuovi transformer e ampliato `getBreakingChanges()` con la rimozione dei metodi deprecati, la rimozione di `LogException`/`NoLogException` e la rimozione delle costanti inutilizzate da `Config/config.php`
+- **`Console/Services/Upgrade/UpgradeManager.php`**: I warning raccolti dai transformer vengono ora inclusi nel report anche per i file che non hanno subito modifiche automatiche di contenuto (prima erano scartati se `changesCount` restava a 0, es. per un transformer di sola rilevazione)
+
+#### `robots.txt` e `sitemap.xml` non raggiungibili (404) sul sito di autopromozione
+
+Le richieste a `/robots.txt` e `/sitemap.xml` restituivano la pagina di errore generica del sito (`Errore` seguito dal path grezzo) invece del contenuto atteso. I due file erano posizionati nella root del modulo `Sample/`, ma `ResourceHandler::handleResourceFile()` risolve i file statici solo in tre percorsi: la root di progetto, gli assets strutturali del framework e la cartella `Assets/` del modulo applicativo (`Sample/Assets/`) — mai la root del modulo stesso, che è riservata all'albero di classi/viste (`Controllers/`, `Models/`, `Views/`, ecc.). Non trovando il file in nessuno dei tre percorsi, il dispatcher lanciava una `PageNotFoundException` con il path richiesto come messaggio, gestita da `SampleController::error()` come una pagina di errore qualsiasi.
+
+**File spostati**:
+- **`Sample/robots.txt`** → **`Sample/Assets/robots.txt`**
+- **`Sample/sitemap.xml`** → **`Sample/Assets/sitemap.xml`**
+
+#### `Config/config.php` — La root del sito (`/`) serviva la pagina degli esempi invece della homepage
+
+`DEFAULT_PATH` era impostato su `sample`: `RouteResolver::parsePath()` lo usa come controller quando l'URL è vuoto, quindi ogni richiesta a `/` risolveva a `SampleController::index()` (la lista di articoli demo) invece che a `HomeController::index()` (la landing page del framework). `HomeController::welcome()`, il cui docblock dichiara `URL: /`, era di fatto irraggiungibile da quel path — mentre `sitemap.xml` e `robots.txt` indicavano `/` come homepage con priorità massima.
+
+**File modificati**:
+- **`Config/config.php`**: `DEFAULT_PATH` da `"sample"` a `"home"` — la root ora risolve direttamente a `HomeController::index()`
+
+#### `Core/HelperClasses/Dispatcher/ControllerFactory.php` — Istanziazione errata dei controller con parametri di costruttore aggiuntivi dopo `DataMapper`
+
+`createController()` decideva se usare la "fast path" di istanziazione (`new $controllerClassName($this->dataMapper, $this->debugger)`) controllando solo che il primo parametro del costruttore fosse di tipo `DataMapper`, senza verificare che il secondo fosse effettivamente `Debugger`. Per un controller con firma `__construct(DataMapper $dataMapper, XxxService $xxxService)` — come `Sample/Controllers/HomeController.php`, `DocsController.php` e `SampleController.php`, che accettano `FrameworkInfoService` come secondo parametro — veniva comunque intrapresa la fast path, passando un'istanza di `Debugger` al posto del servizio atteso: il dispatcher reale falliva con un `TypeError` all'istanziazione del controller.
+
+Il controllo ora enumera esplicitamente i soli casi ammessi per la fast path: costruttore senza parametri, un solo parametro di tipo `DataMapper`, oppure esattamente due parametri rispettivamente `DataMapper` e `Debugger`. Qualsiasi altra combinazione (inclusi eventuali costruttori con tre o più parametri) passa sempre dalla risoluzione generica `resolveConstructorArguments()`, che istanzia ogni parametro in base al proprio tipo — più robusta anche di un controllo basato solo su "il secondo parametro è `Debugger`?", che avrebbe comunque richiamato la fast path (con soli due argomenti posizionali) anche in presenza di un eventuale terzo parametro obbligatorio.
+
+**File modificati**:
+- **`Core/HelperClasses/Dispatcher/ControllerFactory.php`**
+
+#### `Sample/Controllers/SampleController::protected()` — Metodi inesistenti su `Authentication`
+
+L'azione chiamava `$auth->isLogged()`, `$auth->getAuthenticatedUser()` e `$auth->getUserIdentifier()` su `Security\HttpClasses\Authentication`: nessuno di questi tre metodi esiste, né su quella classe né sulla base `BaseAuthentication` (che espone solo `getAuthenticableInterface()`, utilizzabile esclusivamente nella stessa richiesta in cui `checkAuthenticable()` ha già validato le credenziali). Qualunque richiesta a `/sample/protected` falliva con un `Error: Call to undefined method`. Mancava inoltre la view `sample/protected.php`, mai creata.
+
+Come documentato in `docs/security.md`, `Authentication` si occupa solo della *validazione* delle credenziali in fase di login; la persistenza dello stato di autenticazione tra richieste va gestita tramite `Session`. Riscritta l'azione per verificare `Session::hasItem('userId')`, coerente con l'esempio di login già presente nella documentazione. Il modulo demo non include un flusso di login (nessuna entity implementa `AuthenticableInterface`), quindi l'azione dimostra il pattern di guardia ma reindirizza sempre alla pagina di errore in assenza di sessione.
+
+**File aggiunti**:
+- **`Sample/Views/sample/protected.php`**
+
+**File modificati**:
+- **`Sample/Controllers/SampleController.php`**: `protected()` non richiede più `Authentication` come parametro, usa `Session::hasItem()`/`Session::getItem()`
+
+#### `Core/HelperClasses/BufferManager` — `clear()`/`flush()` non gestivano output buffer annidati
+
+`clear()` e `flush()` operavano solo sul livello di output buffer più interno (`ob_clean()`/`ob_flush()` agiscono su un singolo livello), mentre diverse view che si appoggiano a `siteLayout.php` aprono un proprio buffer annidato (`ob_start()` per catturare `$content` prima di includere il layout condiviso) dentro quello già aperto da `RenderService::assemblesComponents()`. Se un'eccezione (ogni `BaseException`, incluse tutte le eccezioni HTTP del framework, chiama `BufferManager::clear()` nel proprio costruttore) veniva sollevata mentre il buffer della view era ancora aperto, `clear()` ripuliva solo quel livello interno, lasciando aperto e non azzerato il livello esterno del framework — una correttezza che si è retta finora solo sul fatto che quel livello esterno risultava sempre vuoto in pratica, non su una garanzia del codice.
+
+`clear()`/`flush()` ora svuotano in loop tutti i livelli di buffer aperti dal framework, tramite `ob_end_clean()`/`ob_end_flush()`. Per evitare di richiudere buffer non di proprietà del framework (es. quello di PHPUnit durante i test, o un eventuale buffer aperto dal server prima dell'avvio della richiesta), la classe memorizza ora un livello di base (`$baseLevel`), rilevato al primo utilizzo, sotto il quale i due metodi non scendono mai. Una prima versione che svuotava incondizionatamente fino al livello 0 assoluto è stata scartata perché rompeva l'isolamento dei buffer di PHPUnit (57 test segnalati come "risky" nella suite completa).
+
+**File modificati**:
+- **`Core/HelperClasses/BufferManager.php`**
+
+### 📖 Documentazione
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+Rigenerata tramite `composer phpdoc` per includere le nuove classi introdotte in questa release (`ExceptionBaseClassTransformer`, `DeprecatedMethodUsageTransformer`) e riflettere le modifiche a `Upgrade11to12Strategy` e `UpgradeManager`. `Sample/`, `Config/` e `Tests/` restano esclusi dalla generazione (`phpdoc.xml`), quindi le modifiche al sito di autopromozione e alla configurazione di questa release non compaiono in questa documentazione API.
+
+### 🎨 Miglioramenti Sito di Autopromozione (Sample)
+
+#### Rimosso l'uso di `ob_start()`/`ob_get_clean()` dalle view (`commonParts/siteLayout.php` sostituito da header/footer)
+
+Le view basate sul layout condiviso (`home/*`, `docs/*`, quasi tutte le `sample/*`) catturavano il proprio contenuto con `ob_start()`/`ob_get_clean()` in una variabile `$content`, poi interpolata a metà di `siteLayout.php` tra navbar e footer — un buffer annidato dentro quello già aperto da `RenderService::assemblesComponents()`. Non è il pattern documentato dal framework: `docs/views.md` indica esplicitamente di dividere il layout in `header.php`/`footer.php` e usare `require` sequenziali, proprio per evitare qualunque trucco di output buffering nelle view. Le view più vecchie del sito (`error.php`, `notify.php`) seguivano già correttamente questo pattern.
+
+`Sample/Views/commonParts/siteLayout.php` è stato sostituito da `siteLayoutHeader.php` (tutto fino alla chiusura della navbar) e `siteLayoutFooter.php` (dal footer alla chiusura di `</html>`). Le 12 view interessate ora fanno `require` del primo prima del contenuto e del secondo dopo, senza alcun output buffering proprio. Verificato con rendering reale (PHP built-in server) di tutte le pagine coinvolte, oltre alla suite PHPUnit completa.
+
+**File aggiunti**:
+- **`Sample/Views/commonParts/siteLayoutHeader.php`**, **`Sample/Views/commonParts/siteLayoutFooter.php`**
+
+**File rimossi**:
+- **`Sample/Views/commonParts/siteLayout.php`**
+
+**File modificati**:
+- **`Sample/Views/home/index.php`**, **`home/privacy.php`**, **`home/cookies.php`**, **`docs/index.php`**, **`docs/changelog.php`**, **`docs/viewer.php`**, **`sample/index.php`**, **`sample/articlesByAuthor.php`**, **`sample/filterByStatus.php`**, **`sample/search.php`**, **`sample/showArticle.php`**, **`sample/protected.php`**
+- **`Sample/README.md`**, **`Sample/SITE_INFO.md`**: riferimenti a `siteLayout.php` aggiornati
+
+#### Versione e data di rilascio visibili nel sito
+
+La versione corrente del framework e la data di rilascio non erano visibili in nessuna pagina del sito di autopromozione (`Sample`), se non nel `CHANGELOG.md`. Aggiunto un badge versione in navbar (linkato a `/docs/changelog`) e una riga "Versione X.Y.Z — rilasciata il ..." nel footer; corretto anche il campo `softwareVersion` nel JSON-LD della homepage, rimasto hardcoded a `10.0.3` per diverse major.
+
+Le informazioni vengono ricavate automaticamente da `composer.json` (versione) e dal primo blocco datato del `CHANGELOG.md` (data di rilascio corrispondente), tramite un nuovo Service iniettato nei controller — coerente con il pattern di dependency injection già usato per `DataMapper`/`Debugger` — evitando così di doverle allineare manualmente ad ogni rilascio.
+
+**File aggiunti**:
+- **`Sample/Services/FrameworkInfoService.php`**: legge la versione da `composer.json` e la data di rilascio corrispondente dal `CHANGELOG.md`
+
+**File modificati**:
+- **`Sample/Controllers/HomeController.php`**, **`Sample/Controllers/DocsController.php`**, **`Sample/Controllers/SampleController.php`**: iniettato `FrameworkInfoService` e valorizzate le var `frameworkVersion`/`frameworkReleaseDate`
+- **`Sample/Views/commonParts/siteLayout.php`**: badge versione in navbar, riga versione/data nel footer, `softwareVersion` dinamico nel JSON-LD
+
+#### Rimozione codice di debug residuo
+
+Rimossi gli script usati per diagnosticare il bug del parser Markdown risolto in 11.8.1, mai ripuliti dopo il fix, incluso un metodo di controller raggiungibile pubblicamente via URL.
+
+**File rimossi**:
+- **`Sample/test_parser.php`**, **`Sample/test_regex.php`**, **`Sample/debug_markdown.php`**
+
+**File modificati**:
+- **`Sample/Controllers/DocsController.php`**: rimosso il metodo `debugRegex()` (azione pubblica non referenziata da alcuna vista o link)
+
+#### `Sample/module.json` — Allineamento versione
+
+`framework_version` e `requires.sismaframework` erano rimasti fermi a `11.0.0`; allineati a `12.0.1`.
+
+**File modificati**:
+- **`Sample/module.json`**
+
+#### `Sample/Assets/sitemap.xml` — Allineamento con le pagine reali del sito
+
+La sitemap indicizzava solo 2 delle 31 pagine di documentazione (`getting-started`, `api-reference`), non includeva `/docs/changelog`, ed elencava tutte le pagine con `<lastmod>` fermo al `2025-01-15`. Riscritta per includere l'intero albero di `docs/index.md`, raggruppato per sezione con priorità decrescente, e aggiornate le date.
+
+**File modificati**:
+- **`Sample/Assets/sitemap.xml`**
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: tutte le modifiche di questa sezione riguardano esclusivamente il sito demo/autopromozione (`Sample`); non toccano alcuna API pubblica del framework.
+
 ## [12.0.0] - 2026-07-02 - Breaking Changes: Rinomina `SelfReferencedModel` e Riordinamento Parametri `Query`
 
 ### 💥 Breaking Changes
@@ -82,6 +397,30 @@ Il sistema di upgrade automatico dei moduli ora copre anche la migrazione dalla 
 
 **File modificati**:
 - **`Console/Services/Upgrade/UpgradeManager.php`**: Aggiunta `Upgrade11to12Strategy` all'array delle strategy in `selectStrategy()`
+
+#### `Console/Traits/InteractiveInputTrait` — Iniezione dello stream di input per i test
+
+Il trait espone ora il metodo pubblico `setInputStream()`, che permette di sostituire lo stream `php://stdin` usato da `ask()`, `askConfirmation()` e `askSecret()` con uno stream arbitrario (es. `php://memory`), rendendo testabili i comandi interattivi senza dover simulare un vero input da terminale. Lo stream, se non iniettato esplicitamente, viene aperto una sola volta e riutilizzato tra le chiamate successive (in precedenza veniva aperto e richiuso ad ogni singola richiesta).
+
+**File modificati**:
+- **`Console/Traits/InteractiveInputTrait.php`**: aggiunti i metodi `setInputStream()` e `getInputStream()`; lo stream è ora conservato nella proprietà `$inputStream` invece di essere aperto/chiuso ad ogni chiamata
+- **`Tests/Console/Traits/InteractiveInputTraitTest.php`**: nuovi test basati su stream di input iniettati
+- **`Tests/Console/Commands/InstallationCommandTest.php`**: nuovi test del flusso di configurazione interattiva del database basati su stream di input iniettati
+
+### 🔧 Pulizia Configurazione
+
+#### `Config/config.php` e `Core/HelperClasses/Config.php` — Rimozione costanti non utilizzate
+
+Rimosse le costanti dichiarate in `Config/config.php` (e le relative proprietà esposte da `Core/HelperClasses/Config.php`) non più referenziate da alcuna classe del framework: `ADAPTERS`, `ADAPTER_NAMESPACE`, `ADAPTER_PATH`, `CONFIGURATION_PASSWORD`, `CORE`, `CORE_NAMESPACE`, `CORE_PATH`, `DEFAULT_CONTROLLER`, `DEFAULT_CONTROLLER_NAMESPACE`, `DEFAULT_CONTROLLER_PATH`, `DEFAULT_META_URL`, `MODEL_PATH`, `ORM`, `ORM_NAMESPACE`, `ORM_PATH`, `PUBLIC_PATH`, `STRUCTURAL_RESOURCES_PATH`, `THIS_DIRECTORY`.
+
+Rimosse anche `LOG_WARNING_ROW` e `LOG_DANGER_ROW`: non erano lette da alcuna classe del framework (che usa invece `LOG_VERBOSE_ACTIVE`, `LOG_DEVELOPMENT_MAX_ROW` e `LOG_PRODUCTION_MAX_ROW` per la rotazione dei log), ma solo da moduli applicativi esterni per colorare un indicatore nella dashboard di back-end. La loro dichiarazione va spostata nel file di configurazione del modulo consumatore, secondo il pattern già seguito da costanti equivalenti (es. soglie di warning/danger per la dimensione dei media).
+
+**File modificati**:
+- **`Config/config.php`**: rimosse le costanti sopra elencate
+- **`Core/HelperClasses/Config.php`**: rimosse le proprietà `readonly` corrispondenti
+- **`docs/configuration-reference.md`**, **`docs/controllers.md`**: aggiornati i riferimenti alle costanti rimosse
+
+**Migrazione**: chi facesse riferimento diretto a una di queste costanti tramite `\Config\NOME_COSTANTE` in un modulo applicativo deve dichiararla nel file di configurazione del proprio modulo.
 
 ---
 

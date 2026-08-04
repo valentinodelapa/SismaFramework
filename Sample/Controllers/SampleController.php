@@ -8,6 +8,7 @@ use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
 use SismaFramework\Core\HelperClasses\Render;
 use SismaFramework\Core\HelperClasses\Router;
+use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\Interfaces\Controllers\DefaultControllerInterface;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\HelperClasses\DataMapper;
@@ -16,13 +17,13 @@ use SismaFramework\Sample\Enumerations\ArticleStatus;
 use SismaFramework\Sample\Models\SampleBaseEntityModel;
 use SismaFramework\Sample\Models\SampleDependentEntityModel;
 use SismaFramework\Sample\Models\SampleReferencedEntityModel;
-use SismaFramework\Security\HttpClasses\Authentication;
+use SismaFramework\Sample\Services\FrameworkInfoService;
 
 /**
  * Controller di esempio che mostra tutte le funzionalità del framework
  *
  * Questo controller dimostra:
- * - Autowiring di servizi (Request, Authentication)
+ * - Autowiring di servizi (Request)
  * - Binding automatico di parametri tipizzati
  * - Entity injection dall'URL
  * - Gestione di enum nei parametri
@@ -33,10 +34,14 @@ use SismaFramework\Security\HttpClasses\Authentication;
  */
 class SampleController extends BaseController implements DefaultControllerInterface
 {
-    public function __construct(DataMapper $dataMapper = new DataMapper())
-    {
+    public function __construct(
+        DataMapper $dataMapper = new DataMapper(),
+        FrameworkInfoService $frameworkInfoService = new FrameworkInfoService(),
+    ) {
         parent::__construct($dataMapper);
         $this->vars['metaUrl'] = $this->router->getMetaUrl();
+        $this->vars['frameworkVersion'] = $frameworkInfoService->getVersion();
+        $this->vars['frameworkReleaseDate'] = $frameworkInfoService->getReleaseDate();
     }
 
     /**
@@ -139,22 +144,24 @@ class SampleController extends BaseController implements DefaultControllerInterf
     }
 
     /**
-     * Area protetta - Esempio di AUTHENTICATION
+     * Area protetta - Esempio di controllo di accesso tramite SESSION
      *
      * URL: /sample/protected
      *
-     * Dimostra l'autowiring di Authentication per gestire utenti autenticati
+     * La classe Authentication si occupa esclusivamente della validazione
+     * delle credenziali in fase di login: non espone un metodo per
+     * verificare se l'utente è già autenticato in richieste successive.
+     * La persistenza dello stato di login va gestita tramite Session
+     * (vedi docs/security.md). Questo modulo demo non include un flusso
+     * di login, quindi questa pagina reindirizza sempre all'errore.
      */
-    public function protected(Authentication $auth): Response
+    public function protected(): Response
     {
-        // Verifica se l'utente è autenticato
-        if (!$auth->isLogged()) {
+        if (!Session::hasItem('userId')) {
             return $this->router->redirect('/sample/error/message/Devi essere autenticato');
         }
 
-        // Recupera i dati dell'utente loggato
-        $this->vars['user'] = $auth->getAuthenticatedUser();
-        $this->vars['username'] = $auth->getUserIdentifier();
+        $this->vars['userId'] = Session::getItem('userId');
 
         return Render::generateView('sample/protected', $this->vars);
     }

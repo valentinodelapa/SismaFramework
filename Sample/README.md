@@ -42,7 +42,8 @@ Sample/
     ├── docs/                   # Viewer documentazione
     ├── sample/                 # Esempi tecnici
     └── commonParts/
-        └── siteLayout.php      # Layout comune responsive
+        ├── siteLayoutHeader.php # Header + navbar del layout comune
+        └── siteLayoutFooter.php # Footer del layout comune
 ```
 
 ## 🚀 Come Utilizzare gli Esempi

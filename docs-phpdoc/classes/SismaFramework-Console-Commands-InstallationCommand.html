@@ -203,6 +203,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -property -private">
+    <a class="" href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#property_inputStream">$inputStream</a>
+    <span>
+                        &nbsp;: mixed            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -property -private">
     <a class="" href="classes/SismaFramework-Console-Commands-InstallationCommand.html#property_installationManager">$installationManager</a>
     <span>
                         &nbsp;: <a href="classes/SismaFramework-Console-Services-Installation-InstallationManager.html"><abbr title="\SismaFramework\Console\Services\Installation\InstallationManager">InstallationManager</abbr></a>            </span>
@@ -236,6 +242,12 @@
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_setArguments">setArguments()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_setInputStream">setInputStream()</a>
     <span>
                                 &nbsp;: void    </span>
 </dt>
@@ -304,6 +316,12 @@
     <a class="" href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_getDbConfigFromOptions">getDbConfigFromOptions()</a>
     <span>
                                 &nbsp;: array&lt;string|int, mixed&gt;    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_getInputStream">getInputStream()</a>
+    <span>
+                                &nbsp;: mixed    </span>
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
@@ -396,6 +414,43 @@
             <span class="phpdocumentor-signature__type">array&lt;string|int, mixed&gt;</span>
     <span class="phpdocumentor-signature__name">$options</span>
      = <span class="phpdocumentor-signature__default-value">[]</span></code>
+
+    
+    
+    
+
+        
+        
+
+</article>
+                    <article
+        class="
+            phpdocumentor-element
+            -property
+            -private
+                                                                    "
+>
+    <h4 class="phpdocumentor-element__name" id="property_inputStream">
+        $inputStream
+        <a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#property_inputStream" class="headerlink"><i class="fas fa-link"></i></a>
+
+        <span class="phpdocumentor-element__modifiers">
+                                            </span>
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">36</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+        <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">$inputStream</span>
+     = <span class="phpdocumentor-signature__default-value">null</span></code>
 
     
     
@@ -641,6 +696,50 @@
             -public
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_setInputStream">
+        setInputStream()
+        <a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_setInputStream" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">38</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+                    <span class="phpdocumentor-signature__name">setInputStream</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">mixed&nbsp;</span><span class="phpdocumentor-signature__argument__name">$inputStream</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$inputStream</span>
+                : <span class="phpdocumentor-argument-list__argument__type">mixed</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_setOptions">
         setOptions()
         <a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_setOptions" class="headerlink"><i class="fas fa-link"></i></a>
@@ -693,7 +792,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">36</span>
+    <span class="phpdocumentor-element-found-in__line">48</span>
 
     </aside>
 
@@ -748,7 +847,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">52</span>
+    <span class="phpdocumentor-element-found-in__line">62</span>
 
     </aside>
 
@@ -803,7 +902,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">68</span>
+    <span class="phpdocumentor-element-found-in__line">76</span>
 
     </aside>
 
@@ -1153,6 +1252,40 @@
             -private
                                                         "
 >
+    <h4 class="phpdocumentor-element__name" id="method_getInputStream">
+        getInputStream()
+        <a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_getInputStream" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Console/Traits/InteractiveInputTrait.php"><a href="files/console-traits-interactiveinputtrait.html"><abbr title="Console/Traits/InteractiveInputTrait.php">InteractiveInputTrait.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">43</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+                    <span class="phpdocumentor-signature__name">getInputStream</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">mixed</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                                        "
+>
     <h4 class="phpdocumentor-element__name" id="method_hasDatabaseConfigFromEnvironment">
         hasDatabaseConfigFromEnvironment()
         <a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDatabaseConfigFromEnvironment" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1247,6 +1380,7 @@
                     <ul class="phpdocumentor-list -clean">
                                                     <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#property_arguments">$arguments</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#property_options">$options</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#property_inputStream">$inputStream</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#property_installationManager">$installationManager</a></li>
                                             </ul>
                 </li>
@@ -1258,6 +1392,7 @@
                                             <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_checkCompatibility">checkCompatibility()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_run">run()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_setArguments">setArguments()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_setInputStream">setInputStream()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_setOptions">setOptions()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_ask">ask()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askConfirmation">askConfirmation()</a></li>
@@ -1269,6 +1404,7 @@
                                             <li class=""><a href="classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_output">output()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_collectDatabaseConfiguration">collectDatabaseConfiguration()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_getDbConfigFromOptions">getDbConfigFromOptions()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_getInputStream">getInputStream()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDatabaseConfigFromEnvironment">hasDatabaseConfigFromEnvironment()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Console-Commands-InstallationCommand.html#method_hasDbOptionsFromCommandLine">hasDbOptionsFromCommandLine()</a></li>
                                     </ul>

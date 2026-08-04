@@ -215,11 +215,11 @@ abstract class BaseModel
                 $foreignKeyColumn = $query->getAdapter()->escapeColumn($segment, true);
                 $onCondition = $parentAlias . '.' . $foreignKeyColumn . ' = ' . $alias . '.id';
                 $query->appendJoin(
-                    $joinType,
-                    $relatedEntityClass,
-                    $alias,
-                    $onCondition,
-                    $relatedEntityClass
+                        $joinType,
+                        $relatedEntityClass,
+                        $alias,
+                        $onCondition,
+                        $relatedEntityClass
                 );
             }
             $joinedColumns = $query->getAdapter()->buildJoinedColumns($alias, $relatedEntityClass);
@@ -233,15 +233,12 @@ abstract class BaseModel
 
     protected function isCollectionRelation(string $relationName): bool
     {
-        if (!is_subclass_of($this->entityName, ReferencedEntity::class)) {
-            return false;
+        if (is_subclass_of($this->entityName, ReferencedEntity::class)) {
+            $tempEntity = new $this->entityName();
+            if ($tempEntity instanceof ReferencedEntity) {
+                return $tempEntity->checkCollectionExists($relationName);
+            }
         }
-
-        $tempEntity = new $this->entityName();
-        if ($tempEntity instanceof ReferencedEntity) {
-            return $tempEntity->checkCollectionExists($relationName);
-        }
-
         return false;
     }
 
@@ -250,18 +247,15 @@ abstract class BaseModel
         if ($entities->count() === 0) {
             return;
         }
-
         $entityIds = [];
         foreach ($entities as $entity) {
             if (isset($entity->id)) {
                 $entityIds[] = $entity->id;
             }
         }
-
         if (empty($entityIds)) {
             return;
         }
-
         foreach ($collectionNames as $collectionName) {
             $this->loadCollectionForEntities($entities, $collectionName, $entityIds);
         }
@@ -318,49 +312,38 @@ abstract class BaseModel
                     return $this->fetchEntityByIdWithRelations($id, $relations, $joinType);
                 }
             }
-
             return $entity;
         }
-
         return $this->fetchEntityByIdWithRelations($id, $relations, $joinType);
     }
 
     protected function fetchEntityByIdWithRelations(int $id, array $relations, JoinType $joinType): ?BaseEntity
     {
         $query = $this->initQuery();
-
         foreach ($relations as $relation) {
             $this->appendRelationJoin($query, $relation, $joinType);
         }
-
         $query->setWhere();
         $query->appendCondition('id', ComparisonOperator::equal, Placeholder::placeholder);
         $bindValues = [$id];
         $bindTypes = [DataType::typeInteger];
         $query->close();
-
         $results = $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
-
         return $results->count() > 0 ? $results[0] : null;
     }
 
     protected function appendRelationJoin(Query &$query, string $foreignKeyProperty, JoinType $joinType): void
     {
         $entityReflection = new \ReflectionClass($this->entityName);
-
         if (!$entityReflection->hasProperty($foreignKeyProperty)) {
             throw new InvalidArgumentException("Property '{$foreignKeyProperty}' does not exist in entity '{$this->entityName}'");
         }
-
         $property = $entityReflection->getProperty($foreignKeyProperty);
         $propertyType = $property->getType();
-
         if ($propertyType === null || !is_subclass_of($propertyType->getName(), BaseEntity::class)) {
             throw new InvalidArgumentException("Property '{$foreignKeyProperty}' is not a foreign key relationship");
         }
-
         $relatedEntityClass = $propertyType->getName();
-
         if ($relatedEntityClass === $this->entityName) {
             $this->appendSelfReferencedJoin($query, $foreignKeyProperty, $joinType);
         } else {
@@ -376,7 +359,6 @@ abstract class BaseModel
     protected function appendSelfReferencedJoin(Query &$query, string $foreignKeyProperty, JoinType $joinType): void
     {
         $query->appendJoinOnForeignKey($joinType, $foreignKeyProperty, $this->entityName);
-
         $joinedColumns = $query->getAdapter()->buildJoinedColumns($foreignKeyProperty, $this->entityName);
         foreach ($joinedColumns as $column) {
             $query->appendColumn($column);

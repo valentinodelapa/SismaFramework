@@ -39,7 +39,6 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class ControllerFactory
 {
-
     private DataMapper $dataMapper;
     private DocumentMapper $documentMapper;
     private Debugger $debugger;
@@ -56,13 +55,8 @@ class ControllerFactory
         $reflectionController = new \ReflectionClass($controllerClassName);
         $reflectionConstructor = $reflectionController->getConstructor();
         $reflectionConstructorArguments = $reflectionConstructor->getParameters();
-        if ((count($reflectionConstructorArguments) == 0) ||
-                (is_a($reflectionConstructorArguments[0]->getType()->getName(), DataMapper::class, true))) {
-            return new $controllerClassName($this->dataMapper, $this->documentMapper, $this->debugger);
-        } else {
-            $constructorArguments = $this->resolveConstructorArguments($reflectionConstructorArguments);
-            return $reflectionController->newInstanceArgs($constructorArguments);
-        }
+        $constructorArguments = $this->resolveConstructorArguments($reflectionConstructorArguments);
+        return $reflectionController->newInstanceArgs($constructorArguments);
     }
 
     private function resolveConstructorArguments(array $reflectionArguments): array

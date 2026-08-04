@@ -231,10 +231,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Enumerations-ModelType.html#enumcase_dependentModel"
         },                {
-            "fqsen": "\\SismaFramework\\Console\\Enumerations\\ModelType\u003A\u003AselfReferencedModel",
-            "name": "selfReferencedModel",
+            "fqsen": "\\SismaFramework\\Console\\Enumerations\\ModelType\u003A\u003AselfDependentModel",
+            "name": "selfDependentModel",
             "summary": "",
-            "url": "classes/SismaFramework-Console-Enumerations-ModelType.html#enumcase_selfReferencedModel"
+            "url": "classes/SismaFramework-Console-Enumerations-ModelType.html#enumcase_selfDependentModel"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Exceptions\\ApplicationPathException",
             "name": "ApplicationPathException",
@@ -836,6 +836,36 @@ Search.appendIndex(
             "summary": "Check\u0020if\u0020this\u0020strategy\u0020requires\u0020manual\u0020intervention",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade10to11Strategy.html#method_requiresManualIntervention"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade11to12Strategy",
+            "name": "Upgrade11to12Strategy",
+            "summary": "Upgrade\u0020strategy\u0020for\u0020version\u002011.x\u0020to\u002012.0.0",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade11to12Strategy.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade11to12Strategy\u003A\u003AgetSourceVersion\u0028\u0029",
+            "name": "getSourceVersion",
+            "summary": "Get\u0020the\u0020source\u0020version\u0020this\u0020strategy\u0020upgrades\u0020from",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade11to12Strategy.html#method_getSourceVersion"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade11to12Strategy\u003A\u003AgetTargetVersion\u0028\u0029",
+            "name": "getTargetVersion",
+            "summary": "Get\u0020the\u0020target\u0020version\u0020this\u0020strategy\u0020upgrades\u0020to",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade11to12Strategy.html#method_getTargetVersion"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade11to12Strategy\u003A\u003AgetTransformers\u0028\u0029",
+            "name": "getTransformers",
+            "summary": "Get\u0020the\u0020list\u0020of\u0020transformers\u0020to\u0020apply",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade11to12Strategy.html#method_getTransformers"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade11to12Strategy\u003A\u003AgetBreakingChanges\u0028\u0029",
+            "name": "getBreakingChanges",
+            "summary": "Get\u0020the\u0020list\u0020of\u0020breaking\u0020changes",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade11to12Strategy.html#method_getBreakingChanges"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade11to12Strategy\u003A\u003ArequiresManualIntervention\u0028\u0029",
+            "name": "requiresManualIntervention",
+            "summary": "Check\u0020if\u0020this\u0020strategy\u0020requires\u0020manual\u0020intervention",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade11to12Strategy.html#method_requiresManualIntervention"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\UpgradeStrategyInterface",
             "name": "UpgradeStrategyInterface",
             "summary": "Interface\u0020for\u0020upgrade\u0020strategies",
@@ -865,6 +895,151 @@ Search.appendIndex(
             "name": "requiresManualIntervention",
             "summary": "Check\u0020if\u0020this\u0020strategy\u0020requires\u0020manual\u0020intervention",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-UpgradeStrategyInterface.html#method_requiresManualIntervention"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ClassRenameTransformer",
+            "name": "ClassRenameTransformer",
+            "summary": "Transformer\u0020for\u0020renaming\u0020classes,\u0020interfaces,\u0020traits\u0020and\u0020enum\u0020cases",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ClassRenameTransformer.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ClassRenameTransformer\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ClassRenameTransformer.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ClassRenameTransformer\u003A\u003AcanTransform\u0028\u0029",
+            "name": "canTransform",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ClassRenameTransformer.html#method_canTransform"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ClassRenameTransformer\u003A\u003Atransform\u0028\u0029",
+            "name": "transform",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ClassRenameTransformer.html#method_transform"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ClassRenameTransformer\u003A\u003AgetConfidence\u0028\u0029",
+            "name": "getConfidence",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ClassRenameTransformer.html#method_getConfidence"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ClassRenameTransformer\u003A\u003AgetDescription\u0028\u0029",
+            "name": "getDescription",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ClassRenameTransformer.html#method_getDescription"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ClassRenameTransformer\u003A\u003A\u0024renames",
+            "name": "renames",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ClassRenameTransformer.html#property_renames"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\DeprecatedMethodUsageTransformer",
+            "name": "DeprecatedMethodUsageTransformer",
+            "summary": "Detects\u0020calls\u0020to\u0020methods\u0020removed\u0020by\u0020an\u0020upgrade\u0020strategy\u0020and\u0020flags\u0020them\u0020for\nmanual\u0020review.\u0020Unlike\u0020MethodRenameTransformer,\u0020the\u0020replacement\u0020is\u0020not\u0020a\nfixed\u0020identifier\u0020\u0028it\u0020depends\u0020on\u0020call\u002Dsite\u0020context,\u0020e.g.\u0020the\u0020property\u0020name\nused\u0020to\u0020build\u0020a\u0020magic\u0020method\u0020name\u0029,\u0020so\u0020no\u0020content\u0020is\u0020modified.",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-DeprecatedMethodUsageTransformer.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\DeprecatedMethodUsageTransformer\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-DeprecatedMethodUsageTransformer.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\DeprecatedMethodUsageTransformer\u003A\u003AcanTransform\u0028\u0029",
+            "name": "canTransform",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-DeprecatedMethodUsageTransformer.html#method_canTransform"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\DeprecatedMethodUsageTransformer\u003A\u003Atransform\u0028\u0029",
+            "name": "transform",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-DeprecatedMethodUsageTransformer.html#method_transform"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\DeprecatedMethodUsageTransformer\u003A\u003AgetConfidence\u0028\u0029",
+            "name": "getConfidence",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-DeprecatedMethodUsageTransformer.html#method_getConfidence"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\DeprecatedMethodUsageTransformer\u003A\u003AgetDescription\u0028\u0029",
+            "name": "getDescription",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-DeprecatedMethodUsageTransformer.html#method_getDescription"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\DeprecatedMethodUsageTransformer\u003A\u003A\u0024deprecations",
+            "name": "deprecations",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-DeprecatedMethodUsageTransformer.html#property_deprecations"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ExceptionBaseClassTransformer",
+            "name": "ExceptionBaseClassTransformer",
+            "summary": "Transformer\u0020for\u0020the\u0020removal\u0020of\u0020Security\\ExtendedClasses\\LogException\u0020and\nNoLogException\u0020\u0028v11\u0020\u2192\u0020v12\u0029.\u0020Both\u0020classes\u0020are\u0020replaced\u0020by\u0020BaseException,\nwith\u0020LogException\u0020additionally\u0020requiring\u0020the\u0020ShouldBeLoggedException\ninterface\u0020to\u0020preserve\u0020its\u0020logging\u0020behaviour.",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ExceptionBaseClassTransformer.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ExceptionBaseClassTransformer\u003A\u003AcanTransform\u0028\u0029",
+            "name": "canTransform",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ExceptionBaseClassTransformer.html#method_canTransform"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ExceptionBaseClassTransformer\u003A\u003Atransform\u0028\u0029",
+            "name": "transform",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ExceptionBaseClassTransformer.html#method_transform"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ExceptionBaseClassTransformer\u003A\u003AgetConfidence\u0028\u0029",
+            "name": "getConfidence",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ExceptionBaseClassTransformer.html#method_getConfidence"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ExceptionBaseClassTransformer\u003A\u003AgetDescription\u0028\u0029",
+            "name": "getDescription",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ExceptionBaseClassTransformer.html#method_getDescription"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ExceptionBaseClassTransformer\u003A\u003ABASE_EXCEPTION_USE",
+            "name": "BASE_EXCEPTION_USE",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ExceptionBaseClassTransformer.html#constant_BASE_EXCEPTION_USE"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ExceptionBaseClassTransformer\u003A\u003ASHOULD_BE_LOGGED_USE",
+            "name": "SHOULD_BE_LOGGED_USE",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ExceptionBaseClassTransformer.html#constant_SHOULD_BE_LOGGED_USE"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\ExceptionBaseClassTransformer\u003A\u003AREMOVED_CLASSES",
+            "name": "REMOVED_CLASSES",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-ExceptionBaseClassTransformer.html#constant_REMOVED_CLASSES"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\FulltextIndexColumnTransformer",
+            "name": "FulltextIndexColumnTransformer",
+            "summary": "Transformer\u0020for\u0020Query\u003A\u003AsetFulltextIndexColumn\u0028\u0029\u0020parameter\u0020reordering\u0020\u0028v11\u0020\u2192\u0020v12\u0029",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-FulltextIndexColumnTransformer.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\FulltextIndexColumnTransformer\u003A\u003AcanTransform\u0028\u0029",
+            "name": "canTransform",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-FulltextIndexColumnTransformer.html#method_canTransform"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\FulltextIndexColumnTransformer\u003A\u003Atransform\u0028\u0029",
+            "name": "transform",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-FulltextIndexColumnTransformer.html#method_transform"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\FulltextIndexColumnTransformer\u003A\u003AextractArguments\u0028\u0029",
+            "name": "extractArguments",
+            "summary": "Extracts\u0020comma\u002Dseparated\u0020arguments\u0020from\u0020a\u0020position\u0020after\u0020the\u0020opening\u0020parenthesis,\nrespecting\u0020nested\u0020parentheses,\u0020brackets,\u0020and\u0020string\u0020literals.",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-FulltextIndexColumnTransformer.html#method_extractArguments"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\FulltextIndexColumnTransformer\u003A\u003AgetConfidence\u0028\u0029",
+            "name": "getConfidence",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-FulltextIndexColumnTransformer.html#method_getConfidence"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\FulltextIndexColumnTransformer\u003A\u003AgetDescription\u0028\u0029",
+            "name": "getDescription",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-FulltextIndexColumnTransformer.html#method_getDescription"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\FulltextIndexColumnTransformer\u003A\u003AMETHOD_NAME",
+            "name": "METHOD_NAME",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Transformers-FulltextIndexColumnTransformer.html#constant_METHOD_NAME"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Transformers\\MethodRenameTransformer",
             "name": "MethodRenameTransformer",
@@ -1236,6 +1411,16 @@ Search.appendIndex(
             "summary": "Trait\u0020for\u0020handling\u0020interactive\u0020console\u0020input",
             "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html"
         },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003AsetInputStream\u0028\u0029",
+            "name": "setInputStream",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_setInputStream"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003AgetInputStream\u0028\u0029",
+            "name": "getInputStream",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_getInputStream"
+        },                {
             "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003Aask\u0028\u0029",
             "name": "ask",
             "summary": "",
@@ -1250,6 +1435,11 @@ Search.appendIndex(
             "name": "askSecret",
             "summary": "",
             "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#method_askSecret"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Traits\\InteractiveInputTrait\u003A\u003A\u0024inputStream",
+            "name": "inputStream",
+            "summary": "",
+            "url": "classes/SismaFramework-Console-Traits-InteractiveInputTrait.html#property_inputStream"
         },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController",
             "name": "BaseController",
@@ -2740,6 +2930,21 @@ Search.appendIndex(
             "name": "flush",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_flush"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003AdiscardAll\u0028\u0029",
+            "name": "discardAll",
+            "summary": "Discards\u0020every\u0020open\u0020buffer\u0020level,\u0020including\u0020any\u0020wrapper\u0020opened\u0020outside\nthe\u0020tracked\u0020floor\u0020\u0028e.g.\u0020by\u0020ErrorHandler\u0029,\u0020and\u0020resets\u0020the\u0020floor\u0020so\u0020it\u0020is\nrecomputed\u0020on\u0020next\u0020use.\u0020Only\u0020meant\u0020for\u0020full\u002Dresponse\u0020replacement\u0020\u0028error\nrecovery\u0029,\u0020never\u0020for\u0020regular\u0020request\u0020handling.",
+            "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_discardAll"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003AensureBaseLevel\u0028\u0029",
+            "name": "ensureBaseLevel",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_ensureBaseLevel"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003A\u0024baseLevel",
+            "name": "baseLevel",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#property_baseLevel"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor",
             "name": "Encryptor",
@@ -5031,25 +5236,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AcountEntityCollectionByEntity\u0028\u0029",
-            "name": "countEntityCollectionByEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_countEntityCollectionByEntity"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AbuildPropertiesConditions\u0028\u0029",
             "name": "buildPropertiesConditions",
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_buildPropertiesConditions"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AgetEntityCollectionByEntity\u0028\u0029",
-            "name": "getEntityCollectionByEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_getEntityCollectionByEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AdeleteEntityCollectionByEntity\u0028\u0029",
-            "name": "deleteEntityCollectionByEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-DependentModel.html#method_deleteEntityCollectionByEntity"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\DependentModel\u003A\u003AgetOtherEntityCollectionByEntity\u0028\u0029",
             "name": "getOtherEntityCollectionByEntity",
@@ -5161,6 +5351,71 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-ReferencedEntity.html#property_collections"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel",
+            "name": "SelfDependentModel",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003A__call\u0028\u0029",
+            "name": "__call",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method___call"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AcountEntityCollectionByParent\u0028\u0029",
+            "name": "countEntityCollectionByParent",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_countEntityCollectionByParent"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AcountEntityCollectionByParentAndProperties\u0028\u0029",
+            "name": "countEntityCollectionByParentAndProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_countEntityCollectionByParentAndProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AgetEntityCollectionByParent\u0028\u0029",
+            "name": "getEntityCollectionByParent",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_getEntityCollectionByParent"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AgetEntityCollectionByParentAndProperties\u0028\u0029",
+            "name": "getEntityCollectionByParentAndProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_getEntityCollectionByParentAndProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AgetOtherEntityCollectionByParent\u0028\u0029",
+            "name": "getOtherEntityCollectionByParent",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_getOtherEntityCollectionByParent"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AgetEntityTree\u0028\u0029",
+            "name": "getEntityTree",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_getEntityTree"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AdeleteEntityCollectionByParent\u0028\u0029",
+            "name": "deleteEntityCollectionByParent",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_deleteEntityCollectionByParent"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AdeleteEntityCollectionByParentAndProperties\u0028\u0029",
+            "name": "deleteEntityCollectionByParentAndProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_deleteEntityCollectionByParentAndProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003AdeleteEntityTree\u0028\u0029",
+            "name": "deleteEntityTree",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#method_deleteEntityTree"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfDependentModel\u003A\u003A\u0024parentForeignKey",
+            "name": "parentForeignKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfDependentModel.html#property_parentForeignKey"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedEntity",
             "name": "SelfReferencedEntity",
             "summary": "",
@@ -5190,86 +5445,6 @@ Search.appendIndex(
             "name": "getShortClassName",
             "summary": "",
             "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedEntity.html#method_getShortClassName"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel",
-            "name": "SelfReferencedModel",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003A__construct\u0028\u0029",
-            "name": "__construct",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method___construct"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003A__call\u0028\u0029",
-            "name": "__call",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method___call"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AcountEntityCollectionByParent\u0028\u0029",
-            "name": "countEntityCollectionByParent",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_countEntityCollectionByParent"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AcountEntityCollectionByParentAndEntity\u0028\u0029",
-            "name": "countEntityCollectionByParentAndEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_countEntityCollectionByParentAndEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AcountEntityCollectionByParentAndProperties\u0028\u0029",
-            "name": "countEntityCollectionByParentAndProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_countEntityCollectionByParentAndProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AgetEntityCollectionByParent\u0028\u0029",
-            "name": "getEntityCollectionByParent",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_getEntityCollectionByParent"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AgetEntityCollectionByParentAndEntity\u0028\u0029",
-            "name": "getEntityCollectionByParentAndEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_getEntityCollectionByParentAndEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AgetEntityCollectionByParentAndProperties\u0028\u0029",
-            "name": "getEntityCollectionByParentAndProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_getEntityCollectionByParentAndProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AgetOtherEntityCollectionByParent\u0028\u0029",
-            "name": "getOtherEntityCollectionByParent",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_getOtherEntityCollectionByParent"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AgetEntityTree\u0028\u0029",
-            "name": "getEntityTree",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_getEntityTree"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AdeleteEntityCollectionByParent\u0028\u0029",
-            "name": "deleteEntityCollectionByParent",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_deleteEntityCollectionByParent"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AdeleteEntityCollectionByParentAndEntity\u0028\u0029",
-            "name": "deleteEntityCollectionByParentAndEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_deleteEntityCollectionByParentAndEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AdeleteEntityCollectionByParentAndProperties\u0028\u0029",
-            "name": "deleteEntityCollectionByParentAndProperties",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_deleteEntityCollectionByParentAndProperties"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003AdeleteEntityTree\u0028\u0029",
-            "name": "deleteEntityTree",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#method_deleteEntityTree"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\SelfReferencedModel\u003A\u003A\u0024parentForeignKey",
-            "name": "parentForeignKey",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-ExtendedClasses-SelfReferencedModel.html#property_parentForeignKey"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\ExtendedClasses\\StandardEntity",
             "name": "StandardEntity",
@@ -6115,16 +6290,6 @@ Search.appendIndex(
             "name": "setResponseType",
             "summary": "",
             "url": "classes/SismaFramework-Security-Exceptions-AuthenticationException.html#method_setResponseType"
-        },                {
-            "fqsen": "\\SismaFramework\\Security\\ExtendedClasses\\LogException",
-            "name": "LogException",
-            "summary": "",
-            "url": "classes/SismaFramework-Security-ExtendedClasses-LogException.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Security\\ExtendedClasses\\NoLogException",
-            "name": "NoLogException",
-            "summary": "",
-            "url": "classes/SismaFramework-Security-ExtendedClasses-NoLogException.html"
         },                {
             "fqsen": "\\SismaFramework\\Security\\ExtendedClasses\\RedirectException",
             "name": "RedirectException",

@@ -128,16 +128,14 @@ class RenderServiceTest extends TestCase
 
     public function testGenerateViewInDevelopmentEnvironment(): void
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
-        
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)/s');
+
         $vars = [
             'metaUrl' => '',
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        
+
         $this->initializeMocks();
         $this->localizatorMock->expects($this->once())
                 ->method('getPageLocaleArray')
@@ -145,40 +143,36 @@ class RenderServiceTest extends TestCase
         $this->debuggerMock->expects($this->once())
                 ->method('generateDebugBar')
                 ->willReturn('');
-        
+
         $service = RenderService::getInstance();
         $service->generateView('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->debuggerMock, $this->configStubDevelop);
     }
 
     public function testGenerateViewNotInDevelopmentEnvironment(): void
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
-        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
-        
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)(?!.*(?:Database|Log|Form|Variables))/s');
+
         $vars = [
             'metaUrl' => '',
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        
+
         $this->initializeMocks();
         $this->localizatorMock->expects($this->once())
                 ->method('getPageLocaleArray')
                 ->willReturn([]);
         $this->debuggerMock->expects($this->never())
                 ->method('generateDebugBar');
-        
+
         $service = RenderService::getInstance();
         $service->generateView('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->debuggerMock, $this->configStubProduction);
     }
 
     public function testGenerateViewStructural(): void
     {
-        \ob_end_clean();
         $this->expectOutputRegex('/debug bar/');
-        
+
         $this->initializeMocks();
         $this->localizatorMock->expects($this->never())
                 ->method('getPageLocaleArray');
@@ -194,45 +188,38 @@ class RenderServiceTest extends TestCase
 
     public function testGenerateDataInDevelopmentEnvironment(): void
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
-        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
-        
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)(?!.*(?:Database|Log|Form|Variables))/s');
+
         $this->initializeStubs();
         $vars = [
             'metaUrl' => '',
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        
+
         $service = RenderService::getInstance();
         $service->generateData('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->configStubDevelop);
     }
 
     public function testGenerateDataNotInDevelopmentEnvironment(): void
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
-        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
-        
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)(?!.*(?:Database|Log|Form|Variables))/s');
+
         $this->initializeStubs();
         $vars = [
             'metaUrl' => '',
             'controllerUrl' => 'sample',
             'actionUrl' => 'index',
         ];
-        
+
         $service = RenderService::getInstance();
         $service->generateData('sample/index', $vars, ResponseType::httpOk, $this->localizatorMock, $this->configStubProduction);
     }
 
     public function testGenerateJson(): void
     {
-        \ob_end_clean();
         $this->expectOutputString('{"message":"test"}');
-        
+
         $service = RenderService::getInstance();
         $service->setStructural();
         $service->generateJson(['message' => 'test']);
@@ -241,9 +228,8 @@ class RenderServiceTest extends TestCase
 
     public function testGetView(): void
     {
-        \ob_end_clean();
         $this->expectOutputRegex('/.*/s');
-        
+
         $this->initializeStubs();
         $vars = [
             'metaUrl' => '',

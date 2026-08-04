@@ -85,7 +85,7 @@ class Dispatcher
     public function run($router = new Router()): Response
     {
         $requestUri = $this->request->server['REQUEST_URI'];
-        if ((strlen($this->request->server['QUERY_STRING']) > 0) &&
+        if ((strlen($this->request->server['QUERY_STRING'] ?? '') > 0) &&
                 ($this->resourceHandler->isResourceFile(explode('?', $requestUri, 2)[0]) === false)) {
             return $router->reloadWithParsedQueryString();
         }
@@ -123,7 +123,7 @@ class Dispatcher
         if ($this->hasValidAction($reflectionController, $this->routeResolver->getRouteInfo()->parsedAction)) {
             return $this->callControllerAction($reflectionController);
         } elseif ($this->isCallableController($reflectionController)) {
-            return $this->executeCallableController();
+            return $this->executeCallableController($reflectionController);
         } else {
             return $this->handleNotFound();
         }
@@ -139,7 +139,6 @@ class Dispatcher
                 return true;
             }
         }
-
         return false;
     }
 
@@ -170,10 +169,11 @@ class Dispatcher
         }
     }
 
-    private function executeCallableController(): Response
+    private function executeCallableController(\ReflectionClass $reflectionController): Response
     {
         $controller = $this->controllerFactory->createController($this->routeResolver->getRouteInfo()->controllerClassName);
-        return $controller->{$this->routeResolver->getRouteInfo()->parsedAction}(...$this->routeResolver->getRouteInfo()->actionArguments);
+        $action = $reflectionController->hasMethod($this->routeResolver->getRouteInfo()->parsedAction) ? $this->routeResolver->getRouteInfo()->parsedAction : $this->routeResolver->getRouteInfo()->pathAction;
+        return $controller->{$action}(...$this->routeResolver->getRouteInfo()->actionArguments);
     }
 
     private function handleNotFound(): Response

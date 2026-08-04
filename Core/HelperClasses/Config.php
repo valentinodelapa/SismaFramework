@@ -39,7 +39,6 @@ use SismaFramework\Orm\Enumerations\AdapterType;
  */
 class Config
 {
-
     protected readonly string $application;
     protected readonly string $controllers;
     protected readonly string $defaultPath;
@@ -113,6 +112,9 @@ class Config
     /* Templater Constant */
     protected readonly string $templatesPath;
     protected readonly string $structuralTemplatesPath;
+
+    /* Resource Constant */
+    protected readonly string $resourcesPath;
 
     /* Log Constants */
     protected readonly string $logDirectoryPath;

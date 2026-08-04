@@ -1,4 +1,4 @@
-<?php ob_start(); ?>
+<?php require __DIR__ . '/../commonParts/siteLayoutHeader.php'; ?>
 
 <div class="container my-5">
     <nav aria-label="breadcrumb">
@@ -121,6 +121,4 @@
     </div>
 </div>
 
-<?php
-$content = ob_get_clean();
-require __DIR__ . '/../commonParts/siteLayout.php';
+<?php require __DIR__ . '/../commonParts/siteLayoutFooter.php'; ?>

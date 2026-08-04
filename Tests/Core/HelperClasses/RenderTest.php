@@ -84,9 +84,7 @@ class RenderTest extends TestCase
 
     public function testGenerateViewInDevelopmentEnvironment()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)/s');
         $vars = [
             'metaUrl' => '',
             'controllerUrl' => 'sample',
@@ -104,10 +102,7 @@ class RenderTest extends TestCase
 
     public function testGenerateViewNotInDevelopmentEnvironment()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
-        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)(?!.*(?:Database|Log|Form|Variables))/s');
         $vars = [
             'metaUrl' => '',
             'controllerUrl' => 'sample',
@@ -124,7 +119,6 @@ class RenderTest extends TestCase
 
     public function testGenerateViewStructural()
     {
-        \ob_end_clean();
         $this->expectOutputRegex('/debug bar/');
         $this->initializeMocks();
         $this->localizatorMock->expects($this->never())
@@ -139,10 +133,7 @@ class RenderTest extends TestCase
 
     public function testGenerateDataInDevelopmentEnvironment()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
-        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)(?!.*(?:Database|Log|Form|Variables))/s');
         $this->initializeStubs();
         $vars = [
             'metaUrl' => '',
@@ -154,10 +145,7 @@ class RenderTest extends TestCase
 
     public function testGenerateDataNotInDevelopmentEnvironment()
     {
-        \ob_end_clean();
-        $this->expectOutputRegex('/sample - index/');
-        $this->expectOutputRegex('/Hello World/');
-        $this->expectOutputRegex('/^(?!.*(?:Database|Log|Form|Variables)).*$/s');
+        $this->expectOutputRegex('/(?=.*sample - index)(?=.*Hello World)(?!.*(?:Database|Log|Form|Variables))/s');
         $this->initializeStubs();
         $vars = [
             'metaUrl' => '',
@@ -169,7 +157,6 @@ class RenderTest extends TestCase
 
     public function testGenerareJson()
     {
-        \ob_end_clean();
         $this->expectOutputString('{"message":"test"}');
         Render::setStructural();
         Render::generateJson(['message' => 'test']);

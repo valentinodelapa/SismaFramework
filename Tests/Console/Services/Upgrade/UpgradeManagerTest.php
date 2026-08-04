@@ -203,6 +203,32 @@ class UpgradeManagerTest extends TestCase
         $this->assertEquals('SUCCESS', $report->status);
     }
 
+    public function testUpgradeSurfacesWarningsForFilesWithNoAutomaticChanges(): void
+    {
+        $modulePath = $this->tempDir . 'TestUpgradeModule';
+        mkdir($modulePath, 0755, true);
+
+        $filePath = $modulePath . DIRECTORY_SEPARATOR . 'Application' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR . 'CategoryModel.php';
+        mkdir(dirname($filePath), 0755, true);
+        file_put_contents($filePath, '<?php $this->countEntityCollectionByEntity([\'foo\' => $bar]);');
+
+        $this->versionDetectorStub->method('detectVersion')->willReturn('11.0.0');
+        $this->versionDetectorStub->method('isValidVersion')->willReturn(true);
+        $this->fileScannerStub->method('scanModuleFiles')->willReturn([$filePath]);
+        $this->fileScannerStub->method('categorizeFile')->willReturn('model');
+        $this->fileScannerStub->method('shouldProcessFile')->willReturn(true);
+
+        $this->manager->setDryRun(true)->setSkipBackup(true);
+
+        $report = $this->manager->upgrade('TestUpgradeModule', '12.0.0', '11.0.0');
+
+        $this->assertEquals(0, $report->filesModified);
+        $this->assertEquals(1, $report->filesSkipped);
+        $this->assertGreaterThan(0, $report->warningsCount);
+        $this->assertNotEmpty($report->fileResults);
+        $this->assertNotEmpty($report->fileResults[0]->warnings);
+    }
+
     public function testUpgradeIncludesManualActionsForBreakingChanges(): void
     {
         mkdir($this->tempDir . 'TestUpgradeModule', 0755, true);
