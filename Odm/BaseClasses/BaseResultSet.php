@@ -77,6 +77,7 @@ abstract class BaseResultSet implements \Iterator
             $this->current = null;
             return;
         }
+        $this->valid = true;
         $document = new $this->returnType();
         $document->hydrate($raw);
         $this->current = $document;

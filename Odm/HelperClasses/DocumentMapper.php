@@ -26,6 +26,8 @@
 
 namespace SismaFramework\Odm\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\HelperClasses\Parser;
 use SismaFramework\Odm\BaseClasses\BaseAdapter;
 use SismaFramework\Odm\BaseClasses\BaseDocument;
 use SismaFramework\Odm\Exceptions\DocumentMapperException;
@@ -36,10 +38,18 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
  */
 class DocumentMapper
 {
+    private Config $config;
+
     public function __construct(
-        protected ?BaseAdapter $adapter = null
+        protected ?BaseAdapter $adapter = null,
+        ?Config $config = null
     ) {
-        $this->adapter ??= BaseAdapter::getDefault();
+        $this->config = $config ?? Config::getInstance();
+    }
+
+    private function getAdapter(): BaseAdapter
+    {
+        return $this->adapter ??= BaseAdapter::getDefault();
     }
 
     public function save(BaseDocument $document): void
@@ -48,40 +58,65 @@ class DocumentMapper
             return;
         }
 
-        $this->adapter->ensureConnected();
+        $this->getAdapter()->ensureConnected();
         $collection = $document->getCollectionName();
-        $data = $document->toArray();
+        $data = $this->unparseData($document->toArray());
 
         if (isset($data['_id']) && $data['_id'] !== null && $data['_id'] !== '') {
             $id = (string) $data['_id'];
             unset($data['_id']);
-            $this->adapter->update($collection, $id, $data);
+            $this->getAdapter()->update($collection, $id, $data);
         } else {
             unset($data['_id']);
-            $newId = $this->adapter->insert($collection, $data);
+            $newId = $this->getAdapter()->insert($collection, $data);
             $document->_id = $newId;
         }
 
         $document->modified = false;
+        if ($this->config->odmCache) {
+            Cache::setDocument($document);
+        }
+    }
+
+    private function unparseData(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            $data[$key] = is_array($value) ? $this->unparseData($value) : Parser::unparseValue($value);
+        }
+        return $data;
     }
 
     public function delete(BaseDocument $document): void
     {
-        $this->adapter->ensureConnected();
+        $this->getAdapter()->ensureConnected();
         $id = $document->_id;
         if ($id === null || $id === '') {
             throw new DocumentMapperException('Cannot delete a document without an ID.');
         }
-        $this->adapter->delete($document->getCollectionName(), (string) $id);
+        $this->getAdapter()->delete($document->getCollectionName(), (string) $id);
         $document->_id = null;
         $document->modified = false;
+        if ($this->config->odmCache) {
+            Cache::clearDocumentCache();
+        }
+    }
+
+    public function deleteBatch(string $documentClass, DocumentQuery $query): int
+    {
+        $this->getAdapter()->ensureConnected();
+        $prototype = new $documentClass();
+        $deletedCount = $this->getAdapter()->deleteMany($prototype->getCollectionName(), $query);
+        if ($this->config->odmCache) {
+            Cache::clearDocumentCache();
+        }
+        return $deletedCount;
     }
 
     public function find(string $documentClass, DocumentQuery $query): SismaCollection
     {
-        $this->adapter->ensureConnected();
+        $this->getAdapter()->ensureConnected();
         $prototype = new $documentClass();
-        $resultSet = $this->adapter->find($prototype->getCollectionName(), $query);
+        $resultSet = $this->getAdapter()->find($prototype->getCollectionName(), $query);
         $resultSet->setReturnType($documentClass);
 
         $collection = new SismaCollection($documentClass);
@@ -101,8 +136,8 @@ class DocumentMapper
 
     public function getCount(string $documentClass, DocumentQuery $query): int
     {
-        $this->adapter->ensureConnected();
+        $this->getAdapter()->ensureConnected();
         $prototype = new $documentClass();
-        return $this->adapter->count($prototype->getCollectionName(), $query);
+        return $this->getAdapter()->count($prototype->getCollectionName(), $query);
     }
 }

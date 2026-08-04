@@ -52,19 +52,24 @@ class TransactionManager
 {
 
     private static bool $isActiveTransaction = false;
-    private BaseAdapter $adapter;
+    private ?BaseAdapter $adapter;
     private ProcessedEntitiesCollection $processedEntitiesCollection;
 
     public function __construct(?BaseAdapter $adapter = null, ?ProcessedEntitiesCollection $processedEntitiesCollection = null)
     {
-        $this->adapter = $adapter ?? BaseAdapter::getDefault();
+        $this->adapter = $adapter;
         $this->processedEntitiesCollection = $processedEntitiesCollection ?? ProcessedEntitiesCollection::getInstance();
+    }
+
+    private function getAdapter(): BaseAdapter
+    {
+        return $this->adapter ??= BaseAdapter::getDefault();
     }
 
     public function start(): bool
     {
         if (self::$isActiveTransaction === false) {
-            if ($this->adapter->beginTransaction()) {
+            if ($this->getAdapter()->beginTransaction()) {
                 self::$isActiveTransaction = true;
                 return true;
             }
@@ -75,7 +80,7 @@ class TransactionManager
     public function commit(bool $checkAnnidation = true): void
     {
         if (self::$isActiveTransaction && $checkAnnidation) {
-            if ($this->adapter->commitTransaction()) {
+            if ($this->getAdapter()->commitTransaction()) {
                 self::$isActiveTransaction = false;
                 $this->processedEntitiesCollection->clear();
             }
@@ -85,7 +90,7 @@ class TransactionManager
     public function rollback(): void
     {
         if (self::$isActiveTransaction) {
-            $this->adapter->rollbackTransaction();
+            $this->getAdapter()->rollbackTransaction();
             self::$isActiveTransaction = false;
         }
     }

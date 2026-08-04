@@ -26,8 +26,10 @@
 
 namespace SismaFramework\Console\Services\Fixtures;
 
+use SismaFramework\Core\BaseClasses\BaseDocumentFixture;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\ModuleManager;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
 /**
@@ -39,11 +41,13 @@ class FixturesManager
     private array $fixturesArray;
     private array $entitiesArray = [];
     private DataMapper $dataMapper;
+    private DocumentMapper $documentMapper;
 
-    public function __construct(DataMapper $dataMapper = new DataMapper(), ?Config $customConfig = null)
+    public function __construct(DataMapper $dataMapper = new DataMapper(), ?Config $customConfig = null, DocumentMapper $documentMapper = new DocumentMapper())
     {
         $this->dataMapper = $dataMapper;
         $this->config = $customConfig ?? Config::getInstance();
+        $this->documentMapper = $documentMapper;
     }
 
     public function run(): void
@@ -88,7 +92,9 @@ class FixturesManager
     private function executeFixture($fixture): void
     {
         if ($this->fixturesArray[$fixture] === false) {
-            $fixtureInstance = new $fixture($this->dataMapper);
+            $fixtureInstance = is_subclass_of($fixture, BaseDocumentFixture::class)
+                    ? new $fixture($this->documentMapper)
+                    : new $fixture($this->dataMapper);
             if (count($fixtureInstance->getDependencies()) > 0) {
                 $this->executeFixturesArray($fixtureInstance->getDependencies());
             }

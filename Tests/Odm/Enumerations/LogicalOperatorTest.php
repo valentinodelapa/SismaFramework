@@ -45,8 +45,7 @@ class LogicalOperatorTest extends TestCase
         $caseNames = array_map(fn($c) => $c->name, LogicalOperator::cases());
         $this->assertContains('and', $caseNames);
         $this->assertContains('or', $caseNames);
-        $this->assertContains('not', $caseNames);
-        $this->assertCount(3, $caseNames);
+        $this->assertCount(2, $caseNames);
     }
 
     public function testOdmKeywordTraitIsUsed(): void
@@ -62,7 +61,6 @@ class LogicalOperatorTest extends TestCase
     {
         $this->assertEquals('$and', LogicalOperator::and->getAdapterVersion(AdapterType::mongodb));
         $this->assertEquals('$or', LogicalOperator::or->getAdapterVersion(AdapterType::mongodb));
-        $this->assertEquals('$nor', LogicalOperator::not->getAdapterVersion(AdapterType::mongodb));
     }
 
     public function testAllOperatorsReturnNonEmptyStringForMongodb(): void

@@ -71,7 +71,7 @@ class DataMapper
 {
 
     private Config $config;
-    private BaseAdapter $adapter;
+    private ?BaseAdapter $adapter;
     private ProcessedEntitiesCollection $processedEntitiesCollection;
     private bool $ormCacheStatus;
 
@@ -83,9 +83,14 @@ class DataMapper
             private QueryExecutor $queryExecutor = new QueryExecutor())
     {
         $this->config = $config ?? Config::getInstance();
-        $this->adapter = $adapter ?? BaseAdapter::getDefault();
+        $this->adapter = $adapter;
         $this->processedEntitiesCollection = $processedEntityCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->ormCacheStatus = $this->config->ormCache;
+    }
+
+    private function getAdapter(): BaseAdapter
+    {
+        return $this->adapter ??= BaseAdapter::getDefault();
     }
 
     public function setOrmCacheStatus(bool $ormCacheStatus = true): void
@@ -140,9 +145,9 @@ class DataMapper
         $this->parseForeignKeyIndexes($entity, $query, $bindValues, $bindTypes);
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::insert);
-        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        $result = $this->getAdapter()->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
-            $entity->setPrimaryKeyAfterSave($this->adapter->lastInsertId());
+            $entity->setPrimaryKeyAfterSave($this->getAdapter()->lastInsertId());
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
             if ($this->ormCacheStatus) {
@@ -164,7 +169,7 @@ class DataMapper
         $cmd = $query->getCommandToExecute(Statement::update);
         $bindValues[] = $entity->{$entity->getPrimaryKeyPropertyName()};
         $bindTypes[] = DataType::typeInteger;
-        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        $result = $this->getAdapter()->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
             $entity->modified = false;
             $this->checkIsReferencedEntity($entity);
@@ -294,7 +299,7 @@ class DataMapper
         $bindValues = [$entity];
         $bindTypes = [DataType::typeEntity];
         Parser::unparseValues($bindValues);
-        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        $result = $this->getAdapter()->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
             Cache::clearEntityCache();
             $entity->unsetPrimaryKey();
@@ -307,7 +312,7 @@ class DataMapper
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::delete);
         Parser::unparseValues($bindValues);
-        $result = $this->adapter->execute($cmd, $bindValues, $bindTypes);
+        $result = $this->getAdapter()->execute($cmd, $bindValues, $bindTypes);
         if ($result) {
             Cache::clearEntityCache();
         }

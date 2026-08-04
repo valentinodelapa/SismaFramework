@@ -29,6 +29,8 @@ namespace SismaFramework\Tests\Console\Services\Fixtures;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Console\Services\Fixtures\FixturesManager;
+use SismaFramework\Odm\BaseClasses\BaseAdapter as OdmBaseAdapter;
+use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
@@ -39,6 +41,7 @@ class FixturesManagerTest extends TestCase
 {
 
     private DataMapper $dataMapperMock;
+    private DocumentMapper $documentMapperMock;
     private Config $configStub;
 
     public function setUp(): void
@@ -53,19 +56,33 @@ class FixturesManagerTest extends TestCase
                     ['fixturePath', 'TestsApplication' . DIRECTORY_SEPARATOR . $fixtures],
                     ['moduleFolders', ['SismaFramework']],
                     ['ormCache', true],
+                    ['odmCache', true],
                     ['rootPath', dirname(__DIR__, 5) . DIRECTORY_SEPARATOR],
         ]);
         Config::setInstance($this->configStub);
         $baseAdapterMock = $this->createStub(BaseAdapter::class);
         BaseAdapter::setDefault($baseAdapterMock);
+        $odmBaseAdapterMock = $this->createStub(OdmBaseAdapter::class);
+        OdmBaseAdapter::setDefault($odmBaseAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
+        $this->documentMapperMock = $this->createMock(DocumentMapper::class);
     }
 
     public function testFixtureManager()
     {
         $this->dataMapperMock->method('save')
                 ->willReturn(true);
-        $fixtureManager = new FixturesManager($this->dataMapperMock, $this->configStub);
+        $fixtureManager = new FixturesManager($this->dataMapperMock, $this->configStub, $this->documentMapperMock);
+        $fixtureManager->run();
+        $this->assertTrue($fixtureManager->extecuted());
+    }
+
+    public function testFixtureManagerExecutesDocumentFixtures()
+    {
+        $this->dataMapperMock->method('save')
+                ->willReturn(true);
+        $this->documentMapperMock->expects($this->atLeastOnce())->method('save');
+        $fixtureManager = new FixturesManager($this->dataMapperMock, $this->configStub, $this->documentMapperMock);
         $fixtureManager->run();
         $this->assertTrue($fixtureManager->extecuted());
     }

@@ -138,6 +138,7 @@ class Config
     protected readonly string $ormDatabaseUsername;
 
     /* Object Document Mapper Constant */
+    protected readonly bool $odmCache;
     protected readonly OdmAdapterType $defaultOdmAdapterType;
     protected readonly string $odmDatabaseHost;
     protected readonly string $odmDatabaseName;

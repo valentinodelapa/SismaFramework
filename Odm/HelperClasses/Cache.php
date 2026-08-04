@@ -24,28 +24,37 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Odm\Enumerations;
+namespace SismaFramework\Odm\HelperClasses;
+
+use SismaFramework\Odm\BaseClasses\BaseDocument;
 
 /**
  * @author Valentino de Lapa
  */
-enum LogicalOperator
+class Cache
 {
-    use \SismaFramework\Odm\Traits\OdmKeyword;
+    private static array $documentCache = [];
 
-    case and;
-    case or;
-
-    #[\Override]
-    public function getAdapterVersion(AdapterType $adapterType): string
+    public static function setDocument(BaseDocument $document): void
     {
-        return match ($this) {
-            self::and => match ($adapterType) {
-                AdapterType::mongodb => '$and',
-            },
-            self::or => match ($adapterType) {
-                AdapterType::mongodb => '$or',
-            },
-        };
+        static::$documentCache[get_class($document)][$document->_id] = $document;
+    }
+
+    public static function checkDocumentPresenceInCache(string $documentName, string $documentId): bool
+    {
+        if (isset(static::$documentCache[$documentName])) {
+            return array_key_exists($documentId, static::$documentCache[$documentName]);
+        }
+        return false;
+    }
+
+    public static function getDocumentById(string $documentName, string $documentId): BaseDocument
+    {
+        return static::$documentCache[$documentName][$documentId];
+    }
+
+    public static function clearDocumentCache(): void
+    {
+        static::$documentCache = [];
     }
 }

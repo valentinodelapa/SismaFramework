@@ -132,6 +132,7 @@ define(__NAMESPACE__ . '\ORM_DATABASE_PORT', getenv('ORM_DATABASE_PORT') ?: "");
 define(__NAMESPACE__ . '\ORM_DATABASE_USERNAME', getenv('ORM_DATABASE_USERNAME') ?: "");
 
 /* Object Document Mapper Constant */
+const ODM_CACHE = true;
 const DEFAULT_ODM_ADAPTER_TYPE = "mongodb";
 define(__NAMESPACE__ . '\ODM_DATABASE_HOST', getenv('ODM_DATABASE_HOST') ?: "");
 define(__NAMESPACE__ . '\ODM_DATABASE_NAME', getenv('ODM_DATABASE_NAME') ?: "");

@@ -27,8 +27,11 @@
 namespace SismaFramework\Tests\Odm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Odm\Enumerations\FilterOperator;
 use SismaFramework\Odm\Enumerations\Indexing;
+use SismaFramework\Odm\Exceptions\DocumentMapperException;
+use SismaFramework\Odm\HelperClasses\Cache;
 use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -41,13 +44,17 @@ use SismaFramework\TestsApplication\Documents\SampleDocument;
 class BaseModelTest extends TestCase
 {
     private DocumentMapper $mapperMock;
+    private Config $configStub;
     private SampleDocumentModel $model;
 
     #[\Override]
     public function setUp(): void
     {
+        Cache::clearDocumentCache();
         $this->mapperMock = $this->createMock(DocumentMapper::class);
-        $this->model = new SampleDocumentModel($this->mapperMock);
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')->willReturnMap([['odmCache', false]]);
+        $this->model = new SampleDocumentModel($this->mapperMock, $this->configStub);
     }
 
     public function testGetDocumentNameReturnsSampleDocument(): void
@@ -178,5 +185,115 @@ class BaseModelTest extends TestCase
         $this->mapperMock->expects($this->never())->method('delete');
 
         $this->model->deleteDocumentById('nonexistent');
+    }
+
+    public function testGetDocumentByIdReturnsCachedDocumentWithoutCallingMapper(): void
+    {
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')->willReturnMap([['odmCache', true]]);
+        $model = new SampleDocumentModel($this->mapperMock, $configStub);
+
+        $document = new SampleDocument();
+        $document->hydrate(['_id' => 'cached-id', 'title' => 'Cached']);
+        Cache::setDocument($document);
+
+        $this->mapperMock->expects($this->never())->method('findFirst');
+
+        $this->assertSame($document, $model->getDocumentById('cached-id'));
+    }
+
+    public function testGetDocumentByIdFallsBackToMapperWhenCacheDisabled(): void
+    {
+        $document = new SampleDocument();
+        $document->hydrate(['_id' => 'some-id', 'title' => 'Fresh']);
+        Cache::setDocument($document);
+
+        $this->mapperMock->expects($this->once())->method('findFirst')->willReturn($document);
+
+        $this->model->getDocumentById('some-id');
+    }
+
+    public function testCallFindByPropertyBuildsCorrectQuery(): void
+    {
+        $capturedQuery = null;
+        $this->mapperMock->method('find')
+            ->willReturnCallback(function (string $class, DocumentQuery $query) use (&$capturedQuery) {
+                $capturedQuery = $query;
+                return new SismaCollection($class);
+            });
+
+        $this->model->findByStatus('published');
+
+        $conditions = $capturedQuery->getConditions();
+        $this->assertCount(1, $conditions);
+        $this->assertEquals('status', $conditions[0]['field']);
+        $this->assertSame(FilterOperator::equal, $conditions[0]['operator']);
+        $this->assertEquals('published', $conditions[0]['value']);
+    }
+
+    public function testCallGetByPropertyIsAliasForFind(): void
+    {
+        $expectedCollection = new SismaCollection(SampleDocument::class);
+        $this->mapperMock->expects($this->once())->method('find')->willReturn($expectedCollection);
+
+        $this->assertSame($expectedCollection, $this->model->getByStatus('draft'));
+    }
+
+    public function testCallCountByPropertyDelegatesToMapper(): void
+    {
+        $this->mapperMock->expects($this->once())
+            ->method('getCount')
+            ->with(SampleDocument::class, $this->isInstanceOf(DocumentQuery::class))
+            ->willReturn(5);
+
+        $this->assertEquals(5, $this->model->countByStatus('draft'));
+    }
+
+    public function testCallDeleteByPropertyDelegatesToMapper(): void
+    {
+        $this->mapperMock->expects($this->once())
+            ->method('deleteBatch')
+            ->with(SampleDocument::class, $this->isInstanceOf(DocumentQuery::class))
+            ->willReturn(2);
+
+        $this->assertEquals(2, $this->model->deleteByStatus('archived'));
+    }
+
+    public function testCallByMultiplePropertiesJoinedWithAnd(): void
+    {
+        $capturedQuery = null;
+        $this->mapperMock->method('find')
+            ->willReturnCallback(function (string $class, DocumentQuery $query) use (&$capturedQuery) {
+                $capturedQuery = $query;
+                return new SismaCollection($class);
+            });
+
+        $this->model->findByStatusAndCount('published', 3);
+
+        $conditions = $capturedQuery->getConditions();
+        $this->assertCount(3, $conditions);
+        $this->assertEquals('status', $conditions[0]['field']);
+        $this->assertEquals('count', $conditions[2]['field']);
+    }
+
+    public function testCallWithUnknownActionThrowsException(): void
+    {
+        $this->expectException(DocumentMapperException::class);
+
+        $this->model->frobnicateByStatus('draft');
+    }
+
+    public function testCallWithoutByThrowsException(): void
+    {
+        $this->expectException(DocumentMapperException::class);
+
+        $this->model->findAllDocuments();
+    }
+
+    public function testCallWithMismatchedArgumentCountThrowsException(): void
+    {
+        $this->expectException(DocumentMapperException::class);
+
+        $this->model->findByStatusAndCount('draft');
     }
 }

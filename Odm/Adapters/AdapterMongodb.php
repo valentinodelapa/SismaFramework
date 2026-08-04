@@ -28,6 +28,7 @@ namespace SismaFramework\Odm\Adapters;
 
 use MongoDB\Client;
 use MongoDB\BSON\ObjectId;
+use MongoDB\BSON\UTCDateTime;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Odm\BaseClasses\BaseAdapter;
 use SismaFramework\Odm\BaseClasses\BaseResultSet;
@@ -38,6 +39,7 @@ use SismaFramework\Odm\Enumerations\Indexing;
 use SismaFramework\Odm\Exceptions\AdapterException;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
 use SismaFramework\Odm\ResultSets\ResultSetMongodb;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 
 /**
  * @author Valentino de Lapa
@@ -101,58 +103,52 @@ class AdapterMongodb extends BaseAdapter
 
     private function compileConditions(array $conditions): array
     {
-        $andGroups = [];
+        $orGroups = $this->splitByOr($conditions);
+        $compiledGroups = array_map(fn(array $group): array => $this->compileAndGroup($group), $orGroups);
+
+        if (count($compiledGroups) === 1) {
+            return $compiledGroups[0];
+        }
+
+        return [LogicalOperator::or->getAdapterVersion(AdapterType::mongodb) => $compiledGroups];
+    }
+
+    private function splitByOr(array $conditions): array
+    {
+        $groups = [];
         $currentGroup = [];
-        $pendingLogical = null;
 
         foreach ($conditions as $node) {
-            if ($node['type'] === 'logical_separator') {
-                if (!empty($currentGroup)) {
-                    $andGroups[] = ['logical' => $pendingLogical, 'condition' => $currentGroup];
-                    $currentGroup = [];
-                }
-                $pendingLogical = $node['operator'];
-            } else {
-                $currentGroup = $node;
+            if ($node['type'] === 'logical_separator' && $node['operator'] === LogicalOperator::or) {
+                $groups[] = $currentGroup;
+                $currentGroup = [];
+            } elseif ($node['type'] !== 'logical_separator') {
+                $currentGroup[] = $node;
             }
         }
+        $groups[] = $currentGroup;
 
-        if (!empty($currentGroup)) {
-            $andGroups[] = ['logical' => $pendingLogical, 'condition' => $currentGroup];
+        return $groups;
+    }
+
+    private function compileAndGroup(array $group): array
+    {
+        $compiledConditions = array_map(fn(array $node): array => $this->compileSingleCondition($node), $group);
+
+        if (count($compiledConditions) === 1) {
+            return $compiledConditions[0];
         }
 
-        if (count($andGroups) === 1) {
-            return $this->compileSingleCondition($andGroups[0]['condition']);
-        }
-
-        $andClauses = [];
-        $orClauses = [];
-
-        foreach ($andGroups as $group) {
-            $compiled = $this->compileSingleCondition($group['condition']);
-            if ($group['logical'] === LogicalOperator::or) {
-                $orClauses[] = $compiled;
-            } else {
-                $andClauses[] = $compiled;
-            }
-        }
-
-        $filter = [];
-        if (!empty($andClauses)) {
-            $filter[LogicalOperator::and->getAdapterVersion(AdapterType::mongodb)] = $andClauses;
-        }
-        if (!empty($orClauses)) {
-            $filter[LogicalOperator::or->getAdapterVersion(AdapterType::mongodb)] = $orClauses;
-        }
-
-        return $filter;
+        return [LogicalOperator::and->getAdapterVersion(AdapterType::mongodb) => $compiledConditions];
     }
 
     private function compileSingleCondition(array $node): array
     {
         $field    = $node['field'];
         $operator = $node['operator'];
-        $value    = $node['value'];
+        $this->assertSafeField($field);
+        $this->assertSafeValue($operator, $node['value']);
+        $value    = $this->convertFieldValue($field, $node['value']);
         $mongoOp  = $operator->getAdapterVersion(AdapterType::mongodb);
 
         return match ($operator) {
@@ -162,6 +158,60 @@ class AdapterMongodb extends BaseAdapter
             FilterOperator::notLike   => [$field => [$mongoOp => ['$regex' => $value, '$options' => 'i']]],
             default                   => [$field => [$mongoOp => $value]],
         };
+    }
+
+    private function assertSafeField(string $field): void
+    {
+        if ($field === '' || $field[0] === '$') {
+            throw new AdapterException('Nome campo non valido: ' . $field);
+        }
+    }
+
+    private function assertSafeValue(FilterOperator $operator, mixed $value): void
+    {
+        if ($operator === FilterOperator::isNull || $operator === FilterOperator::isNotNull) {
+            return;
+        }
+        if ($operator === FilterOperator::in || $operator === FilterOperator::notIn) {
+            if (!is_array($value)) {
+                throw new AdapterException('Il valore per gli operatori in/notIn deve essere un array.');
+            }
+            foreach ($value as $item) {
+                $this->assertScalarOrNullOrObjectId($item);
+            }
+            return;
+        }
+        $this->assertScalarOrNullOrObjectId($value);
+    }
+
+    private function assertScalarOrNullOrObjectId(mixed $value): void
+    {
+        if ($value !== null && !is_scalar($value) && !($value instanceof ObjectId)) {
+            throw new AdapterException('Valore filtro non valido: sono ammessi solo scalari, null o ObjectId.');
+        }
+    }
+
+    private function convertFieldValue(string $field, mixed $value): mixed
+    {
+        if ($field !== '_id' || $value === null) {
+            return $value;
+        }
+        if (is_array($value)) {
+            return array_map(fn(mixed $item): mixed => $this->toObjectId($item), $value);
+        }
+        return $this->toObjectId($value);
+    }
+
+    private function toObjectId(mixed $value): ObjectId
+    {
+        if ($value instanceof ObjectId) {
+            return $value;
+        }
+        try {
+            return new ObjectId((string) $value);
+        } catch (\Exception $e) {
+            throw new AdapterException('ObjectId non valido: ' . $value, $e->getCode(), $e);
+        }
     }
 
     private function compileSortOptions(DocumentQuery $query): array
@@ -176,16 +226,19 @@ class AdapterMongodb extends BaseAdapter
     #[\Override]
     public function find(string $collection, DocumentQuery $query): BaseResultSet
     {
-        $filter  = $this->compileQuery($query);
-        $options = ['sort' => $this->compileSortOptions($query)];
-        if ($query->getLimit() !== null) {
-            $options['limit'] = $query->getLimit();
-        }
-        if ($query->getOffset() !== null) {
-            $options['skip'] = $query->getOffset();
-        }
-
         try {
+            $filter  = $this->compileQuery($query);
+            $options = [
+                'sort' => $this->compileSortOptions($query),
+                'typeMap' => ['root' => 'array', 'document' => 'array', 'array' => 'array'],
+            ];
+            if ($query->getLimit() !== null) {
+                $options['limit'] = $query->getLimit();
+            }
+            if ($query->getOffset() !== null) {
+                $options['skip'] = $query->getOffset();
+            }
+
             $cursor = $this->client
                 ->selectDatabase($this->databaseName)
                 ->selectCollection($collection)
@@ -196,6 +249,8 @@ class AdapterMongodb extends BaseAdapter
                 $rows[] = $this->bsonToArray($bsonDoc);
             }
             return new ResultSetMongodb($rows);
+        } catch (AdapterException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new AdapterException('Errore find MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
         }
@@ -243,14 +298,33 @@ class AdapterMongodb extends BaseAdapter
     }
 
     #[\Override]
+    public function deleteMany(string $collection, DocumentQuery $query): int
+    {
+        try {
+            $filter = $this->compileQuery($query);
+            $result = $this->client
+                ->selectDatabase($this->databaseName)
+                ->selectCollection($collection)
+                ->deleteMany($filter);
+            return $result->getDeletedCount();
+        } catch (AdapterException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw new AdapterException('Errore deleteMany MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    #[\Override]
     public function count(string $collection, DocumentQuery $query): int
     {
-        $filter = $this->compileQuery($query);
         try {
+            $filter = $this->compileQuery($query);
             return (int) $this->client
                 ->selectDatabase($this->databaseName)
                 ->selectCollection($collection)
                 ->countDocuments($filter);
+        } catch (AdapterException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new AdapterException('Errore count MongoDB: ' . $e->getMessage(), $e->getCode(), $e);
         }
@@ -268,12 +342,25 @@ class AdapterMongodb extends BaseAdapter
         return $this->lastErrorCode;
     }
 
-    private function bsonToArray(mixed $bsonDoc): array
+    private function bsonToArray(array $bsonDoc): array
     {
-        $data = (array) $bsonDoc;
-        if (isset($data['_id']) && $data['_id'] instanceof ObjectId) {
-            $data['_id'] = (string) $data['_id'];
+        foreach ($bsonDoc as $key => $value) {
+            $bsonDoc[$key] = $this->convertBsonValue($value);
         }
-        return $data;
+        return $bsonDoc;
+    }
+
+    private function convertBsonValue(mixed $value): mixed
+    {
+        if ($value instanceof ObjectId) {
+            return (string) $value;
+        }
+        if ($value instanceof UTCDateTime) {
+            return SismaDateTime::createFromInterface($value->toDateTime());
+        }
+        if (is_array($value)) {
+            return $this->bsonToArray($value);
+        }
+        return $value;
     }
 }

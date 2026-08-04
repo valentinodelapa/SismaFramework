@@ -95,6 +95,39 @@ class ScaffoldingManager
         return $success;
     }
 
+    public function generateDocumentScaffolding(string $documentShortName, string $module): bool
+    {
+        $this->module = $module;
+        $modulePath = $this->getModulePath();
+        $applicationPath = $this->getApplicationPath($modulePath);
+        $this->checkRequiredDocumentDirectoriesExists($applicationPath);
+        $this->setDocumentPlaceholders($documentShortName);
+        $success = $this->generate('Document', $applicationPath . DIRECTORY_SEPARATOR . 'Documents' . DIRECTORY_SEPARATOR . $documentShortName . '.php');
+        $success &= $this->generate('DocumentModel', $applicationPath . DIRECTORY_SEPARATOR . 'DocumentModels' . DIRECTORY_SEPARATOR . $documentShortName . 'Model.php');
+        return $success;
+    }
+
+    private function checkRequiredDocumentDirectoriesExists(string $applicationPath): void
+    {
+        foreach (['Documents', 'DocumentModels'] as $dir) {
+            $dirPath = $applicationPath . '/' . $dir;
+            if (!is_dir($dirPath)) {
+                if (!mkdir($dirPath, 0777, true)) {
+                    throw new \RuntimeException("Failed to create directory: " . $dirPath);
+                }
+            }
+        }
+    }
+
+    private function setDocumentPlaceholders(string $documentShortName): void
+    {
+        $applicationNamespace = $this->module . '\\' . $this->config->application;
+        $this->setPlaceholder('documentShortName', $documentShortName);
+        $this->setPlaceholder('documentNamespace', $applicationNamespace . '\\Documents');
+        $this->setPlaceholder('documentModelNamespace', $applicationNamespace . '\\DocumentModels');
+        $this->setPlaceholder('collectionName', NotationManager::convertToSnakeCase($documentShortName));
+    }
+
     private function getModulePath(): string
     {
         $modulePath = $this->config->rootPath . $this->module;

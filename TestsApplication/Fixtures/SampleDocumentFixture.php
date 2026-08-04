@@ -24,28 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace SismaFramework\Odm\Enumerations;
+namespace SismaFramework\TestsApplication\Fixtures;
+
+use SismaFramework\Core\BaseClasses\BaseDocumentFixture;
+use SismaFramework\TestsApplication\Documents\SampleDocument;
 
 /**
  * @author Valentino de Lapa
  */
-enum LogicalOperator
+class SampleDocumentFixture extends BaseDocumentFixture
 {
-    use \SismaFramework\Odm\Traits\OdmKeyword;
 
-    case and;
-    case or;
-
-    #[\Override]
-    public function getAdapterVersion(AdapterType $adapterType): string
+    protected function setDependencies(): void
     {
-        return match ($this) {
-            self::and => match ($adapterType) {
-                AdapterType::mongodb => '$and',
-            },
-            self::or => match ($adapterType) {
-                AdapterType::mongodb => '$or',
-            },
-        };
+
     }
+
+    public function setDocument(): void
+    {
+        $sampleDocument = new SampleDocument();
+        $sampleDocument->title = 'fixture document';
+        $this->addDocument($sampleDocument);
+    }
+
 }

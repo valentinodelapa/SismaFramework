@@ -118,6 +118,40 @@ class ScaffoldCommandTest extends TestCase
     }
 
 
+    public function testSuccessfulDocumentExecution(): void
+    {
+        $this->command->setArguments([
+            '0' => 'ArticleDocument',
+            '1' => 'TestModule'
+        ]);
+        $this->command->setOptions(['document' => true, 'force' => true]);
+
+        $this->scaffoldingManagerMock
+            ->expects($this->once())
+            ->method('setForce')
+            ->with(true)
+            ->willReturnSelf();
+
+        $this->scaffoldingManagerMock
+            ->expects($this->once())
+            ->method('generateDocumentScaffolding')
+            ->with('ArticleDocument', 'TestModule')
+            ->willReturn(true);
+
+        $this->scaffoldingManagerMock
+            ->expects($this->never())
+            ->method('generateScaffolding');
+
+        ob_start();
+        $result = $this->command->run();
+        $output = ob_get_clean();
+
+        $this->assertTrue($result);
+        $this->assertStringContainsString('Document scaffolding generated successfully', $output);
+        $this->assertStringContainsString('TestModule/Application/Documents/ArticleDocument.php', $output);
+        $this->assertStringContainsString('TestModule/Application/DocumentModels/ArticleDocumentModel.php', $output);
+    }
+
     public function testHelpOutput(): void
     {
         ob_start();

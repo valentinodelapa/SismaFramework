@@ -26,8 +26,11 @@
 
 namespace SismaFramework\Odm\BaseClasses;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Odm\Enumerations\FilterOperator;
 use SismaFramework\Odm\Enumerations\Indexing;
+use SismaFramework\Odm\Exceptions\DocumentMapperException;
+use SismaFramework\Odm\HelperClasses\Cache;
 use SismaFramework\Odm\HelperClasses\DocumentMapper;
 use SismaFramework\Odm\HelperClasses\DocumentQuery;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
@@ -37,9 +40,14 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
  */
 abstract class BaseModel
 {
+    protected Config $config;
+
     public function __construct(
-        protected DocumentMapper $documentMapper = new DocumentMapper()
-    ) {}
+        protected DocumentMapper $documentMapper = new DocumentMapper(),
+        ?Config $config = null
+    ) {
+        $this->config = $config ?? Config::getInstance();
+    }
 
     abstract public function getDocumentName(): string;
 
@@ -65,6 +73,9 @@ abstract class BaseModel
 
     public function getDocumentById(string $id): ?BaseDocument
     {
+        if ($this->config->odmCache && Cache::checkDocumentPresenceInCache($this->getDocumentName(), $id)) {
+            return Cache::getDocumentById($this->getDocumentName(), $id);
+        }
         $query = (new DocumentQuery())->where('_id', FilterOperator::equal, $id);
         return $this->documentMapper->findFirst($this->getDocumentName(), $query);
     }
@@ -86,5 +97,40 @@ abstract class BaseModel
         if ($document !== null) {
             $this->documentMapper->delete($document);
         }
+    }
+
+    public function __call(string $name, array $arguments): SismaCollection|int
+    {
+        $nameParts = explode('By', $name, 2);
+        if (count($nameParts) !== 2) {
+            throw new DocumentMapperException($name);
+        }
+        $action = lcfirst($nameParts[0]);
+        $propertyNames = array_map('lcfirst', explode('And', $nameParts[1]));
+        if (count($propertyNames) !== count($arguments)) {
+            throw new DocumentMapperException($name);
+        }
+        $query = $this->buildQueryFromProperties($propertyNames, $arguments);
+        return match ($action) {
+            'find', 'get' => $this->getDocumentCollection($query),
+            'count' => $this->countDocumentCollection($query),
+            'delete' => $this->documentMapper->deleteBatch($this->getDocumentName(), $query),
+            default => throw new DocumentMapperException($name),
+        };
+    }
+
+    private function buildQueryFromProperties(array $propertyNames, array $values): DocumentQuery
+    {
+        $query = new DocumentQuery();
+        foreach ($propertyNames as $index => $propertyName) {
+            $value = $values[$index];
+            $operator = $value === null ? FilterOperator::isNull : FilterOperator::equal;
+            if ($index === 0) {
+                $query->where($propertyName, $operator, $value);
+            } else {
+                $query->andWhere($propertyName, $operator, $value);
+            }
+        }
+        return $query;
     }
 }

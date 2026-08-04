@@ -409,6 +409,50 @@ PHP);
         $this->assertEquals('', $controllerContent);
     }
 
+    public function testGenerateDocumentScaffolding(): void
+    {
+        $result = $this->scaffoldingManager->generateDocumentScaffolding('ArticleDocument', 'TestModule');
+        $this->assertTrue($result);
+        $documentPath = $this->tempDir . 'TestModule/Application/Documents/ArticleDocument.php';
+        $documentModelPath = $this->tempDir . 'TestModule/Application/DocumentModels/ArticleDocumentModel.php';
+        $this->assertFileExists($documentPath);
+        $this->assertFileExists($documentModelPath);
+        $vars = [
+            'documentShortName' => 'ArticleDocument',
+            'documentNamespace' => 'TestModule\Application\Documents',
+            'documentModelNamespace' => 'TestModule\Application\DocumentModels',
+            'collectionName' => 'article_document',
+        ];
+        $this->assertEquals(Templater::parseTemplate($this->templatesPath . 'Document.tpl', $vars), file_get_contents($documentPath));
+        $this->assertEquals(Templater::parseTemplate($this->templatesPath . 'DocumentModel.tpl', $vars), file_get_contents($documentModelPath));
+    }
+
+    public function testGenerateDocumentScaffoldingCreatesMissingDirectories(): void
+    {
+        $this->assertDirectoryDoesNotExist($this->tempDir . 'TestModule/Application/Documents');
+        $this->scaffoldingManager->generateDocumentScaffolding('ProductDocument', 'TestModule');
+        $this->assertDirectoryExists($this->tempDir . 'TestModule/Application/Documents');
+        $this->assertDirectoryExists($this->tempDir . 'TestModule/Application/DocumentModels');
+    }
+
+    public function testGenerateDocumentScaffoldingWithoutForceThrowsOnSecondRun(): void
+    {
+        $this->scaffoldingManager->generateDocumentScaffolding('DuplicateDocument', 'TestModule');
+        $this->expectException(\RuntimeException::class);
+        $this->scaffoldingManager->generateDocumentScaffolding('DuplicateDocument', 'TestModule');
+    }
+
+    public function testGenerateDocumentScaffoldingWithForceOverwrites(): void
+    {
+        $this->scaffoldingManager->generateDocumentScaffolding('OverwritableDocument', 'TestModule');
+        $documentPath = $this->tempDir . 'TestModule/Application/Documents/OverwritableDocument.php';
+        file_put_contents($documentPath, 'stale content');
+        $this->scaffoldingManager->setForce(true);
+        $result = $this->scaffoldingManager->generateDocumentScaffolding('OverwritableDocument', 'TestModule');
+        $this->assertTrue($result);
+        $this->assertNotEquals('stale content', file_get_contents($documentPath));
+    }
+
     public function testFakeCustomTemplate()
     {
         $FakeTemplatesPath = $this->tempDir . 'FakeTemplates';

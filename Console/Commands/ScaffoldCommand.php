@@ -62,9 +62,11 @@ Options:
   --force         Force overwrite of existing files
   --type=TYPE     Force a specific model type (BaseModel, DependentModel, SelfDependentModel)
   --template=PATH  Use custom templates from the specified path
+  --document       Generate a Document/DocumentModel pair (ODM) instead of an Entity/Model (ORM)
 
 Example:
   php SismaFramework/Console/sisma scaffold User Blog
+  php SismaFramework/Console/sisma scaffold Article Blog --document
 OUTPUT);
     }
 
@@ -82,6 +84,9 @@ OUTPUT);
             return false;
         }
         $force = $this->getOption('force') !== null;
+        if ($this->getOption('document') !== null) {
+            return $this->executeDocumentScaffolding($entityName, $module, $force);
+        }
         $type = $this->getOption('type');
         $templatePath = $this->getOption('template');
         if ($type && !in_array($type, $this->validTypes)) {
@@ -103,6 +108,19 @@ OUTPUT);
         $this->output("  - {$module}/Application/Models/{$entityName}Model.php");
         $this->output("  - {$module}/Application/Controllers/{$entityName}Controller.php");
         $this->output("  - {$module}/Application/Forms/{$entityName}Form.php");
+        return true;
+    }
+
+    private function executeDocumentScaffolding(string $documentName, string $module, bool $force): bool
+    {
+        $this->scaffoldingManager
+                ->setForce($force)
+                ->generateDocumentScaffolding($documentName, $module);
+
+        $this->output('Document scaffolding generated successfully!');
+        $this->output('Generated files:');
+        $this->output("  - {$module}/Application/Documents/{$documentName}.php");
+        $this->output("  - {$module}/Application/DocumentModels/{$documentName}Model.php");
         return true;
     }
 }

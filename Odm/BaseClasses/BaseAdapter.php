@@ -79,6 +79,8 @@ abstract class BaseAdapter
 
     abstract public function delete(string $collection, string $id): void;
 
+    abstract public function deleteMany(string $collection, DocumentQuery $query): int;
+
     abstract public function count(string $collection, DocumentQuery $query): int;
 
     abstract public function getLastErrorMsg(): string;

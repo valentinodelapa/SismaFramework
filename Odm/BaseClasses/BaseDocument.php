@@ -37,6 +37,7 @@ abstract class BaseDocument
     public function __construct()
     {
         $this->setPropertyDefaultValue();
+        $this->modified = false;
     }
 
     public function hydrate(array $data): void

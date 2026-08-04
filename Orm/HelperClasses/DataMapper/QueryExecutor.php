@@ -59,11 +59,16 @@ use SismaFramework\Orm\HelperClasses\Query;
 class QueryExecutor
 {
 
-    private BaseAdapter $adapter;
+    private ?BaseAdapter $adapter;
 
     public function __construct(?BaseAdapter $adapter = null)
     {
-        $this->adapter = $adapter ?? BaseAdapter::getDefault();
+        $this->adapter = $adapter;
+    }
+
+    private function getAdapter(): BaseAdapter
+    {
+        return $this->adapter ??= BaseAdapter::getDefault();
     }
 
     public function setVariable(string $variable, string $bindValue, DataType $bindType, Query $query = new Query()): bool
@@ -72,7 +77,7 @@ class QueryExecutor
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::set);
         Parser::unparseValue($bindValue);
-        $result = $this->adapter->execute($cmd, [$bindValue], [$bindType]);
+        $result = $this->getAdapter()->execute($cmd, [$bindValue], [$bindType]);
         return $result;
     }
 
@@ -113,7 +118,7 @@ class QueryExecutor
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::select);
         Parser::unparseValues($bindValues);
-        $result = $this->adapter->select($cmd, $bindValues, $bindTypes);
+        $result = $this->getAdapter()->select($cmd, $bindValues, $bindTypes);
         if ($result === null) {
             return 0;
         }
@@ -131,7 +136,7 @@ class QueryExecutor
         $query->close();
         $cmd = $query->getCommandToExecute(Statement::select);
         Parser::unparseValues($bindValues);
-        $result = $this->adapter->select($cmd, $bindValues, $bindTypes);
+        $result = $this->getAdapter()->select($cmd, $bindValues, $bindTypes);
         if (!$result) {
             return null;
         }
