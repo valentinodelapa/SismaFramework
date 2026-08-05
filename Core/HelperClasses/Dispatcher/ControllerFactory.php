@@ -41,10 +41,10 @@ class ControllerFactory
     private DataMapper $dataMapper;
     private Debugger $debugger;
 
-    public function __construct(DataMapper $dataMapper, Debugger $debugger = new Debugger())
+    public function __construct(DataMapper $dataMapper, ?Debugger $debugger = null)
     {
         $this->dataMapper = $dataMapper;
-        $this->debugger = $debugger;
+        $this->debugger = $debugger ?? Debugger::getInstance();
     }
 
     public function createController(string $controllerClassName): BaseController

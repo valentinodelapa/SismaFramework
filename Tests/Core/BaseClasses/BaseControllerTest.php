@@ -48,7 +48,8 @@ class BaseControllerTest extends TestCase
     {
         RouterService::resetInstance();
         RenderService::resetInstance();
-        
+        Debugger::resetInstance();
+
         $configStub = $this->createStub(\SismaFramework\Core\HelperClasses\Config::class);
         $configStub->method('__get')
                 ->willReturnMap([
@@ -66,6 +67,7 @@ class BaseControllerTest extends TestCase
     {
         RouterService::resetInstance();
         RenderService::resetInstance();
+        Debugger::resetInstance();
     }
 
     public function testControllerInjectsRouterServiceInstance(): void

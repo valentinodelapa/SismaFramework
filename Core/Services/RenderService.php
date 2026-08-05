@@ -81,10 +81,11 @@ class RenderService
         array $vars,
         ResponseType $responseType = ResponseType::httpOk,
         Localizator $localizator = new Localizator(),
-        Debugger $debugger = new Debugger(),
+        ?Debugger $debugger = null,
         ?Config $customConfig = null
     ): Response {
         $config = $customConfig ?? Config::getInstance();
+        $debugger = $debugger ?? Debugger::getInstance();
         $debugger->setVars($vars);
         $this->assemblesComponents($view, $localizator, $vars, $config);
         echo $this->generateDebugBar($debugger, $config);

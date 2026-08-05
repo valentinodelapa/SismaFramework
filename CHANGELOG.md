@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.7] - 2026-08-05 - Ripristino della Propagazione dell'Istanza Debugger Condivisa
+
+Patch che corregge un difetto architetturale introdotto con la conversione di `Debugger` da classe statica a classe di istanza (11.0.0), per cui la maggior parte dei punti che dipendono da `Debugger` — `BaseForm`, `BaseController`, `Dispatcher`, `ControllerFactory`, `RenderService::generateView()` e `BaseAdapter` — riceveva silenziosamente un'istanza nuova e isolata (tramite il valore di default `new Debugger()`) invece dell'istanza effettivamente in uso per la richiesta corrente (creata in `Public/index.php` e propagata tramite `Dispatcher`/`ControllerFactory` fino al controller).
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Debugger` — nessun punto di accesso condiviso all'istanza della richiesta corrente
+
+Ogni classe che dipende da `Debugger` lo riceve come parametro di costruttore/metodo con valore di default `new Debugger()` (reso possibile dal supporto di PHP 8.1 a `new` negli inizializzatori). Quando il chiamante omette il parametro — la norma, non l'eccezione, in tutto il codice applicativo esistente: nessun esempio in `Sample/`, `TestsApplication/`, nei template di scaffolding o nella documentazione passa esplicitamente l'istanza corretta a `RenderService::generateView()` — ciascuna di queste classi finisce con una propria istanza isolata. `BaseController` riceve correttamente l'istanza condivisa tramite `ControllerFactory` (che la inietta esplicitamente via reflection), ma quell'istanza non arriva mai a `RenderService::generateView()` (dove la debug bar viene effettivamente generata), né a `BaseAdapter`/`DataMapper` (dove vengono conteggiate le query eseguite), né a `BaseForm` (dove `isValid()` chiama `setFormFilter()`), perché nessuno di questi punti la passa esplicitamente. L'effetto pratico, mai notato perché silenzioso: la debug bar non ha mai mostrato dati reali in nessuno scenario realistico.
+
+`Debugger` espone ora `getInstance()`/`setInstance()`/`resetInstance()`, sul modello già in uso in `Config` e `RenderService`. I punti di wiring elencati sotto sostituiscono il parametro `Debugger $debugger = new Debugger()` con `?Debugger $debugger = null` e delegano il fallback a `Debugger::getInstance()` nel corpo del metodo — necessario perché PHP consente `new` ma non chiamate a metodi statici arbitrari come valore di default di un parametro. La dependency injection resta intatta: chi passa già un'istanza esplicita (o un mock, nei test) continua a poterlo fare esattamente come prima.
+
+**File modificati**:
+- **`Core/HelperClasses/Debugger.php`**: aggiunti i metodi statici `getInstance()`, `setInstance()`, `resetInstance()`
+- **`Public/index.php`**: `$debugger = Debugger::getInstance()` al posto di `new Debugger()`
+- **`Core/HelperClasses/Dispatcher.php`**: parametro `$debugger` reso nullable con fallback a `Debugger::getInstance()`
+- **`Core/HelperClasses/Dispatcher/ControllerFactory.php`**: idem
+- **`Core/BaseClasses/BaseController.php`**: idem (rimossa la constructor property promotion su `$debugger` per consentire il fallback)
+- **`Core/BaseClasses/BaseForm.php`**: idem
+- **`Core/Services/RenderService.php`**: `generateView()`, idem
+- **`Orm/BaseClasses/BaseAdapter.php`**: idem
+- **`Tests/Core/HelperClasses/DebuggerTest.php`**: aggiunti `testGetInstanceReturnsSameInstance()`, `testSetInstanceAllowsInjectingCustomInstance()`, `testResetInstanceCreatesNewInstanceOnNextGet()`; `setUp()`/`tearDown()` resettano l'istanza singleton
+- **`Tests/Core/BaseClasses/BaseFormTest.php`**, **`Tests/Core/BaseClasses/BaseControllerTest.php`**, **`Tests/Core/HelperClasses/DispatcherTest.php`**: `setUp()`/`tearDown()` chiamano `Debugger::resetInstance()` per evitare che lo stato del singleton si propaghi da un test al successivo
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica viene ristretta. I parametri toccati passano da `Debugger` (con default `new Debugger()`) a `?Debugger` (con default `null`) — un allargamento del tipo accettato, non una restrizione: chi passava già un'istanza esplicita continua a farlo senza modifiche. I tre nuovi metodi statici su `Debugger` sono puramente additivi.
+- **Cambiamento di comportamento osservabile**: la debug bar (attiva solo con `developmentEnvironment` a `true`) mostra ora query eseguite, errori di validazione dei form e variabili di vista realmente accumulati durante la richiesta, laddove prima veniva sempre generata da un'istanza vuota. Nessun impatto in produzione.
+- **Ciclo di vita**: lo stato del singleton è delimitato alla singola esecuzione dello script (PHP-FPM/Apache mod_php/CLI, il modello di deploy assunto da `Public/index.php`); non ci sono implicazioni in ambienti a processo persistente (Swoole, RoadRunner), che il framework non supporta attualmente.
+
+---
+
 ## [11.9.6] - 2026-08-01 - Correzione Gestione Valori Non Stringa in Filter::customFilter()
 
 Patch che corregge un difetto di `Filter::customFilter()`, l'unico metodo della classe `Filter` che passava il valore da validare direttamente a una funzione nativa di stringa (`preg_match()`) senza verificarne preventivamente il tipo, a differenza di tutti gli altri metodi (`isString()`, `isEmail()`, `isSecurePassword()`, ecc.) che già gestiscono in modo uniforme i valori non stringa restituendo `false`.
