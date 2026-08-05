@@ -45,7 +45,7 @@ $errorHandler->disableErrorDisplay();
 
 try {
     $errorHandler->registerNonThrowableErrorHandler();
-    $debugger = new Debugger();
+    $debugger = Debugger::getInstance();
     $debugger->startExecutionTimeCalculation();
     PhpVersionChecker::checkPhpVersion();
     Session::start();

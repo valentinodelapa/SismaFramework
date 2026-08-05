@@ -69,14 +69,14 @@ abstract class BaseForm
         FilterManager $filterManager = new FilterManager(),
         ?FormValidator $formValidator = null,
         EntityResolver $entityResolver = new EntityResolver(),
-        Debugger $debugger = new Debugger(),
+        ?Debugger $debugger = null,
     ) {
         $this->initSubmittable();
         $this->dataMapper = $dataMapper;
         $this->filterManager = $filterManager;
         $this->formValidator = $formValidator ?? new FormValidator($dataMapper, $filterManager);
         $this->entityResolver = $entityResolver;
-        $this->debugger = $debugger;
+        $this->debugger = $debugger ?? Debugger::getInstance();
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
     }

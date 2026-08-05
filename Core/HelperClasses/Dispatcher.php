@@ -62,11 +62,11 @@ class Dispatcher
             ResourceHandler $resourceHandler = new ResourceHandler(),
             ?ControllerFactory $controllerFactory = null,
             ?ActionArgumentsParser $actionArgumentsParser = null,
-            Debugger $debugger = new Debugger())
+            ?Debugger $debugger = null)
     {
         $this->request = $request;
         $this->dataMapper = $dataMapper;
-        $this->debugger = $debugger;
+        $this->debugger = $debugger ?? Debugger::getInstance();
         $this->routeResolver = $routeResolver;
         $this->controllerFactory = $controllerFactory ?? new ControllerFactory($this->dataMapper, $this->debugger);
         $this->actionArgumentsParser = $actionArgumentsParser ?? new ActionArgumentsParser($this->request, $this->dataMapper);
