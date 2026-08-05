@@ -61,6 +61,7 @@ class DispatcherTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
+        Debugger::resetInstance();
         $this->configStub = $this->createStub(Config::class);
         $this->configStub->method('__get')
                 ->willReturnMap($this->buildConfigMap(dirname(__DIR__, 4) . DIRECTORY_SEPARATOR));
@@ -386,5 +387,6 @@ class DispatcherTest extends TestCase
     public function tearDown(): void
     {
         Router::resetMetaUrl();
+        Debugger::resetInstance();
     }
 }

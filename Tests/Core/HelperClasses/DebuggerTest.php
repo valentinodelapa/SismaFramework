@@ -43,6 +43,7 @@ class DebuggerTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
+        Debugger::resetInstance();
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $configStub = $this->createStub(Config::class);
         $configStub->method('__get')
@@ -52,6 +53,38 @@ class DebuggerTest extends TestCase
                     ['logPath', $logDirectoryPath . 'log.txt'],
         ]);
         Config::setInstance($configStub);
+    }
+
+    #[\Override]
+    public function tearDown(): void
+    {
+        Debugger::resetInstance();
+    }
+
+    public function testGetInstanceReturnsSameInstance(): void
+    {
+        $instance1 = Debugger::getInstance();
+        $instance2 = Debugger::getInstance();
+
+        $this->assertInstanceOf(Debugger::class, $instance1);
+        $this->assertSame($instance1, $instance2);
+    }
+
+    public function testSetInstanceAllowsInjectingCustomInstance(): void
+    {
+        $customDebugger = $this->createStub(Debugger::class);
+        Debugger::setInstance($customDebugger);
+
+        $this->assertSame($customDebugger, Debugger::getInstance());
+    }
+
+    public function testResetInstanceCreatesNewInstanceOnNextGet(): void
+    {
+        $instance1 = Debugger::getInstance();
+        Debugger::resetInstance();
+        $instance2 = Debugger::getInstance();
+
+        $this->assertNotSame($instance1, $instance2);
     }
 
     public function testStartExecutionTimeCalculation()

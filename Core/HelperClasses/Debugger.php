@@ -40,6 +40,7 @@ use SismaFramework\Core\Interfaces\Logging\LogReaderInterface;
 class Debugger
 {
 
+    private static ?Debugger $instance = null;
     private float $startMicrotime = 0.0;
     private float $executionTime = 0.0;
     private int $queryExecutedNumber = 0;
@@ -54,6 +55,24 @@ class Debugger
     public function __construct(?LogReaderInterface $logReader = null)
     {
         $this->logReader = $logReader ?? new SismaLogReader();
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    public static function setInstance(?Debugger $instance): void
+    {
+        self::$instance = $instance;
+    }
+
+    public static function resetInstance(): void
+    {
+        self::$instance = null;
     }
 
     public function startExecutionTimeCalculation(): void

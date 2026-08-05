@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\BaseClasses\BaseForm\FilterManager;
 use SismaFramework\Orm\BaseClasses\BaseForm\FormValidator;
 use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\Exceptions\FormException;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
@@ -75,6 +76,7 @@ class BaseFormTest extends TestCase
     #[\Override]
     public function setUp(): void
     {
+        Debugger::resetInstance();
         $logDirectoryPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('log_', true) . DIRECTORY_SEPARATOR;
         $referenceCacheDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('cache_', true) . DIRECTORY_SEPARATOR;
         $this->configStub = $this->createStub(Config::class);
@@ -107,6 +109,12 @@ class BaseFormTest extends TestCase
         $this->formValidator = new FormValidator($this->dataMapperMock, $this->filterManager, $this->configStub);
         $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->query = $this->requestMock->input = $this->requestMock->cookie = $this->requestMock->files = $this->requestMock->server = $this->requestMock->headers = [];
+    }
+
+    #[\Override]
+    public function tearDown(): void
+    {
+        Debugger::resetInstance();
     }
 
     public function testAddEntityFromFormWithException()
