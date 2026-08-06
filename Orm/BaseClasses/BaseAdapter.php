@@ -83,11 +83,11 @@ abstract class BaseAdapter
     protected array $connectionOptions = [];
     protected Debugger $debugger;
 
-    public function __construct(array $options = [], Debugger $debugger = new Debugger())
+    public function __construct(array $options = [], ?Debugger $debugger = null)
     {
         $this->connectionOptions = $options;
         $this->adapterType = $this->setAdapterType();
-        $this->debugger = $debugger;
+        $this->debugger = $debugger ?? Debugger::getInstance();
     }
 
     /**

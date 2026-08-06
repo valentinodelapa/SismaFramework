@@ -39,15 +39,14 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class ControllerFactory
 {
-    private DataMapper $dataMapper;
-    private DocumentMapper $documentMapper;
     private Debugger $debugger;
 
-    public function __construct(DataMapper $dataMapper, DocumentMapper $documentMapper = new DocumentMapper(), Debugger $debugger = new Debugger())
-    {
-        $this->dataMapper = $dataMapper;
-        $this->documentMapper = $documentMapper;
-        $this->debugger = $debugger;
+    public function __construct(
+        private DataMapper $dataMapper,
+        private DocumentMapper $documentMapper = new DocumentMapper(),
+        ?Debugger $debugger = null,
+    ) {
+        $this->debugger = $debugger ?? Debugger::getInstance();
     }
 
     public function createController(string $controllerClassName): BaseController

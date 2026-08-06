@@ -40,12 +40,14 @@ abstract class BaseController
     protected RouterService $router;
     protected RenderService $render;
     protected array $vars;
+    protected Debugger $debugger;
 
     public function __construct(
         protected DataMapper $dataMapper = new DataMapper(),
         protected DocumentMapper $documentMapper = new DocumentMapper(),
-        protected Debugger $debugger = new Debugger(),
+        ?Debugger $debugger = null,
     ) {
+        $this->debugger = $debugger ?? Debugger::getInstance();
         $this->router = RouterService::getInstance();
         $this->render = RenderService::getInstance();
         $this->vars['controllerUrl'] = $this->router->getControllerUrl();

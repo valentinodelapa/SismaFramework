@@ -72,7 +72,7 @@ abstract class BaseForm
         DocumentMapper $documentMapper = new DocumentMapper(),
         ?FormValidator $formValidator = null,
         EntityResolver $entityResolver = new EntityResolver(),
-        Debugger $debugger = new Debugger(),
+        ?Debugger $debugger = null,
     ) {
         $this->initSubmittable();
         $this->dataMapper = $dataMapper;
@@ -80,7 +80,7 @@ abstract class BaseForm
         $this->filterManager = $filterManager;
         $this->formValidator = $formValidator ?? new FormValidator($dataMapper, $filterManager, $documentMapper);
         $this->entityResolver = $entityResolver;
-        $this->debugger = $debugger;
+        $this->debugger = $debugger ?? Debugger::getInstance();
         $this->checkEntityName();
         $this->embedEntity($baseEntity);
     }
