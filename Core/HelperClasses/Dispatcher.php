@@ -27,7 +27,6 @@
 namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\Exceptions\PageNotFoundException;
-use SismaFramework\Core\HelperClasses\Debugger;
 use SismaFramework\Core\HelperClasses\Dispatcher\ActionArgumentsParser;
 use SismaFramework\Core\HelperClasses\Dispatcher\ControllerFactory;
 use SismaFramework\Core\HelperClasses\Dispatcher\ResourceHandler;
@@ -46,35 +45,23 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
  */
 class Dispatcher
 {
-
-    private Request $request;
-    private RouteResolver $routeResolver;
-    private ControllerFactory $controllerFactory;
-    private ActionArgumentsParser $actionArgumentsParser;
-    private ResourceHandler $resourceHandler;
-    private DataMapper $dataMapper;
-    private DocumentMapper $documentMapper;
     private Debugger $debugger;
     private array $crawlComponentMakerList = [];
     private CrawlComponentMakerInterface $currentCrawlComponentMaker;
 
-    public function __construct(Request $request = new Request(),
-            DataMapper $dataMapper = new DataMapper(),
-            RouteResolver $routeResolver = new RouteResolver(),
-            ResourceHandler $resourceHandler = new ResourceHandler(),
-            ?ControllerFactory $controllerFactory = null,
-            ?ActionArgumentsParser $actionArgumentsParser = null,
-            Debugger $debugger = new Debugger(),
-            DocumentMapper $documentMapper = new DocumentMapper())
-    {
-        $this->request = $request;
-        $this->dataMapper = $dataMapper;
-        $this->documentMapper = $documentMapper;
-        $this->debugger = $debugger;
-        $this->routeResolver = $routeResolver;
+    public function __construct(
+        private Request $request = new Request(),
+        private DataMapper $dataMapper = new DataMapper(),
+        private DocumentMapper $documentMapper = new DocumentMapper(),
+        private RouteResolver $routeResolver = new RouteResolver(),
+        private ResourceHandler $resourceHandler = new ResourceHandler(),
+        private ?ControllerFactory $controllerFactory = null,
+        private ?ActionArgumentsParser $actionArgumentsParser = null,
+        ?Debugger $debugger = null,
+    ) {
+        $this->debugger = $debugger ?? Debugger::getInstance();
         $this->controllerFactory = $controllerFactory ?? new ControllerFactory($this->dataMapper, $this->documentMapper, $this->debugger);
         $this->actionArgumentsParser = $actionArgumentsParser ?? new ActionArgumentsParser($this->request, $this->dataMapper, $this->documentMapper);
-        $this->resourceHandler = $resourceHandler;
     }
 
     public function addCrawlComponentMaker(CrawlComponentMakerInterface $crawlComponentMaker): void
@@ -85,8 +72,8 @@ class Dispatcher
     public function run($router = new Router()): Response
     {
         $requestUri = $this->request->server['REQUEST_URI'];
-        if ((strlen($this->request->server['QUERY_STRING'] ?? '') > 0) &&
-                ($this->resourceHandler->isResourceFile(explode('?', $requestUri, 2)[0]) === false)) {
+        if ((strlen($this->request->server['QUERY_STRING'] ?? '') > 0)
+                && ($this->resourceHandler->isResourceFile(explode('?', $requestUri, 2)[0]) === false)) {
             return $router->reloadWithParsedQueryString();
         }
         $this->routeResolver->initialize($requestUri);
@@ -161,8 +148,8 @@ class Dispatcher
             return false;
         } else {
             Router::setActualCleanUrl(
-                    $this->routeResolver->getRouteInfo()->pathController,
-                    $this->routeResolver->getRouteInfo()->pathAction
+                $this->routeResolver->getRouteInfo()->pathController,
+                $this->routeResolver->getRouteInfo()->pathAction,
             );
             $fullCallableParts = [$this->routeResolver->getRouteInfo()->pathAction, ...$this->routeResolver->getRouteInfo()->actionArguments];
             return $this->routeResolver->getRouteInfo()->controllerClassName::checkCompatibility($fullCallableParts);

@@ -104,7 +104,14 @@ class DispatcherTest extends TestCase
         $resourceMakerStub = $this->createStub(ResourceMaker::class);
         $this->routeResolverMock = new RouteResolver($resourceMakerStub, $this->configStub);
         $this->resourceHandlerMock = new ResourceHandler($resourceMakerStub, $this->configStub);
-        return new Dispatcher($this->requestMock, $this->dataMapperMock, $this->routeResolverMock, $this->resourceHandlerMock, null, null);
+        return new Dispatcher(
+            request: $this->requestMock,
+            dataMapper: $this->dataMapperMock,
+            routeResolver: $this->routeResolverMock,
+            resourceHandler: $this->resourceHandlerMock,
+            controllerFactory: null,
+            actionArgumentsParser: null,
+        );
     }
 
     private function createDispatcherWithResourceMakerMock(?Config $configStub = null):Dispatcher
@@ -113,7 +120,14 @@ class DispatcherTest extends TestCase
         $this->resourceMakerMock = $this->createMock(ResourceMaker::class);
         $this->routeResolverMock = new RouteResolver($this->resourceMakerMock, $configStub);
         $this->resourceHandlerMock = new ResourceHandler($this->resourceMakerMock, $configStub);
-        return new Dispatcher($this->requestMock, $this->dataMapperMock, $this->routeResolverMock, $this->resourceHandlerMock, null, null);
+        return new Dispatcher(
+            request: $this->requestMock,
+            dataMapper: $this->dataMapperMock,
+            routeResolver: $this->routeResolverMock,
+            resourceHandler: $this->resourceHandlerMock,
+            controllerFactory: null,
+            actionArgumentsParser: null,
+        );
     }
 
     public function testRunWithReloadQueryString()

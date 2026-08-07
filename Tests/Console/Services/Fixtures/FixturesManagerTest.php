@@ -65,7 +65,7 @@ class FixturesManagerTest extends TestCase
         $odmBaseAdapterMock = $this->createStub(OdmBaseAdapter::class);
         OdmBaseAdapter::setDefault($odmBaseAdapterMock);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
-        $this->documentMapperMock = $this->createMock(DocumentMapper::class);
+        $this->documentMapperMock = $this->createStub(DocumentMapper::class);
     }
 
     public function testFixtureManager()
@@ -81,6 +81,7 @@ class FixturesManagerTest extends TestCase
     {
         $this->dataMapperMock->method('save')
                 ->willReturn(true);
+        $this->documentMapperMock = $this->createMock(DocumentMapper::class);
         $this->documentMapperMock->expects($this->atLeastOnce())->method('save');
         $fixtureManager = new FixturesManager($this->dataMapperMock, $this->configStub, $this->documentMapperMock);
         $fixtureManager->run();
