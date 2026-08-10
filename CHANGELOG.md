@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.8] - 2026-08-11 - Correzione Firma getParent() in SelfReferencedEnumeration
+
+Patch che corregge il contratto del trait `SelfReferencedEnumeration`, il cui metodo astratto `getParent()` era dichiarato con tipo di ritorno non nullable (`self`), impedendo di rappresentare correttamente la radice di una gerarchia di case enum.
+
+### 🐛 Bug Fix
+
+#### `Core/Traits/SelfReferencedEnumeration::getParent()` — impossibile rappresentare l'assenza di un padre
+
+Un enum che implementa il trait per modellare una struttura gerarchica (analoga a una tabella auto-referenziata) ha sempre almeno un case radice privo di padre. Con `getParent(): self`, quel case è costretto a restituire un valore fittizio — tipicamente se stesso o un altro case a caso — perché il tipo di ritorno non ammette `null`. Il problema è lo stesso, concettualmente, di una foreign key auto-referenziata dichiarata `NOT NULL`.
+
+Il metodo astratto è ora dichiarato `getParent(): ?self`, permettendo alle implementazioni di restituire `null` per il case radice.
+
+**File modificati**:
+- **`Core/Traits/SelfReferencedEnumeration.php`**: `getParent()`, tipo di ritorno da `self` a `?self`
+- **`docs/traits.md`**: esempio aggiornato per restituire `null` sul case radice invece di un riferimento fittizio a se stesso
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: PHP ammette la covarianza sui tipi di ritorno nelle implementazioni di un metodo astratto; le classi che già dichiarano `getParent(): self` restano override validi di `getParent(): ?self` (un tipo più stretto è sempre accettato). Nessuna implementazione esistente smette di funzionare; solo le nuove implementazioni (o quelle corrette per gestire la radice) potranno dichiarare `?self` e restituire `null`.
+
+---
+
 ## [11.9.7] - 2026-08-05 - Ripristino della Propagazione dell'Istanza Debugger Condivisa
 
 Patch che corregge un difetto architetturale introdotto con la conversione di `Debugger` da classe statica a classe di istanza (11.0.0), per cui la maggior parte dei punti che dipendono da `Debugger` — `BaseForm`, `BaseController`, `Dispatcher`, `ControllerFactory`, `RenderService::generateView()` e `BaseAdapter` — riceveva silenziosamente un'istanza nuova e isolata (tramite il valore di default `new Debugger()`) invece dell'istanza effettivamente in uso per la richiesta corrente (creata in `Public/index.php` e propagata tramite `Dispatcher`/`ControllerFactory` fino al controller).
