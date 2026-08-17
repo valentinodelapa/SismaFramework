@@ -33,5 +33,5 @@ namespace SismaFramework\Core\Traits;
 trait SelfReferencedEnumeration
 {
 
-    abstract public function getParent(): self;
+    abstract public function getParent(): ?self;
 }

@@ -2,6 +2,60 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.1.0] - 2026-08-11 - Supporto Chiavi Enum Composte in Localizator
+
+Minor release che estende `Localizator` con un nuovo metodo dedicato alla lettura di valori di localizzazione strutturati (array) per i case degli enum, mantenendo `getEnumerationLocaleArray()` invariato per l'uso corrente (label singola come stringa).
+
+### ✨ Nuove Funzionalità
+
+#### `Core\HelperClasses\Localizator::getComposedEnumerationLocaleArray()` — Lettura di chiavi di localizzazione composte per enum
+
+Introdotto un nuovo metodo pubblico per leggere, per un case di enum, un valore di localizzazione strutturato come array (es. `{"label": "...", "description": "..."}`), accanto al metodo esistente `getEnumerationLocaleArray()` che continua a restituire una singola stringa.
+
+**Motivazione**: `getEnumerationLocaleArray()` è tipizzato `string` ed è usato da `SelectableEnumeration::getFriendlyLabel()` per costruire le choice delle select — un ritorno `string|array` avrebbe costretto ogni chiamante a discriminare il tipo. Un metodo dedicato, sempre `array`, evita questo problema e resta esplicito su cosa aspettarsi.
+
+**Implementazione**:
+- La logica di lettura del campo dal file di localizzazione (`$locale['enumerations'][lcfirst($enumerationName)][$enumeration->name]`) è stata estratta nel metodo privato `getEnumerationLocaleField(): string|array`
+- `getEnumerationLocaleArray(): string` e `getComposedEnumerationLocaleArray(): array` delegano entrambi a `getEnumerationLocaleField()`
+
+**File modificati**:
+- **`Core\HelperClasses\Localizator.php`**: aggiunto `getComposedEnumerationLocaleArray()` e il metodo privato `getEnumerationLocaleField()`
+
+### 🧪 Test
+
+#### `Tests\Core\HelperClasses\LocalizatorTest` — Copertura nuovo metodo
+
+Aggiunto `testGetComposedEnumerationLocaleArrayMethodExists()`, sullo stesso modello del test esistente per `getEnumerationLocaleArray()`.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `getEnumerationLocaleArray()` non cambia firma né comportamento; il nuovo metodo è puramente additivo.
+- **Nessun impatto sui file di locale esistenti**: i JSON con case enum come stringa singola (es. `Sample/Locales/it_IT.json`) restano validi; il nuovo metodo va usato solo quando la chiave dell'enum è effettivamente un array nel JSON.
+
+---
+
+## [12.0.9] - 2026-08-11 - Correzione Firma getParent() in SelfReferencedEnumeration
+
+Patch che corregge il contratto del trait `SelfReferencedEnumeration`, il cui metodo astratto `getParent()` era dichiarato con tipo di ritorno non nullable (`self`), impedendo di rappresentare correttamente la radice di una gerarchia di case enum.
+
+### 🐛 Bug Fix
+
+#### `Core/Traits/SelfReferencedEnumeration::getParent()` — impossibile rappresentare l'assenza di un padre
+
+Un enum che implementa il trait per modellare una struttura gerarchica (analoga a una tabella auto-referenziata) ha sempre almeno un case radice privo di padre. Con `getParent(): self`, quel case è costretto a restituire un valore fittizio — tipicamente se stesso o un altro case a caso — perché il tipo di ritorno non ammette `null`. Il problema è lo stesso, concettualmente, di una foreign key auto-referenziata dichiarata `NOT NULL`.
+
+Il metodo astratto è ora dichiarato `getParent(): ?self`, permettendo alle implementazioni di restituire `null` per il case radice.
+
+**File modificati**:
+- **`Core/Traits/SelfReferencedEnumeration.php`**: `getParent()`, tipo di ritorno da `self` a `?self`
+- **`docs/traits.md`**: esempio aggiornato per restituire `null` sul case radice invece di un riferimento fittizio a se stesso
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: PHP ammette la covarianza sui tipi di ritorno nelle implementazioni di un metodo astratto; le classi che già dichiarano `getParent(): self` restano override validi di `getParent(): ?self` (un tipo più stretto è sempre accettato). Nessuna implementazione esistente smette di funzionare; solo le nuove implementazioni (o quelle corrette per gestire la radice) potranno dichiarare `?self` e restituire `null`.
+
+---
+
 ## [12.0.8] - 2026-08-05 - Ripristino della Propagazione dell'Istanza Debugger Condivisa
 
 Patch che corregge un difetto architetturale introdotto con la conversione di `Debugger` da classe statica a classe di istanza (11.0.0), per cui la maggior parte dei punti che dipendono da `Debugger` — `BaseForm`, `BaseController`, `Dispatcher`, `ControllerFactory`, `RenderService::generateView()` e `BaseAdapter` — riceveva silenziosamente un'istanza nuova e isolata (tramite il valore di default `new Debugger()`) invece dell'istanza effettivamente in uso per la richiesta corrente (creata in `Public/index.php` e propagata tramite `Dispatcher`/`ControllerFactory` fino al controller).
