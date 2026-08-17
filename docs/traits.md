@@ -100,13 +100,13 @@ enum MenuCategory: string
     case computers = 'computers';
     case laptops = 'laptops';
 
-    public function getParent(): self
+    public function getParent(): ?self
     {
         return match($this) {
             self::electronics => self::products,
             self::computers => self::electronics,
             self::laptops => self::computers,
-            default => self::products,
+            self::products => null,
         };
     }
 }
@@ -114,6 +114,7 @@ enum MenuCategory: string
 // Uso
 $category = MenuCategory::laptops;
 $parent = $category->getParent(); // MenuCategory::computers
+$root = MenuCategory::products->getParent(); // null
 ```
 
 ## `MultipleSelfReferencedEnumeration`

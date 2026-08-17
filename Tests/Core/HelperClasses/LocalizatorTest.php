@@ -81,6 +81,13 @@ class LocalizatorTest extends TestCase
         $this->assertTrue($reflection->getMethod('getEnumerationLocaleArray')->isPublic());
     }
 
+    public function testGetComposedEnumerationLocaleArrayMethodExists()
+    {
+        $reflection = new \ReflectionClass(Localizator::class);
+        $this->assertTrue($reflection->hasMethod('getComposedEnumerationLocaleArray'));
+        $this->assertTrue($reflection->getMethod('getComposedEnumerationLocaleArray')->isPublic());
+    }
+
     public function testSetLanguageMethodExists()
     {
         $reflection = new \ReflectionClass(Localizator::class);

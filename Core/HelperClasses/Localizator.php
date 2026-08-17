@@ -86,6 +86,16 @@ class Localizator
 
     public function getEnumerationLocaleArray(\UnitEnum $enumeration): string
     {
+        return $this->getEnumerationLocaleField($enumeration);
+    }
+
+    public function getComposedEnumerationLocaleArray(\UnitEnum $enumeration): array
+    {
+        return $this->getEnumerationLocaleField($enumeration);
+    }
+
+    private function getEnumerationLocaleField(\UnitEnum $enumeration): string|array
+    {
         $reflectionEnumeration = new \ReflectionClass($enumeration);
         $enumerationName = $reflectionEnumeration->getShortName();
         $locale = $this->getLocale();
