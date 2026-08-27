@@ -48,6 +48,7 @@ class Session
 
     public static function start(Request $request = new Request()): void
     {
+        ini_set('session.gc_maxlifetime', 3600);
         session_set_cookie_params([
             "lifetime" => 3600,
             "path" => "/",
@@ -57,7 +58,7 @@ class Session
             "samesite" => "Lax",
         ]);
         session_start();
-        session_regenerate_id();
+        session_regenerate_id(true);
         self::setItem('token', hash("sha512", ($request->server['HTTP_USER_AGENT'] ?? null) . ($request->server['REMOTE_ADDR'] ?? null)));
     }
 
@@ -68,7 +69,10 @@ class Session
 
     public static function setItem(int|string $key, mixed $value, bool $serialize = false): void
     {
-        preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        $matches = [[], []];
+        if (is_string($key) && str_contains($key, '[')) {
+            preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        }
         if ($serialize) {
             $_SESSION[$key] = serialize($value);
         } elseif (count($matches[1]) > 0) {
@@ -91,7 +95,10 @@ class Session
 
     public static function appendItem(int|string $key, mixed $value, bool $serialize = false): void
     {
-        preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        $matches = [[], []];
+        if (is_string($key) && str_contains($key, '[')) {
+            preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        }
         if ($serialize) {
             $_SESSION[$key][] = serialize($value);
         } elseif (count($matches[1]) > 0) {
@@ -106,7 +113,7 @@ class Session
     {
         $actualKey = array_shift($keys);
         if (count($keys) > 0) {
-            self::setItemRecursive($currentPosition[$actualKey], $keys, $value);
+            self::appendItemRecursive($currentPosition[$actualKey], $keys, $value);
         } elseif ((isset($currentPosition[$actualKey]) && is_array($currentPosition[$actualKey]) && (in_array($value, $currentPosition[$actualKey]) === false)) || (isset($currentPosition[$actualKey]) === false)) {
             $currentPosition[$actualKey][] = $value;
         }
@@ -119,8 +126,10 @@ class Session
 
     public static function unsetItem(int|string $key): void
     {
-        $matches = [];
-        preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        $matches = [[], []];
+        if (is_string($key) && str_contains($key, '[')) {
+            preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        }
         if (count($matches[1]) > 0) {
             $match = [];
             preg_match("/^[^\\[]*/", $key, $match);
@@ -147,7 +156,10 @@ class Session
 
     public static function getItem(int|string $key, $unserialize = false): mixed
     {
-        preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        $matches = [[], []];
+        if (is_string($key) && str_contains($key, '[')) {
+            preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        }
         if ($unserialize) {
             return unserialize($_SESSION[$key]);
         } elseif (count($matches[1]) > 0) {
@@ -175,7 +187,10 @@ class Session
 
     public static function hasItem($key): bool
     {
-        preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        $matches = [[], []];
+        if (is_string($key) && str_contains($key, '[')) {
+            preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches);
+        }
         if (count($matches[1]) > 0) {
             preg_match("/^[^\\[]*/", $key, $match);
             return self::hasItemRecursive($_SESSION[$match[0]], $matches[1]);
@@ -196,8 +211,8 @@ class Session
 
     public static function isValidSession(Request $request = new Request()): bool
     {
-        $value = hash("sha512", $request->server['HTTP_USER_AGENT'] . $request->server['REMOTE_ADDR']);
-        return (self::getItem('token') === $value);
+        $value = hash("sha512", ($request->server['HTTP_USER_AGENT'] ?? null) . ($request->server['REMOTE_ADDR'] ?? null));
+        return hash_equals((string) self::getItem('token'), $value);
     }
 
     public static function end(): void

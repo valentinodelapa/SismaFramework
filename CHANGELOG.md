@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.1.1] - 2026-08-27 - Correzione Bug in appendItem() e Rafforzamento della Sicurezza delle Sessioni
+
+Patch che raggruppa un insieme di correzioni alla classe `Session`, emerse da una revisione mirata della gestione delle sessioni nel framework: un bug di ricorsione in `appendItem()` che ne vanificava silenziosamente il comportamento sulle chiavi annidate a più livelli, un disallineamento tra la durata del cookie di sessione e quella dei dati lato server, un confronto non timing-safe del token anti-hijacking, e una rotazione dell'ID di sessione ad ogni richiesta che non invalidava mai realmente l'ID precedente.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Session::appendItemRecursive()` — l'append su chiavi annidate a più livelli degradava silenziosamente a un overwrite
+
+Per una chiave con un solo livello di annidamento (es. `test[one]`), `appendItem()` funziona correttamente: verifica se il valore è già presente nell'array di destinazione e, in caso contrario, lo accoda. Per una chiave con due o più livelli (es. `test[one][two]`), il ramo ricorsivo di `appendItemRecursive()` richiamava però `setItemRecursive()` invece di se stesso: il risultato, per qualunque profondità superiore a uno, era che il valore più profondo veniva sovrascritto come farebbe `setItem()` — perdendo l'array esistente, il controllo dei duplicati e la semantica di append che il metodo promette dalla sua firma. L'unico test esistente per l'append su chiavi annidate copriva un solo livello di profondità, motivo per cui il difetto è rimasto silente.
+
+`appendItemRecursive()` richiama ora se stessa nel ramo ricorsivo, esattamente come già fanno `setItemRecursive()`, `unsetItemRecursive()`, `getItemRecursive()` e `hasItemRecursive()`.
+
+**File modificati**:
+- **`Core/HelperClasses/Session.php`**: `appendItemRecursive()`, la chiamata ricorsiva richiama ora `appendItemRecursive()` invece di `setItemRecursive()`
+- **`Tests/Core/HelperClasses/SessionTest.php`**: aggiunto `testSessionAppendDeeplyNestedItem()`, che esercita `appendItem()` su una chiave a due livelli di annidamento e fallisce contro l'implementazione precedente
+
+#### `Core/HelperClasses/Session::start()` — la sessione lato server poteva scadere prima del cookie del client
+
+Il cookie di sessione viene emesso con `lifetime: 3600` (un'ora), ma nessun punto del framework allineava `session.gc_maxlifetime` — il parametro PHP che determina quando i dati di sessione diventano eleggibili per la garbage collection — a quello stesso valore. Con l'`ini` di default di molte distribuzioni (tipicamente 1440 secondi, 24 minuti), i dati di sessione potevano essere ripuliti dal server ben prima della scadenza dichiarata al client: l'utente restava con un cookie ancora "valido" ma privo di sessione corrispondente, con un logout inatteso e difficile da riprodurre perché dipendente dalla configurazione dell'hosting.
+
+`start()` imposta ora esplicitamente `ini_set('session.gc_maxlifetime', 3600)`, in modo che la vita dei dati lato server sia sempre coerente con quella del cookie, indipendentemente dalla configurazione di `php.ini` dell'ambiente di destinazione.
+
+**File modificati**:
+- **`Core/HelperClasses/Session.php`**: `start()`, aggiunta `ini_set('session.gc_maxlifetime', 3600)` prima di `session_set_cookie_params()`
+
+### 🛡️ Sicurezza
+
+#### `Core/HelperClasses/Session::isValidSession()` — confronto del token incoerente rispetto a `start()` e non timing-safe
+
+`start()` calcola il token anti-hijacking con `($request->server['HTTP_USER_AGENT'] ?? null) . ($request->server['REMOTE_ADDR'] ?? null)`, tollerando l'assenza di uno dei due header. `isValidSession()` eseguiva lo stesso calcolo senza l'operatore di null coalescing, sollevando un warning "Undefined array key" nei contesti in cui uno dei due valori non è presente (client senza `User-Agent`, proxy che lo rimuovono, ambienti di test). Il confronto finale tra token atteso e token calcolato, inoltre, usava `===` anzichè un confronto a tempo costante, esponendo — sebbene in modo marginale, trattandosi di un hash SHA-512 non direttamente controllabile da un attaccante — a un timing attack in stile OWASP su una funzione dedicata proprio a rilevare sessioni dirottate.
+
+`isValidSession()` è ora allineato a `start()` sull'uso di `?? null`, e il confronto finale utilizza `hash_equals()` invece di `===`.
+
+**File modificati**:
+- **`Core/HelperClasses/Session.php`**: `isValidSession()`, allineato l'uso di `?? null` a `start()` e sostituito il confronto `===` con `hash_equals()`
+
+#### `Core/HelperClasses/Session::start()` — l'ID di sessione precedente restava valido dopo la rotazione
+
+`start()` viene invocato dal front controller (`Public/index.php`) ad ogni richiesta, e rigenera sempre l'ID di sessione tramite `session_regenerate_id()`. Chiamato senza l'argomento `delete_old_session`, però, il vecchio ID non viene invalidato: resta pienamente utilizzabile fino a quando non interviene la garbage collection di PHP (probabilistica, e ora fino a un'ora di distanza per effetto dell'allineamento di `gc_maxlifetime` sopra descritto). La rotazione ad ogni richiesta è una difesa in profondità riconosciuta contro il furto di sessione — riduce la finestra in cui un ID sottratto resta utile — ma senza l'invalidazione immediata del vecchio ID quel beneficio non si realizzava: l'ID rubato restava valido esattamente quanto se la rotazione non fosse mai avvenuta.
+
+`start()` chiama ora `session_regenerate_id(true)`, invalidando immediatamente l'ID precedente ad ogni rotazione.
+
+**File modificati**:
+- **`Core/HelperClasses/Session.php`**: `start()`, `session_regenerate_id()` → `session_regenerate_id(true)`
+- **`Tests/Core/HelperClasses/SessionTest.php`**: aggiunto `testSessionRegenerateIdInvalidatesPreviousId()`, che verifica sia la continuità dei dati lungo una catena legittima di rotazioni sia l'effettiva invalidazione di un ID già ruotato via
+
+### 🚀 Performance
+
+#### `Core/HelperClasses/Session` — `preg_match_all()` eseguito anche per chiavi semplici senza annidamento
+
+`setItem()`, `getItem()`, `appendItem()`, `unsetItem()` e `hasItem()` eseguivano incondizionatamente `preg_match_all("/\\[([^\\]]*)\\]/", $key, $matches)` per rilevare la sintassi di chiave annidata (`foo[bar][baz]`), anche quando la chiave passata era una semplice stringa priva di parentesi quadre — il caso di gran lunga più comune nell'uso tipico della classe.
+
+Ciascuno dei cinque metodi esegue ora `preg_match_all()` solo se la chiave contiene effettivamente `[`, evitando il costo della regex nel percorso comune.
+
+**File modificati**:
+- **`Core/HelperClasses/Session.php`**: `setItem()`, `getItem()`, `appendItem()`, `unsetItem()`, `hasItem()` — `preg_match_all()` eseguito solo se `str_contains($key, '[')`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica è stata modificata; tutte le modifiche sono correzioni di comportamento o hardening interno.
+- **Cambiamento di comportamento osservabile — rotazione dell'ID di sessione**: con `session_regenerate_id(true)`, una richiesta concorrente che si presenta con un cookie già superato da una rotazione precedente (tab multipli, chiamate `fetch`/AJAX in parallelo dallo stesso client) riceve ora una sessione vuota invece di continuare silenziosamente a leggere i dati residui del vecchio ID. È il prezzo esplicito del beneficio di sicurezza descritto sopra; un'implementazione con periodo di grazia (mappatura vecchio→nuovo ID per una finestra di pochi secondi) richiederebbe un session handler dedicato e non rientra in questa patch.
+- **Cambiamento di comportamento osservabile — `appendItem()` su chiavi annidate a più livelli**: chi si affidava (involontariamente) al comportamento precedente per sovrascrivere un valore annidato tramite `appendItem()` invece di `setItem()` vedrà ora la semantica di append effettivamente applicata.
+- **`session.gc_maxlifetime`**: ora forzato a 3600 secondi per l'intera esecuzione dello script da `Session::start()`; se l'applicazione ospitante si affida a un valore diverso per scopi indipendenti dalla sessione del framework, questa impostazione lo sovrascrive.
+
+---
+
 ## [12.1.0] - 2026-08-11 - Supporto Chiavi Enum Composte in Localizator
 
 Minor release che estende `Localizator` con un nuovo metodo dedicato alla lettura di valori di localizzazione strutturati (array) per i case degli enum, mantenendo `getEnumerationLocaleArray()` invariato per l'uso corrente (label singola come stringa).
