@@ -69,6 +69,31 @@ class SessionTest extends TestCase
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
     }
 
+    public function testSessionRegenerateIdInvalidatesPreviousId()
+    {
+        $this->assertEquals(PHP_SESSION_NONE, session_status());
+        Session::start($this->requestMock);
+        $staleId = session_id();
+        Session::setItem('marker', 'present');
+        session_write_close();
+        $this->assertEquals(PHP_SESSION_NONE, session_status());
+
+        session_id($staleId);
+        Session::start($this->requestMock);
+        $this->assertNotEquals($staleId, session_id());
+        $this->assertEquals('present', Session::getItem('marker'));
+        session_write_close();
+        $this->assertEquals(PHP_SESSION_NONE, session_status());
+
+        session_id($staleId);
+        Session::start($this->requestMock);
+        $this->assertNotEquals($staleId, session_id());
+        $this->assertFalse(Session::hasItem('marker'));
+
+        Session::end();
+        $this->assertEquals(PHP_SESSION_NONE, session_status());
+    }
+
     public function testSessionSetUnsetSampleItemStatic()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
@@ -184,6 +209,30 @@ class SessionTest extends TestCase
         $this->assertTrue(Session::hasItem('test[one][1]'));
         $this->assertEquals('valueTwo', $_SESSION['test']['one'][1]);
         $this->assertEquals('valueTwo', Session::getItem('test[one][1]'));
+        Session::unsetItem('test');
+        $this->assertArrayNotHasKey('test', $_SESSION);
+        $this->assertFalse(Session::hasItem('test'));
+        Session::end();
+        $this->assertEquals(PHP_SESSION_NONE, session_status());
+    }
+
+    public function testSessionAppendDeeplyNestedItem()
+    {
+        $this->assertEquals(PHP_SESSION_NONE, session_status());
+        Session::start($this->requestMock);
+        $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
+        $this->assertArrayNotHasKey('test', $_SESSION);
+        Session::setItem('test[one][two][0]', 'valueOne');
+        $this->assertEquals('valueOne', Session::getItem('test[one][two][0]'));
+        Session::appendItem('test[one][two]', 'valueTwo');
+        $this->assertArrayHasKey(0, $_SESSION['test']['one']['two']);
+        $this->assertTrue(Session::hasItem('test[one][two][0]'));
+        $this->assertEquals('valueOne', $_SESSION['test']['one']['two'][0]);
+        $this->assertArrayHasKey(1, $_SESSION['test']['one']['two']);
+        $this->assertTrue(Session::hasItem('test[one][two][1]'));
+        $this->assertEquals('valueTwo', $_SESSION['test']['one']['two'][1]);
+        Session::appendItem('test[one][two]', 'valueTwo');
+        $this->assertCount(2, $_SESSION['test']['one']['two']);
         Session::unsetItem('test');
         $this->assertArrayNotHasKey('test', $_SESSION);
         $this->assertFalse(Session::hasItem('test'));
