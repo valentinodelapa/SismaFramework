@@ -34,10 +34,9 @@ use SismaFramework\Core\Enumerations\Language;
  */
 trait ReferencedSelectableEnumeration
 {
-
     use SelectableEnumeration;
 
-    private static function getChoiceByReferencedEnumeration(Language $language, $referencingMethodName, \UnitEnum $referencedEnumeration = null): array
+    private static function getChoiceByReferencedEnumeration(Language $language, string $referencingMethodName, ?\UnitEnum $referencedEnumeration = null): array
     {
         $choice = [];
         foreach (self::cases() as $case) {

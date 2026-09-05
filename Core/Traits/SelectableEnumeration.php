@@ -39,7 +39,7 @@ trait SelectableEnumeration
     public function getFriendlyLabel(Language $language): string
     {
         $localizator = new Localizator($language);
-        return $localizator->getEnumerationLocaleArray($this);
+        return $localizator->getEnumerationLocaleLabel($this);
     }
 
     public static function getChoiceFromEnumerations(Language $language): array

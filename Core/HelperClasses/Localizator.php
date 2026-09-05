@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\LocalizatorException;
@@ -38,7 +37,6 @@ use SismaFramework\Core\Exceptions\LocalizatorException;
  */
 class Localizator
 {
-
     private static ?Language $injectedLanguage = null;
     private ?Language $customLanguage = null;
     private Config $config;
@@ -84,14 +82,24 @@ class Localizator
         return $actualLocale;
     }
 
-    public function getEnumerationLocaleArray(\UnitEnum $enumeration): string
+    public function getEnumerationLocaleLabel(\UnitEnum $enumeration): string
     {
-        return $this->getEnumerationLocaleField($enumeration);
+        $field = $this->getEnumerationLocaleField($enumeration);
+        return is_array($field) ? $field['label'] : $field;
     }
 
-    public function getComposedEnumerationLocaleArray(\UnitEnum $enumeration): array
+    public function getComposedEnumerationLocale(\UnitEnum $enumeration): array
     {
-        return $this->getEnumerationLocaleField($enumeration);
+        $field = $this->getEnumerationLocaleField($enumeration);
+        if (is_array($field) === false) {
+            throw new LocalizatorException('Il valore di localizzazione per ' . $enumeration::class . '::' . $enumeration->name . ' non è composto');
+        }
+        return $field;
+    }
+
+    public function getEnumerationLocaleAttribute(\UnitEnum $enumeration, string $attribute): string|array
+    {
+        return $this->getComposedEnumerationLocale($enumeration)[$attribute];
     }
 
     private function getEnumerationLocaleField(\UnitEnum $enumeration): string|array

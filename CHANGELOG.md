@@ -2,6 +2,81 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.2.0] - 2026-09-05 - Rinominazione API di Localizator, Correzione TypeError e Nuovo Metodo getEnumerationLocaleAttribute()
+
+Minor release che rinomina due metodi pubblici di `Localizator` i cui nomi non riflettevano più il tipo di ritorno effettivo (e, nel caso di `getComposedEnumerationLocale()`, erano diventati troppo simili al metodo privato sottostante), corregge un bug introdotto in [12.1.0](#1210---2026-08-11---supporto-chiavi-enum-composte-in-localizator), e aggiunge un nuovo metodo per leggere un singolo attributo da un valore di localizzazione composto.
+
+### ♻️ Refactoring
+
+#### `Core/HelperClasses/Localizator` — Rinominati `getEnumerationLocaleArray()` e `getComposedEnumerationLocaleArray()`
+
+Entrambi i nomi risalivano a un paradigma precedente (commit `20eb7a15`, dic 2024) in cui il primo metodo restituiva davvero un `array`; da allora restituisce una singola stringa (la label), ma il nome non era mai stato aggiornato. Con l'introduzione in 12.1.0 di un secondo metodo per il valore composto, la coppia di nomi (`getEnumerationLocaleArray()` → stringa, `getComposedEnumerationLocaleArray()` → array) era diventata fuorviante. Rinominati per riflettere il tipo di ritorno effettivo:
+
+- `getEnumerationLocaleArray(): string` → **`getEnumerationLocaleLabel(): string`**
+- `getComposedEnumerationLocaleArray(): array` → **`getComposedEnumerationLocale(): array`**
+
+Il secondo nome evita deliberatamente la parola "Field/Fields": il metodo privato sottostante, `getEnumerationLocaleField()`, esegue il lookup grezzo (`string|array`) per un case dell'enum, mentre il metodo pubblico pretende e garantisce la forma composta (`array`). Chiamarlo `getEnumerationLocaleFields()` — come nome scelto in un primo momento — li rendeva praticamente indistinguibili a colpo d'occhio pur avendo contratti diversi (uno può restituire una stringa, l'altro lancia un'eccezione se non trova un array).
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: rinominati i due metodi
+- **`Core/Traits/SelectableEnumeration.php`**: `getFriendlyLabel()` aggiornato per chiamare `getEnumerationLocaleLabel()`
+- **`Tests/Core/HelperClasses/LocalizatorTest.php`**: test di esistenza metodo aggiornati ai nuovi nomi
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Localizator::getEnumerationLocaleLabel()` — `TypeError` quando il valore di localizzazione dell'enum è un array
+
+Da quando, in 12.1.0, `getEnumerationLocaleField()` è diventato `string|array` per supportare le chiavi di localizzazione composte, questo metodo (allora `getEnumerationLocaleArray()`) — dichiarato `: string` — continuava a restituire il valore così com'era. Se il case dell'enum ha un valore locale composto (es. `{"label": "...", "description": "..."}`), la chiamata sollevava `TypeError: Return value must be of type string, array returned`.
+
+Il metodo ora verifica il tipo del valore restituito da `getEnumerationLocaleField()` e, se è un array, estrae la chiave `'label'`.
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: gestione esplicita del caso array estraendo `$field['label']`
+
+#### `Core/HelperClasses/Localizator::getComposedEnumerationLocale()` — Errore nativo poco chiaro quando l'enum non ha un valore locale composto
+
+Stesso difetto del punto precedente, presente fin dall'introduzione del metodo in 12.1.0 (allora `getComposedEnumerationLocaleArray()`): dichiarato `: array`, restituiva `getEnumerationLocaleField()` senza verificarne il tipo. Se il case dell'enum ha un valore locale semplice (stringa), la chiamata sollevava un `TypeError` a carico del tipo di ritorno.
+
+Il metodo ora verifica il tipo del valore restituito da `getEnumerationLocaleField()` e, se non è un array, solleva una `LocalizatorException` esplicita — già prevista nel framework (`Core/Exceptions/LocalizatorException.php`) ma finora mai utilizzata — invece del `TypeError`/"illegal string offset" nativo di PHP.
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: `getComposedEnumerationLocale()` gestisce esplicitamente il caso non-array
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Localizator::getEnumerationLocaleAttribute()` — Lettura di un singolo attributo da un valore di localizzazione composto
+
+Aggiunto un nuovo metodo pubblico che, dato un enum e il nome di un attributo, restituisce direttamente il valore di quell'attributo dal campo di localizzazione composto, senza dover passare per `getComposedEnumerationLocale()` e indicizzare manualmente l'array risultante. Internamente delega a `getComposedEnumerationLocale()`, ereditandone la `LocalizatorException` quando l'enum non ha un valore locale composto.
+
+Il tipo di ritorno è `string|array` e non `mixed`: i file di locale sono file di linguaggio, il cui unico scopo è contenere testo (eventualmente organizzato in strutture annidate, come si vede in `Aurunci/Application/Locales/it_IT.json` con voci a più livelli, es. `nobleQualification.don.male.label`); un numero o un booleano al loro interno sarebbe un errore di contenuto, non un caso d'uso legittimo da rappresentare nel tipo. Poiché il framework non dichiara `strict_types` da nessuna parte, un simile errore verrebbe comunque coercito silenziosamente a stringa da PHP anziché sollevare un `TypeError`; il vantaggio pratico del tipo esplicito è invece sul lookup di una chiave `$attribute` inesistente, che con `string|array` (non nullable) fallisce subito con un `TypeError` invece di propagarsi silenziosamente come `null`.
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: aggiunto `getEnumerationLocaleAttribute(\UnitEnum $enumeration, string $attribute): string|array`
+
+### 📖 Documentazione
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+`Localizator` è marcata `@internal`, quindi phpDocumentor non genera per essa (né per le altre classi `@internal` del framework) una pagina pubblica: le modifiche di questa release non compaiono nella documentazione generata. La rigenerazione ha comunque aggiornato 14 pagine rimaste indietro rispetto a modifiche di release precedenti mai propagate alla documentazione (es. `Session` per la 12.1.1, `MultipleSelfReferencedEnumeration` per la 12.1.2).
+
+### 🔧 Manutenzione
+
+#### `phpunit.xml` — Sostituito l'attributo deprecato `cacheResult`
+
+PHPUnit 13 segnala `cacheResult` come deprecato e ne annuncia la rimozione in PHPUnit 14 (`vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/Loader.php`), in favore di `recordTestRunHistory` (stesso significato, nuovo nome). Sostituito nell'attributo radice `<phpunit>`.
+
+**File modificati**:
+- **`phpunit.xml`**: `cacheResult="true"` → `recordTestRunHistory="true"`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change sull'API pubblica stabile**: `Localizator` è marcata `@internal` (non è API consumabile dall'esterno del framework, coerentemente con il trattamento già riservato in passato a classi come `Submittable` in 11.6.0 e `TransactionManager`/`QueryExecutor` in 10.0.5); il rename dei due metodi è quindi documentato come modifica interna, non come breaking change.
+- **Cambio di comportamento su input malformato**: chiamare `getComposedEnumerationLocale()` o `getEnumerationLocaleAttribute()` su un enum privo di valore locale composto ora solleva `LocalizatorException` invece di un `TypeError`/warning nativo di PHP — un errore più esplicito, non un nuovo modo di fallire.
+- L'unico chiamante interno (`SelectableEnumeration::getFriendlyLabel()`) è stato aggiornato nello stesso commit.
+- Il nuovo metodo `getEnumerationLocaleAttribute()` è puramente additivo.
+
+---
+
 ## [12.1.2] - 2026-09-05 - Correzione Import Mancante in MultipleSelfReferencedEnumeration
 
 Patch che corregge un fatal error latente nel trait `MultipleSelfReferencedEnumeration`: il metodo `getChoiceByMultipleParent()` dichiara il parametro `Language $language`, ma il file non importava la classe `SismaFramework\Core\Enumerations\Language`.
