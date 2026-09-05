@@ -26,6 +26,7 @@
                         <li><a href="/docs/view/file/getting-started">Getting Started</a></li>
                         <li><a href="/docs/view/file/api-reference">API Reference</a></li>
                         <li><a href="/sample/index">Esempi</a></li>
+                        <li><a href="/home/donate">Donazioni</a></li>
                         <li><a href="/home/privacy">Privacy Policy</a></li>
                         <li><a href="/home/cookies">Cookie Policy</a></li>
                     </ul>

@@ -36,6 +36,14 @@
         <priority>0.8</priority>
     </url>
 
+    <!-- Donazioni -->
+    <url>
+        <loc>https://www.sisma-framework.dev/home/donate</loc>
+        <lastmod>2026-09-01</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
     <!-- Tutorial -->
     <url>
         <loc>https://www.sisma-framework.dev/docs/view/file/getting-started</loc>
