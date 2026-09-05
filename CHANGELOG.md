@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.1.2] - 2026-09-05 - Correzione Import Mancante in MultipleSelfReferencedEnumeration
+
+Patch che corregge un fatal error latente nel trait `MultipleSelfReferencedEnumeration`: il metodo `getChoiceByMultipleParent()` dichiara il parametro `Language $language`, ma il file non importava la classe `SismaFramework\Core\Enumerations\Language`.
+
+### 🐛 Bug Fix
+
+#### `Core/Traits/MultipleSelfReferencedEnumeration::getChoiceByMultipleParent()` — `Language` referenziata senza `use`, fatal error a runtime
+
+Il parametro `Language $language` viene risolto da PHP, in assenza di un `use` esplicito, nel namespace corrente del file (`SismaFramework\Core\Traits`). Poiché la classe `Language` vive in `SismaFramework\Core\Enumerations`, qualsiasi enum concreto che utilizza il trait e invoca `getChoiceByMultipleParent()` solleva un `Error: Class "SismaFramework\Core\Traits\Language" not found`. Il difetto era presente fin dall'introduzione della firma tipizzata del metodo e non è mai emerso perché nessun test in `Tests/` esercita questo trait.
+
+Aggiunta la dichiarazione `use SismaFramework\Core\Enumerations\Language;` in testa al file.
+
+**File modificati**:
+- **`Core/Traits/MultipleSelfReferencedEnumeration.php`**: aggiunto `use SismaFramework\Core\Enumerations\Language;`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la firma pubblica del metodo non cambia; viene risolto un fatal error che rendeva il metodo inutilizzabile in qualsiasi enum concreto.
+
+---
+
 ## [12.1.1] - 2026-08-27 - Correzione Bug in appendItem() e Rafforzamento della Sicurezza delle Sessioni
 
 Patch che raggruppa un insieme di correzioni alla classe `Session`, emerse da una revisione mirata della gestione delle sessioni nel framework: un bug di ricorsione in `appendItem()` che ne vanificava silenziosamente il comportamento sulle chiavi annidate a più livelli, un disallineamento tra la durata del cookie di sessione e quella dei dati lato server, un confronto non timing-safe del token anti-hijacking, e una rotazione dell'ID di sessione ad ogni richiesta che non invalidava mai realmente l'ID precedente.
