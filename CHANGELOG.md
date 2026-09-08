@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.10] - 2026-09-08 - Correzione Rilevamento Foreign Key Null in buildPropertiesConditions()
+
+Patch che corregge un difetto di `DependentModel::buildPropertiesConditions()`, il metodo che traduce le proprietà passate ai metodi di ricerca su relazione (`countEntityCollectionByEntity()`, `getEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()`, i finder magici generati da `__call()`) in condizioni SQL: per una proprietà foreign key (dichiarata come sottoclasse di `ReferencedEntity`) valorizzata con `null`, il metodo generava una condizione sulla colonna sbagliata, priva del suffisso `Id` richiesto dalla convenzione di naming dell'ORM.
+
+### 🐛 Bug Fix
+
+#### `Orm/ExtendedClasses/DependentModel::buildPropertiesConditions()` — ricerca per foreign key null risolta sulla colonna sbagliata
+
+Il quarto parametro di `Query::appendCondition()` (`bool $foreignKey`) indica all'adapter se il nome colonna va risolto con il suffisso `Id` (`NotationManager::convertPropertyNameToColumnName($name, true)`, es. `relatedEntity` → `related_entity_id`) invece che come proprietà scalare (`relatedEntity` → `related_entity`). `buildPropertiesConditions()` determinava questo flag con `$propertyValue instanceof ReferencedEntity` — un controllo sul valore a runtime, non sul tipo dichiarato della proprietà. Per qualunque proprietà foreign key interrogata con valore `null` (il caso d'uso esplicito di una ricerca "dove la relazione è assente"), `null instanceof ReferencedEntity` è sempre `false`, indipendentemente dal tipo dichiarato della proprietà sull'entità: il metodo trattava quindi la colonna come se fosse scalare, generando una condizione `WHERE related_entity IS NULL` invece di `WHERE related_entity_id IS NULL` — una colonna che nella tabella non esiste, con conseguente errore SQL a runtime per qualunque ricerca su una foreign key nullable valorizzata a `null`.
+
+`buildPropertiesConditions()` determina ora se una proprietà è una foreign key leggendo il tipo dichiarato tramite `ReflectionProperty::getType()` e `is_subclass_of(..., ReferencedEntity::class)`, indipendentemente dal valore effettivo — corretto sia per il ramo `null` che per quello non-null, ed eliminando la necessità di istanziare una seconda volta `ReflectionProperty` nel ramo non-null (già usata per calcolare `$bindTypes`).
+
+Nessun test esistente copriva questo percorso: `testCountEntityCollectionByEntityWithNullEntity` e `testCountEntityCollectionByEntityAndBuiltinPropertyWithNull` invocano già `countEntityCollectionByEntity()` con valore `null` su una proprietà foreign key, ma verificano solo che `appendCondition()` venga chiamato, senza asserire il valore del quarto parametro.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/DependentModel.php`**: `buildPropertiesConditions()`, il rilevamento foreign key usa ora `is_subclass_of($reflectionProperty->getType()->getName(), ReferencedEntity::class)` invece di `$propertyValue instanceof ReferencedEntity`, in entrambi i rami (null e non-null)
+- **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**: aggiunto `testBuildPropertiesConditionsPassesCorrectFourthParameterForNullForeignKeyValue()`, che invoca `countEntityCollectionByEntity()` con `null` su una proprietà `?ReferencedEntity` e asserisce che il quarto parametro di `appendCondition()` sia `true`; fallisce contro l'implementazione precedente
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `buildPropertiesConditions()` è `protected` e non fa parte del contratto pubblico consumato direttamente dalle applicazioni; nessuna firma è cambiata.
+- **Cambiamento di comportamento osservabile**: le ricerche per proprietà foreign key nullable valorizzate a `null` (via `countEntityCollectionByEntity()`/`getEntityCollectionByEntity()`/`deleteEntityCollectionByEntity()` o i finder magici equivalenti), che prima fallivano con un errore SQL per colonna inesistente, ora restituiscono il risultato corretto.
+
+---
+
 ## [11.9.8] - 2026-08-27 - Correzione Bug in appendItem() e Rafforzamento della Sicurezza delle Sessioni
 
 Patch che raggruppa un insieme di correzioni alla classe `Session`, emerse da una revisione mirata della gestione delle sessioni nel framework: un bug di ricorsione in `appendItem()` che ne vanificava silenziosamente il comportamento sulle chiavi annidate a più livelli, un disallineamento tra la durata del cookie di sessione e quella dei dati lato server, un confronto non timing-safe del token anti-hijacking, e una rotazione dell'ID di sessione ad ogni richiesta che non invalidava mai realmente l'ID precedente.
