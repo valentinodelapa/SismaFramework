@@ -519,6 +519,46 @@ class DependentModelTest extends TestCase
     }
 
     /**
+     * Test che verifica che il quarto parametro di appendCondition sia corretto
+     * quando una proprietà foreign key riceve valore null.
+     *
+     * Questo test avrebbe catturato il bug per cui buildPropertiesConditions()
+     * usava `$propertyValue instanceof ReferencedEntity` per determinare se una
+     * proprietà è una foreign key: con valore null l'instanceof è sempre false,
+     * anche quando la proprietà è dichiarata come ReferencedEntity, generando
+     * una condizione SQL sulla colonna sbagliata (priva del suffisso "Id").
+     */
+    public function testBuildPropertiesConditionsPassesCorrectFourthParameterForNullForeignKeyValue()
+    {
+        $this->initializeMock();
+
+        $this->dataMapperMock->expects($this->once())
+                ->method('initQuery')
+                ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+                ->method('setWhere');
+
+        $this->queryMock->expects($this->once())
+                ->method('appendCondition')
+                ->willReturnCallback(function ($column, $operator, $value, $isForeignKey = false) {
+                    $this->assertEquals('nullableReferencedEntityWithInitialization', $column);
+                    $this->assertTrue($isForeignKey, 'Il quarto parametro deve essere TRUE per una proprietà ReferencedEntity anche quando il valore è null');
+                    return $this->queryMock;
+                });
+
+        $this->queryMock->expects($this->once())
+                ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+                ->method('getCount')
+                ->willReturn(3);
+
+        $result = $this->model->countByNullableReferencedEntityWithInitialization(null);
+        $this->assertEquals(3, $result);
+    }
+
+    /**
      * Test che verifica che i bind types siano determinati correttamente
      * per proprietà miste (entity e builtin).
      * 

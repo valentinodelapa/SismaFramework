@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.2.1] - 2026-09-08 - Correzione Rilevamento Foreign Key Null in buildPropertiesConditions()
+
+Patch che corregge un difetto di `DependentModel::buildPropertiesConditions()`, il metodo che traduce le proprietà passate ai finder magici generati dal framework (`findByProperties()`, le varianti `countBy...()`/`deleteBy...()` generate da `__callStatic`/`__call`, ecc.) in condizioni SQL: per una proprietà foreign key (dichiarata come sottoclasse di `ReferencedEntity`) valorizzata con `null`, il metodo generava una condizione sulla colonna sbagliata, priva del suffisso `Id` richiesto dalla convenzione di naming dell'ORM.
+
+### 🐛 Bug Fix
+
+#### `Orm/ExtendedClasses/DependentModel::buildPropertiesConditions()` — ricerca per foreign key null risolta sulla colonna sbagliata
+
+Il quarto parametro di `Query::appendCondition()` (`bool $foreignKey`) indica all'adapter se il nome colonna va risolto con il suffisso `Id` (`NotationManager::convertPropertyNameToColumnName($name, true)`, es. `relatedEntity` → `related_entity_id`) invece che come proprietà scalare (`relatedEntity` → `related_entity`). `buildPropertiesConditions()` determinava questo flag con `$propertyValue instanceof ReferencedEntity` — un controllo sul valore a runtime, non sul tipo dichiarato della proprietà. Per qualunque proprietà foreign key interrogata con valore `null` (il caso d'uso esplicito di una ricerca "dove la relazione è assente"), `null instanceof ReferencedEntity` è sempre `false`, indipendentemente dal tipo dichiarato della proprietà sull'entità: il metodo trattava quindi la colonna come se fosse scalare, generando una condizione `WHERE related_entity IS NULL` invece di `WHERE related_entity_id IS NULL` — una colonna che nella tabella non esiste, con conseguente errore SQL a runtime per qualunque ricerca su una foreign key nullable valorizzata a `null`.
+
+`buildPropertiesConditions()` determina ora se una proprietà è una foreign key leggendo il tipo dichiarato tramite `ReflectionProperty::getType()` e `is_subclass_of(..., ReferencedEntity::class)`, indipendentemente dal valore effettivo — corretto sia per il ramo `null` che per quello non-null, ed eliminando la necessità di istanziare una seconda volta `ReflectionProperty` nel ramo non-null (già usata per calcolare `$bindTypes`).
+
+Nessun test esistente copriva questo percorso: gli unici test che invocano un finder con valore `null` su una proprietà foreign key (`testMagicMethodCountByNullableEntityWithNullValue`, `testMagicMethodCountByMultiplePropertiesWithNullValues`) verificano solo che `appendCondition()` venga chiamato, senza asserire il valore del quarto parametro.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/DependentModel.php`**: `buildPropertiesConditions()`, il rilevamento foreign key usa ora `is_subclass_of($reflectionProperty->getType()->getName(), ReferencedEntity::class)` invece di `$propertyValue instanceof ReferencedEntity`, in entrambi i rami (null e non-null)
+- **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**: aggiunto `testBuildPropertiesConditionsPassesCorrectFourthParameterForNullForeignKeyValue()`, che invoca un finder con `null` su una proprietà `?ReferencedEntity` e asserisce che il quarto parametro di `appendCondition()` sia `true`; fallisce contro l'implementazione precedente
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `buildPropertiesConditions()` è `protected` e non fa parte del contratto pubblico consumato direttamente dalle applicazioni; nessuna firma è cambiata.
+- **Cambiamento di comportamento osservabile**: le ricerche sui finder magici generati dal framework per proprietà foreign key nullable valorizzate a `null` (es. `countByRelatedEntityWithInitialization(null)` su una proprietà `?ReferencedEntity`), che prima fallivano con un errore SQL per colonna inesistente, ora restituiscono il risultato corretto.
+
+---
+
 ## [12.2.0] - 2026-09-05 - Rinominazione API di Localizator, Correzione TypeError e Nuovo Metodo getEnumerationLocaleAttribute()
 
 Minor release che rinomina due metodi pubblici di `Localizator` i cui nomi non riflettevano più il tipo di ritorno effettivo (e, nel caso di `getComposedEnumerationLocale()`, erano diventati troppo simili al metodo privato sottostante), corregge un bug introdotto in [12.1.0](#1210---2026-08-11---supporto-chiavi-enum-composte-in-localizator), e aggiunge un nuovo metodo per leggere un singolo attributo da un valore di localizzazione composto.
