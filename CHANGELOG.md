@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.11] - 2026-09-08 - Correzione Import Mancante in MultipleSelfReferencedEnumeration
+
+Patch che corregge un fatal error latente nel trait `MultipleSelfReferencedEnumeration`: il metodo `getChoiceByMultipleParent()` dichiara il parametro `Language $language`, ma il file non importava la classe `SismaFramework\Core\Enumerations\Language`.
+
+### 🐛 Bug Fix
+
+#### `Core/Traits/MultipleSelfReferencedEnumeration::getChoiceByMultipleParent()` — `Language` referenziata senza `use`, fatal error a runtime
+
+Qualunque enum concreto che usa questo trait e richiama `getChoiceByMultipleParent()` incontra un `Error: Class "SismaFramework\Core\Traits\Language" not found` a runtime, perché PHP risolve i tipi non importati nel namespace corrente (`Core\Traits`) invece che in quello reale della classe (`Core\Enumerations`). Il difetto è passato inosservato perché nessun enum in questa codebase (né applicativo né di test) usa attualmente il trait — copertura di test pari a zero su questo metodo.
+
+Aggiunta la dichiarazione `use SismaFramework\Core\Enumerations\Language;` in testa al file.
+
+**File modificati**:
+- **`Core/Traits/MultipleSelfReferencedEnumeration.php`**: aggiunto `use SismaFramework\Core\Enumerations\Language;`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la firma pubblica del metodo non cambia; viene risolto un fatal error che rendeva il metodo inutilizzabile in qualsiasi enum concreto.
+
+---
+
 ## [11.9.10] - 2026-09-08 - Correzione Rilevamento Foreign Key Null in buildPropertiesConditions()
 
 Patch che corregge un difetto di `DependentModel::buildPropertiesConditions()`, il metodo che traduce le proprietà passate ai metodi di ricerca su relazione (`countEntityCollectionByEntity()`, `getEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()`, i finder magici generati da `__call()`) in condizioni SQL: per una proprietà foreign key (dichiarata come sottoclasse di `ReferencedEntity`) valorizzata con `null`, il metodo generava una condizione sulla colonna sbagliata, priva del suffisso `Id` richiesto dalla convenzione di naming dell'ORM.
