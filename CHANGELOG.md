@@ -2,6 +2,60 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.3.0] - 2026-09-09 - Crittografia Asimmetrica Completa in Encryptor (Chiavi, CSR, Certificati, Catena di Fiducia, Cifratura a Busta)
+
+Minor release che estende `Encryptor` — finora limitato ad hash e cifratura simmetrica — con un set completo di primitive di crittografia asimmetrica: coppie di chiavi, richieste di firma certificato, certificati self-signed o firmati da CA (con controllo esplicito dell'estensione X.509v3 `basicConstraints`), verifica della catena di fiducia, firma/verifica di dati e cifratura a busta (envelope encryption). Le nuove funzioni sono generiche e riusabili da qualunque progetto basato sul framework, non legate a un caso d'uso applicativo specifico — non è stata rilasciata una prima versione ridotta (solo self-signed) perché, trattandosi di codice di libreria condiviso e non di un caso d'uso applicativo puntuale, un set di primitive incompleto (mancava, ad esempio, il corrispettivo di "firma" per la sola verifica del certificato, o l'analogo asimmetrico di `encryptString()`) avrebbe significato lasciare un lavoro a metà.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Encryptor` — dieci nuovi metodi per crittografia asimmetrica reale (OpenSSL)
+
+Aggiunti dieci metodi statici, nello stesso stile di quelli già esistenti (`?Config $customConfig = null` come ultimo parametro):
+
+**Chiavi e certificati**:
+- **`generateAsymmetricKeyPair(?Config $customConfig = null): array`** — genera una coppia di chiavi (`openssl_pkey_new`), ritorna `['privateKey' => string, 'publicKey' => string]` in formato PEM.
+- **`generateCertificateSigningRequest(string $privateKeyPem, array $distinguishedName, ?Config $customConfig = null): string`** — genera una CSR (`openssl_csr_new`) a partire da una chiave privata e un distinguished name (es. `['CN' => 'Mario Rossi', 'O' => 'Aurunci']`).
+- **`generateSelfSignedCertificate(string $privateKeyPem, array $distinguishedName, bool $certificationAuthority = true, ?Config $customConfig = null): string`** — genera una CSR e la autofirma (`openssl_csr_sign` con emittente `null`), per un soggetto che è al contempo titolare e garante del proprio certificato (root of trust). `$certificationAuthority` controlla l'estensione X.509v3 `basicConstraints` (`CA:TRUE`/`CA:FALSE`) del certificato risultante.
+- **`signCertificateSigningRequest(string $certificateSigningRequestPem, string $issuerCertificatePem, string $issuerPrivateKeyPem, bool $certificationAuthority = false, ?Config $customConfig = null): string`** — firma la CSR di un soggetto terzo con il certificato e la chiave di un emittente (una CA), producendo un certificato con `issuer` ≠ `subject`. `$certificationAuthority` decide se il certificato emesso è a sua volta una CA intermedia (default: no, certificato foglia).
+
+**Verifica**:
+- **`signData(string $data, string $privateKeyPem, ?Config $customConfig = null): string`** — firma dei dati con una chiave privata (`openssl_sign`), ritorna la firma in base64.
+- **`verifySignature(string $data, string $base64Signature, string $certificateOrPublicKeyPem, ?Config $customConfig = null): bool`** — verifica una firma (`openssl_verify`) contro un certificato o una chiave pubblica.
+- **`verifyCertificateSignedByIssuer(string $certificatePem, string $issuerCertificateOrPublicKeyPem): bool`** — verifica la catena di fiducia (`openssl_x509_verify`): "questo certificato è stato davvero emesso da questo emittente?", a differenza di `verifySignature()` che verifica la firma su un dato applicativo, non il certificato stesso.
+
+**Cifratura a busta**:
+- **`encryptWithPublicKey(string $data, string $certificateOrPublicKeyPem, ?Config $customConfig = null): array`** — cifratura a busta (`openssl_seal`): la chiave pubblica cifra una chiave simmetrica generata al volo, che a sua volta cifra i dati con l'algoritmo di `ENCRYPTION_ALGORITHM`. A differenza della cifratura RSA diretta (`openssl_public_encrypt`), non ha il limite di dimensione legato alla lunghezza della chiave asimmetrica (~245 byte per RSA 2048 bit con padding PKCS1). Ritorna `['data' => string, 'envelopeKey' => string, 'initializationVector' => string]`, tutti in base64.
+- **`decryptWithPrivateKey(array $encryptedEnvelope, string $privateKeyPem, ?Config $customConfig = null): string|false`** — decifra una busta prodotta da `encryptWithPublicKey()` (`openssl_open`). Ritorna `false` (non un'eccezione) se la decifratura fallisce, es. chiave privata errata — stesso contratto di `decryptString()` per lo stesso scenario.
+
+#### Configurazione OpenSSL autosufficiente — nessun `openssl.cnf` di sistema richiesto
+
+`generateAsymmetricKeyPair()`, `generateCertificateSigningRequest()`, `generateSelfSignedCertificate()` e `signCertificateSigningRequest()` passano tutte alle funzioni OpenSSL sottostanti l'opzione `config`, risolta da `resolveOpensslConfigPath()`: se `Config::opensslConfigPath` non è valorizzata, viene generato — una sola volta per processo, tramite `tempnam()`, ripulito a fine richiesta con `register_shutdown_function()` — un file di configurazione OpenSSL minimale (costante privata `Encryptor::MINIMAL_OPENSSL_CONFIG`) contenente le sezioni `[req]`/`[req_distinguished_name]` necessarie alle operazioni di base e le sezioni `[v3_ca]`/`[v3_leaf]` (rispettivamente `basicConstraints critical,CA:TRUE`/`CA:FALSE`) usate da `generateSelfSignedCertificate()`/`signCertificateSigningRequest()` per l'estensione X.509v3. Questo elimina la dipendenza da un `openssl.cnf` di sistema risolvibile automaticamente (assente per default su alcune installazioni PHP su Windows, dove altrimenti `openssl_pkey_new()`/`openssl_csr_new()`/`openssl_csr_sign()` falliscono silenziosamente ritornando `false`) — `OPENSSL_CONFIG_PATH` resta disponibile come override esplicito solo per esigenze avanzate (es. un provider/engine OpenSSL specifico).
+
+**Nuove proprietà di `Config`/costanti di `Config/config.php`** (sezione "Encryptor Constants"):
+
+| Costante | Proprietà `Config` | Tipo | Default |
+|---|---|---|---|
+| `ASYMMETRIC_KEY_TYPE` | `asymmetricKeyType` | `int` | `OPENSSL_KEYTYPE_RSA` |
+| `ASYMMETRIC_KEY_BITS` | `asymmetricKeyBits` | `int` | `2048` |
+| `ASYMMETRIC_DIGEST_ALGORITHM` | `asymmetricDigestAlgorithm` | `string` | `"sha256"` |
+| `CERTIFICATE_VALIDITY_DAYS` | `certificateValidityDays` | `int` | `3650` |
+| `OPENSSL_CONFIG_PATH` | `opensslConfigPath` | `string` | `""` (via `getenv('OPENSSL_CONFIG_PATH')`) |
+
+**File modificati**:
+- **`Core/HelperClasses/Encryptor.php`**: aggiunti i dieci metodi pubblici e i metodi privati di supporto `resolveOpensslConfigPath()`/`getMinimalOpensslConfigPath()`/`buildOpensslOptions()`/`createCertificateSigningRequestResource()`
+- **`Core/HelperClasses/Config.php`**: aggiunte le cinque proprietà `readonly` sopra elencate
+- **`Config/config.php`**: aggiunte le cinque costanti sopra elencate
+- **`Tests/Core/HelperClasses/EncryptorTest.php`**: aggiunti 21 test (incl. verifica delle estensioni `basicConstraints` per entrambi i booleani su entrambi i metodi, catena di fiducia positiva/su certificato self-signed/negativa, round-trip di cifratura a busta con payload oltre il limite RSA diretto, fallimento con chiave privata errata) — l'intera suite passa senza necessità di impostare `OPENSSL_CONFIG_PATH`, confermando l'autosufficienza della nuova configurazione minimale
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change per il codice applicativo esistente**: solo metodi e proprietà additive rispetto alla 12.2.1; nessuna firma di metodo preesistente è stata modificata.
+- **Cambio di firma rispetto alla prima stesura di questa stessa minor** (mai rilasciata separatamente): `generateSelfSignedCertificate()` e `signCertificateSigningRequest()` guadagnano il parametro `bool $certificationAuthority` prima di `?Config $customConfig`. Non è una breaking change verso versioni precedenti pubblicate — è la forma con cui questi due metodi vengono introdotti in questa release.
+- **Installazioni Esistenti**: `Config/configFramework.php` viene copiato da `Config/config.php` una sola volta, in fase di installazione (`InstallationManager::copyConfigFolder()`), e non viene mai risincronizzato automaticamente da un successivo aggiornamento del framework via composer. Un progetto già installato che aggiorna la dipendenza continua a funzionare senza modifiche — le nuove proprietà di `Config` sono risolte in modo lazy e nessun codice esistente le referenzia. Per poter usare i nuovi metodi di `Encryptor`, è necessario aggiungere manualmente le cinque costanti sopra elencate al proprio `Config/configFramework.php`: in assenza, la prima chiamata a uno dei nuovi metodi solleva `Error: Undefined constant`.
+- **Nuove Installazioni**: le costanti sono già incluse nel template `Config/config.php` copiato da `InstallationManager::copyConfigFolder()`, nessuna azione richiesta.
+
+---
+
 ## [12.2.1] - 2026-09-08 - Correzione Rilevamento Foreign Key Null in buildPropertiesConditions()
 
 Patch che corregge un difetto di `DependentModel::buildPropertiesConditions()`, il metodo che traduce le proprietà passate ai finder magici generati dal framework (`findByProperties()`, le varianti `countBy...()`/`deleteBy...()` generate da `__callStatic`/`__call`, ecc.) in condizioni SQL: per una proprietà foreign key (dichiarata come sottoclasse di `ReferencedEntity`) valorizzata con `null`, il metodo generava una condizione sulla colonna sbagliata, priva del suffisso `Id` richiesto dalla convenzione di naming dell'ORM.

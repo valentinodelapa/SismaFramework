@@ -561,7 +561,7 @@ class DependentModelTest extends TestCase
     /**
      * Test che verifica che i bind types siano determinati correttamente
      * per proprietà miste (entity e builtin).
-     * 
+     *
      * Questo test avrebbe catturato il bug della versione 10.1.0 dove
      * buildPropertyConditions hardcodava DataType::typeEntity per tutte
      * le proprietà invece di usare DataType::fromReflection().

@@ -13,6 +13,7 @@ Questa sezione fornisce una documentazione completa delle API principali di Sism
   * [NotationManager](#notationmanager)
   * [BufferManager](#buffermanager)
   * [Router](#router)
+  * [Encryptor](#encryptor)
 * [ORM Classes](#orm-classes)
   * [DataMapper](#datamapper)
   * [BaseModel](#basemodel)
@@ -293,6 +294,87 @@ Restituisce il contenuto del buffer senza pulirlo.
 public static function end(): void
 ```
 Termina il buffering dell'output.
+
+---
+
+### Encryptor
+
+**Namespace:** `SismaFramework\Core\HelperClasses\Encryptor`
+
+API unificata per operazioni crittografiche: token casuali, hash semplici, hash password (Blowfish/BCrypt), cifratura simmetrica e (dalla v12.3.0) crittografia asimmetrica — coppie di chiavi, CSR, certificati self-signed o emessi da una CA, firma e verifica di dati. Guida d'uso completa in [Sicurezza](security.md#crittografia-e-protezione-dati).
+
+Tutti i metodi sono statici e accettano un `?Config $customConfig = null` opzionale come ultimo parametro (usa `Config::getInstance()` se omesso).
+
+#### Token e Hash
+
+```php
+public static function getSimpleRandomToken(): string
+```
+Genera un token casuale esadecimale (`bin2hex(random_bytes(16))`).
+
+```php
+public static function getSimpleHash(string $text, ?Config $customConfig = null): string
+public static function verifySimpleHash(string $text, string $hash, ?Config $customConfig = null): bool
+```
+Hash/verifica con l'algoritmo configurato in `SIMPLE_HASH_ALGORITHM` (default `sha256`). Solo per checksum/integrità, mai per password.
+
+```php
+public static function getBlowfishHash(string $text, ?Config $customConfig = null): string
+public static function verifyBlowfishHash(string $text, string $hash): bool
+```
+Hash/verifica BCrypt (`password_hash`/`password_verify`), workload configurabile via `BLOWFISH_HASH_WORKLOAD`. Da usare sempre per le password.
+
+#### Cifratura Simmetrica
+
+```php
+public static function createInitializationVector(?Config $customConfig = null): string
+public static function encryptString(string $plainText, string $initializationVector, ?Config $customConfig = null): string
+public static function decryptString(string $cipherText, string $initializationVector, ?Config $customConfig = null): string|false
+```
+Cifratura/decifratura AES (algoritmo configurabile via `ENCRYPTION_ALGORITHM`, chiave via `ENCRYPTION_PASSPHRASE`). L'IV va generato una volta per dato cifrato e conservato insieme al ciphertext.
+
+#### Crittografia Asimmetrica (v12.3.0+)
+
+Nessuna di queste operazioni richiede configurazione: se `OPENSSL_CONFIG_PATH` non è valorizzata, `Encryptor` usa internamente una configurazione OpenSSL minimale autosufficiente (temporanea, generata una volta per processo).
+
+```php
+public static function generateAsymmetricKeyPair(?Config $customConfig = null): array
+```
+Genera una coppia di chiavi PEM. Ritorna `['privateKey' => string, 'publicKey' => string]`.
+
+```php
+public static function generateCertificateSigningRequest(string $privateKeyPem, array $distinguishedName, ?Config $customConfig = null): string
+```
+Genera una CSR PEM a partire da una chiave privata e un distinguished name (es. `['CN' => 'Mario Rossi']`).
+
+```php
+public static function generateSelfSignedCertificate(string $privateKeyPem, array $distinguishedName, bool $certificationAuthority = true, ?Config $customConfig = null): string
+```
+Genera una CSR e la autofirma, producendo un certificato PEM con `issuer` uguale a `subject`. `$certificationAuthority` (default `true`) controlla l'estensione X.509v3 `basicConstraints` del certificato risultante (`CA:TRUE`/`CA:FALSE`).
+
+```php
+public static function signCertificateSigningRequest(string $certificateSigningRequestPem, string $issuerCertificatePem, string $issuerPrivateKeyPem, bool $certificationAuthority = false, ?Config $customConfig = null): string
+```
+Firma la CSR di un soggetto terzo con certificato/chiave di un emittente (una CA), producendo un certificato PEM con `issuer` diverso da `subject`. `$certificationAuthority` (default `false`) decide se il certificato emesso è a sua volta abilitato a firmarne altri (CA intermedia) o è un certificato foglia.
+
+```php
+public static function signData(string $data, string $privateKeyPem, ?Config $customConfig = null): string
+public static function verifySignature(string $data, string $base64Signature, string $certificateOrPublicKeyPem, ?Config $customConfig = null): bool
+```
+Firma dati con una chiave privata (ritorna la firma in base64) e verifica una firma contro un certificato o una chiave pubblica.
+
+```php
+public static function verifyCertificateSignedByIssuer(string $certificatePem, string $issuerCertificateOrPublicKeyPem): bool
+```
+Verifica che un certificato sia stato firmato dal titolare del certificato/chiave pubblica indicato come emittente (verifica della catena di fiducia, non di una firma su un dato applicativo).
+
+```php
+public static function encryptWithPublicKey(string $data, string $certificateOrPublicKeyPem, ?Config $customConfig = null): array
+public static function decryptWithPrivateKey(array $encryptedEnvelope, string $privateKeyPem, ?Config $customConfig = null): string|false
+```
+Cifratura a busta (envelope encryption): la chiave pubblica cifra una chiave simmetrica generata al volo che cifra i dati, senza il limite di dimensione della cifratura RSA diretta. `encryptWithPublicKey()` ritorna `['data' => string, 'envelopeKey' => string, 'initializationVector' => string]` (tutti in base64). `decryptWithPrivateKey()` ritorna `false` (non un'eccezione) se la decifratura fallisce, es. chiave privata errata.
+
+**Configurazione**: `ASYMMETRIC_KEY_TYPE`, `ASYMMETRIC_KEY_BITS`, `ASYMMETRIC_DIGEST_ALGORITHM`, `CERTIFICATE_VALIDITY_DAYS`, `OPENSSL_CONFIG_PATH` — dettagli in [Configuration Reference](configuration-reference.md#crittografia).
 
 ---
 
