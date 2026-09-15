@@ -127,7 +127,7 @@ jobs:
           name: Release ${{ github.ref_name }}
           body: ${{ env.RELEASE_BODY }}
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
           files: |
             ${{ needs.build.outputs.archive_path }}
             *.intoto.jsonl
