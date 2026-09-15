@@ -288,7 +288,35 @@ const BLOWFISH_HASH_WORKLOAD = 12;
 const ENCRYPTION_PASSPHRASE = 'your-secret-key-here';
 const ENCRYPTION_ALGORITHM = 'AES-256-CBC';
 const INITIALIZATION_VECTOR_BYTES = 16;
+
+// Crittografia asimmetrica (coppie di chiavi, CSR, certificati, firma/verifica — v12.3.0+)
+const ASYMMETRIC_KEY_TYPE = OPENSSL_KEYTYPE_RSA;
+const ASYMMETRIC_KEY_BITS = 2048;
+const ASYMMETRIC_DIGEST_ALGORITHM = 'sha256';
+const CERTIFICATE_VALIDITY_DAYS = 3650;
+// Solo se necessario: percorso esplicito di openssl.cnf (ambienti senza default risolvibile)
+define(__NAMESPACE__ . '\OPENSSL_CONFIG_PATH', getenv('OPENSSL_CONFIG_PATH') ?: '');
 ```
+
+#### ASYMMETRIC_KEY_TYPE / ASYMMETRIC_KEY_BITS
+- **Tipo**: `int` / `int`
+- **Default**: `OPENSSL_KEYTYPE_RSA` / `2048`
+- **Descrizione**: tipo e lunghezza in bit delle coppie di chiavi generate da `Encryptor::generateAsymmetricKeyPair()`
+
+#### ASYMMETRIC_DIGEST_ALGORITHM
+- **Tipo**: `string`
+- **Default**: `'sha256'`
+- **Descrizione**: algoritmo di digest usato per CSR, certificati e firme (`Encryptor::signData()`/`verifySignature()`)
+
+#### CERTIFICATE_VALIDITY_DAYS
+- **Tipo**: `int`
+- **Default**: `3650`
+- **Descrizione**: validità in giorni dei certificati generati da `Encryptor::generateSelfSignedCertificate()`/`signCertificateSigningRequest()`
+
+#### OPENSSL_CONFIG_PATH
+- **Tipo**: `string`
+- **Default**: `''` (nessun override; letta da `getenv('OPENSSL_CONFIG_PATH')`)
+- **Descrizione**: percorso esplicito di un `openssl.cnf`, opzionale. Se non valorizzata, `Encryptor` genera e usa autonomamente una configurazione OpenSSL minimale autosufficiente (funziona anche su ambienti, tipicamente Windows, privi di un `openssl.cnf` di sistema risolvibile). Impostarla solo per esigenze avanzate (es. un provider/engine OpenSSL specifico) — in tal caso il file indicato deve includere le sezioni `[v3_ca]`/`[v3_leaf]` se si vuole che `generateSelfSignedCertificate()`/`signCertificateSigningRequest()` applichino correttamente l'estensione `basicConstraints`
 
 #### Configurazione Sicura
 

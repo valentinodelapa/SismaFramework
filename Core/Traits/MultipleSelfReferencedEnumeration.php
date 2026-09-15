@@ -26,12 +26,13 @@
 
 namespace SismaFramework\Core\Traits;
 
+use SismaFramework\Core\Enumerations\Language;
+
 /**
  * @author Valentino de Lapa
  */
 trait MultipleSelfReferencedEnumeration
 {
-
     use SelectableEnumeration;
 
     abstract public function getSons(): array;

@@ -155,4 +155,18 @@ class HomeController extends BaseController
 
         return Render::generateView("home/cookies", $this->vars);
     }
+
+    /**
+     * Pagina Donazioni
+     *
+     * URL: /home/donate
+     */
+    public function donate(): Response
+    {
+        $this->vars["pageTitle"] = "Sostieni il Progetto - SismaFramework";
+        $this->vars["pageDescription"] =
+            "Sostieni lo sviluppo di SismaFramework con una donazione o contribuendo al progetto open source.";
+
+        return Render::generateView("home/donate", $this->vars);
+    }
 }

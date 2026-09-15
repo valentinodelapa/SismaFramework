@@ -74,18 +74,18 @@ class LocalizatorTest extends TestCase
         $this->assertTrue($reflection->getMethod('getTemplateLocaleArray')->isPublic());
     }
 
-    public function testGetEnumerationLocaleArrayMethodExists()
+    public function testGetEnumerationLocaleLabelMethodExists()
     {
         $reflection = new \ReflectionClass(Localizator::class);
-        $this->assertTrue($reflection->hasMethod('getEnumerationLocaleArray'));
-        $this->assertTrue($reflection->getMethod('getEnumerationLocaleArray')->isPublic());
+        $this->assertTrue($reflection->hasMethod('getEnumerationLocaleLabel'));
+        $this->assertTrue($reflection->getMethod('getEnumerationLocaleLabel')->isPublic());
     }
 
-    public function testGetComposedEnumerationLocaleArrayMethodExists()
+    public function testGetComposedEnumerationLocaleMethodExists()
     {
         $reflection = new \ReflectionClass(Localizator::class);
-        $this->assertTrue($reflection->hasMethod('getComposedEnumerationLocaleArray'));
-        $this->assertTrue($reflection->getMethod('getComposedEnumerationLocaleArray')->isPublic());
+        $this->assertTrue($reflection->hasMethod('getComposedEnumerationLocale'));
+        $this->assertTrue($reflection->getMethod('getComposedEnumerationLocale')->isPublic());
     }
 
     public function testSetLanguageMethodExists()

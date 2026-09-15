@@ -2,6 +2,181 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.3.0] - 2026-09-09 - Crittografia Asimmetrica Completa in Encryptor (Chiavi, CSR, Certificati, Catena di Fiducia, Cifratura a Busta)
+
+Minor release che estende `Encryptor` — finora limitato ad hash e cifratura simmetrica — con un set completo di primitive di crittografia asimmetrica: coppie di chiavi, richieste di firma certificato, certificati self-signed o firmati da CA (con controllo esplicito dell'estensione X.509v3 `basicConstraints`), verifica della catena di fiducia, firma/verifica di dati e cifratura a busta (envelope encryption). Le nuove funzioni sono generiche e riusabili da qualunque progetto basato sul framework, non legate a un caso d'uso applicativo specifico — non è stata rilasciata una prima versione ridotta (solo self-signed) perché, trattandosi di codice di libreria condiviso e non di un caso d'uso applicativo puntuale, un set di primitive incompleto (mancava, ad esempio, il corrispettivo di "firma" per la sola verifica del certificato, o l'analogo asimmetrico di `encryptString()`) avrebbe significato lasciare un lavoro a metà.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Encryptor` — dieci nuovi metodi per crittografia asimmetrica reale (OpenSSL)
+
+Aggiunti dieci metodi statici, nello stesso stile di quelli già esistenti (`?Config $customConfig = null` come ultimo parametro):
+
+**Chiavi e certificati**:
+- **`generateAsymmetricKeyPair(?Config $customConfig = null): array`** — genera una coppia di chiavi (`openssl_pkey_new`), ritorna `['privateKey' => string, 'publicKey' => string]` in formato PEM.
+- **`generateCertificateSigningRequest(string $privateKeyPem, array $distinguishedName, ?Config $customConfig = null): string`** — genera una CSR (`openssl_csr_new`) a partire da una chiave privata e un distinguished name (es. `['CN' => 'Mario Rossi', 'O' => 'Aurunci']`).
+- **`generateSelfSignedCertificate(string $privateKeyPem, array $distinguishedName, bool $certificationAuthority = true, ?Config $customConfig = null): string`** — genera una CSR e la autofirma (`openssl_csr_sign` con emittente `null`), per un soggetto che è al contempo titolare e garante del proprio certificato (root of trust). `$certificationAuthority` controlla l'estensione X.509v3 `basicConstraints` (`CA:TRUE`/`CA:FALSE`) del certificato risultante.
+- **`signCertificateSigningRequest(string $certificateSigningRequestPem, string $issuerCertificatePem, string $issuerPrivateKeyPem, bool $certificationAuthority = false, ?Config $customConfig = null): string`** — firma la CSR di un soggetto terzo con il certificato e la chiave di un emittente (una CA), producendo un certificato con `issuer` ≠ `subject`. `$certificationAuthority` decide se il certificato emesso è a sua volta una CA intermedia (default: no, certificato foglia).
+
+**Verifica**:
+- **`signData(string $data, string $privateKeyPem, ?Config $customConfig = null): string`** — firma dei dati con una chiave privata (`openssl_sign`), ritorna la firma in base64.
+- **`verifySignature(string $data, string $base64Signature, string $certificateOrPublicKeyPem, ?Config $customConfig = null): bool`** — verifica una firma (`openssl_verify`) contro un certificato o una chiave pubblica.
+- **`verifyCertificateSignedByIssuer(string $certificatePem, string $issuerCertificateOrPublicKeyPem): bool`** — verifica la catena di fiducia (`openssl_x509_verify`): "questo certificato è stato davvero emesso da questo emittente?", a differenza di `verifySignature()` che verifica la firma su un dato applicativo, non il certificato stesso.
+
+**Cifratura a busta**:
+- **`encryptWithPublicKey(string $data, string $certificateOrPublicKeyPem, ?Config $customConfig = null): array`** — cifratura a busta (`openssl_seal`): la chiave pubblica cifra una chiave simmetrica generata al volo, che a sua volta cifra i dati con l'algoritmo di `ENCRYPTION_ALGORITHM`. A differenza della cifratura RSA diretta (`openssl_public_encrypt`), non ha il limite di dimensione legato alla lunghezza della chiave asimmetrica (~245 byte per RSA 2048 bit con padding PKCS1). Ritorna `['data' => string, 'envelopeKey' => string, 'initializationVector' => string]`, tutti in base64.
+- **`decryptWithPrivateKey(array $encryptedEnvelope, string $privateKeyPem, ?Config $customConfig = null): string|false`** — decifra una busta prodotta da `encryptWithPublicKey()` (`openssl_open`). Ritorna `false` (non un'eccezione) se la decifratura fallisce, es. chiave privata errata — stesso contratto di `decryptString()` per lo stesso scenario.
+
+#### Configurazione OpenSSL autosufficiente — nessun `openssl.cnf` di sistema richiesto
+
+`generateAsymmetricKeyPair()`, `generateCertificateSigningRequest()`, `generateSelfSignedCertificate()` e `signCertificateSigningRequest()` passano tutte alle funzioni OpenSSL sottostanti l'opzione `config`, risolta da `resolveOpensslConfigPath()`: se `Config::opensslConfigPath` non è valorizzata, viene generato — una sola volta per processo, tramite `tempnam()`, ripulito a fine richiesta con `register_shutdown_function()` — un file di configurazione OpenSSL minimale (costante privata `Encryptor::MINIMAL_OPENSSL_CONFIG`) contenente le sezioni `[req]`/`[req_distinguished_name]` necessarie alle operazioni di base e le sezioni `[v3_ca]`/`[v3_leaf]` (rispettivamente `basicConstraints critical,CA:TRUE`/`CA:FALSE`) usate da `generateSelfSignedCertificate()`/`signCertificateSigningRequest()` per l'estensione X.509v3. Questo elimina la dipendenza da un `openssl.cnf` di sistema risolvibile automaticamente (assente per default su alcune installazioni PHP su Windows, dove altrimenti `openssl_pkey_new()`/`openssl_csr_new()`/`openssl_csr_sign()` falliscono silenziosamente ritornando `false`) — `OPENSSL_CONFIG_PATH` resta disponibile come override esplicito solo per esigenze avanzate (es. un provider/engine OpenSSL specifico).
+
+**Nuove proprietà di `Config`/costanti di `Config/config.php`** (sezione "Encryptor Constants"):
+
+| Costante | Proprietà `Config` | Tipo | Default |
+|---|---|---|---|
+| `ASYMMETRIC_KEY_TYPE` | `asymmetricKeyType` | `int` | `OPENSSL_KEYTYPE_RSA` |
+| `ASYMMETRIC_KEY_BITS` | `asymmetricKeyBits` | `int` | `2048` |
+| `ASYMMETRIC_DIGEST_ALGORITHM` | `asymmetricDigestAlgorithm` | `string` | `"sha256"` |
+| `CERTIFICATE_VALIDITY_DAYS` | `certificateValidityDays` | `int` | `3650` |
+| `OPENSSL_CONFIG_PATH` | `opensslConfigPath` | `string` | `""` (via `getenv('OPENSSL_CONFIG_PATH')`) |
+
+**File modificati**:
+- **`Core/HelperClasses/Encryptor.php`**: aggiunti i dieci metodi pubblici e i metodi privati di supporto `resolveOpensslConfigPath()`/`getMinimalOpensslConfigPath()`/`buildOpensslOptions()`/`createCertificateSigningRequestResource()`
+- **`Core/HelperClasses/Config.php`**: aggiunte le cinque proprietà `readonly` sopra elencate
+- **`Config/config.php`**: aggiunte le cinque costanti sopra elencate
+- **`Tests/Core/HelperClasses/EncryptorTest.php`**: aggiunti 21 test (incl. verifica delle estensioni `basicConstraints` per entrambi i booleani su entrambi i metodi, catena di fiducia positiva/su certificato self-signed/negativa, round-trip di cifratura a busta con payload oltre il limite RSA diretto, fallimento con chiave privata errata) — l'intera suite passa senza necessità di impostare `OPENSSL_CONFIG_PATH`, confermando l'autosufficienza della nuova configurazione minimale
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change per il codice applicativo esistente**: solo metodi e proprietà additive rispetto alla 12.2.1; nessuna firma di metodo preesistente è stata modificata.
+- **Cambio di firma rispetto alla prima stesura di questa stessa minor** (mai rilasciata separatamente): `generateSelfSignedCertificate()` e `signCertificateSigningRequest()` guadagnano il parametro `bool $certificationAuthority` prima di `?Config $customConfig`. Non è una breaking change verso versioni precedenti pubblicate — è la forma con cui questi due metodi vengono introdotti in questa release.
+- **Installazioni Esistenti**: `Config/configFramework.php` viene copiato da `Config/config.php` una sola volta, in fase di installazione (`InstallationManager::copyConfigFolder()`), e non viene mai risincronizzato automaticamente da un successivo aggiornamento del framework via composer. Un progetto già installato che aggiorna la dipendenza continua a funzionare senza modifiche — le nuove proprietà di `Config` sono risolte in modo lazy e nessun codice esistente le referenzia. Per poter usare i nuovi metodi di `Encryptor`, è necessario aggiungere manualmente le cinque costanti sopra elencate al proprio `Config/configFramework.php`: in assenza, la prima chiamata a uno dei nuovi metodi solleva `Error: Undefined constant`.
+- **Nuove Installazioni**: le costanti sono già incluse nel template `Config/config.php` copiato da `InstallationManager::copyConfigFolder()`, nessuna azione richiesta.
+
+---
+
+## [12.2.1] - 2026-09-08 - Correzione Rilevamento Foreign Key Null in buildPropertiesConditions()
+
+Patch che corregge un difetto di `DependentModel::buildPropertiesConditions()`, il metodo che traduce le proprietà passate ai finder magici generati dal framework (`findByProperties()`, le varianti `countBy...()`/`deleteBy...()` generate da `__callStatic`/`__call`, ecc.) in condizioni SQL: per una proprietà foreign key (dichiarata come sottoclasse di `ReferencedEntity`) valorizzata con `null`, il metodo generava una condizione sulla colonna sbagliata, priva del suffisso `Id` richiesto dalla convenzione di naming dell'ORM.
+
+### 🐛 Bug Fix
+
+#### `Orm/ExtendedClasses/DependentModel::buildPropertiesConditions()` — ricerca per foreign key null risolta sulla colonna sbagliata
+
+Il quarto parametro di `Query::appendCondition()` (`bool $foreignKey`) indica all'adapter se il nome colonna va risolto con il suffisso `Id` (`NotationManager::convertPropertyNameToColumnName($name, true)`, es. `relatedEntity` → `related_entity_id`) invece che come proprietà scalare (`relatedEntity` → `related_entity`). `buildPropertiesConditions()` determinava questo flag con `$propertyValue instanceof ReferencedEntity` — un controllo sul valore a runtime, non sul tipo dichiarato della proprietà. Per qualunque proprietà foreign key interrogata con valore `null` (il caso d'uso esplicito di una ricerca "dove la relazione è assente"), `null instanceof ReferencedEntity` è sempre `false`, indipendentemente dal tipo dichiarato della proprietà sull'entità: il metodo trattava quindi la colonna come se fosse scalare, generando una condizione `WHERE related_entity IS NULL` invece di `WHERE related_entity_id IS NULL` — una colonna che nella tabella non esiste, con conseguente errore SQL a runtime per qualunque ricerca su una foreign key nullable valorizzata a `null`.
+
+`buildPropertiesConditions()` determina ora se una proprietà è una foreign key leggendo il tipo dichiarato tramite `ReflectionProperty::getType()` e `is_subclass_of(..., ReferencedEntity::class)`, indipendentemente dal valore effettivo — corretto sia per il ramo `null` che per quello non-null, ed eliminando la necessità di istanziare una seconda volta `ReflectionProperty` nel ramo non-null (già usata per calcolare `$bindTypes`).
+
+Nessun test esistente copriva questo percorso: gli unici test che invocano un finder con valore `null` su una proprietà foreign key (`testMagicMethodCountByNullableEntityWithNullValue`, `testMagicMethodCountByMultiplePropertiesWithNullValues`) verificano solo che `appendCondition()` venga chiamato, senza asserire il valore del quarto parametro.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/DependentModel.php`**: `buildPropertiesConditions()`, il rilevamento foreign key usa ora `is_subclass_of($reflectionProperty->getType()->getName(), ReferencedEntity::class)` invece di `$propertyValue instanceof ReferencedEntity`, in entrambi i rami (null e non-null)
+- **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**: aggiunto `testBuildPropertiesConditionsPassesCorrectFourthParameterForNullForeignKeyValue()`, che invoca un finder con `null` su una proprietà `?ReferencedEntity` e asserisce che il quarto parametro di `appendCondition()` sia `true`; fallisce contro l'implementazione precedente
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: `buildPropertiesConditions()` è `protected` e non fa parte del contratto pubblico consumato direttamente dalle applicazioni; nessuna firma è cambiata.
+- **Cambiamento di comportamento osservabile**: le ricerche sui finder magici generati dal framework per proprietà foreign key nullable valorizzate a `null` (es. `countByRelatedEntityWithInitialization(null)` su una proprietà `?ReferencedEntity`), che prima fallivano con un errore SQL per colonna inesistente, ora restituiscono il risultato corretto.
+
+---
+
+## [12.2.0] - 2026-09-05 - Rinominazione API di Localizator, Correzione TypeError e Nuovo Metodo getEnumerationLocaleAttribute()
+
+Minor release che rinomina due metodi pubblici di `Localizator` i cui nomi non riflettevano più il tipo di ritorno effettivo (e, nel caso di `getComposedEnumerationLocale()`, erano diventati troppo simili al metodo privato sottostante), corregge un bug introdotto in [12.1.0](#1210---2026-08-11---supporto-chiavi-enum-composte-in-localizator), e aggiunge un nuovo metodo per leggere un singolo attributo da un valore di localizzazione composto.
+
+### ♻️ Refactoring
+
+#### `Core/HelperClasses/Localizator` — Rinominati `getEnumerationLocaleArray()` e `getComposedEnumerationLocaleArray()`
+
+Entrambi i nomi risalivano a un paradigma precedente (commit `20eb7a15`, dic 2024) in cui il primo metodo restituiva davvero un `array`; da allora restituisce una singola stringa (la label), ma il nome non era mai stato aggiornato. Con l'introduzione in 12.1.0 di un secondo metodo per il valore composto, la coppia di nomi (`getEnumerationLocaleArray()` → stringa, `getComposedEnumerationLocaleArray()` → array) era diventata fuorviante. Rinominati per riflettere il tipo di ritorno effettivo:
+
+- `getEnumerationLocaleArray(): string` → **`getEnumerationLocaleLabel(): string`**
+- `getComposedEnumerationLocaleArray(): array` → **`getComposedEnumerationLocale(): array`**
+
+Il secondo nome evita deliberatamente la parola "Field/Fields": il metodo privato sottostante, `getEnumerationLocaleField()`, esegue il lookup grezzo (`string|array`) per un case dell'enum, mentre il metodo pubblico pretende e garantisce la forma composta (`array`). Chiamarlo `getEnumerationLocaleFields()` — come nome scelto in un primo momento — li rendeva praticamente indistinguibili a colpo d'occhio pur avendo contratti diversi (uno può restituire una stringa, l'altro lancia un'eccezione se non trova un array).
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: rinominati i due metodi
+- **`Core/Traits/SelectableEnumeration.php`**: `getFriendlyLabel()` aggiornato per chiamare `getEnumerationLocaleLabel()`
+- **`Tests/Core/HelperClasses/LocalizatorTest.php`**: test di esistenza metodo aggiornati ai nuovi nomi
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Localizator::getEnumerationLocaleLabel()` — `TypeError` quando il valore di localizzazione dell'enum è un array
+
+Da quando, in 12.1.0, `getEnumerationLocaleField()` è diventato `string|array` per supportare le chiavi di localizzazione composte, questo metodo (allora `getEnumerationLocaleArray()`) — dichiarato `: string` — continuava a restituire il valore così com'era. Se il case dell'enum ha un valore locale composto (es. `{"label": "...", "description": "..."}`), la chiamata sollevava `TypeError: Return value must be of type string, array returned`.
+
+Il metodo ora verifica il tipo del valore restituito da `getEnumerationLocaleField()` e, se è un array, estrae la chiave `'label'`.
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: gestione esplicita del caso array estraendo `$field['label']`
+
+#### `Core/HelperClasses/Localizator::getComposedEnumerationLocale()` — Errore nativo poco chiaro quando l'enum non ha un valore locale composto
+
+Stesso difetto del punto precedente, presente fin dall'introduzione del metodo in 12.1.0 (allora `getComposedEnumerationLocaleArray()`): dichiarato `: array`, restituiva `getEnumerationLocaleField()` senza verificarne il tipo. Se il case dell'enum ha un valore locale semplice (stringa), la chiamata sollevava un `TypeError` a carico del tipo di ritorno.
+
+Il metodo ora verifica il tipo del valore restituito da `getEnumerationLocaleField()` e, se non è un array, solleva una `LocalizatorException` esplicita — già prevista nel framework (`Core/Exceptions/LocalizatorException.php`) ma finora mai utilizzata — invece del `TypeError`/"illegal string offset" nativo di PHP.
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: `getComposedEnumerationLocale()` gestisce esplicitamente il caso non-array
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Localizator::getEnumerationLocaleAttribute()` — Lettura di un singolo attributo da un valore di localizzazione composto
+
+Aggiunto un nuovo metodo pubblico che, dato un enum e il nome di un attributo, restituisce direttamente il valore di quell'attributo dal campo di localizzazione composto, senza dover passare per `getComposedEnumerationLocale()` e indicizzare manualmente l'array risultante. Internamente delega a `getComposedEnumerationLocale()`, ereditandone la `LocalizatorException` quando l'enum non ha un valore locale composto.
+
+Il tipo di ritorno è `string|array` e non `mixed`: i file di locale sono file di linguaggio, il cui unico scopo è contenere testo (eventualmente organizzato in strutture annidate, come si vede in `Aurunci/Application/Locales/it_IT.json` con voci a più livelli, es. `nobleQualification.don.male.label`); un numero o un booleano al loro interno sarebbe un errore di contenuto, non un caso d'uso legittimo da rappresentare nel tipo. Poiché il framework non dichiara `strict_types` da nessuna parte, un simile errore verrebbe comunque coercito silenziosamente a stringa da PHP anziché sollevare un `TypeError`; il vantaggio pratico del tipo esplicito è invece sul lookup di una chiave `$attribute` inesistente, che con `string|array` (non nullable) fallisce subito con un `TypeError` invece di propagarsi silenziosamente come `null`.
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: aggiunto `getEnumerationLocaleAttribute(\UnitEnum $enumeration, string $attribute): string|array`
+
+### 📖 Documentazione
+
+#### `docs-phpdoc/` — Rigenerazione completa
+
+`Localizator` è marcata `@internal`, quindi phpDocumentor non genera per essa (né per le altre classi `@internal` del framework) una pagina pubblica: le modifiche di questa release non compaiono nella documentazione generata. La rigenerazione ha comunque aggiornato 14 pagine rimaste indietro rispetto a modifiche di release precedenti mai propagate alla documentazione (es. `Session` per la 12.1.1, `MultipleSelfReferencedEnumeration` per la 12.1.2).
+
+### 🔧 Manutenzione
+
+#### `phpunit.xml` — Sostituito l'attributo deprecato `cacheResult`
+
+PHPUnit 13 segnala `cacheResult` come deprecato e ne annuncia la rimozione in PHPUnit 14 (`vendor/phpunit/phpunit/src/TextUI/Configuration/Xml/Loader.php`), in favore di `recordTestRunHistory` (stesso significato, nuovo nome). Sostituito nell'attributo radice `<phpunit>`.
+
+**File modificati**:
+- **`phpunit.xml`**: `cacheResult="true"` → `recordTestRunHistory="true"`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change sull'API pubblica stabile**: `Localizator` è marcata `@internal` (non è API consumabile dall'esterno del framework, coerentemente con il trattamento già riservato in passato a classi come `Submittable` in 11.6.0 e `TransactionManager`/`QueryExecutor` in 10.0.5); il rename dei due metodi è quindi documentato come modifica interna, non come breaking change.
+- **Cambio di comportamento su input malformato**: chiamare `getComposedEnumerationLocale()` o `getEnumerationLocaleAttribute()` su un enum privo di valore locale composto ora solleva `LocalizatorException` invece di un `TypeError`/warning nativo di PHP — un errore più esplicito, non un nuovo modo di fallire.
+- L'unico chiamante interno (`SelectableEnumeration::getFriendlyLabel()`) è stato aggiornato nello stesso commit.
+- Il nuovo metodo `getEnumerationLocaleAttribute()` è puramente additivo.
+
+---
+
+## [12.1.2] - 2026-09-05 - Correzione Import Mancante in MultipleSelfReferencedEnumeration
+
+Patch che corregge un fatal error latente nel trait `MultipleSelfReferencedEnumeration`: il metodo `getChoiceByMultipleParent()` dichiara il parametro `Language $language`, ma il file non importava la classe `SismaFramework\Core\Enumerations\Language`.
+
+### 🐛 Bug Fix
+
+#### `Core/Traits/MultipleSelfReferencedEnumeration::getChoiceByMultipleParent()` — `Language` referenziata senza `use`, fatal error a runtime
+
+Il parametro `Language $language` viene risolto da PHP, in assenza di un `use` esplicito, nel namespace corrente del file (`SismaFramework\Core\Traits`). Poiché la classe `Language` vive in `SismaFramework\Core\Enumerations`, qualsiasi enum concreto che utilizza il trait e invoca `getChoiceByMultipleParent()` solleva un `Error: Class "SismaFramework\Core\Traits\Language" not found`. Il difetto era presente fin dall'introduzione della firma tipizzata del metodo e non è mai emerso perché nessun test in `Tests/` esercita questo trait.
+
+Aggiunta la dichiarazione `use SismaFramework\Core\Enumerations\Language;` in testa al file.
+
+**File modificati**:
+- **`Core/Traits/MultipleSelfReferencedEnumeration.php`**: aggiunto `use SismaFramework\Core\Enumerations\Language;`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la firma pubblica del metodo non cambia; viene risolto un fatal error che rendeva il metodo inutilizzabile in qualsiasi enum concreto.
+
+---
+
 ## [12.1.1] - 2026-08-27 - Correzione Bug in appendItem() e Rafforzamento della Sicurezza delle Sessioni
 
 Patch che raggruppa un insieme di correzioni alla classe `Session`, emerse da una revisione mirata della gestione delle sessioni nel framework: un bug di ricorsione in `appendItem()` che ne vanificava silenziosamente il comportamento sulle chiavi annidate a più livelli, un disallineamento tra la durata del cookie di sessione e quella dei dati lato server, un confronto non timing-safe del token anti-hijacking, e una rotazione dell'ID di sessione ad ogni richiesta che non invalidava mai realmente l'ID precedente.

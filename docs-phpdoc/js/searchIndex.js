@@ -1466,15 +1466,15 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_vars"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController\u003A\u003A\u0024dataMapper",
-            "name": "dataMapper",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_dataMapper"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController\u003A\u003A\u0024debugger",
             "name": "debugger",
             "summary": "",
             "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_debugger"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseController\u003A\u003A\u0024dataMapper",
+            "name": "dataMapper",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-BaseClasses-BaseController.html#property_dataMapper"
         },                {
             "fqsen": "\\SismaFramework\\Core\\BaseClasses\\BaseFixture",
             "name": "BaseFixture",
@@ -2933,7 +2933,7 @@ Search.appendIndex(
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003AdiscardAll\u0028\u0029",
             "name": "discardAll",
-            "summary": "Discards\u0020every\u0020open\u0020buffer\u0020level,\u0020including\u0020any\u0020wrapper\u0020opened\u0020outside\nthe\u0020tracked\u0020floor\u0020\u0028e.g.\u0020by\u0020ErrorHandler\u0029,\u0020and\u0020resets\u0020the\u0020floor\u0020so\u0020it\u0020is\nrecomputed\u0020on\u0020next\u0020use.\u0020Only\u0020meant\u0020for\u0020full\u002Dresponse\u0020replacement\u0020\u0028error\nrecovery\u0029,\u0020never\u0020for\u0020regular\u0020request\u0020handling.",
+            "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-BufferManager.html#method_discardAll"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\BufferManager\u003A\u003AensureBaseLevel\u0028\u0029",
@@ -2990,6 +2990,81 @@ Search.appendIndex(
             "name": "decryptString",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AgenerateAsymmetricKeyPair\u0028\u0029",
+            "name": "generateAsymmetricKeyPair",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_generateAsymmetricKeyPair"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AgenerateCertificateSigningRequest\u0028\u0029",
+            "name": "generateCertificateSigningRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_generateCertificateSigningRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AgenerateSelfSignedCertificate\u0028\u0029",
+            "name": "generateSelfSignedCertificate",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_generateSelfSignedCertificate"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AsignCertificateSigningRequest\u0028\u0029",
+            "name": "signCertificateSigningRequest",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_signCertificateSigningRequest"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AsignData\u0028\u0029",
+            "name": "signData",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_signData"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AverifySignature\u0028\u0029",
+            "name": "verifySignature",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_verifySignature"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AverifyCertificateSignedByIssuer\u0028\u0029",
+            "name": "verifyCertificateSignedByIssuer",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_verifyCertificateSignedByIssuer"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AencryptWithPublicKey\u0028\u0029",
+            "name": "encryptWithPublicKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptWithPublicKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AdecryptWithPrivateKey\u0028\u0029",
+            "name": "decryptWithPrivateKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPrivateKey"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AcreateCertificateSigningRequestResource\u0028\u0029",
+            "name": "createCertificateSigningRequestResource",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_createCertificateSigningRequestResource"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AbuildOpensslOptions\u0028\u0029",
+            "name": "buildOpensslOptions",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_buildOpensslOptions"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AresolveOpensslConfigPath\u0028\u0029",
+            "name": "resolveOpensslConfigPath",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_resolveOpensslConfigPath"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AgetMinimalOpensslConfigPath\u0028\u0029",
+            "name": "getMinimalOpensslConfigPath",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_getMinimalOpensslConfigPath"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AMINIMAL_OPENSSL_CONFIG",
+            "name": "MINIMAL_OPENSSL_CONFIG",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_MINIMAL_OPENSSL_CONFIG"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003A\u0024minimalOpensslConfigPath",
+            "name": "minimalOpensslConfigPath",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#property_minimalOpensslConfigPath"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter",
             "name": "Filter",

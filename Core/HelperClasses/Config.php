@@ -129,6 +129,11 @@ class Config
     protected readonly ?string $encryptionPassphrase;
     protected readonly string $encryptionAlgorithm;
     protected readonly int $initializationVectorBytes;
+    protected readonly int $asymmetricKeyType;
+    protected readonly int $asymmetricKeyBits;
+    protected readonly string $asymmetricDigestAlgorithm;
+    protected readonly int $certificateValidityDays;
+    protected readonly string $opensslConfigPath;
 
     /* Database Constant */
     protected readonly string $databaseHost;

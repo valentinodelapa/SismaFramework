@@ -193,7 +193,11 @@ Le query dinamiche gestiscono correttamente i valori `null` su proprietà nullab
 
 ```php
 // Trova entità con proprietà nullable = NULL
-$orphanPosts = $postModel->getByParentPost(null); // WHERE parent_post IS NULL
+// Su una foreign key (proprietà tipizzata come ReferencedEntity) la colonna
+// generata ha sempre il suffisso Id, anche con valore null (v12.3.0+; prima
+// di questa correzione il valore null generava erroneamente la colonna senza
+// suffisso — vedi CHANGELOG 12.2.1):
+$orphanPosts = $postModel->getByParentPost(null); // WHERE parent_post_id IS NULL
 
 // Trova utenti senza avatar
 $usersWithoutAvatar = $userModel->getByAvatarUrl(null); // WHERE avatar_url IS NULL

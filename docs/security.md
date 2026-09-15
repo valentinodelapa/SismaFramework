@@ -29,6 +29,7 @@ La classe `Authentication` può essere iniettata direttamente in un controller e
 namespace MyModule\Application\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
@@ -66,8 +67,13 @@ class SecurityController extends BaseController
             $this->vars['errors'] = $auth->getFilterErrors();
         }
 
-        // Genera il CSRF token per il form
-        $auth->checkCsrfToken(); // inizializza la sessione CSRF se non presente
+        // Genera e salva il token CSRF per il form: checkCsrfToken()/checkAuthenticable()
+        // lo verificano soltanto, non lo generano — tocca all'applicazione farlo prima
+        // di renderizzare il form.
+        if (Session::hasItem('csrfToken') === false) {
+            Session::setItem('csrfToken', Encryptor::getSimpleRandomToken());
+        }
+        $this->vars['csrfToken'] = Session::getItem('csrfToken');
 
         $this->vars['pageTitle'] = 'Login';
         return $this->render->generateView('security/login', $this->vars);
@@ -401,6 +407,90 @@ const ENCRYPTION_PASSPHRASE = 'chiave-molto-lunga-e-sicura';
 const INITIALIZATION_VECTOR_BYTES = 16;
 ```
 
+#### Crittografia Asimmetrica e Certificati
+
+Per casi d'uso che richiedono chiavi pubbliche/private reali — firma digitale di documenti, identità verificabili, catene di certificati, dati leggibili solo da un destinatario specifico — `Encryptor` fornisce un'API basata su OpenSSL completa: generazione di chiavi e certificati, verifica della catena di fiducia, firma/verifica di dati e cifratura a busta.
+
+Tutte le operazioni funzionano senza alcuna configurazione: se `OPENSSL_CONFIG_PATH` non è valorizzata, `Encryptor` genera e usa autonomamente una configurazione OpenSSL minimale autosufficiente (un file temporaneo per processo, ripulito automaticamente a fine richiesta) — non serve un `openssl.cnf` di sistema risolvibile, nemmeno su ambienti (tipicamente Windows) che ne sono privi.
+
+**Generare una coppia di chiavi:**
+
+```php
+$keyPair = Encryptor::generateAsymmetricKeyPair();
+// ['privateKey' => '-----BEGIN PRIVATE KEY-----...', 'publicKey' => '-----BEGIN PUBLIC KEY-----...']
+```
+
+**Certificato self-signed** (il soggetto è al contempo titolare e garante — es. un fondatore/root of trust iniziale). Il secondo parametro booleano (default `true`) controlla l'estensione X.509v3 `basicConstraints`: `true` produce un certificato abilitato a firmare altri certificati, `false` un certificato foglia non abilitato a farlo:
+
+```php
+$certificate = Encryptor::generateSelfSignedCertificate(
+    $keyPair['privateKey'],
+    ['CN' => 'Mario Rossi', 'O' => 'La Mia Organizzazione']
+    // true di default: root of trust abilitata a firmare altri certificati
+);
+```
+
+**Certificato emesso da una CA** (il soggetto genera la propria chiave e una CSR; la CA firma la CSR con il proprio certificato/chiave, producendo un certificato con `issuer` diverso dal `subject`). Anche qui un parametro booleano (default `false`) decide se il certificato emesso è a sua volta una CA intermedia o un certificato foglia:
+
+```php
+// Lato CA: una CA self-signed già esistente
+$caKeyPair = Encryptor::generateAsymmetricKeyPair();
+$caCertificate = Encryptor::generateSelfSignedCertificate($caKeyPair['privateKey'], ['CN' => 'La Mia CA']);
+
+// Lato soggetto: genera la propria chiave e la CSR
+$subjectKeyPair = Encryptor::generateAsymmetricKeyPair();
+$csr = Encryptor::generateCertificateSigningRequest($subjectKeyPair['privateKey'], ['CN' => 'Mario Rossi']);
+
+// Lato CA: firma la CSR, emette il certificato del soggetto (foglia, non CA)
+$subjectCertificate = Encryptor::signCertificateSigningRequest($csr, $caCertificate, $caKeyPair['privateKey']);
+```
+
+**Verificare la catena di fiducia** ("questo certificato è stato davvero emesso da questa CA?" — diverso dal verificare la firma su un documento):
+
+```php
+$isTrusted = Encryptor::verifyCertificateSignedByIssuer($subjectCertificate, $caCertificate); // true
+$isTrusted = Encryptor::verifyCertificateSignedByIssuer($subjectCertificate, $unrelatedCertificate); // false
+```
+
+**Firma e verifica di dati:**
+
+```php
+$signature = Encryptor::signData('testo del documento', $subjectKeyPair['privateKey']);
+
+// La verifica accetta sia un certificato che una chiave pubblica
+$isValid = Encryptor::verifySignature('testo del documento', $signature, $subjectCertificate); // true
+$isValid = Encryptor::verifySignature('testo manomesso', $signature, $subjectCertificate); // false
+```
+
+**Cifratura a busta (envelope encryption)** — a differenza della cifratura RSA diretta, non ha limiti di dimensione sul dato cifrato: la chiave pubblica cifra una chiave simmetrica generata al volo, che a sua volta cifra i dati (stesso algoritmo di `ENCRYPTION_ALGORITHM`):
+
+```php
+$envelope = Encryptor::encryptWithPublicKey('dati riservati per il destinatario', $subjectCertificate);
+// ['data' => ..., 'envelopeKey' => ..., 'initializationVector' => ...] — tutti in base64
+
+$decrypted = Encryptor::decryptWithPrivateKey($envelope, $subjectKeyPair['privateKey']);
+// 'dati riservati per il destinatario'
+
+// Con la chiave privata sbagliata: false, non un'eccezione (stesso contratto di decryptString())
+$failed = Encryptor::decryptWithPrivateKey($envelope, $altraChiavePrivata); // false
+```
+
+**Configurazione in `Config/config.php`:**
+```php
+const ASYMMETRIC_KEY_TYPE = OPENSSL_KEYTYPE_RSA;
+const ASYMMETRIC_KEY_BITS = 2048;
+const ASYMMETRIC_DIGEST_ALGORITHM = 'sha256';
+const CERTIFICATE_VALIDITY_DAYS = 3650;
+
+// Opzionale: necessaria solo per esigenze avanzate (es. un provider/engine OpenSSL
+// specifico). Se il file indicato non contiene le sezioni [v3_ca]/[v3_leaf] usate da
+// generateSelfSignedCertificate()/signCertificateSigningRequest(), l'estensione
+// basicConstraints non verrà applicata ai certificati generati.
+define(__NAMESPACE__ . '\OPENSSL_CONFIG_PATH', getenv('OPENSSL_CONFIG_PATH') ?: '');
+```
+
+> **Nota per progetti già installati**: `Config/configFramework.php` viene copiato da `Config/config.php` una sola volta, in fase di installazione, e non si aggiorna automaticamente con gli upgrade del framework. Se il tuo progetto esisteva prima dell'introduzione di questa funzionalità, aggiungi manualmente le costanti sopra al tuo `configFramework.php` prima di usare questi metodi — altrimenti la prima chiamata solleva `Error: Undefined constant`.
+
 ### Interfacce di Autenticazione
 
 #### `AuthenticableInterface`
@@ -613,15 +703,43 @@ In `Config/config.php` per ambiente di produzione:
 const BLOWFISH_HASH_WORKLOAD = 12;
 const ENCRYPTION_ALGORITHM = 'AES-256-CBC';
 const SIMPLE_HASH_ALGORITHM = 'sha256';
+```
 
-// Session Security
-const SESSION_COOKIE_SECURE = true;
-const SESSION_COOKIE_HTTPONLY = true;
-const SESSION_COOKIE_SAMESITE = 'Strict';
+### Cookie di Sessione
 
-// CSRF Protection
-const CSRF_TOKEN_NAME = '_token';
-const CSRF_TOKEN_EXPIRY = 3600; // 1 ora
+I parametri del cookie di sessione **non sono configurabili tramite costanti**: `Session::start()` li imposta direttamente via `session_set_cookie_params()`:
+
+```php
+[
+    "lifetime"  => 3600,
+    "path"      => "/",
+    "domain"    => $request->server["HTTP_HOST"],
+    "secure"    => Communication::getCommunicationProtocol($request) === CommunicationProtocol::https,
+    "httponly"  => true,
+    "samesite"  => "Lax",
+]
+```
+
+`secure` viene determinato automaticamente in base al protocollo della richiesta corrente (coerente con `HTTPS_IS_FORCED`, non un flag separato); `httponly` è sempre attivo; `samesite` è sempre `Lax` (non configurabile, e non `Strict`). Per personalizzare questi valori è necessario un override della classe `Session`, non una costante.
+
+### Protezione CSRF
+
+Anche qui la chiave di sessione (`csrfToken`) è fissa e non configurabile, e il framework non applica alcuna scadenza al token. `Authentication::checkCsrfToken()` (richiamato internamente da `checkAuthenticable()`) **verifica soltanto** che `$_SESSION['csrfToken']` corrisponda al campo `csrfToken` inviato dal form — non lo genera. Genera e salva il token nella action che mostra il form, prima di renderizzarlo:
+
+```php
+use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Core\HelperClasses\Session;
+
+if (Session::hasItem('csrfToken') === false) {
+    Session::setItem('csrfToken', Encryptor::getSimpleRandomToken());
+}
+$this->vars['csrfToken'] = Session::getItem('csrfToken');
+```
+
+e includilo nel form come campo nascosto:
+
+```html
+<input type="hidden" name="csrfToken" value="<?= htmlspecialchars($csrfToken) ?>">
 ```
 
 ---
