@@ -4,9 +4,72 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 ## Indice
 
+- [Da 12.x a 13.x](#da-12x-a-13x)
 - [Da 11.x a 12.x](#da-11x-a-12x)
 - [Da 10.x a 11.x](#da-10x-a-11x)
 - [Da 9.x a 10.x](#da-9x-a-10x)
+
+---
+
+## Da 12.x a 13.x
+
+> **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
+
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`.
+
+### Breaking Changes
+
+#### 1. `BaseForm`, `Filter`, `FilterType` spostate dal modulo `Core` al modulo `Orm`
+
+**Impatto**: Alto
+**Componenti interessati**: Tutti i form applicativi che estendono `BaseForm` o referenziano `Filter`/`FilterType`
+
+Le tre classi sono state spostate dal modulo `Core` al modulo `Orm` per allinearne la collocazione al dominio a cui appartengono concettualmente (`BaseForm` dipende da `BaseEntity`, `SismaCollection` e `DataMapper`, tutte classi `Orm`; `Filter`/`FilterType` esistono a supporto della validazione dei form). Nessuna firma pubblica è cambiata: è uno spostamento di namespace, non un cambio di comportamento.
+
+**Prima (12.x)**:
+```php
+use SismaFramework\Core\BaseClasses\BaseForm;
+use SismaFramework\Core\HelperClasses\Filter;
+use SismaFramework\Core\Enumerations\FilterType;
+
+class ProductForm extends BaseForm
+{
+    // ...
+}
+```
+
+**Dopo (13.x)**:
+```php
+use SismaFramework\Orm\BaseClasses\BaseForm;
+use SismaFramework\Orm\HelperClasses\Filter;
+use SismaFramework\Orm\Enumerations\FilterType;
+
+class ProductForm extends BaseForm
+{
+    // ...
+}
+```
+
+Lo stesso vale per le classi interne di supporto, se referenziate direttamente:
+- `SismaFramework\Core\BaseClasses\BaseForm\EntityResolver` → `SismaFramework\Orm\BaseClasses\BaseForm\EntityResolver`
+- `SismaFramework\Core\BaseClasses\BaseForm\FilterManager` → `SismaFramework\Orm\BaseClasses\BaseForm\FilterManager`
+- `SismaFramework\Core\BaseClasses\BaseForm\FormValidator` → `SismaFramework\Orm\BaseClasses\BaseForm\FormValidator`
+
+**Azione richiesta**:
+- Cercare tutte le occorrenze di `SismaFramework\Core\BaseClasses\BaseForm`, `SismaFramework\Core\HelperClasses\Filter` e `SismaFramework\Core\Enumerations\FilterType` nel codebase del progetto (inclusi gli `use` statement nei form generati da scaffolding)
+- Sostituire il segmento di namespace `Core` con `Orm` per le sei classi elencate sopra
+- Se si estende direttamente `EntityResolver`, `FilterManager` o `FormValidator`, aggiornare anche i relativi `use` statement
+
+### Checklist di Migrazione
+
+- [ ] **Form applicativi che estendono `BaseForm`**
+  - [ ] Aggiornati tutti gli `use SismaFramework\Core\BaseClasses\BaseForm` in `use SismaFramework\Orm\BaseClasses\BaseForm`
+- [ ] **Codice che referenzia `Filter`/`FilterType`**
+  - [ ] Aggiornati tutti gli `use SismaFramework\Core\HelperClasses\Filter` in `use SismaFramework\Orm\HelperClasses\Filter`
+  - [ ] Aggiornati tutti gli `use SismaFramework\Core\Enumerations\FilterType` in `use SismaFramework\Orm\Enumerations\FilterType`
+- [ ] **Testing**
+  - [ ] Eseguiti tutti i test unitari
+  - [ ] Verificato che tutti i form dell'applicazione validino correttamente
 
 ---
 

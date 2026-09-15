@@ -2,6 +2,60 @@
 
 All notable changes to this project will be documented in this file.
 
+## [13.0.0-alpha.1] - 2026-09-15 - Pre-release: Spostamento `BaseForm`, `Filter` e `FilterType` dal modulo Core al modulo Orm
+
+Prima pre-release (alpha) della versione 13. Contiene tutte le modifiche già rilasciate fino alla 12.3.0 più un breaking change architetturale: lo spostamento di `BaseForm`, `Filter` e `FilterType` dal modulo `Core` al modulo `Orm`. Trattandosi di una pre-release, l'API non è da considerarsi stabile: ulteriori breaking change (inclusa, eventualmente, l'integrazione della feature ODM ancora in valutazione) possono essere introdotti prima del rilascio definitivo di 13.0.0.
+
+### 💥 Breaking Changes
+
+#### `BaseForm`, `Filter`, `FilterType` — spostate dal modulo `Core` al modulo `Orm`
+
+Le tre classi sono state spostate dal modulo `Core` al modulo `Orm` per allineare la loro collocazione al dominio a cui appartengono concettualmente: `BaseForm` dipende strutturalmente da `BaseEntity`, `SismaCollection` e `DataMapper` (tutte classi `Orm`), e `Filter`/`FilterType` esistono esclusivamente a supporto della validazione dei form. La precedente collocazione in `Core` non rifletteva questa dipendenza.
+
+**Namespace modificati**:
+- `SismaFramework\Core\BaseClasses\BaseForm` → `SismaFramework\Orm\BaseClasses\BaseForm`
+- `SismaFramework\Core\BaseClasses\BaseForm\EntityResolver` → `SismaFramework\Orm\BaseClasses\BaseForm\EntityResolver`
+- `SismaFramework\Core\BaseClasses\BaseForm\FilterManager` → `SismaFramework\Orm\BaseClasses\BaseForm\FilterManager`
+- `SismaFramework\Core\BaseClasses\BaseForm\FormValidator` → `SismaFramework\Orm\BaseClasses\BaseForm\FormValidator`
+- `SismaFramework\Core\Enumerations\FilterType` → `SismaFramework\Orm\Enumerations\FilterType`
+- `SismaFramework\Core\HelperClasses\Filter` → `SismaFramework\Orm\HelperClasses\Filter`
+
+Nessuna firma pubblica delle classi è cambiata: si tratta esclusivamente di uno spostamento di namespace.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseForm.php`**, **`Orm/BaseClasses/BaseForm/EntityResolver.php`**, **`Orm/BaseClasses/BaseForm/FilterManager.php`**, **`Orm/BaseClasses/BaseForm/FormValidator.php`**, **`Orm/Enumerations/FilterType.php`**, **`Orm/HelperClasses/Filter.php`**: spostati da `Core/`, namespace aggiornato
+- **`Console/Services/Scaffolding/ScaffoldingManager.php`**, **`Console/Services/Scaffolding/Templates/Form.tpl`**: riferimenti aggiornati al nuovo namespace di `BaseForm`
+- **`Security/BaseClasses/BaseAuthentication.php`**, **`Security/HttpClasses/Authentication.php`**, **`Security/HttpClasses/OAuthAuthentication.php`**: `use` statement aggiornati
+- **`Tests/Orm/BaseClasses/BaseFormTest.php`**, **`Tests/Orm/Enumerations/FilterTypeTest.php`**, **`Tests/Orm/HelperClasses/FilterTest.php`**: spostati da `Tests/Core/`, namespace aggiornato
+- **`docs/api-reference.md`**, **`docs/enumerations.md`**, **`docs/forms.md`**: esempi e riferimenti aggiornati al nuovo namespace
+
+**Migrazione**: Sostituire, in tutti i form applicativi e nel codice che referenzia `Filter`/`FilterType`, gli `use` statement da `SismaFramework\Core\...` a `SismaFramework\Orm\...` per le sei classi elencate sopra. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x). Il comando `sisma upgrade` supporta la migrazione automatica di questo breaking change (vedi sotto).
+
+### ✨ Nuove Funzionalità
+
+#### Supporto upgrade automatico 12.x → 13.x nel comando `sisma upgrade`
+
+Aggiunta `Upgrade12to13Strategy`, registrata in `UpgradeManager::selectStrategy()` insieme alle strategy già esistenti per 10→11 e 11→12. Prima di questa modifica, `sisma upgrade <module> --to=13.0.0` falliva sempre con `VersionMismatchException: No upgrade strategy found`, indipendentemente dal contenuto del modulo.
+
+**Transformer `ClassRenameTransformer`** (confidence: 95%, riutilizzato dalla strategy 11→12):
+- Riscrive gli `use` statement (e ogni altro riferimento testuale) che puntano ai vecchi namespace `SismaFramework\Core\BaseClasses\BaseForm`, `SismaFramework\Core\HelperClasses\Filter` e `SismaFramework\Core\Enumerations\FilterType` verso i corrispondenti namespace `Orm`
+- Il rename sul prefisso `...BaseClasses\BaseForm` copre automaticamente anche `BaseForm\EntityResolver`, `BaseForm\FilterManager` e `BaseForm\FormValidator`, senza bisogno di voci separate
+- Nessun intervento manuale richiesto per questo specifico breaking change
+
+**File aggiunti**:
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: nuova strategy per l'upgrade 12.x → 13.0.0
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: test della nuova strategy
+
+**File modificati**:
+- **`Console/Services/Upgrade/UpgradeManager.php`**: aggiunta `Upgrade12to13Strategy` all'array delle strategy in `selectStrategy()`
+- **`Tests/Console/Services/Upgrade/UpgradeManagerTest.php`**: aggiunto test che verifica la risoluzione della strategy per la coppia 12.0.0 → 13.0.0
+
+### ✅ Backward Compatibility
+
+- **Breaking change per il codice applicativo esistente**: qualunque `use SismaFramework\Core\BaseClasses\BaseForm` (o le altre cinque classi spostate) smette di risolvere e va aggiornato al nuovo namespace `Orm`. Il comando `sisma upgrade` automatizza questo aggiornamento.
+
+---
+
 ## [12.3.0] - 2026-09-09 - Crittografia Asimmetrica Completa in Encryptor (Chiavi, CSR, Certificati, Catena di Fiducia, Cifratura a Busta)
 
 Minor release che estende `Encryptor` — finora limitato ad hash e cifratura simmetrica — con un set completo di primitive di crittografia asimmetrica: coppie di chiavi, richieste di firma certificato, certificati self-signed o firmati da CA (con controllo esplicito dell'estensione X.509v3 `basicConstraints`), verifica della catena di fiducia, firma/verifica di dati e cifratura a busta (envelope encryption). Le nuove funzioni sono generiche e riusabili da qualunque progetto basato sul framework, non legate a un caso d'uso applicativo specifico — non è stata rilasciata una prima versione ridotta (solo self-signed) perché, trattandosi di codice di libreria condiviso e non di un caso d'uso applicativo puntuale, un set di primitive incompleto (mancava, ad esempio, il corrispettivo di "firma" per la sola verifica del certificato, o l'analogo asimmetrico di `encryptString()`) avrebbe significato lasciare un lavoro a metà.

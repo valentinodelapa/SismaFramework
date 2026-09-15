@@ -244,6 +244,22 @@ class UpgradeManagerTest extends TestCase
         $this->assertNotEmpty($report->manualActions);
     }
 
+    public function testUpgradeResolvesStrategyFrom12To13(): void
+    {
+        mkdir($this->tempDir . 'TestUpgradeModule', 0755, true);
+
+        $this->versionDetectorStub->method('detectVersion')->willReturn('12.0.0');
+        $this->versionDetectorStub->method('isValidVersion')->willReturn(true);
+        $this->fileScannerStub->method('scanModuleFiles')->willReturn([]);
+
+        $this->manager->setDryRun(true);
+
+        $report = $this->manager->upgrade('TestUpgradeModule', '13.0.0', '12.0.0');
+
+        $this->assertEquals('DRY-RUN', $report->status);
+        $this->assertNotEmpty($report->manualActions);
+    }
+
     private function removeDirectory(string $dir): void
     {
         if (!is_dir($dir)) {
