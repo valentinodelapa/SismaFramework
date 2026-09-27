@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Localizator;
 use SismaFramework\Core\HelperClasses\ModuleManager;
@@ -169,5 +170,22 @@ class TemplaterTest extends TestCase
 
         $result = Templater::generateTemplate('test', ['name' => 'John'], $localizatorStub, $configStub);
         $this->assertEquals('Hello John, welcome to Locale site!', $result);
+    }
+
+    public function testGenerateNestedTemplateWithHierarchicalLocale()
+    {
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnMap([
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
+                    ['templatesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Templates' . DIRECTORY_SEPARATOR],
+        ]);
+        Config::setInstance($configStub);
+        ModuleManager::setApplicationModule('SismaFramework');
+        ModuleManager::unsetCustomVisualizationModule();
+
+        $result = Templater::generateTemplate('emails/account/activation', ['username' => 'Mario'], new Localizator(Language::italian, $configStub), $configStub);
+        $this->assertEquals('Attivazione account: Gentile utente Mario! Gestione account - Il team di Sisma', $result);
     }
 }

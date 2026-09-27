@@ -74,9 +74,10 @@ const MODULE_FOLDERS = ['Blog', 'UserModule', 'ApiModule'];
 ## Internazionalizzazione (i18n)
 
 *   **Posizione:** `NomeModulo/Application/Locales/`
-*   **Nome File:** Deve corrispondere esattamente alla costante `LANGUAGE` in `config.php`, con estensione `.php` o `.json`.
-    *   `LANGUAGE = 'it_IT'` -> `it_IT.php` o `it_IT.json`.
-*   **Variabili:** Le chiavi definite nel file di lingua diventano variabili PHP disponibili nella vista.
+*   **Nome File:** Deve corrispondere esattamente alla costante `LANGUAGE` in `config.php`, con estensione `.json`.
+    *   `LANGUAGE = 'it_IT'` -> `it_IT.json`.
+*   **Struttura:** Le chiavi delle sezioni `pages` e `templates` rispecchiano la struttura delle cartelle `Views/` e `Templates/`, con label `common` facoltative a ogni livello.
+*   **Variabili:** Le label definite per una vista diventano variabili PHP disponibili nella vista; quelle definite per un template diventano segnaposto `{{...}}` del template.
 
 ## Asset Statici
 

@@ -27,8 +27,11 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Localizator;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Core\Enumerations\Resource;
 
 /**
  * @author Valentino de Lapa
@@ -108,6 +111,71 @@ class LocalizatorTest extends TestCase
     {
         Localizator::setLanguage(Language::english);
         Localizator::unsetLanguage();
-        $this->assertTrue(true); 
+        $this->assertTrue(true);
+    }
+
+    public function testGetPageLocaleArrayMergesCommonOfEveryLevel()
+    {
+        $this->assertEquals([
+            'siteName' => 'Sisma',
+            'section' => 'Esempi',
+            'title' => 'Homepage',
+        ], $this->getTestsApplicationLocalizator()->getPageLocaleArray('sample/index'));
+    }
+
+    public function testGetPageLocaleArrayWithoutViewLocaleReturnsCommonOnly()
+    {
+        $this->assertEquals([
+            'siteName' => 'Sisma',
+            'section' => 'Esempi',
+        ], $this->getTestsApplicationLocalizator()->getPageLocaleArray('sample/missing'));
+    }
+
+    public function testGetTemplateLocaleArrayFollowsTemplateFolders()
+    {
+        $this->assertEquals([
+            'signature' => 'Il team di Sisma',
+            'greeting' => 'Ciao',
+            'subject' => 'Benvenuto',
+        ], $this->getTestsApplicationLocalizator()->getTemplateLocaleArray('emails/welcome'));
+    }
+
+    public function testGetTemplateLocaleArraySpecificLevelOverridesCommon()
+    {
+        $this->assertEquals([
+            'signature' => 'Il team di Sisma',
+            'greeting' => 'Gentile utente',
+            'footer' => 'Gestione account',
+            'subject' => 'Attivazione account',
+        ], $this->getTestsApplicationLocalizator()->getTemplateLocaleArray('emails/account/activation'));
+    }
+
+    public function testGetTemplateLocaleArrayWithoutTemplateLocaleReturnsCommonOnly()
+    {
+        $this->assertEquals([
+            'signature' => 'Il team di Sisma',
+        ], $this->getTestsApplicationLocalizator()->getTemplateLocaleArray('missing'));
+    }
+
+    public function testGetTemplateLocaleArraySupportsDeprecatedFlatKey()
+    {
+        $this->assertEquals([
+            'subject' => 'Promemoria',
+        ], $this->getTestsApplicationLocalizator()->getTemplateLocaleArray('emails/reminder'));
+    }
+
+    private function getTestsApplicationLocalizator(): Localizator
+    {
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnMap([
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
+        ]);
+        Config::setInstance($configStub);
+        ModuleManager::setApplicationModule('SismaFramework');
+        ModuleManager::unsetCustomVisualizationModule();
+        ModuleManager::getExistingFilePath($configStub->localesPath . Language::italian->value, Resource::json, $configStub);
+        return new Localizator(Language::italian, $configStub);
     }
 }
