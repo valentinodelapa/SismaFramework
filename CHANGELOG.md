@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.3.1] - 2026-09-27 - Correzione Precedenza tra Variabili e Label di Localizzazione in Templater
+
+Patch che allinea `Templater::generateTemplate()` alla regola di precedenza già applicata al rendering delle view: le variabili passate dal codice applicativo prevalgono sulle label del file di localizzazione con la stessa chiave, e non viceversa.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Templater::generateTemplate()` — le label di localizzazione sovrascrivevano le variabili passate dal codice
+
+`generateTemplate()` combinava le variabili e le label restituite da `Localizator::getTemplateLocaleArray()` con `array_merge($vars, $locale)`: poiché `array_merge()` dà precedenza al secondo array, a parità di chiave la label del file di localizzazione sostituiva la variabile passata dal chiamante. Il comportamento era l'opposto di quello di `RenderService`, che esegue `extract()` prima sulle label (`getPageLocaleArray()`) e poi sulle variabili, lasciando l'ultima parola allo sviluppatore. La conseguenza era duplice: non era possibile specializzare una label per un singolo utilizzo del template (es. un oggetto email personalizzato) senza modificare il file di localizzazione, valido per tutti; e l'aggiunta al file di localizzazione di una chiave omonima a una variabile dinamica (es. `name`, `url`) ne sostituiva silenziosamente il valore nel template generato.
+
+L'ordine degli argomenti di `array_merge()` è stato invertito, rendendo le label valori di default sovrascrivibili dalle variabili, come per le view.
+
+Nessun test esistente copriva `generateTemplate()`: `TemplaterTest` verificava solo `parseTemplate()` e l'esistenza dei metodi.
+
+**File modificati**:
+- **`Core/HelperClasses/Templater.php`**: `generateTemplate()` usa ora `array_merge($localizator->getTemplateLocaleArray($template), $vars)` invece di `array_merge($vars, $localizator->getTemplateLocaleArray($template))`
+- **`Tests/Core/HelperClasses/TemplaterTest.php`**: aggiunto `testGenerateTemplateVarsOverrideLocaleLabels()`, che fornisce una label in conflitto con una variabile (`name`) e una label senza conflitto (`site`) e asserisce che la prima sia sovrascritta dalla variabile e la seconda applicata; fallisce contro l'implementazione precedente
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma è cambiata; la precedenza delle label sulle variabili nei template non era documentata e contraddiceva quella, stabilita, del rendering delle view.
+- **Cambiamento di comportamento osservabile**: le chiamate a `Templater::generateTemplate()` che passano una variabile con la stessa chiave di una label definita in `templates` nel file di localizzazione producono ora il valore della variabile anziché quello della label. Le chiamate senza chiavi in conflitto producono lo stesso output di prima.
+
+---
+
 ## [12.3.0] - 2026-09-09 - Crittografia Asimmetrica Completa in Encryptor (Chiavi, CSR, Certificati, Catena di Fiducia, Cifratura a Busta)
 
 Minor release che estende `Encryptor` — finora limitato ad hash e cifratura simmetrica — con un set completo di primitive di crittografia asimmetrica: coppie di chiavi, richieste di firma certificato, certificati self-signed o firmati da CA (con controllo esplicito dell'estensione X.509v3 `basicConstraints`), verifica della catena di fiducia, firma/verifica di dati e cifratura a busta (envelope encryption). Le nuove funzioni sono generiche e riusabili da qualunque progetto basato sul framework, non legate a un caso d'uso applicativo specifico — non è stata rilasciata una prima versione ridotta (solo self-signed) perché, trattandosi di codice di libreria condiviso e non di un caso d'uso applicativo puntuale, un set di primitive incompleto (mancava, ad esempio, il corrispettivo di "firma" per la sola verifica del certificato, o l'analogo asimmetrico di `encryptString()`) avrebbe significato lasciare un lavoro a metà.

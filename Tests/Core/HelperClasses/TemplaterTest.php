@@ -27,6 +27,9 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\HelperClasses\Localizator;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\HelperClasses\Templater;
 
 /**
@@ -145,5 +148,26 @@ class TemplaterTest extends TestCase
         $this->assertEquals($expected, $result);
 
         unlink($complexTemplate);
+    }
+
+    public function testGenerateTemplateVarsOverrideLocaleLabels()
+    {
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnMap([
+                    ['rootPath', sys_get_temp_dir() . DIRECTORY_SEPARATOR],
+                    ['templatesPath', ''],
+        ]);
+        Config::setInstance($configStub);
+        ModuleManager::setApplicationModule(basename($this->tempTemplateDir));
+        $localizatorStub = $this->createStub(Localizator::class);
+        $localizatorStub->method('getTemplateLocaleArray')
+                ->willReturn([
+                    'name' => 'Locale name',
+                    'site' => 'Locale site',
+        ]);
+
+        $result = Templater::generateTemplate('test', ['name' => 'John'], $localizatorStub, $configStub);
+        $this->assertEquals('Hello John, welcome to Locale site!', $result);
     }
 }
