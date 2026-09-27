@@ -64,6 +64,7 @@ class Upgrade12to13Strategy implements UpgradeStrategyInterface
             'BaseForm\\EntityResolver, BaseForm\\FilterManager, BaseForm\\FormValidator: Moved along with BaseForm from SismaFramework\\Core\\BaseClasses\\BaseForm to SismaFramework\\Orm\\BaseClasses\\BaseForm',
             'Filter: Moved from SismaFramework\\Core\\HelperClasses to SismaFramework\\Orm\\HelperClasses',
             'FilterType: Moved from SismaFramework\\Core\\Enumerations to SismaFramework\\Orm\\Enumerations',
+            'Localizator: Flat template keys containing "/" in the "templates" locale section are ignored, convert them to nested keys (manual)',
         ];
     }
 

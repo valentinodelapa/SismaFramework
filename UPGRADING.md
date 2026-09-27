@@ -15,7 +15,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 > **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
 
-La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`.
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType` e rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle.
 
 ### Breaking Changes
 
@@ -60,6 +60,40 @@ Lo stesso vale per le classi interne di supporto, se referenziate direttamente:
 - Sostituire il segmento di namespace `Core` con `Orm` per le sei classi elencate sopra
 - Se si estende direttamente `EntityResolver`, `FilterManager` o `FormValidator`, aggiornare anche i relativi `use` statement
 
+#### 2. Rimossa la chiave piatta nella localizzazione dei template
+
+**Impatto**: Basso
+**Componenti interessati**: File di localizzazione (`Locales/*.json`) che definiscono label per template in sottocartelle con una chiave contenente `/`
+
+Dalla 12.4.0 le label dei template seguono la struttura delle sottocartelle di `Templates/`, come già avveniva per le viste. La chiave piatta con il percorso completo del template, deprecata nella 12.4.0, viene ora ignorata: le label definite in quella forma non raggiungono più il template, senza alcun errore.
+
+**Prima (12.x)**:
+```json
+"templates": {
+    "emails/welcome": {
+        "subject": "Benvenuto"
+    }
+}
+```
+
+**Dopo (13.x)**:
+```json
+"templates": {
+    "emails": {
+        "welcome": {
+            "subject": "Benvenuto"
+        }
+    }
+}
+```
+
+**Azione richiesta**:
+- Cercare, nella sezione `templates` di ogni file di localizzazione, le chiavi contenenti `/`
+- Trasformare ciascuna in chiavi annidate, un livello per ogni segmento del percorso
+- Le label comuni a più template della stessa cartella possono essere spostate in una chiave `common` di quella cartella
+
+Questa modifica non è gestita da `sisma upgrade`, che trasforma solo il codice PHP.
+
 ### Checklist di Migrazione
 
 - [ ] **Form applicativi che estendono `BaseForm`**
@@ -67,6 +101,8 @@ Lo stesso vale per le classi interne di supporto, se referenziate direttamente:
 - [ ] **Codice che referenzia `Filter`/`FilterType`**
   - [ ] Aggiornati tutti gli `use SismaFramework\Core\HelperClasses\Filter` in `use SismaFramework\Orm\HelperClasses\Filter`
   - [ ] Aggiornati tutti gli `use SismaFramework\Core\Enumerations\FilterType` in `use SismaFramework\Orm\Enumerations\FilterType`
+- [ ] **File di localizzazione**
+  - [ ] Convertite in forma gerarchica tutte le chiavi con `/` nella sezione `templates`
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari
   - [ ] Verificato che tutti i form dell'applicazione validino correttamente

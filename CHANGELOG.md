@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.4.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator).
+
+### 💥 Breaking Changes
+
+#### `Core/HelperClasses/Localizator::getTemplateLocaleArray()` — rimossa la chiave piatta per i template in sottocartelle
+
+La 12.4.0 ha introdotto per i template la localizzazione gerarchica, con chiavi che rispecchiano le sottocartelle di `Templates/`, mantenendo per compatibilità la forma precedente: la chiave piatta con il percorso completo del template (es. `"emails/welcome": {...}` direttamente dentro `templates`), che se presente aveva la precedenza sulla struttura gerarchica. Quella forma non è più supportata: `getTemplateLocaleArray()` segue ora esclusivamente la struttura gerarchica, e una chiave piatta viene ignorata senza errori, per cui il template riceve solo le eventuali label `common` dei livelli attraversati.
+
+**Prima (12.x)**:
+```json
+"templates": {
+    "emails/welcome": { "subject": "Benvenuto" }
+}
+```
+
+**Dopo (13.x)**:
+```json
+"templates": {
+    "emails": {
+        "welcome": { "subject": "Benvenuto" }
+    }
+}
+```
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: `getTemplateLocaleArray()` delega direttamente a `getHierarchicalLocaleArray()`; rimosso il metodo privato `isDeprecatedFlatTemplateKey()`
+- **`Tests/Core/HelperClasses/LocalizatorTest.php`**: `testGetTemplateLocaleArraySupportsDeprecatedFlatKey()` sostituito da `testGetTemplateLocaleArrayIgnoresFlatKey()`, che verifica che la chiave piatta `"emails/reminder"` di `TestsApplication/Locales/it_IT.json` venga ignorata e che il template riceva le sole label `common`
+- **`TestsApplication/Templates/emails/reminder.tpl`**: rimosso, non più referenziato
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: aggiunta la voce corrispondente a `getBreakingChanges()`; la conversione non è automatizzata perché i transformer di `sisma upgrade` operano solo sul codice PHP
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: aggiornati il numero atteso di breaking change e le voci attese
+- **`UPGRADING.md`**: aggiunto il breaking change 2 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
+- **`docs/internationalization.md`**: la nota di deprecazione è sostituita dalla nota di rimozione
+
+**Migrazione**: Convertire in chiavi annidate, un livello per ogni segmento del percorso, tutte le chiavi contenenti `/` nella sezione `templates` dei file di localizzazione. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
+
+### ✅ Backward Compatibility
+
+- **Breaking change per i file di localizzazione esistenti**: le label definite con la chiave piatta smettono di raggiungere il template, senza errori; i file che usano già la forma gerarchica, e i template al primo livello (nome senza `/`), non sono interessati.
+
+---
+
 ## [12.4.0] - 2026-09-27 - Localizzazione Gerarchica dei Template e Label `common` Facoltative in Localizator
 
 Minor release che estende ai template il meccanismo di localizzazione gerarchica già usato per le viste: le chiavi della sezione `templates` del file di localizzazione possono ora rispecchiare, a profondità arbitraria, la struttura delle sottocartelle di `Templates/`, con label `common` condivise a ogni livello. La chiave piatta con il percorso completo del template, finora l'unica forma supportata per i template in sottocartelle, resta supportata ma è deprecata.

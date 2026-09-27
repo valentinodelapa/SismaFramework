@@ -78,16 +78,7 @@ class Localizator
 
     public function getTemplateLocaleArray(string $template): array
     {
-        $templatesLocale = $this->getLocale()['templates'] ?? [];
-        if ($this->isDeprecatedFlatTemplateKey($templatesLocale, $template)) {
-            return $templatesLocale[$template];
-        }
-        return $this->getHierarchicalLocaleArray($templatesLocale, $template);
-    }
-
-    private function isDeprecatedFlatTemplateKey(array $templatesLocale, string $template): bool
-    {
-        return str_contains($template, '/') && array_key_exists($template, $templatesLocale);
+        return $this->getHierarchicalLocaleArray($this->getLocale()['templates'] ?? [], $template);
     }
 
     public function getEnumerationLocaleLabel(\UnitEnum $enumeration): string

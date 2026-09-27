@@ -90,7 +90,7 @@ Per il template `emails/account/activation` (file `Templates/emails/account/acti
 $corpoEmail = Templater::generateTemplate('emails/account/activation', ['username' => 'Mario Rossi']);
 ```
 
-> **Deprecato dalla versione 12.4.0, sarà rimosso nella versione 13.0.0**: per i template in sottocartelle è ancora supportata la chiave piatta con il percorso completo (es. `"emails/welcome": {...}` direttamente dentro `templates`). Se presente, ha la precedenza sulla struttura gerarchica ma non riceve le label `common`. Convertila nella forma gerarchica (`"emails": {"welcome": {...}}`).
+> **Nota**: dalla versione 13.0.0 la chiave piatta con il percorso completo del template (es. `"emails/welcome": {...}` direttamente dentro `templates`), deprecata nella 12.4.0, non è più supportata e viene ignorata. Usa la forma gerarchica (`"emails": {"welcome": {...}}`); vedi [UPGRADING.md](../UPGRADING.md#da-12x-a-13x).
 
 ## Precedenza tra Label e Variabili
 

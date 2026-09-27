@@ -157,10 +157,11 @@ class LocalizatorTest extends TestCase
         ], $this->getTestsApplicationLocalizator()->getTemplateLocaleArray('missing'));
     }
 
-    public function testGetTemplateLocaleArraySupportsDeprecatedFlatKey()
+    public function testGetTemplateLocaleArrayIgnoresFlatKey()
     {
         $this->assertEquals([
-            'subject' => 'Promemoria',
+            'signature' => 'Il team di Sisma',
+            'greeting' => 'Ciao',
         ], $this->getTestsApplicationLocalizator()->getTemplateLocaleArray('emails/reminder'));
     }
 
