@@ -10,9 +10,12 @@
     },
     "pages": {
         "common": {
-
+            "siteName": "Sisma"
         },
         "sample": {
+            "common": {
+                "section": "Esempi"
+            },
             "index": {
                 "title": "Homepage"
             },
@@ -30,6 +33,28 @@
         }
     },
     "templates": {
-
+        "common": {
+            "signature": "Il team di Sisma"
+        },
+        "emails": {
+            "common": {
+                "greeting": "Ciao"
+            },
+            "welcome": {
+                "subject": "Benvenuto"
+            },
+            "account": {
+                "common": {
+                    "footer": "Gestione account"
+                },
+                "activation": {
+                    "subject": "Attivazione account",
+                    "greeting": "Gentile utente"
+                }
+            }
+        },
+        "emails/reminder": {
+            "subject": "Promemoria"
+        }
     }
 }

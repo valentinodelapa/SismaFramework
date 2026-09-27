@@ -2,6 +2,111 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.4.0] - 2026-09-27 - Localizzazione Gerarchica dei Template e Label `common` Facoltative in Localizator
+
+Minor release che estende ai template il meccanismo di localizzazione gerarchica già usato per le viste: le chiavi della sezione `templates` del file di localizzazione possono ora rispecchiare, a profondità arbitraria, la struttura delle sottocartelle di `Templates/`, con label `common` condivise a ogni livello. La chiave piatta con il percorso completo del template, finora l'unica forma supportata per i template in sottocartelle, resta supportata ma è deprecata.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Localizator::getTemplateLocaleArray()` — struttura gerarchica e label `common` per i template
+
+`getTemplateLocaleArray()` cercava le label del template come chiave letterale all'interno di `templates`: per un template in una sottocartella (es. `emails/welcome`, la forma usata nella documentazione) la chiave doveva essere l'intero percorso (`"emails/welcome": {...}`), senza possibilità di condividere label tra template della stessa cartella. Il metodo segue ora lo stesso algoritmo di `getPageLocaleArray()`: suddivide il nome del template su `/`, scende di un livello nella sezione `templates` per ogni parte e unisce le label `common` incontrate a ogni livello, con precedenza al livello più specifico.
+
+```json
+"templates": {
+    "common": { "signature": "Il team" },
+    "emails": {
+        "common": { "greeting": "Ciao" },
+        "account": {
+            "activation": { "subject": "Attiva il tuo account" }
+        }
+    }
+}
+```
+
+Per `emails/account/activation` vengono restituite `signature`, `greeting` e `subject`.
+
+La logica è estratta nel metodo privato `getHierarchicalLocaleArray()`, condiviso da `getPageLocaleArray()` e `getTemplateLocaleArray()`.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Localizator` — sezioni e `common` radice obbligatori
+
+`getPageLocaleArray()` leggeva `$locale['pages']['common']` senza verificarne l'esistenza, e `getTemplateLocaleArray()` passava `$locale['templates']` direttamente ad `array_key_exists()`: un file di localizzazione privo di `pages.common`, di `pages` o di `templates` produceva un warning seguito da un `TypeError`. Tutti e tre sono ora facoltativi, e la loro assenza equivale a una sezione vuota.
+
+### ⚠️ Deprecazioni
+
+- **Chiave piatta con il percorso completo del template** (es. `"emails/welcome": {...}` direttamente dentro `templates`): deprecata dalla versione 12.4.0, sarà rimossa nella versione 13.0.0. Per preservare il comportamento esistente, se il nome del template contiene `/` e la chiave piatta corrispondente esiste, `getTemplateLocaleArray()` restituisce il suo contenuto così com'è, con precedenza sulla struttura gerarchica e senza unire alcuna label `common`. La deprecazione è solo documentale: nessun `E_USER_DEPRECATED` viene sollevato a runtime, perché `ErrorHandler::registerNonThrowableErrorHandler()` in ambiente di sviluppo sostituisce l'output della pagina con la pagina di dettaglio per qualsiasi errore registrato, deprecazioni incluse.
+
+### 📖 Documentazione
+
+#### `docs/internationalization.md` — struttura del file di localizzazione allineata al codice
+
+La guida descriveva un file di localizzazione piatto (chiavi direttamente alla radice), non corrispondente alla struttura letta da `Localizator` (sezioni `pages` e `templates`), dichiarava il supporto a file `.php` (`Localizator` legge solo file `.json`) e l'esempio di vista usava una variabile inesistente (`$edit_post`). Riscritte le sezioni "Come Funziona", "Creare un File di Lingua" e "Utilizzo nelle Viste"; aggiunte le sezioni "Utilizzo nei Template" (con la nota di deprecazione) e "Precedenza tra Label e Variabili".
+
+#### `docs/views.md` e `docs/conventions.md` — estensioni e struttura dei file allineate al codice
+
+`docs/views.md` indicava per il template di esempio l'estensione `.html`, mentre `Templater` cerca file `.tpl`; aggiunto inoltre un rimando alla localizzazione dei template. `docs/conventions.md` dichiarava il supporto a file di lingua `.php`; aggiunta la descrizione della struttura gerarchica di `pages` e `templates`.
+
+#### `docs-phpdoc/` — Rigenerazione
+
+Rigenerata tramite `composer phpdoc`. `Localizator` è `@internal` e non compare nella documentazione generata, e le firme pubbliche di `Templater` sono invariate; la rigenerazione corregge due anomalie preesistenti:
+- rimosse da `SismaFramework-Core-HelperClasses-Encryptor.html` 46 righe spurie accodate dopo `</html>`, residuo di una generazione precedente;
+- rimosse le pagine `files/scannerwork-*.html` (5 file), generate da file PHP vuoti presenti nella cartella locale `.scannerwork/` (workdir di SonarQube, ignorata da git ma non da phpDocumentor) e mai elencate nell'indice dei file. La cartella, che conteneva solo quei file vuoti e il report di un'analisi del 2023, è stata eliminata.
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: `getPageLocaleArray()` e `getTemplateLocaleArray()` delegano al nuovo metodo privato `getHierarchicalLocaleArray()`; aggiunto il metodo privato `isDeprecatedFlatTemplateKey()` per il supporto alla chiave piatta deprecata
+- **`TestsApplication/Locales/it_IT.json`**: aggiunte label `common` a livello radice e di cartella in `pages`, e una sezione `templates` gerarchica su tre livelli con una chiave piatta deprecata
+- **`TestsApplication/Templates/`**: nuova cartella con i template `emails/welcome.tpl`, `emails/reminder.tpl` ed `emails/account/activation.tpl`
+- **`Tests/Core/HelperClasses/LocalizatorTest.php`**: aggiunti sei test su `getPageLocaleArray()` e `getTemplateLocaleArray()` con il file di localizzazione reale di `TestsApplication` (unione dei `common` di ogni livello, precedenza del livello più specifico, vista/template senza label proprie, chiave piatta deprecata)
+- **`Tests/Core/HelperClasses/TemplaterTest.php`**: aggiunto `testGenerateNestedTemplateWithHierarchicalLocale()`, che genera un template annidato su tre livelli con `Localizator` reale
+- **`docs/internationalization.md`**, **`docs/views.md`**, **`docs/conventions.md`**, **`docs-phpdoc/classes/SismaFramework-Core-HelperClasses-Encryptor.html`**, **`docs-phpdoc/files/scannerwork-*.html`** (eliminati): vedi sopra
+
+### 🔧 Manutenzione
+
+#### PHPUnit aggiornato alla 13.3.5 — `recordTestRunHistory` non riconosciuto dalla versione installata
+
+In [12.2.0](#1220---2026-09-05---rinominazione-api-di-localizator-correzione-typeerror-e-nuovo-metodo-getenumerationlocaleattribute) l'attributo `cacheResult` di `phpunit.xml` era stato sostituito con `recordTestRunHistory`, ma quest'ultimo è stato introdotto solo in PHPUnit 13.3.0 (che contestualmente depreca `cacheResult`), mentre il vincolo `^13.0` di `composer.json` e il `composer.lock` fissavano PHPUnit 13.2.2. La versione installata non riconosceva quindi l'attributo e ogni esecuzione della suite terminava con "OK, but there were issues" per un warning di validazione della configurazione, invece che con un esito pulito.
+
+**File modificati**:
+- **`composer.json`**: vincolo `phpunit/phpunit` da `^13.0` a `^13.3`, per impedire l'installazione di una versione che non riconosce l'attributo
+- **`phpunit.xml`**: schema di riferimento da `13.0/phpunit.xsd` a `13.3/phpunit.xsd`
+
+La suite è verificata con PHPUnit 13.3.5.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica è cambiata; `getPageLocaleArray()` restituisce lo stesso risultato per ogni file di localizzazione valido in precedenza.
+- **Chiavi piatte dei template in sottocartelle**: continuano a funzionare invariate fino alla 13.0.0.
+- **Cambiamento di comportamento osservabile**: ogni template riceve ora anche le label di `templates.common` e dei `common` delle cartelle che lo contengono. Prima una chiave `common` in `templates` poteva esistere solo come localizzazione di un template chiamato `common`: solo in quel caso le sue label vengono ora estese anche agli altri template.
+
+---
+
+## [12.3.1] - 2026-09-27 - Correzione Precedenza tra Variabili e Label di Localizzazione in Templater
+
+Patch che allinea `Templater::generateTemplate()` alla regola di precedenza già applicata al rendering delle view: le variabili passate dal codice applicativo prevalgono sulle label del file di localizzazione con la stessa chiave, e non viceversa.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Templater::generateTemplate()` — le label di localizzazione sovrascrivevano le variabili passate dal codice
+
+`generateTemplate()` combinava le variabili e le label restituite da `Localizator::getTemplateLocaleArray()` con `array_merge($vars, $locale)`: poiché `array_merge()` dà precedenza al secondo array, a parità di chiave la label del file di localizzazione sostituiva la variabile passata dal chiamante. Il comportamento era l'opposto di quello di `RenderService`, che esegue `extract()` prima sulle label (`getPageLocaleArray()`) e poi sulle variabili, lasciando l'ultima parola allo sviluppatore. La conseguenza era duplice: non era possibile specializzare una label per un singolo utilizzo del template (es. un oggetto email personalizzato) senza modificare il file di localizzazione, valido per tutti; e l'aggiunta al file di localizzazione di una chiave omonima a una variabile dinamica (es. `name`, `url`) ne sostituiva silenziosamente il valore nel template generato.
+
+L'ordine degli argomenti di `array_merge()` è stato invertito, rendendo le label valori di default sovrascrivibili dalle variabili, come per le view.
+
+Nessun test esistente copriva `generateTemplate()`: `TemplaterTest` verificava solo `parseTemplate()` e l'esistenza dei metodi.
+
+**File modificati**:
+- **`Core/HelperClasses/Templater.php`**: `generateTemplate()` usa ora `array_merge($localizator->getTemplateLocaleArray($template), $vars)` invece di `array_merge($vars, $localizator->getTemplateLocaleArray($template))`
+- **`Tests/Core/HelperClasses/TemplaterTest.php`**: aggiunto `testGenerateTemplateVarsOverrideLocaleLabels()`, che fornisce una label in conflitto con una variabile (`name`) e una label senza conflitto (`site`) e asserisce che la prima sia sovrascritta dalla variabile e la seconda applicata; fallisce contro l'implementazione precedente
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma è cambiata; la precedenza delle label sulle variabili nei template non era documentata e contraddiceva quella, stabilita, del rendering delle view.
+- **Cambiamento di comportamento osservabile**: le chiamate a `Templater::generateTemplate()` che passano una variabile con la stessa chiave di una label definita in `templates` nel file di localizzazione producono ora il valore della variabile anziché quello della label. Le chiamate senza chiavi in conflitto producono lo stesso output di prima.
+
+---
+
 ## [13.0.0-alpha.1] - 2026-09-15 - Pre-release: Spostamento `BaseForm`, `Filter` e `FilterType` dal modulo Core al modulo Orm
 
 Prima pre-release (alpha) della versione 13. Contiene tutte le modifiche già rilasciate fino alla 12.3.0 più un breaking change architetturale: lo spostamento di `BaseForm`, `Filter` e `FilterType` dal modulo `Core` al modulo `Orm`. Trattandosi di una pre-release, l'API non è da considerarsi stabile: ulteriori breaking change (inclusa, eventualmente, l'integrazione della feature ODM ancora in valutazione) possono essere introdotti prima del rilascio definitivo di 13.0.0.

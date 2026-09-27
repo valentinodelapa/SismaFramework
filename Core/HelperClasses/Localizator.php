@@ -49,14 +49,15 @@ class Localizator
 
     public function getPageLocaleArray(string $view): array
     {
-        $viewParts = \explode('/', $view);
-        $locale = $this->getLocale();
-        $actualLocale = $locale['pages'];
-        $commonLocale = $locale['pages']['common'];
-        foreach ($viewParts as $part) {
-            if (isset($actualLocale['common'])) {
-                $commonLocale = array_merge($commonLocale, $actualLocale['common']);
-            }
+        return $this->getHierarchicalLocaleArray($this->getLocale()['pages'] ?? [], $view);
+    }
+
+    private function getHierarchicalLocaleArray(array $sectionLocale, string $path): array
+    {
+        $actualLocale = $sectionLocale;
+        $commonLocale = [];
+        foreach (\explode('/', $path) as $part) {
+            $commonLocale = array_merge($commonLocale, $actualLocale['common'] ?? []);
             $actualLocale = $actualLocale[$part] ?? [];
         }
         return array_merge($commonLocale, $actualLocale);
@@ -77,9 +78,16 @@ class Localizator
 
     public function getTemplateLocaleArray(string $template): array
     {
-        $locale = $this->getLocale();
-        $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
-        return $actualLocale;
+        $templatesLocale = $this->getLocale()['templates'] ?? [];
+        if ($this->isDeprecatedFlatTemplateKey($templatesLocale, $template)) {
+            return $templatesLocale[$template];
+        }
+        return $this->getHierarchicalLocaleArray($templatesLocale, $template);
+    }
+
+    private function isDeprecatedFlatTemplateKey(array $templatesLocale, string $template): bool
+    {
+        return str_contains($template, '/') && array_key_exists($template, $templatesLocale);
     }
 
     public function getEnumerationLocaleLabel(\UnitEnum $enumeration): string
