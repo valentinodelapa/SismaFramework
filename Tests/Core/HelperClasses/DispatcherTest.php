@@ -133,13 +133,13 @@ class DispatcherTest extends TestCase
     public function testStructuralFileFopen()
     {
         $dispatcher = $this->createDispatcherWithResourceMakerMock();
-        $this->requestMock->server['REQUEST_URI'] = '/css/debugBar.css';
+        $this->requestMock->server['REQUEST_URI'] = '/svg/logo.svg';
         $this->resourceMakerMock->expects($this->exactly(2))
                 ->method('isAcceptedResourceFile')
                 ->willReturn(true);
         $this->resourceMakerMock->expects($this->once())
                 ->method('makeResource')
-                ->with($this->configStub->structuralAssetsPath . 'css' . DIRECTORY_SEPARATOR . 'debugBar.css');
+                ->with($this->configStub->structuralAssetsPath . 'svg' . DIRECTORY_SEPARATOR . 'logo.svg');
         $this->assertInstanceOf(Response::class, $dispatcher->run());
     }
 

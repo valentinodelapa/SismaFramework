@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.4.1] - 2026-10-03 - Tipografia della Barra di Debug Indipendente dallo Stile della Pagina
+
+Patch che rende la tipografia della barra di debug indipendente dai fogli di stile dell'applicazione, corregge l'apertura dei pannelli al primo click e rimuove dagli asset strutturali due file della barra non più utilizzati.
+
+### 🐛 Bug Fix
+
+#### `Structural/Templates/debugBar.tpl` — la tipografia della barra di debug ereditava lo stile della pagina
+
+Il blocco `<style>` del template definiva layout e colori della barra, ma nessuna proprietà tipografica: font, dimensione e interlinea erano ereditati dal `body` della pagina in cui la barra viene iniettata. Di conseguenza l'aspetto della barra cambiava da un'applicazione all'altra, e regole come un `font-size` elevato o un font decorativo sul `body` potevano renderla poco leggibile o alterarne l'altezza. Anche il contenuto dei pannelli (`<pre>`) dipendeva dalle eventuali regole dell'applicazione sui `pre`.
+
+Il template dichiara ora esplicitamente:
+- su `.debug-bar`: font di sistema sans-serif, `font-size: 12px`, `line-height: 1.4`;
+- sui contatori di intestazione (query, log, form, variabili, memoria, tempo): `font-weight: 600` e cifre a larghezza fissa (`font-variant-numeric: tabular-nums`), per evitare spostamenti del layout al variare dei valori;
+- su `.debug-bar-body` e sui relativi `<pre>`: font monospace di sistema, `font-size: 12px`, `line-height: 1.5`.
+
+#### `Structural/Templates/debugBar.tpl` — il primo click su un'etichetta della barra non apriva il pannello
+
+Lo script del template decideva se mostrare o nascondere il pannello confrontando `style.display` con `'none'`. Al caricamento della pagina, però, il pannello è nascosto dalla regola CSS `.debug-bar-body { display: none; }` e non da uno stile inline, quindi `style.display` vale `''`: il confronto falliva e il primo click impostava `display: none` su un pannello già nascosto, senza alcun effetto visibile. Il pannello si apriva solo al secondo click. Lo stato viene ora letto con `getComputedStyle()`, che tiene conto anche delle regole CSS.
+
+### ♻️ Pulizia Codice
+
+#### `Structural/Assets/` — rimossi `css/debugBar.css` e `javascript/jquery.debugBar.js`
+
+I due file erano residui della prima implementazione della barra di debug: stili e comportamento sono da tempo incorporati in `debugBar.tpl` (con JavaScript nativo, senza dipendenza da jQuery) e nessuna parte del framework li referenziava. `DispatcherTest::testStructuralFileFopen()` usava `debugBar.css` come file di esempio per il servizio degli asset strutturali: ora usa `svg/logo.svg`.
+
+**File modificati**:
+- **`Structural/Templates/debugBar.tpl`**: aggiunte le proprietà tipografiche descritte sopra; il toggle dei pannelli usa `getComputedStyle(targetDebugBarBody).display` invece di `targetDebugBarBody.style.display`
+- **`Structural/Assets/css/debugBar.css`**, **`Structural/Assets/javascript/jquery.debugBar.js`**: eliminati
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: `testStructuralFileFopen()` richiede `/svg/logo.svg` invece di `/css/debugBar.css`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica è cambiata.
+- **Cambiamento di comportamento osservabile**: la barra di debug, visibile solo in ambiente di sviluppo, non eredita più font, dimensione e interlinea dalla pagina.
+- **Asset rimossi**: gli URL `/css/debugBar.css` e `/javascript/jquery.debugBar.js` non sono più serviti dagli asset strutturali. Non erano documentati né usati dal framework; un'applicazione che li includesse esplicitamente nel proprio layout riceverà ora un 404.
+
+---
+
 ## [12.4.0] - 2026-09-27 - Localizzazione Gerarchica dei Template e Label `common` Facoltative in Localizator
 
 Minor release che estende ai template il meccanismo di localizzazione gerarchica già usato per le viste: le chiavi della sezione `templates` del file di localizzazione possono ora rispecchiare, a profondità arbitraria, la struttura delle sottocartelle di `Templates/`, con label `common` condivise a ogni livello. La chiave piatta con il percorso completo del template, finora l'unica forma supportata per i template in sottocartelle, resta supportata ma è deprecata.
