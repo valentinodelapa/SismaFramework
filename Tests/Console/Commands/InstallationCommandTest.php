@@ -29,6 +29,7 @@ class InstallationCommandTest extends TestCase
 
     public function testConfigureShowsHelpMessage(): void
     {
+        $this->command->setOptions(['help' => true]);
         ob_start();
         $this->command->run();
         $output = ob_get_clean();
@@ -55,6 +56,7 @@ class InstallationCommandTest extends TestCase
 
     public function testConfigureShowsSkipDbOption(): void
     {
+        $this->command->setOptions(['help' => true]);
         ob_start();
         $this->command->run();
         $output = ob_get_clean();
@@ -73,8 +75,9 @@ class InstallationCommandTest extends TestCase
         $output = ob_get_clean();
 
         $this->assertFalse($result);
-        $this->assertStringContainsString('Usage: php SismaFramework/Console/sisma install', $output);
+        $this->assertStringNotContainsString('Usage: php SismaFramework/Console/sisma install', $output);
         $this->assertStringContainsString('Error: Project name is required', $output);
+        $this->assertStringContainsString('Use --help for usage information.', $output);
     }
 
     public function testSuccessfulInstallationWithSkipDb(): void
