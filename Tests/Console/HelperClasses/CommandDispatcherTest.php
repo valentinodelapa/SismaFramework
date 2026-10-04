@@ -108,7 +108,7 @@ namespace SismaFakeSystem\Console\Commands;
 use SismaFramework\Console\BaseClasses\BaseCommand;
 class SystemFakeCommand extends BaseCommand {
     public function checkCompatibility(string $command): bool { return $command === 'system-fake'; }
-    protected function configure(): void {}
+    protected function help(): string { return ''; }
     protected function execute(): bool { return true; }
 }
 PHP);
@@ -157,7 +157,7 @@ namespace FakeModule\Console\Commands;
 use SismaFramework\Console\BaseClasses\BaseCommand;
 class ModuleFakeCommand extends BaseCommand {
     public function checkCompatibility(string $command): bool { return $command === 'module-fake'; }
-    protected function configure(): void {}
+    protected function help(): string { return ''; }
     protected function execute(): bool { return true; }
 }
 PHP);
@@ -280,7 +280,7 @@ namespace UnconfiguredModule\Console\Commands;
 use SismaFramework\Console\BaseClasses\BaseCommand;
 class UnconfiguredFakeCommand extends BaseCommand {
     public function checkCompatibility(string $command): bool { return $command === 'unconfigured-fake'; }
-    protected function configure(): void {}
+    protected function help(): string { return ''; }
     protected function execute(): bool { return true; }
 }
 PHP);
@@ -333,7 +333,7 @@ namespace {$module}\\Console\\Commands;
 use SismaFramework\\Console\\BaseClasses\\BaseCommand;
 class {$className} extends BaseCommand {
     public function checkCompatibility(string \$command): bool { return \$command === 'prio-cmd'; }
-    protected function configure(): void {}
+    protected function help(): string { return ''; }
     protected function execute(): bool { echo '{$module}'; return true; }
 }
 PHP);

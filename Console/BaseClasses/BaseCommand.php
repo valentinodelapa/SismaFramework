@@ -37,7 +37,7 @@ abstract class BaseCommand
     
     abstract public function checkCompatibility(string $command): bool;
 
-    abstract protected function configure(): void;
+    abstract protected function help(): string;
 
     abstract protected function execute(): bool;
 
@@ -54,7 +54,7 @@ abstract class BaseCommand
     public function run(): bool
     {
         if ($this->getOption('help') !== null) {
-            $this->configure();
+            $this->output($this->help());
             return true;
         }
         $result = $this->execute();

@@ -15,7 +15,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 > **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
 
-La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType` e rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle.
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle e rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`.
 
 ### Breaking Changes
 
@@ -94,6 +94,45 @@ Dalla 12.4.0 le label dei template seguono la struttura delle sottocartelle di `
 
 Questa modifica non è gestita da `sisma upgrade`, che trasforma solo il codice PHP.
 
+#### 3. Rimosso `BaseCommand::configure()`, `help()` obbligatorio
+
+**Impatto**: Basso
+**Componenti interessati**: Comandi console dei moduli che estendono `BaseCommand`
+
+> **Importante**: questa conversione va completata **prima** di aggiornare alla 13. All'avvio la console carica le classi di tutti i comandi dei moduli: un comando non convertito provoca un fatal error che blocca qualunque comando `sisma`, compreso `sisma upgrade`.
+
+Dalla 12.4.2 `configure()` viene chiamato solo con l'opzione `--help`, e il suo unico compito è stampare il testo d'aiuto del comando. La 12.5.0 lo ha deprecato a favore di `help(): string`, che restituisce il testo invece di stamparlo. Nella 13 `configure()` è rimosso e `help(): string` è astratto: un comando che non lo implementa, o che dichiara ancora `configure()` con `#[\Override]`, non può essere caricato.
+
+**Prima (12.x)**:
+```php
+#[\Override]
+protected function configure(): void
+{
+    $this->output(<<<OUTPUT
+Usage: php SismaFramework/Console/sisma report <module>
+OUTPUT);
+}
+```
+
+**Dopo (13.x)**:
+```php
+#[\Override]
+protected function help(): string
+{
+    return <<<OUTPUT
+Usage: php SismaFramework/Console/sisma report <module>
+OUTPUT;
+}
+```
+
+**Azione richiesta** (sulla 12.5.x, prima dell'aggiornamento):
+- In ogni comando che estende `BaseCommand`, rinominare `configure(): void` in `help(): string` e restituire il testo d'aiuto invece di passarlo a `$this->output()`
+- Sostituire eventuali chiamate esplicite `$this->configure();` con `$this->output($this->help());`
+- Nei comandi che estendono un altro comando, sostituire `parent::configure()` con `parent::help()`, concatenandone il risultato al testo restituito
+- Verificare con `sisma <comando> --help` che nessun comando emetta più l'avviso di deprecazione
+
+Questa modifica non è gestita da `sisma upgrade`, che sulla 13 non può avviarsi finché i comandi non sono convertiti.
+
 ### Checklist di Migrazione
 
 - [ ] **Form applicativi che estendono `BaseForm`**
@@ -103,6 +142,9 @@ Questa modifica non è gestita da `sisma upgrade`, che trasforma solo il codice 
   - [ ] Aggiornati tutti gli `use SismaFramework\Core\Enumerations\FilterType` in `use SismaFramework\Orm\Enumerations\FilterType`
 - [ ] **File di localizzazione**
   - [ ] Convertite in forma gerarchica tutte le chiavi con `/` nella sezione `templates`
+- [ ] **Comandi console dei moduli** (prima dell'aggiornamento, sulla 12.5.x)
+  - [ ] Sostituito `configure(): void` con `help(): string` in tutti i comandi che estendono `BaseCommand`
+  - [ ] Sostituite le chiamate `$this->configure();` e `parent::configure()`
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari
   - [ ] Verificato che tutti i form dell'applicazione validino correttamente

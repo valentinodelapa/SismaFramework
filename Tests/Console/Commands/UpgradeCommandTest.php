@@ -31,7 +31,7 @@ class UpgradeCommandTest extends TestCase
         $this->assertFalse($this->command->checkCompatibility('other'));
     }
 
-    public function testConfigureShowsHelpMessage(): void
+    public function testHelpOptionShowsHelpMessage(): void
     {
         $this->command->setOptions(['help' => true]);
         ob_start();

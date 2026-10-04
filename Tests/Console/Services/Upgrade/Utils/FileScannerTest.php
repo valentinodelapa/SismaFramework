@@ -36,6 +36,16 @@ class FileScannerTest extends TestCase
         $this->assertContains('SampleEntity.php', $fileNames);
     }
 
+    public function testScanModuleFilesFindsConsoleCommands(): void
+    {
+        $this->createModuleStructure();
+
+        $files = $this->scanner->scanModuleFiles($this->testDir, false);
+
+        $fileNames = array_map('basename', $files);
+        $this->assertContains('SampleCommand.php', $fileNames);
+    }
+
     public function testScanModuleFilesIncludesCriticalFiles(): void
     {
         $this->createModuleStructure();
@@ -88,6 +98,11 @@ class FileScannerTest extends TestCase
         $this->assertEquals('entity', $this->scanner->categorizeFile('/path/to/Application/Entities/SampleEntity.php'));
     }
 
+    public function testCategorizeFileForCommand(): void
+    {
+        $this->assertEquals('command', $this->scanner->categorizeFile('/path/to/Module/Console/Commands/SampleCommand.php'));
+    }
+
     public function testCategorizeFileForIndexPhp(): void
     {
         $this->assertEquals('critical', $this->scanner->categorizeFile('/path/to/Public/index.php'));
@@ -128,6 +143,11 @@ class FileScannerTest extends TestCase
         $this->assertTrue($this->scanner->shouldProcessFile('entity'));
     }
 
+    public function testShouldProcessFileForCommand(): void
+    {
+        $this->assertTrue($this->scanner->shouldProcessFile('command'));
+    }
+
     public function testShouldProcessFileForCritical(): void
     {
         $this->assertTrue($this->scanner->shouldProcessFile('critical'));
@@ -150,6 +170,7 @@ class FileScannerTest extends TestCase
             $this->testDir . '/Application/Forms',
             $this->testDir . '/Application/Entities',
             $this->testDir . '/Application/Models',
+            $this->testDir . '/Console/Commands',
             $this->testDir . '/Config',
             dirname($this->testDir) . '/Public',
         ];
@@ -163,6 +184,7 @@ class FileScannerTest extends TestCase
         file_put_contents($this->testDir . '/Application/Controllers/SampleController.php', '<?php // controller');
         file_put_contents($this->testDir . '/Application/Forms/SampleForm.php', '<?php // form');
         file_put_contents($this->testDir . '/Application/Entities/SampleEntity.php', '<?php // entity');
+        file_put_contents($this->testDir . '/Console/Commands/SampleCommand.php', '<?php // command');
         file_put_contents($this->testDir . '/Config/configFramework.php', '<?php // config');
         file_put_contents(dirname($this->testDir) . '/Public/index.php', '<?php // index');
     }

@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.4.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator).
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.4.2, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), e la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`.
 
 ### 💥 Breaking Changes
 
@@ -39,9 +39,61 @@ La 12.4.0 ha introdotto per i template la localizzazione gerarchica, con chiavi 
 
 **Migrazione**: Convertire in chiavi annidate, un livello per ogni segmento del percorso, tutte le chiavi contenenti `/` nella sezione `templates` dei file di localizzazione. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
 
+#### `Console/BaseClasses/BaseCommand` — rimosso `configure()`, `help(): string` astratto
+
+La 12.5.0 ha introdotto `help(): string`, che restituisce il testo d'aiuto del comando, deprecando `configure(): void`, che lo stampava: il nome richiamava una fase di preparazione del comando, mentre dalla 12.4.2 il metodo viene chiamato solo con l'opzione `--help`. `configure()` è ora rimosso e `help(): string` è astratto: ogni comando deve implementarlo. Con `--help`, `BaseCommand::run()` esegue `$this->output($this->help())`.
+
+**Prima (12.x)**:
+```php
+#[\Override]
+protected function configure(): void
+{
+    $this->output(<<<OUTPUT
+Usage: php SismaFramework/Console/sisma report <module>
+OUTPUT);
+}
+```
+
+**Dopo (13.x)**:
+```php
+#[\Override]
+protected function help(): string
+{
+    return <<<OUTPUT
+Usage: php SismaFramework/Console/sisma report <module>
+OUTPUT;
+}
+```
+
+La conversione non è gestita da `sisma upgrade` e va eseguita **prima** dell'aggiornamento alla 13: all'avvio il dispatcher carica le classi di tutti i comandi dei moduli, e un comando che non implementa `help()`, o che dichiara `configure()` con `#[\Override]`, provoca un fatal error al caricamento, che impedisce l'esecuzione di qualunque comando `sisma`, compreso `sisma upgrade`. Sulla 12.5.x ogni comando ancora da convertire emette un avviso di deprecazione quando viene invocato con `--help`.
+
+**File modificati**:
+- **`Console/BaseClasses/BaseCommand.php`**: rimosso `configure()`; `help(): string` diventa astratto; `run()` con `--help` esegue `$this->output($this->help())`
+- **`Console/Commands/FixturesCommand.php`**, **`Console/Commands/InstallationCommand.php`**, **`Console/Commands/ScaffoldCommand.php`**, **`Console/Commands/UpgradeCommand.php`**: `configure()` convertito in `help(): string`
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: aggiunta la voce corrispondente a `getBreakingChanges()`
+- **`Tests/Console/BaseClasses/BaseCommandTest.php`**: nuovo test, che copre la stampa di `help()` con `--help` senza esecuzione del comando e il suggerimento in caso di fallimento
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: aggiornati il numero atteso di breaking change e le voci attese
+- **`Tests/Console/HelperClasses/CommandDispatcherTest.php`**, **`Tests/Console/HelperClasses/Dispatcher/CommandFactoryTest.php`**: i comandi fittizi implementano `help(): string`
+- **`Tests/Console/Commands/UpgradeCommandTest.php`**, **`Tests/Console/Commands/InstallationCommandTest.php`**: `testConfigureShowsHelpMessage()` rinominato in `testHelpOptionShowsHelpMessage()` e `testConfigureShowsSkipDbOption()` in `testHelpOptionShowsSkipDbOption()`
+- **`UPGRADING.md`**: aggiunto il breaking change 3 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
+
+**Migrazione**: Prima di aggiornare alla 13, convertire `configure(): void` in `help(): string` in tutti i comandi dei moduli, eliminando gli avvisi di deprecazione della 12.5.x. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
+
+### 🐛 Bug Fix
+
+#### `Console/Services/Upgrade/Utils/FileScanner` — i comandi console dei moduli non venivano elaborati da `sisma upgrade`
+
+`scanModuleFiles()` raccoglieva solo i file di `Application/` e i file critici (`Public/index.php`, `Config/`), per cui i comandi in `Console/Commands` del modulo non ricevevano le trasformazioni della strategia applicata: per esempio, un comando che usa `Filter` manteneva il vecchio namespace `SismaFramework\Core\HelperClasses\Filter` anche dopo `sisma upgrade --to=13.0.0`. La cartella `Console/Commands` viene ora scansionata, e i suoi file sono classificati nella nuova categoria `command`, elaborata da `shouldProcessFile()`.
+
+**File modificati**:
+- **`Console/Services/Upgrade/Utils/FileScanner.php`**: `scanModuleFiles()` include i file di `Console/Commands`; `categorizeFile()` restituisce `command` per i percorsi che contengono `/Console/Commands/`; `shouldProcessFile()` elabora la categoria `command`
+- **`Tests/Console/Services/Upgrade/Utils/FileScannerTest.php`**: aggiunti `testScanModuleFilesFindsConsoleCommands()`, `testCategorizeFileForCommand()` e `testShouldProcessFileForCommand()`
+
 ### ✅ Backward Compatibility
 
 - **Breaking change per i file di localizzazione esistenti**: le label definite con la chiave piatta smettono di raggiungere il template, senza errori; i file che usano già la forma gerarchica, e i template al primo livello (nome senza `/`), non sono interessati.
+- **Breaking change per i comandi console dei moduli**: un comando che non implementa `help(): string` provoca un fatal error al caricamento, che blocca l'intera console.
+- **Cambiamento di comportamento di `sisma upgrade`**: i file in `Console/Commands` dei moduli vengono ora elaborati da tutti i transformer della strategia applicata.
 
 ---
 

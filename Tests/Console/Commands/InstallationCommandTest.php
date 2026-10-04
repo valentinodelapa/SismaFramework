@@ -27,7 +27,7 @@ class InstallationCommandTest extends TestCase
         $this->assertFalse($this->command->checkCompatibility('scaffold'));
     }
 
-    public function testConfigureShowsHelpMessage(): void
+    public function testHelpOptionShowsHelpMessage(): void
     {
         $this->command->setOptions(['help' => true]);
         ob_start();
@@ -54,7 +54,7 @@ class InstallationCommandTest extends TestCase
         }
     }
 
-    public function testConfigureShowsSkipDbOption(): void
+    public function testHelpOptionShowsSkipDbOption(): void
     {
         $this->command->setOptions(['help' => true]);
         ob_start();

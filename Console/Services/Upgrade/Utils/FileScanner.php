@@ -47,6 +47,8 @@ class FileScanner
         if (is_dir($applicationPath)) {
             $files = array_merge($files, $this->scanDirectory($applicationPath, '*.php'));
         }
+        $commandsPath = $modulePath . DIRECTORY_SEPARATOR . 'Console' . DIRECTORY_SEPARATOR . 'Commands';
+        $files = array_merge($files, $this->scanDirectory($commandsPath, '*.php'));
         if ($includeCritical) {
             $publicIndexPath = dirname($modulePath) . DIRECTORY_SEPARATOR . 'Public' . DIRECTORY_SEPARATOR . 'index.php';
             if (file_exists($publicIndexPath)) {
@@ -89,7 +91,7 @@ class FileScanner
      * Categorize a file based on its path
      *
      * @param string $filePath File path
-     * @return string Category (form, controller, model, entity, critical, other)
+     * @return string Category (form, controller, model, entity, command, critical, other)
      */
     public function categorizeFile(string $filePath): string
     {
@@ -105,6 +107,9 @@ class FileScanner
         }
         if (str_contains($normalizedPath, '/Entities/')) {
             return 'entity';
+        }
+        if (str_contains($normalizedPath, '/Console/Commands/')) {
+            return 'command';
         }
         if (basename($filePath) === 'index.php') {
             return 'critical';
@@ -127,6 +132,6 @@ class FileScanner
         if ($skipCritical && $category === 'critical') {
             return false;
         }
-        return in_array($category, ['form', 'controller', 'model', 'entity', 'critical']);
+        return in_array($category, ['form', 'controller', 'model', 'entity', 'command', 'critical']);
     }
 }

@@ -47,14 +47,14 @@ class FixturesCommand extends BaseCommand
     }
 
     #[\Override]
-    protected function configure(): void
+    protected function help(): string
     {
-        $this->output(<<<OUTPUT
+        return <<<OUTPUT
 Usage: php SismaFramework/Console/sisma fixtures
 
 Executes all fixture classes found in the configured fixture directories of each module.
 Fixtures are executed respecting their declared dependencies.
-OUTPUT);
+OUTPUT;
     }
 
     #[\Override]
