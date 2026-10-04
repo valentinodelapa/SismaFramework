@@ -33,6 +33,7 @@ class UpgradeCommandTest extends TestCase
 
     public function testConfigureShowsHelpMessage(): void
     {
+        $this->command->setOptions(['help' => true]);
         ob_start();
         $this->command->run();
         $output = ob_get_clean();

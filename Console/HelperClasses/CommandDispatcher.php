@@ -51,7 +51,7 @@ class CommandDispatcher
 Usage: php SismaFramework/Console/sisma <command> [arguments] [options]
 Available commands:
   scaffold <entity> <module> - Generate scaffolding for an entity
-Type 'php SismaFramework/Console/sisma <command>' for more information about a command
+Type 'php SismaFramework/Console/sisma <command> --help' for more information about a command
 ERROR);
         }
         $this->config = $config ?? Config::getInstance();

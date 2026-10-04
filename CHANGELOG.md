@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.4.2] - 2026-10-04 - Codice d'Uscita della Console e Testo d'Aiuto Solo su Richiesta
+
+Patch che fa uscire il comando `sisma` con un codice diverso da zero quando un comando fallisce e che stampa il testo d'aiuto dei comandi solo con l'opzione `--help`, invece che a ogni esecuzione.
+
+### 🐛 Bug Fix
+
+#### `Console/sisma` — codice d'uscita 0 anche quando il comando falliva
+
+Un comando segnala il fallimento restituendo `false` da `execute()`, e il valore risaliva correttamente fino a `CommandDispatcher::run()`. Lo script `sisma`, però, ignorava il valore restituito: il processo usciva con codice 1 solo per le eccezioni non catturate, mentre un comando che gestiva l'errore (argomento mancante, opzione non valida, file non scrivibile) terminava con codice 0, come se fosse andato a buon fine. Di conseguenza `make`, script con `set -e`, catene con `&&`, cron e job CI non rilevavano il fallimento. Lo script esce ora con `exit($commandDispatcher->run() ? 0 : 1)`.
+
+#### `Console/BaseClasses/BaseCommand::run()` — il testo d'aiuto veniva stampato a ogni esecuzione
+
+`run()` chiamava sempre `configure()` prima di `execute()`. Poiché per convenzione `configure()` stampa il blocco «Usage / Arguments / Options / Example», il testo d'aiuto compariva anche quando il comando era invocato correttamente e andava a buon fine, sporcando l'output e i log dei comandi eseguiti da cron o da script.
+
+`run()` si comporta ora così:
+- con l'opzione `--help` chiama solo `configure()` e restituisce `true`, senza eseguire il comando;
+- senza `--help` chiama solo `execute()`;
+- se `execute()` restituisce `false` stampa una sola riga, `Use --help for usage information.`, al posto dell'intero blocco d'aiuto.
+
+#### `Console/HelperClasses/CommandDispatcher` — suggerimento d'uso allineato
+
+Il messaggio mostrato quando `sisma` è invocato senza argomenti indica ora `sisma <command> --help` per ottenere informazioni su un comando, invece di `sisma <command>`.
+
+**File modificati**:
+- **`Console/sisma`**: il valore restituito da `CommandDispatcher::run()` determina il codice d'uscita
+- **`Console/BaseClasses/BaseCommand.php`**: `run()` chiama `configure()` solo con `--help` e stampa un suggerimento in caso di fallimento
+- **`Console/HelperClasses/CommandDispatcher.php`**: messaggio d'uso aggiornato
+- **`Tests/Console/Commands/UpgradeCommandTest.php`**, **`Tests/Console/Commands/InstallationCommandTest.php`**, **`Tests/Console/Commands/ScaffoldCommandTest.php`**: i test sul testo d'aiuto impostano l'opzione `help`; `InstallationCommandTest::testExecuteWithMissingProjectName()` verifica ora l'assenza del blocco d'aiuto e la presenza del suggerimento; aggiunti a `ScaffoldCommandTest` i test `testFailedExecutionShowsHelpHintWithoutUsage()` e `testHelpOptionDoesNotExecuteCommand()`, ed estesa `testSuccessfulExecution()` per verificare l'assenza del testo d'aiuto
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica è cambiata; `configure()` resta astratto e i comandi dei moduli non richiedono modifiche.
+- **Cambiamento di comportamento osservabile**: il testo d'aiuto di un comando non viene più stampato a ogni esecuzione, ma solo con `--help`. Chi lanciava un comando senza argomenti per leggerne l'uso deve ora aggiungere `--help`.
+- **Cambiamento di comportamento osservabile**: un comando che fallisce restituendo `false` fa uscire `sisma` con codice 1 invece di 0. Gli script che invocano `sisma` vedono ora i fallimenti che prima venivano ignorati.
+
+---
+
 ## [12.4.1] - 2026-10-03 - Tipografia della Barra di Debug Indipendente dallo Stile della Pagina
 
 Patch che rende la tipografia della barra di debug indipendente dai fogli di stile dell'applicazione, corregge l'apertura dei pannelli al primo click e rimuove dagli asset strutturali due file della barra non più utilizzati.

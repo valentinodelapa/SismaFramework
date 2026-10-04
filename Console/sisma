@@ -19,7 +19,7 @@ try {
     CommandLineInterfaceSettingsChecker::checkIsCommandLineInterfaceMode(php_sapi_name());
     CommandLineInterfaceSettingsChecker::checkIsProjectDirectory(\Config\SYSTEM_PATH);
     $commandDispatcher = new CommandDispatcher(array_slice($argv, 1));
-    $commandDispatcher->run();
+    exit($commandDispatcher->run() ? 0 : 1);
 } catch (\Throwable $e) {
     echo "Error: " . $e->getMessage() . PHP_EOL;
     exit(1);
