@@ -42,8 +42,9 @@ class NoConstructorCommand extends BaseCommand
     }
 
     #[\Override]
-    protected function configure(): void
+    protected function help(): string
     {
+        return '';
     }
 
     #[\Override]
@@ -67,8 +68,9 @@ class AllDefaultsCommand extends BaseCommand
     }
 
     #[\Override]
-    protected function configure(): void
+    protected function help(): string
     {
+        return '';
     }
 
     #[\Override]

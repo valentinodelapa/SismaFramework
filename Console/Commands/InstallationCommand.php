@@ -50,10 +50,9 @@ class InstallationCommand extends BaseCommand
     }
 
     #[\Override]
-    protected function configure(): void
+    protected function help(): string
     {
-        $this->output(
-                <<<OUTPUT
+        return <<<OUTPUT
             Usage: php SismaFramework/Console/sisma install <projectName> [options]
 
             Arguments:
@@ -78,8 +77,7 @@ class InstallationCommand extends BaseCommand
               php SismaFramework/Console/sisma install MyProject
               php SismaFramework/Console/sisma install MyProject --skip-db
               php SismaFramework/Console/sisma install MyProject --db-name=mydb --db-user=root
-            OUTPUT,
-        );
+            OUTPUT;
     }
 
     #[\Override]

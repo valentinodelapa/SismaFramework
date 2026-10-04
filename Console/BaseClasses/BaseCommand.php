@@ -37,7 +37,18 @@ abstract class BaseCommand
     
     abstract public function checkCompatibility(string $command): bool;
 
-    abstract protected function configure(): void;
+    /**
+     * @deprecated dalla versione 12.5.0, sarà rimosso nella versione 13.0.0. Implementare help()
+     */
+    protected function configure(): void
+    {
+
+    }
+
+    protected function help(): string
+    {
+        return '';
+    }
 
     abstract protected function execute(): bool;
 
@@ -54,7 +65,7 @@ abstract class BaseCommand
     public function run(): bool
     {
         if ($this->getOption('help') !== null) {
-            $this->configure();
+            $this->printHelp();
             return true;
         }
         $result = $this->execute();
@@ -62,6 +73,21 @@ abstract class BaseCommand
             $this->output('Use --help for usage information.');
         }
         return $result;
+    }
+
+    private function printHelp(): void
+    {
+        if ($this->isOverridden('configure') && !$this->isOverridden('help')) {
+            $this->configure();
+            $this->output('Deprecated: ' . static::class . '::configure() is deprecated since 12.5.0 and will be removed in 13.0.0, implement help(): string instead.');
+        } else {
+            $this->output($this->help());
+        }
+    }
+
+    private function isOverridden(string $methodName): bool
+    {
+        return (new \ReflectionMethod($this, $methodName))->getDeclaringClass()->getName() !== self::class;
     }
 
     protected function getArgument(string $name): ?string

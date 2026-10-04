@@ -51,9 +51,9 @@ class UpgradeCommand extends BaseCommand
     }
 
     #[\Override]
-    protected function configure(): void
+    protected function help(): string
     {
-        $this->output(<<<OUTPUT
+        return <<<OUTPUT
 Usage: php SismaFramework/Console/sisma upgrade <module> [options]
 
 Arguments:
@@ -89,7 +89,7 @@ Examples:
   # Minimal output
   php SismaFramework/Console/sisma upgrade Blog --to=11.0.0 --quiet
 
-OUTPUT);
+OUTPUT;
     }
 
     #[\Override]

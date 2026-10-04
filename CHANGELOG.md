@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.5.0] - 2026-10-04 - Metodo `help()` nei Comandi Console e Deprecazione di `configure()`
+
+Minor release che introduce nei comandi console il metodo `help(): string`, che restituisce il testo d'aiuto del comando, e depreca `configure(): void`, che lo stampava. `configure()` sarà rimosso nella 13.0.0, dove `help()` diventerà obbligatorio: la release permette di convertire i comandi dei moduli prima dell'aggiornamento.
+
+### ✨ Nuove Funzionalità
+
+#### `Console/BaseClasses/BaseCommand::help()` — testo d'aiuto restituito invece che stampato
+
+Il nome `configure()` richiamava una fase di preparazione del comando, sul modello di Symfony, ma per convenzione il metodo stampava soltanto il testo d'aiuto, e dalla 12.4.2 viene chiamato esclusivamente con l'opzione `--help`: un comando che vi inserisse una preparazione vera la vedrebbe eseguita solo con `--help` e mai durante l'esecuzione normale. Il nuovo metodo `help(): string` restituisce il testo d'aiuto, e la stampa è a carico di `BaseCommand::run()`.
+
+**Prima**:
+```php
+#[\Override]
+protected function configure(): void
+{
+    $this->output(<<<OUTPUT
+Usage: php SismaFramework/Console/sisma report <module>
+OUTPUT);
+}
+```
+
+**Dopo**:
+```php
+#[\Override]
+protected function help(): string
+{
+    return <<<OUTPUT
+Usage: php SismaFramework/Console/sisma report <module>
+OUTPUT;
+}
+```
+
+Con `--help`, `run()` stampa il risultato di `help()`. Se il comando implementa ancora soltanto `configure()`, `run()` chiama `configure()` come in precedenza e stampa in coda un avviso di deprecazione che indica la classe da convertire. Se il comando implementa entrambi i metodi, viene usato `help()`.
+
+I quattro comandi del framework (`fixtures`, `install`, `scaffold`, `upgrade`) implementano ora `help()`.
+
+### ⚠️ Deprecazioni
+
+- **`BaseCommand::configure()`**: deprecato dalla versione 12.5.0, sarà rimosso nella versione 13.0.0. Implementare `help(): string`. Il metodo non è più astratto: `BaseCommand` ne fornisce un'implementazione vuota, per cui i comandi nuovi non devono dichiararlo. L'avviso di deprecazione è una riga stampata in console e non un `E_USER_DEPRECATED`, perché `ErrorHandler::handleCommandLineInterfaceNonThrowableError()` termina il processo con codice 1 a qualunque errore registrato, deprecazioni incluse.
+
+La conversione va completata prima di aggiornare alla 13.0.0: nella 13 la console carica all'avvio le classi di tutti i comandi dei moduli, e un comando che non implementa `help()`, o che dichiara `configure()` con `#[\Override]`, provoca un fatal error che impedisce l'esecuzione di qualunque comando `sisma`, compreso `sisma upgrade`.
+
+**File modificati**:
+- **`Console/BaseClasses/BaseCommand.php`**: `configure()` non più astratto, con implementazione vuota e annotazione `@deprecated`; aggiunto `help(): string`, che restituisce una stringa vuota; `run()` con `--help` delega al nuovo metodo privato `printHelp()`, che usa `help()` o, per i comandi non convertiti, `configure()` seguito dall'avviso di deprecazione; il nuovo metodo privato `isOverridden()` verifica tramite reflection se un metodo è ridefinito dal comando
+- **`Console/Commands/FixturesCommand.php`**, **`Console/Commands/InstallationCommand.php`**, **`Console/Commands/ScaffoldCommand.php`**, **`Console/Commands/UpgradeCommand.php`**: `configure()` convertito in `help(): string`
+- **`Tests/Console/BaseClasses/BaseCommandTest.php`**: nuovo test, che copre la stampa di `help()` con `--help` senza esecuzione del comando, il ripiego su `configure()` con l'avviso di deprecazione, la precedenza di `help()` quando il comando implementa entrambi i metodi e il suggerimento in caso di fallimento
+- **`Tests/Console/HelperClasses/CommandDispatcherTest.php`**, **`Tests/Console/HelperClasses/Dispatcher/CommandFactoryTest.php`**: i comandi fittizi implementano `help(): string` invece di `configure()`
+- **`Tests/Console/Commands/UpgradeCommandTest.php`**, **`Tests/Console/Commands/InstallationCommandTest.php`**: `testConfigureShowsHelpMessage()` rinominato in `testHelpOptionShowsHelpMessage()` e `testConfigureShowsSkipDbOption()` in `testHelpOptionShowsSkipDbOption()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: i comandi che implementano `configure()` continuano a funzionare senza modifiche, anche se lo dichiarano con `#[\Override]`.
+- **Cambiamento di comportamento osservabile**: con `--help`, un comando non ancora convertito stampa, dopo il proprio testo d'aiuto, una riga `Deprecated: …` che indica la classe da convertire.
+
+---
+
 ## [12.4.2] - 2026-10-04 - Codice d'Uscita della Console e Testo d'Aiuto Solo su Richiesta
 
 Patch che fa uscire il comando `sisma` con un codice diverso da zero quando un comando fallisce e che stampa il testo d'aiuto dei comandi solo con l'opzione `--help`, invece che a ogni esecuzione.

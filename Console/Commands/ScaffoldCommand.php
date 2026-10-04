@@ -49,9 +49,9 @@ class ScaffoldCommand extends BaseCommand
     }
 
     #[\Override]
-    protected function configure(): void
+    protected function help(): string
     {
-        $this->output(<<<OUTPUT
+        return <<<OUTPUT
 Usage: php SismaFramework/Console/sisma scaffold <entity> <module> [options]
 
 Arguments:
@@ -65,7 +65,7 @@ Options:
 
 Example:
   php SismaFramework/Console/sisma scaffold User Blog
-OUTPUT);
+OUTPUT;
     }
 
     #[\Override]
