@@ -27,6 +27,7 @@
 namespace SismaFramework\Orm\Enumerations;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 
 /**
  *
@@ -45,6 +46,7 @@ enum DataType
     case typeStatement;
     case typeEntity;
     case typeEnumeration;
+    case typeJson;
     case typeGeneric;
 
     public static function fromReflection(\ReflectionNamedType $reflectionNamedType, mixed $value): self
@@ -63,6 +65,8 @@ enum DataType
             return self::typeEnumeration;
         } elseif (is_subclass_of($reflectionNamedType->getName(), \DateTimeInterface::class)) {
             return self::typeDate;
+        } elseif (is_a($reflectionNamedType->getName(), SismaJson::class, true)) {
+            return self::typeJson;
         } else {
             return self::typeGeneric;
         }

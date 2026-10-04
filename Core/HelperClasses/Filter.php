@@ -30,6 +30,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 
 /**
  *
@@ -242,6 +243,16 @@ class Filter
         $result = ($this->isNotEmpty($value)) ? $result : false;
         if ($result) {
             $result = $value instanceof SismaTime;
+        }
+        return $result;
+    }
+
+    public function isJson(mixed $value): bool
+    {
+        $result = true;
+        $result = ($this->isNotEmpty($value)) ? $result : false;
+        if ($result) {
+            $result = $value instanceof SismaJson;
         }
         return $result;
     }

@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Orm\Enumerations;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\Orm\Enumerations\DataType;
 
 /**
@@ -53,6 +54,7 @@ class DataTypeTest extends TestCase
             'typeStatement',
             'typeEntity',
             'typeEnumeration',
+            'typeJson',
             'typeGeneric'
         ];
 
@@ -68,7 +70,7 @@ class DataTypeTest extends TestCase
     {
         $cases = DataType::cases();
         $this->assertIsArray($cases);
-        $this->assertEquals(11, count($cases));
+        $this->assertEquals(12, count($cases));
     }
 
     public function testEachCaseIsInstance()
@@ -98,6 +100,7 @@ class DataTypeTest extends TestCase
         $this->assertInstanceOf(DataType::class, DataType::typeStatement);
         $this->assertInstanceOf(DataType::class, DataType::typeEntity);
         $this->assertInstanceOf(DataType::class, DataType::typeEnumeration);
+        $this->assertInstanceOf(DataType::class, DataType::typeJson);
         $this->assertInstanceOf(DataType::class, DataType::typeGeneric);
     }
 
@@ -125,7 +128,16 @@ class DataTypeTest extends TestCase
         $this->assertEquals('typeStatement', DataType::typeStatement->name);
         $this->assertEquals('typeEntity', DataType::typeEntity->name);
         $this->assertEquals('typeEnumeration', DataType::typeEnumeration->name);
+        $this->assertEquals('typeJson', DataType::typeJson->name);
         $this->assertEquals('typeGeneric', DataType::typeGeneric->name);
+    }
+
+    public function testFromReflectionWithSismaJson()
+    {
+        $reflectionNamedTypeStub = $this->createStub(\ReflectionNamedType::class);
+        $reflectionNamedTypeStub->method('getName')
+                ->willReturn(SismaJson::class);
+        $this->assertEquals(DataType::typeJson, DataType::fromReflection($reflectionNamedTypeStub, '{"key":"value"}'));
     }
 
     public function testEnumIsNotBacked()
@@ -149,6 +161,7 @@ class DataTypeTest extends TestCase
                 DataType::typeStatement => 'statement',
                 DataType::typeEntity => 'entity',
                 DataType::typeEnumeration => 'enumeration',
+                DataType::typeJson => 'json',
                 DataType::typeGeneric => 'generic',
             };
 

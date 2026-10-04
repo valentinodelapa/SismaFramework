@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.6.0] - 2026-10-04 - Tipo `SismaJson` per le Colonne JSON
+
+Minor release che introduce nell'ORM il tipo `SismaJson`, per mappare le colonne `JSON` di MySQL e MariaDB su proprietà delle entità decodificate e tracciate dal change tracking come gli altri tipi custom.
+
+### ✨ Nuove Funzionalità
+
+#### `Orm/CustomTypes/SismaJson` — proprietà JSON nelle entità
+
+Finora una colonna JSON poteva essere mappata solo su una proprietà `string`, lasciando all'applicazione la codifica e la decodifica e facendo rilevare come modifica qualunque differenza testuale, anche solo nell'ordine delle chiavi che MySQL normalizza in fase di salvataggio. Una proprietà tipizzata `SismaJson` viene ora decodificata in lettura (`Parser::parseValue()`) e serializzata in scrittura (`Parser::unparseValue()`), sia nell'ORM sia nel parsing di form e argomenti delle action, che accettano la stringa JSON o un array.
+
+```php
+protected SismaJson $attributes;
+
+$product->attributes = new SismaJson(['color' => 'red']);
+$product->attributes = $product->attributes->with('size', 'M');
+echo $product->attributes['color'];
+```
+
+`SismaJson` contiene un oggetto o un array JSON, decodificato in array associativo, e implementa `ArrayAccess`, `IteratorAggregate`, `Countable` e `JsonSerializable`. È immutabile: `with()` e `without()` restituiscono una nuova istanza, mentre l'assegnazione tramite indice solleva una `LogicException`. Un oggetto mutabile modificato in place non passerebbe da `BaseEntity::__set()` e la modifica non verrebbe salvata. `equals()` confronta i documenti ignorando l'ordine delle chiavi degli oggetti ma non quello degli elementi delle liste, con confronto stretto sui tipi.
+
+#### `Orm/Interfaces/CustomTypeInterface` — interfaccia per i tipi custom confrontabili
+
+Nuova interfaccia con il metodo `equals(self $other): bool`, implementata da `SismaJson`. Il change tracking di `BaseEntity` usa `equals()` per le proprietà il cui tipo implementa `CustomDateTimeInterface` o `CustomTypeInterface`. `CustomDateTimeInterface` resta invariata e non estende la nuova interfaccia: renderla figlia di `CustomTypeInterface` amplierebbe il parametro di `equals()`, e le implementazioni esistenti che lo dichiarano come `CustomDateTimeInterface` violerebbero la controvarianza dei parametri, con un fatal error.
+
+#### `DataType::typeJson` e `FilterType::isJson`
+
+- **`DataType::typeJson`**: restituito da `DataType::fromReflection()` per le proprietà `SismaJson` e dal rilevamento automatico del tipo di binding di `AdapterMysql`; l'adapter lo lega come `PDO::PARAM_STR`.
+- **`FilterType::isJson`** e **`Filter::isJson()`**: verificano che il valore sia un'istanza di `SismaJson`. `FilterType::fromPhpType()` lo restituisce per le proprietà `SismaJson`, per cui lo scaffolding genera il filtro corretto invece di fallire con un `TypeError`.
+
+**File modificati**:
+- **`Orm/CustomTypes/SismaJson.php`**: nuova classe
+- **`Orm/Interfaces/CustomTypeInterface.php`**: nuova interfaccia
+- **`Orm/BaseClasses/BaseEntity.php`**: `checkCustomDateTimeInterfacePropertyChange()` rinominato in `checkCustomTypePropertyChange()`, che tramite il nuovo metodo privato `isCustomType()` considera anche `CustomTypeInterface`
+- **`Orm/Enumerations/DataType.php`**: aggiunto il case `typeJson` e il relativo ramo in `fromReflection()`
+- **`Orm/Adapters/AdapterMysql.php`**: `typeJson` tradotto in `PDO::PARAM_STR`; `parseGenericBindType()` riconosce `SismaJson`
+- **`Core/HelperClasses/Parser.php`**: `parseValue()` gestisce `SismaJson` tramite il nuovo metodo `parseJson()`, che converte una `JsonException` in `InvalidArgumentException` e restituisce `null` per il letterale JSON `null` se la proprietà è nullable; `unparseValue()` serializza `SismaJson` con `toJson()`
+- **`Core/Enumerations/FilterType.php`**: aggiunto il case `isJson` e il relativo ramo in `fromPhpType()`
+- **`Core/HelperClasses/Filter.php`**: aggiunto `isJson()`
+- **`TestsApplication/Entities/BaseSample.php`**: aggiunte le proprietà `jsonWithoutInitialization`, `jsonWithInitialization` e `jsonNullableWithInitialization`
+- **`Tests/Orm/CustomTypes/SismaJsonTest.php`**: nuovo test
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**, **`Tests/Core/HelperClasses/ParserTest.php`**, **`Tests/Orm/Enumerations/DataTypeTest.php`**, **`Tests/Orm/Adapters/AdapterMysqlTest.php`**, **`Tests/Core/Enumerations/FilterTypeTest.php`**, **`Tests/Core/HelperClasses/FilterTest.php`**: test per il nuovo tipo
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: valori e tipi di binding attesi aggiornati con le nuove proprietà di `BaseSample`
+- **`docs/orm.md`**, **`docs/scaffolding.md`**, **`docs/enumerations.md`**: documentato il nuovo tipo
+
+### ⚠️ Limitazioni Note
+
+- Sono supportati solo oggetti e array JSON: un JSON scalare solleva una `JsonException` in `SismaJson::fromJson()` e una `InvalidArgumentException` durante l'idratazione, per cui un'entità con un JSON scalare nella colonna non può essere caricata. Fa eccezione il letterale JSON `null`, che su una proprietà nullable viene idratato come `null`, e che un successivo salvataggio della colonna riscrive come `NULL` SQL.
+- Poiché la decodifica produce array PHP, un oggetto vuoto `{}` viene riscritto come `[]`.
+- Una proprietà `SismaJson` cifrata viene salvata come stringa cifrata, che non è JSON valido: la colonna deve essere testuale e non `JSON`.
+- Le query sul contenuto dei documenti (`JSON_EXTRACT`, `->>`) non sono supportate dal query builder.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le proprietà `string` mappate su colonne JSON continuano a funzionare come prima; il nuovo comportamento si attiva solo per le proprietà tipizzate `SismaJson`.
+- **Nuovi case negli enum**: `DataType::typeJson` e `FilterType::isJson` si aggiungono ai case esistenti. Un `match` esaustivo senza ramo `default` su `DataType` o `FilterType` scritto nel codice applicativo solleverebbe un `UnhandledMatchError` per i nuovi case.
+
+---
+
 ## [12.5.0] - 2026-10-04 - Metodo `help()` nei Comandi Console e Deprecazione di `configure()`
 
 Minor release che introduce nei comandi console il metodo `help(): string`, che restituisce il testo d'aiuto del comando, e depreca `configure(): void`, che lo stampava. `configure()` sarà rimosso nella 13.0.0, dove `help()` diventerà obbligatorio: la release permette di convertire i comandi dei moduli prima dell'aggiornamento.

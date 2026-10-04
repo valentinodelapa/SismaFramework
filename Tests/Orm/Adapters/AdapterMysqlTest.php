@@ -42,6 +42,7 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
@@ -155,6 +156,7 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals(Placeholder::placeholder->getAdapterVersion(AdapterType::mysql), $adapterMysql->escapeValue(Placeholder::placeholder));
         $sismaDateTime = new SismaDateTime();
         $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $adapterMysql->escapeValue($sismaDateTime));
+        $this->assertEquals('{"key":"value"}', $adapterMysql->escapeValue(new SismaJson(['key' => 'value'])));
         $baseSample = new BaseSample();
         $baseSample->id = 1;
         $this->assertEquals('1', $adapterMysql->escapeValue($baseSample));
@@ -536,6 +538,32 @@ class AdapterMysqlTest extends TestCase
             5 => DataType::typeEnumeration,
             6 => DataType::typeEntity,
             7 => DataType::typeNull,
+        ];
+        $this->assertInstanceOf(ResultSetMysql::class, $adapterMysql->select('', $bindValues, $bindTypes));
+    }
+
+    public function testSelectWithSismaJson()
+    {
+        $sismaJson = new SismaJson(['key' => 'value']);
+        $pdoStatementMock = $this->createMock(\PDOStatement::class);
+        $pdoStatementMock->method('execute');
+        $matcher = $this->exactly(2);
+        $pdoStatementMock->expects($matcher)
+                ->method('bindParam')
+                ->willReturnCallback(function ($key, $value, $type) use ($matcher) {
+                    $this->assertEquals($key, $matcher->numberOfInvocations());
+                    $this->assertEquals($type, \PDO::PARAM_STR);
+                    return true;
+                });
+        $this->connectionMock->method('prepare')
+                ->willReturn($pdoStatementMock);
+        $adapterMysql = new AdapterMysql();
+        $bindValues = [
+            0 => '{"key":"value"}',
+            1 => $sismaJson,
+        ];
+        $bindTypes = [
+            0 => DataType::typeJson,
         ];
         $this->assertInstanceOf(ResultSetMysql::class, $adapterMysql->select('', $bindValues, $bindTypes));
     }

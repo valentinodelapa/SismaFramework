@@ -32,6 +32,7 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\Core\Exceptions\InvalidArgumentException;
 
 /**
@@ -67,6 +68,8 @@ class Parser
             return new SismaDateTime($value);
         } elseif (is_a($reflectionNamedType->getName(), SismaTime::class, true)) {
             return SismaTime::createFromStandardTimeFormat($value);
+        } elseif (is_a($reflectionNamedType->getName(), SismaJson::class, true)) {
+            return self::parseJson($value, $reflectionNamedType->allowsNull());
         } elseif (($reflectionNamedType->getName() === 'array') && is_array($value)) {
             return $value;
         } else {
@@ -97,6 +100,21 @@ class Parser
         }
     }
 
+    public static function parseJson(string|array $value, bool $allowsNull = false): ?SismaJson
+    {
+        if (is_array($value)) {
+            return new SismaJson($value);
+        } elseif ($allowsNull && (trim($value) === 'null')) {
+            return null;
+        } else {
+            try {
+                return SismaJson::fromJson($value);
+            } catch (\JsonException) {
+                throw new InvalidArgumentException(SismaJson::class);
+            }
+        }
+    }
+
     public static function unparseValues(array &$arrayValues): void
     {
         foreach ($arrayValues as &$value) {
@@ -116,6 +134,8 @@ class Parser
             return $value->format("Y-m-d H:i:s");
         } elseif ($value instanceof SismaTime) {
             return $value->formatToStandardTimeFormat();
+        } elseif ($value instanceof SismaJson) {
+            return $value->toJson();
         } else {
             return $value;
         }

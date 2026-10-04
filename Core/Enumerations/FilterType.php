@@ -31,6 +31,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 
 /**
  *
@@ -66,6 +67,7 @@ enum FilterType
     case isDate;
     case isDatetime;
     case isTime;
+    case isJson;
     case isUploadedFile;
     case isEntity;
     case isEnumeration;
@@ -95,6 +97,8 @@ enum FilterType
             return self::isDatetime;
         } elseif (is_a($reflectionNamedType->getName(), SismaTime::class, true)) {
             return self::isTime;
+        } elseif (is_a($reflectionNamedType->getName(), SismaJson::class, true)) {
+            return self::isJson;
         }
     }
 }

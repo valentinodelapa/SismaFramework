@@ -45,6 +45,7 @@ namespace SismaFramework\Orm\Adapters;
 
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\AdapterType;
@@ -118,6 +119,7 @@ class AdapterMysql extends BaseAdapter
             case DataType::typeString:
             case DataType::typeDecimal:
             case DataType::typeDate:
+            case DataType::typeJson:
                 return \PDO::PARAM_STR;
             case DataType::typeBinary:
                 return \PDO::PARAM_LOB;
@@ -161,6 +163,8 @@ class AdapterMysql extends BaseAdapter
             return DataType::typeEnumeration;
         } elseif ($value instanceof SismaDateTime) {
             return DataType::typeDate;
+        } elseif ($value instanceof SismaJson) {
+            return DataType::typeJson;
         } elseif ($value === null) {
             return DataType::typeNull;
         } else {
