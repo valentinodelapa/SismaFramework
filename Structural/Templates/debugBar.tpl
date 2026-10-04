@@ -1,5 +1,8 @@
 <style>
     .debug-bar{
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 12px;
+        line-height: 1.4;
         bottom: 0px;
         width: 100%;
         position: fixed;
@@ -40,11 +43,18 @@
         padding: 2px 0px;
     }
     .debug-bar-header-left > div, .debug-bar-header-right > div{
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
         padding: 2px 5px;
         background-color: #f4f4f4;
         border-radius: 3px;
     }
     .debug-bar-header-left > label:last-of-type{
+    }
+    .debug-bar-body, .debug-bar-body > pre{
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+        font-size: 12px;
+        line-height: 1.5;
     }
     .debug-bar-body{
         height: 200px;
@@ -116,7 +126,7 @@
                     }
                 }
                 const targetDebugBarBody = debugBar.querySelector('.' + bodyInformationType);
-                targetDebugBarBody.style.display = targetDebugBarBody.style.display === 'none' ? 'block' : 'none';
+                targetDebugBarBody.style.display = getComputedStyle(targetDebugBarBody).display === 'none' ? 'block' : 'none';
             });
         }
         const body = document.querySelector('body');

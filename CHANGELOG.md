@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.12] - 2026-10-04 - Codice d'Uscita della Console, Testo d'Aiuto Solo su Richiesta e Correzioni alla Barra di Debug
+
+Patch che riporta sul ramo 11.x le correzioni delle versioni 12.4.1 e 12.4.2: il comando `sisma` esce con un codice diverso da zero quando un comando fallisce, il testo d'aiuto dei comandi viene stampato solo con l'opzione `--help`, e la barra di debug non eredita più la tipografia della pagina e apre i pannelli al primo click. Vengono inoltre rimossi due asset della barra di debug non più utilizzati.
+
+### 🐛 Bug Fix
+
+#### `Console/sisma` — codice d'uscita 0 anche quando il comando falliva
+
+Un comando segnala il fallimento restituendo `false` da `execute()`, e il valore risaliva correttamente fino a `CommandDispatcher::run()`. Lo script `sisma`, però, ignorava il valore restituito: il processo usciva con codice 1 solo per le eccezioni non catturate, mentre un comando che gestiva l'errore (argomento mancante, opzione non valida, file non scrivibile) terminava con codice 0, come se fosse andato a buon fine. Di conseguenza `make`, script con `set -e`, catene con `&&`, cron e job CI non rilevavano il fallimento. Lo script esce ora con `exit($commandDispatcher->run() ? 0 : 1)`.
+
+#### `Console/BaseClasses/BaseCommand::run()` — il testo d'aiuto veniva stampato a ogni esecuzione
+
+`run()` chiamava sempre `configure()` prima di `execute()`. Poiché per convenzione `configure()` stampa il blocco «Usage / Arguments / Options / Example», il testo d'aiuto compariva anche quando il comando era invocato correttamente e andava a buon fine, sporcando l'output e i log dei comandi eseguiti da cron o da script.
+
+`run()` si comporta ora così:
+- con l'opzione `--help` chiama solo `configure()` e restituisce `true`, senza eseguire il comando;
+- senza `--help` chiama solo `execute()`;
+- se `execute()` restituisce `false` stampa una sola riga, `Use --help for usage information.`, al posto dell'intero blocco d'aiuto.
+
+#### `Console/HelperClasses/CommandDispatcher` — suggerimento d'uso allineato
+
+Il messaggio mostrato quando `sisma` è invocato senza argomenti indica ora `sisma <command> --help` per ottenere informazioni su un comando, invece di `sisma <command>`.
+
+#### `Structural/Templates/debugBar.tpl` — la tipografia della barra di debug ereditava lo stile della pagina
+
+Il blocco `<style>` del template definiva layout e colori della barra, ma nessuna proprietà tipografica: font, dimensione e interlinea erano ereditati dal `body` della pagina in cui la barra viene iniettata. Di conseguenza l'aspetto della barra cambiava da un'applicazione all'altra, e regole come un `font-size` elevato o un font decorativo sul `body` potevano renderla poco leggibile o alterarne l'altezza. Anche il contenuto dei pannelli (`<pre>`) dipendeva dalle eventuali regole dell'applicazione sui `pre`.
+
+Il template dichiara ora esplicitamente:
+- su `.debug-bar`: font di sistema sans-serif, `font-size: 12px`, `line-height: 1.4`;
+- sui contatori di intestazione (query, log, form, variabili, memoria, tempo): `font-weight: 600` e cifre a larghezza fissa (`font-variant-numeric: tabular-nums`), per evitare spostamenti del layout al variare dei valori;
+- su `.debug-bar-body` e sui relativi `<pre>`: font monospace di sistema, `font-size: 12px`, `line-height: 1.5`.
+
+#### `Structural/Templates/debugBar.tpl` — il primo click su un'etichetta della barra non apriva il pannello
+
+Lo script del template decideva se mostrare o nascondere il pannello confrontando `style.display` con `'none'`. Al caricamento della pagina, però, il pannello è nascosto dalla regola CSS `.debug-bar-body { display: none; }` e non da uno stile inline, quindi `style.display` vale `''`: il confronto falliva e il primo click impostava `display: none` su un pannello già nascosto, senza alcun effetto visibile. Il pannello si apriva solo al secondo click. Lo stato viene ora letto con `getComputedStyle()`, che tiene conto anche delle regole CSS.
+
+### ♻️ Pulizia Codice
+
+#### `Structural/Assets/` — rimossi `css/debugBar.css` e `javascript/jquery.debugBar.js`
+
+I due file erano residui della prima implementazione della barra di debug: stili e comportamento sono da tempo incorporati in `debugBar.tpl` (con JavaScript nativo, senza dipendenza da jQuery) e nessuna parte del framework li referenziava. `DispatcherTest::testStructuralFileFopen()` usava `debugBar.css` come file di esempio per il servizio degli asset strutturali: ora usa `svg/logo.svg`.
+
+**File modificati**:
+- **`Console/sisma`**: il valore restituito da `CommandDispatcher::run()` determina il codice d'uscita
+- **`Console/BaseClasses/BaseCommand.php`**: `run()` chiama `configure()` solo con `--help` e stampa un suggerimento in caso di fallimento
+- **`Console/HelperClasses/CommandDispatcher.php`**: messaggio d'uso aggiornato
+- **`Structural/Templates/debugBar.tpl`**: aggiunte le proprietà tipografiche descritte sopra; il toggle dei pannelli usa `getComputedStyle(targetDebugBarBody).display` invece di `targetDebugBarBody.style.display`
+- **`Structural/Assets/css/debugBar.css`**, **`Structural/Assets/javascript/jquery.debugBar.js`**: eliminati
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: `testStructuralFileFopen()` richiede `/svg/logo.svg` invece di `/css/debugBar.css`
+- **`Tests/Console/Commands/UpgradeCommandTest.php`**, **`Tests/Console/Commands/InstallationCommandTest.php`**, **`Tests/Console/Commands/ScaffoldCommandTest.php`**: i test sul testo d'aiuto impostano l'opzione `help`; `InstallationCommandTest::testExecuteWithMissingProjectName()` verifica ora l'assenza del blocco d'aiuto e la presenza del suggerimento; aggiunti a `ScaffoldCommandTest` i test `testFailedExecutionShowsHelpHintWithoutUsage()` e `testHelpOptionDoesNotExecuteCommand()`, ed estesa `testSuccessfulExecution()` per verificare l'assenza del testo d'aiuto
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica è cambiata; `configure()` resta astratto e i comandi dei moduli non richiedono modifiche.
+- **Cambiamento di comportamento osservabile**: il testo d'aiuto di un comando non viene più stampato a ogni esecuzione, ma solo con `--help`. Chi lanciava un comando senza argomenti per leggerne l'uso deve ora aggiungere `--help`.
+- **Cambiamento di comportamento osservabile**: un comando che fallisce restituendo `false` fa uscire `sisma` con codice 1 invece di 0. Gli script che invocano `sisma` vedono ora i fallimenti che prima venivano ignorati.
+- **Cambiamento di comportamento osservabile**: la barra di debug, visibile solo in ambiente di sviluppo, non eredita più font, dimensione e interlinea dalla pagina.
+- **Asset rimossi**: gli URL `/css/debugBar.css` e `/javascript/jquery.debugBar.js` non sono più serviti dagli asset strutturali. Non erano documentati né usati dal framework; un'applicazione che li includesse esplicitamente nel proprio layout riceverà ora un 404.
+
+---
+
 ## [11.9.11] - 2026-09-08 - Correzione Import Mancante in MultipleSelfReferencedEnumeration
 
 Patch che corregge un fatal error latente nel trait `MultipleSelfReferencedEnumeration`: il metodo `getChoiceByMultipleParent()` dichiara il parametro `Language $language`, ma il file non importava la classe `SismaFramework\Core\Enumerations\Language`.

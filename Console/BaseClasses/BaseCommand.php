@@ -53,8 +53,15 @@ abstract class BaseCommand
 
     public function run(): bool
     {
-        $this->configure();
-        return $this->execute();
+        if ($this->getOption('help') !== null) {
+            $this->configure();
+            return true;
+        }
+        $result = $this->execute();
+        if ($result === false) {
+            $this->output('Use --help for usage information.');
+        }
+        return $result;
     }
 
     protected function getArgument(string $name): ?string

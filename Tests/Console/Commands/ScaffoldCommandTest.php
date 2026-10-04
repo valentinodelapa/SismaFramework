@@ -115,14 +115,45 @@ class ScaffoldCommandTest extends TestCase
 
         $this->assertTrue($result);
         $this->assertStringContainsString('Scaffolding generated successfully', $output);
+        $this->assertStringNotContainsString('Usage:', $output);
+        $this->assertStringNotContainsString('Use --help', $output);
+    }
+
+    public function testFailedExecutionShowsHelpHintWithoutUsage(): void
+    {
+        $this->command->setArguments([]);
+
+        ob_start();
+        $this->command->run();
+        $output = ob_get_clean();
+
+        $this->assertStringNotContainsString('Usage:', $output);
+        $this->assertStringContainsString('Use --help for usage information.', $output);
+    }
+
+    public function testHelpOptionDoesNotExecuteCommand(): void
+    {
+        $this->command->setArguments(['0' => 'MockEntity', '1' => 'TestModule']);
+        $this->command->setOptions(['help' => true]);
+
+        $this->scaffoldingManagerMock
+            ->expects($this->never())
+            ->method('generateScaffolding');
+
+        ob_start();
+        $this->command->run();
+        ob_get_clean();
     }
 
 
     public function testHelpOutput(): void
     {
+        $this->command->setOptions(['help' => true]);
         ob_start();
-        $this->command->run();
+        $result = $this->command->run();
         $output = ob_get_clean();
+
+        $this->assertTrue($result);
 
         $expectedStrings = [
             'Usage: php SismaFramework/Console/sisma scaffold <entity> <module> [options]',
