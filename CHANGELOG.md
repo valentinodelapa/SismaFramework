@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.5.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), e la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`.
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.6.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, e l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0.
 
 ### 💥 Breaking Changes
 
@@ -79,6 +79,37 @@ La conversione non è gestita da `sisma upgrade` e va eseguita **prima** dell'ag
 
 **Migrazione**: Prima di aggiornare alla 13, convertire `configure(): void` in `help(): string` in tutti i comandi dei moduli, eliminando gli avvisi di deprecazione della 12.5.x. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
 
+#### `Orm/Interfaces/CustomDateTimeInterface` — estende `CustomTypeInterface`
+
+La 12.6.0 ha introdotto `CustomTypeInterface` lasciandola separata da `CustomDateTimeInterface`, per non rompere le implementazioni esistenti di `equals(CustomDateTimeInterface $other)`, e il change tracking di `BaseEntity` doveva quindi controllare entrambe le interfacce. `CustomDateTimeInterface` estende ora `CustomTypeInterface` e non dichiara più un proprio `equals()`: il metodo ereditato è `equals(CustomTypeInterface $other): bool`, e il change tracking considera una sola interfaccia. `SismaDate`, `SismaDateTime` e `SismaTime` restituiscono `false` quando l'argomento non è un `CustomDateTimeInterface`, per esempio un `SismaJson`; il confronto tra date resta invariato.
+
+**Prima (12.x)**:
+```php
+public function equals(CustomDateTimeInterface $other): bool
+{
+    return $this->getTimestamp() === $other->getTimestamp();
+}
+```
+
+**Dopo (13.x)**:
+```php
+public function equals(CustomTypeInterface $other): bool
+{
+    return ($other instanceof CustomDateTimeInterface) && ($this->getTimestamp() === $other->getTimestamp());
+}
+```
+
+**File modificati**:
+- **`Orm/Interfaces/CustomDateTimeInterface.php`**: estende `CustomTypeInterface`; rimossa la dichiarazione di `equals(self $other)`
+- **`Orm/CustomTypes/SismaDate.php`**, **`Orm/CustomTypes/SismaDateTime.php`**, **`Orm/CustomTypes/SismaTime.php`**: `equals()` accetta un `CustomTypeInterface` e restituisce `false` per i tipi che non sono date
+- **`Orm/BaseClasses/BaseEntity.php`**: `checkCustomTypePropertyChange()` controlla solo `CustomTypeInterface`; rimosso il metodo privato `isCustomType()`
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: aggiunta la voce corrispondente a `getBreakingChanges()`
+- **`Tests/Orm/CustomTypes/SismaDateTest.php`**, **`Tests/Orm/CustomTypes/SismaDateTimeTest.php`**, **`Tests/Orm/CustomTypes/SismaTimeTest.php`**: aggiunti `testIsCustomType()` e `testEqualsWithOtherCustomType()`
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: aggiornati il numero atteso di breaking change e le voci attese
+- **`UPGRADING.md`**: aggiunto il breaking change 4 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
+
+**Migrazione**: Nelle classi applicative che implementano `CustomDateTimeInterface`, dichiarare `equals(CustomTypeInterface $other): bool` e restituire `false` quando l'argomento non è un `CustomDateTimeInterface`. Per preparare il codice sulla 12.6.x si può usare il tipo unione `CustomDateTimeInterface|CustomTypeInterface`, compatibile con entrambe le versioni. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
+
 ### 🐛 Bug Fix
 
 #### `Console/Services/Upgrade/Utils/FileScanner` — i comandi console dei moduli non venivano elaborati da `sisma upgrade`
@@ -93,6 +124,7 @@ La conversione non è gestita da `sisma upgrade` e va eseguita **prima** dell'ag
 
 - **Breaking change per i file di localizzazione esistenti**: le label definite con la chiave piatta smettono di raggiungere il template, senza errori; i file che usano già la forma gerarchica, e i template al primo livello (nome senza `/`), non sono interessati.
 - **Breaking change per i comandi console dei moduli**: un comando che non implementa `help(): string` provoca un fatal error al caricamento, che blocca l'intera console.
+- **Breaking change per i tipi custom di data e ora applicativi**: una classe che implementa `CustomDateTimeInterface` dichiarando `equals(CustomDateTimeInterface $other)` provoca un fatal error al caricamento; il codice che usa soltanto `SismaDate`, `SismaDateTime` e `SismaTime` non è interessato.
 - **Cambiamento di comportamento di `sisma upgrade`**: i file in `Console/Commands` dei moduli vengono ora elaborati da tutti i transformer della strategia applicata.
 
 ---

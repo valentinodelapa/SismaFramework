@@ -15,7 +15,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 > **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
 
-La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle e rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`.
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, e rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`.
 
 ### Breaking Changes
 
@@ -133,6 +133,48 @@ OUTPUT;
 
 Questa modifica non è gestita da `sisma upgrade`, che sulla 13 non può avviarsi finché i comandi non sono convertiti.
 
+#### 4. `CustomDateTimeInterface` estende `CustomTypeInterface`
+
+**Impatto**: Basso
+**Componenti interessati**: Classi applicative che implementano direttamente `CustomDateTimeInterface`; il codice che usa `SismaDate`, `SismaDateTime` e `SismaTime` non è interessato
+
+La 12.6.0 ha introdotto `CustomTypeInterface`, l'interfaccia dei tipi custom confrontabili tramite `equals()`, lasciandola separata da `CustomDateTimeInterface` per non rompere le implementazioni esistenti. Nella 13 `CustomDateTimeInterface` la estende e non dichiara più un proprio `equals()`: il metodo ereditato è `equals(CustomTypeInterface $other): bool`. Una classe che dichiara ancora `equals(CustomDateTimeInterface $other)` restringe il tipo del parametro e provoca un fatal error al caricamento.
+
+**Prima (12.x)**:
+```php
+use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+
+class FiscalDate extends \DateTimeImmutable implements CustomDateTimeInterface
+{
+    public function equals(CustomDateTimeInterface $other): bool
+    {
+        return $this->format('Y-m-d') === $other->format('Y-m-d');
+    }
+}
+```
+
+**Dopo (13.x)**:
+```php
+use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\Interfaces\CustomTypeInterface;
+
+class FiscalDate extends \DateTimeImmutable implements CustomDateTimeInterface
+{
+    public function equals(CustomTypeInterface $other): bool
+    {
+        return ($other instanceof CustomDateTimeInterface) && ($this->format('Y-m-d') === $other->format('Y-m-d'));
+    }
+}
+```
+
+Il controllo `instanceof` è necessario perché `equals()` può ora ricevere qualunque tipo custom, per esempio un `SismaJson`, che non espone i metodi delle date.
+
+**Azione richiesta**:
+- Cercare le classi che implementano `CustomDateTimeInterface`
+- Cambiare il tipo del parametro di `equals()` in `CustomTypeInterface` e restituire `false` quando l'argomento non è un `CustomDateTimeInterface`
+
+Sulla 12.x la firma `equals(CustomTypeInterface $other)` provoca a sua volta un fatal error, perché lì `CustomTypeInterface` non è un supertipo di `CustomDateTimeInterface`. Per preparare il codice già sulla 12.6.x, prima dell'aggiornamento, si può dichiarare il parametro con il tipo unione `CustomDateTimeInterface|CustomTypeInterface`, compatibile con entrambe le versioni, e ridurlo a `CustomTypeInterface` dopo il passaggio alla 13. Questa modifica non è gestita da `sisma upgrade`.
+
 ### Checklist di Migrazione
 
 - [ ] **Form applicativi che estendono `BaseForm`**
@@ -145,6 +187,8 @@ Questa modifica non è gestita da `sisma upgrade`, che sulla 13 non può avviars
 - [ ] **Comandi console dei moduli** (prima dell'aggiornamento, sulla 12.5.x)
   - [ ] Sostituito `configure(): void` con `help(): string` in tutti i comandi che estendono `BaseCommand`
   - [ ] Sostituite le chiamate `$this->configure();` e `parent::configure()`
+- [ ] **Tipi custom di data e ora** (se presenti)
+  - [ ] Convertito in `equals(CustomTypeInterface $other): bool` il metodo delle classi che implementano `CustomDateTimeInterface`
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari
   - [ ] Verificato che tutti i form dell'applicazione validino correttamente

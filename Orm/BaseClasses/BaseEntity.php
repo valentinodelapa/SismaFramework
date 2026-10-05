@@ -45,7 +45,6 @@ use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
-use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
 use SismaFramework\Orm\Interfaces\CustomTypeInterface;
 
 /**
@@ -208,15 +207,9 @@ abstract class BaseEntity
 
     private function checkCustomTypePropertyChange(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): bool
     {
-        return ($this->isCustomType($reflectionNamedType) &&
+        return (is_a($reflectionNamedType->getName(), CustomTypeInterface::class, true) &&
                 ((isset($this->$name) && ((is_a($value, $reflectionNamedType->getName()) && ($this->$name->equals($value) === false)) || ($value === null))) ||
                 ((isset($this->$name) === false) && ($value !== null))));
-    }
-
-    private function isCustomType(\ReflectionNamedType $reflectionNamedType): bool
-    {
-        return (is_a($reflectionNamedType->getName(), CustomDateTimeInterface::class, true) ||
-                is_a($reflectionNamedType->getName(), CustomTypeInterface::class, true));
     }
 
     public function __isset($name)

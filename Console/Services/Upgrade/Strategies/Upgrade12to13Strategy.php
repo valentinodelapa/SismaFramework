@@ -66,6 +66,7 @@ class Upgrade12to13Strategy implements UpgradeStrategyInterface
             'FilterType: Moved from SismaFramework\\Core\\Enumerations to SismaFramework\\Orm\\Enumerations',
             'Localizator: Flat template keys containing "/" in the "templates" locale section are ignored, convert them to nested keys (manual)',
             'BaseCommand: configure(), deprecated in 12.5.0, removed; help(): string is now abstract and must be implemented by every command (manual, before upgrading: unmigrated commands prevent the console from starting)',
+            'CustomDateTimeInterface: now extends CustomTypeInterface; classes implementing it must declare equals(CustomTypeInterface $other): bool instead of equals(CustomDateTimeInterface $other): bool (manual)',
         ];
     }
 

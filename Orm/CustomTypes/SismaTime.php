@@ -27,6 +27,7 @@
 namespace SismaFramework\Orm\CustomTypes;
 
 use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\Interfaces\CustomTypeInterface;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -46,8 +47,8 @@ class SismaTime extends \DateTimeImmutable implements CustomDateTimeInterface
     }
 
     #[\Override]
-    public function equals(CustomDateTimeInterface $other): bool
+    public function equals(CustomTypeInterface $other): bool
     {
-        return $this->format('H:i:s') === $other->format('H:i:s');
+        return ($other instanceof CustomDateTimeInterface) && ($this->format('H:i:s') === $other->format('H:i:s'));
     }
 }

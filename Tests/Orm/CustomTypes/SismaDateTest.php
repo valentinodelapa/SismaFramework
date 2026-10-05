@@ -28,6 +28,9 @@ namespace SismaFramework\Tests\Orm\CustomTypes;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\CustomTypes\SismaDate;
+use SismaFramework\Orm\CustomTypes\SismaJson;
+use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\Interfaces\CustomTypeInterface;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -55,6 +58,19 @@ class SismaDateTest extends TestCase
         $this->assertEquals('00:00:00', $sismaDateThree->format('H:i:s'));
         $this->assertTrue($sismaDateOne->equals($sismaDateTwo));
         $this->assertfalse($sismaDateOne->equals($sismaDateThree));
-        
+
+    }
+
+    public function testIsCustomType()
+    {
+        $sismaDate = new SismaDate('2020-01-01');
+        $this->assertInstanceOf(CustomDateTimeInterface::class, $sismaDate);
+        $this->assertInstanceOf(CustomTypeInterface::class, $sismaDate);
+    }
+
+    public function testEqualsWithOtherCustomType()
+    {
+        $sismaDate = new SismaDate('2020-01-01');
+        $this->assertFalse($sismaDate->equals(new SismaJson()));
     }
 }

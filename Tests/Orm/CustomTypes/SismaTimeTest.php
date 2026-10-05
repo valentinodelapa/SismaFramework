@@ -28,6 +28,9 @@ namespace SismaFramework\Tests\Orm\CustomTypes;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
+use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\Interfaces\CustomTypeInterface;
 
 /**
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
@@ -52,5 +55,18 @@ class SismaTimeTest extends TestCase
         $sismaTimeThree = SismaTime::createFromStandardTimeFormat("03:00:00");
         $this->assertTrue($sismaTimeOne->equals($sismaTimeTwo));
         $this->assertfalse($sismaTimeOne->equals($sismaTimeThree));
+    }
+
+    public function testIsCustomType()
+    {
+        $sismaTime = SismaTime::createFromStandardTimeFormat("02:00:00");
+        $this->assertInstanceOf(CustomDateTimeInterface::class, $sismaTime);
+        $this->assertInstanceOf(CustomTypeInterface::class, $sismaTime);
+    }
+
+    public function testEqualsWithOtherCustomType()
+    {
+        $sismaTime = SismaTime::createFromStandardTimeFormat("02:00:00");
+        $this->assertFalse($sismaTime->equals(new SismaJson()));
     }
 }
