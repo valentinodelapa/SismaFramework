@@ -29,6 +29,7 @@ Il sistema di scaffolding analizza ogni proprietà dell'entità tramite **Reflec
 | `SismaDate` | `FilterType::isDate` | Valida date |
 | `SismaDateTime` | `FilterType::isDatetime` | Valida date con orario |
 | `SismaTime` | `FilterType::isTime` | Valida orari |
+| `SismaJson` | `FilterType::isJson` | Valida documenti JSON (oggetti o array) |
 
 ### Gestione Proprietà Nullable
 

@@ -30,6 +30,7 @@ use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
@@ -53,6 +54,9 @@ class BaseSample extends BaseEntity
     protected ?SismaDateTime $datetimeNullableWithInitialization = null;
     protected ?SismaDate $dateNullableWithInitialization = null;
     protected ?SismaTime $timeNullableWithInitialization = null;
+    protected SismaJson $jsonWithoutInitialization;
+    protected SismaJson $jsonWithInitialization;
+    protected ?SismaJson $jsonNullableWithInitialization = null;
     protected SampleType $enumWithoutInitialization;
     protected SampleType $enumWithInitialization = SampleType::one;
     protected ?SampleType $enumNullableWithInitialization = null;
@@ -68,6 +72,7 @@ class BaseSample extends BaseEntity
         $this->datetimeWithInitialization = SismaDateTime::createFromFormat('Y-m-d H:i:s', '2020-01-01 00:00:00');
         $this->dateWithInitialization = SismaDate::createFromFormat('Y-m-d', '2020-01-01');
         $this->timeWithInitialization = SismaTime::createFromStandardTimeFormat('10:31:25');
+        $this->jsonWithInitialization = new SismaJson(['name' => 'base sample', 'tags' => ['one', 'two']]);
     }
 
     protected function setEncryptedProperties(): void

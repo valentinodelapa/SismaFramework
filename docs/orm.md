@@ -26,6 +26,7 @@ Le proprietà di un'entità devono essere dichiarate `protected` e la **tipizzaz
 
 - Tipi nativi (`int`, `string`, `float`, `bool`).
 - `SismaDateTime`, `SismaDate`, `SismaTime` per date e orari.
+- `SismaJson` per le colonne JSON (vedi [Colonne JSON](#colonne-json)).
 - `BackedEnum` per i vocabolari chiusi.
 - Altre classi `Entity` per le relazioni (chiavi esterne).
 
@@ -50,6 +51,44 @@ class Post extends BaseEntity
 // Questa entità mappa automaticamente alla tabella 'post' (singolare)
 // SismaFramework utilizza convenzioni con nomi di tabelle al singolare
 ```
+
+### Colonne JSON
+
+Una proprietà tipizzata `SismaJson` mappa una colonna `JSON` (MySQL, MariaDB) o testuale contenente un oggetto o un array JSON. Il valore letto dal database viene decodificato in un array associativo; in scrittura viene serializzato con `JSON_UNESCAPED_UNICODE`, `JSON_UNESCAPED_SLASHES` e `JSON_PRESERVE_ZERO_FRACTION`.
+
+```php
+use SismaFramework\Orm\CustomTypes\SismaJson;
+
+class Product extends BaseEntity
+{
+    protected int $id;
+    protected SismaJson $attributes;
+    protected ?SismaJson $metadata = null;
+    // ...
+}
+
+$product->attributes = new SismaJson(['color' => 'red', 'sizes' => ['S', 'M']]);
+$product->attributes = SismaJson::fromJson('{"color":"red"}');
+
+echo $product->attributes['color'];
+echo $product->attributes->get('weight', 0);
+foreach ($product->attributes as $key => $value) { /* ... */ }
+```
+
+`SismaJson` è **immutabile**: per modificarne il contenuto si usano `with()` e `without()`, che restituiscono una nuova istanza da riassegnare alla proprietà. La riassegnazione passa dal tracciamento delle modifiche dell'entità, che altrimenti non rileverebbe un cambiamento fatto sull'oggetto in place. L'assegnazione tramite indice (`$json['key'] = ...`) solleva una `LogicException`.
+
+```php
+$product->attributes = $product->attributes->with('color', 'blue');
+$product->attributes = $product->attributes->without('sizes');
+```
+
+Il confronto usato dal tracciamento delle modifiche (`equals()`) ignora l'ordine delle chiavi degli oggetti, che MySQL riordina in fase di salvataggio, ma non quello degli elementi delle liste, ed è stretto sui tipi (`1` e `"1"` sono diversi).
+
+Limitazioni:
+- sono supportati solo oggetti e array JSON: un JSON scalare (`"testo"`, `5`) solleva una `JsonException` in `fromJson()` e una `InvalidArgumentException` durante l'idratazione dell'entità e il parsing di form e argomenti delle action. Fa eccezione il letterale JSON `null`, che su una proprietà nullable (`?SismaJson`) diventa `null`, come il `NULL` SQL; un successivo salvataggio della colonna scrive quindi `NULL` SQL al posto del letterale JSON;
+- poiché la decodifica produce array PHP, un oggetto vuoto `{}` viene riscritto come `[]`, e un oggetto con chiavi numeriche consecutive a partire da `0` viene riscritto come lista;
+- una proprietà `SismaJson` cifrata con `addEncryptedProperty()` viene salvata come stringa cifrata, che non è JSON valido: la colonna deve essere di tipo testuale e non `JSON`;
+- le query sul contenuto del documento (`JSON_EXTRACT`, `->>`) non sono ancora supportate dal query builder.
 
 ### Lazy Loading (Caricamento Pigro)
 

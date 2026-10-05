@@ -46,6 +46,7 @@ use SismaFramework\Orm\HelperClasses\Cache;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
+use SismaFramework\Orm\Interfaces\CustomTypeInterface;
 
 /**
  * @author Valentino de Lapa
@@ -192,7 +193,7 @@ abstract class BaseEntity
     private function trackOtherPropertyChanges(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): void
     {
         if ($this->checkBuiltinOrEnumPropertyChange($reflectionNamedType, $name, $value) ||
-                $this->checkCustomDateTimeInterfacePropertyChange($reflectionNamedType, $name, $value)) {
+                $this->checkCustomTypePropertyChange($reflectionNamedType, $name, $value)) {
             $this->processedEntitesCollection->remove($this);
             $this->modified = true;
         }
@@ -205,11 +206,17 @@ abstract class BaseEntity
                 ((isset($this->$name) === false) && ($value !== null))));
     }
 
-    private function checkCustomDateTimeInterfacePropertyChange(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): bool
+    private function checkCustomTypePropertyChange(\ReflectionNamedType $reflectionNamedType, string $name, mixed $value): bool
     {
-        return (is_a($reflectionNamedType->getName(), CustomDateTimeInterface::class, true) &&
+        return ($this->isCustomType($reflectionNamedType) &&
                 ((isset($this->$name) && ((is_a($value, $reflectionNamedType->getName()) && ($this->$name->equals($value) === false)) || ($value === null))) ||
                 ((isset($this->$name) === false) && ($value !== null))));
+    }
+
+    private function isCustomType(\ReflectionNamedType $reflectionNamedType): bool
+    {
+        return (is_a($reflectionNamedType->getName(), CustomDateTimeInterface::class, true) ||
+                is_a($reflectionNamedType->getName(), CustomTypeInterface::class, true));
     }
 
     public function __isset($name)

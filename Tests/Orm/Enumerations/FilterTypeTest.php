@@ -34,6 +34,7 @@ use SismaFramework\TestsApplication\Enumerations\SampleType;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 
 /**
  * Description of FilterTypeTest
@@ -266,6 +267,14 @@ class FilterTypeTest extends TestCase
         FilterType::isTime->applyFilter('value', [], $this->filterMock);
     }
 
+    public function testIsJson()
+    {
+        $this->filterMock->expects($this->once())
+                ->method(FilterType::isJson->name)
+                ->with('value');
+        FilterType::isJson->applyFilter('value', [], $this->filterMock);
+    }
+
     public function testIsUploadedFile()
     {
         $this->filterMock->expects($this->once())
@@ -303,7 +312,7 @@ class FilterTypeTest extends TestCase
         $this->filterMock->expects($this->never())
                 ->method(FilterType::customFilter->name);
         $reflectionNabedTypeMock = $this->createMock(\ReflectionNamedType::class);
-        $matcherOne = $this->exactly(9);
+        $matcherOne = $this->exactly(10);
         $reflectionNabedTypeMock->expects($matcherOne)
                 ->method('isBuiltin')
                 ->willReturnCallback(function ()use ($matcherOne) {
@@ -318,10 +327,11 @@ class FilterTypeTest extends TestCase
                         case 7:
                         case 8:
                         case 9:
+                        case 10:
                             return false;
                     }
                 });
-        $matcherTwo = $this->exactly(19);
+        $matcherTwo = $this->exactly(25);
         $reflectionNabedTypeMock->expects($matcherTwo)
                 ->method('getName')
                 ->willReturnCallback(function ()use ($matcherTwo) {
@@ -354,6 +364,13 @@ class FilterTypeTest extends TestCase
                         case 18:
                         case 19:
                             return SismaTime::class;
+                        case 20:
+                        case 21:
+                        case 22:
+                        case 23:
+                        case 24:
+                        case 25:
+                            return SismaJson::class;
                     }
                 });
         $this->assertEquals(FilterType::isInteger, FilterType::fromPhpType($reflectionNabedTypeMock));
@@ -365,5 +382,6 @@ class FilterTypeTest extends TestCase
         $this->assertEquals(FilterType::isDate, FilterType::fromPhpType($reflectionNabedTypeMock));
         $this->assertEquals(FilterType::isDatetime, FilterType::fromPhpType($reflectionNabedTypeMock));
         $this->assertEquals(FilterType::isTime, FilterType::fromPhpType($reflectionNabedTypeMock));
+        $this->assertEquals(FilterType::isJson, FilterType::fromPhpType($reflectionNabedTypeMock));
     }
 }

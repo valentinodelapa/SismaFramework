@@ -156,7 +156,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, '{"name":"base sample","tags":["one","two"]}', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
                             $this->assertEquals([
                                 DataType::typeEntity,
                                 DataType::typeEntity,
@@ -171,6 +171,8 @@ class DataMapperTest extends TestCase
                                 DataType::typeDate,
                                 DataType::typeDate,
                                 DataType::typeDate,
+                                DataType::typeJson,
+                                DataType::typeJson,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
@@ -227,7 +229,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, '{"name":"base sample","tags":["one","two"]}', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
                             $this->assertEquals([
                                 DataType::typeEntity,
                                 DataType::typeEntity,
@@ -242,6 +244,8 @@ class DataMapperTest extends TestCase
                                 DataType::typeDate,
                                 DataType::typeDate,
                                 DataType::typeDate,
+                                DataType::typeJson,
+                                DataType::typeJson,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
@@ -296,7 +300,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([2, 2, null, 3, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([2, 2, null, 3, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, '{"name":"base sample","tags":["one","two"]}', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
                             $this->assertEquals([
                                 DataType::typeEntity,
                                 DataType::typeEntity,
@@ -311,6 +315,8 @@ class DataMapperTest extends TestCase
                                 DataType::typeDate,
                                 DataType::typeDate,
                                 DataType::typeDate,
+                                DataType::typeJson,
+                                DataType::typeJson,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
@@ -372,7 +378,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 2], $param2);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, '{"name":"base sample","tags":["one","two"]}', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 2], $param2);
                             $this->assertEquals([
                                 DataType::typeEntity,
                                 DataType::typeEntity,
@@ -387,6 +393,8 @@ class DataMapperTest extends TestCase
                                 DataType::typeDate,
                                 DataType::typeDate,
                                 DataType::typeDate,
+                                DataType::typeJson,
+                                DataType::typeJson,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
@@ -447,7 +455,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, '{"name":"base sample","tags":["one","two"]}', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
                             $this->assertEquals([
                                 DataType::typeEntity,
                                 DataType::typeEntity,
@@ -462,6 +470,8 @@ class DataMapperTest extends TestCase
                                 DataType::typeDate,
                                 DataType::typeDate,
                                 DataType::typeDate,
+                                DataType::typeJson,
+                                DataType::typeJson,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
@@ -518,7 +528,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 2:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
+                            $this->assertEquals([1, 1, null, 2, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, '{"name":"base sample","tags":["one","two"]}', null, 'T', 'O', null, "base sample", "base sample", null, null, 1, 3], $param2);
                             $this->assertEquals([
                                 DataType::typeEntity,
                                 DataType::typeEntity,
@@ -533,6 +543,8 @@ class DataMapperTest extends TestCase
                                 DataType::typeDate,
                                 DataType::typeDate,
                                 DataType::typeDate,
+                                DataType::typeJson,
+                                DataType::typeJson,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
@@ -946,7 +958,7 @@ class DataMapperTest extends TestCase
                             break;
                         case 3:
                             $this->assertEquals('', $param1);
-                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
+                            $this->assertEquals([1, 1, null, 1, '2020-01-02 00:00:00', '2020-01-02', '10:25:31', '2020-01-01 00:00:00', '2020-01-01', '10:31:25', null, null, null, '{"name":"base sample","tags":["one","two"]}', null, 'T', 'O', null, "base sample", "base sample", null, null, 1], $param2);
                             $this->assertEquals([
                                 DataType::typeEntity,
                                 DataType::typeEntity,
@@ -961,6 +973,8 @@ class DataMapperTest extends TestCase
                                 DataType::typeDate,
                                 DataType::typeDate,
                                 DataType::typeDate,
+                                DataType::typeJson,
+                                DataType::typeJson,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,
                                 DataType::typeEnumeration,

@@ -381,9 +381,12 @@ enum DataType
     case typeStatement;
     case typeEntity;
     case typeEnumeration;
+    case typeJson;
     case typeGeneric;
 }
 ```
+
+`typeJson` (dalla versione 12.6.0) è il tipo delle proprietà `SismaJson`; l'adapter MySQL lo lega come `PDO::PARAM_STR`.
 
 #### Utilizzi nell'ORM
 
@@ -418,6 +421,7 @@ class SqlGenerator {
             DataType::typeDecimal => 'DECIMAL(10,2)',
             DataType::typeDate => 'DATETIME',
             DataType::typeBinary => 'BLOB',
+            DataType::typeJson => 'JSON',
             default => 'TEXT',
         };
     }

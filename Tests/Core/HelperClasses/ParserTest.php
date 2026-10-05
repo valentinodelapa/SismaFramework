@@ -35,6 +35,7 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
@@ -203,6 +204,62 @@ class ParserTest extends TestCase
         $this->assertInstanceOf(SismaTime::class, Parser::parseValue($reflectionNamedTypeMock, '1:00:00', true, $this->dataMapperMock));
     }
 
+    public function testParseValueWithSismaJson()
+    {
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock->method('allowsNull')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('isBuiltin')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('getName')
+                ->willReturn(SismaJson::class);
+        $sismaJsonFromString = Parser::parseValue($reflectionNamedTypeMock, '{"key":"value"}', true, $this->dataMapperMock);
+        $this->assertInstanceOf(SismaJson::class, $sismaJsonFromString);
+        $this->assertEquals(['key' => 'value'], $sismaJsonFromString->toArray());
+        $sismaJsonFromArray = Parser::parseValue($reflectionNamedTypeMock, ['key' => 'value'], true, $this->dataMapperMock);
+        $this->assertInstanceOf(SismaJson::class, $sismaJsonFromArray);
+        $this->assertEquals(['key' => 'value'], $sismaJsonFromArray->toArray());
+    }
+
+    public function testParseValueWithInvalidSismaJson()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock->method('allowsNull')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('isBuiltin')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('getName')
+                ->willReturn(SismaJson::class);
+        Parser::parseValue($reflectionNamedTypeMock, '{invalid', true, $this->dataMapperMock);
+    }
+
+    public function testParseValueWithJsonNullAndNullableSismaJson()
+    {
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock->method('allowsNull')
+                ->willReturn(true);
+        $reflectionNamedTypeMock->method('isBuiltin')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('getName')
+                ->willReturn(SismaJson::class);
+        $this->assertNull(Parser::parseValue($reflectionNamedTypeMock, 'null', true, $this->dataMapperMock));
+        $this->assertNull(Parser::parseValue($reflectionNamedTypeMock, ' null ', true, $this->dataMapperMock));
+    }
+
+    public function testParseValueWithJsonNullAndNotNullableSismaJson()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
+        $reflectionNamedTypeMock->method('allowsNull')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('isBuiltin')
+                ->willReturn(false);
+        $reflectionNamedTypeMock->method('getName')
+                ->willReturn(SismaJson::class);
+        Parser::parseValue($reflectionNamedTypeMock, 'null', true, $this->dataMapperMock);
+    }
+
     public function testParseValueWithArray()
     {
         $reflectionNamedTypeMock = $this->createStub(\ReflectionNamedType::class);
@@ -242,12 +299,14 @@ class ParserTest extends TestCase
         $sismaDate = new SismaDate();
         $sismaDateTime = new SismaDateTime();
         $sismaTime = SismaTime::createFromStandardTimeFormat('1:00:00');
+        $sismaJson = new SismaJson(['key' => 'value']);
         $array = [
             'baseSample' => $baseSample,
             'sampleType' => $sampleType,
             'sismaDate' => $sismaDate,
             'sismaDateTime' => $sismaDateTime,
             'sismaTime' => $sismaTime,
+            'sismaJson' => $sismaJson,
         ];
         Parser::unparseValues($array);
         $this->assertEquals(1, $array['baseSample']);
@@ -255,5 +314,6 @@ class ParserTest extends TestCase
         $this->assertEquals($sismaDate->format('Y-m-d'), $array['sismaDate']);
         $this->assertEquals($sismaDateTime->format('Y-m-d H:i:s'), $array['sismaDateTime']);
         $this->assertEquals($sismaTime->formatToStandardTimeFormat(), $array['sismaTime']);
+        $this->assertEquals('{"key":"value"}', $array['sismaJson']);
     }
 }

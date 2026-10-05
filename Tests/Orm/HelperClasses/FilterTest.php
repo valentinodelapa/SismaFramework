@@ -35,6 +35,7 @@ use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
@@ -356,6 +357,21 @@ class FilterTest extends TestCase
         $this->assertFalse($this->filter->isTime(false));
         $this->assertFalse($this->filter->isTime(null));
         $this->assertFalse($this->filter->isTime(''));
+    }
+
+    public function testIsJson()
+    {
+        $this->assertTrue($this->filter->isJson(new SismaJson(['key' => 'value'])));
+        $this->assertTrue($this->filter->isJson(new SismaJson()));
+        $this->assertFalse($this->filter->isJson('{"key":"value"}'));
+        $this->assertFalse($this->filter->isJson(['key' => 'value']));
+        $this->assertFalse($this->filter->isJson(new SismaDate()));
+        $this->assertFalse($this->filter->isJson(1));
+        $this->assertFalse($this->filter->isJson(0));
+        $this->assertFalse($this->filter->isJson(true));
+        $this->assertFalse($this->filter->isJson(false));
+        $this->assertFalse($this->filter->isJson(null));
+        $this->assertFalse($this->filter->isJson(''));
     }
 
     public function testIsEntity()

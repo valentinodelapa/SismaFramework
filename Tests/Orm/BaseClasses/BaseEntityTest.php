@@ -34,6 +34,7 @@ use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\CustomTypes\SismaTime;
+use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\DependentEntityThree;
 use SismaFramework\TestsApplication\Entities\EntityWithOneCollectionOne;
@@ -330,6 +331,37 @@ class BaseEntityTest extends TestCase
         $baseSampleThree->timeNullableWithInitialization = SismaTime::createFromStandardTimeFormat('10:31:25');
         $this->assertFalse($baseSampleThree->modified);
         $baseSampleThree->timeNullableWithInitialization = SismaTime::createFromStandardTimeFormat('10:25:31');
+        $this->assertTrue($baseSampleThree->modified);
+    }
+
+    public function testEntityWithSismaJsonProperty()
+    {
+        $baseSampleOne = new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->jsonWithoutInitialization = new SismaJson(['key' => 'value']);
+        $this->assertTrue($baseSampleOne->modified);
+        $baseSampleOne->modified = false;
+        $baseSampleOne->jsonWithoutInitialization = new SismaJson(['key' => 'value']);
+        $this->assertFalse($baseSampleOne->modified);
+        $baseSampleOne->jsonWithoutInitialization = $baseSampleOne->jsonWithoutInitialization->with('key', 'other value');
+        $this->assertTrue($baseSampleOne->modified);
+
+        $baseSampleTwo = new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->jsonWithInitialization = SismaJson::fromJson('{"tags":["one","two"],"name":"base sample"}');
+        $this->assertFalse($baseSampleTwo->modified);
+        $baseSampleTwo->jsonWithInitialization = SismaJson::fromJson('{"name":"base sample","tags":["two","one"]}');
+        $this->assertTrue($baseSampleTwo->modified);
+
+        $baseSampleThree = new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $baseSampleThree->jsonNullableWithInitialization = null;
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->jsonNullableWithInitialization = new SismaJson(['key' => 'value']);
+        $this->assertTrue($baseSampleThree->modified);
+        $baseSampleThree->modified = false;
+        $baseSampleThree->jsonNullableWithInitialization = new SismaJson(['key' => 'value']);
+        $this->assertFalse($baseSampleThree->modified);
+        $baseSampleThree->jsonNullableWithInitialization = null;
         $this->assertTrue($baseSampleThree->modified);
     }
 

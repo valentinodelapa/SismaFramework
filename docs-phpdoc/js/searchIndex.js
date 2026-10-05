@@ -11,10 +11,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_checkCompatibility"
         },                {
-            "fqsen": "\\SismaFramework\\Console\\BaseClasses\\BaseCommand\u003A\u003Aconfigure\u0028\u0029",
-            "name": "configure",
+            "fqsen": "\\SismaFramework\\Console\\BaseClasses\\BaseCommand\u003A\u003Ahelp\u0028\u0029",
+            "name": "help",
             "summary": "",
-            "url": "classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_configure"
+            "url": "classes/SismaFramework-Console-BaseClasses-BaseCommand.html#method_help"
         },                {
             "fqsen": "\\SismaFramework\\Console\\BaseClasses\\BaseCommand\u003A\u003Aexecute\u0028\u0029",
             "name": "execute",
@@ -76,10 +76,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html#method_checkCompatibility"
         },                {
-            "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand\u003A\u003Aconfigure\u0028\u0029",
-            "name": "configure",
+            "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand\u003A\u003Ahelp\u0028\u0029",
+            "name": "help",
             "summary": "",
-            "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html#method_configure"
+            "url": "classes/SismaFramework-Console-Commands-FixturesCommand.html#method_help"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Commands\\FixturesCommand\u003A\u003Aexecute\u0028\u0029",
             "name": "execute",
@@ -106,10 +106,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_checkCompatibility"
         },                {
-            "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003Aconfigure\u0028\u0029",
-            "name": "configure",
+            "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003Ahelp\u0028\u0029",
+            "name": "help",
             "summary": "",
-            "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_configure"
+            "url": "classes/SismaFramework-Console-Commands-InstallationCommand.html#method_help"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Commands\\InstallationCommand\u003A\u003Aexecute\u0028\u0029",
             "name": "execute",
@@ -156,10 +156,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Commands-ScaffoldCommand.html#method_checkCompatibility"
         },                {
-            "fqsen": "\\SismaFramework\\Console\\Commands\\ScaffoldCommand\u003A\u003Aconfigure\u0028\u0029",
-            "name": "configure",
+            "fqsen": "\\SismaFramework\\Console\\Commands\\ScaffoldCommand\u003A\u003Ahelp\u0028\u0029",
+            "name": "help",
             "summary": "",
-            "url": "classes/SismaFramework-Console-Commands-ScaffoldCommand.html#method_configure"
+            "url": "classes/SismaFramework-Console-Commands-ScaffoldCommand.html#method_help"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Commands\\ScaffoldCommand\u003A\u003Aexecute\u0028\u0029",
             "name": "execute",
@@ -191,10 +191,10 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Console-Commands-UpgradeCommand.html#method_checkCompatibility"
         },                {
-            "fqsen": "\\SismaFramework\\Console\\Commands\\UpgradeCommand\u003A\u003Aconfigure\u0028\u0029",
-            "name": "configure",
+            "fqsen": "\\SismaFramework\\Console\\Commands\\UpgradeCommand\u003A\u003Ahelp\u0028\u0029",
+            "name": "help",
             "summary": "",
-            "url": "classes/SismaFramework-Console-Commands-UpgradeCommand.html#method_configure"
+            "url": "classes/SismaFramework-Console-Commands-UpgradeCommand.html#method_help"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Commands\\UpgradeCommand\u003A\u003Aexecute\u0028\u0029",
             "name": "execute",
@@ -865,6 +865,36 @@ Search.appendIndex(
             "name": "requiresManualIntervention",
             "summary": "Check\u0020if\u0020this\u0020strategy\u0020requires\u0020manual\u0020intervention",
             "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade11to12Strategy.html#method_requiresManualIntervention"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade12to13Strategy",
+            "name": "Upgrade12to13Strategy",
+            "summary": "Upgrade\u0020strategy\u0020for\u0020version\u002012.x\u0020to\u002013.0.0",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade12to13Strategy.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade12to13Strategy\u003A\u003AgetSourceVersion\u0028\u0029",
+            "name": "getSourceVersion",
+            "summary": "Get\u0020the\u0020source\u0020version\u0020this\u0020strategy\u0020upgrades\u0020from",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade12to13Strategy.html#method_getSourceVersion"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade12to13Strategy\u003A\u003AgetTargetVersion\u0028\u0029",
+            "name": "getTargetVersion",
+            "summary": "Get\u0020the\u0020target\u0020version\u0020this\u0020strategy\u0020upgrades\u0020to",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade12to13Strategy.html#method_getTargetVersion"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade12to13Strategy\u003A\u003AgetTransformers\u0028\u0029",
+            "name": "getTransformers",
+            "summary": "Get\u0020the\u0020list\u0020of\u0020transformers\u0020to\u0020apply",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade12to13Strategy.html#method_getTransformers"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade12to13Strategy\u003A\u003AgetBreakingChanges\u0028\u0029",
+            "name": "getBreakingChanges",
+            "summary": "Get\u0020the\u0020list\u0020of\u0020breaking\u0020changes",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade12to13Strategy.html#method_getBreakingChanges"
+        },                {
+            "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\Upgrade12to13Strategy\u003A\u003ArequiresManualIntervention\u0028\u0029",
+            "name": "requiresManualIntervention",
+            "summary": "Check\u0020if\u0020this\u0020strategy\u0020requires\u0020manual\u0020intervention",
+            "url": "classes/SismaFramework-Console-Services-Upgrade-Strategies-Upgrade12to13Strategy.html#method_requiresManualIntervention"
         },                {
             "fqsen": "\\SismaFramework\\Console\\Services\\Upgrade\\Strategies\\UpgradeStrategyInterface",
             "name": "UpgradeStrategyInterface",
@@ -3736,10 +3766,15 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkBuiltinOrEnumPropertyChange"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AcheckCustomDateTimeInterfacePropertyChange\u0028\u0029",
-            "name": "checkCustomDateTimeInterfacePropertyChange",
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AcheckCustomTypePropertyChange\u0028\u0029",
+            "name": "checkCustomTypePropertyChange",
             "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkCustomDateTimeInterfacePropertyChange"
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkCustomTypePropertyChange"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AisCustomType\u0028\u0029",
+            "name": "isCustomType",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isCustomType"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A__isset\u0028\u0029",
             "name": "__isset",
@@ -4411,6 +4446,106 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-CustomTypes-SismaDateTime.html#method_equals"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson",
+            "name": "SismaJson",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003A__construct\u0028\u0029",
+            "name": "__construct",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method___construct"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AfromJson\u0028\u0029",
+            "name": "fromJson",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_fromJson"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AtoJson\u0028\u0029",
+            "name": "toJson",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_toJson"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AtoArray\u0028\u0029",
+            "name": "toArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_toArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003Ahas\u0028\u0029",
+            "name": "has",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_has"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003Aget\u0028\u0029",
+            "name": "get",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_get"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003Awith\u0028\u0029",
+            "name": "with",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_with"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003Awithout\u0028\u0029",
+            "name": "without",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_without"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AoffsetExists\u0028\u0029",
+            "name": "offsetExists",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_offsetExists"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AoffsetGet\u0028\u0029",
+            "name": "offsetGet",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_offsetGet"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AoffsetSet\u0028\u0029",
+            "name": "offsetSet",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_offsetSet"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AoffsetUnset\u0028\u0029",
+            "name": "offsetUnset",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_offsetUnset"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AgetIterator\u0028\u0029",
+            "name": "getIterator",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_getIterator"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003Acount\u0028\u0029",
+            "name": "count",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_count"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AjsonSerialize\u0028\u0029",
+            "name": "jsonSerialize",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_jsonSerialize"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003Aequals\u0028\u0029",
+            "name": "equals",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_equals"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003Anormalize\u0028\u0029",
+            "name": "normalize",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#method_normalize"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003AENCODE_FLAGS",
+            "name": "ENCODE_FLAGS",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#constant_ENCODE_FLAGS"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaJson\u003A\u003A\u0024data",
+            "name": "data",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-CustomTypes-SismaJson.html#property_data"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\CustomTypes\\SismaStandardClass",
             "name": "SismaStandardClass",
             "summary": "",
@@ -4651,6 +4786,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-Enumerations-DataType.html#enumcase_typeEnumeration"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\DataType\u003A\u003AtypeJson",
+            "name": "typeJson",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-DataType.html#enumcase_typeJson"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\DataType\u003A\u003AtypeGeneric",
             "name": "typeGeneric",
             "summary": "",
@@ -4805,6 +4945,11 @@ Search.appendIndex(
             "name": "isTime",
             "summary": "",
             "url": "classes/SismaFramework-Orm-Enumerations-FilterType.html#enumcase_isTime"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\FilterType\u003A\u003AisJson",
+            "name": "isJson",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-FilterType.html#enumcase_isJson"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\FilterType\u003A\u003AisUploadedFile",
             "name": "isUploadedFile",
@@ -5726,6 +5871,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Filter.html#method_isTime"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Filter\u003A\u003AisJson\u0028\u0029",
+            "name": "isJson",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Filter.html#method_isJson"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Filter\u003A\u003AisUploadedFile\u0028\u0029",
             "name": "isUploadedFile",
             "summary": "",
@@ -6120,6 +6270,16 @@ Search.appendIndex(
             "name": "equals",
             "summary": "",
             "url": "classes/SismaFramework-Orm-Interfaces-CustomDateTimeInterface.html#method_equals"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Interfaces\\CustomTypeInterface",
+            "name": "CustomTypeInterface",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Interfaces-CustomTypeInterface.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Interfaces\\CustomTypeInterface\u003A\u003Aequals\u0028\u0029",
+            "name": "equals",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Interfaces-CustomTypeInterface.html#method_equals"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\Permissions\\ReferencedEntityDeletionPermission",
             "name": "ReferencedEntityDeletionPermission",
