@@ -88,7 +88,7 @@ Limitazioni:
 - sono supportati solo oggetti e array JSON: un JSON scalare (`"testo"`, `5`) solleva una `JsonException` in `fromJson()` e una `InvalidArgumentException` durante l'idratazione dell'entità e il parsing di form e argomenti delle action. Fa eccezione il letterale JSON `null`, che su una proprietà nullable (`?SismaJson`) diventa `null`, come il `NULL` SQL; un successivo salvataggio della colonna scrive quindi `NULL` SQL al posto del letterale JSON;
 - poiché la decodifica produce array PHP, un oggetto vuoto `{}` viene riscritto come `[]`, e un oggetto con chiavi numeriche consecutive a partire da `0` viene riscritto come lista;
 - una proprietà `SismaJson` cifrata con `addEncryptedProperty()` viene salvata come stringa cifrata, che non è JSON valido: la colonna deve essere di tipo testuale e non `JSON`;
-- le query sul contenuto del documento (`JSON_EXTRACT`, `->>`) non sono ancora supportate dal query builder.
+- le query sul contenuto del documento sono supportate dalla 12.7.0: vedi [Query su Colonne JSON](advanced-orm.md#query-su-colonne-json).
 
 ### Lazy Loading (Caricamento Pigro)
 

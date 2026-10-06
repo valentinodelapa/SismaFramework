@@ -47,6 +47,10 @@
  *   * Modifica di buildJoinOnForeignKey() per includere relatedEntityClass nei metadati
  *   * Modifica di allColumns() per accettare parametro opzionale $table e restituire table.* per qualificazione colonne
  *   * Supporto per eager loading gerarchico multi-entità con hydration automatica
+ * - Introduzione del supporto alle query su colonne JSON (v12.7.0):
+ *   * Aggiunta di escapeJsonPath() per la validazione dei path JSON letterali
+ *   * Aggiunta di opJsonCondition() per la composizione delle condizioni su valori estratti da documenti JSON
+ *   * Aggiunta dei metodi astratti opJsonExtract(), opJsonContains(), opJsonContainsPath() e opJsonIsNull()
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -61,12 +65,14 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\JoinType;
+use SismaFramework\Orm\Enumerations\JsonValueType;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\LogicalOperator;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\Exceptions\AdapterException;
 use SismaFramework\Orm\HelperClasses\Query;
 
 /**
@@ -422,6 +428,34 @@ abstract class BaseAdapter
     abstract public function opDecryptFunction(string $column, string $initializationVectorColumn): string;
 
     abstract public function fulltextConditionSintax(array $columns, Placeholder|string $value, TextSearchMode $textSearchMode): string;
+
+    public function escapeJsonPath(Placeholder|string $path): string
+    {
+        if ($path instanceof Placeholder) {
+            return $path->getAdapterVersion($this->adapterType);
+        } elseif (preg_match('/^\$(\.[A-Za-z_][A-Za-z0-9_]*|\[[0-9]+\])*$/', $path) === 1) {
+            return "'" . $path . "'";
+        } else {
+            throw new AdapterException('Invalid JSON path: ' . $path);
+        }
+    }
+
+    public function opJsonCondition(string $column, Placeholder|string $path, ComparisonOperator $operator, Placeholder|string|array $value, JsonValueType $jsonValueType): string
+    {
+        if ($jsonValueType === JsonValueType::json) {
+            throw new AdapterException('JSON values cannot be compared as documents: use a JSON contains condition');
+        } else {
+            return $this->opJsonExtract($column, $path, $jsonValueType) . ' ' . $this->parseComparisonOperator($operator) . ' ' . $this->escapeValue($value, $operator);
+        }
+    }
+
+    abstract public function opJsonExtract(string $column, Placeholder|string $path, JsonValueType $jsonValueType, ?string $columnAlias = null): string;
+
+    abstract public function opJsonContains(string $column, Placeholder|string $value, JsonValueType $jsonValueType, Placeholder|string|null $path = null): string;
+
+    abstract public function opJsonContainsPath(string $column, Placeholder|string $path): string;
+
+    abstract public function opJsonIsNull(string $column, Placeholder|string $path): string;
 
     public function lastInsertId(): int
     {

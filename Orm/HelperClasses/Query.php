@@ -52,6 +52,8 @@
  *   * Modifica di initializeColumn() per passare $this->table a allColumns() delegando qualificazione all'adapter
  *   * Modifica di build() per includere clausole JOIN nella query SQL finale
  *   * Supporto per tutti i tipi di JOIN: INNER, LEFT, RIGHT, CROSS tramite enum JoinType
+ * - Aggiunta del supporto alle query su colonne JSON (v12.7.0): setJsonExtractColumn(), appendOrderByJsonPath(),
+ *   appendJsonCondition(), appendJsonContainsCondition(), appendJsonPathExistsCondition(), appendJsonNullCondition().
  */
 
 namespace SismaFramework\Orm\HelperClasses;
@@ -62,6 +64,7 @@ use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\Condition;
 use SismaFramework\Orm\Enumerations\Indexing;
 use SismaFramework\Orm\Enumerations\JoinType;
+use SismaFramework\Orm\Enumerations\JsonValueType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
@@ -185,6 +188,17 @@ class Query
         return $this;
     }
 
+    public function &setJsonExtractColumn(string $column, Placeholder|string $path, JsonValueType $jsonValueType = JsonValueType::string, ?string $columnAlias = null, bool $append = false): self
+    {
+        if ($append) {
+            $this->initializeColumn();
+            $this->columns[] = $this->adapter->opJsonExtract($column, $path, $jsonValueType, $columnAlias);
+        } else {
+            $this->columns = [$this->adapter->opJsonExtract($column, $path, $jsonValueType, $columnAlias)];
+        }
+        return $this;
+    }
+
     private function initializeColumn()
     {
         if (count($this->columns) === 0) {
@@ -301,6 +315,13 @@ class Query
         return $this;
     }
 
+    public function &appendOrderByJsonPath(string $column, Placeholder|string $path, null|string|Indexing $Indexing = null, JsonValueType $jsonValueType = JsonValueType::string): self
+    {
+        $parsedIndexing = $this->adapter->escapeOrderIndexing($Indexing);
+        $this->order[] = $this->adapter->opJsonExtract($column, $path, $jsonValueType) . ' ' . $parsedIndexing;
+        return $this;
+    }
+
     public function &appendOrderBySubquery(Query $query, null|string|Indexing $Indexing = null): self
     {
         $parsedQuery = $this->adapter->openBlock() . $query->getCommandToExecute() . $this->adapter->closeBlock();
@@ -363,6 +384,40 @@ class Query
     {
         $this->where[] = $this->adapter->fulltextConditionSintax($columns, $value, $textSearchMode);
         return $this;
+    }
+
+    public function &appendJsonCondition(string $column, Placeholder|string $path, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder, JsonValueType $jsonValueType = JsonValueType::string): self
+    {
+        $this->appendToCurrentCondition($this->adapter->opJsonCondition($column, $path, $operator, $value, $jsonValueType));
+        return $this;
+    }
+
+    public function &appendJsonContainsCondition(string $column, JsonValueType $jsonValueType, Placeholder|string $value = Placeholder::placeholder, Placeholder|string|null $path = null): self
+    {
+        $this->appendToCurrentCondition($this->adapter->opJsonContains($column, $value, $jsonValueType, $path));
+        return $this;
+    }
+
+    public function &appendJsonPathExistsCondition(string $column, Placeholder|string $path): self
+    {
+        $this->appendToCurrentCondition($this->adapter->opJsonContainsPath($column, $path));
+        return $this;
+    }
+
+    public function &appendJsonNullCondition(string $column, Placeholder|string $path): self
+    {
+        $this->appendToCurrentCondition($this->adapter->opJsonIsNull($column, $path));
+        return $this;
+    }
+
+    private function appendToCurrentCondition(string $condition): void
+    {
+        if ($this->currentCondition == Condition::where) {
+            $this->where[] = $condition;
+        }
+        if ($this->currentCondition == Condition::having) {
+            $this->having[] = $condition;
+        }
     }
 
     public function &appendSubqueryCondition(Query $subquery, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder): self

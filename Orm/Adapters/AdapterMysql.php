@@ -38,6 +38,7 @@
  * - Implementazione del metodo parseGenericBindType() per rilevamento automatico del tipo di dato.
  * - Aggiunta del supporto fulltext search con opFulltextIndex() e fulltextConditionSintax().
  * - Aggiunta del supporto per decrittazione AES con opDecryptFunction(), opBase64DecodeFunction(), opConvertBlobToHex().
+ * - Aggiunta del supporto alle query su colonne JSON con opJsonExtract(), opJsonContains(), opJsonContainsPath(), opJsonIsNull().
  * - Utilizzo dell'attributo #[\Override] per esplicitare i metodi sovrascritti (PHP 8.3+).
  */
 
@@ -51,6 +52,7 @@ use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\JsonValueType;
 use SismaFramework\Orm\Enumerations\Keyword;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
@@ -140,10 +142,18 @@ class AdapterMysql extends BaseAdapter
             if ($bindTypes[$key] === DataType::typeGeneric) {
                 $bindTypes[$key] = $this->parseGenericBindType($value);
             }
+            $this->checkJsonBindValue($bindTypes[$key], $value);
             $bindTypes[$key] = $this->translateDataType($bindTypes[$key]);
         }
         if (array_key_exists(0, $bindValues)) {
             $this->incrementIndexedArrayKey($bindValues, $bindTypes);
+        }
+    }
+
+    private function checkJsonBindValue(DataType $bindType, mixed $value): void
+    {
+        if (($bindType === DataType::typeJson) && (is_bool($value) || is_array($value))) {
+            throw new AdapterException('A value bound as JSON must be a JSON string or a SismaJson, ' . get_debug_type($value) . ' given');
         }
     }
 
@@ -345,5 +355,61 @@ class AdapterMysql extends BaseAdapter
     {
         $escapedColumn = $this->escapeColumn($column);
         return 'UNHEX' . $this->openBlock() . 'HEX' . $this->openBlock() . $escapedColumn . $this->closeBlock() . $this->closeBlock();
+    }
+
+    #[\Override]
+    public function opJsonExtract(string $column, Placeholder|string $path, JsonValueType $jsonValueType, ?string $columnAlias = null): string
+    {
+        $extraction = $this->opJsonExtractFunction($column, $path);
+        $typedExtraction = match ($jsonValueType) {
+            JsonValueType::json => $extraction,
+            JsonValueType::string => $this->opJsonUnquoteFunction($extraction),
+            JsonValueType::integer => 'CAST' . $this->openBlock() . $this->opJsonUnquoteFunction($extraction) . ' AS SIGNED' . $this->closeBlock(),
+            JsonValueType::decimal => 'CAST' . $this->openBlock() . $this->opJsonUnquoteFunction($extraction) . ' AS DECIMAL(65,30)' . $this->closeBlock(),
+            JsonValueType::boolean => $this->openBlock() . $this->opJsonUnquoteFunction($extraction) . " = 'true'" . $this->closeBlock(),
+        };
+        if ($columnAlias !== null) {
+            $typedExtraction .= ' as ' . $this->escapeColumn($columnAlias);
+        }
+        return $typedExtraction;
+    }
+
+    private function opJsonExtractFunction(string $column, Placeholder|string $path): string
+    {
+        return 'JSON_EXTRACT' . $this->openBlock() . $this->escapeColumn($column) . ', ' . $this->escapeJsonPath($path) . $this->closeBlock();
+    }
+
+    private function opJsonUnquoteFunction(string $expression): string
+    {
+        return 'JSON_UNQUOTE' . $this->openBlock() . $expression . $this->closeBlock();
+    }
+
+    #[\Override]
+    public function opJsonContains(string $column, Placeholder|string $value, JsonValueType $jsonValueType, Placeholder|string|null $path = null): string
+    {
+        $escapedValue = $this->escapeValue($value);
+        $candidate = match ($jsonValueType) {
+            JsonValueType::json => $escapedValue,
+            JsonValueType::string => 'JSON_QUOTE' . $this->openBlock() . $escapedValue . $this->closeBlock(),
+            JsonValueType::integer, JsonValueType::decimal => 'CAST' . $this->openBlock() . $escapedValue . ' AS CHAR' . $this->closeBlock(),
+            JsonValueType::boolean => 'IF' . $this->openBlock() . $escapedValue . ", 'true', 'false'" . $this->closeBlock(),
+        };
+        $arguments = $this->escapeColumn($column) . ', ' . $candidate;
+        if ($path !== null) {
+            $arguments .= ', ' . $this->escapeJsonPath($path);
+        }
+        return 'JSON_CONTAINS' . $this->openBlock() . $arguments . $this->closeBlock();
+    }
+
+    #[\Override]
+    public function opJsonContainsPath(string $column, Placeholder|string $path): string
+    {
+        return 'JSON_CONTAINS_PATH' . $this->openBlock() . $this->escapeColumn($column) . ", 'one', " . $this->escapeJsonPath($path) . $this->closeBlock();
+    }
+
+    #[\Override]
+    public function opJsonIsNull(string $column, Placeholder|string $path): string
+    {
+        return 'CAST' . $this->openBlock() . 'JSON_TYPE' . $this->openBlock() . $this->opJsonExtractFunction($column, $path) . $this->closeBlock() . ' AS BINARY' . $this->closeBlock() . " = 'NULL'";
     }
 }

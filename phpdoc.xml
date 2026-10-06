@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpdocumentor
-        configVersion="3"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="https://www.phpdoc.org"
-        xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/3.0/xml/phpdoc.xsd">
+	configVersion="3"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="https://www.phpdoc.org"
+	xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/3.0/xml/phpdoc.xsd"
+>
 
     <title>SismaFramework</title>
 
@@ -19,6 +20,7 @@
             </source>
 
             <ignore>
+                <path>/.delta/**/*</path>
                 <path>vendor</path>
                 <path>Sample</path>
                 <path>Tests</path>
