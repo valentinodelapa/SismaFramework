@@ -35,6 +35,7 @@ use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\JsonValueType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\Exceptions\AdapterException;
@@ -408,6 +409,82 @@ class AdapterMysqlTest extends TestCase
         $this->assertStringContainsString('`column_two`', $result);
     }
 
+    public function testEscapeJsonPath()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals('?', $adapterMysql->escapeJsonPath(Placeholder::placeholder));
+        $this->assertEquals("'$'", $adapterMysql->escapeJsonPath('$'));
+        $this->assertEquals("'$.color'", $adapterMysql->escapeJsonPath('$.color'));
+        $this->assertEquals("'$.sizes[0].label_text'", $adapterMysql->escapeJsonPath('$.sizes[0].label_text'));
+    }
+
+    public function testEscapeJsonPathWithInvalidPath()
+    {
+        $adapterMysql = new AdapterMysql();
+        foreach (['color', '$.', '$.1color', "$.color' OR '1'='1", '$."two words"', '$.*', '$[*]', '$**.color', '$.color[-1]'] as $invalidPath) {
+            try {
+                $adapterMysql->escapeJsonPath($invalidPath);
+                $this->fail('Invalid JSON path accepted: ' . $invalidPath);
+            } catch (AdapterException $exception) {
+                $this->assertStringContainsString('Invalid JSON path', $exception->getMessage());
+            }
+        }
+    }
+
+    public function testOpJsonExtract()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals("JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.color' ) )", $adapterMysql->opJsonExtract('attributes', '$.color', JsonValueType::string));
+        $this->assertEquals("CAST( JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.quantity' ) ) AS SIGNED )", $adapterMysql->opJsonExtract('attributes', '$.quantity', JsonValueType::integer));
+        $this->assertEquals("CAST( JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.price' ) ) AS DECIMAL(65,30) )", $adapterMysql->opJsonExtract('attributes', '$.price', JsonValueType::decimal));
+        $this->assertEquals("( JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.onSale' ) ) = 'true' )", $adapterMysql->opJsonExtract('attributes', '$.onSale', JsonValueType::boolean));
+        $this->assertEquals("JSON_EXTRACT( `attributes`, '$.tags' )", $adapterMysql->opJsonExtract('attributes', '$.tags', JsonValueType::json));
+        $this->assertEquals("JSON_UNQUOTE( JSON_EXTRACT( `product_attributes`, ? ) )", $adapterMysql->opJsonExtract('productAttributes', Placeholder::placeholder, JsonValueType::string));
+        $this->assertEquals("JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.color' ) ) as `main_color`", $adapterMysql->opJsonExtract('attributes', '$.color', JsonValueType::string, 'mainColor'));
+    }
+
+    public function testOpJsonCondition()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals("JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.color' ) ) = ?", $adapterMysql->opJsonCondition('attributes', '$.color', ComparisonOperator::equal, Placeholder::placeholder, JsonValueType::string));
+        $this->assertEquals("CAST( JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.price' ) ) AS DECIMAL(65,30) ) > ?", $adapterMysql->opJsonCondition('attributes', '$.price', ComparisonOperator::greater, Placeholder::placeholder, JsonValueType::decimal));
+        $this->assertEquals("( JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.onSale' ) ) = 'true' ) = ?", $adapterMysql->opJsonCondition('attributes', '$.onSale', ComparisonOperator::equal, Placeholder::placeholder, JsonValueType::boolean));
+        $this->assertEquals("JSON_UNQUOTE( JSON_EXTRACT( `attributes`, ? ) ) = ?", $adapterMysql->opJsonCondition('attributes', Placeholder::placeholder, ComparisonOperator::equal, Placeholder::placeholder, JsonValueType::string));
+        $this->assertEquals("JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.discount' ) ) IS NULL ", $adapterMysql->opJsonCondition('attributes', '$.discount', ComparisonOperator::isNull, Placeholder::placeholder, JsonValueType::string));
+    }
+
+    public function testOpJsonConditionWithJsonValueType()
+    {
+        $this->expectException(AdapterException::class);
+        $adapterMysql = new AdapterMysql();
+        $adapterMysql->opJsonCondition('attributes', '$.tags', ComparisonOperator::equal, Placeholder::placeholder, JsonValueType::json);
+    }
+
+    public function testOpJsonContains()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals("JSON_CONTAINS( `attributes`, JSON_QUOTE( ? ), '$.tags' )", $adapterMysql->opJsonContains('attributes', Placeholder::placeholder, JsonValueType::string, '$.tags'));
+        $this->assertEquals("JSON_CONTAINS( `attributes`, CAST( ? AS CHAR ), '$.sizes' )", $adapterMysql->opJsonContains('attributes', Placeholder::placeholder, JsonValueType::integer, '$.sizes'));
+        $this->assertEquals("JSON_CONTAINS( `attributes`, CAST( ? AS CHAR ), '$.prices' )", $adapterMysql->opJsonContains('attributes', Placeholder::placeholder, JsonValueType::decimal, '$.prices'));
+        $this->assertEquals("JSON_CONTAINS( `attributes`, IF( ?, 'true', 'false' ), '$.flags' )", $adapterMysql->opJsonContains('attributes', Placeholder::placeholder, JsonValueType::boolean, '$.flags'));
+        $this->assertEquals("JSON_CONTAINS( `attributes`, ? )", $adapterMysql->opJsonContains('attributes', Placeholder::placeholder, JsonValueType::json));
+        $this->assertEquals("JSON_CONTAINS( `attributes`, ?, ? )", $adapterMysql->opJsonContains('attributes', Placeholder::placeholder, JsonValueType::json, Placeholder::placeholder));
+    }
+
+    public function testOpJsonContainsPath()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals("JSON_CONTAINS_PATH( `attributes`, 'one', '$.discount' )", $adapterMysql->opJsonContainsPath('attributes', '$.discount'));
+        $this->assertEquals("JSON_CONTAINS_PATH( `attributes`, 'one', ? )", $adapterMysql->opJsonContainsPath('attributes', Placeholder::placeholder));
+    }
+
+    public function testOpJsonIsNull()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertEquals("CAST( JSON_TYPE( JSON_EXTRACT( `attributes`, '$.discount' ) ) AS BINARY ) = 'NULL'", $adapterMysql->opJsonIsNull('attributes', '$.discount'));
+        $this->assertEquals("CAST( JSON_TYPE( JSON_EXTRACT( `attributes`, ? ) ) AS BINARY ) = 'NULL'", $adapterMysql->opJsonIsNull('attributes', Placeholder::placeholder));
+    }
+
     public function testParseSelect()
     {
         $adapterMysql = new AdapterMysql();
@@ -566,6 +643,24 @@ class AdapterMysqlTest extends TestCase
             0 => DataType::typeJson,
         ];
         $this->assertInstanceOf(ResultSetMysql::class, $adapterMysql->select('', $bindValues, $bindTypes));
+    }
+
+    public function testSelectWithBooleanBoundAsJson()
+    {
+        $this->expectException(AdapterException::class);
+        $this->connectionMock->method('prepare')
+                ->willReturn($this->createStub(\PDOStatement::class));
+        $adapterMysql = new AdapterMysql();
+        $adapterMysql->select('', [true], [DataType::typeJson]);
+    }
+
+    public function testSelectWithArrayBoundAsJson()
+    {
+        $this->expectException(AdapterException::class);
+        $this->connectionMock->method('prepare')
+                ->willReturn($this->createStub(\PDOStatement::class));
+        $adapterMysql = new AdapterMysql();
+        $adapterMysql->select('', [['key' => 'value']], [DataType::typeJson]);
     }
 
     public function testExecuteTrue()

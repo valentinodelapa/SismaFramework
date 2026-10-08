@@ -537,6 +537,32 @@ class AdvancedQueryBuilder {
 }
 ```
 
+### JsonValueType
+
+**Namespace:** `SismaFramework\Orm\Enumerations\JsonValueType`
+
+Introdotto nella 12.7.0, indica il tipo di un valore contenuto in un documento JSON, per le condizioni, la selezione e l'ordinamento sulle colonne JSON. L'adapter genera in base al tipo la conversione nell'SQL, così che i valori si leghino con il `DataType` naturale.
+
+```php
+enum JsonValueType
+{
+    case string;
+    case integer;
+    case decimal;
+    case boolean;
+    case json;
+}
+```
+
+```php
+$query->setWhere()
+    ->appendJsonCondition('attributes', '$.price', ComparisonOperator::greater, Placeholder::placeholder, JsonValueType::decimal);
+$bindValues = [10.5];
+$bindTypes = [DataType::typeDecimal];
+```
+
+Vedi [Query su Colonne JSON](advanced-orm.md#query-su-colonne-json) per la conversione generata da ciascun caso.
+
 ---
 
 ## Security Enumerations

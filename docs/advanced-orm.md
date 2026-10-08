@@ -155,6 +155,104 @@ class PostSearchService
 
 > **Nota (12.0.0):** prima della 12.0.0 il parametro `$textSearchMode` era l'ultimo argomento di `setFulltextIndexColumn()`; da questa versione precede `$columnAlias` e `$append`. Il comando `sisma upgrade` corregge automaticamente le chiamate esistenti.
 
+### Query su Colonne JSON
+
+Dalla 12.7.0 il query builder interroga il contenuto delle colonne JSON (vedi [Colonne JSON](orm.md#colonne-json)). L'SQL generato usa `JSON_EXTRACT`, `JSON_UNQUOTE`, `JSON_CONTAINS`, `JSON_CONTAINS_PATH` e `JSON_TYPE`, disponibili sia in MySQL sia in MariaDB; gli operatori `->` e `->>`, che MariaDB non supporta, non vengono usati.
+
+| Metodo | Uso |
+|---|---|
+| `appendJsonCondition($column, $path, $operator, $value, $jsonValueType)` | confronta un valore del documento |
+| `appendJsonContainsCondition($column, $jsonValueType, $value, $path)` | verifica che il documento, o il valore al path, contenga un valore |
+| `appendJsonPathExistsCondition($column, $path)` | verifica che il path esista nel documento |
+| `appendJsonNullCondition($column, $path)` | verifica che il path esista e valga `null` |
+| `setJsonExtractColumn($column, $path, $jsonValueType, $columnAlias, $append)` | seleziona un valore del documento come colonna |
+| `appendOrderByJsonPath($column, $path, $indexing, $jsonValueType)` | ordina per un valore del documento |
+
+Le condizioni si comportano come `appendCondition()`: vanno nel `WHERE` dopo `setWhere()` e nell'`HAVING` dopo `setHaving()`, e si combinano con `appendAnd()`, `appendOr()`, `appendNot()` e i blocchi.
+
+#### Path
+
+Il path segue la sintassi JSON di MySQL e si può passare in due modi:
+
+- **come stringa**, inserita come letterale nell'SQL: è ammessa solo la forma `$`, seguita da chiavi `.nome` (lettere, cifre e `_`, senza cifra iniziale) e indici `[n]`, per esempio `$.sizes[0].label`. Un path diverso, con caratteri speciali, chiavi tra virgolette o caratteri jolly, solleva un'`AdapterException` quando si costruisce la query;
+- **come `Placeholder::placeholder`**, legato come parametro: è ammesso qualunque path, e il suo valore va inserito nei `$bindValues` nella posizione in cui compare nell'SQL, cioè **prima** del valore del confronto.
+
+#### Tipo del valore: `JsonValueType`
+
+Il documento restituisce i valori come testo: senza indicazioni un confronto `>` tra `'9'` e `'10.5'` sarebbe lessicografico, e un booleano `true` estratto è la stringa `'true'`, diversa dall'`1` con cui MySQL rappresenta un booleano SQL. L'enum `JsonValueType` indica il tipo del valore nel documento, e il builder genera l'SQL che converte di conseguenza; i valori si legano nei `$bindValues` come per qualunque altra condizione.
+
+| `JsonValueType` | Valore estratto | Valore cercato da `appendJsonContainsCondition` | Valore da legare |
+|---|---|---|---|
+| `string` (default) | `JSON_UNQUOTE(...)` | `JSON_QUOTE(?)` | stringa, `typeString` |
+| `integer` | `CAST(... AS SIGNED)` | `CAST(? AS CHAR)` | intero, `typeInteger` |
+| `decimal` | `CAST(... AS DECIMAL(65,30))` | `CAST(? AS CHAR)` | float, `typeDecimal` |
+| `boolean` | `(... = 'true')`, che vale `1` o `0` | `IF(?, 'true', 'false')` | bool, `typeBoolean` |
+| `json` | `JSON_EXTRACT(...)` senza conversione | `?` invariato | `SismaJson` o stringa JSON, `typeJson` |
+
+`JsonValueType::json` non è ammesso in `appendJsonCondition()`, dove solleva un'`AdapterException`: il confronto tra documenti non è affidabile, e per cercare un oggetto o un array va usato `appendJsonContainsCondition()`. In `appendJsonContainsCondition()` il tipo è obbligatorio, perché un tipo errato fa fallire la ricerca senza errori.
+
+```php
+use SismaFramework\Orm\CustomTypes\SismaJson;
+use SismaFramework\Orm\Enumerations\JsonValueType;
+
+class ProductModel extends BaseModel
+{
+    public function getDiscountedRedProducts(float $minimumPrice): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere()
+            ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder)
+            ->appendAnd()
+            ->appendJsonCondition('attributes', '$.color', ComparisonOperator::equal, Placeholder::placeholder)
+            ->appendAnd()
+            ->appendJsonCondition('attributes', '$.price', ComparisonOperator::greaterOrEqual, Placeholder::placeholder, JsonValueType::decimal)
+            ->appendAnd()
+            ->appendJsonCondition('attributes', '$.onSale', ComparisonOperator::equal, Placeholder::placeholder, JsonValueType::boolean);
+        $query->appendOrderByJsonPath('attributes', '$.price', Indexing::asc, JsonValueType::decimal);
+
+        $bindValues = ['active', 'red', $minimumPrice, true];
+        $bindTypes = [DataType::typeString, DataType::typeString, DataType::typeDecimal, DataType::typeBoolean];
+
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+    }
+
+    public function getProductsWithTags(array $tags): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere()
+            ->appendJsonContainsCondition('attributes', JsonValueType::json, Placeholder::placeholder, '$.tags');
+
+        $bindValues = [new SismaJson($tags)];
+        $bindTypes = [DataType::typeJson];
+
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+    }
+}
+```
+
+Per cercare un solo elemento di una lista basta indicarne il tipo: `appendJsonContainsCondition('attributes', JsonValueType::string, Placeholder::placeholder, '$.tags')` con il valore `'sale'` legato come `typeString`.
+
+#### Chiave assente e valore `null`
+
+Una chiave assente e una chiave con valore `null` sono situazioni diverse: estraendo la prima si ottiene il `NULL` SQL, estraendo la seconda la stringa `'null'`. Di conseguenza `appendJsonCondition()` con `ComparisonOperator::isNull` trova solo le chiavi **assenti**. Per gli altri casi:
+
+| Documenti cercati | Condizione |
+|---|---|
+| chiave assente | `appendNot()` + `appendJsonPathExistsCondition()` |
+| chiave presente, qualunque valore | `appendJsonPathExistsCondition()` |
+| chiave presente con valore `null` | `appendJsonNullCondition()` |
+| chiave assente o con valore `null` | `appendJsonCondition()` con `isNull`, `appendOr()`, `appendJsonNullCondition()` |
+
+#### Selezione di valori estratti
+
+`setJsonExtractColumn()` aggiunge alla `SELECT` un valore del documento con un alias. L'idratazione di un'entità valorizza solo le proprietà esistenti, per cui la colonna estratta è utile soprattutto con `StandardEntity`, nelle aggregazioni o come alias per l'ordinamento.
+
+#### Valori legati come `typeJson`
+
+Un valore legato con `DataType::typeJson` deve essere già JSON, cioè un `SismaJson` o una stringa JSON. Un booleano o un array legati come `typeJson` sollevano un'`AdapterException`: senza il controllo `true` arriverebbe al database come `'1'`, `false` come stringa vuota, e un array non sarebbe convertibile.
+
 ---
 
 ## Metodi Magici e Relazioni

@@ -129,6 +129,68 @@ public function equals(CustomTypeInterface $other): bool
 
 ---
 
+## [12.7.0] - 2026-10-06 - Query sulle Colonne JSON
+
+Minor release che estende al query builder il supporto alle colonne JSON introdotto con la 12.6.0: condizioni, selezione e ordinamento sui valori contenuti nei documenti, con conversione del tipo dei valori gestita nell'SQL.
+
+### ✨ Nuove Funzionalità
+
+#### `Orm/HelperClasses/Query` — condizioni, selezione e ordinamento su documenti JSON
+
+Con la 12.6.0 una colonna JSON poteva essere letta e scritta, ma non interrogata nel contenuto. `Query` espone ora sei metodi:
+
+| Metodo | SQL generato |
+|---|---|
+| `appendJsonCondition($column, $path, $operator, $value, $jsonValueType)` | `JSON_UNQUOTE(JSON_EXTRACT(col, path)) <operatore> ?`, con l'eventuale conversione del tipo |
+| `appendJsonContainsCondition($column, $jsonValueType, $value, $path)` | `JSON_CONTAINS(col, <valore>, path)` |
+| `appendJsonPathExistsCondition($column, $path)` | `JSON_CONTAINS_PATH(col, 'one', path)` |
+| `appendJsonNullCondition($column, $path)` | `CAST(JSON_TYPE(JSON_EXTRACT(col, path)) AS BINARY) = 'NULL'` |
+| `setJsonExtractColumn($column, $path, $jsonValueType, $columnAlias, $append)` | il valore estratto come colonna della `SELECT` |
+| `appendOrderByJsonPath($column, $path, $indexing, $jsonValueType)` | il valore estratto come criterio di `ORDER BY` |
+
+Le condizioni vanno nel `WHERE` o nell'`HAVING` secondo la clausola attiva, come `appendCondition()`. Le funzioni usate sono disponibili sia in MySQL sia in MariaDB, che non supporta gli operatori `->` e `->>`, e l'SQL generato è stato verificato su MySQL 8.4 e MariaDB 11.8. In `appendJsonNullCondition()` il risultato di `JSON_TYPE` è convertito in `BINARY` prima del confronto: in MariaDB la sua collation e quella del letterale, derivata dalla connessione, hanno la stessa coercibilità, e il confronto diretto fallisce con l'errore 1267 (*Illegal mix of collations*).
+
+```php
+$query->setWhere()
+    ->appendJsonCondition('attributes', '$.price', ComparisonOperator::greater, Placeholder::placeholder, JsonValueType::decimal)
+    ->appendAnd()
+    ->appendJsonContainsCondition('attributes', JsonValueType::string, Placeholder::placeholder, '$.tags');
+$bindValues = [10.5, 'sale'];
+$bindTypes = [DataType::typeDecimal, DataType::typeString];
+```
+
+Il path si passa come stringa, inserita come letterale dopo la validazione contro la grammatica `$`, `.chiave`, `[indice]` (un path non conforme solleva un'`AdapterException` alla costruzione della query), oppure come `Placeholder::placeholder`, legato come parametro nella posizione in cui compare nell'SQL, prima del valore del confronto.
+
+#### `Orm/Enumerations/JsonValueType` — tipo dei valori nei documenti
+
+Un valore estratto da un documento è testo: un confronto `>` con un decimale legato come stringa sarebbe lessicografico (`'9.5' > '10.5'`), e il booleano JSON `true` estratto è la stringa `'true'`, diversa dall'`1` con cui MySQL rappresenta un booleano SQL. Il nuovo enum (`string`, `integer`, `decimal`, `boolean`, `json`) indica il tipo del valore nel documento, e l'adapter genera la conversione nell'SQL: `CAST(... AS SIGNED)`, `CAST(... AS DECIMAL(65,30))` e `(... = 'true')` sul valore estratto, `JSON_QUOTE(?)`, `CAST(? AS CHAR)` e `IF(?, 'true', 'false')` sul valore cercato da `JSON_CONTAINS`. I valori si legano con il `DataType` naturale, come nelle condizioni sulle colonne ordinarie. `JsonValueType::json` lascia il valore invariato, per cercare oggetti e array legati come `SismaJson`; non è ammesso nei confronti di `appendJsonCondition()`, dove solleva un'`AdapterException`.
+
+**File modificati**:
+- **`Orm/Enumerations/JsonValueType.php`**: nuovo enum
+- **`Orm/HelperClasses/Query.php`**: aggiunti `setJsonExtractColumn()`, `appendOrderByJsonPath()`, `appendJsonCondition()`, `appendJsonContainsCondition()`, `appendJsonPathExistsCondition()`, `appendJsonNullCondition()` e il metodo privato `appendToCurrentCondition()`
+- **`Orm/BaseClasses/BaseAdapter.php`**: aggiunti `escapeJsonPath()`, che valida i path letterali, `opJsonCondition()`, che compone le condizioni di confronto, e i metodi astratti `opJsonExtract()`, `opJsonContains()`, `opJsonContainsPath()` e `opJsonIsNull()`
+- **`Orm/Adapters/AdapterMysql.php`**: implementati i metodi astratti, con i metodi privati `opJsonExtractFunction()` e `opJsonUnquoteFunction()`
+- **`Tests/Orm/Adapters/AdapterMysqlTest.php`**: test dell'SQL generato per ogni metodo e tipo di valore e della validazione dei path
+- **`Tests/Orm/HelperClasses/QueryTest.php`**: test della delega all'adapter e della collocazione in `WHERE`, `HAVING`, colonne e ordinamento
+- **`docs/advanced-orm.md`**: nuova sezione "Query su Colonne JSON"; **`docs/orm.md`**: aggiornata la limitazione sulle query; **`docs/enumerations.md`**: aggiunto `JsonValueType`
+
+### 🐛 Bug Fix
+
+#### `Orm/Adapters/AdapterMysql::parseBind()` — booleani e array legati come `typeJson`
+
+`DataType::typeJson` presuppone un valore già serializzato, `SismaJson` o stringa JSON, e lo lega come stringa. Un booleano subiva il cast di PHP, per cui `true` arrivava al database come `'1'`, cioè il numero JSON `1`, e `false` come stringa vuota, che non è JSON valido; un array non era convertibile. Questi valori sollevano ora un'`AdapterException` che indica il tipo ricevuto.
+
+**File modificati**:
+- **`Orm/Adapters/AdapterMysql.php`**: `parseBind()` verifica il valore tramite il nuovo metodo privato `checkJsonBindValue()`
+- **`Tests/Orm/Adapters/AdapterMysqlTest.php`**: aggiunti `testSelectWithBooleanBoundAsJson()` e `testSelectWithArrayBoundAsJson()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: i metodi aggiunti a `Query` e l'enum `JsonValueType` sono nuovi; i metodi astratti sono aggiunti a `BaseAdapter`, classe `@internal`.
+- **Cambiamento di comportamento osservabile**: un booleano o un array legati come `DataType::typeJson` sollevano un'`AdapterException` invece di essere inviati al database come valori errati.
+
+---
+
 ## [12.6.0] - 2026-10-04 - Tipo `SismaJson` per le Colonne JSON
 
 Minor release che introduce nell'ORM il tipo `SismaJson`, per mappare le colonne `JSON` di MySQL e MariaDB su proprietà delle entità decodificate e tracciate dal change tracking come gli altri tipi custom.

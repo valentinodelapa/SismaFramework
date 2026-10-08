@@ -32,6 +32,7 @@ use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\JsonValueType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\Statement;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
@@ -940,6 +941,139 @@ class QueryTest extends TestCase
         $query = new Query($baseAdapterMock);
         $query->setWhere()
                 ->setGroupBy(['columnNameOne', 'columnNameTwo'])
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testSelectJsonExtractColumn()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $matcherOne = $this->exactly(2);
+        $baseAdapterMock->expects($matcherOne)
+                ->method('opJsonExtract')
+                ->willReturnCallback(function ($column, $path, $jsonValueType, $columnAlias) use ($matcherOne) {
+                    $this->assertEquals('attributes', $column);
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('$.color', $path);
+                            $this->assertEquals(JsonValueType::string, $jsonValueType);
+                            $this->assertNull($columnAlias);
+                            return 'COLOR';
+                        case 2:
+                            $this->assertEquals(Placeholder::placeholder, $path);
+                            $this->assertEquals(JsonValueType::decimal, $jsonValueType);
+                            $this->assertEquals('price', $columnAlias);
+                            return 'PRICE as price';
+                    }
+                });
+        $matcherTwo = $this->exactly(2);
+        $baseAdapterMock->expects($matcherTwo)
+                ->method('parseSelect')
+                ->willReturnCallback(function ($distinct, $select) use ($matcherTwo) {
+                    switch ($matcherTwo->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals(['COLOR'], $select);
+                            break;
+                        case 2:
+                            $this->assertEquals(['*', 'PRICE as price'], $select);
+                            break;
+                    }
+                    return '';
+                });
+        $queryOne = new Query($baseAdapterMock);
+        $queryOne->setJsonExtractColumn('attributes', '$.color')
+                ->close();
+        $this->assertEquals('', $queryOne->getCommandToExecute());
+        $queryTwo = new Query($baseAdapterMock);
+        $queryTwo->setJsonExtractColumn('attributes', Placeholder::placeholder, JsonValueType::decimal, 'price', true)
+                ->close();
+        $this->assertEquals('', $queryTwo->getCommandToExecute());
+    }
+
+    public function testSelectJsonConditionsInWhereAndHaving()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->method('allColumns')
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $baseAdapterMock->method('opAND')
+                ->willReturn('AND');
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('opJsonCondition')
+                ->with('attributes', '$.price', ComparisonOperator::greater, Placeholder::placeholder, JsonValueType::decimal)
+                ->willReturn('PRICE > ?');
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('opJsonContains')
+                ->with('attributes', Placeholder::placeholder, JsonValueType::string, '$.tags')
+                ->willReturn('TAGS CONTAINS ?');
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('opJsonContainsPath')
+                ->with('attributes', '$.discount')
+                ->willReturn('DISCOUNT EXISTS');
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('opJsonIsNull')
+                ->with('attributes', '$.discount')
+                ->willReturn('DISCOUNT IS JSON NULL');
+        $expectedConditions = ['PRICE > ?', 'AND', 'TAGS CONTAINS ?', 'AND', 'DISCOUNT EXISTS', 'AND', 'DISCOUNT IS JSON NULL'];
+        $matcher = $this->exactly(2);
+        $baseAdapterMock->expects($matcher)
+                ->method('parseSelect')
+                ->willReturnCallback(function ($distinct, $select, $from, $where, $groupby, $having) use ($matcher, $expectedConditions) {
+                    switch ($matcher->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals($expectedConditions, $where);
+                            $this->assertEquals([], $having);
+                            break;
+                        case 2:
+                            $this->assertEquals([], $where);
+                            $this->assertEquals($expectedConditions, $having);
+                            break;
+                    }
+                    return '';
+                });
+        $queryOne = new Query($baseAdapterMock);
+        $queryOne->setWhere();
+        $this->appendJsonConditions($queryOne);
+        $queryOne->close();
+        $this->assertEquals('', $queryOne->getCommandToExecute());
+        $queryTwo = new Query($baseAdapterMock);
+        $queryTwo->setHaving();
+        $this->appendJsonConditions($queryTwo);
+        $queryTwo->close();
+        $this->assertEquals('', $queryTwo->getCommandToExecute());
+    }
+
+    private function appendJsonConditions(Query $query): void
+    {
+        $query->appendJsonCondition('attributes', '$.price', ComparisonOperator::greater, Placeholder::placeholder, JsonValueType::decimal)
+                ->appendAnd()
+                ->appendJsonContainsCondition('attributes', JsonValueType::string, Placeholder::placeholder, '$.tags')
+                ->appendAnd()
+                ->appendJsonPathExistsCondition('attributes', '$.discount')
+                ->appendAnd()
+                ->appendJsonNullCondition('attributes', '$.discount');
+    }
+
+    public function testOrderByJsonPath()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->method('allColumns')
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $baseAdapterMock->expects($this->once())
+                ->method('opJsonExtract')
+                ->with('attributes', '$.price', JsonValueType::decimal)
+                ->willReturn('PRICE');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeOrderIndexing')
+                ->with(Indexing::desc)
+                ->willReturn('DESC');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*'], '', [], [], [], ['PRICE DESC'], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->appendOrderByJsonPath('attributes', '$.price', Indexing::desc, JsonValueType::decimal)
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
     }

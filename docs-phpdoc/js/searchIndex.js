@@ -5021,6 +5021,36 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-Enumerations-JoinType.html#enumcase_cross"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JsonValueType",
+            "name": "JsonValueType",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JsonValueType.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JsonValueType\u003A\u003Astring",
+            "name": "string",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JsonValueType.html#enumcase_string"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JsonValueType\u003A\u003Ainteger",
+            "name": "integer",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JsonValueType.html#enumcase_integer"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JsonValueType\u003A\u003Adecimal",
+            "name": "decimal",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JsonValueType.html#enumcase_decimal"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JsonValueType\u003A\u003Aboolean",
+            "name": "boolean",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JsonValueType.html#enumcase_boolean"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\Enumerations\\JsonValueType\u003A\u003Ajson",
+            "name": "json",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-Enumerations-JsonValueType.html#enumcase_json"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\Enumerations\\Keyword",
             "name": "Keyword",
             "summary": "",
@@ -6006,6 +6036,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setFulltextIndexColumn"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AsetJsonExtractColumn\u0028\u0029",
+            "name": "setJsonExtractColumn",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_setJsonExtractColumn"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AinitializeColumn\u0028\u0029",
             "name": "initializeColumn",
             "summary": "",
@@ -6081,6 +6116,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderByCondition"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendOrderByJsonPath\u0028\u0029",
+            "name": "appendOrderByJsonPath",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendOrderByJsonPath"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendOrderBySubquery\u0028\u0029",
             "name": "appendOrderBySubquery",
             "summary": "",
@@ -6115,6 +6155,31 @@ Search.appendIndex(
             "name": "appendFulltextCondition",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendFulltextCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendJsonCondition\u0028\u0029",
+            "name": "appendJsonCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendJsonCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendJsonContainsCondition\u0028\u0029",
+            "name": "appendJsonContainsCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendJsonContainsCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendJsonPathExistsCondition\u0028\u0029",
+            "name": "appendJsonPathExistsCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendJsonPathExistsCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendJsonNullCondition\u0028\u0029",
+            "name": "appendJsonNullCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendJsonNullCondition"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendToCurrentCondition\u0028\u0029",
+            "name": "appendToCurrentCondition",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-Query.html#method_appendToCurrentCondition"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\Query\u003A\u003AappendSubqueryCondition\u0028\u0029",
             "name": "appendSubqueryCondition",
