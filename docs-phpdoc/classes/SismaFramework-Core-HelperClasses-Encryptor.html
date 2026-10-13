@@ -182,10 +182,76 @@
 
 </h4>
 <dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS">PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 600000                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS">PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 100000                            </span>
+</dt>
+
             <dt class="phpdocumentor-table-of-contents__entry -constant -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_MINIMAL_OPENSSL_CONFIG">MINIMAL_OPENSSL_CONFIG</a>
     <span>
         &nbsp;: mixed&nbsp;= &lt;&lt;&lt;&#039;CNF&#039; [req] distinguished_name = req_disting...                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_CIPHER">PASSWORD_ENVELOPE_CIPHER</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;aes-256-gcm&#039;                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES">PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 12                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_BYTES">PASSWORD_ENVELOPE_KEY_BYTES</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 32                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_DERIVATION">PASSWORD_ENVELOPE_KEY_DERIVATION</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;pbkdf2-sha256&#039;                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SALT_BYTES">PASSWORD_ENVELOPE_SALT_BYTES</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 16                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SEPARATOR">PASSWORD_ENVELOPE_SEPARATOR</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;$&#039;                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_TAG_BYTES">PASSWORD_ENVELOPE_TAG_BYTES</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 16                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_VERSION">PASSWORD_ENVELOPE_VERSION</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;sisma-pw1&#039;                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS">PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 10000000                            </span>
 </dt>
 
     </dl>
@@ -224,6 +290,12 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPassword">decryptWithPassword()</a>
+    <span>
+                                &nbsp;: string|false    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPrivateKey">decryptWithPrivateKey()</a>
     <span>
                                 &nbsp;: string|false    </span>
@@ -231,6 +303,12 @@
 
             <dt class="phpdocumentor-table-of-contents__entry -method -public">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptString">encryptString()</a>
+    <span>
+                                &nbsp;: string    </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptWithPassword">encryptWithPassword()</a>
     <span>
                                 &nbsp;: string    </span>
 </dt>
@@ -348,6 +426,66 @@
             <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
 
         </h3>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS">
+        PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">53</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS</span>
+    = <span class="phpdocumentor-signature__default-value">600000</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS">
+        PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">54</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS</span>
+    = <span class="phpdocumentor-signature__default-value">100000</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
                     <article class="phpdocumentor-element -constant -private ">
     <h4 class="phpdocumentor-element__name" id="constant_MINIMAL_OPENSSL_CONFIG">
         MINIMAL_OPENSSL_CONFIG
@@ -391,6 +529,276 @@ CNF</span>
 
         
     </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_ENVELOPE_CIPHER">
+        PASSWORD_ENVELOPE_CIPHER
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_CIPHER" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">59</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_ENVELOPE_CIPHER</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;aes-256-gcm&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES">
+        PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">62</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES</span>
+    = <span class="phpdocumentor-signature__default-value">12</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_ENVELOPE_KEY_BYTES">
+        PASSWORD_ENVELOPE_KEY_BYTES
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_BYTES" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">60</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_ENVELOPE_KEY_BYTES</span>
+    = <span class="phpdocumentor-signature__default-value">32</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_ENVELOPE_KEY_DERIVATION">
+        PASSWORD_ENVELOPE_KEY_DERIVATION
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_DERIVATION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">57</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_ENVELOPE_KEY_DERIVATION</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;pbkdf2-sha256&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_ENVELOPE_SALT_BYTES">
+        PASSWORD_ENVELOPE_SALT_BYTES
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SALT_BYTES" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">61</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_ENVELOPE_SALT_BYTES</span>
+    = <span class="phpdocumentor-signature__default-value">16</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_ENVELOPE_SEPARATOR">
+        PASSWORD_ENVELOPE_SEPARATOR
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SEPARATOR" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">58</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_ENVELOPE_SEPARATOR</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;$&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_ENVELOPE_TAG_BYTES">
+        PASSWORD_ENVELOPE_TAG_BYTES
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_TAG_BYTES" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">63</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_ENVELOPE_TAG_BYTES</span>
+    = <span class="phpdocumentor-signature__default-value">16</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_ENVELOPE_VERSION">
+        PASSWORD_ENVELOPE_VERSION
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_VERSION" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">56</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_ENVELOPE_VERSION</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;sisma-pw1&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS">
+        PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">55</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS</span>
+    = <span class="phpdocumentor-signature__default-value">10000000</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
             </section>
 
         
@@ -417,7 +825,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">53</span>
+    <span class="phpdocumentor-element-found-in__line">65</span>
 
     </aside>
 
@@ -459,7 +867,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">85</span>
+    <span class="phpdocumentor-element-found-in__line">97</span>
 
     </aside>
 
@@ -507,7 +915,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">97</span>
+    <span class="phpdocumentor-element-found-in__line">109</span>
 
     </aside>
 
@@ -561,6 +969,61 @@ CNF</span>
             -public
                                     -static                    "
 >
+    <h4 class="phpdocumentor-element__name" id="method_decryptWithPassword">
+        decryptWithPassword()
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPassword" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">231</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">decryptWithPassword</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$envelope</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$password</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string|false</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$envelope</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$password</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string|false</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
     <h4 class="phpdocumentor-element__name" id="method_decryptWithPrivateKey">
         decryptWithPrivateKey()
         <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPrivateKey" class="headerlink"><i class="fas fa-link"></i></a>
@@ -569,7 +1032,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">188</span>
+    <span class="phpdocumentor-element-found-in__line">200</span>
 
     </aside>
 
@@ -631,7 +1094,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">91</span>
+    <span class="phpdocumentor-element-found-in__line">103</span>
 
     </aside>
 
@@ -685,6 +1148,68 @@ CNF</span>
             -public
                                     -static                    "
 >
+    <h4 class="phpdocumentor-element__name" id="method_encryptWithPassword">
+        encryptWithPassword()
+        <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptWithPassword" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">215</span>
+
+    </aside>
+
+    
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">encryptWithPassword</span><span>(</span><span class="phpdocumentor-signature__argument"><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$plainText</span></span><span class="phpdocumentor-signature__argument"><span>, </span><span class="phpdocumentor-signature__argument__type">string&nbsp;</span><span class="phpdocumentor-signature__argument__name">$password</span></span><span class="phpdocumentor-signature__argument"><span>[</span><span>, </span><span class="phpdocumentor-signature__argument__type">int&nbsp;</span><span class="phpdocumentor-signature__argument__name">$iterations</span><span> = </span><span class="phpdocumentor-signature__argument__default-value"><abbr title="\self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS">self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS</abbr></span><span> ]</span></span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">string</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+        <h5 class="phpdocumentor-argument-list__heading">Parameters</h5>
+    <dl class="phpdocumentor-argument-list">
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$plainText</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$password</span>
+                : <span class="phpdocumentor-argument-list__argument__type">string</span>
+                            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+                    <dt class="phpdocumentor-argument-list__entry">
+                <span class="phpdocumentor-argument-list__argument__name">$iterations</span>
+                : <span class="phpdocumentor-argument-list__argument__type">int</span>
+                 = <span class="phpdocumentor-argument-list__argument__default-value"><abbr title="\self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS">self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS</abbr></span>            </dt>
+            <dd class="phpdocumentor-argument-list__definition">
+                
+            </dd>
+            </dl>
+
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">string</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -public
+                                    -static                    "
+>
     <h4 class="phpdocumentor-element__name" id="method_encryptWithPublicKey">
         encryptWithPublicKey()
         <a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptWithPublicKey" class="headerlink"><i class="fas fa-link"></i></a>
@@ -693,7 +1218,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">176</span>
+    <span class="phpdocumentor-element-found-in__line">188</span>
 
     </aside>
 
@@ -755,7 +1280,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">103</span>
+    <span class="phpdocumentor-element-found-in__line">115</span>
 
     </aside>
 
@@ -803,7 +1328,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">119</span>
+    <span class="phpdocumentor-element-found-in__line">131</span>
 
     </aside>
 
@@ -865,7 +1390,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">127</span>
+    <span class="phpdocumentor-element-found-in__line">139</span>
 
     </aside>
 
@@ -934,7 +1459,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">72</span>
+    <span class="phpdocumentor-element-found-in__line">84</span>
 
     </aside>
 
@@ -989,7 +1514,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">60</span>
+    <span class="phpdocumentor-element-found-in__line">72</span>
 
     </aside>
 
@@ -1044,7 +1569,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">55</span>
+    <span class="phpdocumentor-element-found-in__line">67</span>
 
     </aside>
 
@@ -1082,7 +1607,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">141</span>
+    <span class="phpdocumentor-element-found-in__line">153</span>
 
     </aside>
 
@@ -1158,7 +1683,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">154</span>
+    <span class="phpdocumentor-element-found-in__line">166</span>
 
     </aside>
 
@@ -1220,7 +1745,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">80</span>
+    <span class="phpdocumentor-element-found-in__line">92</span>
 
     </aside>
 
@@ -1275,7 +1800,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">169</span>
+    <span class="phpdocumentor-element-found-in__line">181</span>
 
     </aside>
 
@@ -1330,7 +1855,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">162</span>
+    <span class="phpdocumentor-element-found-in__line">174</span>
 
     </aside>
 
@@ -1399,7 +1924,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">66</span>
+    <span class="phpdocumentor-element-found-in__line">78</span>
 
     </aside>
 
@@ -1461,7 +1986,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">210</span>
+    <span class="phpdocumentor-element-found-in__line">266</span>
 
     </aside>
 
@@ -1516,7 +2041,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">203</span>
+    <span class="phpdocumentor-element-found-in__line">259</span>
 
     </aside>
 
@@ -1578,7 +2103,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">224</span>
+    <span class="phpdocumentor-element-found-in__line">280</span>
 
     </aside>
 
@@ -1616,7 +2141,7 @@ CNF</span>
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Encryptor.php"><a href="files/core-helperclasses-encryptor.html"><abbr title="Core/HelperClasses/Encryptor.php">Encryptor.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">216</span>
+    <span class="phpdocumentor-element-found-in__line">272</span>
 
     </aside>
 
@@ -1672,7 +2197,18 @@ CNF</span>
                             <li class="phpdocumentor-on-this-page-section__title">Constants</li>
                 <li>
                     <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS">PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS">PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS</a></li>
                                                     <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_MINIMAL_OPENSSL_CONFIG">MINIMAL_OPENSSL_CONFIG</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_CIPHER">PASSWORD_ENVELOPE_CIPHER</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES">PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_BYTES">PASSWORD_ENVELOPE_KEY_BYTES</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_DERIVATION">PASSWORD_ENVELOPE_KEY_DERIVATION</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SALT_BYTES">PASSWORD_ENVELOPE_SALT_BYTES</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SEPARATOR">PASSWORD_ENVELOPE_SEPARATOR</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_TAG_BYTES">PASSWORD_ENVELOPE_TAG_BYTES</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_VERSION">PASSWORD_ENVELOPE_VERSION</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS">PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS</a></li>
                                             </ul>
                 </li>
             
@@ -1688,8 +2224,10 @@ CNF</span>
                 <ul class="phpdocumentor-list -clean">
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_createInitializationVector">createInitializationVector()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptString">decryptString()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPassword">decryptWithPassword()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPrivateKey">decryptWithPrivateKey()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptString">encryptString()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptWithPassword">encryptWithPassword()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptWithPublicKey">encryptWithPublicKey()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_generateAsymmetricKeyPair">generateAsymmetricKeyPair()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_generateCertificateSigningRequest">generateCertificateSigningRequest()</a></li>

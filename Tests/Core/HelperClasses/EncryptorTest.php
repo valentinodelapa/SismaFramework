@@ -282,4 +282,84 @@ class EncryptorTest extends TestCase
 
         $this->assertFalse(Encryptor::decryptWithPrivateKey($envelope, $wrongKeyPair['privateKey'], $this->configStub));
     }
+
+    public function testEncryptDecryptWithPasswordUsesDefaultIterations()
+    {
+        $envelope = Encryptor::encryptWithPassword('chiave privata', '123456');
+
+        $this->assertStringStartsWith('sisma-pw1$pbkdf2-sha256$' . Encryptor::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS . '$', $envelope);
+        $this->assertEquals('chiave privata', Encryptor::decryptWithPassword($envelope, '123456'));
+    }
+
+    public function testEncryptDecryptWithPasswordPreservesBinaryAndUnicodeData()
+    {
+        $plainText = "-----BEGIN PRIVATE KEY-----\nÀèìòù €\0\xff" . random_bytes(64);
+
+        $envelope = Encryptor::encryptWithPassword($plainText, 'pïn sègreto', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS);
+
+        $this->assertSame($plainText, Encryptor::decryptWithPassword($envelope, 'pïn sègreto'));
+    }
+
+    public function testEncryptWithPasswordProducesDifferentEnvelopesForSameInput()
+    {
+        $firstEnvelope = Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS);
+        $secondEnvelope = Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS);
+
+        $this->assertNotEquals($firstEnvelope, $secondEnvelope);
+        $this->assertStringNotContainsString('dati', $firstEnvelope);
+    }
+
+    public function testDecryptWithPasswordFailsWithWrongPassword()
+    {
+        $envelope = Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS);
+
+        $this->assertFalse(Encryptor::decryptWithPassword($envelope, '654321'));
+        $this->assertFalse(Encryptor::decryptWithPassword($envelope, ''));
+    }
+
+    public function testDecryptWithPasswordFailsWithTamperedCipherText()
+    {
+        $parts = explode('$', Encryptor::encryptWithPassword('dati riservati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS));
+        $cipherText = base64_decode($parts[6]);
+        $cipherText[0] = chr(ord($cipherText[0]) ^ 1);
+        $parts[6] = base64_encode($cipherText);
+
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', $parts), '123456'));
+    }
+
+    public function testDecryptWithPasswordFailsWithTamperedHeader()
+    {
+        $parts = explode('$', Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS));
+        $parts[2] = (string) (Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS + 1);
+
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', $parts), '123456'));
+    }
+
+    public function testDecryptWithPasswordFailsWithMalformedOrUnsupportedEnvelope()
+    {
+        $parts = explode('$', Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS));
+
+        $this->assertFalse(Encryptor::decryptWithPassword('', '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword('non è un involucro', '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_slice($parts, 0, 6)), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [0 => 'sisma-pw9'])), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [1 => 'pbkdf2-md5'])), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [2 => 'molte'])), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [2 => '1000'])), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [2 => '999999999'])), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [5 => '!!!'])), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [4 => base64_encode('corto')])), '123456'));
+    }
+
+    public function testEncryptWithPasswordRejectsEmptyPassword()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        Encryptor::encryptWithPassword('dati', '');
+    }
+
+    public function testEncryptWithPasswordRejectsTooFewIterations()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS - 1);
+    }
 }

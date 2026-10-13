@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.8.0] - 2026-10-13 - Cifratura con Password in Encryptor
+
+Minor release che aggiunge a `Encryptor` la cifratura simmetrica con una chiave ricavata da una password, indipendente dalla passphrase dell'applicazione. Serve quando un dato conservato sul server deve restare inutilizzabile senza un segreto che conosce solo il suo titolare, per esempio una chiave privata di firma custodita sul server ma sbloccabile solo con il PIN dell'utente.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Encryptor` — `encryptWithPassword()` e `decryptWithPassword()`
+
+`encryptString()` usa `ENCRYPTION_PASSPHRASE`: chiunque controlli il server può decifrare. I due nuovi metodi ricavano invece la chiave dalla password passata dal chiamante:
+
+- **`encryptWithPassword(string $plainText, string $password, int $iterations = self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS): string`** — ricava una chiave di 256 bit con PBKDF2-HMAC-SHA256 (sale casuale di 16 byte, 600.000 iterazioni per default) e cifra con AES-256-GCM (IV casuale di 12 byte, tag di 16 byte). Solleva `InvalidArgumentException` se la password è vuota o le iterazioni sono fuori dall'intervallo ammesso (da 100.000 a 10.000.000).
+- **`decryptWithPassword(string $envelope, string $password): string|false`** — restituisce `false`, senza eccezioni, se la password è errata o l'involucro è malformato, di una versione o di un algoritmo non supportati, con iterazioni fuori intervallo o alterato: stesso contratto di `decryptString()`.
+
+Il risultato è un involucro autodescrittivo, `sisma-pw1$pbkdf2-sha256$<iterazioni>$<sale>$<iv>$<tag>$<dati>`, con i campi binari in base64: contiene tutto il necessario per decifrare tranne la password, quindi chi lo usa non deve conservare a parte sale e IV. L'intestazione (versione, algoritmo di derivazione, iterazioni, sale) è passata ad AES-GCM come dato autenticato aggiuntivo: alterare i parametri rende l'involucro indecifrabile invece di indebolirlo. Il limite massimo delle iterazioni impedisce che un involucro manipolato imponga una derivazione arbitrariamente costosa.
+
+I parametri non sono letti da `Config` ma scritti nell'involucro, per due ragioni: un progetto già installato non riceve le nuove costanti di `Config/config.php` (vedi la 12.3.0), e con le costanti la prima chiamata solleverebbe `Error: Undefined constant`; inoltre un involucro deve restare decifrabile anche dopo che il costo di default è stato alzato. Il terzo argomento di `encryptWithPassword()` permette di scegliere un costo diverso per i nuovi involucri. Le costanti pubbliche `PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS` e `PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS` espongono i valori.
+
+PBKDF2 e AES-GCM usano solo le estensioni `hash` e `openssl`, già richieste dal framework: nessuna nuova dipendenza (Argon2id avrebbe richiesto `sodium`).
+
+**File modificati**:
+- **`Core/HelperClasses/Encryptor.php`**: aggiunti `encryptWithPassword()`, `decryptWithPassword()` e le costanti dell'involucro
+- **`Tests/Core/HelperClasses/EncryptorTest.php`**: aggiunti 9 test (round-trip con il costo di default, dati binari e Unicode, involucri diversi a parità di input, password errata o vuota, dati alterati, intestazione alterata, involucri malformati o non supportati, rifiuto di password vuota e di iterazioni insufficienti)
+- **`docs/security.md`**: nuova sezione "Cifratura con Password"; **`docs/api-reference.md`**: aggiunti i due metodi; **`docs/configuration-reference.md`**: nota sull'assenza di costanti di configurazione
+- **`docs-phpdoc/`**: rigenerata la pagina di `Encryptor` e l'indice di ricerca
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: solo metodi e costanti additive; nessuna firma esistente è cambiata.
+- **Nessuna azione richiesta**: nessuna nuova costante di configurazione, i metodi funzionano anche nei progetti già installati.
+
+---
+
 ## [12.7.0] - 2026-10-06 - Query sulle Colonne JSON
 
 Minor release che estende al query builder il supporto alle colonne JSON introdotto con la 12.6.0: condizioni, selezione e ordinamento sui valori contenuti nei documenti, con conversione del tipo dei valori gestita nell'SQL.

@@ -376,6 +376,14 @@ Cifratura a busta (envelope encryption): la chiave pubblica cifra una chiave sim
 
 **Configurazione**: `ASYMMETRIC_KEY_TYPE`, `ASYMMETRIC_KEY_BITS`, `ASYMMETRIC_DIGEST_ALGORITHM`, `CERTIFICATE_VALIDITY_DAYS`, `OPENSSL_CONFIG_PATH` — dettagli in [Configuration Reference](configuration-reference.md#crittografia).
 
+#### Cifratura con Password (v12.8.0+)
+
+```php
+public static function encryptWithPassword(string $plainText, string $password, int $iterations = self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS): string
+public static function decryptWithPassword(string $envelope, string $password): string|false
+```
+Cifra con una chiave ricavata da una password (PBKDF2-HMAC-SHA256) usando AES-256-GCM, indipendentemente da `ENCRYPTION_PASSPHRASE`. Ritorna un involucro autodescrittivo (`sisma-pw1$pbkdf2-sha256$<iterazioni>$<sale>$<iv>$<tag>$<dati>`) che contiene sale, IV e parametri. `encryptWithPassword()` solleva `InvalidArgumentException` se la password è vuota o le iterazioni sono fuori dall'intervallo ammesso (minimo `PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS`, 100.000); `decryptWithPassword()` ritorna `false` se la password è errata o l'involucro è malformato o alterato. Nessuna costante di configurazione richiesta. Esempi in [Sicurezza](security.md#cifratura-con-password-v1280).
+
 ---
 
 ## Utilizzo degli Helper

@@ -491,6 +491,28 @@ define(__NAMESPACE__ . '\OPENSSL_CONFIG_PATH', getenv('OPENSSL_CONFIG_PATH') ?: 
 
 > **Nota per progetti già installati**: `Config/configFramework.php` viene copiato da `Config/config.php` una sola volta, in fase di installazione, e non si aggiorna automaticamente con gli upgrade del framework. Se il tuo progetto esisteva prima dell'introduzione di questa funzionalità, aggiungi manualmente le costanti sopra al tuo `configFramework.php` prima di usare questi metodi — altrimenti la prima chiamata solleva `Error: Undefined constant`.
 
+#### Cifratura con Password (v12.8.0+)
+
+`encryptString()` cifra con la passphrase dell'applicazione: chi controlla il server può decifrare tutto. Quando un dato deve restare inaccessibile senza un segreto che conosce solo il suo titolare (una chiave privata custodita sul server ma utilizzabile solo con il PIN dell'utente, un documento protetto da password), si usa la cifratura con password:
+
+```php
+// Cifratura: la chiave AES viene ricavata dalla password
+$envelope = Encryptor::encryptWithPassword($privateKeyPem, $pin);
+
+// Decifratura: false se la password è errata o l'involucro è stato alterato
+$privateKeyPem = Encryptor::decryptWithPassword($envelope, $pin);
+if ($privateKeyPem === false) {
+    // PIN errato
+}
+```
+
+- **Algoritmi**: la chiave è ricavata dalla password con PBKDF2-HMAC-SHA256 (600.000 iterazioni per default, minimo 100.000) e un sale casuale di 16 byte; i dati sono cifrati con AES-256-GCM, che ne garantisce anche l'integrità.
+- **Involucro autodescrittivo**: il risultato è una stringa `sisma-pw1$pbkdf2-sha256$<iterazioni>$<sale>$<iv>$<tag>$<dati>` (campi binari in base64) che contiene tutto il necessario per decifrare, password esclusa: non serve conservare a parte sale o IV. L'intestazione (versione, algoritmo, iterazioni, sale) è autenticata insieme ai dati, quindi un involucro con i parametri alterati non si decifra.
+- **Nessuna configurazione**: i parametri sono scritti nell'involucro, non letti da `Config`; il terzo argomento di `encryptWithPassword()` permette di aumentare le iterazioni, e gli involucri già creati restano decifrabili.
+- **Errori**: `encryptWithPassword()` solleva `InvalidArgumentException` per una password vuota o un numero di iterazioni fuori dall'intervallo ammesso; `decryptWithPassword()` non solleva eccezioni e restituisce `false`, come `decryptString()`.
+
+La robustezza dipende dalla password: un PIN numerico corto resiste a un attacco offline solo per il costo della derivazione. Per i segreti più delicati, limitare anche i tentativi lato applicativo e preferire password lunghe.
+
 ### Interfacce di Autenticazione
 
 #### `AuthenticableInterface`

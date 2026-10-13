@@ -3056,6 +3056,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPrivateKey"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AencryptWithPassword\u0028\u0029",
+            "name": "encryptWithPassword",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptWithPassword"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AdecryptWithPassword\u0028\u0029",
+            "name": "decryptWithPassword",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPassword"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AcreateCertificateSigningRequestResource\u0028\u0029",
             "name": "createCertificateSigningRequestResource",
             "summary": "",
@@ -3080,6 +3090,61 @@ Search.appendIndex(
             "name": "MINIMAL_OPENSSL_CONFIG",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_MINIMAL_OPENSSL_CONFIG"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS",
+            "name": "PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS",
+            "name": "PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS",
+            "name": "PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_VERSION",
+            "name": "PASSWORD_ENVELOPE_VERSION",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_VERSION"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_KEY_DERIVATION",
+            "name": "PASSWORD_ENVELOPE_KEY_DERIVATION",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_DERIVATION"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_SEPARATOR",
+            "name": "PASSWORD_ENVELOPE_SEPARATOR",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SEPARATOR"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_CIPHER",
+            "name": "PASSWORD_ENVELOPE_CIPHER",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_CIPHER"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_KEY_BYTES",
+            "name": "PASSWORD_ENVELOPE_KEY_BYTES",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_BYTES"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_SALT_BYTES",
+            "name": "PASSWORD_ENVELOPE_SALT_BYTES",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SALT_BYTES"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES",
+            "name": "PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_TAG_BYTES",
+            "name": "PASSWORD_ENVELOPE_TAG_BYTES",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_TAG_BYTES"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003A\u0024minimalOpensslConfigPath",
             "name": "minimalOpensslConfigPath",
