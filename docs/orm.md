@@ -90,6 +90,31 @@ Limitazioni:
 - una proprietà `SismaJson` cifrata con `addEncryptedProperty()` viene salvata come stringa cifrata, che non è JSON valido: la colonna deve essere di tipo testuale e non `JSON`;
 - le query sul contenuto del documento sono supportate dalla 12.7.0: vedi [Query su Colonne JSON](advanced-orm.md#query-su-colonne-json).
 
+### Proprietà Cifrate
+
+Le proprietà dichiarate in `setEncryptedProperties()` con `addEncryptedProperty()` vengono cifrate con `Encryptor::encryptString()` al salvataggio e decifrate alla lettura, in modo trasparente per il codice che usa l'entità.
+
+```php
+class Certificate extends BaseEntity
+{
+    protected int $id;
+    protected string $certificate;
+    protected ?string $privateKey = null;
+    protected ?string $initializationVector = null;
+
+    protected function setEncryptedProperties(): void
+    {
+        $this->addEncryptedProperty('privateKey');
+    }
+
+    protected function setPropertyDefaultValue(): void { }
+}
+```
+
+- **Vettore d'inizializzazione obbligatorio**: l'entità deve dichiarare la proprietà `initializationVector` (e la tabella la colonna `initialization_vector`, binaria), in cui l'ORM conserva l'IV generato al primo salvataggio e condiviso da tutte le proprietà cifrate dell'entità. **Senza questa proprietà la cifratura non avviene**: le proprietà dichiarate cifrate vengono salvate in chiaro, senza errori né avvisi.
+- **Passphrase**: la cifratura usa `ENCRYPTION_PASSPHRASE`; con la passphrase vuota le proprietà vengono salvate in chiaro.
+- **Valori nulli** (v12.8.1+): una proprietà cifrata che vale `null` viene salvata come `NULL` e letta come `null`, senza cifratura né decifratura. Prima della 12.8.1 il salvataggio e la lettura di un valore nullo sollevavano un `TypeError`.
+
 ### Lazy Loading (Caricamento Pigro)
 
 Una delle caratteristiche più potenti dell'ORM è il **Lazy Loading**. Quando carichi un'entità, le sue relazioni (es. `$post->author`) non vengono caricate immediatamente. L'ORM carica l'oggetto `User` correlato solo nel momento esatto in cui provi ad accedervi (es. `echo $post->author->getUsername();`). Questo ottimizza drasticamente le performance, evitando query inutili.

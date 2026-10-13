@@ -207,7 +207,7 @@ class DataMapper
             $this->save($currentValue);
         }
         $parsedValue = Parser::unparseValue($currentValue);
-        if ($entity->isEncryptedProperty($reflectionProperty->getName())) {
+        if ($entity->isEncryptedProperty($reflectionProperty->getName()) && ($parsedValue !== null)) {
             $initializationVectorPropertyName = $entity->getInitializationVectorPropertyName();
             if (empty($entity->$initializationVectorPropertyName)) {
                 $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInitializationVector();

@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.8.1] - 2026-10-13 - Proprietà Cifrate con Valore Nullo
+
+Patch che permette di salvare e leggere un'entità con una proprietà cifrata facoltativa che vale `null`: fino alla 12.8.0 entrambe le operazioni sollevavano un `TypeError`.
+
+### 🐛 Bug Fix
+
+#### `Orm/HelperClasses/DataMapper::parseSingleProperty()` — cifratura di un valore nullo
+
+Al salvataggio, una proprietà dichiarata con `addEncryptedProperty()` veniva passata a `Encryptor::encryptString()` qualunque fosse il suo valore. Per una proprietà nullable che vale `null` (per esempio una chiave privata custodita altrove, quindi assente) la chiamata falliva con `TypeError: Encryptor::encryptString(): Argument #1 ($plainText) must be of type string, null given`, e l'entità non poteva essere salvata. Un valore `null` viene ora scritto come `NULL` senza cifratura; il vettore d'inizializzazione viene generato solo quando c'è effettivamente un valore da cifrare, e resta quello già presente se l'entità ne ha uno.
+
+#### `Orm/BaseClasses/BaseResultSet` — decifratura di un valore nullo
+
+Alla lettura, `convertToBaseEntity()` e `hydrateRelatedEntity()` (entità caricate con join) chiamavano `Encryptor::decryptString()` su ogni proprietà cifrata quando la riga aveva un vettore d'inizializzazione, anche se il valore della colonna era `NULL`: stesso `TypeError`, sollevato leggendo un'entità che aveva un'altra proprietà cifrata valorizzata. Un valore `NULL` viene ora restituito come `null` senza decifratura.
+
+**File modificati**:
+- **`Orm/HelperClasses/DataMapper.php`**: `parseSingleProperty()` cifra solo i valori diversi da `null`
+- **`Orm/BaseClasses/BaseResultSet.php`**: `convertToBaseEntity()` e `hydrateRelatedEntity()` decifrano solo i valori diversi da `null`
+- **`TestsApplication/Entities/EntityWithNullableEncryptedProperty.php`**: nuova entità di test con una proprietà cifrata facoltativa e una obbligatoria
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: aggiunto `testSaveEntityWithNullEncryptedPropertyKeepsNull()`, che salva l'entità con la proprietà facoltativa nulla (scritta come `NULL`, vettore d'inizializzazione generato per l'altra) e poi la aggiorna valorizzandola (cifrata con lo stesso vettore); fallisce contro l'implementazione precedente
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: aggiunto `testFetchWithEntityWithNullEncryptedProperty()`, che legge una riga con la colonna cifrata facoltativa a `NULL` e l'altra cifrata; fallisce con `TypeError` contro l'implementazione precedente
+- **`docs/orm.md`**: nuova sezione "Proprietà Cifrate" (dichiarazione, vettore d'inizializzazione obbligatorio, passphrase, valori nulli)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma è cambiata.
+- **Cambiamento di comportamento osservabile**: il salvataggio e la lettura di una proprietà cifrata nulla, che prima sollevavano un `TypeError`, ora riescono. Le proprietà cifrate valorizzate sono trattate esattamente come prima.
+
+---
+
 ## [12.8.0] - 2026-10-13 - Cifratura con Password in Encryptor
 
 Minor release che aggiunge a `Encryptor` la cifratura simmetrica con una chiave ricavata da una password, indipendente dalla passphrase dell'applicazione. Serve quando un dato conservato sul server deve restare inutilizzabile senza un segreto che conosce solo il suo titolare, per esempio una chiave privata di firma custodita sul server ma sbloccabile solo con il PIN dell'utente.
