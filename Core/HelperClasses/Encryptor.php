@@ -50,6 +50,18 @@ class Encryptor
         keyUsage = critical,digitalSignature,keyEncipherment,dataEncipherment
         CNF;
 
+    public const PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS = 600000;
+    public const PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS = 100000;
+    private const PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS = 10000000;
+    private const PASSWORD_ENVELOPE_VERSION = 'sisma-pw1';
+    private const PASSWORD_ENVELOPE_KEY_DERIVATION = 'pbkdf2-sha256';
+    private const PASSWORD_ENVELOPE_SEPARATOR = '$';
+    private const PASSWORD_ENVELOPE_CIPHER = 'aes-256-gcm';
+    private const PASSWORD_ENVELOPE_KEY_BYTES = 32;
+    private const PASSWORD_ENVELOPE_SALT_BYTES = 16;
+    private const PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES = 12;
+    private const PASSWORD_ENVELOPE_TAG_BYTES = 16;
+
     private static ?string $minimalOpensslConfigPath = null;
 
     public static function getSimpleRandomToken(): string
@@ -198,6 +210,50 @@ class Encryptor
             base64_decode($encryptedEnvelope['initializationVector'])
         );
         return $success ? $decryptedData : false;
+    }
+
+    public static function encryptWithPassword(string $plainText, string $password, int $iterations = self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS): string
+    {
+        if ($password === '') {
+            throw new \InvalidArgumentException('The password must not be empty.');
+        }
+        if (($iterations < self::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS) || ($iterations > self::PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS)) {
+            throw new \InvalidArgumentException('The key derivation iterations must be between ' . self::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS . ' and ' . self::PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS . '.');
+        }
+        $salt = random_bytes(self::PASSWORD_ENVELOPE_SALT_BYTES);
+        $initializationVector = random_bytes(self::PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES);
+        $header = implode(self::PASSWORD_ENVELOPE_SEPARATOR, [self::PASSWORD_ENVELOPE_VERSION, self::PASSWORD_ENVELOPE_KEY_DERIVATION, $iterations, base64_encode($salt)]);
+        $key = hash_pbkdf2('sha256', $password, $salt, $iterations, self::PASSWORD_ENVELOPE_KEY_BYTES, true);
+        $cipherText = openssl_encrypt($plainText, self::PASSWORD_ENVELOPE_CIPHER, $key, OPENSSL_RAW_DATA, $initializationVector, $tag, $header, self::PASSWORD_ENVELOPE_TAG_BYTES);
+        return implode(self::PASSWORD_ENVELOPE_SEPARATOR, [$header, base64_encode($initializationVector), base64_encode($tag), base64_encode($cipherText)]);
+    }
+
+    public static function decryptWithPassword(string $envelope, string $password): string|false
+    {
+        $parts = explode(self::PASSWORD_ENVELOPE_SEPARATOR, $envelope);
+        if ((count($parts) !== 7) || ($password === '')) {
+            return false;
+        }
+        [$version, $keyDerivation, $iterations, $encodedSalt, $encodedInitializationVector, $encodedTag, $encodedCipherText] = $parts;
+        if (($version !== self::PASSWORD_ENVELOPE_VERSION) || ($keyDerivation !== self::PASSWORD_ENVELOPE_KEY_DERIVATION) || (ctype_digit($iterations) === false)) {
+            return false;
+        }
+        if (((int) $iterations < self::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS) || ((int) $iterations > self::PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS)) {
+            return false;
+        }
+        $salt = base64_decode($encodedSalt, true);
+        $initializationVector = base64_decode($encodedInitializationVector, true);
+        $tag = base64_decode($encodedTag, true);
+        $cipherText = base64_decode($encodedCipherText, true);
+        if (($salt === false) || ($initializationVector === false) || ($tag === false) || ($cipherText === false)) {
+            return false;
+        }
+        if ((strlen($initializationVector) !== self::PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES) || (strlen($tag) !== self::PASSWORD_ENVELOPE_TAG_BYTES)) {
+            return false;
+        }
+        $header = implode(self::PASSWORD_ENVELOPE_SEPARATOR, [$version, $keyDerivation, $iterations, $encodedSalt]);
+        $key = hash_pbkdf2('sha256', $password, $salt, (int) $iterations, self::PASSWORD_ENVELOPE_KEY_BYTES, true);
+        return openssl_decrypt($cipherText, self::PASSWORD_ENVELOPE_CIPHER, $key, OPENSSL_RAW_DATA, $initializationVector, $tag, $header);
     }
 
     private static function createCertificateSigningRequestResource(string $privateKeyPem, array $distinguishedName, Config $config): \OpenSSLCertificateSigningRequest

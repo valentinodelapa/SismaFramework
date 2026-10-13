@@ -318,6 +318,9 @@ define(__NAMESPACE__ . '\OPENSSL_CONFIG_PATH', getenv('OPENSSL_CONFIG_PATH') ?: 
 - **Default**: `''` (nessun override; letta da `getenv('OPENSSL_CONFIG_PATH')`)
 - **Descrizione**: percorso esplicito di un `openssl.cnf`, opzionale. Se non valorizzata, `Encryptor` genera e usa autonomamente una configurazione OpenSSL minimale autosufficiente (funziona anche su ambienti, tipicamente Windows, privi di un `openssl.cnf` di sistema risolvibile). Impostarla solo per esigenze avanzate (es. un provider/engine OpenSSL specifico) — in tal caso il file indicato deve includere le sezioni `[v3_ca]`/`[v3_leaf]` se si vuole che `generateSelfSignedCertificate()`/`signCertificateSigningRequest()` applichino correttamente l'estensione `basicConstraints`
 
+#### Cifratura con password (v12.8.0+)
+`Encryptor::encryptWithPassword()`/`decryptWithPassword()` non usano nessuna costante di configurazione, nemmeno `ENCRYPTION_PASSPHRASE`/`ENCRYPTION_ALGORITHM`: la chiave è ricavata dalla password del chiamante e i parametri (algoritmo, iterazioni, sale) sono scritti nell'involucro cifrato. Il costo della derivazione si sceglie con il terzo argomento di `encryptWithPassword()` (default `Encryptor::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`). Vedi [Sicurezza](security.md#cifratura-con-password-v1280).
+
 #### Configurazione Sicura
 
 **Esempio Produzione**:
