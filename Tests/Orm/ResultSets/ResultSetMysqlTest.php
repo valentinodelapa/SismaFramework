@@ -33,6 +33,7 @@ use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
+use SismaFramework\TestsApplication\Entities\EntityWithNullableEncryptedProperty;
 
 /**
  * @author Valentino de Lapa
@@ -180,6 +181,29 @@ class ResultSetMysqlTest extends TestCase
         $this->assertFalse($resultSetMysql->valid());
         $this->assertEquals(1, $resultSetMysql->key());
         $this->assertNull($resultSetMysql->fetch());
+    }
+
+    public function testFetchWithEntityWithNullEncryptedProperty()
+    {
+        $PDOStatementMock = $this->createMock(\PDOStatement::class);
+        $PDOStatementMock->method('rowCount')
+                ->willReturn(1);
+        $propertyValue = 'test-value';
+        $initializationVector = Encryptor::createInitializationVector($this->configStub);
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->nullable_encrypted_property = null;
+        $result->encrypted_property = Encryptor::encryptString($propertyValue, $initializationVector, $this->configStub);
+        $result->initialization_vector = $initializationVector;
+        $PDOStatementMock->expects($this->once())
+                ->method('fetch')
+                ->willReturn($result);
+        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql->setReturnType(EntityWithNullableEncryptedProperty::class);
+        $entityWithNullableEncryptedProperty = $resultSetMysql->fetch();
+        $this->assertInstanceOf(EntityWithNullableEncryptedProperty::class, $entityWithNullableEncryptedProperty);
+        $this->assertNull($entityWithNullableEncryptedProperty->nullableEncryptedProperty);
+        $this->assertEquals($propertyValue, $entityWithNullableEncryptedProperty->encryptedProperty);
     }
 
     public function testFetchWithMultipleBaseEntity()

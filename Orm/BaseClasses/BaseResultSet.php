@@ -230,7 +230,7 @@ abstract class BaseResultSet implements \Iterator
                 $reflectionType = $reflectionProperty->getType();
 
                 $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
-                if ($entity->isEncryptedProperty($property) && isset($data->$initializationVectorColumnName) && ($data->$initializationVectorColumnName !== null)) {
+                if ($entity->isEncryptedProperty($property) && ($value !== null) && isset($data->$initializationVectorColumnName) && ($data->$initializationVectorColumnName !== null)) {
                     $value = Encryptor::decryptString($value, $data->$initializationVectorColumnName) ?: $value;
                 }
 
@@ -272,7 +272,7 @@ abstract class BaseResultSet implements \Iterator
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
                 $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
-                if ($entity->isEncryptedProperty($property) && ($standardClass->$initializationVectorColumnName !== null)) {
+                if ($entity->isEncryptedProperty($property) && ($value !== null) && ($standardClass->$initializationVectorColumnName !== null)) {
                     $value = Encryptor::decryptString($value, $standardClass->$initializationVectorColumnName) ?: $value;
                 }
                 $entity->$property = Parser::parseValue($reflectionType, $value, false);
