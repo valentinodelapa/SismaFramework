@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.8.2] - 2026-10-13 - Sessione: Richieste Concorrenti, Cookie su Porte Non Standard, Token Anti-Dirottamento
+
+Patch che corregge tre difetti di `Session`: la rotazione dell'ID a ogni richiesta disconnetteva l'utente al caricamento di una normale pagina, il cookie di sessione veniva scartato dai browser sulle porte non standard, e il token anti-dirottamento veniva riscritto a ogni richiesta, rendendo `isValidSession()` sempre vero.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Session::start()` — sessione persa con richieste concorrenti
+
+Dalla patch che ha introdotto `session_regenerate_id(true)`, ogni richiesta ruotava l'ID cancellando subito la sessione precedente. Il compromesso era documentato per i casi di tab multipli e chiamate `fetch` in parallelo, ma riguarda anche il caso più comune: quando fogli di stile e script passano dal front controller, il browser li richiede in parallelo con lo stesso cookie della pagina; la prima richiesta servita ruota l'ID e cancella la sessione, le altre ricevono una sessione vuota e il cookie che il browser conserva è quello dell'ultima risposta arrivata. L'utente risultava disconnesso già al caricamento di una pagina con un foglio di stile e uno script.
+
+La rotazione a ogni richiesta resta, ma con un periodo di grazia, secondo lo schema indicato dal manuale di PHP per `session_regenerate_id()` e senza un session handler dedicato: `rotate()` crea il nuovo ID con `session_regenerate_id(false)`, che ne eredita i dati, e marca la vecchia sessione con l'istante della rotazione e il nuovo ID (`Session::ROTATED_AT_KEY`, `Session::NEXT_SESSION_ID_KEY`). Una richiesta che si presenta con un ID già ruotato da meno di `Session::ROTATION_GRACE_SECONDS` (30 secondi) viene agganciata alla sessione corrente, seguendo anche più rotazioni consecutive (`followRotation()`), e non ruota di nuovo; oltre il periodo di grazia riceve una sessione vuota, come prima. Entrambe le sessioni esistono quando vengono riaperte, quindi la rotazione funziona anche con `session.use_strict_mode` attivo.
+
+#### `Core/HelperClasses/Session::start()` — cookie scartato sulle porte non standard
+
+Il parametro `domain` del cookie valeva `HTTP_HOST`, che su una porta diversa da 80 e 443 contiene anche la porta (`localhost:8080`): un attributo `Domain` con la porta non è valido e i browser scartavano il cookie, per cui il login non funzionava in sviluppo né in qualunque installazione su porta non standard. Anche senza porta, un `Domain` esplicito estende il cookie a tutti i sottodomini. `domain` non viene più impostato: il cookie resta legato all'host esatto che l'ha emesso.
+
+#### `Core/HelperClasses/Session::start()` — token anti-dirottamento riscritto a ogni richiesta
+
+`start()` registrava a ogni richiesta l'impronta di `User-Agent` e indirizzo IP del client corrente, e `isValidSession()` la confrontava con l'impronta della stessa richiesta: il confronto era sempre vero e non poteva rilevare una sessione usata da un altro client. Il token viene ora registrato solo alla creazione della sessione.
+
+**File modificati**:
+- **`Core/HelperClasses/Session.php`**: `start()` non imposta più `domain`, ruota con periodo di grazia e registra il token solo se assente; aggiunti i metodi privati `followRotation()` e `rotate()` e le costanti pubbliche `ROTATION_GRACE_SECONDS`, `ROTATED_AT_KEY` e `NEXT_SESSION_ID_KEY`
+- **`Tests/Core/HelperClasses/SessionTest.php`**: `testSessionRegenerateIdInvalidatesPreviousId()` sostituito da `testSessionRotationKeepsDataAlongLegitimateChain()`, `testStaleSessionIdWithinGracePeriodFollowsCurrentSession()` e `testStaleSessionIdAfterGracePeriodGetsEmptySession()`; aggiunti `testSessionCookieIsBoundToExactHost()` e `testSessionTokenIsBoundToFirstRequest()`. I test sul periodo di grazia, sul cookie e sul token falliscono contro l'implementazione precedente
+- **`docs/security.md`**: aggiornata la sezione "Cookie di Sessione" e aggiunta la sezione "Rotazione dell'ID di Sessione"
+- **`docs-phpdoc/`**: rigenerata la pagina di `Session` (nuove costanti pubbliche) e l'indice di ricerca
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma pubblica è cambiata; sono state aggiunte solo costanti pubbliche.
+- **Cambiamento di comportamento osservabile — rotazione**: una richiesta concorrente con un cookie appena superato ritrova la sessione corrente invece di riceverne una vuota; un ID ruotato resta utilizzabile per al massimo 30 secondi, invece di diventare subito inutilizzabile.
+- **Cambiamento di comportamento osservabile — cookie**: il cookie di sessione non ha più l'attributo `Domain` e non viene inviato ai sottodomini dell'host che l'ha emesso. Un'applicazione che condivideva la sessione tra sottodomini deve impostare `domain` con un override di `Session`.
+- **Cambiamento di comportamento osservabile — token**: `isValidSession()` restituisce `false` quando `User-Agent` o indirizzo IP del client sono cambiati dall'apertura della sessione (per esempio un dispositivo mobile che cambia rete). Il framework non chiama `isValidSession()`: il comportamento cambia solo per le applicazioni che la usano.
+
+---
+
 ## [12.8.1] - 2026-10-13 - Proprietà Cifrate con Valore Nullo
 
 Patch che permette di salvare e leggere un'entità con una proprietà cifrata facoltativa che vale `null`: fino alla 12.8.0 entrambe le operazioni sollevavano un `TypeError`.

@@ -3566,6 +3566,16 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_start"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AfollowRotation\u0028\u0029",
+            "name": "followRotation",
+            "summary": "Se\u0020l\u0027ID\u0020presentato\u0020\u00E8\u0020gi\u00E0\u0020stato\u0020ruotato\u0020da\u0020una\u0020richiesta\u0020precedente,\u0020aggancia\u0020la\u0020richiesta\u0020alla\u0020sessione\u0020che\u0020lo\nha\u0020sostituito\u0020\u0028seguendo\u0020eventuali\u0020rotazioni\u0020successive\u0029\u0020purch\u00E9\u0020la\u0020rotazione\u0020sia\u0020avvenuta\u0020entro\nROTATION_GRACE_SECONDS\u003B\u0020altrimenti\u0020la\u0020sessione\u0020\u00E8\u0020scaduta\u0020e\u0020viene\u0020sostituita\u0020da\u0020una\u0020vuota.\u0020Restituisce\u0020true\u0020se\u0020la\nrichiesta\u0020ha\u0020seguito\u0020una\u0020rotazione\u003A\u0020in\u0020quel\u0020caso\u0020non\u0020si\u0020ruota\u0020di\u0020nuovo.",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_followRotation"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003Arotate\u0028\u0029",
+            "name": "rotate",
+            "summary": "Sostituisce\u0020l\u0027ID\u0020di\u0020sessione\u0020con\u0020uno\u0020nuovo\u0020che\u0020ne\u0020eredita\u0020i\u0020dati.\u0020La\u0020vecchia\u0020sessione\u0020non\u0020viene\u0020cancellata\nsubito\u003A\u0020resta\u0020marcata\u0020con\u0020l\u0027istante\u0020della\u0020rotazione\u0020e\u0020il\u0020nuovo\u0020ID,\u0020cos\u00EC\u0020le\u0020richieste\u0020concorrenti\u0020partite\u0020con\u0020il\nvecchio\u0020cookie\u0020\u0028fogli\u0020di\u0020stile,\u0020script,\u0020chiamate\u0020fetch\u0020della\u0020stessa\u0020pagina\u0029\u0020ritrovano\u0020la\u0020sessione\u0020corrente\u0020invece\ndi\u0020riceverne\u0020una\u0020vuota,\u0020e\u0020dopo\u0020il\u0020periodo\u0020di\u0020grazia\u0020il\u0020vecchio\u0020ID\u0020non\u0020\u00E8\u0020pi\u00F9\u0020utilizzabile.\u0020Entrambe\u0020le\u0020sessioni\nesistono\u0020quando\u0020vengono\u0020riaperte,\u0020quindi\u0020la\u0020rotazione\u0020funziona\u0020anche\u0020con\u0020session.use_strict_mode\u0020attivo.",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_rotate"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003A__set\u0028\u0029",
             "name": "__set",
             "summary": "",
@@ -3645,6 +3655,26 @@ Search.appendIndex(
             "name": "end",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_end"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AROTATION_GRACE_SECONDS",
+            "name": "ROTATION_GRACE_SECONDS",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATION_GRACE_SECONDS"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AROTATED_AT_KEY",
+            "name": "ROTATED_AT_KEY",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATED_AT_KEY"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003ANEXT_SESSION_ID_KEY",
+            "name": "NEXT_SESSION_ID_KEY",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#constant_NEXT_SESSION_ID_KEY"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AMAXIMUM_ROTATION_HOPS",
+            "name": "MAXIMUM_ROTATION_HOPS",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#constant_MAXIMUM_ROTATION_HOPS"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003A\u0024sessionProperties",
             "name": "sessionProperties",
