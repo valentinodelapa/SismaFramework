@@ -54,6 +54,7 @@ use SismaFramework\TestsApplication\Entities\DependentEntityOne;
 use SismaFramework\TestsApplication\Entities\DependentEntityTwo;
 use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
 use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyTwo;
+use SismaFramework\TestsApplication\Entities\EntityWithNullableEncryptedProperty;
 use SismaFramework\TestsApplication\Entities\EntityWithTwoCollection;
 use SismaFramework\TestsApplication\Entities\SimpleEntity;
 use SismaFramework\TestsApplication\Entities\SubdependentEntity;
@@ -803,6 +804,71 @@ class DataMapperTest extends TestCase
         $dataMapper->save($entityWithEncryptedPropertyOne, $this->queryMock);
         $entityWithEncryptedPropertyOne->encryptedPropertyTwo = $propertyValueThree;
         $dataMapper->save($entityWithEncryptedPropertyOne, $this->queryMock);
+    }
+
+    public function testSaveEntityWithNullEncryptedPropertyKeepsNull()
+    {
+        $this->initializeMock();
+        $initializationVector = null;
+        $encryptedValue = 'test-value';
+        $nullableValue = 'test-nullable-value';
+        $matcherOne = $this->exactly(2);
+        $this->baseAdapterMock->expects($matcherOne)
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($encryptedValue, $nullableValue, $matcherOne, &$initializationVector) {
+                    $this->assertEquals('query', $param1);
+                    switch ($matcherOne->numberOfInvocations()) {
+                        case 1:
+                            $this->assertCount(3, $param2);
+                            $this->assertEquals([DataType::typeString, DataType::typeBinary, DataType::typeString], $param3);
+                            $this->assertNull($param2[0]);
+                            $initializationVector = $param2[1];
+                            $this->assertNotNull($initializationVector);
+                            $this->assertEquals(Encryptor::encryptString($encryptedValue, $initializationVector), $param2[2]);
+                            break;
+                        case 2:
+                            $this->assertCount(4, $param2);
+                            $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
+                            $this->assertEquals($initializationVector, $param2[0]);
+                            $this->assertEquals(Encryptor::encryptString($nullableValue, $initializationVector), $param2[1]);
+                            $this->assertEquals(Encryptor::encryptString($encryptedValue, $initializationVector), $param2[2]);
+                    }
+                    return true;
+                });
+        $this->baseAdapterMock->expects($this->once())
+                ->method('lastInsertId')
+                ->willReturn(1);
+        $matcherTwo = $this->exactly(3);
+        $this->queryMock->expects($matcherTwo)
+                ->method('hasColumn')
+                ->willReturnCallback(function ($column, $foreignKey) use ($matcherTwo) {
+                    $this->assertFalse($foreignKey);
+                    $this->assertEquals('initializationVector', $column);
+                    return $matcherTwo->numberOfInvocations() === 3;
+                });
+        $matcherThree = $this->exactly(6);
+        $this->queryMock->expects($matcherThree)
+                ->method('appendColumnValue')
+                ->willReturnCallback(function ($column, $value, $foreignKey) use ($matcherThree) {
+                    $this->assertEquals(Placeholder::placeholder, $value);
+                    $this->assertFalse($foreignKey);
+                    $expectedColumns = [1 => 'nullableEncryptedProperty', 2 => 'initializationVector', 3 => 'encryptedProperty', 4 => 'initializationVector', 5 => 'nullableEncryptedProperty', 6 => 'encryptedProperty'];
+                    $this->assertEquals($expectedColumns[$matcherThree->numberOfInvocations()], $column);
+                    return $this->queryMock;
+                });
+        $matcherFour = $this->exactly(2);
+        $this->queryMock->expects($matcherFour)
+                ->method('getCommandToExecute')
+                ->willReturnCallback(function ($cmdType) use ($matcherFour) {
+                    $this->assertEquals($matcherFour->numberOfInvocations() === 1 ? Statement::insert : Statement::update, $cmdType);
+                    return 'query';
+                });
+        $entityWithNullableEncryptedProperty = new EntityWithNullableEncryptedProperty();
+        $entityWithNullableEncryptedProperty->encryptedProperty = $encryptedValue;
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
+        $dataMapper->save($entityWithNullableEncryptedProperty, $this->queryMock);
+        $entityWithNullableEncryptedProperty->nullableEncryptedProperty = $nullableValue;
+        $dataMapper->save($entityWithNullableEncryptedProperty, $this->queryMock);
     }
 
     public function testSaveNewEntityWithEncryptedPropertyTwo()

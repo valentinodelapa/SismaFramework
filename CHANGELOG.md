@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.13] - 2026-10-13 - Proprietà Cifrate con Valore Nullo
+
+Patch che riporta sul ramo 11.x la correzione della versione 12.8.1: permette di salvare e leggere un'entità con una proprietà cifrata facoltativa che vale `null`; fino alla 11.9.12 entrambe le operazioni sollevavano un `TypeError`.
+
+### 🐛 Bug Fix
+
+#### `Orm/HelperClasses/DataMapper::parseSingleProperty()` — cifratura di un valore nullo
+
+Al salvataggio, una proprietà dichiarata con `addEncryptedProperty()` veniva passata a `Encryptor::encryptString()` qualunque fosse il suo valore. Per una proprietà nullable che vale `null` (per esempio una chiave privata custodita altrove, quindi assente) la chiamata falliva con `TypeError: Encryptor::encryptString(): Argument #1 ($plainText) must be of type string, null given`, e l'entità non poteva essere salvata. Un valore `null` viene ora scritto come `NULL` senza cifratura; il vettore d'inizializzazione viene generato solo quando c'è effettivamente un valore da cifrare, e resta quello già presente se l'entità ne ha uno.
+
+#### `Orm/BaseClasses/BaseResultSet` — decifratura di un valore nullo
+
+Alla lettura, `convertToBaseEntity()` e `hydrateRelatedEntity()` (entità caricate con join) chiamavano `Encryptor::decryptString()` su ogni proprietà cifrata quando la riga aveva un vettore d'inizializzazione, anche se il valore della colonna era `NULL`: stesso `TypeError`, sollevato leggendo un'entità che aveva un'altra proprietà cifrata valorizzata. Un valore `NULL` viene ora restituito come `null` senza decifratura.
+
+**File modificati**:
+- **`Orm/HelperClasses/DataMapper.php`**: `parseSingleProperty()` cifra solo i valori diversi da `null`
+- **`Orm/BaseClasses/BaseResultSet.php`**: `convertToBaseEntity()` e `hydrateRelatedEntity()` decifrano solo i valori diversi da `null`
+- **`TestsApplication/Entities/EntityWithNullableEncryptedProperty.php`**: nuova entità di test con una proprietà cifrata facoltativa e una obbligatoria
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: aggiunto `testSaveEntityWithNullEncryptedPropertyKeepsNull()`, che salva l'entità con la proprietà facoltativa nulla (scritta come `NULL`, vettore d'inizializzazione generato per l'altra) e poi la aggiorna valorizzandola (cifrata con lo stesso vettore); fallisce contro l'implementazione precedente
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: aggiunto `testFetchWithEntityWithNullEncryptedProperty()`, che legge una riga con la colonna cifrata facoltativa a `NULL` e l'altra cifrata; fallisce con `TypeError` contro l'implementazione precedente
+- **`docs/orm.md`**: nuova sezione "Proprietà Cifrate" (dichiarazione, vettore d'inizializzazione obbligatorio, passphrase, valori nulli)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nessuna firma è cambiata.
+- **Cambiamento di comportamento osservabile**: il salvataggio e la lettura di una proprietà cifrata nulla, che prima sollevavano un `TypeError`, ora riescono. Le proprietà cifrate valorizzate sono trattate esattamente come prima.
+
+---
+
 ## [11.9.12] - 2026-10-04 - Codice d'Uscita della Console, Testo d'Aiuto Solo su Richiesta e Correzioni alla Barra di Debug
 
 Patch che riporta sul ramo 11.x le correzioni delle versioni 12.4.1 e 12.4.2: il comando `sisma` esce con un codice diverso da zero quando un comando fallisce, il testo d'aiuto dei comandi viene stampato solo con l'opzione `--help`, e la barra di debug non eredita più la tipografia della pagina e apre i pannelli al primo click. Vengono inoltre rimossi due asset della barra di debug non più utilizzati.
