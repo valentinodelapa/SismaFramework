@@ -735,14 +735,26 @@ I parametri del cookie di sessione **non sono configurabili tramite costanti**: 
 [
     "lifetime"  => 3600,
     "path"      => "/",
-    "domain"    => $request->server["HTTP_HOST"],
     "secure"    => Communication::getCommunicationProtocol($request) === CommunicationProtocol::https,
     "httponly"  => true,
     "samesite"  => "Lax",
 ]
 ```
 
+`domain` non viene impostato (v12.8.2+): il cookie resta legato all'host esatto che l'ha emesso, porta compresa, e non viene inviato ai sottodomini. Fino alla 12.8.1 valeva `HTTP_HOST`, che su una porta non standard (`localhost:8080`) contiene anche la porta: i browser scartavano il cookie e il login non funzionava.
+
 `secure` viene determinato automaticamente in base al protocollo della richiesta corrente (coerente con `HTTPS_IS_FORCED`, non un flag separato); `httponly` è sempre attivo; `samesite` è sempre `Lax` (non configurabile, e non `Strict`). Per personalizzare questi valori è necessario un override della classe `Session`, non una costante.
+
+### Rotazione dell'ID di Sessione
+
+`Session::start()`, chiamato dal front controller a ogni richiesta, sostituisce l'ID di sessione con uno nuovo che ne eredita i dati: un ID sottratto smette presto di essere utilizzabile. La vecchia sessione non viene cancellata subito ma marcata con l'istante della rotazione e con il nuovo ID (v12.8.2+):
+
+- una richiesta che si presenta con un ID già ruotato **entro `Session::ROTATION_GRACE_SECONDS` (30 secondi)** viene agganciata alla sessione corrente, seguendo anche più rotazioni consecutive, e non ruota di nuovo. È il caso normale delle richieste concorrenti dello stesso browser: fogli di stile, script e chiamate `fetch` di una pagina partono tutte con lo stesso cookie, e quando passano dal front controller la prima che arriva ruota l'ID;
+- oltre il periodo di grazia la vecchia sessione è considerata scaduta e la richiesta riceve una sessione vuota.
+
+Fino alla 12.8.1 la rotazione cancellava subito la vecchia sessione (`session_regenerate_id(true)`): ogni richiesta concorrente partita con il cookie precedente riceveva una sessione vuota, e l'utente risultava disconnesso già al caricamento di una pagina con un foglio di stile e uno script serviti dal front controller.
+
+Il token anti-dirottamento (impronta di `User-Agent` e indirizzo IP) viene registrato alla creazione della sessione e non più a ogni richiesta: `Session::isValidSession($request)` restituisce `false` se la richiesta corrente proviene da un client diverso da quello che ha aperto la sessione.
 
 ### Protezione CSRF
 

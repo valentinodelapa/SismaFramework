@@ -69,29 +69,115 @@ class SessionTest extends TestCase
         $this->assertEquals(PHP_SESSION_ACTIVE, session_status());
     }
 
-    public function testSessionRegenerateIdInvalidatesPreviousId()
+    public function testSessionRotationKeepsDataAlongLegitimateChain()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());
+        Session::start($this->requestMock);
+        $firstId = session_id();
+        Session::setItem('marker', 'present');
+        session_write_close();
+
+        session_id($firstId);
+        Session::start($this->requestMock);
+        $secondId = session_id();
+        $this->assertNotEquals($firstId, $secondId);
+        $this->assertEquals('present', Session::getItem('marker'));
+        $this->assertFalse(Session::hasItem(Session::ROTATED_AT_KEY));
+        session_write_close();
+
+        session_id($secondId);
+        Session::start($this->requestMock);
+        $this->assertNotEquals($secondId, session_id());
+        $this->assertEquals('present', Session::getItem('marker'));
+
+        Session::end();
+        $this->assertEquals(PHP_SESSION_NONE, session_status());
+    }
+
+    public function testStaleSessionIdWithinGracePeriodFollowsCurrentSession()
+    {
         Session::start($this->requestMock);
         $staleId = session_id();
         Session::setItem('marker', 'present');
         session_write_close();
-        $this->assertEquals(PHP_SESSION_NONE, session_status());
 
+        // Prima richiesta col cookie corrente: ruota l'ID.
         session_id($staleId);
         Session::start($this->requestMock);
-        $this->assertNotEquals($staleId, session_id());
+        $currentId = session_id();
+        session_write_close();
+
+        // Richiesta concorrente partita con lo stesso cookie: ritrova la sessione corrente, senza ruotarla di nuovo.
+        session_id($staleId);
+        Session::start($this->requestMock);
+        $this->assertEquals($currentId, session_id());
         $this->assertEquals('present', Session::getItem('marker'));
         session_write_close();
-        $this->assertEquals(PHP_SESSION_NONE, session_status());
+
+        // Dopo un'altra rotazione, il vecchio ID segue la catena fino alla sessione più recente.
+        session_id($currentId);
+        Session::start($this->requestMock);
+        $latestId = session_id();
+        Session::setItem('marker', 'updated');
+        session_write_close();
+        session_id($staleId);
+        Session::start($this->requestMock);
+        $this->assertEquals($latestId, session_id());
+        $this->assertEquals('updated', Session::getItem('marker'));
+
+        Session::end();
+    }
+
+    public function testStaleSessionIdAfterGracePeriodGetsEmptySession()
+    {
+        Session::start($this->requestMock);
+        $staleId = session_id();
+        Session::setItem('marker', 'present');
+        session_write_close();
+        session_id($staleId);
+        Session::start($this->requestMock);
+        $currentId = session_id();
+        session_write_close();
+
+        // La rotazione del vecchio ID risale a oltre il periodo di grazia.
+        session_id($staleId);
+        session_start();
+        $_SESSION[Session::ROTATED_AT_KEY] = time() - Session::ROTATION_GRACE_SECONDS - 1;
+        session_write_close();
 
         session_id($staleId);
         Session::start($this->requestMock);
         $this->assertNotEquals($staleId, session_id());
+        $this->assertNotEquals($currentId, session_id());
         $this->assertFalse(Session::hasItem('marker'));
 
         Session::end();
-        $this->assertEquals(PHP_SESSION_NONE, session_status());
+    }
+
+    public function testSessionCookieIsBoundToExactHost()
+    {
+        $this->requestMock->server['HTTP_HOST'] = 'example.test:8080';
+        Session::start($this->requestMock);
+        $this->assertSame('', session_get_cookie_params()['domain']);
+        Session::end();
+    }
+
+    public function testSessionTokenIsBoundToFirstRequest()
+    {
+        $firstRequest = $this->createStub(Request::class);
+        $firstRequest->server = ['HTTP_HOST' => '', 'HTTP_USER_AGENT' => 'agent-a', 'REMOTE_ADDR' => '10.0.0.1'];
+        $otherRequest = $this->createStub(Request::class);
+        $otherRequest->server = ['HTTP_HOST' => '', 'HTTP_USER_AGENT' => 'agent-b', 'REMOTE_ADDR' => '10.0.0.2'];
+        Session::start($firstRequest);
+        $sessionId = session_id();
+        session_write_close();
+
+        session_id($sessionId);
+        Session::start($otherRequest);
+        $this->assertTrue(Session::isValidSession($firstRequest));
+        $this->assertFalse(Session::isValidSession($otherRequest));
+
+        Session::end();
     }
 
     public function testSessionSetUnsetSampleItemStatic()
