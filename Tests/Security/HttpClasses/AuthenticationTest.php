@@ -78,6 +78,10 @@ class AuthenticationTest extends TestCase
         $this->configStub->method('__get')
                 ->willReturnMap([
                     ['blowfishHashWorkload', 10],
+                    ['csrfTokenKey', 'csrfToken'],
+                    ['authenticationIdentifierField', 'identifier'],
+                    ['authenticationPasswordField', 'password'],
+                    ['authenticationMultiFactorCodeField', 'code'],
         ]);
         $this->authenticableInterfaceMock = $this->createStub(AuthenticableInterface::class);
         $this->multiFactorInterfaceMock = $this->createStub(MultiFactorInterface::class);
@@ -150,7 +154,7 @@ class AuthenticationTest extends TestCase
         } else {
             $this->multiFactorWrapperInterfaceMock = $this->createStub(MultiFactorWrapperInterface::class);
         }
-        $this->authentication = new Authentication($this->requestMock, $this->filterMock, $this->sessionMock);
+        $this->authentication = new Authentication($this->requestMock, $this->filterMock, $this->sessionMock, $this->configStub);
         $this->authentication->setAuthenticableModelInterface($this->authenticableModelInterfaceMock);
         $this->authentication->setPasswordModelInterface($this->passwordModelInterfaceMock);
         $this->authentication->setMultiFactorModelInterface($this->multiFactorModelInterfaceMock);
@@ -210,6 +214,86 @@ class AuthenticationTest extends TestCase
         $this->assertFalse($this->authentication->checkAuthenticable(false));
         $this->requestMock->input['password'] = 'password-test';
         $this->assertTrue($this->authentication->checkAuthenticable(false));
+    }
+
+    public function testCheckAuthenticableUsesConfiguredFieldNames()
+    {
+        $configStub = $this->createConfigStubWith(['authenticationIdentifierField' => 'email', 'authenticationPasswordField' => 'secret']);
+        $authenticableModelStub = $this->createStub(AuthenticableModelInterface::class);
+        $authenticableModelStub->method('getValidAuthenticableInterfaceByIdentifier')
+                ->willReturn($this->authenticableInterfaceMock);
+        $passwordStub = $this->createStub(Password::class);
+        $passwordStub->method('__get')
+                ->willReturn(Encryptor::getBlowfishHash('password-test', $configStub));
+        $passwordModelStub = $this->createStub(PasswordModelInterface::class);
+        $passwordModelStub->method('getPasswordByAuthenticableInterface')
+                ->willReturn($passwordStub);
+        $authentication = new Authentication($this->requestMock, $this->createFilterAcceptingStrings(), $this->createStub(Session::class), $configStub);
+        $authentication->setAuthenticableModelInterface($authenticableModelStub);
+        $authentication->setPasswordModelInterface($passwordModelStub);
+
+        $this->requestMock->input = ['identifier' => 'identifier-test', 'password' => 'password-test'];
+        $this->assertFalse($authentication->checkAuthenticable(false));
+        $this->requestMock->input = ['email' => 'identifier-test', 'secret' => 'password-test'];
+        $this->assertTrue($authentication->checkAuthenticable(false));
+    }
+
+    public function testCheckMultiFactorUsesConfiguredFieldName()
+    {
+        $configStub = $this->createConfigStubWith(['authenticationMultiFactorCodeField' => 'otp']);
+        $multiFactorModelStub = $this->createStub(MultiFactorModelInterface::class);
+        $multiFactorModelStub->method('getLastActiveMultiFactorByAuthenticableInterface')
+                ->willReturn($this->multiFactorInterfaceMock);
+        $multiFactorWrapperStub = $this->createStub(MultiFactorWrapperInterface::class);
+        $multiFactorWrapperStub->method('testCodeForLogin')
+                ->willReturnCallback(fn(MultiFactorInterface $multiFactorInterface, string $code) => $code === '123456');
+        $authentication = new Authentication($this->requestMock, $this->createFilterAcceptingStrings(), $this->createStub(Session::class), $configStub);
+        $authentication->setMultiFactorModelInterface($multiFactorModelStub);
+        $authentication->setMultiFactorWrapperInterface($multiFactorWrapperStub);
+
+        $this->requestMock->input = ['code' => '123456'];
+        $this->assertFalse($authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->createStub(DataMapper::class)));
+        $this->requestMock->input = ['otp' => '123456'];
+        $this->assertTrue($authentication->checkMultiFactor($this->authenticableInterfaceMock, $this->createStub(DataMapper::class)));
+    }
+
+    private function createConfigStubWith(array $customValues): Config
+    {
+        $values = array_merge([
+            'blowfishHashWorkload' => 10,
+            'csrfTokenKey' => 'csrfToken',
+            'authenticationIdentifierField' => 'identifier',
+            'authenticationPasswordField' => 'password',
+            'authenticationMultiFactorCodeField' => 'code',
+                ], $customValues);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnCallback(fn(string $name) => $values[$name]);
+        return $configStub;
+    }
+
+    private function createFilterAcceptingStrings(): Filter
+    {
+        $filterStub = $this->createStub(Filter::class);
+        $filterStub->method('isString')
+                ->willReturn(true);
+        return $filterStub;
+    }
+
+    public function testCheckCsrfTokenUsesConfiguredKey()
+    {
+        $configStub = $this->createConfigStubWith(['csrfTokenKey' => 'antiForgeryToken']);
+        $sessionStub = $this->createStub(Session::class);
+        $sessionStub->method('__isset')
+                ->willReturnCallback(fn(string $name) => $name === 'antiForgeryToken');
+        $sessionStub->method('__get')
+                ->willReturnCallback(fn(string $name) => ($name === 'antiForgeryToken') ? 'token-value' : null);
+        $authentication = new Authentication($this->requestMock, $this->createFilterAcceptingStrings(), $sessionStub, $configStub);
+
+        $this->requestMock->input = ['csrfToken' => 'token-value'];
+        $this->assertFalse($authentication->checkCsrfToken());
+        $this->requestMock->input = ['antiForgeryToken' => 'token-value'];
+        $this->assertTrue($authentication->checkCsrfToken());
     }
 
     public function testCheckCsrfToken()

@@ -27,6 +27,7 @@
 namespace SismaFramework\Security\HttpClasses;
 
 use SismaFramework\Core\Enumerations\RequestType;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Session;
@@ -57,10 +58,12 @@ class Authentication extends BaseAuthentication
     private RequestType $requestType;
     private PasswordModelInterface $passwordModelInterface;
     private AuthenticableModelInterface $authenticableModelInterface;
+    private Config $config;
 
-    public function __construct(Request $request, Filter $filter = new Filter(), Session $session = new Session())
+    public function __construct(Request $request, Filter $filter = new Filter(), Session $session = new Session(), ?Config $customConfig = null)
     {
         parent::__construct($request, $filter, $session);
+        $this->config = $customConfig ?? Config::getInstance();
         $this->initSubmittable();
         $this->requestType = RequestType::from($request->server['REQUEST_METHOD']);
     }
@@ -95,8 +98,9 @@ class Authentication extends BaseAuthentication
         if ($withCsrfToken && ($this->checkCsrfToken() === false)) {
             return false;
         }
-        if (array_key_exists('identifier', $this->request->input) && $this->filter->isString($this->request->input["identifier"])) {
-            $this->authenticableInterface = $this->authenticableModelInterface->getValidAuthenticableInterfaceByIdentifier($this->request->input["identifier"]);
+        $identifierField = $this->config->authenticationIdentifierField;
+        if (array_key_exists($identifierField, $this->request->input) && $this->filter->isString($this->request->input[$identifierField])) {
+            $this->authenticableInterface = $this->authenticableModelInterface->getValidAuthenticableInterfaceByIdentifier($this->request->input[$identifierField]);
             if (($this->authenticableInterface instanceof AuthenticableInterface) && $this->checkPassword($this->authenticableInterface)) {
                 return true;
             } else {
@@ -109,23 +113,25 @@ class Authentication extends BaseAuthentication
 
     public function checkCsrfToken(): bool
     {
-        if (isset($this->session->csrfToken) === false) {
+        $csrfTokenKey = $this->config->csrfTokenKey;
+        if (isset($this->session->$csrfTokenKey) === false) {
             return false;
-        } elseif (array_key_exists("csrfToken", $this->request->input) === false) {
+        } elseif (array_key_exists($csrfTokenKey, $this->request->input) === false) {
             return false;
-        } elseif ($this->filter->isString($this->request->input["csrfToken"]) === false) {
+        } elseif ($this->filter->isString($this->request->input[$csrfTokenKey]) === false) {
             return false;
         } else {
-            return $this->request->input["csrfToken"] === $this->session->csrfToken;
+            return hash_equals((string) $this->session->$csrfTokenKey, $this->request->input[$csrfTokenKey]);
         }
     }
 
     public function checkPassword(AuthenticableInterface $authenticableInterface): bool
     {
-        if (array_key_exists('password', $this->request->input) && $this->filter->isString($this->request->input['password'])) {
+        $passwordField = $this->config->authenticationPasswordField;
+        if (array_key_exists($passwordField, $this->request->input) && $this->filter->isString($this->request->input[$passwordField])) {
             $passwordInterface = $this->passwordModelInterface->getPasswordByAuthenticableInterface($authenticableInterface);
             if ($passwordInterface instanceof PasswordInterface) {
-                return Encryptor::verifyBlowfishHash($this->request->input["password"], $passwordInterface->password);
+                return Encryptor::verifyBlowfishHash($this->request->input[$passwordField], $passwordInterface->password);
             } else {
                 return false;
             }
@@ -135,21 +141,22 @@ class Authentication extends BaseAuthentication
 
     public function checkMultiFactor(AuthenticableInterface $authenticableInterface, DataMapper $dataMapper = new DataMapper()): bool
     {
-        if (array_key_exists("code", $this->request->input) && $this->filter->isString($this->request->input["code"])) {
+        $codeField = $this->config->authenticationMultiFactorCodeField;
+        if (array_key_exists($codeField, $this->request->input) && $this->filter->isString($this->request->input[$codeField])) {
             $multiFactorInterface = $this->multiFactorModelInterface->getLastActiveMultiFactorByAuthenticableInterface($authenticableInterface);
             if ($multiFactorInterface instanceof MultiFactorInterface) {
-                return $this->switchMultiFactorOptions($multiFactorInterface, $dataMapper);
+                return $this->switchMultiFactorOptions($multiFactorInterface, $this->request->input[$codeField], $dataMapper);
             }
         }
         $this->formFilterError->codeError = true;
         return false;
     }
 
-    private function switchMultiFactorOptions(MultiFactorInterface $multiFactorInterface, DataMapper $dataMapper): bool
+    private function switchMultiFactorOptions(MultiFactorInterface $multiFactorInterface, string $code, DataMapper $dataMapper): bool
     {
-        if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $this->request->input["code"])) {
+        if ($this->multiFactorWrapperInterface->testCodeForLogin($multiFactorInterface, $code)) {
             return true;
-        } elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $this->request->input["code"], $dataMapper)) {
+        } elseif ($this->checkMultiFactorRecovery($multiFactorInterface, $code, $dataMapper)) {
             return true;
         } else {
             $this->formFilterError->codeError = true;

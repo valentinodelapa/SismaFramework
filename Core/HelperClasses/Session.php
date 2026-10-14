@@ -37,11 +37,6 @@ use SismaFramework\Core\HttpClasses\Request;
 class Session
 {
 
-    public const ROTATION_GRACE_SECONDS = 30;
-    public const ROTATED_AT_KEY = '__sismaSessionRotatedAt';
-    public const NEXT_SESSION_ID_KEY = '__sismaNextSessionId';
-    private const MAXIMUM_ROTATION_HOPS = 10;
-
     private \stdClass $sessionProperties;
 
     public function __construct(Request $request = new Request())
@@ -53,66 +48,84 @@ class Session
 
     public static function start(Request $request = new Request()): void
     {
-        ini_set('session.gc_maxlifetime', 3600);
+        $config = Config::getInstance();
+        ini_set('session.gc_maxlifetime', $config->sessionLifetime);
         session_set_cookie_params([
-            "lifetime" => 3600,
-            "path" => "/",
+            "lifetime" => $config->sessionLifetime,
+            "path" => $config->sessionCookiePath,
+            "domain" => $config->sessionCookieDomain,
             "secure" => Communication::getCommunicationProtocol($request) === CommunicationProtocol::https,
-            "httponly" => true,
-            "samesite" => "Lax",
+            "httponly" => $config->sessionCookieHttpOnly,
+            "samesite" => $config->sessionCookieSameSite,
         ]);
         session_start();
-        if (self::followRotation() === false) {
-            self::rotate();
+        if (self::followRotationChainOfPresentedId() === false) {
+            self::rotateIdKeepingPreviousSessionDuringGracePeriod();
         }
-        if (self::hasItem('token') === false) {
-            self::setItem('token', hash("sha512", ($request->server['HTTP_USER_AGENT'] ?? null) . ($request->server['REMOTE_ADDR'] ?? null)));
+        if (self::hasItem($config->sessionTokenKey) === false) {
+            self::setItem($config->sessionTokenKey, self::getClientFingerprint($request, $config));
         }
     }
 
-    /**
-     * Se l'ID presentato è già stato ruotato da una richiesta precedente, aggancia la richiesta alla sessione che lo
-     * ha sostituito (seguendo eventuali rotazioni successive) purché la rotazione sia avvenuta entro
-     * ROTATION_GRACE_SECONDS; altrimenti la sessione è scaduta e viene sostituita da una vuota. Restituisce true se la
-     * richiesta ha seguito una rotazione: in quel caso non si ruota di nuovo.
-     */
-    private static function followRotation(): bool
+    private static function getClientFingerprint(Request $request, Config $config): string
     {
-        $followed = false;
-        for ($hop = 0; ($hop < self::MAXIMUM_ROTATION_HOPS) && isset($_SESSION[self::ROTATED_AT_KEY]); $hop++) {
-            if (($_SESSION[self::ROTATED_AT_KEY] < time() - self::ROTATION_GRACE_SECONDS) || (isset($_SESSION[self::NEXT_SESSION_ID_KEY]) === false)) {
-                $_SESSION = [];
-                session_regenerate_id(true);
+        return hash($config->sessionTokenHashAlgorithm, ($request->server['HTTP_USER_AGENT'] ?? null) . ($request->server['REMOTE_ADDR'] ?? null));
+    }
+
+    private static function followRotationChainOfPresentedId(): bool
+    {
+        $hasFollowedRotation = false;
+        $maximumRotationHops = Config::getInstance()->sessionMaximumRotationHops;
+        for ($hop = 0; ($hop < $maximumRotationHops) && self::isCurrentSessionRotated(); $hop++) {
+            if (self::isRotationStillFollowable() === false) {
+                self::replaceWithEmptySession();
                 return true;
             }
-            $nextSessionId = $_SESSION[self::NEXT_SESSION_ID_KEY];
-            session_write_close();
-            session_id($nextSessionId);
-            session_start();
-            $followed = true;
+            self::switchToSession($_SESSION[Config::getInstance()->sessionNextSessionIdKey]);
+            $hasFollowedRotation = true;
         }
-        return $followed;
+        return $hasFollowedRotation;
     }
 
-    /**
-     * Sostituisce l'ID di sessione con uno nuovo che ne eredita i dati. La vecchia sessione non viene cancellata
-     * subito: resta marcata con l'istante della rotazione e il nuovo ID, così le richieste concorrenti partite con il
-     * vecchio cookie (fogli di stile, script, chiamate fetch della stessa pagina) ritrovano la sessione corrente invece
-     * di riceverne una vuota, e dopo il periodo di grazia il vecchio ID non è più utilizzabile. Entrambe le sessioni
-     * esistono quando vengono riaperte, quindi la rotazione funziona anche con session.use_strict_mode attivo.
-     */
-    private static function rotate(): void
+    private static function isCurrentSessionRotated(): bool
+    {
+        return isset($_SESSION[Config::getInstance()->sessionRotatedAtKey]);
+    }
+
+    private static function isRotationStillFollowable(): bool
+    {
+        $config = Config::getInstance();
+        $isWithinGracePeriod = $_SESSION[$config->sessionRotatedAtKey] >= time() - $config->sessionRotationGraceSeconds;
+        return $isWithinGracePeriod && isset($_SESSION[$config->sessionNextSessionIdKey]);
+    }
+
+    private static function replaceWithEmptySession(): void
+    {
+        $_SESSION = [];
+        session_regenerate_id(true);
+    }
+
+    private static function rotateIdKeepingPreviousSessionDuringGracePeriod(): void
     {
         $previousSessionId = session_id();
         session_regenerate_id(false);
         $nextSessionId = session_id();
+        self::switchToSession($previousSessionId);
+        self::markCurrentSessionAsRotatedTo($nextSessionId);
+        self::switchToSession($nextSessionId);
+    }
+
+    private static function markCurrentSessionAsRotatedTo(string $nextSessionId): void
+    {
+        $config = Config::getInstance();
+        $_SESSION[$config->sessionRotatedAtKey] = time();
+        $_SESSION[$config->sessionNextSessionIdKey] = $nextSessionId;
+    }
+
+    private static function switchToSession(string $sessionId): void
+    {
         session_write_close();
-        session_id($previousSessionId);
-        session_start();
-        $_SESSION[self::ROTATED_AT_KEY] = time();
-        $_SESSION[self::NEXT_SESSION_ID_KEY] = $nextSessionId;
-        session_write_close();
-        session_id($nextSessionId);
+        session_id($sessionId);
         session_start();
     }
 
@@ -265,8 +278,8 @@ class Session
 
     public static function isValidSession(Request $request = new Request()): bool
     {
-        $value = hash("sha512", ($request->server['HTTP_USER_AGENT'] ?? null) . ($request->server['REMOTE_ADDR'] ?? null));
-        return hash_equals((string) self::getItem('token'), $value);
+        $config = Config::getInstance();
+        return hash_equals((string) self::getItem($config->sessionTokenKey), self::getClientFingerprint($request, $config));
     }
 
     public static function end(): void

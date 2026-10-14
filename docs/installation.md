@@ -202,18 +202,21 @@ Se preferisci configurare manualmente il progetto, segui questi passaggi.
 
 ### Passo 2: Prepara la struttura del progetto
 
-Per garantire che gli aggiornamenti del framework non sovrascrivano le tue configurazioni, devi copiare le cartelle `Config` e `Public` dalla libreria alla root del tuo progetto.
+Per garantire che gli aggiornamenti del framework non sovrascrivano le tue configurazioni, devi copiare il file di configurazione del framework e la cartella `Public` dalla libreria alla root del tuo progetto. Il file di configurazione va copiato come `Config/configFramework.php`; gli altri file di `SismaFramework/Config/` (come `openssl.cnf`) restano nel modulo, da cui il framework li legge.
 
 ```bash
-cp -R SismaFramework/Config/ .
+mkdir Config
+cp SismaFramework/Config/config.php Config/configFramework.php
 cp -R SismaFramework/Public/ .
 ```
 
-Rinomina il file di configurazione del framework:
+Nel file copiato sostituisci il namespace del modulo con quello del progetto, cioè la riga `namespace SismaFramework\Config;` con `namespace Config;`:
 
 ```bash
-mv Config/config.php Config/configFramework.php
+sed -i 's/^namespace SismaFramework\\Config;/namespace Config;/' Config/configFramework.php
 ```
+
+Il framework cerca ogni costante prima nel namespace `Config` (il tuo file) e poi in `SismaFramework\Config` (il file del modulo, che fornisce i valori di default): lasciando il namespace del modulo le costanti verrebbero dichiarate due volte. Vedi [Configurazione del Progetto e Valori di Default](configuration-reference.md#configurazione-del-progetto-e-valori-di-default).
 
 Crea le cartelle necessarie con i permessi appropriati:
 

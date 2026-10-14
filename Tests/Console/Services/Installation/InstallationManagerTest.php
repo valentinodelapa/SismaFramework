@@ -103,6 +103,8 @@ class InstallationManagerTest extends TestCase
         $this->assertFileExists($configFile);
 
         $content = file_get_contents($configFile);
+        $this->assertStringContainsString("namespace Config;", $content);
+        $this->assertStringNotContainsString("namespace SismaFramework\\Config;", $content);
         $this->assertMatchesRegularExpression("/const PROJECT = ['\"]" . preg_quote($projectName, '/') . "['\"]/", $content);
         $this->assertMatchesRegularExpression("/const APPLICATION = ['\"]Application['\"]/", $content);
         $this->assertStringContainsString("const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;", $content);
@@ -343,6 +345,7 @@ PHP
             $configDir . '/config.php',
             <<<'PHP'
 <?php
+namespace SismaFramework\Config;
 const PROJECT = 'TestProject';
 const APPLICATION = 'Sample';
 const CACHE = 'Cache';

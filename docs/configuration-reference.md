@@ -10,8 +10,18 @@ La configurazione è organizzata in sezioni logiche:
 - **Database**: Configurazione connessione database
 - **ORM**: Impostazioni Object-Relational Mapper
 - **Sicurezza**: Configurazione crittografia e sicurezza
+- **Sessione**: Cookie, token anti-dirottamento e rotazione dell'ID di sessione
+- **Autenticazione**: Token CSRF, nomi dei campi dei form di login, chiave e lunghezza dello `state` OAuth
 - **Logging**: Sistema di log e debug
 - **Moduli**: Gestione architettura modulare
+
+### Configurazione del Progetto e Valori di Default
+
+Il file `Config/config.php` del modulo SismaFramework dichiara le costanti nel namespace `SismaFramework\Config` e contiene i valori di default. L'installazione lo copia in `Config/configFramework.php` nella root del progetto, riscrivendo il namespace in `Config`: è il file che il progetto modifica.
+
+Dalla 12.9.0 `Config` cerca ogni costante prima in `Config\` (il file del progetto) e, se non la trova, in `SismaFramework\Config\` (il file del modulo). Un progetto che aggiorna il framework riceve quindi automaticamente le costanti introdotte dopo la sua installazione, con il valore di default, e può sovrascriverle aggiungendole al proprio `configFramework.php`. Se una costante manca in entrambi i file, la lettura solleva `Error: Undefined constant`.
+
+Il default è il valore calcolato nel file del modulo: per le costanti derivate da altre costanti o da `__DIR__` (path, namespace) va dichiarata esplicitamente nel progetto.
 
 ---
 
@@ -280,6 +290,9 @@ const MODULE_FOLDERS = [
 ### Crittografia
 
 ```php
+// Token casuali
+const SIMPLE_RANDOM_TOKEN_BYTES = 16;
+
 // Algoritmi hash
 const SIMPLE_HASH_ALGORITHM = 'sha256';
 const BLOWFISH_HASH_WORKLOAD = 12;
@@ -296,7 +309,26 @@ const ASYMMETRIC_DIGEST_ALGORITHM = 'sha256';
 const CERTIFICATE_VALIDITY_DAYS = 3650;
 // Solo se necessario: percorso esplicito di openssl.cnf (ambienti senza default risolvibile)
 define(__NAMESPACE__ . '\OPENSSL_CONFIG_PATH', getenv('OPENSSL_CONFIG_PATH') ?: '');
+
+// Cifratura con password (v12.8.0+)
+const PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS = 600000;
+const PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS = 100000;
+const PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS = 10000000;
+const PASSWORD_KEY_DERIVATION_HASH_ALGORITHM = 'sha256';
+const PASSWORD_KEY_DERIVATION_SALT_BYTES = 16;
+const PASSWORD_ENCRYPTION_ALGORITHM = 'aes-256-gcm';
+const PASSWORD_ENCRYPTION_INITIALIZATION_VECTOR_BYTES = 12;
+const PASSWORD_ENCRYPTION_TAG_BYTES = 16;
+const PASSWORD_ENCRYPTION_MINIMUM_TAG_BYTES = 12;
+const PASSWORD_ENVELOPE_VERSION = 'sisma-pw2';
+const PASSWORD_ENVELOPE_SEPARATOR = '$';
+const PASSWORD_ENVELOPE_KEY_DERIVATION_PREFIX = 'pbkdf2-';
 ```
+
+#### SIMPLE_RANDOM_TOKEN_BYTES
+- **Tipo**: `int`
+- **Default**: `16`
+- **Descrizione**: byte casuali dei token generati da `Encryptor::getSimpleRandomToken()`; il token esadecimale è lungo il doppio (32 caratteri per default)
 
 #### ASYMMETRIC_KEY_TYPE / ASYMMETRIC_KEY_BITS
 - **Tipo**: `int` / `int`
@@ -316,10 +348,44 @@ define(__NAMESPACE__ . '\OPENSSL_CONFIG_PATH', getenv('OPENSSL_CONFIG_PATH') ?: 
 #### OPENSSL_CONFIG_PATH
 - **Tipo**: `string`
 - **Default**: `''` (nessun override; letta da `getenv('OPENSSL_CONFIG_PATH')`)
-- **Descrizione**: percorso esplicito di un `openssl.cnf`, opzionale. Se non valorizzata, `Encryptor` genera e usa autonomamente una configurazione OpenSSL minimale autosufficiente (funziona anche su ambienti, tipicamente Windows, privi di un `openssl.cnf` di sistema risolvibile). Impostarla solo per esigenze avanzate (es. un provider/engine OpenSSL specifico) — in tal caso il file indicato deve includere le sezioni `[v3_ca]`/`[v3_leaf]` se si vuole che `generateSelfSignedCertificate()`/`signCertificateSigningRequest()` applichino correttamente l'estensione `basicConstraints`
+- **Descrizione**: percorso esplicito di un `openssl.cnf`, opzionale. Se non valorizzata, `Encryptor` usa la configurazione OpenSSL minimale `Config/openssl.cnf` inclusa nel modulo (funziona anche su ambienti, tipicamente Windows, privi di un `openssl.cnf` di sistema risolvibile). Impostarla solo per esigenze avanzate (es. un provider/engine OpenSSL specifico) — in tal caso il file indicato deve includere le sezioni `[v3_ca]`/`[v3_leaf]` se si vuole che `generateSelfSignedCertificate()`/`signCertificateSigningRequest()` applichino correttamente l'estensione `basicConstraints`
 
-#### Cifratura con password (v12.8.0+)
-`Encryptor::encryptWithPassword()`/`decryptWithPassword()` non usano nessuna costante di configurazione, nemmeno `ENCRYPTION_PASSPHRASE`/`ENCRYPTION_ALGORITHM`: la chiave è ricavata dalla password del chiamante e i parametri (algoritmo, iterazioni, sale) sono scritti nell'involucro cifrato. Il costo della derivazione si sceglie con il terzo argomento di `encryptWithPassword()` (default `Encryptor::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`). Vedi [Sicurezza](security.md#cifratura-con-password-v1280).
+#### PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS
+- **Tipo**: `int`
+- **Default**: `600000`
+- **Descrizione**: iterazioni PBKDF2 usate da `Encryptor::encryptWithPassword()` quando il terzo argomento non è indicato. Il valore è scritto nell'involucro cifrato: alzarlo non rende indecifrabili gli involucri esistenti
+
+#### PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS / PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS
+- **Tipo**: `int` / `int`
+- **Default**: `100000` / `10000000`
+- **Descrizione**: intervallo di iterazioni ammesso. `encryptWithPassword()` rifiuta un costo fuori intervallo; `decryptWithPassword()` rifiuta gli involucri che ne dichiarano uno, così un involucro alterato non può imporre una derivazione troppo debole o troppo onerosa. Alzare il minimo rende indecifrabili gli involucri creati con un costo inferiore
+
+#### PASSWORD_KEY_DERIVATION_HASH_ALGORITHM / PASSWORD_KEY_DERIVATION_SALT_BYTES
+- **Tipo**: `string` / `int`
+- **Default**: `'sha256'` / `16`
+- **Descrizione**: algoritmo di hash di PBKDF2 (uno di `hash_hmac_algos()`) e lunghezza in byte del sale casuale
+
+#### PASSWORD_ENCRYPTION_ALGORITHM
+- **Tipo**: `string`
+- **Default**: `'aes-256-gcm'`
+- **Descrizione**: cifrario dei nuovi involucri. Deve essere un cifrario autenticato supportato da OpenSSL (`aes-128/192/256-gcm`, `-ccm`, `-ocb`, `chacha20-poly1305`), altrimenti `encryptWithPassword()` solleva `InvalidArgumentException`. La lunghezza della chiave derivata è quella richiesta dal cifrario
+
+#### PASSWORD_ENCRYPTION_INITIALIZATION_VECTOR_BYTES / PASSWORD_ENCRYPTION_TAG_BYTES
+- **Tipo**: `int` / `int`
+- **Default**: `12` / `16`
+- **Descrizione**: lunghezze in byte dell'IV e del tag di autenticazione dei nuovi involucri; devono essere ammesse dal cifrario scelto (con GCM: IV di 12 byte raccomandato, tag fino a 16)
+
+#### PASSWORD_ENCRYPTION_MINIMUM_TAG_BYTES
+- **Tipo**: `int`
+- **Default**: `12`
+- **Descrizione**: lunghezza minima del tag accettata. `encryptWithPassword()` rifiuta una configurazione con un tag più corto; `decryptWithPassword()` rifiuta gli involucri con un tag più corto, così un involucro alterato non può indebolire la verifica di integrità troncando il tag
+
+#### PASSWORD_ENVELOPE_VERSION / PASSWORD_ENVELOPE_SEPARATOR / PASSWORD_ENVELOPE_KEY_DERIVATION_PREFIX
+- **Tipo**: `string` / `string` / `string`
+- **Default**: `'sisma-pw2'` / `'$'` / `'pbkdf2-'`
+- **Descrizione**: identificatore del formato, separatore dei campi e prefisso dell'algoritmo di derivazione nell'involucro. Definiscono il formato stesso: **non vanno modificati** su un'applicazione che ha già salvato involucri, perché `decryptWithPassword()` restituirebbe `false` per tutti quelli creati con i valori precedenti (ripristinando i valori tornano leggibili). Il separatore non deve comparire nei nomi di cifrario e hash né nell'alfabeto base64 (`A-Z`, `a-z`, `0-9`, `+`, `/`, `=`)
+
+Cifrario, hash, iterazioni, sale, IV e tag sono scritti nell'involucro e la decifratura li legge da lì: questi parametri decidono solo come vengono creati i nuovi involucri, e modificarli non rende indecifrabili quelli esistenti. Fanno eccezione i limiti (`PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS`, `PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS`, `PASSWORD_ENCRYPTION_MINIMUM_TAG_BYTES`), che valgono anche in decifratura, e i tre parametri del formato. La cifratura con password non usa `ENCRYPTION_PASSPHRASE`/`ENCRYPTION_ALGORITHM`. Vedi [Sicurezza](security.md#cifratura-con-password-v1280).
 
 #### Configurazione Sicura
 
@@ -330,15 +396,98 @@ const BLOWFISH_HASH_WORKLOAD = 15;  // Più sicuro ma più lento
 
 // Chiave crittografia forte (genera con random_bytes)
 const ENCRYPTION_PASSPHRASE = 'kJ8k3nR9mQ7pL5xW2zB6vC4nM8qT1eY7';
-
-// Algoritmo raccomandato
-const ENCRYPTION_ALGORITHM = 'AES-256-GCM';  // Più sicuro di CBC
 ```
+
+`ENCRYPTION_ALGORITHM` deve restare un cifrario non autenticato (default `AES-256-CBC`): `encryptString()`/`decryptString()` non gestiscono il tag di autenticazione, quindi con GCM la cifratura fallisce. Per una cifratura autenticata usare `encryptWithPassword()`.
 
 **⚠️ Avvertenze Sicurezza**:
 - Mai committare `ENCRYPTION_PASSPHRASE` in repository
 - Usare variabili ambiente in produzione
 - Cambiare `BLOWFISH_HASH_WORKLOAD` in base alle performance server
+
+### Sessione
+
+```php
+const SESSION_LIFETIME = 3600;
+const SESSION_COOKIE_PATH = '/';
+const SESSION_COOKIE_DOMAIN = '';
+const SESSION_COOKIE_HTTP_ONLY = true;
+const SESSION_COOKIE_SAME_SITE = 'Lax';
+const SESSION_TOKEN_KEY = 'token';
+const SESSION_TOKEN_HASH_ALGORITHM = 'sha512';
+const SESSION_ROTATION_GRACE_SECONDS = 30;
+const SESSION_MAXIMUM_ROTATION_HOPS = 10;
+const SESSION_ROTATED_AT_KEY = '__sismaSessionRotatedAt';
+const SESSION_NEXT_SESSION_ID_KEY = '__sismaNextSessionId';
+```
+
+#### SESSION_LIFETIME
+- **Tipo**: `int`
+- **Default**: `3600`
+- **Descrizione**: durata in secondi del cookie di sessione; `Session::start()` vi allinea anche `session.gc_maxlifetime`, così i dati lato server non scadono prima del cookie
+
+#### SESSION_COOKIE_DOMAIN
+- **Tipo**: `string`
+- **Default**: `''`
+- **Descrizione**: attributo `Domain` del cookie di sessione. Vuoto, il cookie resta legato all'host esatto che l'ha emesso e non viene inviato ai sottodomini; impostato su un dominio (per esempio `example.com`), la sessione è condivisa con tutti i suoi sottodomini. Non deve contenere la porta, altrimenti i browser scartano il cookie
+
+#### SESSION_COOKIE_PATH / SESSION_COOKIE_HTTP_ONLY / SESSION_COOKIE_SAME_SITE
+- **Tipo**: `string` / `bool` / `string`
+- **Default**: `'/'` / `true` / `'Lax'`
+- **Descrizione**: attributi `Path`, `HttpOnly` e `SameSite` del cookie di sessione. `HttpOnly` disattivato rende il cookie leggibile da JavaScript (esposto a XSS); `SameSite` accetta `Lax`, `Strict` o `None`, e con `None` il browser richiede HTTPS. `Secure` non è configurabile: dipende dal protocollo della richiesta
+
+#### SESSION_TOKEN_KEY / SESSION_TOKEN_HASH_ALGORITHM
+- **Tipo**: `string` / `string`
+- **Default**: `'token'` / `'sha512'`
+- **Descrizione**: chiave di `$_SESSION` e algoritmo di hash del token anti-dirottamento (impronta di `User-Agent` e indirizzo IP) verificato da `Session::isValidSession()`. Con sessioni aperte, cambiare l'algoritmo fa risultare non valide le sessioni esistenti; cambiare la chiave fa registrare un nuovo token alla richiesta successiva, legato al client che la invia
+
+#### SESSION_ROTATION_GRACE_SECONDS
+- **Tipo**: `int`
+- **Default**: `30`
+- **Descrizione**: per quanti secondi un ID di sessione già ruotato resta agganciato alla sessione che lo ha sostituito (richieste concorrenti partite con il cookie precedente). Oltre questo periodo la richiesta riceve una sessione vuota
+
+#### SESSION_MAXIMUM_ROTATION_HOPS
+- **Tipo**: `int`
+- **Default**: `10`
+- **Descrizione**: numero massimo di rotazioni consecutive seguite per ricondurre un ID ruotato alla sessione corrente
+
+#### SESSION_ROTATED_AT_KEY / SESSION_NEXT_SESSION_ID_KEY
+- **Tipo**: `string` / `string`
+- **Default**: `'__sismaSessionRotatedAt'` / `'__sismaNextSessionId'`
+- **Descrizione**: chiavi di `$_SESSION` in cui la sessione ruotata registra l'istante della rotazione e il nuovo ID. Non devono coincidere con chiavi usate dall'applicazione. Cambiarle con sessioni aperte fa perdere l'aggancio alle richieste concorrenti per al più `SESSION_ROTATION_GRACE_SECONDS`
+
+Vedi [Sicurezza](security.md#rotazione-dellid-di-sessione).
+
+### Autenticazione
+
+```php
+const CSRF_TOKEN_KEY = 'csrfToken';
+const AUTHENTICATION_IDENTIFIER_FIELD = 'identifier';
+const AUTHENTICATION_PASSWORD_FIELD = 'password';
+const AUTHENTICATION_MULTI_FACTOR_CODE_FIELD = 'code';
+const OAUTH_STATE_KEY = 'oauthState';
+const OAUTH_STATE_BYTES = 16;
+```
+
+#### CSRF_TOKEN_KEY
+- **Tipo**: `string`
+- **Default**: `'csrfToken'`
+- **Descrizione**: nome del token CSRF verificato da `Authentication::checkCsrfToken()`, usato sia come chiave di `$_SESSION` sia come nome del campo del form. L'applicazione, che genera il token, deve usare lo stesso nome. Vedi [Sicurezza](security.md#protezione-csrf)
+
+#### AUTHENTICATION_IDENTIFIER_FIELD / AUTHENTICATION_PASSWORD_FIELD / AUTHENTICATION_MULTI_FACTOR_CODE_FIELD
+- **Tipo**: `string` / `string` / `string`
+- **Default**: `'identifier'` / `'password'` / `'code'`
+- **Descrizione**: nomi dei campi del form da cui `Authentication` legge l'identificatore dell'utente (`checkAuthenticable()`), la password (`checkPassword()`) e il codice dell'autenticazione a due fattori (`checkMultiFactor()`). I campi `name` dei form di login e di verifica devono corrispondere
+
+#### OAUTH_STATE_KEY
+- **Tipo**: `string`
+- **Default**: `'oauthState'`
+- **Descrizione**: chiave di `$_SESSION` in cui `OAuthAuthentication::getAuthorizationUrl()` salva lo `state` anti-CSRF, verificato da `checkCallback()`. Non deve coincidere con chiavi usate dall'applicazione. Il parametro `state` della richiesta di callback non è configurabile: il nome è definito dal protocollo OAuth 2.0
+
+#### OAUTH_STATE_BYTES
+- **Tipo**: `int`
+- **Default**: `16`
+- **Descrizione**: byte casuali dello `state` generato da `getAuthorizationUrl()`; lo `state` esadecimale inviato al provider è lungo il doppio. Alcuni provider limitano la lunghezza dei parametri dell'URL di autorizzazione
 
 ---
 
@@ -447,10 +596,9 @@ const MODULE_FOLDERS = [
 
 // === SICUREZZA ===
 const ENCRYPTION_PASSPHRASE = 'change-this-secret-key';
-
-// Includi configurazioni standard
-require_once 'config.defaults.php';
 ```
+
+Le costanti non dichiarate prendono il valore di default dal `config.php` del modulo (vedi [Configurazione del Progetto e Valori di Default](#configurazione-del-progetto-e-valori-di-default)). Fanno eccezione i path e i namespace derivati (`ROOT_PATH`, `APPLICATION_PATH`, `ENTITY_NAMESPACE`, ...), che nel modulo sono calcolati sulla sua cartella e sull'applicazione `Sample`: conviene partire dal `configFramework.php` generato dall'installazione, che li contiene già.
 
 ### Configurazione Completa per Produzione
 
@@ -488,14 +636,10 @@ const MODULE_FOLDERS = [
 // === SICUREZZA ===
 const ENCRYPTION_PASSPHRASE = 'production-encryption-key-32-chars';
 const BLOWFISH_HASH_WORKLOAD = 15;
-const ENCRYPTION_ALGORITHM = 'AES-256-GCM';
 
 // === LOGGING ===
 const LOG_VERBOSE_ACTIVE = false;
 const LOG_PRODUCTION_MAX_ROW = 200;
-
-// Include configurazioni base
-require_once 'config.defaults.php';
 ```
 
 ---

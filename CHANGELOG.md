@@ -2,6 +2,126 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.9.0] - 2026-10-15 - Valori di Default della Configurazione dal Modulo e Parametri di Sessione e Cifratura con Password in Config
+
+Minor release che risolve alla radice il problema delle costanti di configurazione introdotte dopo l'installazione di un progetto: `Config` usa ora come valori di default quelli del `config.php` del modulo SismaFramework, quindi un progetto che aggiorna il framework non deve più aggiungere le nuove costanti al proprio `configFramework.php`. Su questa base, i parametri di `Session` e della cifratura con password di `Encryptor`, che la 12.8.x aveva introdotto come costanti di classe, sono spostati in `Config/config.php`, come tutti gli altri parametri del framework; l'involucro della cifratura con password passa al formato `sisma-pw2`, che dichiara tutti i propri parametri.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Config` — valori di default dal `config.php` del modulo
+
+`Config/configFramework.php` viene copiato da `Config/config.php` una sola volta, in fase di installazione: le costanti aggiunte al framework dopo l'installazione mancavano nel progetto, e la prima lettura sollevava `Error: Undefined constant` (vedi la 12.3.0, dove l'aggiunta manuale era documentata come azione richiesta).
+
+Il `config.php` del modulo dichiara ora le costanti nel namespace `SismaFramework\Config`, che corrisponde alla sua posizione nel modulo, e l'installazione lo copia in `configFramework.php` riscrivendo il namespace in `Config`. Entrambi i file possono quindi essere caricati insieme: `Config` cerca ogni costante prima in `Config\` (il progetto) e, se non la trova, carica il `config.php` del modulo e la legge da `SismaFramework\Config\`. Se la costante manca anche lì, l'errore resta `Error: Undefined constant`. Il file del modulo viene caricato solo quando manca una costante: un progetto con la configurazione completa non lo legge mai.
+
+Il default è il valore calcolato nel file del modulo. Per le costanti scalari (durate, iterazioni, algoritmi) è il valore corretto; una costante derivata da altre costanti o da `__DIR__` (path, namespace) avrebbe invece il valore calcolato sulla cartella del modulo e sull'applicazione `Sample`, e va dichiarata nel progetto.
+
+#### `Core/HelperClasses/Session` — durata e rotazione configurabili
+
+La durata e gli attributi del cookie di sessione, il token anti-dirottamento e i parametri della rotazione dell'ID introdotti nella 12.8.2 erano scritti nella classe: per cambiarli bisognava modificare il framework, e l'aggiornamento successivo li riportava al valore originale. Sono ora costanti di configurazione:
+
+- **`SESSION_LIFETIME`** (`3600`): durata del cookie di sessione, a cui `start()` allinea `session.gc_maxlifetime`
+- **`SESSION_COOKIE_PATH`** (`/`), **`SESSION_COOKIE_HTTP_ONLY`** (`true`), **`SESSION_COOKIE_SAME_SITE`** (`Lax`): attributi del cookie di sessione, prima modificabili solo con un override di `Session`
+- **`SESSION_COOKIE_DOMAIN`** (`""`): attributo `Domain` del cookie. Vuoto, come dalla 12.8.2, il cookie resta legato all'host esatto; impostato su un dominio, la sessione è condivisa con i sottodomini, cosa che la 12.8.2 permetteva solo con un override di `Session`
+- **`SESSION_TOKEN_KEY`** (`token`), **`SESSION_TOKEN_HASH_ALGORITHM`** (`sha512`): chiave e algoritmo del token anti-dirottamento, prima ripetuti in `start()` e `isValidSession()`
+- **`SESSION_ROTATION_GRACE_SECONDS`** (`30`): periodo in cui un ID già ruotato resta agganciato alla sessione che lo ha sostituito
+- **`SESSION_MAXIMUM_ROTATION_HOPS`** (`10`): numero massimo di rotazioni consecutive seguite
+- **`SESSION_ROTATED_AT_KEY`** (`__sismaSessionRotatedAt`), **`SESSION_NEXT_SESSION_ID_KEY`** (`__sismaNextSessionId`): chiavi con cui la sessione ruotata registra l'istante della rotazione e il nuovo ID, prima costanti pubbliche di `Session`
+
+#### `Core/HelperClasses/Encryptor` — cifratura con password configurabile e involucro `sisma-pw2`
+
+I parametri della cifratura con password introdotta nella 12.8.0 erano costanti di classe. Sono ora costanti di configurazione:
+
+- **`PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`** (`600000`), **`PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS`** (`100000`), **`PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS`** (`10000000`): costo di default e intervallo ammesso di PBKDF2
+- **`PASSWORD_KEY_DERIVATION_HASH_ALGORITHM`** (`sha256`), **`PASSWORD_KEY_DERIVATION_SALT_BYTES`** (`16`): hash di PBKDF2 e lunghezza del sale
+- **`PASSWORD_ENCRYPTION_ALGORITHM`** (`aes-256-gcm`), **`PASSWORD_ENCRYPTION_INITIALIZATION_VECTOR_BYTES`** (`12`), **`PASSWORD_ENCRYPTION_TAG_BYTES`** (`16`): cifrario e lunghezze di IV e tag
+- **`PASSWORD_ENCRYPTION_MINIMUM_TAG_BYTES`** (`12`): lunghezza minima del tag accettata
+- **`PASSWORD_ENVELOPE_VERSION`** (`sisma-pw2`), **`PASSWORD_ENVELOPE_SEPARATOR`** (`$`), **`PASSWORD_ENVELOPE_KEY_DERIVATION_PREFIX`** (`pbkdf2-`): definizione del formato dell'involucro. A differenza degli altri parametri, valgono anche in decifratura: cambiarli rende illeggibili gli involucri creati con i valori precedenti finché non vengono ripristinati
+
+L'involucro `sisma-pw1` dichiarava iterazioni e sale ma non il cifrario, e la decifratura confrontava le lunghezze di IV e tag con valori fissi: con questi parametri configurabili, cambiarne uno avrebbe reso indecifrabili gli involucri esistenti. I nuovi involucri usano quindi il formato `sisma-pw2$<cifrario>$pbkdf2-<hash>$<iterazioni>$<sale>$<iv>$<tag>$<dati>`: `decryptWithPassword()` legge cifrario, hash e iterazioni dall'intestazione, IV e tag dai dati, e ricava la lunghezza della chiave dal cifrario. La configurazione decide solo come vengono creati i nuovi involucri, e modificarla non rende indecifrabili quelli esistenti; dalla configurazione vengono letti in decifratura solo i limiti (iterazioni minime e massime, tag minimo), così un involucro alterato non può imporre una derivazione troppo debole o troppo onerosa né indebolire la verifica di integrità troncando il tag. L'intestazione, cifrario compreso, resta autenticata insieme ai dati. Gli involucri `sisma-pw1` non sono più supportati: il formato è stato sostituito il giorno dopo l'uscita della 12.8.0, e continuare a leggerlo avrebbe richiesto di conservare nel codice i suoi parametri fissi.
+
+`encryptWithPassword()` solleva `InvalidArgumentException` anche se la configurazione indica un hash non supportato da `hash_hmac_algos()`, un cifrario che non è un cifrario autenticato supportato da OpenSSL (`aes-128/192/256-gcm`, `-ccm`, `-ocb`, `chacha20-poly1305`) o un tag più corto del minimo.
+
+Anche la lunghezza dei token di `getSimpleRandomToken()`, prima fissa a 16 byte, è ora la costante **`SIMPLE_RANDOM_TOKEN_BYTES`** (`16`); il metodo accetta `?Config $customConfig = null` come gli altri metodi di `Encryptor`.
+
+#### `Security/HttpClasses/Authentication` — token CSRF e campi del form configurabili
+
+I nomi del token CSRF e dei campi da cui `Authentication` legge le credenziali erano scritti nella classe. Sono ora costanti di configurazione:
+
+- **`CSRF_TOKEN_KEY`** (`csrfToken`): chiave di sessione e campo del form del token CSRF, verificati da `checkCsrfToken()`
+- **`AUTHENTICATION_IDENTIFIER_FIELD`** (`identifier`), **`AUTHENTICATION_PASSWORD_FIELD`** (`password`), **`AUTHENTICATION_MULTI_FACTOR_CODE_FIELD`** (`code`): campi letti da `checkAuthenticable()`, `checkPassword()` e `checkMultiFactor()`
+
+Il costruttore accetta un `?Config $customConfig = null` opzionale, come le altre classi che leggono la configurazione.
+
+#### `Security/HttpClasses/OAuthAuthentication` — chiave di sessione dello `state` configurabile
+
+La chiave di sessione in cui `getAuthorizationUrl()` salva lo `state` anti-CSRF, e da cui `checkCallback()` lo rilegge, era `oauthState`, scritta nella classe. È ora la costante di configurazione **`OAUTH_STATE_KEY`** (`oauthState`), e la lunghezza dello `state`, prima fissa a 16 byte, è **`OAUTH_STATE_BYTES`** (`16`); il costruttore accetta `?Config $customConfig = null` come `Authentication`. I parametri `error`, `code` e `state` della richiesta di callback restano invariati: sono definiti dal protocollo OAuth 2.0.
+
+### 🛡️ Sicurezza
+
+#### `Security/HttpClasses/Authentication::checkCsrfToken()` — confronto del token non a tempo costante
+
+Il token inviato dal form era confrontato con quello in sessione tramite `===`, il cui tempo di esecuzione dipende dalla posizione del primo carattere diverso. Il confronto usa ora `hash_equals()`, come già `checkOAuthState()` di `OAuthAuthentication` e `Session::isValidSession()`. La documentazione di `OAuthAuthentication` affermava già che i due controlli seguivano lo stesso schema: ora è vero.
+
+### ♻️ Refactoring
+
+#### `Core/HelperClasses/Session` — rotazione dell'ID con nomi espressivi
+
+`followRotation()` e `rotate()`, introdotti nella 12.8.2 con due docblock esplicativi, sono sostituiti da `followRotationChainOfPresentedId()` e `rotateIdKeepingPreviousSessionDuringGracePeriod()`, scomposti in `isCurrentSessionRotated()`, `isRotationStillFollowable()`, `replaceWithEmptySession()`, `markCurrentSessionAsRotatedTo()` e `switchToSession()`. I docblock sono rimossi. Il comportamento non cambia.
+
+### 📖 Documentazione
+
+#### `docs/configuration-reference.md` — esempi di configurazione errati
+
+- Gli esempi "Configurazione Minimale" e "Configurazione Completa per Produzione" terminavano con `require_once 'config.defaults.php'`, un file che non esiste: la riga è rimossa, e l'esempio minimale spiega quali costanti possono essere omesse grazie ai valori di default del modulo.
+- L'esempio di produzione e la sezione "Configurazione Sicura" suggerivano `ENCRYPTION_ALGORITHM = 'AES-256-GCM'`: `encryptString()` non passa il tag di autenticazione a `openssl_encrypt()`, che con GCM emette un warning e restituisce `false`, quindi la cifratura delle proprietà falliva. Il suggerimento è rimosso e sostituito da una nota.
+
+#### `docs/security.md` — algoritmi deboli suggeriti per `SIMPLE_HASH_ALGORITHM`
+
+L'esempio di configurazione proponeva `md5` e `sha1` come alternative a `sha256`. Sono sostituiti da `sha384`, `sha512` e `sha3-256`, con una nota che sconsiglia gli algoritmi vulnerabili alle collisioni e ricorda di usare `getBlowfishHash()` per le password.
+
+#### `docs/security.md` — esempio del token CSRF salvato nella chiave sbagliata
+
+L'esempio di `getSimpleRandomToken()` salvava il token CSRF in `$_SESSION['csrf_token']`, mentre `checkCsrfToken()` lo cerca in `csrfToken`: un'applicazione che seguiva l'esempio non superava mai il controllo. L'esempio usa ora `Session::setItem('csrfToken', ...)`. Corretto anche il token d'esempio, lungo 40 caratteri invece di 32.
+
+**File modificati**:
+- **`Config/config.php`**: namespace `SismaFramework\Config`; aggiunte le costanti `SESSION_*`, `PASSWORD_*`, `SIMPLE_RANDOM_TOKEN_BYTES`, `CSRF_TOKEN_KEY`, `AUTHENTICATION_*` e `OAUTH_STATE_*` elencate sopra
+- **`Config/openssl.cnf`**: nuovo file con la configurazione OpenSSL minimale usata quando `OPENSSL_CONFIG_PATH` non è valorizzata, prima contenuta nella costante `Encryptor::MINIMAL_OPENSSL_CONFIG`
+- **`Core/HelperClasses/Config.php`**: aggiunto `getProjectOrFrameworkValue()`, che legge la costante del progetto o, in sua assenza, quella del modulo; aggiunte le proprietà delle nuove costanti
+- **`Core/HelperClasses/Session.php`**: durata e attributi del cookie, token e parametri della rotazione letti da `Config`; il calcolo del token, prima ripetuto in `start()` e `isValidSession()`, è estratto in `getClientFingerprint()`; rimosse le costanti pubbliche `ROTATION_GRACE_SECONDS`, `ROTATED_AT_KEY` e `NEXT_SESSION_ID_KEY` e la costante privata `MAXIMUM_ROTATION_HOPS`; rotazione scomposta come descritto sopra
+- **`Core/HelperClasses/Encryptor.php`**: involucro `sisma-pw2` con parametri letti da `Config`, senza supporto ai `sisma-pw1`; configurazione OpenSSL di ripiego letta da `Config/openssl.cnf` invece che scritta in un file temporaneo; rimosse le costanti pubbliche `PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS` e `PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS`, tutte le costanti private (parametri e formato dell'involucro, `MINIMAL_OPENSSL_CONFIG`) e il metodo `getMinimalOpensslConfigPath()`; `encryptWithPassword()` accetta `?int $iterations = null` e `?Config $customConfig = null`, `decryptWithPassword()` e `getSimpleRandomToken()` accettano `?Config $customConfig = null`; `getSimpleRandomToken()` legge la lunghezza del token da `Config`
+- **`Security/HttpClasses/Authentication.php`**: `checkCsrfToken()`, `checkAuthenticable()`, `checkPassword()` e `checkMultiFactor()` leggono i nomi del token e dei campi da `Config`; `switchMultiFactorOptions()` riceve il codice come argomento invece di rileggerlo dalla richiesta; `checkCsrfToken()` confronta i token con `hash_equals()`; il costruttore accetta `?Config $customConfig = null`
+- **`Security/HttpClasses/OAuthAuthentication.php`**: `getAuthorizationUrl()` e `checkCallback()` leggono chiave di sessione e lunghezza dello `state` da `Config`; il costruttore accetta `?Config $customConfig = null`
+- **`Console/Services/Installation/InstallationManager.php`**: `copyConfigFolder()` riscrive il namespace del file copiato in `Config`
+- **`TestsApplication/HelperClasses/ConfigWithUndeclaredParameter.php`**: nuova fixture con un parametro senza costante né nel progetto né nel modulo
+- **`TestsApplication/Entities/EntityWithNullableEncryptedProperty.php`**: rimossa la descrizione dal docblock di classe
+- **`Tests/Core/HelperClasses/ConfigTest.php`**: aggiunti `testProjectConstantTakesPrecedenceOverFrameworkConfiguration()`, `testUndeclaredProjectConstantFallsBackToFrameworkConfiguration()` (entrambi in un processo separato) e `testConstantDeclaredNowhereThrowsError()`
+- **`Tests/Core/HelperClasses/EncryptorTest.php`**: lo stub di `Config` include i nuovi parametri; i test esistenti adeguati al formato `sisma-pw2`; aggiunti `testDecryptWithPasswordRejectsReleasedVersion1Envelope()` (involucro prodotto dalla 12.8.2), `testEnvelopeStaysDecryptableAfterEncryptionParametersChange()`, `testEnvelopeFormatIsReadOnlyWithSameFormatConfiguration()`, `testEncryptWithPasswordRejectsCipherWithoutAuthentication()`, `testEncryptWithPasswordRejectsUnsupportedHashAlgorithm()`, `testEncryptWithPasswordRejectsTagShorterThanMinimum()` e `testDecryptWithPasswordRejectsTruncatedTag()`; `testGetSimpleRandomToken()` verifica la lunghezza del token con il default e con un valore personalizzato
+- **`Tests/Core/HelperClasses/SessionTest.php`**: lo stub di `Config`, costruito da `setConfiguration()`, include i nuovi parametri e accetta valori personalizzati; aggiunto `testSessionCookieAndTokenFollowConfiguration()`; `testStaleSessionIdWithinGracePeriodFollowsCurrentSession()` diviso in `testConcurrentRequestWithStaleSessionIdWithinGracePeriodJoinsCurrentSession()` e `testStaleSessionIdFollowsRotationChainToLatestSession()`, con metodi di supporto al posto dei commenti
+- **`Tests/Security/HttpClasses/AuthenticationTest.php`**: lo stub di `Config` include i nomi del token e dei campi ed è passato al costruttore; aggiunti `testCheckCsrfTokenUsesConfiguredKey()`, `testCheckAuthenticableUsesConfiguredFieldNames()` e `testCheckMultiFactorUsesConfiguredFieldName()`, con i metodi di supporto `createConfigStubWith()` e `createFilterAcceptingStrings()`
+- **`Tests/Security/HttpClasses/OAuthAuthenticationTest.php`**: uno stub di `Config` con chiave e lunghezza dello `state` è passato al costruttore, invece di dipendere dall'istanza globale; aggiunto `testStateIsStoredAndCheckedUnderConfiguredKey()`, che verifica anche la lunghezza dello `state`
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: lo stub di `Config` include i parametri di sessione, letti da `Session::start()` attraverso `Authentication`
+- **`Tests/Console/Services/Installation/InstallationManagerTest.php`**: il `config.php` di prova dichiara il namespace del modulo; `testInstallCopiesConfigFile()` verifica la riscrittura del namespace
+- **`docs/configuration-reference.md`**: nuova sezione "Configurazione del Progetto e Valori di Default", nuove sezioni "Sessione" e "Autenticazione", nuove costanti della cifratura con password e `SIMPLE_RANDOM_TOKEN_BYTES`, esempi corretti come descritto sopra
+- **`docs/installation.md`**: l'installazione manuale copia solo `config.php` (come `configFramework.php`) invece dell'intera cartella `Config`, e include la sostituzione del namespace nel file copiato
+- **`docs/security.md`**: aggiornate le sezioni "Cookie di Sessione", "Rotazione dell'ID di Sessione", "Cifratura con Password" e "Protezione CSRF", la nota per i progetti già installati, l'esempio di `SIMPLE_HASH_ALGORITHM` e quello di `getSimpleRandomToken()`; aggiunti i nomi dei campi dei form di login e di verifica a due fattori
+- **`docs/api-reference.md`**: aggiornate firme e formato dell'involucro di `encryptWithPassword()`/`decryptWithPassword()`; aggiunti i costruttori di `Authentication` e `OAuthAuthentication`, i nomi configurabili del token CSRF e dei campi del form, chiave e lunghezza dello `state` OAuth e la firma di `getSimpleRandomToken()`; corretta la firma di `checkMultiFactor()`, che non riportava il default di `$dataMapper`
+- **`docs-phpdoc/`**: rigenerate le pagine di `Encryptor`, `Session`, `Authentication`, `OAuthAuthentication` e `InstallationManager` e l'indice di ricerca
+
+### ✅ Backward Compatibility
+
+- **Costanti pubbliche rimosse**: `Encryptor::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`, `Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS`, `Session::ROTATION_GRACE_SECONDS`, `Session::ROTATED_AT_KEY` e `Session::NEXT_SESSION_ID_KEY`, introdotte nella 12.8.x, non esistono più: il codice che le referenzia solleva `Error: Undefined constant`. I valori si leggono da `Config` (`passwordKeyDerivationDefaultIterations`, `passwordKeyDerivationMinimumIterations`, `sessionRotationGraceSeconds`, `sessionRotatedAtKey`, `sessionNextSessionIdKey`).
+- **Firme compatibili**: i chiamanti di `encryptWithPassword()` e `decryptWithPassword()` non devono cambiare nulla, anche se passano le iterazioni per nome.
+- **Progetti già installati**: nessuna azione richiesta. Il loro `configFramework.php` dichiara già il namespace `Config`, e le costanti nuove arrivano dal modulo. Per cambiarne il valore basta aggiungerle al proprio `configFramework.php`.
+- **Installazioni manuali**: chi copia `Config/config.php` a mano deve sostituire `namespace SismaFramework\Config;` con `namespace Config;` (vedi `docs/installation.md`); lasciando il namespace del modulo, ogni costante viene dichiarata due volte e PHP emette un warning.
+- **Codice che include direttamente `Config/config.php` del modulo**: le costanti sono ora in `SismaFramework\Config\` e non più in `Config\`. Il framework non le referenzia per nome, solo tramite `Config`.
+- **Cambiamento di comportamento osservabile — configurazione**: una costante assente nel progetto ma presente nel modulo non solleva più `Error: Undefined constant` e assume il valore di default del modulo.
+- **Involucri `sisma-pw1` non più supportati**: `decryptWithPassword()` restituisce `false` per gli involucri creati con la 12.8.x. Chi ne avesse salvati deve decifrarli con la 12.8.x e cifrarli di nuovo dopo l'aggiornamento.
+- **Cambiamento di comportamento osservabile — involucri**: `encryptWithPassword()` produce involucri `sisma-pw2`, che la 12.8.x non sa decifrare: tornando a una versione precedente, gli involucri creati con la 12.9.0 restano illeggibili fino al nuovo aggiornamento.
+- **Configurazione OpenSSL di ripiego**: senza `OPENSSL_CONFIG_PATH` viene usato `Config/openssl.cnf` del modulo, con lo stesso contenuto del file temporaneo generato fino alla 12.8.x; il framework non scrive più nella cartella temporanea di sistema.
+
+---
+
 ## [12.8.2] - 2026-10-13 - Sessione: Richieste Concorrenti, Cookie su Porte Non Standard, Token Anti-Dirottamento
 
 Patch che corregge tre difetti di `Session`: la rotazione dell'ID a ogni richiesta disconnetteva l'utente al caricamento di una normale pagina, il cookie di sessione veniva scartato dai browser sulle porte non standard, e il token anti-dirottamento veniva riscritto a ogni richiesta, rendendo `isValidSession()` sempre vero.

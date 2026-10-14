@@ -36,31 +36,56 @@ use SismaFramework\Core\HelperClasses\Encryptor;
 class EncryptorTest extends TestCase
 {
 
+    private const DEFAULT_ITERATIONS = 600000;
+    private const MINIMUM_ITERATIONS = 100000;
+    private const RELEASED_VERSION_1_ENVELOPE = 'sisma-pw1$pbkdf2-sha256$100000$kAXNr/YDypI9oZ5tTeAoPw==$LbriCvVW3XRPbOAv$mcovN2nCI50GpKIQWiJxhQ==$WZH7Ck/TK2v5UGUlfGk=';
+
     private Config $configStub;
 
     public function setUp(): void
     {
-        $this->configStub = $this->createStub(Config::class);
-        $this->configStub->method('__get')
-                ->willReturnMap([
-                    ['blowfishHashWorkload', 12],
-                    ['encryptionAlgorithm', 'AES-256-CBC'],
-                    ['encryptionPassphrase', ''],
-                    ['initializationVectorBytes', 16],
-                    ['simpleHashAlgorithm', 'sha256'],
-                    ['asymmetricKeyType', OPENSSL_KEYTYPE_RSA],
-                    ['asymmetricKeyBits', 2048],
-                    ['asymmetricDigestAlgorithm', 'sha256'],
-                    ['certificateValidityDays', 3650],
-                    ['opensslConfigPath', getenv('OPENSSL_CONFIG_PATH') ?: ''],
-        ]);
-        $this->configStub->method('__isset')
+        $this->configStub = $this->createConfigStub();
+    }
+
+    private function createConfigStub(array $customValues = []): Config
+    {
+        $values = array_merge([
+            'simpleRandomTokenBytes' => 16,
+            'blowfishHashWorkload' => 12,
+            'encryptionAlgorithm' => 'AES-256-CBC',
+            'encryptionPassphrase' => '',
+            'initializationVectorBytes' => 16,
+            'simpleHashAlgorithm' => 'sha256',
+            'asymmetricKeyType' => OPENSSL_KEYTYPE_RSA,
+            'asymmetricKeyBits' => 2048,
+            'asymmetricDigestAlgorithm' => 'sha256',
+            'certificateValidityDays' => 3650,
+            'opensslConfigPath' => getenv('OPENSSL_CONFIG_PATH') ?: '',
+            'passwordKeyDerivationDefaultIterations' => self::DEFAULT_ITERATIONS,
+            'passwordKeyDerivationMinimumIterations' => self::MINIMUM_ITERATIONS,
+            'passwordKeyDerivationMaximumIterations' => 10000000,
+            'passwordKeyDerivationHashAlgorithm' => 'sha256',
+            'passwordKeyDerivationSaltBytes' => 16,
+            'passwordEncryptionAlgorithm' => 'aes-256-gcm',
+            'passwordEncryptionInitializationVectorBytes' => 12,
+            'passwordEncryptionTagBytes' => 16,
+            'passwordEncryptionMinimumTagBytes' => 12,
+            'passwordEnvelopeVersion' => 'sisma-pw2',
+            'passwordEnvelopeSeparator' => '$',
+            'passwordEnvelopeKeyDerivationPrefix' => 'pbkdf2-',
+                ], $customValues);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnCallback(fn(string $name) => $values[$name]);
+        $configStub->method('__isset')
                 ->willReturn(true);
+        return $configStub;
     }
 
     public function testGetSimpleRandomToken()
     {
-        $this->assertIsString(Encryptor::getSimpleRandomToken());
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{32}$/', Encryptor::getSimpleRandomToken($this->configStub));
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', Encryptor::getSimpleRandomToken($this->createConfigStub(['simpleRandomTokenBytes' => 32])));
     }
 
     public function testGetVerifySimpleHash()
@@ -285,25 +310,87 @@ class EncryptorTest extends TestCase
 
     public function testEncryptDecryptWithPasswordUsesDefaultIterations()
     {
-        $envelope = Encryptor::encryptWithPassword('chiave privata', '123456');
+        $envelope = Encryptor::encryptWithPassword('chiave privata', '123456', null, $this->configStub);
 
-        $this->assertStringStartsWith('sisma-pw1$pbkdf2-sha256$' . Encryptor::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS . '$', $envelope);
-        $this->assertEquals('chiave privata', Encryptor::decryptWithPassword($envelope, '123456'));
+        $this->assertStringStartsWith('sisma-pw2$aes-256-gcm$pbkdf2-sha256$' . self::DEFAULT_ITERATIONS . '$', $envelope);
+        $this->assertEquals('chiave privata', Encryptor::decryptWithPassword($envelope, '123456', $this->configStub));
+    }
+
+    public function testDecryptWithPasswordRejectsReleasedVersion1Envelope()
+    {
+        $this->assertFalse(Encryptor::decryptWithPassword(self::RELEASED_VERSION_1_ENVELOPE, '123456', $this->configStub));
+    }
+
+    public function testEnvelopeStaysDecryptableAfterEncryptionParametersChange()
+    {
+        $customConfig = $this->createConfigStub([
+            'passwordKeyDerivationHashAlgorithm' => 'sha512',
+            'passwordKeyDerivationSaltBytes' => 32,
+            'passwordEncryptionAlgorithm' => 'aes-128-gcm',
+            'passwordEncryptionInitializationVectorBytes' => 16,
+            'passwordEncryptionTagBytes' => 12,
+        ]);
+
+        $envelope = Encryptor::encryptWithPassword('chiave privata', '123456', self::MINIMUM_ITERATIONS, $customConfig);
+
+        $this->assertStringStartsWith('sisma-pw2$aes-128-gcm$pbkdf2-sha512$', $envelope);
+        $this->assertEquals('chiave privata', Encryptor::decryptWithPassword($envelope, '123456', $this->configStub));
+    }
+
+    public function testEnvelopeFormatIsReadOnlyWithSameFormatConfiguration()
+    {
+        $customConfig = $this->createConfigStub([
+            'passwordEnvelopeVersion' => 'custom-v1',
+            'passwordEnvelopeSeparator' => '|',
+            'passwordEnvelopeKeyDerivationPrefix' => 'kdf-',
+        ]);
+
+        $envelope = Encryptor::encryptWithPassword('chiave privata', '123456', self::MINIMUM_ITERATIONS, $customConfig);
+
+        $this->assertStringStartsWith('custom-v1|aes-256-gcm|kdf-sha256|', $envelope);
+        $this->assertEquals('chiave privata', Encryptor::decryptWithPassword($envelope, '123456', $customConfig));
+        $this->assertFalse(Encryptor::decryptWithPassword($envelope, '123456', $this->configStub));
+    }
+
+    public function testEncryptWithPasswordRejectsCipherWithoutAuthentication()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        Encryptor::encryptWithPassword('dati', '123456', null, $this->createConfigStub(['passwordEncryptionAlgorithm' => 'aes-256-cbc']));
+    }
+
+    public function testEncryptWithPasswordRejectsUnsupportedHashAlgorithm()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        Encryptor::encryptWithPassword('dati', '123456', null, $this->createConfigStub(['passwordKeyDerivationHashAlgorithm' => 'sha999']));
+    }
+
+    public function testEncryptWithPasswordRejectsTagShorterThanMinimum()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        Encryptor::encryptWithPassword('dati', '123456', null, $this->createConfigStub(['passwordEncryptionTagBytes' => 8]));
+    }
+
+    public function testDecryptWithPasswordRejectsTruncatedTag()
+    {
+        $parts = explode('$', Encryptor::encryptWithPassword('dati', '123456', self::MINIMUM_ITERATIONS, $this->configStub));
+        $parts[6] = base64_encode(substr(base64_decode($parts[6]), 0, 4));
+
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', $parts), '123456', $this->configStub));
     }
 
     public function testEncryptDecryptWithPasswordPreservesBinaryAndUnicodeData()
     {
         $plainText = "-----BEGIN PRIVATE KEY-----\nÀèìòù €\0\xff" . random_bytes(64);
 
-        $envelope = Encryptor::encryptWithPassword($plainText, 'pïn sègreto', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS);
+        $envelope = Encryptor::encryptWithPassword($plainText, 'pïn sègreto', self::MINIMUM_ITERATIONS, $this->configStub);
 
-        $this->assertSame($plainText, Encryptor::decryptWithPassword($envelope, 'pïn sègreto'));
+        $this->assertSame($plainText, Encryptor::decryptWithPassword($envelope, 'pïn sègreto', $this->configStub));
     }
 
     public function testEncryptWithPasswordProducesDifferentEnvelopesForSameInput()
     {
-        $firstEnvelope = Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS);
-        $secondEnvelope = Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS);
+        $firstEnvelope = Encryptor::encryptWithPassword('dati', '123456', self::MINIMUM_ITERATIONS, $this->configStub);
+        $secondEnvelope = Encryptor::encryptWithPassword('dati', '123456', self::MINIMUM_ITERATIONS, $this->configStub);
 
         $this->assertNotEquals($firstEnvelope, $secondEnvelope);
         $this->assertStringNotContainsString('dati', $firstEnvelope);
@@ -311,55 +398,55 @@ class EncryptorTest extends TestCase
 
     public function testDecryptWithPasswordFailsWithWrongPassword()
     {
-        $envelope = Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS);
+        $envelope = Encryptor::encryptWithPassword('dati', '123456', self::MINIMUM_ITERATIONS, $this->configStub);
 
-        $this->assertFalse(Encryptor::decryptWithPassword($envelope, '654321'));
-        $this->assertFalse(Encryptor::decryptWithPassword($envelope, ''));
+        $this->assertFalse(Encryptor::decryptWithPassword($envelope, '654321', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword($envelope, '', $this->configStub));
     }
 
     public function testDecryptWithPasswordFailsWithTamperedCipherText()
     {
-        $parts = explode('$', Encryptor::encryptWithPassword('dati riservati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS));
-        $cipherText = base64_decode($parts[6]);
+        $parts = explode('$', Encryptor::encryptWithPassword('dati riservati', '123456', self::MINIMUM_ITERATIONS, $this->configStub));
+        $cipherText = base64_decode($parts[7]);
         $cipherText[0] = chr(ord($cipherText[0]) ^ 1);
-        $parts[6] = base64_encode($cipherText);
+        $parts[7] = base64_encode($cipherText);
 
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', $parts), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', $parts), '123456', $this->configStub));
     }
 
     public function testDecryptWithPasswordFailsWithTamperedHeader()
     {
-        $parts = explode('$', Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS));
-        $parts[2] = (string) (Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS + 1);
+        $parts = explode('$', Encryptor::encryptWithPassword('dati', '123456', self::MINIMUM_ITERATIONS, $this->configStub));
+        $parts[3] = (string) (self::MINIMUM_ITERATIONS + 1);
 
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', $parts), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', $parts), '123456', $this->configStub));
     }
 
     public function testDecryptWithPasswordFailsWithMalformedOrUnsupportedEnvelope()
     {
-        $parts = explode('$', Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS));
+        $parts = explode('$', Encryptor::encryptWithPassword('dati', '123456', self::MINIMUM_ITERATIONS, $this->configStub));
 
-        $this->assertFalse(Encryptor::decryptWithPassword('', '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword('non è un involucro', '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_slice($parts, 0, 6)), '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [0 => 'sisma-pw9'])), '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [1 => 'pbkdf2-md5'])), '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [2 => 'molte'])), '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [2 => '1000'])), '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [2 => '999999999'])), '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [5 => '!!!'])), '123456'));
-        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [4 => base64_encode('corto')])), '123456'));
+        $this->assertFalse(Encryptor::decryptWithPassword('', '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword('non è un involucro', '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_slice($parts, 0, 7)), '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [0 => 'sisma-pw9'])), '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [1 => 'aes-256-cbc'])), '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [2 => 'scrypt-sha256'])), '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [3 => 'molte'])), '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [3 => '1000'])), '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [3 => '999999999'])), '123456', $this->configStub));
+        $this->assertFalse(Encryptor::decryptWithPassword(implode('$', array_replace($parts, [6 => '!!!'])), '123456', $this->configStub));
     }
 
     public function testEncryptWithPasswordRejectsEmptyPassword()
     {
         $this->expectException(\InvalidArgumentException::class);
-        Encryptor::encryptWithPassword('dati', '');
+        Encryptor::encryptWithPassword('dati', '', null, $this->configStub);
     }
 
     public function testEncryptWithPasswordRejectsTooFewIterations()
     {
         $this->expectException(\InvalidArgumentException::class);
-        Encryptor::encryptWithPassword('dati', '123456', Encryptor::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS - 1);
+        Encryptor::encryptWithPassword('dati', '123456', self::MINIMUM_ITERATIONS - 1, $this->configStub);
     }
 }

@@ -27,6 +27,7 @@
 namespace SismaFramework\Tests\Security\HttpClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
@@ -41,6 +42,7 @@ use SismaFramework\Security\Interfaces\Wrappers\OAuthWrapperInterface;
 class OAuthAuthenticationTest extends TestCase
 {
     private Request $requestStub;
+    private Config $configStub;
     private Session $sessionStub;
     private Filter $filterStub;
     private OAuthAuthentication $oauthAuthentication;
@@ -55,6 +57,8 @@ class OAuthAuthenticationTest extends TestCase
         $this->requestStub->query = [];
         $this->requestStub->server = [];
 
+        $this->configStub = $this->createConfigStubWithStateKey('oauthState');
+
         $this->sessionStub = $this->createStub(Session::class);
 
         $this->filterStub = $this->createStub(Filter::class);
@@ -64,9 +68,49 @@ class OAuthAuthenticationTest extends TestCase
         $this->authenticableModelStub = $this->createStub(AuthenticableModelInterface::class);
         $this->authenticableInterfaceStub = $this->createStub(AuthenticableInterface::class);
 
-        $this->oauthAuthentication = new OAuthAuthentication($this->requestStub, $this->filterStub, $this->sessionStub);
+        $this->oauthAuthentication = new OAuthAuthentication($this->requestStub, $this->filterStub, $this->sessionStub, $this->configStub);
         $this->oauthAuthentication->setOAuthWrapperInterface($this->oauthWrapperStub);
         $this->oauthAuthentication->setAuthenticableModelInterface($this->authenticableModelStub);
+    }
+
+    private function createConfigStubWithStateKey(string $oauthStateKey, int $oauthStateBytes = 16): Config
+    {
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+            ->willReturnMap([
+                ['oauthStateKey', $oauthStateKey],
+                ['oauthStateBytes', $oauthStateBytes],
+            ]);
+        return $configStub;
+    }
+
+    public function testStateIsStoredAndCheckedUnderConfiguredKey(): void
+    {
+        $configStub = $this->createConfigStubWithStateKey('providerState', 32);
+        $storedState = null;
+        $sessionStub = $this->createStub(Session::class);
+        $sessionStub->method('__set')
+            ->willReturnCallback(function (string $name, mixed $value) use (&$storedState): void {
+                $this->assertSame('providerState', $name);
+                $storedState = $value;
+            });
+        $sessionStub->method('__isset')
+            ->willReturnCallback(fn(string $name) => $name === 'providerState');
+        $sessionStub->method('__get')
+            ->willReturnCallback(function (string $name) use (&$storedState): mixed {
+                return ($name === 'providerState') ? $storedState : null;
+            });
+        $this->oauthWrapperStub->method('getAuthenticableIdentifier')->willReturn('user@example.com');
+        $this->authenticableModelStub->method('getValidAuthenticableInterfaceByIdentifier')->willReturn($this->authenticableInterfaceStub);
+        $oauthAuthentication = new OAuthAuthentication($this->requestStub, $this->filterStub, $sessionStub, $configStub);
+        $oauthAuthentication->setOAuthWrapperInterface($this->oauthWrapperStub);
+        $oauthAuthentication->setAuthenticableModelInterface($this->authenticableModelStub);
+
+        $oauthAuthentication->getAuthorizationUrl();
+        $this->requestStub->query = ['state' => $storedState, 'code' => 'valid_code'];
+
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $storedState);
+        $this->assertTrue($oauthAuthentication->checkCallback());
     }
 
     public function testGetAuthorizationUrl(): void
@@ -85,7 +129,7 @@ class OAuthAuthenticationTest extends TestCase
             ->with($this->anything())
             ->willReturn($expectedUrl);
 
-        $oauthAuthentication = new OAuthAuthentication($this->requestStub, $this->filterStub, $sessionMock);
+        $oauthAuthentication = new OAuthAuthentication($this->requestStub, $this->filterStub, $sessionMock, $this->configStub);
         $oauthAuthentication->setOAuthWrapperInterface($wrapperMock);
         $oauthAuthentication->setAuthenticableModelInterface($this->authenticableModelStub);
 

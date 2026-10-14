@@ -29,7 +29,6 @@ namespace SismaFramework\TestsApplication\Entities;
 use SismaFramework\Orm\BaseClasses\BaseEntity;
 
 /**
- * Entità con una proprietà cifrata facoltativa, che può valere null, e una obbligatoria.
  *
  * @author Valentino de Lapa <valentino.delapa@gmail.com>
  */
