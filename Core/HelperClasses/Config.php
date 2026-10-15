@@ -124,6 +124,7 @@ class Config
     protected readonly int $logProductionMaxRow;
 
     /* Encryptor Constants */
+    protected readonly int $simpleRandomTokenBytes;
     protected readonly string $simpleHashAlgorithm;
     protected readonly int $blowfishHashWorkload;
     protected readonly ?string $encryptionPassphrase;
@@ -134,6 +135,39 @@ class Config
     protected readonly string $asymmetricDigestAlgorithm;
     protected readonly int $certificateValidityDays;
     protected readonly string $opensslConfigPath;
+    protected readonly int $passwordKeyDerivationDefaultIterations;
+    protected readonly int $passwordKeyDerivationMinimumIterations;
+    protected readonly int $passwordKeyDerivationMaximumIterations;
+    protected readonly string $passwordKeyDerivationHashAlgorithm;
+    protected readonly int $passwordKeyDerivationSaltBytes;
+    protected readonly string $passwordEncryptionAlgorithm;
+    protected readonly int $passwordEncryptionInitializationVectorBytes;
+    protected readonly int $passwordEncryptionTagBytes;
+    protected readonly int $passwordEncryptionMinimumTagBytes;
+    protected readonly string $passwordEnvelopeVersion;
+    protected readonly string $passwordEnvelopeSeparator;
+    protected readonly string $passwordEnvelopeKeyDerivationPrefix;
+
+    /* Session Constants */
+    protected readonly int $sessionLifetime;
+    protected readonly string $sessionCookiePath;
+    protected readonly string $sessionCookieDomain;
+    protected readonly bool $sessionCookieHttpOnly;
+    protected readonly string $sessionCookieSameSite;
+    protected readonly string $sessionTokenKey;
+    protected readonly string $sessionTokenHashAlgorithm;
+    protected readonly int $sessionRotationGraceSeconds;
+    protected readonly int $sessionMaximumRotationHops;
+    protected readonly string $sessionRotatedAtKey;
+    protected readonly string $sessionNextSessionIdKey;
+
+    /* Authentication Constants */
+    protected readonly string $csrfTokenKey;
+    protected readonly string $authenticationIdentifierField;
+    protected readonly string $authenticationPasswordField;
+    protected readonly string $authenticationMultiFactorCodeField;
+    protected readonly string $oauthStateKey;
+    protected readonly int $oauthStateBytes;
 
     /* Database Constant */
     protected readonly string $databaseHost;
@@ -172,10 +206,19 @@ class Config
     private function forceSet(string $name): void
     {
         if (isset($this->$name) === false) {
-            $constantName = '\\Config\\' . NotationManager::convertToUpperSnakeCase($name);
             $reflectionProperty = new \ReflectionProperty($this, $name);
-            $this->$name = Parser::simpleParseValue($reflectionProperty->getType(), constant($constantName));
+            $this->$name = Parser::simpleParseValue($reflectionProperty->getType(), $this->getProjectOrFrameworkValue($name));
         }
+    }
+
+    private function getProjectOrFrameworkValue(string $name): mixed
+    {
+        $constantName = NotationManager::convertToUpperSnakeCase($name);
+        if (defined('Config\\' . $constantName)) {
+            return constant('Config\\' . $constantName);
+        }
+        require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
+        return constant('SismaFramework\\Config\\' . $constantName);
     }
 
     public function __isset(string $name): bool

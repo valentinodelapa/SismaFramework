@@ -89,6 +89,8 @@ class SecurityController extends BaseController
 
 > La classe `Authentication` gestisce automaticamente la protezione da attacchi CSRF tramite `checkCsrfToken()`, che viene chiamato internamente da `checkAuthenticable()`.
 
+Il form di login deve inviare i campi `identifier`, `password` e `csrfToken`; quello di verifica a due fattori il campo `code`. Sono i nomi di default e si cambiano con `AUTHENTICATION_IDENTIFIER_FIELD`, `AUTHENTICATION_PASSWORD_FIELD`, `CSRF_TOKEN_KEY` e `AUTHENTICATION_MULTI_FACTOR_CODE_FIELD` (vedi [Configuration Reference](configuration-reference.md#autenticazione)).
+
 ### Autenticazione OAuth 2.0 (`OAuthAuthentication`)
 
 La classe `OAuthAuthentication` implementa il flusso **Authorization Code OAuth 2.0** ed è progettata per provider come Google, GitHub, ecc. Non usa `SubmittableTrait` perché non esiste un form da sottomettere: gli errori arrivano come parametri URL dal provider e vengono gestiti tramite valori di ritorno.
@@ -215,7 +217,7 @@ class OAuthController extends BaseController
 }
 ```
 
-> **Protezione CSRF in OAuth**: `getAuthorizationUrl()` genera automaticamente uno `state` casuale con `random_bytes(16)` e lo persiste in sessione. `checkCallback()` lo verifica in modo timing-safe tramite `hash_equals()`, seguendo lo stesso pattern difensivo di `checkCsrfToken()` nella classe `Authentication`.
+> **Protezione CSRF in OAuth**: `getAuthorizationUrl()` genera automaticamente uno `state` casuale di `OAUTH_STATE_BYTES` byte (default 16) e lo persiste in sessione, nella chiave `OAUTH_STATE_KEY` (default `oauthState`). `checkCallback()` lo verifica in modo timing-safe tramite `hash_equals()`, seguendo lo stesso pattern difensivo di `checkCsrfToken()` nella classe `Authentication`.
 
 ### Sistema di Autorizzazione (Voters e Permissions)
 
@@ -330,13 +332,15 @@ Per creare token sicuri da usare in sessioni, CSRF protection o API keys:
 ```php
 use SismaFramework\Core\HelperClasses\Encryptor;
 
-// Genera un token esadecimale di 32 caratteri (16 bytes)
+// Genera un token esadecimale di 32 caratteri (SIMPLE_RANDOM_TOKEN_BYTES = 16 byte per default)
 $token = Encryptor::getSimpleRandomToken();
-// Esempio output: "a1b2c3d4e5f6789012345678901234567890abcd"
+// Esempio output: "a1b2c3d4e5f60718293a4b5c6d7e8f90"
 
-// Uso tipico per CSRF token
-$_SESSION['csrf_token'] = Encryptor::getSimpleRandomToken();
+// Uso tipico per il token CSRF verificato da Authentication::checkCsrfToken()
+Session::setItem('csrfToken', Encryptor::getSimpleRandomToken());
 ```
+
+La lunghezza in byte si cambia con `SIMPLE_RANDOM_TOKEN_BYTES`; il token esadecimale è lungo il doppio.
 
 #### Hash Semplici (per checksum e integrità)
 
@@ -356,8 +360,10 @@ $hash = Encryptor::getSimpleHash('testo', $customConfig);
 
 **Configurazione algoritmo in `Config/config.php`:**
 ```php
-const SIMPLE_HASH_ALGORITHM = 'sha256'; // o 'md5', 'sha1', 'sha512'
+const SIMPLE_HASH_ALGORITHM = 'sha256'; // o 'sha384', 'sha512', 'sha3-256'
 ```
+
+Non usare `md5` né `sha1`: sono vulnerabili alle collisioni, quindi non garantiscono che due testi diversi abbiano hash diversi. `getSimpleHash()` è comunque un hash veloce e senza sale, adatto a impronte e confronti di integrità: per le password usa `getBlowfishHash()`.
 
 #### Hash Password (Blowfish/BCrypt)
 
@@ -411,7 +417,7 @@ const INITIALIZATION_VECTOR_BYTES = 16;
 
 Per casi d'uso che richiedono chiavi pubbliche/private reali — firma digitale di documenti, identità verificabili, catene di certificati, dati leggibili solo da un destinatario specifico — `Encryptor` fornisce un'API basata su OpenSSL completa: generazione di chiavi e certificati, verifica della catena di fiducia, firma/verifica di dati e cifratura a busta.
 
-Tutte le operazioni funzionano senza alcuna configurazione: se `OPENSSL_CONFIG_PATH` non è valorizzata, `Encryptor` genera e usa autonomamente una configurazione OpenSSL minimale autosufficiente (un file temporaneo per processo, ripulito automaticamente a fine richiesta) — non serve un `openssl.cnf` di sistema risolvibile, nemmeno su ambienti (tipicamente Windows) che ne sono privi.
+Tutte le operazioni funzionano senza alcuna configurazione: se `OPENSSL_CONFIG_PATH` non è valorizzata, `Encryptor` usa la configurazione OpenSSL minimale `Config/openssl.cnf` inclusa nel modulo — non serve un `openssl.cnf` di sistema risolvibile, nemmeno su ambienti (tipicamente Windows) che ne sono privi.
 
 **Generare una coppia di chiavi:**
 
@@ -489,7 +495,7 @@ const CERTIFICATE_VALIDITY_DAYS = 3650;
 define(__NAMESPACE__ . '\OPENSSL_CONFIG_PATH', getenv('OPENSSL_CONFIG_PATH') ?: '');
 ```
 
-> **Nota per progetti già installati**: `Config/configFramework.php` viene copiato da `Config/config.php` una sola volta, in fase di installazione, e non si aggiorna automaticamente con gli upgrade del framework. Se il tuo progetto esisteva prima dell'introduzione di questa funzionalità, aggiungi manualmente le costanti sopra al tuo `configFramework.php` prima di usare questi metodi — altrimenti la prima chiamata solleva `Error: Undefined constant`.
+> **Nota per progetti già installati**: `Config/configFramework.php` viene copiato da `Config/config.php` una sola volta, in fase di installazione, e non si aggiorna con gli upgrade del framework. Dalla 12.9.0 non serve aggiungere le costanti mancanti: se una costante non è dichiarata nel progetto, `Config` usa il valore di default del `config.php` del modulo. Aggiungile al tuo `configFramework.php` solo per cambiarne il valore. Fino alla 12.8.x una costante mancante sollevava `Error: Undefined constant`.
 
 #### Cifratura con Password (v12.8.0+)
 
@@ -506,9 +512,9 @@ if ($privateKeyPem === false) {
 }
 ```
 
-- **Algoritmi**: la chiave è ricavata dalla password con PBKDF2-HMAC-SHA256 (600.000 iterazioni per default, minimo 100.000) e un sale casuale di 16 byte; i dati sono cifrati con AES-256-GCM, che ne garantisce anche l'integrità.
-- **Involucro autodescrittivo**: il risultato è una stringa `sisma-pw1$pbkdf2-sha256$<iterazioni>$<sale>$<iv>$<tag>$<dati>` (campi binari in base64) che contiene tutto il necessario per decifrare, password esclusa: non serve conservare a parte sale o IV. L'intestazione (versione, algoritmo, iterazioni, sale) è autenticata insieme ai dati, quindi un involucro con i parametri alterati non si decifra.
-- **Nessuna configurazione**: i parametri sono scritti nell'involucro, non letti da `Config`; il terzo argomento di `encryptWithPassword()` permette di aumentare le iterazioni, e gli involucri già creati restano decifrabili.
+- **Algoritmi**: per default la chiave è ricavata dalla password con PBKDF2-HMAC-SHA256 (600.000 iterazioni, minimo 100.000) e un sale casuale di 16 byte; i dati sono cifrati con AES-256-GCM, che ne garantisce anche l'integrità. Hash, cifrario (purché autenticato) e lunghezze sono configurabili.
+- **Involucro autodescrittivo**: il risultato è una stringa `sisma-pw2$<cifrario>$pbkdf2-<hash>$<iterazioni>$<sale>$<iv>$<tag>$<dati>` (campi binari in base64) che contiene tutto il necessario per decifrare, password esclusa: non serve conservare a parte sale o IV, e cambiare la configurazione non rende indecifrabili gli involucri esistenti. L'intestazione (versione, cifrario, hash, iterazioni, sale) è autenticata insieme ai dati, quindi un involucro con i parametri alterati non si decifra. Gli involucri `sisma-pw1` della 12.8.x non sono piÃ¹ supportati.
+- **Configurazione**: il costo di default e l'intervallo ammesso delle iterazioni sono letti da `PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`, `PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS` e `PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS`; il terzo argomento di `encryptWithPassword()` permette di scegliere un costo diverso per il singolo involucro. Le iterazioni effettive sono scritte nell'involucro, quindi alzare il default non rende indecifrabili gli involucri già creati.
 - **Errori**: `encryptWithPassword()` solleva `InvalidArgumentException` per una password vuota o un numero di iterazioni fuori dall'intervallo ammesso; `decryptWithPassword()` non solleva eccezioni e restituisce `false`, come `decryptString()`.
 
 La robustezza dipende dalla password: un PIN numerico corto resiste a un attacco offline solo per il costo della derivazione. Per i segreti più delicati, limitare anche i tentativi lato applicativo e preferire password lunghe.
@@ -729,36 +735,37 @@ const SIMPLE_HASH_ALGORITHM = 'sha256';
 
 ### Cookie di Sessione
 
-I parametri del cookie di sessione **non sono configurabili tramite costanti**: `Session::start()` li imposta direttamente via `session_set_cookie_params()`:
+`Session::start()` imposta i parametri del cookie di sessione via `session_set_cookie_params()`, leggendoli dalla configurazione (v12.9.0+):
 
 ```php
 [
-    "lifetime"  => 3600,
-    "path"      => "/",
+    "lifetime"  => $config->sessionLifetime,        // SESSION_LIFETIME, default 3600
+    "path"      => $config->sessionCookiePath,      // SESSION_COOKIE_PATH, default "/"
+    "domain"    => $config->sessionCookieDomain,    // SESSION_COOKIE_DOMAIN, default ""
     "secure"    => Communication::getCommunicationProtocol($request) === CommunicationProtocol::https,
-    "httponly"  => true,
-    "samesite"  => "Lax",
+    "httponly"  => $config->sessionCookieHttpOnly,  // SESSION_COOKIE_HTTP_ONLY, default true
+    "samesite"  => $config->sessionCookieSameSite,  // SESSION_COOKIE_SAME_SITE, default "Lax"
 ]
 ```
 
-`domain` non viene impostato (v12.8.2+): il cookie resta legato all'host esatto che l'ha emesso, porta compresa, e non viene inviato ai sottodomini. Fino alla 12.8.1 valeva `HTTP_HOST`, che su una porta non standard (`localhost:8080`) contiene anche la porta: i browser scartavano il cookie e il login non funzionava.
+Per default `domain` è vuoto (v12.8.2+): il cookie resta legato all'host esatto che l'ha emesso, porta compresa, e non viene inviato ai sottodomini. Per condividere la sessione tra sottodomini si imposta `SESSION_COOKIE_DOMAIN` sul dominio comune (per esempio `example.com`, senza porta: un attributo `Domain` con la porta non è valido e il browser scarta il cookie). Fino alla 12.8.1 valeva `HTTP_HOST`, che su una porta non standard (`localhost:8080`) contiene anche la porta: i browser scartavano il cookie e il login non funzionava.
 
-`secure` viene determinato automaticamente in base al protocollo della richiesta corrente (coerente con `HTTPS_IS_FORCED`, non un flag separato); `httponly` è sempre attivo; `samesite` è sempre `Lax` (non configurabile, e non `Strict`). Per personalizzare questi valori è necessario un override della classe `Session`, non una costante.
+`secure` viene determinato automaticamente in base al protocollo della richiesta corrente (coerente con `HTTPS_IS_FORCED`, non un flag separato). Disattivare `httponly` rende il cookie leggibile da JavaScript, quindi esposto al furto tramite XSS; con `samesite` a `Strict` il cookie non viene inviato quando l'utente arriva da un link esterno, e con `None` serve HTTPS (i browser scartano un cookie `SameSite=None` senza `Secure`).
 
 ### Rotazione dell'ID di Sessione
 
 `Session::start()`, chiamato dal front controller a ogni richiesta, sostituisce l'ID di sessione con uno nuovo che ne eredita i dati: un ID sottratto smette presto di essere utilizzabile. La vecchia sessione non viene cancellata subito ma marcata con l'istante della rotazione e con il nuovo ID (v12.8.2+):
 
-- una richiesta che si presenta con un ID già ruotato **entro `Session::ROTATION_GRACE_SECONDS` (30 secondi)** viene agganciata alla sessione corrente, seguendo anche più rotazioni consecutive, e non ruota di nuovo. È il caso normale delle richieste concorrenti dello stesso browser: fogli di stile, script e chiamate `fetch` di una pagina partono tutte con lo stesso cookie, e quando passano dal front controller la prima che arriva ruota l'ID;
+- una richiesta che si presenta con un ID già ruotato **entro `SESSION_ROTATION_GRACE_SECONDS` (30 secondi per default)** viene agganciata alla sessione corrente, seguendo anche più rotazioni consecutive, e non ruota di nuovo. È il caso normale delle richieste concorrenti dello stesso browser: fogli di stile, script e chiamate `fetch` di una pagina partono tutte con lo stesso cookie, e quando passano dal front controller la prima che arriva ruota l'ID;
 - oltre il periodo di grazia la vecchia sessione è considerata scaduta e la richiesta riceve una sessione vuota.
 
 Fino alla 12.8.1 la rotazione cancellava subito la vecchia sessione (`session_regenerate_id(true)`): ogni richiesta concorrente partita con il cookie precedente riceveva una sessione vuota, e l'utente risultava disconnesso già al caricamento di una pagina con un foglio di stile e uno script serviti dal front controller.
 
-Il token anti-dirottamento (impronta di `User-Agent` e indirizzo IP) viene registrato alla creazione della sessione e non più a ogni richiesta: `Session::isValidSession($request)` restituisce `false` se la richiesta corrente proviene da un client diverso da quello che ha aperto la sessione.
+Il token anti-dirottamento (impronta di `User-Agent` e indirizzo IP, calcolata con `SESSION_TOKEN_HASH_ALGORITHM` e registrata nella chiave `SESSION_TOKEN_KEY`) viene registrato alla creazione della sessione e non più a ogni richiesta: `Session::isValidSession($request)` restituisce `false` se la richiesta corrente proviene da un client diverso da quello che ha aperto la sessione.
 
 ### Protezione CSRF
 
-Anche qui la chiave di sessione (`csrfToken`) è fissa e non configurabile, e il framework non applica alcuna scadenza al token. `Authentication::checkCsrfToken()` (richiamato internamente da `checkAuthenticable()`) **verifica soltanto** che `$_SESSION['csrfToken']` corrisponda al campo `csrfToken` inviato dal form — non lo genera. Genera e salva il token nella action che mostra il form, prima di renderizzarlo:
+Il nome del token è `CSRF_TOKEN_KEY` (default `csrfToken`, configurabile dalla v12.9.0) ed è usato sia come chiave di sessione sia come nome del campo del form; il framework non applica alcuna scadenza al token. `Authentication::checkCsrfToken()` (richiamato internamente da `checkAuthenticable()`) **verifica soltanto** che il valore in sessione corrisponda al campo omonimo inviato dal form, con un confronto a tempo costante (`hash_equals()`, dalla v12.9.0) — non lo genera. Genera e salva il token nella action che mostra il form, prima di renderizzarlo. Gli esempi usano il nome di default; se cambi `CSRF_TOKEN_KEY`, usa lo stesso nome in sessione e nel form:
 
 ```php
 use SismaFramework\Core\HelperClasses\Encryptor;

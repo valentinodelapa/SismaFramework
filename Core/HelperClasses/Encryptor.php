@@ -26,8 +26,6 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\HelperClasses\Config;
-
 /**
  *
  * @author Valentino de Lapa
@@ -35,38 +33,10 @@ use SismaFramework\Core\HelperClasses\Config;
 class Encryptor
 {
 
-    private const MINIMAL_OPENSSL_CONFIG = <<<'CNF'
-        [req]
-        distinguished_name = req_distinguished_name
-
-        [req_distinguished_name]
-
-        [v3_ca]
-        basicConstraints = critical,CA:TRUE
-        keyUsage = critical,keyCertSign,cRLSign
-
-        [v3_leaf]
-        basicConstraints = critical,CA:FALSE
-        keyUsage = critical,digitalSignature,keyEncipherment,dataEncipherment
-        CNF;
-
-    public const PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS = 600000;
-    public const PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS = 100000;
-    private const PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS = 10000000;
-    private const PASSWORD_ENVELOPE_VERSION = 'sisma-pw1';
-    private const PASSWORD_ENVELOPE_KEY_DERIVATION = 'pbkdf2-sha256';
-    private const PASSWORD_ENVELOPE_SEPARATOR = '$';
-    private const PASSWORD_ENVELOPE_CIPHER = 'aes-256-gcm';
-    private const PASSWORD_ENVELOPE_KEY_BYTES = 32;
-    private const PASSWORD_ENVELOPE_SALT_BYTES = 16;
-    private const PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES = 12;
-    private const PASSWORD_ENVELOPE_TAG_BYTES = 16;
-
-    private static ?string $minimalOpensslConfigPath = null;
-
-    public static function getSimpleRandomToken(): string
+    public static function getSimpleRandomToken(?Config $customConfig = null): string
     {
-        return bin2hex(random_bytes(16));
+        $config = $customConfig ?? Config::getInstance();
+        return bin2hex(random_bytes($config->simpleRandomTokenBytes));
     }
 
     public static function getSimpleHash(string $text, ?Config $customConfig = null): string
@@ -85,7 +55,7 @@ class Encryptor
     {
         $config = $customConfig ?? Config::getInstance();
         return password_hash($text, PASSWORD_BCRYPT, [
-            'cost' => $config->blowfishHashWorkload
+            'cost' => $config->blowfishHashWorkload,
         ]);
     }
 
@@ -207,53 +177,111 @@ class Encryptor
             base64_decode($encryptedEnvelope['envelopeKey']),
             $privateKeyResource,
             $config->encryptionAlgorithm,
-            base64_decode($encryptedEnvelope['initializationVector'])
+            base64_decode($encryptedEnvelope['initializationVector']),
         );
         return $success ? $decryptedData : false;
     }
 
-    public static function encryptWithPassword(string $plainText, string $password, int $iterations = self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS): string
+    public static function encryptWithPassword(string $plainText, string $password, ?int $iterations = null, ?Config $customConfig = null): string
+    {
+        $config = $customConfig ?? Config::getInstance();
+        $iterations ??= $config->passwordKeyDerivationDefaultIterations;
+        self::validatePasswordEncryptionParameters($password, $iterations, $config);
+        $cipher = $config->passwordEncryptionAlgorithm;
+        $hashAlgorithm = $config->passwordKeyDerivationHashAlgorithm;
+        $salt = random_bytes($config->passwordKeyDerivationSaltBytes);
+        $initializationVector = random_bytes($config->passwordEncryptionInitializationVectorBytes);
+        $header = implode($config->passwordEnvelopeSeparator, [$config->passwordEnvelopeVersion, $cipher, $config->passwordEnvelopeKeyDerivationPrefix . $hashAlgorithm, $iterations, base64_encode($salt)]);
+        $key = self::derivePasswordKey($password, $hashAlgorithm, $salt, $iterations, $cipher);
+        $cipherText = openssl_encrypt($plainText, $cipher, $key, OPENSSL_RAW_DATA, $initializationVector, $tag, $header, $config->passwordEncryptionTagBytes);
+        return implode($config->passwordEnvelopeSeparator, [$header, base64_encode($initializationVector), base64_encode($tag), base64_encode($cipherText)]);
+    }
+
+    private static function validatePasswordEncryptionParameters(string $password, int $iterations, Config $config): void
     {
         if ($password === '') {
             throw new \InvalidArgumentException('The password must not be empty.');
         }
-        if (($iterations < self::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS) || ($iterations > self::PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS)) {
-            throw new \InvalidArgumentException('The key derivation iterations must be between ' . self::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS . ' and ' . self::PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS . '.');
+        if (self::areIterationsAllowed($iterations, $config) === false) {
+            throw new \InvalidArgumentException('The key derivation iterations must be between ' . $config->passwordKeyDerivationMinimumIterations . ' and ' . $config->passwordKeyDerivationMaximumIterations . '.');
         }
-        $salt = random_bytes(self::PASSWORD_ENVELOPE_SALT_BYTES);
-        $initializationVector = random_bytes(self::PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES);
-        $header = implode(self::PASSWORD_ENVELOPE_SEPARATOR, [self::PASSWORD_ENVELOPE_VERSION, self::PASSWORD_ENVELOPE_KEY_DERIVATION, $iterations, base64_encode($salt)]);
-        $key = hash_pbkdf2('sha256', $password, $salt, $iterations, self::PASSWORD_ENVELOPE_KEY_BYTES, true);
-        $cipherText = openssl_encrypt($plainText, self::PASSWORD_ENVELOPE_CIPHER, $key, OPENSSL_RAW_DATA, $initializationVector, $tag, $header, self::PASSWORD_ENVELOPE_TAG_BYTES);
-        return implode(self::PASSWORD_ENVELOPE_SEPARATOR, [$header, base64_encode($initializationVector), base64_encode($tag), base64_encode($cipherText)]);
+        if (self::isSupportedHashAlgorithm($config->passwordKeyDerivationHashAlgorithm) === false) {
+            throw new \InvalidArgumentException('The key derivation hash algorithm ' . $config->passwordKeyDerivationHashAlgorithm . ' is not supported.');
+        }
+        if (self::isSupportedAuthenticatedCipher($config->passwordEncryptionAlgorithm) === false) {
+            throw new \InvalidArgumentException('The password encryption algorithm ' . $config->passwordEncryptionAlgorithm . ' is not an authenticated cipher supported by OpenSSL.');
+        }
+        if ($config->passwordEncryptionTagBytes < $config->passwordEncryptionMinimumTagBytes) {
+            throw new \InvalidArgumentException('The authentication tag must be at least ' . $config->passwordEncryptionMinimumTagBytes . ' bytes long.');
+        }
     }
 
-    public static function decryptWithPassword(string $envelope, string $password): string|false
+    public static function decryptWithPassword(string $envelope, string $password, ?Config $customConfig = null): string|false
     {
-        $parts = explode(self::PASSWORD_ENVELOPE_SEPARATOR, $envelope);
-        if ((count($parts) !== 7) || ($password === '')) {
+        $config = $customConfig ?? Config::getInstance();
+        $fields = self::parsePasswordEnvelope($envelope, $config);
+        if (($password === '') || ($fields === null) || (self::arePasswordEnvelopeFieldsAllowed($fields, $config) === false)) {
             return false;
         }
-        [$version, $keyDerivation, $iterations, $encodedSalt, $encodedInitializationVector, $encodedTag, $encodedCipherText] = $parts;
-        if (($version !== self::PASSWORD_ENVELOPE_VERSION) || ($keyDerivation !== self::PASSWORD_ENVELOPE_KEY_DERIVATION) || (ctype_digit($iterations) === false)) {
-            return false;
+        $key = self::derivePasswordKey($password, $fields['hashAlgorithm'], $fields['salt'], $fields['iterations'], $fields['cipher']);
+        return openssl_decrypt($fields['cipherText'], $fields['cipher'], $key, OPENSSL_RAW_DATA, $fields['initializationVector'], $fields['tag'], $fields['header']);
+    }
+
+    private static function parsePasswordEnvelope(string $envelope, Config $config): ?array
+    {
+        $parts = explode($config->passwordEnvelopeSeparator, $envelope);
+        if ((count($parts) !== 8) || ($parts[0] !== $config->passwordEnvelopeVersion)) {
+            return null;
         }
-        if (((int) $iterations < self::PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS) || ((int) $iterations > self::PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS)) {
-            return false;
-        }
+        [, $cipher, $keyDerivation, $iterations, $encodedSalt, $encodedInitializationVector, $encodedTag, $encodedCipherText] = $parts;
         $salt = base64_decode($encodedSalt, true);
         $initializationVector = base64_decode($encodedInitializationVector, true);
         $tag = base64_decode($encodedTag, true);
         $cipherText = base64_decode($encodedCipherText, true);
-        if (($salt === false) || ($initializationVector === false) || ($tag === false) || ($cipherText === false)) {
-            return false;
+        $isKeyDerivationWellFormed = str_starts_with($keyDerivation, $config->passwordEnvelopeKeyDerivationPrefix) && ctype_digit($iterations);
+        if (($isKeyDerivationWellFormed === false) || ($salt === false) || ($initializationVector === false) || ($tag === false) || ($cipherText === false)) {
+            return null;
         }
-        if ((strlen($initializationVector) !== self::PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES) || (strlen($tag) !== self::PASSWORD_ENVELOPE_TAG_BYTES)) {
-            return false;
-        }
-        $header = implode(self::PASSWORD_ENVELOPE_SEPARATOR, [$version, $keyDerivation, $iterations, $encodedSalt]);
-        $key = hash_pbkdf2('sha256', $password, $salt, (int) $iterations, self::PASSWORD_ENVELOPE_KEY_BYTES, true);
-        return openssl_decrypt($cipherText, self::PASSWORD_ENVELOPE_CIPHER, $key, OPENSSL_RAW_DATA, $initializationVector, $tag, $header);
+        return [
+            'cipher' => $cipher,
+            'hashAlgorithm' => substr($keyDerivation, strlen($config->passwordEnvelopeKeyDerivationPrefix)),
+            'iterations' => (int) $iterations,
+            'salt' => $salt,
+            'initializationVector' => $initializationVector,
+            'tag' => $tag,
+            'cipherText' => $cipherText,
+            'header' => implode($config->passwordEnvelopeSeparator, array_slice($parts, 0, 5)),
+        ];
+    }
+
+    private static function arePasswordEnvelopeFieldsAllowed(array $fields, Config $config): bool
+    {
+        return self::areIterationsAllowed($fields['iterations'], $config) &&
+                self::isSupportedHashAlgorithm($fields['hashAlgorithm']) &&
+                self::isSupportedAuthenticatedCipher($fields['cipher']) &&
+                ($fields['initializationVector'] !== '') &&
+                (strlen($fields['tag']) >= $config->passwordEncryptionMinimumTagBytes);
+    }
+
+    private static function areIterationsAllowed(int $iterations, Config $config): bool
+    {
+        return ($iterations >= $config->passwordKeyDerivationMinimumIterations) && ($iterations <= $config->passwordKeyDerivationMaximumIterations);
+    }
+
+    private static function isSupportedHashAlgorithm(string $hashAlgorithm): bool
+    {
+        return in_array($hashAlgorithm, hash_hmac_algos(), true);
+    }
+
+    private static function isSupportedAuthenticatedCipher(string $cipher): bool
+    {
+        $isAuthenticatedMode = preg_match('/^(aes-(128|192|256)-(gcm|ccm|ocb)|chacha20-poly1305)$/', $cipher) === 1;
+        return $isAuthenticatedMode && in_array($cipher, openssl_get_cipher_methods(), true);
+    }
+
+    private static function derivePasswordKey(string $password, string $hashAlgorithm, string $salt, int $iterations, string $cipher): string
+    {
+        return hash_pbkdf2($hashAlgorithm, $password, $salt, $iterations, openssl_cipher_key_length($cipher), true);
     }
 
     private static function createCertificateSigningRequestResource(string $privateKeyPem, array $distinguishedName, Config $config): \OpenSSLCertificateSigningRequest
@@ -274,21 +302,6 @@ class Encryptor
         if (empty($config->opensslConfigPath) === false) {
             return $config->opensslConfigPath;
         }
-        return self::getMinimalOpensslConfigPath();
-    }
-
-    private static function getMinimalOpensslConfigPath(): string
-    {
-        if (self::$minimalOpensslConfigPath === null) {
-            $path = tempnam(sys_get_temp_dir(), 'sisma_openssl_');
-            file_put_contents($path, self::MINIMAL_OPENSSL_CONFIG);
-            self::$minimalOpensslConfigPath = $path;
-            register_shutdown_function(static function () use ($path): void {
-                if (is_file($path)) {
-                    @unlink($path);
-                }
-            });
-        }
-        return self::$minimalOpensslConfigPath;
+        return dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'openssl.cnf';
     }
 }

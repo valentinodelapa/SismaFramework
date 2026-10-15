@@ -26,7 +26,8 @@
 
 namespace SismaFramework\Security\HttpClasses;
 
-use SismaFramework\Orm\HelperClasses\Filter;
+use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Security\BaseClasses\BaseAuthentication;
@@ -41,10 +42,12 @@ class OAuthAuthentication extends BaseAuthentication
 {
     private AuthenticableModelInterface $authenticableModelInterface;
     private OAuthWrapperInterface $oauthWrapperInterface;
+    private Config $config;
 
-    public function __construct(Request $request, Filter $filter = new Filter(), Session $session = new Session())
+    public function __construct(Request $request, Filter $filter = new Filter(), Session $session = new Session(), ?Config $customConfig = null)
     {
         parent::__construct($request, $filter, $session);
+        $this->config = $customConfig ?? Config::getInstance();
     }
 
     public function setAuthenticableModelInterface(AuthenticableModelInterface $authenticableModelInterface): void
@@ -59,8 +62,9 @@ class OAuthAuthentication extends BaseAuthentication
 
     public function getAuthorizationUrl(): string
     {
-        $state = bin2hex(random_bytes(16));
-        $this->session->oauthState = $state;
+        $state = bin2hex(random_bytes($this->config->oauthStateBytes));
+        $oauthStateKey = $this->config->oauthStateKey;
+        $this->session->$oauthStateKey = $state;
         return $this->oauthWrapperInterface->getAuthorizationUrl($state);
     }
 
@@ -82,7 +86,8 @@ class OAuthAuthentication extends BaseAuthentication
 
     private function checkOAuthState(): bool
     {
-        if (isset($this->session->oauthState) === false) {
+        $oauthStateKey = $this->config->oauthStateKey;
+        if (isset($this->session->$oauthStateKey) === false) {
             return false;
         }
         if (array_key_exists('state', $this->request->query) === false) {
@@ -91,6 +96,6 @@ class OAuthAuthentication extends BaseAuthentication
         if ($this->filter->isString($this->request->query['state']) === false) {
             return false;
         }
-        return hash_equals($this->session->oauthState, $this->request->query['state']);
+        return hash_equals($this->session->$oauthStateKey, $this->request->query['state']);
     }
 }

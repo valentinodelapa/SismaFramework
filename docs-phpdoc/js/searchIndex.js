@@ -2731,10 +2731,45 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_encryptWithPassword"
         },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AvalidatePasswordEncryptionParameters\u0028\u0029",
+            "name": "validatePasswordEncryptionParameters",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_validatePasswordEncryptionParameters"
+        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AdecryptWithPassword\u0028\u0029",
             "name": "decryptWithPassword",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_decryptWithPassword"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AparsePasswordEnvelope\u0028\u0029",
+            "name": "parsePasswordEnvelope",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_parsePasswordEnvelope"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AarePasswordEnvelopeFieldsAllowed\u0028\u0029",
+            "name": "arePasswordEnvelopeFieldsAllowed",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_arePasswordEnvelopeFieldsAllowed"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AareIterationsAllowed\u0028\u0029",
+            "name": "areIterationsAllowed",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_areIterationsAllowed"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AisSupportedHashAlgorithm\u0028\u0029",
+            "name": "isSupportedHashAlgorithm",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_isSupportedHashAlgorithm"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AisSupportedAuthenticatedCipher\u0028\u0029",
+            "name": "isSupportedAuthenticatedCipher",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_isSupportedAuthenticatedCipher"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AderivePasswordKey\u0028\u0029",
+            "name": "derivePasswordKey",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_derivePasswordKey"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AcreateCertificateSigningRequestResource\u0028\u0029",
             "name": "createCertificateSigningRequestResource",
@@ -2820,6 +2855,202 @@ Search.appendIndex(
             "name": "minimalOpensslConfigPath",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#property_minimalOpensslConfigPath"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter",
+            "name": "Filter",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AnoFilter\u0028\u0029",
+            "name": "noFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_noFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AcustomFilter\u0028\u0029",
+            "name": "customFilter",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_customFilter"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNotNull\u0028\u0029",
+            "name": "isNotNull",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isNotNull"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNotFalse\u0028\u0029",
+            "name": "isNotFalse",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isNotFalse"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNotEmpty\u0028\u0029",
+            "name": "isNotEmpty",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isNotEmpty"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisString\u0028\u0029",
+            "name": "isString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLimitString\u0028\u0029",
+            "name": "isMinLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLimitString\u0028\u0029",
+            "name": "isMaxLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLimitString\u0028\u0029",
+            "name": "isLimitString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLimitString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisAlphabeticString\u0028\u0029",
+            "name": "isAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLimitAlphabeticString\u0028\u0029",
+            "name": "isMinLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLimitAlphabeticString\u0028\u0029",
+            "name": "isMaxLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLimitAlphabeticString\u0028\u0029",
+            "name": "isLimitAlphabeticString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLimitAlphabeticString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisAlphanumericString\u0028\u0029",
+            "name": "isAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLimitAlphanumericString\u0028\u0029",
+            "name": "isMinLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLimitAlphanumericString\u0028\u0029",
+            "name": "isMaxLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLimitAlphanumericString\u0028\u0029",
+            "name": "isLimitAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLimitAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisStrictAlphanumericString\u0028\u0029",
+            "name": "isStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLimitStrictAlphanumericString\u0028\u0029",
+            "name": "isMinLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLimitStrictAlphanumericString\u0028\u0029",
+            "name": "isMaxLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLimitStrictAlphanumericString\u0028\u0029",
+            "name": "isLimitStrictAlphanumericString",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLimitStrictAlphanumericString"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisSecurePassword\u0028\u0029",
+            "name": "isSecurePassword",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isSecurePassword"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisEmail\u0028\u0029",
+            "name": "isEmail",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEmail"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNumeric\u0028\u0029",
+            "name": "isNumeric",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isNumeric"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisInteger\u0028\u0029",
+            "name": "isInteger",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isInteger"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisFloat\u0028\u0029",
+            "name": "isFloat",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isFloat"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisBoolean\u0028\u0029",
+            "name": "isBoolean",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isBoolean"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisArray\u0028\u0029",
+            "name": "isArray",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isArray"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisDate\u0028\u0029",
+            "name": "isDate",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isDate"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisDatetime\u0028\u0029",
+            "name": "isDatetime",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isDatetime"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisTime\u0028\u0029",
+            "name": "isTime",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isTime"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisJson\u0028\u0029",
+            "name": "isJson",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isJson"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisUploadedFile\u0028\u0029",
+            "name": "isUploadedFile",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isUploadedFile"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisEntity\u0028\u0029",
+            "name": "isEntity",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisEnumeration\u0028\u0029",
+            "name": "isEnumeration",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEnumeration"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLengthForValidator\u0028\u0029",
+            "name": "isMinLengthForValidator",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLengthForValidator"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLengthForValidator\u0028\u0029",
+            "name": "isMaxLengthForValidator",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLengthForValidator"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLengthRangeForValidator\u0028\u0029",
+            "name": "isLengthRangeForValidator",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLengthRangeForValidator"
+        }
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Logger",
             "name": "Logger",
@@ -3041,15 +3272,45 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_start"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AfollowRotation\u0028\u0029",
-            "name": "followRotation",
-            "summary": "Se\u0020l\u0027ID\u0020presentato\u0020\u00E8\u0020gi\u00E0\u0020stato\u0020ruotato\u0020da\u0020una\u0020richiesta\u0020precedente,\u0020aggancia\u0020la\u0020richiesta\u0020alla\u0020sessione\u0020che\u0020lo\nha\u0020sostituito\u0020\u0028seguendo\u0020eventuali\u0020rotazioni\u0020successive\u0029\u0020purch\u00E9\u0020la\u0020rotazione\u0020sia\u0020avvenuta\u0020entro\nROTATION_GRACE_SECONDS\u003B\u0020altrimenti\u0020la\u0020sessione\u0020\u00E8\u0020scaduta\u0020e\u0020viene\u0020sostituita\u0020da\u0020una\u0020vuota.\u0020Restituisce\u0020true\u0020se\u0020la\nrichiesta\u0020ha\u0020seguito\u0020una\u0020rotazione\u003A\u0020in\u0020quel\u0020caso\u0020non\u0020si\u0020ruota\u0020di\u0020nuovo.",
-            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_followRotation"
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AgetClientFingerprint\u0028\u0029",
+            "name": "getClientFingerprint",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_getClientFingerprint"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003Arotate\u0028\u0029",
-            "name": "rotate",
-            "summary": "Sostituisce\u0020l\u0027ID\u0020di\u0020sessione\u0020con\u0020uno\u0020nuovo\u0020che\u0020ne\u0020eredita\u0020i\u0020dati.\u0020La\u0020vecchia\u0020sessione\u0020non\u0020viene\u0020cancellata\nsubito\u003A\u0020resta\u0020marcata\u0020con\u0020l\u0027istante\u0020della\u0020rotazione\u0020e\u0020il\u0020nuovo\u0020ID,\u0020cos\u00EC\u0020le\u0020richieste\u0020concorrenti\u0020partite\u0020con\u0020il\nvecchio\u0020cookie\u0020\u0028fogli\u0020di\u0020stile,\u0020script,\u0020chiamate\u0020fetch\u0020della\u0020stessa\u0020pagina\u0029\u0020ritrovano\u0020la\u0020sessione\u0020corrente\u0020invece\ndi\u0020riceverne\u0020una\u0020vuota,\u0020e\u0020dopo\u0020il\u0020periodo\u0020di\u0020grazia\u0020il\u0020vecchio\u0020ID\u0020non\u0020\u00E8\u0020pi\u00F9\u0020utilizzabile.\u0020Entrambe\u0020le\u0020sessioni\nesistono\u0020quando\u0020vengono\u0020riaperte,\u0020quindi\u0020la\u0020rotazione\u0020funziona\u0020anche\u0020con\u0020session.use_strict_mode\u0020attivo.",
-            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_rotate"
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AfollowRotationChainOfPresentedId\u0028\u0029",
+            "name": "followRotationChainOfPresentedId",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_followRotationChainOfPresentedId"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AisCurrentSessionRotated\u0028\u0029",
+            "name": "isCurrentSessionRotated",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_isCurrentSessionRotated"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AisRotationStillFollowable\u0028\u0029",
+            "name": "isRotationStillFollowable",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_isRotationStillFollowable"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AreplaceWithEmptySession\u0028\u0029",
+            "name": "replaceWithEmptySession",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_replaceWithEmptySession"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003ArotateIdKeepingPreviousSessionDuringGracePeriod\u0028\u0029",
+            "name": "rotateIdKeepingPreviousSessionDuringGracePeriod",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_rotateIdKeepingPreviousSessionDuringGracePeriod"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AmarkCurrentSessionAsRotatedTo\u0028\u0029",
+            "name": "markCurrentSessionAsRotatedTo",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_markCurrentSessionAsRotatedTo"
+        },                {
+            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AswitchToSession\u0028\u0029",
+            "name": "switchToSession",
+            "summary": "",
+            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_switchToSession"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003A__set\u0028\u0029",
             "name": "__set",
@@ -3130,26 +3391,6 @@ Search.appendIndex(
             "name": "end",
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Session.html#method_end"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AROTATION_GRACE_SECONDS",
-            "name": "ROTATION_GRACE_SECONDS",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATION_GRACE_SECONDS"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AROTATED_AT_KEY",
-            "name": "ROTATED_AT_KEY",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATED_AT_KEY"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003ANEXT_SESSION_ID_KEY",
-            "name": "NEXT_SESSION_ID_KEY",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#constant_NEXT_SESSION_ID_KEY"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003AMAXIMUM_ROTATION_HOPS",
-            "name": "MAXIMUM_ROTATION_HOPS",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Session.html#constant_MAXIMUM_ROTATION_HOPS"
         },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Session\u003A\u003A\u0024sessionProperties",
             "name": "sessionProperties",
@@ -6796,6 +7037,11 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_authenticableModelInterface"
         },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\Authentication\u003A\u003A\u0024config",
+            "name": "config",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-Authentication.html#property_config"
+        },                {
             "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication",
             "name": "OAuthAuthentication",
             "summary": "",
@@ -6840,6 +7086,11 @@ Search.appendIndex(
             "name": "oauthWrapperInterface",
             "summary": "",
             "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_oauthWrapperInterface"
+        },                {
+            "fqsen": "\\SismaFramework\\Security\\HttpClasses\\OAuthAuthentication\u003A\u003A\u0024config",
+            "name": "config",
+            "summary": "",
+            "url": "classes/SismaFramework-Security-HttpClasses-OAuthAuthentication.html#property_config"
         },                {
             "fqsen": "\\SismaFramework\\Security\\Interfaces\\Entities\\AuthenticableInterface",
             "name": "AuthenticableInterface",

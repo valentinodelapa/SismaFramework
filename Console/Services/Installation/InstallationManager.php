@@ -100,6 +100,7 @@ class InstallationManager
             throw new \RuntimeException("Failed to copy config file.");
         }
         $content = file_get_contents($destConfig);
+        $content = str_replace("namespace SismaFramework\\Config;", "namespace Config;", $content);
         $content = preg_replace("/(const\s+PROJECT\s*=\s*)(['\"])[^'\"]*\\2/", "$1$2{$projectName}$2", $content);
         $content = preg_replace("/(const\s+APPLICATION\s*=\s*)(['\"])[^'\"]*\\2/", "$1$2Application$2", $content);
         $content = str_replace("__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;", "__DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;", $content);

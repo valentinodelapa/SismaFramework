@@ -308,9 +308,9 @@ Tutti i metodi sono statici e accettano un `?Config $customConfig = null` opzion
 #### Token e Hash
 
 ```php
-public static function getSimpleRandomToken(): string
+public static function getSimpleRandomToken(?Config $customConfig = null): string
 ```
-Genera un token casuale esadecimale (`bin2hex(random_bytes(16))`).
+Genera un token casuale esadecimale (`bin2hex(random_bytes(SIMPLE_RANDOM_TOKEN_BYTES))`, 16 byte per default).
 
 ```php
 public static function getSimpleHash(string $text, ?Config $customConfig = null): string
@@ -335,7 +335,7 @@ Cifratura/decifratura AES (algoritmo configurabile via `ENCRYPTION_ALGORITHM`, c
 
 #### Crittografia Asimmetrica (v12.3.0+)
 
-Nessuna di queste operazioni richiede configurazione: se `OPENSSL_CONFIG_PATH` non è valorizzata, `Encryptor` usa internamente una configurazione OpenSSL minimale autosufficiente (temporanea, generata una volta per processo).
+Nessuna di queste operazioni richiede configurazione: se `OPENSSL_CONFIG_PATH` non è valorizzata, `Encryptor` usa la configurazione OpenSSL minimale `Config/openssl.cnf` inclusa nel modulo.
 
 ```php
 public static function generateAsymmetricKeyPair(?Config $customConfig = null): array
@@ -379,10 +379,12 @@ Cifratura a busta (envelope encryption): la chiave pubblica cifra una chiave sim
 #### Cifratura con Password (v12.8.0+)
 
 ```php
-public static function encryptWithPassword(string $plainText, string $password, int $iterations = self::PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS): string
-public static function decryptWithPassword(string $envelope, string $password): string|false
+public static function encryptWithPassword(string $plainText, string $password, ?int $iterations = null, ?Config $customConfig = null): string
+public static function decryptWithPassword(string $envelope, string $password, ?Config $customConfig = null): string|false
 ```
-Cifra con una chiave ricavata da una password (PBKDF2-HMAC-SHA256) usando AES-256-GCM, indipendentemente da `ENCRYPTION_PASSPHRASE`. Ritorna un involucro autodescrittivo (`sisma-pw1$pbkdf2-sha256$<iterazioni>$<sale>$<iv>$<tag>$<dati>`) che contiene sale, IV e parametri. `encryptWithPassword()` solleva `InvalidArgumentException` se la password è vuota o le iterazioni sono fuori dall'intervallo ammesso (minimo `PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS`, 100.000); `decryptWithPassword()` ritorna `false` se la password è errata o l'involucro è malformato o alterato. Nessuna costante di configurazione richiesta. Esempi in [Sicurezza](security.md#cifratura-con-password-v1280).
+Cifra con una chiave ricavata da una password (PBKDF2, per default HMAC-SHA256) usando un cifrario autenticato (per default AES-256-GCM), indipendentemente da `ENCRYPTION_PASSPHRASE`. Ritorna un involucro autodescrittivo (`sisma-pw2$<cifrario>$pbkdf2-<hash>$<iterazioni>$<sale>$<iv>$<tag>$<dati>`) che contiene tutti i parametri: `decryptWithPassword()` li legge dall'involucro, non dalla configurazione; gli involucri `sisma-pw1` prodotti dalla 12.8.x non sono piÃ¹ supportati. Se `$iterations` non è indicato vale `PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`. `encryptWithPassword()` solleva `InvalidArgumentException` se la password è vuota, le iterazioni sono fuori dall'intervallo ammesso o la configurazione indica un hash non supportato, un cifrario non autenticato o un tag più corto del minimo; `decryptWithPassword()` ritorna `false` se la password è errata o l'involucro è malformato, alterato o fuori dagli stessi limiti.
+
+**Configurazione**: `PASSWORD_KEY_DERIVATION_*` e `PASSWORD_ENCRYPTION_*` — dettagli in [Configuration Reference](configuration-reference.md#crittografia). Esempi in [Sicurezza](security.md#cifratura-con-password-v1280).
 
 ---
 
@@ -502,6 +504,10 @@ public function validate(): array
 
 Gestisce il flusso di autenticazione form-based (credenziali + password + CSRF). Estende `BaseAuthentication` e usa `SubmittableTrait`.
 
+```php
+public function __construct(Request $request, Filter $filter = new Filter(), Session $session = new Session(), ?Config $customConfig = null)
+```
+
 #### Metodi Principali
 
 ```php
@@ -517,22 +523,22 @@ Inietta il modello che recupera la password associata all'entità.
 ```php
 public function checkAuthenticable(bool $withCsrfToken = true): bool
 ```
-Verifica in sequenza: CSRF token (se `$withCsrfToken = true`), identificatore utente e password. Restituisce `true` solo se tutti i controlli passano. **Chiama internamente `checkPassword()`** — non è necessario chiamarlo separatamente.
+Verifica in sequenza: CSRF token (se `$withCsrfToken = true`), identificatore utente e password. L'identificatore è letto dal campo `AUTHENTICATION_IDENTIFIER_FIELD` (default `identifier`). Restituisce `true` solo se tutti i controlli passano. **Chiama internamente `checkPassword()`** — non è necessario chiamarlo separatamente.
 
 ```php
 public function checkCsrfToken(): bool
 ```
-Verifica che il token CSRF nella richiesta corrisponda a quello in sessione.
+Verifica che il token CSRF nella richiesta corrisponda a quello in sessione, con un confronto a tempo costante (`hash_equals()`). Il nome del campo e della chiave di sessione è `CSRF_TOKEN_KEY` (default `csrfToken`).
 
 ```php
 public function checkPassword(AuthenticableInterface $authenticable): bool
 ```
-Verifica la password per un'entità autenticabile specifica.
+Verifica la password per un'entità autenticabile specifica, letta dal campo `AUTHENTICATION_PASSWORD_FIELD` (default `password`).
 
 ```php
-public function checkMultiFactor(AuthenticableInterface $authenticable, DataMapper $dataMapper): bool
+public function checkMultiFactor(AuthenticableInterface $authenticable, DataMapper $dataMapper = new DataMapper()): bool
 ```
-Verifica il codice TOTP o il codice di recovery per l'autenticazione a due fattori.
+Verifica il codice TOTP o il codice di recovery per l'autenticazione a due fattori, letto dal campo `AUTHENTICATION_MULTI_FACTOR_CODE_FIELD` (default `code`).
 
 ```php
 // Da BaseAuthentication:
@@ -554,6 +560,10 @@ public function getFilterErrors(): FormFilterError
 
 Implementa il flusso **Authorization Code OAuth 2.0**. Estende `BaseAuthentication`; **non usa `SubmittableTrait`** perché in OAuth non esiste un form da sottomettere.
 
+```php
+public function __construct(Request $request, Filter $filter = new Filter(), Session $session = new Session(), ?Config $customConfig = null)
+```
+
 #### Metodi Principali
 
 ```php
@@ -569,7 +579,7 @@ Inietta il modello che recupera l'utente dall'identificatore OAuth.
 ```php
 public function getAuthorizationUrl(): string
 ```
-Genera uno `state` anti-CSRF con `random_bytes(16)`, lo persiste in sessione e restituisce l'URL di autorizzazione del provider.
+Genera uno `state` anti-CSRF di `OAUTH_STATE_BYTES` byte casuali (default 16), lo persiste in sessione nella chiave `OAUTH_STATE_KEY` (default `oauthState`) e restituisce l'URL di autorizzazione del provider.
 
 ```php
 public function checkCallback(): bool

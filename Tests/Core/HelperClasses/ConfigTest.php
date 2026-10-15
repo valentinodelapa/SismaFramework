@@ -26,8 +26,10 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\TestsApplication\HelperClasses\ConfigWithUndeclaredParameter;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Orm\Enumerations\AdapterType;
 
@@ -177,6 +179,31 @@ class ConfigTest extends TestCase
         $property = $reflection->getProperty('defaultAdapterType');
 
         $this->assertEquals('SismaFramework\Orm\Enumerations\AdapterType', $property->getType()->getName());
+    }
+
+    #[RunInSeparateProcess]
+    public function testProjectConstantTakesPrecedenceOverFrameworkConfiguration()
+    {
+        define('Config\SESSION_LIFETIME', 1);
+
+        $this->assertSame(1, (new Config())->sessionLifetime);
+    }
+
+    #[RunInSeparateProcess]
+    public function testUndeclaredProjectConstantFallsBackToFrameworkConfiguration()
+    {
+        $sessionLifetime = (new Config())->sessionLifetime;
+
+        $this->assertFalse(defined('Config\SESSION_LIFETIME'));
+        $this->assertSame(\SismaFramework\Config\SESSION_LIFETIME, $sessionLifetime);
+    }
+
+    public function testConstantDeclaredNowhereThrowsError()
+    {
+        $config = new ConfigWithUndeclaredParameter();
+
+        $this->expectException(\Error::class);
+        $config->parameterDeclaredNowhere;
     }
 
     public function testInstancePropertyExists()

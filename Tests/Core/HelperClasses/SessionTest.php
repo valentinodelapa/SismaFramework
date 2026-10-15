@@ -36,17 +36,14 @@ use SismaFramework\Core\HttpClasses\Request;
  */
 class SessionTest extends TestCase
 {
+    private const ROTATION_GRACE_SECONDS = 30;
+    private const ROTATED_AT_KEY = '__sismaSessionRotatedAt';
+
     private Request $requestMock;
 
     public function setUp(): void
     {
-        $configStub = $this->createStub(Config::class);
-        $configStub->method('__get')
-                ->willReturnMap([
-                    ['developmentEnvironment', true],
-                    ['httpsIsForced', false],
-        ]);
-        Config::setInstance($configStub);
+        $this->setConfiguration();
         Session::end();
         $this->requestMock = $this->createStub(Request::class);
         $this->requestMock->server = [
@@ -54,6 +51,29 @@ class SessionTest extends TestCase
             'HTTP_USER_AGENT' => '',
             'REMOTE_ADDR' => '',
         ];
+    }
+
+    private function setConfiguration(array $customValues = []): void
+    {
+        $values = array_merge([
+            'developmentEnvironment' => true,
+            'httpsIsForced' => false,
+            'sessionLifetime' => 3600,
+            'sessionCookiePath' => '/',
+            'sessionCookieDomain' => '',
+            'sessionCookieHttpOnly' => true,
+            'sessionCookieSameSite' => 'Lax',
+            'sessionTokenKey' => 'token',
+            'sessionTokenHashAlgorithm' => 'sha512',
+            'sessionRotationGraceSeconds' => self::ROTATION_GRACE_SECONDS,
+            'sessionMaximumRotationHops' => 10,
+            'sessionRotatedAtKey' => self::ROTATED_AT_KEY,
+            'sessionNextSessionIdKey' => '__sismaNextSessionId',
+                ], $customValues);
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnCallback(fn(string $name) => $values[$name]);
+        Config::setInstance($configStub);
     }
 
     public function testSessionStart()
@@ -82,7 +102,7 @@ class SessionTest extends TestCase
         $secondId = session_id();
         $this->assertNotEquals($firstId, $secondId);
         $this->assertEquals('present', Session::getItem('marker'));
-        $this->assertFalse(Session::hasItem(Session::ROTATED_AT_KEY));
+        $this->assertFalse(Session::hasItem(self::ROTATED_AT_KEY));
         session_write_close();
 
         session_id($secondId);
@@ -94,34 +114,28 @@ class SessionTest extends TestCase
         $this->assertEquals(PHP_SESSION_NONE, session_status());
     }
 
-    public function testStaleSessionIdWithinGracePeriodFollowsCurrentSession()
+    public function testConcurrentRequestWithStaleSessionIdWithinGracePeriodJoinsCurrentSession()
     {
-        Session::start($this->requestMock);
-        $staleId = session_id();
-        Session::setItem('marker', 'present');
-        session_write_close();
+        $staleId = $this->startSessionWithMarker('present');
+        $currentId = $this->startRequestRotatingSessionId($staleId);
 
-        // Prima richiesta col cookie corrente: ruota l'ID.
-        session_id($staleId);
-        Session::start($this->requestMock);
-        $currentId = session_id();
-        session_write_close();
-
-        // Richiesta concorrente partita con lo stesso cookie: ritrova la sessione corrente, senza ruotarla di nuovo.
-        session_id($staleId);
-        Session::start($this->requestMock);
+        $this->startRequestWithSessionId($staleId);
         $this->assertEquals($currentId, session_id());
         $this->assertEquals('present', Session::getItem('marker'));
-        session_write_close();
 
-        // Dopo un'altra rotazione, il vecchio ID segue la catena fino alla sessione più recente.
-        session_id($currentId);
-        Session::start($this->requestMock);
+        Session::end();
+    }
+
+    public function testStaleSessionIdFollowsRotationChainToLatestSession()
+    {
+        $staleId = $this->startSessionWithMarker('present');
+        $currentId = $this->startRequestRotatingSessionId($staleId);
+        $this->startRequestWithSessionId($currentId);
         $latestId = session_id();
         Session::setItem('marker', 'updated');
         session_write_close();
-        session_id($staleId);
-        Session::start($this->requestMock);
+
+        $this->startRequestWithSessionId($staleId);
         $this->assertEquals($latestId, session_id());
         $this->assertEquals('updated', Session::getItem('marker'));
 
@@ -130,23 +144,11 @@ class SessionTest extends TestCase
 
     public function testStaleSessionIdAfterGracePeriodGetsEmptySession()
     {
-        Session::start($this->requestMock);
-        $staleId = session_id();
-        Session::setItem('marker', 'present');
-        session_write_close();
-        session_id($staleId);
-        Session::start($this->requestMock);
-        $currentId = session_id();
-        session_write_close();
+        $staleId = $this->startSessionWithMarker('present');
+        $currentId = $this->startRequestRotatingSessionId($staleId);
+        $this->expireRotationGracePeriodOf($staleId);
 
-        // La rotazione del vecchio ID risale a oltre il periodo di grazia.
-        session_id($staleId);
-        session_start();
-        $_SESSION[Session::ROTATED_AT_KEY] = time() - Session::ROTATION_GRACE_SECONDS - 1;
-        session_write_close();
-
-        session_id($staleId);
-        Session::start($this->requestMock);
+        $this->startRequestWithSessionId($staleId);
         $this->assertNotEquals($staleId, session_id());
         $this->assertNotEquals($currentId, session_id());
         $this->assertFalse(Session::hasItem('marker'));
@@ -154,11 +156,69 @@ class SessionTest extends TestCase
         Session::end();
     }
 
+    private function startSessionWithMarker(string $marker): string
+    {
+        Session::start($this->requestMock);
+        Session::setItem('marker', $marker);
+        $sessionId = session_id();
+        session_write_close();
+        return $sessionId;
+    }
+
+    private function startRequestWithSessionId(string $sessionId): void
+    {
+        session_id($sessionId);
+        Session::start($this->requestMock);
+    }
+
+    private function startRequestRotatingSessionId(string $sessionId): string
+    {
+        $this->startRequestWithSessionId($sessionId);
+        $rotatedSessionId = session_id();
+        session_write_close();
+        return $rotatedSessionId;
+    }
+
+    private function expireRotationGracePeriodOf(string $sessionId): void
+    {
+        session_id($sessionId);
+        session_start();
+        $_SESSION[self::ROTATED_AT_KEY] = time() - self::ROTATION_GRACE_SECONDS - 1;
+        session_write_close();
+    }
+
     public function testSessionCookieIsBoundToExactHost()
     {
         $this->requestMock->server['HTTP_HOST'] = 'example.test:8080';
         Session::start($this->requestMock);
         $this->assertSame('', session_get_cookie_params()['domain']);
+        Session::end();
+    }
+
+    public function testSessionCookieAndTokenFollowConfiguration()
+    {
+        $this->setConfiguration([
+            'sessionLifetime' => 600,
+            'sessionCookiePath' => '/area',
+            'sessionCookieDomain' => 'example.test',
+            'sessionCookieHttpOnly' => false,
+            'sessionCookieSameSite' => 'Strict',
+            'sessionTokenKey' => 'fingerprint',
+            'sessionTokenHashAlgorithm' => 'sha256',
+        ]);
+
+        Session::start($this->requestMock);
+        $cookieParameters = session_get_cookie_params();
+
+        $this->assertSame(600, $cookieParameters['lifetime']);
+        $this->assertSame('/area', $cookieParameters['path']);
+        $this->assertSame('example.test', $cookieParameters['domain']);
+        $this->assertFalse($cookieParameters['httponly']);
+        $this->assertSame('Strict', $cookieParameters['samesite']);
+        $this->assertSame(hash('sha256', ''), Session::getItem('fingerprint'));
+        $this->assertFalse(Session::hasItem('token'));
+        $this->assertTrue(Session::isValidSession($this->requestMock));
+
         Session::end();
     }
 
