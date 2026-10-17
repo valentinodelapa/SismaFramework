@@ -184,7 +184,7 @@ abstract class BaseResultSet implements \Iterator
             if (Cache::checkEntityPresenceInCache($entityClass, $entityId)) {
                 $relatedEntity = Cache::getEntityById($entityClass, $entityId);
             } else {
-                $relatedEntity = $this->hydrateRelatedEntity($childData, $entityClass);
+                $relatedEntity = $this->convertToBaseEntity($childData, $entityClass);
                 Cache::setEntity($relatedEntity);
             }
             $hydratedEntities[$aliasPath] = $relatedEntity;
@@ -219,29 +219,6 @@ abstract class BaseResultSet implements \Iterator
         return null;
     }
 
-    private function hydrateRelatedEntity(\stdClass $data, string $entityClass): BaseEntity
-    {
-        $entity = new $entityClass();
-
-        foreach ($data as $property => $value) {
-            $property = NotationManager::convertColumnNameToPropertyName($property);
-            if (property_exists($entity, $property)) {
-                $reflectionProperty = new \ReflectionProperty($entityClass, $property);
-                $reflectionType = $reflectionProperty->getType();
-
-                $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
-                if ($entity->isEncryptedProperty($property) && ($value !== null) && isset($data->$initializationVectorColumnName) && ($data->$initializationVectorColumnName !== null)) {
-                    $value = Encryptor::decryptString($value, $data->$initializationVectorColumnName) ?: $value;
-                }
-
-                $entity->$property = Parser::parseValue($reflectionType, $value, false);
-            }
-        }
-
-        $entity->modified = false;
-        return $entity;
-    }
-
     private function getJoinInfoByProperty(string $foreignKeyProperty): ?array
     {
         foreach ($this->joinMetadata as $join) {
@@ -262,17 +239,17 @@ abstract class BaseResultSet implements \Iterator
         return $standardEntity;
     }
 
-    private function convertToBaseEntity(\stdClass $standardClass): BaseEntity
+    private function convertToBaseEntity(\stdClass $standardClass, ?string $entityClass = null): BaseEntity
     {
-        $class = $this->returnType;
+        $class = $entityClass ?? $this->returnType;
         $entity = new $class();
+        $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
         foreach ($standardClass as $property => $value) {
             $property = NotationManager::convertColumnNameToPropertyName($property);
             if (property_exists($entity, $property)) {
-                $reflectionProperty = new \ReflectionProperty($class, $property);
+                $reflectionProperty = BaseEntity::getReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
-                $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
-                if ($entity->isEncryptedProperty($property) && ($value !== null) && ($standardClass->$initializationVectorColumnName !== null)) {
+                if ($entity->isEncryptedProperty($property) && ($value !== null) && isset($standardClass->$initializationVectorColumnName)) {
                     $value = Encryptor::decryptString($value, $standardClass->$initializationVectorColumnName) ?: $value;
                 }
                 $entity->$property = Parser::parseValue($reflectionType, $value, false);

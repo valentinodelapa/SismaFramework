@@ -47,7 +47,7 @@ abstract class DependentModel extends BaseModel
     protected function buildPropertiesConditions(Query $query, array $properties, array &$bindValues, array &$bindTypes): void
     {
         foreach ($properties as $propertyName => $propertyValue) {
-            $reflectionProperty = new \ReflectionProperty($this->entityName, $propertyName);
+            $reflectionProperty = BaseEntity::getReflectionProperty($this->entityName, $propertyName);
             $isForeignKey = is_subclass_of($reflectionProperty->getType()->getName(), ReferencedEntity::class);
             if ($propertyValue === null) {
                 $query->appendCondition($propertyName, ComparisonOperator::isNull, '', $isForeignKey);

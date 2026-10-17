@@ -582,6 +582,26 @@ class SmartQueryBuilder
 }
 ```
 
+### Cache dei Metadati di Reflection
+
+L'ORM legge la struttura delle entità (proprietà, tipi, foreign key) tramite Reflection durante l'istanziazione, l'accesso alle proprietà, il salvataggio e l'idratazione dei risultati. Dalla versione 12.10.0 gli oggetti `\ReflectionClass` e `\ReflectionProperty` di ogni classe di entità sono creati una sola volta e riutilizzati per tutta la durata della richiesta: idratare migliaia di righe della stessa entità non ricrea la reflection per ogni riga e per ogni colonna.
+
+La cache è automatica e non richiede configurazione. Chi estende il framework e ha bisogno della struttura di un'entità può usare gli stessi metodi statici di `BaseEntity`, che accettano il nome della classe o un'istanza:
+
+```php
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+
+$reflectionClass = BaseEntity::getReflectionClass(Post::class);
+$reflectionProperty = BaseEntity::getReflectionProperty($post, 'title');
+
+// Solo le proprietà dichiarate in classi non astratte (le colonne dell'entità), indicizzate per nome
+foreach (BaseEntity::getFinalClassReflectionProperties(Post::class) as $propertyName => $reflectionProperty) {
+    // ...
+}
+```
+
+Chiamate successive per la stessa classe restituiscono le stesse istanze.
+
 ### Connection Optimization
 
 ```php

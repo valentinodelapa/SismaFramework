@@ -229,14 +229,7 @@ abstract class ReferencedEntity extends BaseEntity
     #[\Override]
     public function toArray(): array
     {
-        $result = [];
-        $reflectionClass = new \ReflectionClass($this);
-        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (self::checkFinalClassReflectionProperty($reflectionProperty)) {
-                $result[$reflectionProperty->getName()] = $this->parsePropterty($reflectionProperty);
-            }
-        }
-        return array_merge($result, $this->collections);
+        return array_merge(parent::toArray(), $this->collections);
     }
 
     public function collectionPropertyIsSetted(string $propertyName): bool

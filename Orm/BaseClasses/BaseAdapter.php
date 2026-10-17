@@ -320,12 +320,11 @@ abstract class BaseAdapter
 
     public function buildJoinedColumns(string $tableAlias, string $entityClass): array
     {
-        $reflection = new \ReflectionClass($entityClass);
         $columns = [];
         $separator = '__';
 
-        foreach ($reflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-            if (BaseEntity::checkFinalClassReflectionProperty($property)) {
+        foreach (BaseEntity::getFinalClassReflectionProperties($entityClass) as $property) {
+            if ($property->isProtected()) {
                 $propertyName = $property->getName();
                 $columnName = $this->escapeColumn($propertyName);
                 $isForeignKey = $property->getType() !== null && is_subclass_of($property->getType()->getName(), BaseEntity::class);

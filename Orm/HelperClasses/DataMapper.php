@@ -177,8 +177,7 @@ class DataMapper
 
     private function parseValues(BaseEntity $entity, Query $query, array &$bindValues, array &$bindTypes): void
     {
-        $reflectionClass = new \ReflectionClass($entity);
-        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+        foreach (BaseEntity::getFinalClassReflectionProperties($entity) as $reflectionProperty) {
             if ($this->propertyIsParsable($reflectionProperty, $entity)) {
                 $this->parseSingleProperty($reflectionProperty, $entity, $query, $bindValues, $bindTypes);
             }
@@ -187,9 +186,7 @@ class DataMapper
 
     private function propertyIsParsable(\ReflectionProperty $reflectionProperty, BaseEntity $entity): bool
     {
-        if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) === false) {
-            return false;
-        } elseif ($reflectionProperty->isInitialized($entity) === false) {
+        if ($reflectionProperty->isInitialized($entity) === false) {
             return false;
         } elseif ($entity->isPrimaryKey($reflectionProperty->getName())) {
             return false;

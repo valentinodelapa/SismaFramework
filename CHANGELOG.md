@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.10.0] - 2026-10-17 - Cache dei Metadati di Reflection delle Entità
+
+Minor release che riduce il costo a runtime dell'ORM: gli oggetti `\ReflectionClass` e `\ReflectionProperty` delle entità, finora ricreati a ogni istanziazione, lettura, scrittura, salvataggio e idratazione, sono ora costruiti una sola volta per classe e riutilizzati per tutta la durata della richiesta. La cache è esposta da tre nuovi metodi statici pubblici di `BaseEntity`, usati da tutte le componenti dell'ORM che leggevano la struttura delle entità.
+
+### ✨ Nuove Funzionalità
+
+#### `Orm/BaseClasses/BaseEntity` — `getReflectionClass()`, `getReflectionProperty()` e `getFinalClassReflectionProperties()`
+
+I tre metodi accettano il nome di una classe di entità o un'istanza (`string|BaseEntity`) e restituiscono metadati memorizzati in cache statiche indicizzate per classe:
+
+- `getReflectionClass()` restituisce la `\ReflectionClass` dell'entità.
+- `getReflectionProperty()` restituisce la `\ReflectionProperty` della proprietà indicata.
+- `getFinalClassReflectionProperties()` restituisce, indicizzate per nome, le proprietà dichiarate in classi non astratte (quelle che `checkFinalClassReflectionProperty()` riconosce come colonne dell'entità), nell'ordine di dichiarazione.
+
+Chiamate successive per la stessa classe restituiscono le stesse istanze, in qualunque ordine i tre metodi vengano invocati.
+
+### 🚀 Performance
+
+#### `Orm/BaseClasses/BaseEntity` — reflection ricreata a ogni istanziazione e a ogni accesso alle proprietà
+
+Il costruttore istanziava una `\ReflectionClass` e scorreva tutte le proprietà per individuare le foreign key; `__get()` e `__set()` (tramite `checkFinalClassProperty()`, `forceForeignKeyPropertySet()` e `switchSettingType()`) creavano una nuova `\ReflectionProperty` a ogni accesso; `toArray()` ripeteva la scansione completa delle proprietà. L'elenco delle foreign key è ora calcolato una sola volta per classe e tutti gli accessi usano i metadati in cache. `forceForeignKeyPropertySet()` legge inoltre la reflection solo quando la proprietà non è valorizzata e ha un indice di foreign key in attesa di risoluzione, invece che a ogni lettura.
+
+#### `Orm/BaseClasses/BaseResultSet`, `Orm/HelperClasses/DataMapper`, `Orm/BaseClasses/BaseModel`, `Orm/BaseClasses/BaseAdapter`, `Orm/ExtendedClasses/DependentModel` — reflection ricreata per ogni riga e per ogni proprietà
+
+L'idratazione dei risultati creava una `\ReflectionProperty` per ogni colonna di ogni riga, il salvataggio scansionava tutte le proprietà dell'entità a ogni `save()`, e le query per proprietà e per relazione ricreavano la reflection a ogni chiamata. Tutti questi punti usano ora i metodi di `BaseEntity`; nell'idratazione il nome della colonna del vettore di inizializzazione è calcolato una volta per riga invece che per ogni colonna.
+
+### 🐛 Bug Fix
+
+#### `Orm/BaseClasses/BaseResultSet::convertToBaseEntity()` — colonna del vettore di inizializzazione assente dal risultato
+
+Per una proprietà cifrata con valore non nullo, l'entità principale leggeva la colonna del vettore di inizializzazione senza verificarne la presenza: se la query non la selezionava, l'accesso sollevava il warning `Undefined property` su `\stdClass`. Il controllo `isset()` già presente nell'idratazione delle entità collegate è ora applicato anche all'entità principale; in assenza del vettore il valore è restituito così com'è.
+
+### ♻️ Refactoring
+
+#### `Orm/BaseClasses/BaseResultSet::hydrateRelatedEntity()` e `Orm/ExtendedClasses/ReferencedEntity::toArray()` — rimozione della logica duplicata
+
+`hydrateRelatedEntity()` duplicava `convertToBaseEntity()` ed è stato rimosso: l'idratazione delle entità collegate usa ora `convertToBaseEntity()`, che accetta la classe dell'entità come secondo parametro opzionale (`?string $entityClass = null`, di default il tipo di ritorno del result set). `ReferencedEntity::toArray()` duplicava `BaseEntity::toArray()` e ora vi aggiunge soltanto le collezioni.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseEntity.php`**: aggiunte le cache statiche e i metodi `getReflectionClass()`, `getReflectionProperty()` e `getFinalClassReflectionProperties()`; foreign key calcolate una volta per classe; `checkFinalClassProperty()`, `forceForeignKeyPropertySet()`, `switchSettingType()` e `toArray()` usano i metadati in cache
+- **`Orm/BaseClasses/BaseResultSet.php`**: `convertToBaseEntity()` accetta la classe dell'entità, usa la reflection in cache e verifica la presenza della colonna del vettore di inizializzazione; rimosso `hydrateRelatedEntity()`
+- **`Orm/BaseClasses/BaseModel.php`**: risoluzione dei percorsi di relazione, `appendRelationJoin()` e costruzione delle condizioni per proprietà con la reflection in cache
+- **`Orm/BaseClasses/BaseAdapter.php`**: `buildJoinedColumns()` scorre le proprietà in cache
+- **`Orm/ExtendedClasses/DependentModel.php`**: `buildPropertiesConditions()` usa la reflection in cache
+- **`Orm/ExtendedClasses/ReferencedEntity.php`**: `toArray()` delega a `BaseEntity::toArray()`
+- **`Orm/HelperClasses/DataMapper.php`**: `parseValues()` scorre le proprietà in cache, già filtrate; rimosso il filtro corrispondente da `propertyIsParsable()`
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: aggiunti `testReflectionMetadataIsCachedPerEntityClass()` e `testReflectionPropertyCachedBeforeFinalClassPropertiesIsReused()`, che verifica che la `\ReflectionProperty` ottenuta prima della scansione delle proprietà non venga sostituita da un'altra istanza; il `setUp()` registra un `BaseAdapter` di default, senza il quale la classe di test falliva se eseguita da sola
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: il `setUp()` registra un `BaseAdapter` di default, per lo stesso motivo
+- **`TestsApplication/Entities/ReflectionCacheSample.php`**: nuova entità usata solo dal test sull'ordine di accesso alla cache, perché le cache statiche non sono già popolate da altri test
+- **`docs/performance.md`**: aggiunta la sezione "Cache dei Metadati di Reflection"
+- **`docs/join-eager-loading.md`**: i riferimenti a `hydrateRelatedEntity()` sostituiti con `convertToBaseEntity()`
+- **`docs-phpdoc/`**: rigenerate le pagine di `BaseEntity`, `BaseResultSet`, `ReferencedEntity`, `SelfReferencedEntity` e `DataMapper` e l'indice di ricerca
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le firme pubbliche esistenti sono invariate; i tre metodi di `BaseEntity` sono aggiunte, e il nuovo parametro di `convertToBaseEntity()`, metodo privato, è opzionale.
+- **Cambiamento di comportamento osservabile**: un risultato che contiene una proprietà cifrata ma non la colonna del vettore di inizializzazione non solleva più un warning.
+
+---
+
 ## [12.9.1] - 2026-10-17 - Esclusione di un'Entità nelle Query per Relazione e per Padre
 
 Patch che corregge `DependentModel::getOtherEntityCollectionByEntity()` e `SelfDependentModel::getOtherEntityCollectionByParent()`, i metodi che restituiscono le entità collegate alla stessa entità (o allo stesso padre) di un'entità data, esclusa quest'ultima: la query generata faceva riferimento a una colonna inesistente, e il primo dei due metodi perdeva anche il valore dell'entità esclusa e non accettava `null`.

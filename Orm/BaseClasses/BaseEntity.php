@@ -62,6 +62,10 @@ abstract class BaseEntity
     protected string $primaryKeyPropertyName;
     protected string $initializationVectorPropertyName = 'initializationVector';
     protected bool $isActiveTransaction = false;
+    private static array $reflectionClasses = [];
+    private static array $reflectionProperties = [];
+    private static array $finalClassReflectionProperties = [];
+    private static array $foreignKeyPropertyNames = [];
     private array $encryptedColumns = [];
     private array $foreignKeyIndexes = [];
 
@@ -73,12 +77,47 @@ abstract class BaseEntity
         $this->processedEntitesCollection = $processedEntitesCollection ?? ProcessedEntitiesCollection::getInstance();
         $this->setPropertyDefaultValue();
         $this->setEncryptedProperties();
-        $reflectionClass = new \ReflectionClass($this);
-        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (($reflectionProperty->class === get_called_class()) && is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
-                $this->foreignKeys[] = $reflectionProperty->getName();
+        $this->foreignKeys = self::getForeignKeyPropertyNames(static::class);
+    }
+
+    public static function getReflectionClass(string|BaseEntity $entityOrClass): \ReflectionClass
+    {
+        $className = is_string($entityOrClass) ? $entityOrClass : $entityOrClass::class;
+        return self::$reflectionClasses[$className] ??= new \ReflectionClass($className);
+    }
+
+    public static function getReflectionProperty(string|BaseEntity $entityOrClass, string $propertyName): \ReflectionProperty
+    {
+        $className = is_string($entityOrClass) ? $entityOrClass : $entityOrClass::class;
+        return self::$reflectionProperties[$className][$propertyName] ??= self::getReflectionClass($className)->getProperty($propertyName);
+    }
+
+    public static function getFinalClassReflectionProperties(string|BaseEntity $entityOrClass): array
+    {
+        $className = is_string($entityOrClass) ? $entityOrClass : $entityOrClass::class;
+        if (isset(self::$finalClassReflectionProperties[$className]) === false) {
+            self::$finalClassReflectionProperties[$className] = [];
+            foreach (self::getReflectionClass($className)->getProperties() as $reflectionProperty) {
+                $reflectionProperty = self::$reflectionProperties[$className][$reflectionProperty->getName()] ??= $reflectionProperty;
+                if (self::checkFinalClassReflectionProperty($reflectionProperty)) {
+                    self::$finalClassReflectionProperties[$className][$reflectionProperty->getName()] = $reflectionProperty;
+                }
             }
         }
+        return self::$finalClassReflectionProperties[$className];
+    }
+
+    private static function getForeignKeyPropertyNames(string $className): array
+    {
+        if (isset(self::$foreignKeyPropertyNames[$className]) === false) {
+            self::$foreignKeyPropertyNames[$className] = [];
+            foreach (self::getFinalClassReflectionProperties($className) as $reflectionProperty) {
+                if (($reflectionProperty->class === $className) && is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+                    self::$foreignKeyPropertyNames[$className][] = $reflectionProperty->getName();
+                }
+            }
+        }
+        return self::$foreignKeyPropertyNames[$className];
     }
 
     public function unsetPrimaryKey(): void
@@ -98,7 +137,7 @@ abstract class BaseEntity
 
     protected function checkFinalClassProperty(string $propertyName): bool
     {
-        $reflectionProperty = new \ReflectionProperty($this, $propertyName);
+        $reflectionProperty = self::getReflectionProperty($this, $propertyName);
         return self::checkFinalClassReflectionProperty($reflectionProperty);
     }
 
@@ -109,11 +148,13 @@ abstract class BaseEntity
 
     protected function forceForeignKeyPropertySet(string $propertyName): void
     {
-        $reflectionProperty = new \ReflectionProperty($this, $propertyName);
-        $reflectionTypeName = $reflectionProperty->getType()->getName();
-        if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName]) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
-            $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName], $this->dataMapper);
-            unset($this->foreignKeyIndexes[$propertyName]);
+        if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName])) {
+            $reflectionProperty = self::getReflectionProperty($this, $propertyName);
+            $reflectionTypeName = $reflectionProperty->getType()->getName();
+            if (is_subclass_of($reflectionTypeName, BaseEntity::class)) {
+                $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName], $this->dataMapper);
+                unset($this->foreignKeyIndexes[$propertyName]);
+            }
         }
     }
 
@@ -133,7 +174,7 @@ abstract class BaseEntity
 
     protected function switchSettingType(string $name, mixed $value): void
     {
-        $reflectionProperty = new \ReflectionProperty($this, $name);
+        $reflectionProperty = self::getReflectionProperty($this, $name);
         if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
             if (is_int($value)) {
                 if (Cache::checkEntityPresenceInCache($reflectionProperty->getType()->getName(), $value)) {
@@ -275,11 +316,8 @@ abstract class BaseEntity
     public function toArray(): array
     {
         $result = [];
-        $reflectionClass = new \ReflectionClass($this);
-        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
-            if (self::checkFinalClassReflectionProperty($reflectionProperty)) {
-                $result[$reflectionProperty->getName()] = $this->parsePropterty($reflectionProperty);
-            }
+        foreach (self::getFinalClassReflectionProperties($this) as $reflectionProperty) {
+            $result[$reflectionProperty->getName()] = $this->parsePropterty($reflectionProperty);
         }
         return $result;
     }

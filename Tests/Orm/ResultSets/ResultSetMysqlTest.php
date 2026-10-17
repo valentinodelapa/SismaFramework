@@ -29,6 +29,7 @@ namespace SismaFramework\Tests\Orm\ResultSets;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
@@ -61,6 +62,8 @@ class ResultSetMysqlTest extends TestCase
                     ['encryptionPassphrase', true],
         ]);
         Config::setInstance($this->configStub);
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
         $this->PDOStatementMock = $this->createStub(\PDOStatement::class);
     }
 

@@ -4291,6 +4291,26 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method___construct"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetReflectionClass\u0028\u0029",
+            "name": "getReflectionClass",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getReflectionClass"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetReflectionProperty\u0028\u0029",
+            "name": "getReflectionProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getReflectionProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetFinalClassReflectionProperties\u0028\u0029",
+            "name": "getFinalClassReflectionProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getFinalClassReflectionProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetForeignKeyPropertyNames\u0028\u0029",
+            "name": "getForeignKeyPropertyNames",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getForeignKeyPropertyNames"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AunsetPrimaryKey\u0028\u0029",
             "name": "unsetPrimaryKey",
             "summary": "",
@@ -4475,6 +4495,26 @@ Search.appendIndex(
             "name": "isActiveTransaction",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_isActiveTransaction"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024reflectionClasses",
+            "name": "reflectionClasses",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_reflectionClasses"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024reflectionProperties",
+            "name": "reflectionProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_reflectionProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024finalClassReflectionProperties",
+            "name": "finalClassReflectionProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_finalClassReflectionProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024foreignKeyPropertyNames",
+            "name": "foreignKeyPropertyNames",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyPropertyNames"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024encryptedColumns",
             "name": "encryptedColumns",
@@ -4735,11 +4775,6 @@ Search.appendIndex(
             "name": "getEntityClassForAlias",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getEntityClassForAlias"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AhydrateRelatedEntity\u0028\u0029",
-            "name": "hydrateRelatedEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateRelatedEntity"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AgetJoinInfoByProperty\u0028\u0029",
             "name": "getJoinInfoByProperty",

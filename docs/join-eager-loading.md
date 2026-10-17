@@ -172,7 +172,7 @@ protected const COLUMN_SEPARATOR = '__';
 **Nuovi metodi:**
 - `setJoinMetadata()` - Imposta metadati JOIN
 - `convertToHierarchicalEntity()` - Idratazione multi-entity
-- `hydrateRelatedEntity()` - Idratazione entity correlate
+- `convertToBaseEntity()` - Idratazione dell'entity principale e, con la classe come secondo parametro, delle entity correlate
 - `getJoinInfoByProperty()` - Recupero info JOIN
 
 **Logica automatica:**
@@ -247,7 +247,7 @@ L'implementazione si integra perfettamente con la cache esistente:
 if (Cache::checkEntityPresenceInCache($relatedEntityClass, $entityId)) {
     $relatedEntity = Cache::getEntityById($relatedEntityClass, $entityId);
 } else {
-    $relatedEntity = $this->hydrateRelatedEntity($childData, $relatedEntityClass);
+    $relatedEntity = $this->convertToBaseEntity($childData, $relatedEntityClass);
     Cache::setEntity($relatedEntity); // ← Cache automatica
 }
 ```
