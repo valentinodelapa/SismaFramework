@@ -37,7 +37,9 @@ use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\TestsApplication\Models\BaseSampleModel;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Placeholder;
 
 /**
  * Test for DependentModel class
@@ -454,8 +456,26 @@ class DependentModelTest extends TestCase
         $this->queryMock->expects($this->once())
                 ->method('setWhere');
 
-        $this->queryMock->expects($this->exactly(2))
-                ->method('appendCondition');
+        $invokedCount = $this->exactly(2);
+        $this->queryMock->expects($invokedCount)
+                ->method('appendCondition')
+                ->willReturnCallback(function ($column, $operator, $value = Placeholder::placeholder, $foreignKey = false) use ($invokedCount, $propertyName) {
+                    switch ($invokedCount->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('id', $column);
+                            $this->assertEquals(ComparisonOperator::notEqual, $operator);
+                            $this->assertEquals(Placeholder::placeholder, $value);
+                            $this->assertFalse($foreignKey);
+                            break;
+                        case 2:
+                            $this->assertEquals($propertyName, $column);
+                            $this->assertEquals(ComparisonOperator::equal, $operator);
+                            $this->assertEquals(Placeholder::placeholder, $value);
+                            $this->assertTrue($foreignKey);
+                            break;
+                    }
+                    return $this->queryMock;
+                });
 
         $this->queryMock->expects($this->once())
                 ->method('appendAnd');
@@ -465,17 +485,18 @@ class DependentModelTest extends TestCase
 
         $this->dataMapperMock->expects($this->once())
                 ->method('find')
+                ->with(BaseSample::class, $this->queryMock, [$excludedEntity, $referencedEntity], [DataType::typeEntity, DataType::typeEntity])
                 ->willReturn($expectedCollection);
 
         $result = $this->model->getOtherEntityCollectionByEntity($excludedEntity, $propertyName, $referencedEntity);
-        $this->assertInstanceOf(SismaCollection::class, $result);
+        $this->assertSame($expectedCollection, $result);
     }
 
     public function testGetOtherEntityCollectionByEntityWithNullEntity()
     {
         $this->initializeMock();
         $excludedEntity = $this->createStub(BaseSample::class);
-        $propertyName = 'referencedEntityWithInitialization';
+        $propertyName = 'nullableReferencedEntityWithInitialization';
         $expectedCollection = new SismaCollection(BaseSample::class);
 
         $this->dataMapperMock->expects($this->once())
@@ -485,8 +506,25 @@ class DependentModelTest extends TestCase
         $this->queryMock->expects($this->once())
                 ->method('setWhere');
 
-        $this->queryMock->expects($this->exactly(2))
-                ->method('appendCondition');
+        $invokedCount = $this->exactly(2);
+        $this->queryMock->expects($invokedCount)
+                ->method('appendCondition')
+                ->willReturnCallback(function ($column, $operator, $value = Placeholder::placeholder, $foreignKey = false) use ($invokedCount, $propertyName) {
+                    switch ($invokedCount->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals('id', $column);
+                            $this->assertEquals(ComparisonOperator::notEqual, $operator);
+                            $this->assertFalse($foreignKey);
+                            break;
+                        case 2:
+                            $this->assertEquals($propertyName, $column);
+                            $this->assertEquals(ComparisonOperator::isNull, $operator);
+                            $this->assertEquals('', $value);
+                            $this->assertTrue($foreignKey);
+                            break;
+                    }
+                    return $this->queryMock;
+                });
 
         $this->queryMock->expects($this->once())
                 ->method('appendAnd');
@@ -496,11 +534,11 @@ class DependentModelTest extends TestCase
 
         $this->dataMapperMock->expects($this->once())
                 ->method('find')
+                ->with(BaseSample::class, $this->queryMock, [$excludedEntity], [DataType::typeEntity])
                 ->willReturn($expectedCollection);
 
-        $referencedEntity = $this->createStub(ReferencedSample::class);
-        $result = $this->model->getOtherEntityCollectionByEntity($excludedEntity, $propertyName, $referencedEntity);
-        $this->assertInstanceOf(SismaCollection::class, $result);
+        $result = $this->model->getOtherEntityCollectionByEntity($excludedEntity, $propertyName, null);
+        $this->assertSame($expectedCollection, $result);
     }
 
     public function testMagicMethodCountByEntityWithSearchKey()

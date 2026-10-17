@@ -176,6 +176,37 @@
 
 
 
+<h4 id="toc-constants">
+    Constants
+    <a href="classes/SismaFramework-Core-HelperClasses-Session.html#toc-constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+</h4>
+<dl class="phpdocumentor-table-of-contents">
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_NEXT_SESSION_ID_KEY">NEXT_SESSION_ID_KEY</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;__sismaNextSessionId&#039;                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATED_AT_KEY">ROTATED_AT_KEY</a>
+    <span>
+        &nbsp;: mixed&nbsp;= &#039;__sismaSessionRotatedAt&#039;                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -public">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATION_GRACE_SECONDS">ROTATION_GRACE_SECONDS</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 30                            </span>
+</dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -constant -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_MAXIMUM_ROTATION_HOPS">MAXIMUM_ROTATION_HOPS</a>
+    <span>
+        &nbsp;: mixed&nbsp;= 10                            </span>
+</dt>
+
+    </dl>
 
 
 <h4 id="toc-properties">
@@ -283,6 +314,16 @@
 </dt>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Session.html#method_followRotation">followRotation()</a>
+    <span>
+                                &nbsp;: bool    </span>
+</dt>
+<dd>Se l&#039;ID presentato è già stato ruotato da una richiesta precedente, aggancia la richiesta alla sessione che lo
+ha sostituito (seguendo eventuali rotazioni successive) purché la rotazione sia avvenuta entro
+ROTATION_GRACE_SECONDS; altrimenti la sessione è scaduta e viene sostituita da una vuota. Restituisce true se la
+richiesta ha seguito una rotazione: in quel caso non si ruota di nuovo.</dd>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Session.html#method_getItemRecursive">getItemRecursive()</a>
     <span>
                                 &nbsp;: mixed    </span>
@@ -293,6 +334,17 @@
     <span>
                                 &nbsp;: bool    </span>
 </dt>
+
+            <dt class="phpdocumentor-table-of-contents__entry -method -private">
+    <a class="" href="classes/SismaFramework-Core-HelperClasses-Session.html#method_rotate">rotate()</a>
+    <span>
+                                &nbsp;: void    </span>
+</dt>
+<dd>Sostituisce l&#039;ID di sessione con uno nuovo che ne eredita i dati. La vecchia sessione non viene cancellata
+subito: resta marcata con l&#039;istante della rotazione e il nuovo ID, così le richieste concorrenti partite con il
+vecchio cookie (fogli di stile, script, chiamate fetch della stessa pagina) ritrovano la sessione corrente invece
+di riceverne una vuota, e dopo il periodo di grazia il vecchio ID non è più utilizzabile. Entrambe le sessioni
+esistono quando vengono riaperte, quindi la rotazione funziona anche con session.use_strict_mode attivo.</dd>
 
             <dt class="phpdocumentor-table-of-contents__entry -method -private">
     <a class="" href="classes/SismaFramework-Core-HelperClasses-Session.html#method_setItemRecursive">setItemRecursive()</a>
@@ -311,6 +363,133 @@
 
 
         
+    <section class="phpdocumentor-constants">
+        <h3 class="phpdocumentor-elements__header" id="constants">
+            Constants
+            <a href="classes/SismaFramework-Core-HelperClasses-Session.html#constants" class="headerlink"><i class="fas fa-link"></i></a>
+
+        </h3>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_NEXT_SESSION_ID_KEY">
+        NEXT_SESSION_ID_KEY
+        <a href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_NEXT_SESSION_ID_KEY" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">42</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">NEXT_SESSION_ID_KEY</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;__sismaNextSessionId&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_ROTATED_AT_KEY">
+        ROTATED_AT_KEY
+        <a href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATED_AT_KEY" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">41</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">ROTATED_AT_KEY</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;__sismaSessionRotatedAt&#039;</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -public ">
+    <h4 class="phpdocumentor-element__name" id="constant_ROTATION_GRACE_SECONDS">
+        ROTATION_GRACE_SECONDS
+        <a href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATION_GRACE_SECONDS" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">40</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">public</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">ROTATION_GRACE_SECONDS</span>
+    = <span class="phpdocumentor-signature__default-value">30</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+                    <article class="phpdocumentor-element -constant -private ">
+    <h4 class="phpdocumentor-element__name" id="constant_MAXIMUM_ROTATION_HOPS">
+        MAXIMUM_ROTATION_HOPS
+        <a href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_MAXIMUM_ROTATION_HOPS" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">43</span>
+
+    </aside>
+
+    
+    
+    <code class="phpdocumentor-signature phpdocumentor-code ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+        <span class="phpdocumentor-signature__type">mixed</span>
+    <span class="phpdocumentor-signature__name">MAXIMUM_ROTATION_HOPS</span>
+    = <span class="phpdocumentor-signature__default-value">10</span>
+</code>
+
+
+    
+    
+    
+
+        
+    </article>
+            </section>
 
         
     <section class="phpdocumentor-properties">
@@ -336,7 +515,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">40</span>
+    <span class="phpdocumentor-element-found-in__line">45</span>
 
     </aside>
 
@@ -378,7 +557,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">42</span>
+    <span class="phpdocumentor-element-found-in__line">47</span>
 
     </aside>
 
@@ -422,7 +601,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">143</span>
+    <span class="phpdocumentor-element-found-in__line">206</span>
 
     </aside>
 
@@ -466,7 +645,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">171</span>
+    <span class="phpdocumentor-element-found-in__line">237</span>
 
     </aside>
 
@@ -510,7 +689,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">64</span>
+    <span class="phpdocumentor-element-found-in__line">119</span>
 
     </aside>
 
@@ -561,7 +740,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">115</span>
+    <span class="phpdocumentor-element-found-in__line">176</span>
 
     </aside>
 
@@ -605,7 +784,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">92</span>
+    <span class="phpdocumentor-element-found-in__line">150</span>
 
     </aside>
 
@@ -663,7 +842,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">203</span>
+    <span class="phpdocumentor-element-found-in__line">272</span>
 
     </aside>
 
@@ -697,7 +876,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">148</span>
+    <span class="phpdocumentor-element-found-in__line">211</span>
 
     </aside>
 
@@ -748,7 +927,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">176</span>
+    <span class="phpdocumentor-element-found-in__line">242</span>
 
     </aside>
 
@@ -796,7 +975,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">197</span>
+    <span class="phpdocumentor-element-found-in__line">266</span>
 
     </aside>
 
@@ -844,7 +1023,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">69</span>
+    <span class="phpdocumentor-element-found-in__line">124</span>
 
     </aside>
 
@@ -902,7 +1081,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">49</span>
+    <span class="phpdocumentor-element-found-in__line">54</span>
 
     </aside>
 
@@ -946,7 +1125,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">120</span>
+    <span class="phpdocumentor-element-found-in__line">181</span>
 
     </aside>
 
@@ -990,7 +1169,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">105</span>
+    <span class="phpdocumentor-element-found-in__line">166</span>
 
     </aside>
 
@@ -1040,6 +1219,48 @@
             -private
                                     -static                    "
 >
+    <h4 class="phpdocumentor-element__name" id="method_followRotation">
+        followRotation()
+        <a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_followRotation" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">79</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Se l&#039;ID presentato è già stato ruotato da una richiesta precedente, aggancia la richiesta alla sessione che lo
+ha sostituito (seguendo eventuali rotazioni successive) purché la rotazione sia avvenuta entro
+ROTATION_GRACE_SECONDS; altrimenti la sessione è scaduta e viene sostituita da una vuota. Restituisce true se la
+richiesta ha seguito una rotazione: in quel caso non si ruota di nuovo.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">followRotation</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">bool</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+            <section>
+        <h5 class="phpdocumentor-return-value__heading">Return values</h5>
+        <span class="phpdocumentor-signature__response_type">bool</span>
+            </section>
+
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
     <h4 class="phpdocumentor-element__name" id="method_getItemRecursive">
         getItemRecursive()
         <a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_getItemRecursive" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1048,7 +1269,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">161</span>
+    <span class="phpdocumentor-element-found-in__line">227</span>
 
     </aside>
 
@@ -1099,7 +1320,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">187</span>
+    <span class="phpdocumentor-element-found-in__line">256</span>
 
     </aside>
 
@@ -1146,6 +1367,45 @@
             -private
                                     -static                    "
 >
+    <h4 class="phpdocumentor-element__name" id="method_rotate">
+        rotate()
+        <a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_rotate" class="headerlink"><i class="fas fa-link"></i></a>
+
+    </h4>
+    <aside class="phpdocumentor-element-found-in">
+    <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
+    :
+    <span class="phpdocumentor-element-found-in__line">104</span>
+
+    </aside>
+
+        <p class="phpdocumentor-summary">Sostituisce l&#039;ID di sessione con uno nuovo che ne eredita i dati. La vecchia sessione non viene cancellata
+subito: resta marcata con l&#039;istante della rotazione e il nuovo ID, così le richieste concorrenti partite con il
+vecchio cookie (fogli di stile, script, chiamate fetch della stessa pagina) ritrovano la sessione corrente invece
+di riceverne una vuota, e dopo il periodo di grazia il vecchio ID non è più utilizzabile. Entrambe le sessioni
+esistono quando vengono riaperte, quindi la rotazione funziona anche con session.use_strict_mode attivo.</p>
+
+    <code class="phpdocumentor-code phpdocumentor-signature ">
+    <span class="phpdocumentor-signature__visibility">private</span>
+            <span class="phpdocumentor-signature__static">static</span>        <span class="phpdocumentor-signature__name">rotate</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
+
+    <div class="phpdocumentor-label-line">
+        </div>
+    
+    
+    
+    
+
+        
+    
+    
+</article>
+                    <article
+        class="phpdocumentor-element
+            -method
+            -private
+                                    -static                    "
+>
     <h4 class="phpdocumentor-element__name" id="method_setItemRecursive">
         setItemRecursive()
         <a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_setItemRecursive" class="headerlink"><i class="fas fa-link"></i></a>
@@ -1154,7 +1414,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">82</span>
+    <span class="phpdocumentor-element-found-in__line">140</span>
 
     </aside>
 
@@ -1212,7 +1472,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="Core/HelperClasses/Session.php"><a href="files/core-helperclasses-session.html"><abbr title="Core/HelperClasses/Session.php">Session.php</abbr></a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">133</span>
+    <span class="phpdocumentor-element-found-in__line">196</span>
 
     </aside>
 
@@ -1263,10 +1523,20 @@
             <li class="phpdocumentor-on-this-page-section__title">Table Of Contents</li>
             <li>
                 <ul class="phpdocumentor-list -clean">
+                                        <li><a href="classes/SismaFramework-Core-HelperClasses-Session.html#toc-constants">Constants</a></li>
                                                             <li><a href="classes/SismaFramework-Core-HelperClasses-Session.html#toc-properties">Properties</a></li>
                                                             <li><a href="classes/SismaFramework-Core-HelperClasses-Session.html#toc-methods">Methods</a></li>
                                     </ul>
             </li>
+                            <li class="phpdocumentor-on-this-page-section__title">Constants</li>
+                <li>
+                    <ul class="phpdocumentor-list -clean">
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_NEXT_SESSION_ID_KEY">NEXT_SESSION_ID_KEY</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATED_AT_KEY">ROTATED_AT_KEY</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_ROTATION_GRACE_SECONDS">ROTATION_GRACE_SECONDS</a></li>
+                                                    <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#constant_MAXIMUM_ROTATION_HOPS">MAXIMUM_ROTATION_HOPS</a></li>
+                                            </ul>
+                </li>
             
                             <li class="phpdocumentor-on-this-page-section__title">Properties</li>
                 <li>
@@ -1292,8 +1562,10 @@
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_start">start()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_unsetItem">unsetItem()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_appendItemRecursive">appendItemRecursive()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_followRotation">followRotation()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_getItemRecursive">getItemRecursive()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_hasItemRecursive">hasItemRecursive()</a></li>
+                                            <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_rotate">rotate()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_setItemRecursive">setItemRecursive()</a></li>
                                             <li class=""><a href="classes/SismaFramework-Core-HelperClasses-Session.html#method_unsetItemRecursive">unsetItemRecursive()</a></li>
                                     </ul>

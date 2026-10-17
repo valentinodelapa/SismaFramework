@@ -323,13 +323,14 @@ Per creare token sicuri da usare in sessioni, CSRF protection o API keys:
 
 ```php
 use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Core\HelperClasses\Session;
 
 // Genera un token esadecimale di 32 caratteri (16 bytes)
 $token = Encryptor::getSimpleRandomToken();
-// Esempio output: "a1b2c3d4e5f6789012345678901234567890abcd"
+// Esempio output: "a1b2c3d4e5f6789012345678901234ab"
 
 // Uso tipico per CSRF token
-$_SESSION['csrf_token'] = Encryptor::getSimpleRandomToken();
+Session::setItem('csrfToken', Encryptor::getSimpleRandomToken());
 ```
 
 #### Hash Semplici (per checksum e integrità)
@@ -613,15 +614,55 @@ In `Config/config.php` per ambiente di produzione:
 const BLOWFISH_HASH_WORKLOAD = 12;
 const ENCRYPTION_ALGORITHM = 'AES-256-CBC';
 const SIMPLE_HASH_ALGORITHM = 'sha256';
+```
 
-// Session Security
-const SESSION_COOKIE_SECURE = true;
-const SESSION_COOKIE_HTTPONLY = true;
-const SESSION_COOKIE_SAMESITE = 'Strict';
+### Cookie di Sessione
 
-// CSRF Protection
-const CSRF_TOKEN_NAME = '_token';
-const CSRF_TOKEN_EXPIRY = 3600; // 1 ora
+I parametri del cookie di sessione **non sono configurabili tramite costanti**: `Session::start()` li imposta direttamente via `session_set_cookie_params()`:
+
+```php
+[
+    "lifetime"  => 3600,
+    "path"      => "/",
+    "secure"    => Communication::getCommunicationProtocol($request) === CommunicationProtocol::https,
+    "httponly"  => true,
+    "samesite"  => "Lax",
+]
+```
+
+`domain` non viene impostato (v11.9.14+): il cookie resta legato all'host esatto che l'ha emesso, porta compresa, e non viene inviato ai sottodomini. Fino alla 11.9.13 valeva `HTTP_HOST`, che su una porta non standard (`localhost:8080`) contiene anche la porta: i browser scartavano il cookie e il login non funzionava.
+
+`secure` viene determinato automaticamente in base al protocollo della richiesta corrente (coerente con `HTTPS_IS_FORCED`, non un flag separato); `httponly` è sempre attivo; `samesite` è sempre `Lax` (non configurabile, e non `Strict`). Per personalizzare questi valori è necessario un override della classe `Session`, non una costante.
+
+### Rotazione dell'ID di Sessione
+
+`Session::start()`, chiamato dal front controller a ogni richiesta, sostituisce l'ID di sessione con uno nuovo che ne eredita i dati: un ID sottratto smette presto di essere utilizzabile. La vecchia sessione non viene cancellata subito ma marcata con l'istante della rotazione e con il nuovo ID (v11.9.14+):
+
+- una richiesta che si presenta con un ID già ruotato **entro `Session::ROTATION_GRACE_SECONDS` (30 secondi)** viene agganciata alla sessione corrente, seguendo anche più rotazioni consecutive, e non ruota di nuovo. È il caso normale delle richieste concorrenti dello stesso browser: fogli di stile, script e chiamate `fetch` di una pagina partono tutte con lo stesso cookie, e quando passano dal front controller la prima che arriva ruota l'ID;
+- oltre il periodo di grazia la vecchia sessione è considerata scaduta e la richiesta riceve una sessione vuota.
+
+Fino alla 11.9.13 la rotazione cancellava subito la vecchia sessione (`session_regenerate_id(true)`): ogni richiesta concorrente partita con il cookie precedente riceveva una sessione vuota, e l'utente risultava disconnesso già al caricamento di una pagina con un foglio di stile e uno script serviti dal front controller.
+
+Il token anti-dirottamento (impronta di `User-Agent` e indirizzo IP) viene registrato alla creazione della sessione e non più a ogni richiesta: `Session::isValidSession($request)` restituisce `false` se la richiesta corrente proviene da un client diverso da quello che ha aperto la sessione.
+
+### Protezione CSRF
+
+Anche qui la chiave di sessione (`csrfToken`) è fissa e non configurabile, e il framework non applica alcuna scadenza al token. `Authentication::checkCsrfToken()` (richiamato internamente da `checkAuthenticable()`) **verifica soltanto** che `$_SESSION['csrfToken']` corrisponda al campo `csrfToken` inviato dal form — non lo genera. Genera e salva il token nella action che mostra il form, prima di renderizzarlo:
+
+```php
+use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Core\HelperClasses\Session;
+
+if (Session::hasItem('csrfToken') === false) {
+    Session::setItem('csrfToken', Encryptor::getSimpleRandomToken());
+}
+$this->vars['csrfToken'] = Session::getItem('csrfToken');
+```
+
+e includilo nel form come campo nascosto:
+
+```html
+<input type="hidden" name="csrfToken" value="<?= htmlspecialchars($csrfToken) ?>">
 ```
 
 ---

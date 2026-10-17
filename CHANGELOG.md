@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.14] - 2026-10-17 - Sessione: Richieste Concorrenti, Cookie su Porte Non Standard, Token Anti-Dirottamento; Esclusione di un'Entità nelle Query per Relazione e per Padre
+
+Patch che riporta sul ramo 11.x le correzioni delle versioni 12.8.2 e 12.9.1. Corregge tre difetti di `Session`: la rotazione dell'ID a ogni richiesta disconnetteva l'utente al caricamento di una normale pagina, il cookie di sessione veniva scartato dai browser sulle porte non standard, e il token anti-dirottamento veniva riscritto a ogni richiesta, rendendo `isValidSession()` sempre vero. Corregge inoltre `DependentModel::getOtherEntityCollectionByEntity()` e `SelfReferencedModel::getOtherEntityCollectionByParent()`, che generavano una query su una colonna inesistente; il primo perdeva anche il valore dell'entità esclusa e non accettava `null`.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Session::start()` — sessione persa con richieste concorrenti
+
+Ogni richiesta ruotava l'ID con `session_regenerate_id(true)`, che cancella subito la sessione precedente. Il problema non riguarda solo i tab multipli e le chiamate `fetch` in parallelo, ma anche il caso più comune: quando fogli di stile e script passano dal front controller, il browser li richiede in parallelo con lo stesso cookie della pagina. La prima richiesta servita ruota l'ID e cancella la sessione, le altre ricevono una sessione vuota, e il browser conserva il cookie dell'ultima risposta arrivata. L'utente risultava disconnesso già al caricamento di una pagina con un foglio di stile e uno script.
+
+La rotazione a ogni richiesta resta, ma con un periodo di grazia, secondo lo schema indicato dal manuale di PHP per `session_regenerate_id()` e senza un session handler dedicato: `rotate()` crea il nuovo ID con `session_regenerate_id(false)`, che ne eredita i dati, e marca la vecchia sessione con l'istante della rotazione e il nuovo ID (`Session::ROTATED_AT_KEY`, `Session::NEXT_SESSION_ID_KEY`). Una richiesta che si presenta con un ID già ruotato da meno di `Session::ROTATION_GRACE_SECONDS` (30 secondi) viene agganciata alla sessione corrente, seguendo anche più rotazioni consecutive (`followRotation()`), e non ruota di nuovo; oltre il periodo di grazia riceve una sessione vuota, come prima. Entrambe le sessioni esistono quando vengono riaperte, quindi la rotazione funziona anche con `session.use_strict_mode` attivo.
+
+#### `Core/HelperClasses/Session::start()` — cookie scartato sulle porte non standard
+
+Il parametro `domain` del cookie valeva `HTTP_HOST`, che su una porta diversa da 80 e 443 contiene anche la porta (`localhost:8080`): un attributo `Domain` con la porta non è valido e i browser scartavano il cookie, per cui il login non funzionava in sviluppo né in qualunque installazione su porta non standard. Anche senza porta, un `Domain` esplicito estende il cookie a tutti i sottodomini. `domain` non viene più impostato: il cookie resta legato all'host esatto che l'ha emesso.
+
+#### `Core/HelperClasses/Session::start()` — token anti-dirottamento riscritto a ogni richiesta
+
+`start()` registrava a ogni richiesta l'impronta di `User-Agent` e indirizzo IP del client corrente, e `isValidSession()` la confrontava con l'impronta della stessa richiesta: il confronto era sempre vero e non poteva rilevare una sessione usata da un altro client. Il token viene ora registrato solo alla creazione della sessione.
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` e `Orm/ExtendedClasses/SelfReferencedModel::getOtherEntityCollectionByParent()` — condizione di esclusione sulla colonna `id_id`
+
+La condizione che esclude l'entità passata veniva aggiunta con `appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder, true)`. Il quarto parametro indica una foreign key, il cui nome colonna riceve il suffisso `Id` (`NotationManager::convertPropertyNameToColumnName()`): la condizione diventava `id_id <> ?`, su una colonna che nella tabella non esiste, e la query falliva con un errore SQL. La condizione è ora generata sulla colonna `id`, come in `BaseModel::getOtherEntityCollection()`.
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` — valore dell'entità esclusa perso
+
+Quando `$baseEntity` era valorizzata, il suo valore e il suo tipo sostituivano gli array `$bindValues` e `$bindTypes` invece di esservi aggiunti: la query aveva due placeholder (`id <> ? AND ..._id = ?`) e un solo valore, con un errore sul numero dei parametri o, a seconda del driver, l'entità di riferimento legata al placeholder dell'esclusione. I due valori sono ora entrambi legati, nell'ordine dei placeholder.
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` — `null` non accettato
+
+Il metodo prevede un ramo per `$baseEntity === null`, che genera la condizione `..._id IS NULL`, ma il parametro era dichiarato `BaseEntity`: passare `null` sollevava un `TypeError` prima di eseguire il metodo, e il ramo non era raggiungibile. Il parametro è ora `?BaseEntity $baseEntity = null`, come `$parentEntity` in `SelfReferencedModel::getOtherEntityCollectionByParent()`.
+
+I test esistenti verificavano solo il numero delle chiamate ad `appendCondition()`, senza controllarne gli argomenti né i valori passati a `DataMapper::find()`. Inoltre `testGetOtherEntityCollectionByEntityWithNullEntity()`, nonostante il nome, passava un'entità invece di `null`.
+
+### 📖 Documentazione
+
+#### `docs/security.md` — costanti di sessione e CSRF inesistenti
+
+La sezione "Configurazione Sicurezza Produzione" elencava le costanti `SESSION_COOKIE_SECURE`, `SESSION_COOKIE_HTTPONLY`, `SESSION_COOKIE_SAMESITE`, `CSRF_TOKEN_NAME` e `CSRF_TOKEN_EXPIRY`, che il framework non definisce né legge. Al loro posto ci sono ora le sezioni "Cookie di Sessione", "Rotazione dell'ID di Sessione" e "Protezione CSRF", che descrivono i parametri effettivamente impostati da `Session::start()` e il funzionamento di `Authentication::checkCsrfToken()`. Anche l'esempio di `getSimpleRandomToken()` salvava il token CSRF in `$_SESSION['csrf_token']`, mentre `checkCsrfToken()` lo cerca in `csrfToken`, quindi un'applicazione che seguiva l'esempio non superava mai il controllo. L'esempio usa ora `Session::setItem('csrfToken', ...)`. Corretto anche il token d'esempio, lungo 40 caratteri invece di 32.
+
+**File modificati**:
+- **`Core/HelperClasses/Session.php`**: `start()` non imposta più `domain`, ruota con periodo di grazia e registra il token solo se assente; aggiunti i metodi privati `followRotation()` e `rotate()` e le costanti pubbliche `ROTATION_GRACE_SECONDS`, `ROTATED_AT_KEY` e `NEXT_SESSION_ID_KEY`
+- **`Orm/ExtendedClasses/DependentModel.php`**: `getOtherEntityCollectionByEntity()` genera la condizione di esclusione sulla colonna `id`, aggiunge valore e tipo di `$baseEntity` ai bind invece di sostituirli e accetta `?BaseEntity $baseEntity = null`
+- **`Orm/ExtendedClasses/SelfReferencedModel.php`**: `getOtherEntityCollectionByParent()` genera la condizione di esclusione sulla colonna `id`
+- **`Tests/Core/HelperClasses/SessionTest.php`**: `testSessionRegenerateIdInvalidatesPreviousId()` sostituito da `testSessionRotationKeepsDataAlongLegitimateChain()`, `testStaleSessionIdWithinGracePeriodFollowsCurrentSession()` e `testStaleSessionIdAfterGracePeriodGetsEmptySession()`; aggiunti `testSessionCookieIsBoundToExactHost()` e `testSessionTokenIsBoundToFirstRequest()`. I test sul periodo di grazia, sul cookie e sul token falliscono contro l'implementazione precedente
+- **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**: `testGetOtherEntityCollectionByEntity()` e `testGetOtherEntityCollectionByEntityWithNullEntity()` verificano gli argomenti di ogni chiamata ad `appendCondition()` e i valori e i tipi passati a `find()`; il secondo passa ora `null`. Entrambi falliscono contro l'implementazione precedente
+- **`Tests/Orm/ExtendedClasses/SelfReferencedModelTest.php`**: `testGetOtherEntityCollectionByParent()` verifica gli argomenti di `appendCondition()` e di `find()`; aggiunto `testGetOtherEntityCollectionByParentWithNullParent()`. Entrambi falliscono contro l'implementazione precedente
+- **`docs/security.md`**: sostituite le costanti inesistenti con le sezioni "Cookie di Sessione", "Rotazione dell'ID di Sessione" e "Protezione CSRF"; corretto l'esempio di `getSimpleRandomToken()`
+- **`docs/orm.md`**: documentati `getOtherEntityCollectionByEntity()` nella sezione "Metodi per Relazioni" e `getOtherEntityCollectionByParent()` nella sezione "Query Gerarchiche"
+- **`docs-phpdoc/`**: rigenerazione completa. Oltre alle pagine di `Session` (nuove costanti pubbliche), `DependentModel` e `SelfReferencedModel` (firma di `getOtherEntityCollectionByEntity()`), si allineano al codice le pagine non rigenerate dalle patch precedenti: `Filter`, `BaseController`, `BaseForm`, `RenderService`, `SelfReferencedEnumeration`, `MultipleSelfReferencedEnumeration`, `BaseCommand` e i comandi console, insieme all'indice di ricerca e al report delle deprecazioni
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change per le chiamate**: sono state aggiunte solo costanti pubbliche a `Session`; la firma di `getOtherEntityCollectionByEntity()` passa da `BaseEntity $baseEntity` a `?BaseEntity $baseEntity = null`, un allargamento compatibile con tutte le chiamate esistenti.
+- **Sottoclassi che ridefiniscono `getOtherEntityCollectionByEntity()`**: un override che dichiara ancora `BaseEntity $baseEntity` restringe il tipo del parametro e PHP lo rifiuta con un errore fatale al caricamento della classe; va allineato a `?BaseEntity $baseEntity = null`.
+- **Cambiamento di comportamento osservabile — rotazione**: una richiesta concorrente con un cookie appena superato ritrova la sessione corrente invece di riceverne una vuota; un ID ruotato resta utilizzabile per al massimo 30 secondi, invece di diventare subito inutilizzabile.
+- **Cambiamento di comportamento osservabile — cookie**: il cookie di sessione non ha più l'attributo `Domain` e non viene inviato ai sottodomini dell'host che l'ha emesso. Un'applicazione che condivideva la sessione tra sottodomini deve impostare `domain` con un override di `Session`.
+- **Cambiamento di comportamento osservabile — token**: `isValidSession()` restituisce `false` quando `User-Agent` o indirizzo IP del client sono cambiati dall'apertura della sessione (per esempio un dispositivo mobile che cambia rete). Il framework non chiama `isValidSession()`: il comportamento cambia solo per le applicazioni che la usano.
+- **Cambiamento di comportamento osservabile — query di esclusione**: `getOtherEntityCollectionByEntity()` e `getOtherEntityCollectionByParent()`, che prima fallivano con un errore SQL, restituiscono ora le entità attese.
+
+---
+
 ## [11.9.13] - 2026-10-13 - Proprietà Cifrate con Valore Nullo
 
 Patch che riporta sul ramo 11.x la correzione della versione 12.8.1: permette di salvare e leggere un'entità con una proprietà cifrata facoltativa che vale `null`; fino alla 11.9.12 entrambe le operazioni sollevavano un `TypeError`.
