@@ -182,7 +182,7 @@ abstract class SelfDependentModel extends DependentModel
     {
         $query = $this->initQuery();
         $query->setWhere();
-        $query->appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder, true);
+        $query->appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder);
         $bindValues = [
             $excludedEntity,
         ];

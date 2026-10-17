@@ -192,6 +192,7 @@ $posts = $postModel->getEntityCollection('SismaFramework', ['publicationDate' =>
 Se un modello estende `DependentModel`, ottiene metodi per interrogare il database basandosi sulle relazioni.
 
 - `getBy{PropertyName}(...)` (metodo magico, vedi sezione successiva): Trova entità che corrispondono a una o più entità referenziate.
+- `getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, ?BaseEntity $baseEntity = null)`: Trova le entità collegate a `$baseEntity` tramite la proprietà `$propertyName`, escludendo `$excludedEntity`. Con `$baseEntity` a `null` trova le entità in cui la relazione è assente (v12.9.1+; fino alla 12.9.0 il parametro non ammetteva `null` e la query generata non era valida, vedi CHANGELOG 12.9.1).
 
 **Esempio:** Trova tutti i post di un certo utente.
 
@@ -203,6 +204,12 @@ $user = $userModel->getEntityById(1);
 
 // Trova tutti i post dove 'author' è l'utente con ID 1
 $userPosts = $postModel->getByAuthor($user);
+
+// Gli altri post dello stesso autore, escluso quello corrente
+$otherPosts = $postModel->getOtherEntityCollectionByEntity($post, 'author', $user); // WHERE id <> ? AND author_id = ?
+
+// Gli altri post senza autore, escluso quello corrente
+$otherOrphanPosts = $postModel->getOtherEntityCollectionByEntity($post, 'author'); // WHERE id <> ? AND author_id IS NULL
 ```
 
 ### Metodi Magici (Query Dinamiche)
@@ -294,6 +301,13 @@ Per modelli auto-referenziati, le query dinamiche supportano anche il parametro 
 ```php
 $subCategories = $categoryModel->getByParentAndActive($parentCategory, true);
 $childCount = $categoryModel->countByParentAndStatus($parentCategory, 'active');
+```
+
+`getOtherEntityCollectionByParent(BaseEntity $excludedEntity, ?BaseEntity $parentEntity = null, ?array $order = null)` restituisce le entità sorelle di `$excludedEntity`, cioè quelle con lo stesso padre esclusa l'entità stessa; con `$parentEntity` a `null` restituisce le altre entità radice. Fino alla 12.9.0 la condizione di esclusione veniva generata sulla colonna inesistente `id_id` (vedi CHANGELOG 12.9.1):
+
+```php
+$siblingCategories = $categoryModel->getOtherEntityCollectionByParent($category, $parentCategory); // WHERE id <> ? AND parent_category_id = ?
+$otherRootCategories = $categoryModel->getOtherEntityCollectionByParent($rootCategory); // WHERE id <> ? AND parent_category_id IS NULL
 ```
 
 #### Type Safety e Validazione Automatica

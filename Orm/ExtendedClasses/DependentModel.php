@@ -62,11 +62,11 @@ abstract class DependentModel extends BaseModel
         }
     }
 
-    public function getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, BaseEntity $baseEntity): SismaCollection
+    public function getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, ?BaseEntity $baseEntity = null): SismaCollection
     {
         $query = $this->initQuery();
         $query->setWhere();
-        $query->appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder, true);
+        $query->appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder);
         $bindValues = [
             $excludedEntity,
         ];
@@ -78,8 +78,8 @@ abstract class DependentModel extends BaseModel
             $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
         } else {
             $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
-            $bindValues = [$baseEntity];
-            $bindTypes = [DataType::typeEntity];
+            $bindValues[] = $baseEntity;
+            $bindTypes[] = DataType::typeEntity;
         }
         $query->close();
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);

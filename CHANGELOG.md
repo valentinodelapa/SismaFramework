@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.9.1] - 2026-10-17 - Esclusione di un'Entità nelle Query per Relazione e per Padre
+
+Patch che corregge `DependentModel::getOtherEntityCollectionByEntity()` e `SelfDependentModel::getOtherEntityCollectionByParent()`, i metodi che restituiscono le entità collegate alla stessa entità (o allo stesso padre) di un'entità data, esclusa quest'ultima: la query generata faceva riferimento a una colonna inesistente, e il primo dei due metodi perdeva anche il valore dell'entità esclusa e non accettava `null`.
+
+### 🐛 Bug Fix
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` e `Orm/ExtendedClasses/SelfDependentModel::getOtherEntityCollectionByParent()` — condizione di esclusione sulla colonna `id_id`
+
+La condizione che esclude l'entità passata veniva aggiunta con `appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder, true)`. Il quarto parametro indica una foreign key, il cui nome colonna riceve il suffisso `Id` (`NotationManager::convertPropertyNameToColumnName()`): la condizione diventava `id_id <> ?`, su una colonna che nella tabella non esiste, e la query falliva con un errore SQL. La condizione è ora generata sulla colonna `id`, come in `BaseModel::getOtherEntityCollection()`.
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` — valore dell'entità esclusa perso
+
+Quando `$baseEntity` era valorizzata, il suo valore e il suo tipo sostituivano gli array `$bindValues` e `$bindTypes` invece di esservi aggiunti: la query aveva due placeholder (`id <> ? AND ..._id = ?`) e un solo valore, con un errore sul numero dei parametri o, a seconda del driver, l'entità di riferimento legata al placeholder dell'esclusione. I due valori sono ora entrambi legati, nell'ordine dei placeholder.
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` — `null` non accettato
+
+Il metodo prevede un ramo per `$baseEntity === null`, che genera la condizione `..._id IS NULL`, ma il parametro era dichiarato `BaseEntity`: passare `null` sollevava un `TypeError` prima di eseguire il metodo, e il ramo non era raggiungibile. Il parametro è ora `?BaseEntity $baseEntity = null`, come `$parentEntity` in `SelfDependentModel::getOtherEntityCollectionByParent()`.
+
+I test esistenti verificavano solo il numero delle chiamate ad `appendCondition()`, senza controllarne gli argomenti né i valori passati a `DataMapper::find()`. Inoltre `testGetOtherEntityCollectionByEntityWithNullEntity()`, nonostante il nome, passava un'entità invece di `null`.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/DependentModel.php`**: `getOtherEntityCollectionByEntity()` genera la condizione di esclusione sulla colonna `id`, aggiunge valore e tipo di `$baseEntity` ai bind invece di sostituirli e accetta `?BaseEntity $baseEntity = null`
+- **`Orm/ExtendedClasses/SelfDependentModel.php`**: `getOtherEntityCollectionByParent()` genera la condizione di esclusione sulla colonna `id`
+- **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**: `testGetOtherEntityCollectionByEntity()` e `testGetOtherEntityCollectionByEntityWithNullEntity()` verificano gli argomenti di ogni chiamata ad `appendCondition()` e i valori e i tipi passati a `find()`; il secondo passa ora `null`. Entrambi falliscono contro l'implementazione precedente
+- **`Tests/Orm/ExtendedClasses/SelfDependentModelTest.php`**: `testGetOtherEntityCollectionByParent()` verifica gli argomenti di `appendCondition()` e di `find()`; aggiunto `testGetOtherEntityCollectionByParentWithNullParent()`. Entrambi falliscono contro l'implementazione precedente
+- **`docs/orm.md`**: documentati `getOtherEntityCollectionByEntity()` nella sezione "Metodi per Relazioni" e `getOtherEntityCollectionByParent()` nella sezione "Query Gerarchiche"
+- **`docs-phpdoc/`**: rigenerate le pagine di `DependentModel` e `SelfDependentModel`, che la eredita (firma di `getOtherEntityCollectionByEntity()`)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change per le chiamate**: la firma di `getOtherEntityCollectionByEntity()` passa da `BaseEntity $baseEntity` a `?BaseEntity $baseEntity = null`, un allargamento compatibile con tutte le chiamate esistenti.
+- **Sottoclassi che ridefiniscono il metodo**: un override che dichiara ancora `BaseEntity $baseEntity` restringe il tipo del parametro e PHP lo rifiuta con un errore fatale al caricamento della classe; va allineato a `?BaseEntity $baseEntity = null`.
+- **Cambiamento di comportamento osservabile**: i due metodi, che prima fallivano con un errore SQL, restituiscono ora le entità attese.
+
+---
+
 ## [12.9.0] - 2026-10-15 - Valori di Default della Configurazione dal Modulo e Parametri di Sessione e Cifratura con Password in Config
 
 Minor release che risolve alla radice il problema delle costanti di configurazione introdotte dopo l'installazione di un progetto: `Config` usa ora come valori di default quelli del `config.php` del modulo SismaFramework, quindi un progetto che aggiorna il framework non deve più aggiungere le nuove costanti al proprio `configFramework.php`. Su questa base, i parametri di `Session` e della cifratura con password di `Encryptor`, che la 12.8.x aveva introdotto come costanti di classe, sono spostati in `Config/config.php`, come tutti gli altri parametri del framework; l'involucro della cifratura con password passa al formato `sisma-pw2`, che dichiara tutti i propri parametri.
