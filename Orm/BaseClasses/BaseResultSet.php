@@ -243,19 +243,32 @@ abstract class BaseResultSet implements \Iterator
     {
         $class = $entityClass ?? $this->returnType;
         $entity = new $class();
-        $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
         foreach ($standardClass as $property => $value) {
             $property = NotationManager::convertColumnNameToPropertyName($property);
             if (property_exists($entity, $property)) {
                 $reflectionProperty = BaseEntity::getReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
-                if ($entity->isEncryptedProperty($property) && ($value !== null) && isset($standardClass->$initializationVectorColumnName)) {
-                    $value = Encryptor::decryptString($value, $standardClass->$initializationVectorColumnName) ?: $value;
+                if ($entity->isEncryptedProperty($property) && ($value !== null)) {
+                    $value = $this->decryptValue($standardClass, $entity, $property, $value);
                 }
                 $entity->$property = Parser::parseValue($reflectionType, $value, false);
             }
         }
         $entity->modified = false;
         return $entity;
+    }
+
+    private function decryptValue(\stdClass $standardClass, BaseEntity $entity, string $propertyName, string $value): string
+    {
+        $ownInitializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getPropertyInitializationVectorName($propertyName));
+        $sharedInitializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
+        $initializationVector = $standardClass->$ownInitializationVectorColumnName ?? $standardClass->$sharedInitializationVectorColumnName ?? null;
+        if ($initializationVector !== null) {
+            $decryptedValue = Encryptor::decryptString($value, $initializationVector);
+            if ($decryptedValue !== false) {
+                return $decryptedValue;
+            }
+        }
+        return $value;
     }
 }

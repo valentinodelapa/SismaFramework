@@ -62,6 +62,7 @@ class JoinEagerLoadingTest extends TestCase
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
                     ['encryptionPassphrase', 'encryption-key'],
+                    ['encryptedPropertyInitializationVectorSuffix', 'InitializationVector'],
                     ['encryptionAlgorithm', 'AES-256-CBC'],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],

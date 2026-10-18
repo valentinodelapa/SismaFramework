@@ -279,17 +279,32 @@ abstract class BaseEntity
 
     public function isEncryptedProperty(string $columnName): bool
     {
-        return ((empty($this->config->encryptionPassphrase) === false) && in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->initializationVectorPropertyName)));
+        return ((empty($this->config->encryptionPassphrase) === false) && in_array($columnName, $this->encryptedColumns) && (property_exists($this, $this->getPropertyInitializationVectorName($columnName))));
     }
 
     public function isInitializationVector(string $propertyName): bool
     {
-        return ($propertyName === $this->initializationVectorPropertyName);
+        return ($propertyName === $this->initializationVectorPropertyName) || in_array($propertyName, $this->getOwnInitializationVectorPropertyNames());
+    }
+
+    private function getOwnInitializationVectorPropertyNames(): array
+    {
+        return array_map(fn(string $columnName) => $columnName . $this->config->encryptedPropertyInitializationVectorSuffix, $this->encryptedColumns);
     }
 
     public function getInitializationVectorPropertyName(): string
     {
         return $this->initializationVectorPropertyName;
+    }
+
+    public function getPropertyInitializationVectorName(string $propertyName): string
+    {
+        $ownInitializationVectorPropertyName = $propertyName . $this->config->encryptedPropertyInitializationVectorSuffix;
+        if (property_exists($this, $ownInitializationVectorPropertyName)) {
+            return $ownInitializationVectorPropertyName;
+        } else {
+            return $this->initializationVectorPropertyName;
+        }
     }
 
     abstract protected function setPropertyDefaultValue(): void;

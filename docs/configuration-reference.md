@@ -301,6 +301,8 @@ const BLOWFISH_HASH_WORKLOAD = 12;
 const ENCRYPTION_PASSPHRASE = 'your-secret-key-here';
 const ENCRYPTION_ALGORITHM = 'AES-256-CBC';
 const INITIALIZATION_VECTOR_BYTES = 16;
+// Suffisso della proprietà che contiene il vettore d'inizializzazione di ogni proprietà cifrata (v12.11.0+)
+const ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX = 'InitializationVector';
 
 // Crittografia asimmetrica (coppie di chiavi, CSR, certificati, firma/verifica — v12.3.0+)
 const ASYMMETRIC_KEY_TYPE = OPENSSL_KEYTYPE_RSA;

@@ -39,7 +39,9 @@ use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\DependentEntityThree;
+use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
 use SismaFramework\TestsApplication\Entities\EntityWithOneCollectionOne;
+use SismaFramework\TestsApplication\Entities\EntityWithOwnInitializationVectors;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Entities\ReflectionCacheSample;
 use SismaFramework\TestsApplication\Entities\SimpleEntity;
@@ -64,6 +66,7 @@ class BaseEntityTest extends TestCase
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
+                    ['encryptedPropertyInitializationVectorSuffix', 'InitializationVector'],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
@@ -436,6 +439,17 @@ class BaseEntityTest extends TestCase
         $this->assertArrayNotHasKey('modified', $finalProperties);
         $this->assertArrayNotHasKey('config', $finalProperties);
         $this->assertSame($reflectionPropertyFromName, $finalProperties['stringWithoutInitialization']);
+    }
+
+    public function testPropertyInitializationVectorName()
+    {
+        $entityWithOwnInitializationVectors = new EntityWithOwnInitializationVectors($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $this->assertSame('encryptedPropertyOneInitializationVector', $entityWithOwnInitializationVectors->getPropertyInitializationVectorName('encryptedPropertyOne'));
+        $this->assertTrue($entityWithOwnInitializationVectors->isInitializationVector('encryptedPropertyOneInitializationVector'));
+        $this->assertTrue($entityWithOwnInitializationVectors->isInitializationVector('initializationVector'));
+        $this->assertFalse($entityWithOwnInitializationVectors->isInitializationVector('encryptedPropertyOne'));
+        $entityWithEncryptedPropertyOne = new EntityWithEncryptedPropertyOne($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $this->assertSame('initializationVector', $entityWithEncryptedPropertyOne->getPropertyInitializationVectorName('encryptedPropertyOne'));
     }
 
     public function testBuiltinPropertiesDoNotAutoloadTypeNames()

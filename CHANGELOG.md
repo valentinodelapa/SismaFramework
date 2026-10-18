@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.11.0] - 2026-10-18 - Vettore d'Inizializzazione per Ogni Proprietà Cifrata
+
+Minor release che rivede la cifratura delle proprietà delle entità. Ogni proprietà cifrata può ora avere un proprio vettore d'inizializzazione, rigenerato a ogni salvataggio, al posto di quello condiviso da tutte le proprietà cifrate della riga, che viene deprecato. Il rilascio corregge inoltre il riuso del vettore condiviso negli update, la perdita dei valori cifrati `''` e `'0'` in lettura e adotta `random_bytes()` per la generazione dei vettori.
+
+### ✨ Nuove Funzionalità
+
+#### `Orm/BaseClasses/BaseEntity` — vettore d'inizializzazione per proprietà
+
+Una proprietà cifrata usa come vettore d'inizializzazione la proprietà con lo stesso nome seguito dal suffisso `InitializationVector` (per esempio `privateKeyInitializationVector`, colonna `private_key_initialization_vector`), se l'entità la dichiara. A ogni salvataggio della proprietà l'ORM genera un nuovo vettore e lo scrive insieme al valore cifrato: proprietà diverse e versioni successive della stessa proprietà non condividono mai il vettore, e un'entità caricata solo in parte può essere salvata senza rendere illeggibili le proprietà cifrate non caricate.
+
+In lettura il valore viene decifrato con il vettore proprio o, se questo è `NULL` o assente, con quello condiviso: le righe scritte prima dell'adozione del vettore proprio restano leggibili e vengono ricifrate al primo salvataggio.
+
+- **`Config/config.php`**: nuova costante `ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX` (default `"InitializationVector"`), esposta come `Config::$encryptedPropertyInitializationVectorSuffix`
+- **`BaseEntity::getPropertyInitializationVectorName()`**: nuovo metodo pubblico, restituisce il nome della proprietà che contiene il vettore di una proprietà cifrata, il vettore proprio se dichiarato e altrimenti quello condiviso
+- **`BaseEntity::isInitializationVector()`**: riconosce anche i vettori propri delle proprietà cifrate, che il `DataMapper` esclude quindi dai valori ordinari come già faceva per il vettore condiviso
+
+### 🛡️ Sicurezza
+
+#### `Orm/HelperClasses/DataMapper::parseSingleProperty()` — vettore d'inizializzazione riusato negli update
+
+Il vettore condiviso veniva generato solo se l'entità non ne aveva già uno: a ogni update le proprietà cifrate venivano ricifrate con lo stesso vettore e la stessa chiave. Con `AES-256-CBC` questo rivela quando due versioni di un campo iniziano con gli stessi 16 byte; con modalità a flusso come CTR esporrebbe il contenuto. Il vettore viene ora rigenerato a ogni salvataggio. Fa eccezione il vettore condiviso di un'entità caricata solo in parte: se una delle proprietà cifrate che lo usano non è inizializzata, non verrebbe ricifrata e diventerebbe illeggibile, quindi il vettore caricato viene mantenuto, come nelle versioni precedenti. Con il vettore condiviso il rischio resta inoltre tra proprietà diverse della stessa riga, che lo condividono per costruzione: per eliminarlo va adottato il vettore per proprietà, che non ha eccezioni perché ogni vettore viene scritto insieme alla sua proprietà. L'eccezione sarà rimossa nella 13.0.0 insieme al vettore condiviso.
+
+#### `Core/HelperClasses/Encryptor::createInitializationVector()` — `random_bytes()` al posto di `openssl_random_pseudo_bytes()`
+
+I vettori d'inizializzazione sono ora generati con `random_bytes()`, il generatore crittograficamente sicuro standard di PHP, che non dipende dall'estensione OpenSSL e solleva un'eccezione se non può produrre byte sicuri. `openssl_random_pseudo_bytes()` era già sicura dalla PHP 7.4 in poi: si tratta di un rafforzamento, non della correzione di vettori deboli.
+
+### 🐛 Bug Fix
+
+#### `Orm/BaseClasses/BaseResultSet::convertToBaseEntity()` — valori cifrati `''` e `'0'` letti come testo cifrato
+
+Il risultato di `Encryptor::decryptString()` era scelto con l'operatore `?:`, che scarta tutti i valori falsy e non solo il `false` restituito in caso di errore: una proprietà cifrata con valore `''` o `'0'` veniva idratata con il testo cifrato. Il valore decifrato viene ora scartato solo se è `false`.
+
+**File modificati**:
+- **`Config/config.php`**, **`Core/HelperClasses/Config.php`**: aggiunta la costante `ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX`
+- **`Core/HelperClasses/Encryptor.php`**: `createInitializationVector()` usa `random_bytes()`
+- **`Orm/BaseClasses/BaseEntity.php`**: aggiunto `getPropertyInitializationVectorName()`; `isEncryptedProperty()` verifica il vettore della singola proprietà; `isInitializationVector()` riconosce i vettori propri
+- **`Orm/BaseClasses/BaseResultSet.php`**: la decifratura, estratta nel nuovo metodo privato `decryptValue()`, usa il vettore proprio con ripiego su quello condiviso e scarta il risultato solo se è `false`
+- **`Orm/HelperClasses/DataMapper.php`**: `parseSingleProperty()` usa il vettore della singola proprietà e lo rigenera a ogni salvataggio; il nuovo metodo privato `initializationVectorIsRenewable()` mantiene il vettore caricato quando una delle proprietà cifrate che lo usano non è inizializzata
+- **`TestsApplication/Entities/EntityWithOwnInitializationVectors.php`**: nuova entità con due proprietà cifrate, i rispettivi vettori e il vettore condiviso
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: aggiunto `testPropertyInitializationVectorName()`
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: aggiunti `testInsertEncryptsEachPropertyWithItsOwnInitializationVector()` e `testUpdateRewritesOnlyInitializationVectorOfSavedProperty()`, che falliscono con il vettore condiviso, e `testUpdatePartiallyLoadedEntityKeepsSharedInitializationVector()`, che fallisce se il vettore condiviso viene rigenerato anche con una proprietà cifrata non caricata; `testSaveNewEntityWithEncryptedPropertyOne()`, `testSaveNewEntityWithEncryptedPropertyTwo()` e `testSaveEntityWithNullEncryptedPropertyKeepsNull()` verificano che l'update scriva un vettore nuovo
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: aggiunti `testFetchWithFalsyEncryptedPropertyValues()`, `testFetchWithOwnInitializationVectors()` e `testFetchWithOwnInitializationVectorFallsBackToSharedInitializationVector()`
+- **`Tests/Orm/BaseClasses/BaseModelTest.php`**, **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**, **`Tests/Orm/ExtendedClasses/SelfDependentModelTest.php`**, **`Tests/Orm/JoinEagerLoadingTest.php`**: lo stub di `Config` restituisce il suffisso del vettore
+- **`docs/orm.md`**: sezione "Proprietà Cifrate" riscritta con il vettore per proprietà, il vettore condiviso deprecato, la procedura di migrazione e le query sulle colonne cifrate
+- **`docs/configuration-reference.md`**: documentata `ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX`
+- **`docs-phpdoc/`**: rigenerate le pagine di `BaseEntity`, `BaseResultSet`, `ReferencedEntity`, `SelfReferencedEntity` e `DataMapper` e l'indice di ricerca
+
+### ⚠️ Deprecazioni
+
+- **Vettore d'inizializzazione condiviso** (`initializationVector`): deprecato dalla versione 12.11.0, sarà rimosso nella versione 13.0.0. Dichiarare per ogni proprietà cifrata la proprietà `<proprietà>InitializationVector` e la relativa colonna, seguendo la procedura di migrazione in `docs/orm.md`. Con il vettore condiviso sarà rimossa anche l'eccezione che lo mantiene sulle entità caricate solo in parte. Non viene emesso alcun avviso a runtime.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le entità che dichiarano solo `initializationVector` continuano a funzionare con il vettore condiviso, e i dati esistenti restano leggibili senza migrazione.
+- **Cambiamento di comportamento osservabile**: il vettore condiviso viene rigenerato a ogni salvataggio, salvo che una delle proprietà cifrate che lo usano non sia inizializzata, e le proprietà cifrate sono ricifrate con il nuovo vettore; per lo stesso motivo un vettore impostato a mano sull'entità prima del salvataggio viene sostituito, se tutte le proprietà cifrate che lo usano sono inizializzate.
+- **Limitazione invariata**: se un'entità che usa il vettore condiviso viene caricata senza la colonna del vettore e con solo alcune delle proprietà cifrate, il salvataggio genera un vettore nuovo e le proprietà cifrate non caricate non sono più leggibili, come nelle versioni precedenti. Il vettore per proprietà non ha questa limitazione.
+- **Lettura**: le proprietà cifrate con valore `''` o `'0'` vengono ora restituite decifrate.
+
+---
+
 ## [12.10.2] - 2026-10-18 - Autoload dei Tipi Nativi e Cache di Reflection nei Punti Rimanenti dell'ORM
 
 Patch che completa la 12.10.0 e la 12.10.1, estendendo il controllo sui tipi nativi e la cache dei metadati di reflection ai punti dell'ORM che non eseguono il controllo per ogni riga, ma per ogni classe di entità o per ogni query.

@@ -100,7 +100,7 @@ class Certificate extends BaseEntity
     protected int $id;
     protected string $certificate;
     protected ?string $privateKey = null;
-    protected ?string $initializationVector = null;
+    protected ?string $privateKeyInitializationVector = null;
 
     protected function setEncryptedProperties(): void
     {
@@ -111,7 +111,10 @@ class Certificate extends BaseEntity
 }
 ```
 
-- **Vettore d'inizializzazione obbligatorio**: l'entità deve dichiarare la proprietà `initializationVector` (e la tabella la colonna `initialization_vector`, binaria), in cui l'ORM conserva l'IV generato al primo salvataggio e condiviso da tutte le proprietà cifrate dell'entità. **Senza questa proprietà la cifratura non avviene**: le proprietà dichiarate cifrate vengono salvate in chiaro, senza errori né avvisi.
+- **Vettore d'inizializzazione per proprietà** (v12.11.0+): per ogni proprietà cifrata l'entità dichiara una proprietà con lo stesso nome seguito dal suffisso `InitializationVector` (configurabile con `ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX`), e la tabella la colonna corrispondente, binaria e nullable (`private_key_initialization_vector`). L'ORM genera un nuovo IV a ogni salvataggio della proprietà e lo scrive insieme al valore cifrato: proprietà diverse e versioni successive della stessa proprietà non condividono mai l'IV. **Senza vettore d'inizializzazione la cifratura non avviene**: le proprietà dichiarate cifrate vengono salvate in chiaro, senza errori né avvisi.
+- **Vettore d'inizializzazione condiviso** (deprecato dalla 12.11.0, sarà rimosso nella 13.0.0): una proprietà cifrata senza vettore proprio usa la proprietà `initializationVector` (colonna `initialization_vector`), condivisa da tutte le proprietà cifrate dell'entità e rigenerata a ogni salvataggio. Se l'entità è stata caricata solo in parte e una delle proprietà cifrate che usano l'IV condiviso non è inizializzata, l'IV caricato viene mantenuto, perché rigenerarlo renderebbe illeggibile la proprietà non riscritta; se invece l'IV condiviso non è stato caricato, ne viene generato uno nuovo e le proprietà cifrate non caricate non sono più leggibili. Con un IV condiviso, due proprietà della stessa riga con lo stesso valore, o con gli stessi primi 16 byte, producono lo stesso testo cifrato, o lo stesso primo blocco.
+- **Migrazione dall'IV condiviso**: aggiungere alla tabella le colonne `<proprietà>_initialization_vector` (nullable) e all'entità le proprietà corrispondenti, lasciando per il momento `initializationVector`. Le righe esistenti, che hanno il vettore proprio a `NULL`, vengono decifrate con l'IV condiviso; al primo salvataggio ogni proprietà viene ricifrata con il proprio IV. Quando nessuna riga ha più il vettore proprio a `NULL` per le proprietà valorizzate, `initializationVector` e la sua colonna possono essere rimossi.
+- **Query sulle colonne cifrate**: `Query::appendConditionOnEncryptedColumn()` riceve il nome della colonna del vettore d'inizializzazione: con il vettore per proprietà va indicata la colonna propria (`private_key_initialization_vector`), non `initialization_vector`.
 - **Passphrase**: la cifratura usa `ENCRYPTION_PASSPHRASE`; con la passphrase vuota le proprietà vengono salvate in chiaro.
 - **Valori nulli** (v12.8.1+): una proprietà cifrata che vale `null` viene salvata come `NULL` e letta come `null`, senza cifratura né decifratura. Prima della 12.8.1 il salvataggio e la lettura di un valore nullo sollevavano un `TypeError`.
 
