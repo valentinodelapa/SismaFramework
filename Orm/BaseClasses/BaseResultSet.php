@@ -260,9 +260,8 @@ abstract class BaseResultSet implements \Iterator
 
     private function decryptValue(\stdClass $standardClass, BaseEntity $entity, string $propertyName, string $value): string
     {
-        $ownInitializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getPropertyInitializationVectorName($propertyName));
-        $sharedInitializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
-        $initializationVector = $standardClass->$ownInitializationVectorColumnName ?? $standardClass->$sharedInitializationVectorColumnName ?? null;
+        $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getPropertyInitializationVectorName($propertyName));
+        $initializationVector = $standardClass->$initializationVectorColumnName ?? null;
         if ($initializationVector !== null) {
             $decryptedValue = Encryptor::decryptString($value, $initializationVector);
             if ($decryptedValue !== false) {

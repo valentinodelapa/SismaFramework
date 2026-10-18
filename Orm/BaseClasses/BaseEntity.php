@@ -59,7 +59,6 @@ abstract class BaseEntity
     protected Config $config;
     protected ProcessedEntitiesCollection $processedEntitesCollection;
     protected string $primaryKeyPropertyName;
-    protected string $initializationVectorPropertyName = 'initializationVector';
     protected bool $isActiveTransaction = false;
     private static array $reflectionClasses = [];
     private static array $reflectionProperties = [];
@@ -277,27 +276,12 @@ abstract class BaseEntity
 
     public function isInitializationVector(string $propertyName): bool
     {
-        return ($propertyName === $this->initializationVectorPropertyName) || in_array($propertyName, $this->getOwnInitializationVectorPropertyNames());
-    }
-
-    private function getOwnInitializationVectorPropertyNames(): array
-    {
-        return array_map(fn(string $columnName) => $columnName . $this->config->encryptedPropertyInitializationVectorSuffix, $this->encryptedColumns);
-    }
-
-    public function getInitializationVectorPropertyName(): string
-    {
-        return $this->initializationVectorPropertyName;
+        return in_array($propertyName, array_map(fn(string $columnName) => $this->getPropertyInitializationVectorName($columnName), $this->encryptedColumns));
     }
 
     public function getPropertyInitializationVectorName(string $propertyName): string
     {
-        $ownInitializationVectorPropertyName = $propertyName . $this->config->encryptedPropertyInitializationVectorSuffix;
-        if (property_exists($this, $ownInitializationVectorPropertyName)) {
-            return $ownInitializationVectorPropertyName;
-        } else {
-            return $this->initializationVectorPropertyName;
-        }
+        return $propertyName . $this->config->encryptedPropertyInitializationVectorSuffix;
     }
 
     abstract protected function setPropertyDefaultValue(): void;

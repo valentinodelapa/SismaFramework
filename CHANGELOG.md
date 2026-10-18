@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.6.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, e l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0.
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0 e la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà.
 
 ### 💥 Breaking Changes
 
@@ -110,6 +110,38 @@ public function equals(CustomTypeInterface $other): bool
 
 **Migrazione**: Nelle classi applicative che implementano `CustomDateTimeInterface`, dichiarare `equals(CustomTypeInterface $other): bool` e restituire `false` quando l'argomento non è un `CustomDateTimeInterface`. Per preparare il codice sulla 12.6.x si può usare il tipo unione `CustomDateTimeInterface|CustomTypeInterface`, compatibile con entrambe le versioni. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
 
+#### `Orm/BaseClasses/BaseEntity` — rimosso il vettore d'inizializzazione condiviso delle proprietà cifrate
+
+La 12.11.0 ha introdotto il vettore d'inizializzazione per proprietà, deprecando quello condiviso da tutte le proprietà cifrate della riga (`initializationVector`), che rivela quando due proprietà della stessa riga iniziano con gli stessi 16 byte. Il vettore condiviso è ora rimosso: ogni proprietà cifrata usa esclusivamente la proprietà `<proprietà>InitializationVector`, e una proprietà cifrata che non la dichiara viene salvata in chiaro. In lettura la colonna `initialization_vector` non viene più consultata: un valore cifrato senza il proprio vettore viene restituito così com'è. Con il vettore condiviso è rimossa anche la protezione introdotta nella 12.11.0, che sulle entità caricate solo in parte lo manteneva invece di rigenerarlo, e il controllo `hasColumn()` in `DataMapper::parseSingleProperty()`, che serviva a non aggiungere due volte la colonna condivisa alla stessa query.
+
+**Prima (12.x)**:
+```php
+protected ?string $privateKey = null;
+protected ?string $initializationVector = null;
+```
+
+**Dopo (13.x)**:
+```php
+protected ?string $privateKey = null;
+protected ?string $privateKeyInitializationVector = null;
+```
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseEntity.php`**: rimossi la proprietà `$initializationVectorPropertyName` e il metodo `getInitializationVectorPropertyName()`; `getPropertyInitializationVectorName()` restituisce sempre il nome del vettore della proprietà; `isInitializationVector()` riconosce solo i vettori delle proprietà cifrate; rimosso il metodo privato `getOwnInitializationVectorPropertyNames()`
+- **`Orm/HelperClasses/DataMapper.php`**: `parseSingleProperty()` genera e scrive il vettore della proprietà a ogni salvataggio; rimosso il metodo privato `initializationVectorIsRenewable()`
+- **`Orm/BaseClasses/BaseResultSet.php`**: `decryptValue()` legge solo la colonna del vettore della proprietà
+- **`TestsApplication/Entities/EntityWithEncryptedPropertyOne.php`**, **`TestsApplication/Entities/EntityWithEncryptedPropertyTwo.php`**, **`TestsApplication/Entities/EntityWithNullableEncryptedProperty.php`**: `initializationVector` sostituito dai vettori delle singole proprietà
+- **`TestsApplication/Entities/EntityWithOwnInitializationVectors.php`**: rimossa, equivalente a `EntityWithEncryptedPropertyOne`
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: `testSaveNewEntityWithEncryptedPropertyOne()` e `testSaveNewEntityWithEncryptedPropertyTwo()` delegano al nuovo metodo privato `assertInsertAndUpdateOfEncryptedProperties()`, che verifica un vettore distinto per proprietà all'insert e vettori nuovi all'update; `testSaveEntityWithNullEncryptedPropertyKeepsNull()` e `testUpdateRewritesOnlyInitializationVectorOfSavedProperty()` allineati al vettore per proprietà; rimossi `testInsertEncryptsEachPropertyWithItsOwnInitializationVector()`, coperto dai test precedenti, e `testUpdatePartiallyLoadedEntityKeepsSharedInitializationVector()`
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: i test di lettura usano il vettore per proprietà; `testFetchWithOwnInitializationVectors()` e `testFetchWithOwnInitializationVectorFallsBackToSharedInitializationVector()` sostituiti da `testFetchIgnoresSharedInitializationVector()`
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: `testPropertyInitializationVectorName()` verifica che `initializationVector` non sia più riconosciuto come vettore
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: aggiunta la voce corrispondente a `getBreakingChanges()`
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: aggiornati il numero atteso di breaking change e le voci attese
+- **`UPGRADING.md`**: aggiunto il breaking change 5 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
+- **`docs/orm.md`**: la sezione "Proprietà Cifrate" documenta il solo vettore per proprietà e rimanda alla procedura di migrazione
+
+**Migrazione**: Sulla 12.11.x, prima dell'aggiornamento, aggiungere a ogni entità e tabella il vettore di ciascuna proprietà cifrata e ricifrare tutte le righe esistenti salvando di nuovo le entità, verificando che nessun valore cifrato abbia il vettore proprio a `NULL`. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
+
 ### 🐛 Bug Fix
 
 #### `Console/Services/Upgrade/Utils/FileScanner` — i comandi console dei moduli non venivano elaborati da `sisma upgrade`
@@ -120,11 +152,20 @@ public function equals(CustomTypeInterface $other): bool
 - **`Console/Services/Upgrade/Utils/FileScanner.php`**: `scanModuleFiles()` include i file di `Console/Commands`; `categorizeFile()` restituisce `command` per i percorsi che contengono `/Console/Commands/`; `shouldProcessFile()` elabora la categoria `command`
 - **`Tests/Console/Services/Upgrade/Utils/FileScannerTest.php`**: aggiunti `testScanModuleFilesFindsConsoleCommands()`, `testCategorizeFileForCommand()` e `testShouldProcessFileForCommand()`
 
+#### `Security/HttpClasses/OAuthAuthentication` — `Filter` importato dal namespace precedente allo spostamento
+
+Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornato l'import di `OAuthAuthentication`, che dichiarava ancora `SismaFramework\Core\HelperClasses\Filter`: istanziare la classe senza passare un filtro, usando il default `new Filter()` del costruttore, provocava un fatal error per classe inesistente. `BaseAuthentication` e `Authentication` erano già allineate.
+
+**File modificati**:
+- **`Security/HttpClasses/OAuthAuthentication.php`**: importa `SismaFramework\Orm\HelperClasses\Filter`
+- **`Tests/Security/HttpClasses/OAuthAuthenticationTest.php`**: importa `SismaFramework\Orm\HelperClasses\Filter`; i 9 test della classe fallivano per lo stesso motivo
+
 ### ✅ Backward Compatibility
 
 - **Breaking change per i file di localizzazione esistenti**: le label definite con la chiave piatta smettono di raggiungere il template, senza errori; i file che usano già la forma gerarchica, e i template al primo livello (nome senza `/`), non sono interessati.
 - **Breaking change per i comandi console dei moduli**: un comando che non implementa `help(): string` provoca un fatal error al caricamento, che blocca l'intera console.
 - **Breaking change per i tipi custom di data e ora applicativi**: una classe che implementa `CustomDateTimeInterface` dichiarando `equals(CustomDateTimeInterface $other)` provoca un fatal error al caricamento; il codice che usa soltanto `SismaDate`, `SismaDateTime` e `SismaTime` non è interessato.
+- **Breaking change per le entità con proprietà cifrate**: le entità che dichiarano solo `initializationVector` salvano le proprietà cifrate in chiaro, e i valori cifrati con il vettore condiviso vengono letti come testo cifrato, senza errori; i dati vanno migrati sulla 12.11.x prima dell'aggiornamento.
 - **Cambiamento di comportamento di `sisma upgrade`**: i file in `Console/Commands` dei moduli vengono ora elaborati da tutti i transformer della strategia applicata.
 
 ---

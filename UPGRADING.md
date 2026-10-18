@@ -15,7 +15,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 > **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
 
-La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, e rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`.
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface` e rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà.
 
 ### Breaking Changes
 
@@ -175,6 +175,66 @@ Il controllo `instanceof` è necessario perché `equals()` può ora ricevere qua
 
 Sulla 12.x la firma `equals(CustomTypeInterface $other)` provoca a sua volta un fatal error, perché lì `CustomTypeInterface` non è un supertipo di `CustomDateTimeInterface`. Per preparare il codice già sulla 12.6.x, prima dell'aggiornamento, si può dichiarare il parametro con il tipo unione `CustomDateTimeInterface|CustomTypeInterface`, compatibile con entrambe le versioni, e ridurlo a `CustomTypeInterface` dopo il passaggio alla 13. Questa modifica non è gestita da `sisma upgrade`.
 
+#### 5. Rimosso il vettore d'inizializzazione condiviso delle proprietà cifrate
+
+**Impatto**: Alto, per le applicazioni che cifrano proprietà delle entità
+**Componenti interessati**: Entità che dichiarano proprietà cifrate con `addEncryptedProperty()` e la proprietà `initializationVector`; dati già cifrati nel database
+
+> **Importante**: la migrazione dei dati va completata **prima** di aggiornare alla 13, sulla 12.11.x. La 13 non legge più la colonna `initialization_vector`: un valore cifrato che non ha il proprio vettore viene restituito così com'è, cioè come testo cifrato, senza errori.
+
+La 12.11.0 ha introdotto il vettore d'inizializzazione per proprietà: ogni proprietà cifrata ha una propria colonna con il vettore, rigenerato a ogni salvataggio, invece di condividere con le altre proprietà cifrate della riga la colonna `initialization_vector`. Il vettore condiviso, deprecato, è rimosso nella 13 insieme a:
+- la proprietà `BaseEntity::$initializationVectorPropertyName` e il metodo `BaseEntity::getInitializationVectorPropertyName()`;
+- il ripiego sul vettore condiviso in lettura;
+- la protezione che, sulle entità caricate solo in parte, manteneva il vettore condiviso invece di rigenerarlo.
+
+Una proprietà cifrata senza la proprietà del proprio vettore viene salvata in chiaro, come avveniva nella 12.x per le entità prive di `initializationVector`.
+
+**Prima (12.x)**:
+```php
+class Certificate extends BaseEntity
+{
+    protected int $id;
+    protected ?string $privateKey = null;
+    protected ?string $initializationVector = null;
+
+    protected function setEncryptedProperties(): void
+    {
+        $this->addEncryptedProperty('privateKey');
+    }
+}
+```
+
+**Dopo (13.x)**:
+```php
+class Certificate extends BaseEntity
+{
+    protected int $id;
+    protected ?string $privateKey = null;
+    protected ?string $privateKeyInitializationVector = null;
+
+    protected function setEncryptedProperties(): void
+    {
+        $this->addEncryptedProperty('privateKey');
+    }
+}
+```
+
+**Azione richiesta** (sulla 12.11.x, prima dell'aggiornamento):
+- Per ogni proprietà cifrata, aggiungere alla tabella la colonna `<proprietà>_initialization_vector`, binaria e nullable, e all'entità la proprietà `<proprietà>InitializationVector`, lasciando per il momento `initializationVector`
+- Ricifrare tutte le righe esistenti salvando di nuovo ogni entità, caricata per intero: l'update scrive tutte le proprietà inizializzate, ciascuna con un vettore nuovo
+  ```php
+  foreach ($certificateModel->getEntityCollection() as $certificate) {
+      $certificate->modified = true;
+      $dataMapper->save($certificate);
+  }
+  ```
+- Verificare che non resti alcuna riga da migrare, per ogni proprietà cifrata: `SELECT COUNT(*) FROM certificate WHERE private_key IS NOT NULL AND private_key_initialization_vector IS NULL` deve restituire `0`
+- Dopo l'aggiornamento alla 13, rimuovere dall'entità la proprietà `initializationVector` e dalla tabella la colonna `initialization_vector`
+- Nelle query con `Query::appendConditionOnEncryptedColumn()`, sostituire `initialization_vector` con la colonna del vettore della proprietà
+- Rimuovere eventuali override di `$initializationVectorPropertyName` e chiamate a `getInitializationVectorPropertyName()`; il nome della proprietà del vettore si ottiene con `getPropertyInitializationVectorName()`
+
+Questa modifica non è gestita da `sisma upgrade`, perché richiede di modificare lo schema del database e di ricifrare i dati.
+
 ### Checklist di Migrazione
 
 - [ ] **Form applicativi che estendono `BaseForm`**
@@ -189,6 +249,10 @@ Sulla 12.x la firma `equals(CustomTypeInterface $other)` provoca a sua volta un 
   - [ ] Sostituite le chiamate `$this->configure();` e `parent::configure()`
 - [ ] **Tipi custom di data e ora** (se presenti)
   - [ ] Convertito in `equals(CustomTypeInterface $other): bool` il metodo delle classi che implementano `CustomDateTimeInterface`
+- [ ] **Proprietà cifrate** (prima dell'aggiornamento, sulla 12.11.x)
+  - [ ] Aggiunte le colonne `<proprietà>_initialization_vector` e le proprietà `<proprietà>InitializationVector`
+  - [ ] Ricifrate tutte le righe esistenti e verificato che nessun valore cifrato abbia il vettore proprio a `NULL`
+  - [ ] Dopo l'aggiornamento, rimossi la proprietà `initializationVector` e la colonna `initialization_vector`
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari
   - [ ] Verificato che tutti i form dell'applicazione validino correttamente

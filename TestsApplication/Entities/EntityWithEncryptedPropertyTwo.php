@@ -37,7 +37,8 @@ class EntityWithEncryptedPropertyTwo extends BaseEntity
 {
 
     protected int $id;
-    protected ?string $initializationVector = null;
+    protected ?string $encryptedPropertyOneInitializationVector = null;
+    protected ?string $encryptedPropertyTwoInitializationVector = null;
     protected string $encryptedPropertyOne;
     protected string $encryptedPropertyTwo;
 

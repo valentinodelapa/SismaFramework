@@ -37,8 +37,9 @@ class EntityWithNullableEncryptedProperty extends BaseEntity
 
     protected int $id;
     protected ?string $nullableEncryptedProperty = null;
+    protected ?string $nullableEncryptedPropertyInitializationVector = null;
     protected string $encryptedProperty;
-    protected ?string $initializationVector = null;
+    protected ?string $encryptedPropertyInitializationVector = null;
 
     #[\Override]
     protected function setEncryptedProperties(): void

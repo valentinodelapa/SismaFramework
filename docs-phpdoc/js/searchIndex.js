@@ -2786,272 +2786,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_resolveOpensslConfigPath"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AgetMinimalOpensslConfigPath\u0028\u0029",
-            "name": "getMinimalOpensslConfigPath",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#method_getMinimalOpensslConfigPath"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003AMINIMAL_OPENSSL_CONFIG",
-            "name": "MINIMAL_OPENSSL_CONFIG",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_MINIMAL_OPENSSL_CONFIG"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS",
-            "name": "PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS",
-            "name": "PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS",
-            "name": "PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_VERSION",
-            "name": "PASSWORD_ENVELOPE_VERSION",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_VERSION"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_KEY_DERIVATION",
-            "name": "PASSWORD_ENVELOPE_KEY_DERIVATION",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_DERIVATION"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_SEPARATOR",
-            "name": "PASSWORD_ENVELOPE_SEPARATOR",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SEPARATOR"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_CIPHER",
-            "name": "PASSWORD_ENVELOPE_CIPHER",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_CIPHER"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_KEY_BYTES",
-            "name": "PASSWORD_ENVELOPE_KEY_BYTES",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_KEY_BYTES"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_SALT_BYTES",
-            "name": "PASSWORD_ENVELOPE_SALT_BYTES",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_SALT_BYTES"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES",
-            "name": "PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_INITIALIZATION_VECTOR_BYTES"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003APASSWORD_ENVELOPE_TAG_BYTES",
-            "name": "PASSWORD_ENVELOPE_TAG_BYTES",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#constant_PASSWORD_ENVELOPE_TAG_BYTES"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Encryptor\u003A\u003A\u0024minimalOpensslConfigPath",
-            "name": "minimalOpensslConfigPath",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Encryptor.html#property_minimalOpensslConfigPath"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter",
-            "name": "Filter",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AnoFilter\u0028\u0029",
-            "name": "noFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_noFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AcustomFilter\u0028\u0029",
-            "name": "customFilter",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_customFilter"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNotNull\u0028\u0029",
-            "name": "isNotNull",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isNotNull"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNotFalse\u0028\u0029",
-            "name": "isNotFalse",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isNotFalse"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNotEmpty\u0028\u0029",
-            "name": "isNotEmpty",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isNotEmpty"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisString\u0028\u0029",
-            "name": "isString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLimitString\u0028\u0029",
-            "name": "isMinLimitString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLimitString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLimitString\u0028\u0029",
-            "name": "isMaxLimitString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLimitString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLimitString\u0028\u0029",
-            "name": "isLimitString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLimitString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisAlphabeticString\u0028\u0029",
-            "name": "isAlphabeticString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isAlphabeticString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLimitAlphabeticString\u0028\u0029",
-            "name": "isMinLimitAlphabeticString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLimitAlphabeticString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLimitAlphabeticString\u0028\u0029",
-            "name": "isMaxLimitAlphabeticString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLimitAlphabeticString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLimitAlphabeticString\u0028\u0029",
-            "name": "isLimitAlphabeticString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLimitAlphabeticString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisAlphanumericString\u0028\u0029",
-            "name": "isAlphanumericString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isAlphanumericString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLimitAlphanumericString\u0028\u0029",
-            "name": "isMinLimitAlphanumericString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLimitAlphanumericString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLimitAlphanumericString\u0028\u0029",
-            "name": "isMaxLimitAlphanumericString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLimitAlphanumericString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLimitAlphanumericString\u0028\u0029",
-            "name": "isLimitAlphanumericString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLimitAlphanumericString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisStrictAlphanumericString\u0028\u0029",
-            "name": "isStrictAlphanumericString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isStrictAlphanumericString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLimitStrictAlphanumericString\u0028\u0029",
-            "name": "isMinLimitStrictAlphanumericString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLimitStrictAlphanumericString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLimitStrictAlphanumericString\u0028\u0029",
-            "name": "isMaxLimitStrictAlphanumericString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLimitStrictAlphanumericString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLimitStrictAlphanumericString\u0028\u0029",
-            "name": "isLimitStrictAlphanumericString",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLimitStrictAlphanumericString"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisSecurePassword\u0028\u0029",
-            "name": "isSecurePassword",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isSecurePassword"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisEmail\u0028\u0029",
-            "name": "isEmail",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEmail"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisNumeric\u0028\u0029",
-            "name": "isNumeric",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isNumeric"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisInteger\u0028\u0029",
-            "name": "isInteger",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isInteger"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisFloat\u0028\u0029",
-            "name": "isFloat",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isFloat"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisBoolean\u0028\u0029",
-            "name": "isBoolean",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isBoolean"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisArray\u0028\u0029",
-            "name": "isArray",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isArray"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisDate\u0028\u0029",
-            "name": "isDate",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isDate"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisDatetime\u0028\u0029",
-            "name": "isDatetime",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isDatetime"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisTime\u0028\u0029",
-            "name": "isTime",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isTime"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisJson\u0028\u0029",
-            "name": "isJson",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isJson"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisUploadedFile\u0028\u0029",
-            "name": "isUploadedFile",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isUploadedFile"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisEntity\u0028\u0029",
-            "name": "isEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEntity"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisEnumeration\u0028\u0029",
-            "name": "isEnumeration",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isEnumeration"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMinLengthForValidator\u0028\u0029",
-            "name": "isMinLengthForValidator",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMinLengthForValidator"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisMaxLengthForValidator\u0028\u0029",
-            "name": "isMaxLengthForValidator",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isMaxLengthForValidator"
-        },                {
-            "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Filter\u003A\u003AisLengthRangeForValidator\u0028\u0029",
-            "name": "isLengthRangeForValidator",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-HelperClasses-Filter.html#method_isLengthRangeForValidator"
-        }
-        },                {
             "fqsen": "\\SismaFramework\\Core\\HelperClasses\\Logger",
             "name": "Logger",
             "summary": "",
@@ -4127,11 +3861,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_checkCustomTypePropertyChange"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AisCustomType\u0028\u0029",
-            "name": "isCustomType",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isCustomType"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A__isset\u0028\u0029",
             "name": "__isset",
             "summary": "",
@@ -4156,16 +3885,6 @@ Search.appendIndex(
             "name": "isInitializationVector",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isInitializationVector"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetOwnInitializationVectorPropertyNames\u0028\u0029",
-            "name": "getOwnInitializationVectorPropertyNames",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getOwnInitializationVectorPropertyNames"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetInitializationVectorPropertyName\u0028\u0029",
-            "name": "getInitializationVectorPropertyName",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getInitializationVectorPropertyName"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetPropertyInitializationVectorName\u0028\u0029",
             "name": "getPropertyInitializationVectorName",
@@ -4236,11 +3955,6 @@ Search.appendIndex(
             "name": "primaryKeyPropertyName",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_primaryKeyPropertyName"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024initializationVectorPropertyName",
-            "name": "initializationVectorPropertyName",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_initializationVectorPropertyName"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024isActiveTransaction",
             "name": "isActiveTransaction",
@@ -6042,11 +5756,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_parseSingleProperty"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AinitializationVectorIsRenewable\u0028\u0029",
-            "name": "initializationVectorIsRenewable",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_initializationVectorIsRenewable"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AparseForeignKeyIndexes\u0028\u0029",
             "name": "parseForeignKeyIndexes",
             "summary": "",
@@ -6721,11 +6430,6 @@ Search.appendIndex(
             "name": "CustomDateTimeInterface",
             "summary": "",
             "url": "classes/SismaFramework-Orm-Interfaces-CustomDateTimeInterface.html"
-        },                {
-            "fqsen": "\\SismaFramework\\Orm\\Interfaces\\CustomDateTimeInterface\u003A\u003Aequals\u0028\u0029",
-            "name": "equals",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-Interfaces-CustomDateTimeInterface.html#method_equals"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\Interfaces\\CustomTypeInterface",
             "name": "CustomTypeInterface",

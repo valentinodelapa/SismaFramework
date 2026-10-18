@@ -38,8 +38,9 @@ class EntityWithEncryptedPropertyOne extends BaseEntity
 
     protected int $id;
     protected string $encryptedPropertyOne;
+    protected ?string $encryptedPropertyOneInitializationVector = null;
     protected string $encryptedPropertyTwo;
-    protected ?string $initializationVector = null;
+    protected ?string $encryptedPropertyTwoInitializationVector = null;
 
     #[\Override]
     protected function setEncryptedProperties(): void

@@ -27,9 +27,9 @@
 namespace SismaFramework\Security\HttpClasses;
 
 use SismaFramework\Core\HelperClasses\Config;
-use SismaFramework\Core\HelperClasses\Filter;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Orm\HelperClasses\Filter;
 use SismaFramework\Security\BaseClasses\BaseAuthentication;
 use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
 use SismaFramework\Security\Interfaces\Models\AuthenticableModelInterface;

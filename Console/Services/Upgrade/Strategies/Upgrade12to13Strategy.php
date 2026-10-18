@@ -67,6 +67,7 @@ class Upgrade12to13Strategy implements UpgradeStrategyInterface
             'Localizator: Flat template keys containing "/" in the "templates" locale section are ignored, convert them to nested keys (manual)',
             'BaseCommand: configure(), deprecated in 12.5.0, removed; help(): string is now abstract and must be implemented by every command (manual, before upgrading: unmigrated commands prevent the console from starting)',
             'CustomDateTimeInterface: now extends CustomTypeInterface; classes implementing it must declare equals(CustomTypeInterface $other): bool instead of equals(CustomDateTimeInterface $other): bool (manual)',
+            'BaseEntity: shared initializationVector, deprecated in 12.11.0, removed; every encrypted property needs its own <property>InitializationVector property and column, and existing rows must be re-encrypted (manual, before upgrading: values without their own initialization vector are returned still encrypted)',
         ];
     }
 
