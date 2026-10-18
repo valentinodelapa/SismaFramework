@@ -103,6 +103,8 @@ class Config
     protected readonly string $controllerNamespace;
     protected readonly array $customRenderableResourceTypes;
     protected readonly array $customDownloadableResourceTypes;
+    protected readonly array $preservedQueryStringParameters;
+    protected readonly int $resourceCacheMaxAge;
 
     /* Render Constant */
     protected readonly string $localesPath;

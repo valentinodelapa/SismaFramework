@@ -49,8 +49,6 @@ try {
     $debugger->startExecutionTimeCalculation();
     PhpVersionChecker::checkPhpVersion();
     Session::start();
-    header('Pragma: cache');
-    header('Cache-control: public');
     $dispatcher = new Dispatcher(debugger: $debugger);
     return $dispatcher->run();
 } catch (PhpVersionException $exception) {

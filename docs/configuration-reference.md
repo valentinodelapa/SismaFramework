@@ -240,6 +240,21 @@ const CUSTOM_RENDERABLE_RESOURCE_TYPES = ['xml', 'rss'];
 const CUSTOM_DOWNLOADABLE_RESOURCE_TYPES = ['pdf', 'docx'];
 ```
 
+#### RESOURCE_CACHE_MAX_AGE
+- **Tipo**: `int`
+- **Default**: `86400`
+- **Descrizione**: Durata in secondi per cui browser e proxy possono tenere in cache le risorse statiche servite dal framework (CSS, JavaScript, immagini, file scaricabili). Il valore viene inviato come `Cache-Control: public, max-age=…` e come `Expires`, e sostituisce gli header anti-cache che `session_start()` imposta su ogni risposta. Le pagine generate dai controller mantengono invece gli header anti-cache della sessione, perché possono contenere dati dell'utente.
+
+### Parametri della Query String
+
+```php
+const PRESERVED_QUERY_STRING_PARAMETERS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "gclid", "gbraid", "wbraid", "dclid", "fbclid", "msclkid", "mc_cid", "mc_eid", "_ga", "_gl"];
+```
+
+#### PRESERVED_QUERY_STRING_PARAMETERS
+- **Tipo**: `array`
+- **Descrizione**: Parametri che il dispatcher lascia nella query string. Per le richieste `GET` e `HEAD` il dispatcher riscrive gli altri parametri della query string nel percorso con un redirect (`/blog?page=2` diventa `/blog/page/2/`); i parametri di questa lista restano invece nella query string del redirect, e una richiesta che contiene solo questi parametri non viene reindirizzata. Così gli strumenti di analytics e di tracciamento delle conversioni, che leggono i parametri dalla query string lato client, continuano a riceverli. I parametri restano comunque disponibili in `$request->query` e come argomenti delle action, con il nome convertito in camelCase (`utmSource`).
+
 ---
 
 ## Configurazione Moduli

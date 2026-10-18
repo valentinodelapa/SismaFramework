@@ -2,6 +2,89 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.12.0] - 2026-10-18 - Riscrittura della Query String nel Dispatcher e Cache delle Risorse Statiche
+
+Minor release che rivede la riscrittura della query string nel percorso eseguita dal dispatcher. Le richieste diverse da `GET` e `HEAD` non vengono più reindirizzate, i parametri di tracciamento restano nella query string, gli array annidati e i valori vuoti sopravvivono alla riscrittura e gli slash multipli in coda non causano più errori. Il rilascio rimuove inoltre gli header di cache pubblica applicati a tutte le risposte e introduce una cache configurabile per le sole risorse statiche.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Dispatcher` — parametri preservati nella query string
+
+Per le richieste `GET` e `HEAD` il dispatcher riscrive la query string nel percorso con un redirect (`/blog?page=2` diventa `/blog/page/2/`). I parametri elencati nella nuova costante `PRESERVED_QUERY_STRING_PARAMETERS` restano invece nella query string del redirect (`/blog?page=2&utm_source=x` diventa `/blog/page/2/?utm_source=x`), e una richiesta che contiene solo questi parametri non viene reindirizzata. Prima la riscrittura li spostava nel percorso: gli strumenti di analytics e di tracciamento delle conversioni, che li leggono dalla query string lato client, non li ricevevano più, e lo stesso contenuto risultava raggiungibile da un URL diverso per ogni campagna. La lista predefinita comprende i parametri `utm_*` e gli identificativi di click di Google, Meta, Microsoft e Mailchimp. I parametri restano disponibili in `$request->query` e come argomenti delle action, con il nome convertito in camelCase (`utmSource`).
+
+- **`Config/config.php`**: nuova costante `PRESERVED_QUERY_STRING_PARAMETERS`, esposta come `Config::$preservedQueryStringParameters`
+
+#### `Core/HelperClasses/Dispatcher/ResourceMaker` — cache delle risorse statiche configurabile
+
+Le risorse statiche servite dal framework (CSS, JavaScript, immagini, file scaricabili) ricevono ora `Cache-Control: public, max-age=…` ed `Expires` con la durata della nuova costante `RESOURCE_CACHE_MAX_AGE`, e l'header `Pragma` impostato da `session_start()` viene rimosso. L'header `Expires` usava inoltre il formato dei cookie (`d-M-Y`), non valido per questo header e trattato dai browser come una data già scaduta: ora usa il formato HTTP.
+
+- **`Config/config.php`**: nuova costante `RESOURCE_CACHE_MAX_AGE` (default `86400`), esposta come `Config::$resourceCacheMaxAge`
+
+### 🛡️ Sicurezza
+
+#### `Public/index.php` — `Cache-Control: public` su tutte le risposte
+
+`index.php` impostava `Pragma: cache` e `Cache-control: public` su ogni richiesta, dopo `Session::start()`, sostituendo gli header anti-cache inviati da `session_start()`. Un reverse proxy o una CDN potevano quindi mettere in cache e servire ad altri utenti pagine generate con i dati della sessione. Gli header sono stati rimossi: le pagine generate dai controller mantengono gli header anti-cache della sessione, e la cache pubblica è applicata solo alle risorse statiche.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Dispatcher::run()` — corpo delle richieste `POST` perso con la query string
+
+Il redirect della riscrittura veniva eseguito con qualunque metodo: una `POST` verso un URL con query string (un webhook come `/api/webhook?provider=stripe` o un form con `action` contenente parametri) veniva trasformata dal client in una `GET` e il corpo della richiesta andava perso. La riscrittura è ora eseguita solo per `GET` e `HEAD`; per gli altri metodi `ActionArgumentsParser` legge i parametri direttamente dalla query string e li unisce a quelli del percorso, che hanno la precedenza.
+
+#### `Core/Services/RouterService::reloadWithParsedQueryString()` — errore fatale con parametri array
+
+Un parametro array come `?tag[]=php&tag[]=orm` veniva passato a `urlencode()`, che solleva un `TypeError`. Le liste semplici sono ora riscritte ripetendo la chiave (`tag/php/tag/orm/`), come già accettato dal parser; gli array associativi e annidati, come `?filter[status]=active&filter[tags][]=php`, usano la notazione con parentesi codificata (`filter%5Bstatus%5D/active/filter%5Btags%5D%5B%5D/php/`), che `ActionArgumentsParser` ricostruisce con `parse_str()`. Prima le chiavi degli array associativi venivano perse.
+
+#### `Core/Services/RouterService::reloadWithParsedQueryString()` — query string sulla root
+
+Una richiesta alla root con query string, come `/?page=2`, veniva riscritta in `/page/2/` e `page` veniva interpretato come nome del controller. La root viene ora riscritta nel percorso predefinito (`/<DEFAULT_PATH>/<DEFAULT_ACTION>/page/2/`).
+
+#### `Core/HelperClasses/Dispatcher/RouteResolver::parsePath()` — valore vuoto in coda perso
+
+Un parametro vuoto in fondo alla query string (`?page=2&q=`) produce un percorso che termina con `q//`. `parsePath()` rimuoveva con `rtrim()` tutti gli slash finali, `q` restava senza valore e veniva scartato. Viene ora rimosso un solo slash e `q` riceve il valore `''`. `injectDefaultController()` è stato allineato: non usa più `array_pop()` per togliere l'action di default iniettata, che con un elemento vuoto in coda avrebbe rimosso quest'ultimo al posto dell'action, e gli argomenti passati ai `CallableController` sono ripuliti dagli elementi vuoti in coda come in precedenza.
+
+#### `Core/HelperClasses/Dispatcher/ActionArgumentsParser` — `TypeError` con slash multipli in coda
+
+Con più elementi vuoti in coda, come in `/home/index///`, `cleanArrayShift()` esauriva gli argomenti e restituiva `null` da un metodo con tipo di ritorno `string`, causando un errore 500. Il parser scarta ora gli elementi vuoti prima di ogni coppia chiave/valore e si ferma quando non ne resta una completa.
+
+### 📖 Documentazione
+
+#### `docs/configuration-reference.md` — nuove costanti
+
+Documentate `RESOURCE_CACHE_MAX_AGE` e `PRESERVED_QUERY_STRING_PARAMETERS`.
+
+### 🔧 Manutenzione
+
+#### `.htaccess` — rimossa la regola su `fbclid`
+
+La regola rimuoveva con un redirect `301` l'intera query string di ogni richiesta contenente `fbclid`, compresi gli altri parametri (`?page=2&fbclid=…` perdeva `page`), e impediva al tracciamento di Meta di ricevere l'identificativo di click. `fbclid` è ora gestito dalla lista dei parametri preservati. `InstallationManager` copia il `.htaccess` del framework nei nuovi progetti; nei progetti già installati la regola va rimossa a mano.
+
+**File modificati**:
+- **`.htaccess`**: rimossa la regola di redirect su `fbclid`
+- **`Config/config.php`**, **`Core/HelperClasses/Config.php`**: aggiunte le costanti `PRESERVED_QUERY_STRING_PARAMETERS` e `RESOURCE_CACHE_MAX_AGE`
+- **`Public/index.php`**: rimossi gli header `Pragma: cache` e `Cache-control: public`
+- **`Core/HelperClasses/Dispatcher.php`**: nuovo parametro opzionale `?Config $customConfig` nel costruttore; la condizione di riscrittura, estratta nel metodo privato `hasQueryStringToParse()`, è limitata a `GET` e `HEAD` ed esclude i parametri preservati; `reloadWithParsedQueryString()` riceve la `Request` del dispatcher; `parseActionArguments()` è chiamato anche per le action senza parametri; il nuovo metodo privato `getCallableArguments()` rimuove gli elementi vuoti in coda per i `CallableController`
+- **`Core/HelperClasses/Dispatcher/ActionArgumentsParser.php`**: unione della query string con gli argomenti del percorso; `cleanArrayShift()` sostituito da `removeLeadingEmptyArguments()`; il nuovo metodo privato `convertArgumentKey()` converte in camelCase il solo nome base delle chiavi con parentesi, ricostruite con `parse_str()`
+- **`Core/HelperClasses/Dispatcher/RouteResolver.php`**: `parsePath()` rimuove un solo slash finale; il nuovo metodo privato `buildPathFromParts()` conserva lo slash dell'elemento vuoto in coda; `injectDefaultController()` non inietta l'action di default invece di rimuoverla con `array_pop()`
+- **`Core/HelperClasses/Dispatcher/ResourceMaker.php`**: il nuovo metodo privato `sendCacheHeaders()` imposta `Cache-Control` ed `Expires` e rimuove `Pragma`
+- **`Core/Services/RouterService.php`**: `reloadWithParsedQueryString()` accetta un `?Config $customConfig` opzionale, riscrive la root nel percorso predefinito, mantiene nella query string i parametri preservati e riscrive gli array con i nuovi metodi privati `appendQueryArguments()`, `isScalarList()` e `appendQueryArgument()`
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: aggiunti `testPostWithQueryStringDoesNotReload()`, `testPathWithTrailingEmptyParameter()`, `testGetWithOnlyPreservedQueryStringDoesNotReload()`, `testPathWithMultipleTrailingSlashes()`, `testPathWithEmptyValueFollowedByOtherParameters()` e `testPathWithNestedArrayParameters()`; lo stub di `Config` restituisce i parametri preservati
+- **`Tests/Core/Services/RouterServiceTest.php`**: aggiunti `testReloadWithParsedQueryStringHandlesArrayValues()`, `testReloadWithParsedQueryStringHandlesNestedArrayValues()`, `testReloadWithParsedQueryStringOnRootPath()` e `testReloadWithParsedQueryStringExcludesPreservedParameters()`
+- **`Tests/Core/HelperClasses/RouterTest.php`**, **`Tests/Core/HelperClasses/ResourceMakerTest.php`**: lo stub di `Config` restituisce le nuove costanti
+- **`Tests/Console/Services/Installation/InstallationManagerTest.php`**: il `.htaccess` di prova è allineato a quello del framework
+- **`docs/configuration-reference.md`**: documentate le nuove costanti
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: i nuovi parametri di `Dispatcher::__construct()` e `RouterService::reloadWithParsedQueryString()` sono opzionali, e le nuove costanti hanno un valore di default nel `config.php` del framework.
+- **Cambiamento di comportamento osservabile**: le richieste `POST`, `PUT`, `PATCH` e `DELETE` con query string raggiungono il controller invece di essere reindirizzate; i parametri preservati restano nella query string invece di essere spostati nel percorso.
+- **Cambiamento di comportamento osservabile**: `$request->query` contiene ora, con le chiavi in camelCase, anche gli argomenti delle action senza parametri e i parametri della query string delle richieste non reindirizzate. Il codice che lo legge con le chiavi originali (`sort_order`) in questi casi deve usare il nome in camelCase (`sortOrder`) o leggere `$_GET`, che resta invariato.
+- **Cambiamento di comportamento osservabile**: le pagine generate dai controller non sono più marcate come `Cache-Control: public` e mantengono gli header anti-cache di `session_start()`; le risorse statiche sono invece memorizzabili in cache per `RESOURCE_CACHE_MAX_AGE` secondi.
+- **Cambiamento di comportamento osservabile**: nel percorso generato dalla riscrittura le chiavi sono codificate con `urlencode()`.
+
+---
+
 ## [12.11.0] - 2026-10-18 - Vettore d'Inizializzazione per Ogni Proprietà Cifrata
 
 Minor release che rivede la cifratura delle proprietà delle entità. Ogni proprietà cifrata può ora avere un proprio vettore d'inizializzazione, rigenerato a ogni salvataggio, al posto di quello condiviso da tutte le proprietà cifrate della riga, che viene deprecato. Il rilascio corregge inoltre il riuso del vettore condiviso negli update, la perdita dei valori cifrati `''` e `'0'` in lettura e adotta `random_bytes()` per la generazione dei vettori.

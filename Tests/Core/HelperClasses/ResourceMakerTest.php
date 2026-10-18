@@ -62,6 +62,7 @@ class ResourceMakerTest extends TestCase
                     ['logVerboseActive', true],
                     ['customRenderableResourceTypes', ['md' => 'text/markdown']],
                     ['customDownloadableResourceTypes', []],
+                    ['resourceCacheMaxAge', 86400],
         ]);
         Config::setInstance($this->configStub);
     }

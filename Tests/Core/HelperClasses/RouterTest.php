@@ -48,6 +48,7 @@ class RouterTest extends TestCase
                 ->willReturnMap([
                     ['developmentEnvironment', true],
                     ['httpsIsForced', false],
+                    ['preservedQueryStringParameters', ['utm_source']],
         ]);
         Config::setInstance($configStub);
         $this->requestMock = $this->createStub(Request::class);
