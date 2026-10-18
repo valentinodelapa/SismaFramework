@@ -112,7 +112,7 @@ abstract class BaseEntity
         if (isset(self::$foreignKeyPropertyNames[$className]) === false) {
             self::$foreignKeyPropertyNames[$className] = [];
             foreach (self::getFinalClassReflectionProperties($className) as $reflectionProperty) {
-                if (($reflectionProperty->class === $className) && is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+                if (($reflectionProperty->class === $className) && ($reflectionProperty->getType()->isBuiltin() === false) && is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
                     self::$foreignKeyPropertyNames[$className][] = $reflectionProperty->getName();
                 }
             }
@@ -151,7 +151,7 @@ abstract class BaseEntity
         if ((isset($this->$propertyName) === false) && isset($this->foreignKeyIndexes[$propertyName])) {
             $reflectionProperty = self::getReflectionProperty($this, $propertyName);
             $reflectionTypeName = $reflectionProperty->getType()->getName();
-            if (is_subclass_of($reflectionTypeName, BaseEntity::class)) {
+            if (($reflectionProperty->getType()->isBuiltin() === false) && is_subclass_of($reflectionTypeName, BaseEntity::class)) {
                 $this->$propertyName = Parser::parseEntity($reflectionTypeName, $this->foreignKeyIndexes[$propertyName], $this->dataMapper);
                 unset($this->foreignKeyIndexes[$propertyName]);
             }

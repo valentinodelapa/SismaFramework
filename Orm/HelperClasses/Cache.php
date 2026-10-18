@@ -166,9 +166,8 @@ class Cache
         foreach (array_diff(scandir($directory), ['.', '..']) as $entityFileName) {
             $entitySimpleName = str_replace('.php', '', $entityFileName);
             $entityName = $module . '\\' . $config->entityNamespace . $entitySimpleName;
-            $reflectionEntity = new \ReflectionClass($entityName);
-            foreach ($reflectionEntity->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-                if (BaseEntity::checkFinalClassReflectionProperty($property) && (is_subclass_of($property->getType()->getName(), BaseEntity::class, true))) {
+            foreach (BaseEntity::getFinalClassReflectionProperties($entityName) as $property) {
+                if ($property->isProtected() && ($property->getType()->isBuiltin() === false) && is_subclass_of($property->getType()->getName(), BaseEntity::class, true)) {
                     static::$foreighKeyDataCache[$property->getType()->getName()][lcfirst($entitySimpleName)][$property->getName()] = $entityName;
                 }
             }

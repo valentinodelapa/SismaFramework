@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.10.2] - 2026-10-18 - Autoload dei Tipi Nativi e Cache di Reflection nei Punti Rimanenti dell'ORM
+
+Patch che completa la 12.10.0 e la 12.10.1, estendendo il controllo sui tipi nativi e la cache dei metadati di reflection ai punti dell'ORM che non eseguono il controllo per ogni riga, ma per ogni classe di entità o per ogni query.
+
+### 🚀 Performance
+
+#### `Orm/BaseClasses/BaseEntity`, `Orm/BaseClasses/BaseAdapter`, `Orm/ExtendedClasses/DependentModel`, `Orm/HelperClasses/Cache` — autoload dei nomi dei tipi nativi
+
+Come nei punti corretti dalla 12.10.1, questi controlli passavano il nome del tipo di ogni proprietà a `is_subclass_of()`, e per le proprietà di tipo nativo l'autoloader veniva invocato con nomi come `int` o `string`, eseguendo un `file_exists()` che fallisce sempre. I controlli verificano ora che il tipo non sia nativo prima di confrontarlo con una classe:
+
+- `BaseEntity::getForeignKeyPropertyNames()`, alla prima istanziazione di ogni classe di entità;
+- `BaseEntity::forceForeignKeyPropertySet()`, per coerenza con gli altri controlli: il ramo è raggiunto solo per le proprietà con un indice di foreign key in attesa di risoluzione, che sono sempre entità;
+- `BaseAdapter::buildJoinedColumns()`, per ogni colonna delle entità in join;
+- `DependentModel::buildPropertiesConditions()`, per ogni proprietà usata come condizione nelle query per proprietà;
+- `Cache`, durante la costruzione della cache delle foreign key, per ogni proprietà di ogni entità dei moduli.
+
+Un tipo nativo non può essere un'entità, quindi il risultato dei controlli non cambia.
+
+#### `Orm/HelperClasses/Cache` — reflection delle entità ricreata
+
+La costruzione della cache delle foreign key istanziava una `\ReflectionClass` per ogni entità dei moduli. Usa ora `BaseEntity::getFinalClassReflectionProperties()`, introdotto nella 12.10.0, filtrando le proprietà `protected` come prima: le proprietà lette restano le stesse e i metadati sono condivisi con il resto dell'ORM.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseEntity.php`**: controllo `isBuiltin()` in `getForeignKeyPropertyNames()` e `forceForeignKeyPropertySet()`
+- **`Orm/BaseClasses/BaseAdapter.php`**: controllo `isBuiltin()` in `buildJoinedColumns()`
+- **`Orm/ExtendedClasses/DependentModel.php`**: controllo `isBuiltin()` in `buildPropertiesConditions()`
+- **`Orm/HelperClasses/Cache.php`**: proprietà lette da `BaseEntity::getFinalClassReflectionProperties()` e controllo `isBuiltin()` nella costruzione della cache delle foreign key
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: in `testBuiltinPropertiesDoNotAutoloadTypeNames()` l'entità è istanziata dopo la registrazione dell'autoloader di controllo, così che il test copra anche la ricerca delle foreign key nel costruttore. Fallisce senza il controllo in `getForeignKeyPropertyNames()`, se la classe non è già stata istanziata da un test precedente
+- **`docs-phpdoc/`**: rigenerata la pagina di `Cache` (numeri di riga)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: firme e comportamento invariati.
+
+---
+
 ## [12.10.1] - 2026-10-18 - Autoload Superfluo sui Tipi Nativi delle Proprietà delle Entità
 
 Patch che elimina il principale costo a runtime dell'ORM: per ogni proprietà di tipo nativo (`int`, `string`, `float`, `bool`) l'idratazione, l'assegnazione, `toArray()` e il salvataggio di un'entità invocavano l'autoloader con il nome del tipo, e ogni invocazione cercava su disco un file inesistente.

@@ -440,7 +440,6 @@ class BaseEntityTest extends TestCase
 
     public function testBuiltinPropertiesDoNotAutoloadTypeNames()
     {
-        $simpleEntity = new SimpleEntity($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
         $autoloadedClassNames = [];
         $autoloader = function (string $className) use (&$autoloadedClassNames) {
             if (str_contains($className, '\\') === false) {
@@ -449,6 +448,7 @@ class BaseEntityTest extends TestCase
         };
         spl_autoload_register($autoloader, true, true);
         try {
+            $simpleEntity = new SimpleEntity($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
             $simpleEntity->id = 1;
             $simpleEntity->string = 'test';
             $simpleEntity->string = 'test-modified';

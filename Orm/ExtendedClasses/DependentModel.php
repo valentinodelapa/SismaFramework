@@ -48,7 +48,7 @@ abstract class DependentModel extends BaseModel
     {
         foreach ($properties as $propertyName => $propertyValue) {
             $reflectionProperty = BaseEntity::getReflectionProperty($this->entityName, $propertyName);
-            $isForeignKey = is_subclass_of($reflectionProperty->getType()->getName(), ReferencedEntity::class);
+            $isForeignKey = ($reflectionProperty->getType()->isBuiltin() === false) && is_subclass_of($reflectionProperty->getType()->getName(), ReferencedEntity::class);
             if ($propertyValue === null) {
                 $query->appendCondition($propertyName, ComparisonOperator::isNull, '', $isForeignKey);
             } else {
