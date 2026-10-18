@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.10.1] - 2026-10-18 - Autoload Superfluo sui Tipi Nativi delle Proprietà delle Entità
+
+Patch che elimina il principale costo a runtime dell'ORM: per ogni proprietà di tipo nativo (`int`, `string`, `float`, `bool`) l'idratazione, l'assegnazione, `toArray()` e il salvataggio di un'entità invocavano l'autoloader con il nome del tipo, e ogni invocazione cercava su disco un file inesistente.
+
+### 🚀 Performance
+
+#### `Orm/BaseClasses/BaseEntity` e `Orm/HelperClasses/DataMapper` — autoload dei nomi dei tipi nativi
+
+Per capire se una proprietà fosse una foreign key o un tipo custom, l'ORM passava il nome del suo tipo a `is_subclass_of()` e `is_a(..., true)`. Quando ricevono una stringa, le due funzioni caricano la classe se non è già definita: per i tipi nativi l'autoloader veniva quindi invocato con nomi come `int` o `string`. Con l'autoloader del framework ogni invocazione crea un `Autoloader` ed esegue un `file_exists()` che fallisce sempre, un esito che PHP non conserva nella sua cache. Per un'entità con 10 colonne scalari, idratata e poi letta, modificata e convertita con `toArray()`, l'autoloader veniva invocato circa 23 volte per riga.
+
+I controlli verificano ora che il tipo non sia nativo prima di confrontarlo con una classe:
+
+- `switchSettingType()`, eseguito a ogni assegnazione e quindi per ogni colonna idratata;
+- `isCustomType()`, eseguito dal tracciamento delle modifiche a ogni assegnazione;
+- `parsePropterty()`, eseguito per ogni proprietà da `toArray()`;
+- `DataMapper::parseSingleProperty()`, eseguito per ogni proprietà salvata.
+
+Un tipo nativo non può essere né un'entità né un tipo custom, quindi il risultato dei controlli non cambia.
+
+Misurato con l'autoloader del framework su un'entità con 10 colonne scalari (idratazione, due letture, un'assegnazione e `toArray()` per riga), il tempo per riga passa da ~570–710 µs a ~37 µs. Il guadagno effettivo dipende dal costo di `file_exists()` sul filesystem in uso ed è massimo su Windows e su filesystem sincronizzati o di rete.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseEntity.php`**: controllo `isBuiltin()` in `switchSettingType()`, `isCustomType()` e `parsePropterty()`
+- **`Orm/HelperClasses/DataMapper.php`**: controllo `isBuiltin()` in `parseSingleProperty()`
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: aggiunto `testBuiltinPropertiesDoNotAutoloadTypeNames()`, che registra un autoloader e verifica che assegnazioni e `toArray()` su proprietà native non richiedano classi senza namespace. Fallisce contro l'implementazione precedente
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: aggiunto `testSaveDoesNotAutoloadBuiltinTypeNames()`, la stessa verifica sul salvataggio. Fallisce contro l'implementazione precedente
+- **`docs-phpdoc/`**: rigenerate le pagine di `BaseEntity`, `ReferencedEntity` e `SelfReferencedEntity` (numeri di riga)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: firme e comportamento invariati.
+- **Autoloader personalizzati**: un autoloader registrato dall'applicazione non riceve più richieste per i nomi dei tipi nativi.
+
+---
+
 ## [12.10.0] - 2026-10-17 - Cache dei Metadati di Reflection delle Entità
 
 Minor release che riduce il costo a runtime dell'ORM: gli oggetti `\ReflectionClass` e `\ReflectionProperty` delle entità, finora ricreati a ogni istanziazione, lettura, scrittura, salvataggio e idratazione, sono ora costruiti una sola volta per classe e riutilizzati per tutta la durata della richiesta. La cache è esposta da tre nuovi metodi statici pubblici di `BaseEntity`, usati da tutte le componenti dell'ORM che leggevano la struttura delle entità.

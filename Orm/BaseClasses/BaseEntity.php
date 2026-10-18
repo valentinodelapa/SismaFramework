@@ -175,7 +175,7 @@ abstract class BaseEntity
     protected function switchSettingType(string $name, mixed $value): void
     {
         $reflectionProperty = self::getReflectionProperty($this, $name);
-        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+        if (($reflectionProperty->getType()->isBuiltin() === false) && is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
             if (is_int($value)) {
                 if (Cache::checkEntityPresenceInCache($reflectionProperty->getType()->getName(), $value)) {
                     $cachedEntity = Cache::getEntityById($reflectionProperty->getType()->getName(), $value);
@@ -256,8 +256,9 @@ abstract class BaseEntity
 
     private function isCustomType(\ReflectionNamedType $reflectionNamedType): bool
     {
-        return (is_a($reflectionNamedType->getName(), CustomDateTimeInterface::class, true) ||
-                is_a($reflectionNamedType->getName(), CustomTypeInterface::class, true));
+        return (($reflectionNamedType->isBuiltin() === false) &&
+                (is_a($reflectionNamedType->getName(), CustomDateTimeInterface::class, true) ||
+                is_a($reflectionNamedType->getName(), CustomTypeInterface::class, true)));
     }
 
     public function __isset($name)
@@ -324,7 +325,7 @@ abstract class BaseEntity
 
     protected function parsePropterty(\ReflectionProperty $reflectionProperty)
     {
-        if (is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
+        if (($reflectionProperty->getType()->isBuiltin() === false) && is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class)) {
             if (isset($this->foreignKeyIndexes[$reflectionProperty->getName()])) {
                 return $this->foreignKeyIndexes[$reflectionProperty->getName()];
             } elseif ($reflectionProperty->isInitialized($this)) {

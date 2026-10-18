@@ -217,7 +217,7 @@ class DataMapper
             $parsedValue = Encryptor::encryptString($parsedValue, $entity->$initializationVectorPropertyName);
         }
         $bindTypes[] = DataType::fromReflection($reflectionProperty->getType(), $parsedValue);
-        $query->appendColumnValue($reflectionProperty->getName(), Placeholder::placeholder, is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
+        $query->appendColumnValue($reflectionProperty->getName(), Placeholder::placeholder, ($reflectionProperty->getType()->isBuiltin() === false) && is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
         $bindValues[] = $parsedValue;
     }
 

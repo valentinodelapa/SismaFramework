@@ -1238,6 +1238,30 @@ class DataMapperTest extends TestCase
         $dataMapper->save($simpleEntity);
     }
 
+    public function testSaveDoesNotAutoloadBuiltinTypeNames()
+    {
+        $this->initializeBaseAdapterMock();
+        $this->baseAdapterMock->expects($this->once())
+                ->method('execute')
+                ->willReturn(true);
+        $dataMapper = $this->createDataMapperWithMockedAdapter(new ProcessedEntitiesCollection());
+        $simpleEntity = new SimpleEntity($dataMapper);
+        $simpleEntity->string = 'test';
+        $autoloadedClassNames = [];
+        $autoloader = function (string $className) use (&$autoloadedClassNames) {
+            if (str_contains($className, '\\') === false) {
+                $autoloadedClassNames[] = $className;
+            }
+        };
+        spl_autoload_register($autoloader, true, true);
+        try {
+            $dataMapper->save($simpleEntity);
+        } finally {
+            spl_autoload_unregister($autoloader);
+        }
+        $this->assertSame([], $autoloadedClassNames);
+    }
+
     public function testSaveModificationOnSubnidificateCollection()
     {
         $this->initializeBaseAdapterMock();

@@ -42,6 +42,7 @@ use SismaFramework\TestsApplication\Entities\DependentEntityThree;
 use SismaFramework\TestsApplication\Entities\EntityWithOneCollectionOne;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
 use SismaFramework\TestsApplication\Entities\ReflectionCacheSample;
+use SismaFramework\TestsApplication\Entities\SimpleEntity;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
@@ -435,6 +436,27 @@ class BaseEntityTest extends TestCase
         $this->assertArrayNotHasKey('modified', $finalProperties);
         $this->assertArrayNotHasKey('config', $finalProperties);
         $this->assertSame($reflectionPropertyFromName, $finalProperties['stringWithoutInitialization']);
+    }
+
+    public function testBuiltinPropertiesDoNotAutoloadTypeNames()
+    {
+        $simpleEntity = new SimpleEntity($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $autoloadedClassNames = [];
+        $autoloader = function (string $className) use (&$autoloadedClassNames) {
+            if (str_contains($className, '\\') === false) {
+                $autoloadedClassNames[] = $className;
+            }
+        };
+        spl_autoload_register($autoloader, true, true);
+        try {
+            $simpleEntity->id = 1;
+            $simpleEntity->string = 'test';
+            $simpleEntity->string = 'test-modified';
+            $simpleEntity->toArray();
+        } finally {
+            spl_autoload_unregister($autoloader);
+        }
+        $this->assertSame([], $autoloadedClassNames);
     }
 
     public function testReflectionPropertyCachedBeforeFinalClassPropertiesIsReused()
