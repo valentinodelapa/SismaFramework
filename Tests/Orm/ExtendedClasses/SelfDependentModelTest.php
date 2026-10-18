@@ -34,6 +34,9 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
 use SismaFramework\Orm\CustomTypes\SismaCollection;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\ExtendedClasses\SelfDependentModel;
 use SismaFramework\TestsApplication\Models\SelfReferencedSampleModel;
 use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
@@ -61,6 +64,7 @@ class SelfDependentModelTest extends TestCase
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
                     ['encryptionPassphrase', 'encryption-key'],
+                    ['encryptedPropertyInitializationVectorSuffix', 'InitializationVector'],
                     ['encryptionAlgorithm', 'AES-256-CBC'],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['entityPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Entities' . DIRECTORY_SEPARATOR],
@@ -340,8 +344,26 @@ class SelfDependentModelTest extends TestCase
         $this->queryMock->expects($this->once())
             ->method('setWhere');
 
-        $this->queryMock->expects($this->exactly(2))
-            ->method('appendCondition');
+        $invokedCount = $this->exactly(2);
+        $this->queryMock->expects($invokedCount)
+            ->method('appendCondition')
+            ->willReturnCallback(function ($column, $operator, $value = Placeholder::placeholder, $foreignKey = false) use ($invokedCount) {
+                switch ($invokedCount->numberOfInvocations()) {
+                    case 1:
+                        $this->assertEquals('id', $column);
+                        $this->assertEquals(ComparisonOperator::notEqual, $operator);
+                        $this->assertEquals(Placeholder::placeholder, $value);
+                        $this->assertFalse($foreignKey);
+                        break;
+                    case 2:
+                        $this->assertEquals('parentSelfReferencedSample', $column);
+                        $this->assertEquals(ComparisonOperator::equal, $operator);
+                        $this->assertEquals(Placeholder::placeholder, $value);
+                        $this->assertTrue($foreignKey);
+                        break;
+                }
+                return $this->queryMock;
+            });
 
         $this->queryMock->expects($this->once())
             ->method('appendAnd');
@@ -355,10 +377,59 @@ class SelfDependentModelTest extends TestCase
 
         $this->dataMapperMock->expects($this->once())
             ->method('find')
+            ->with(SelfReferencedSample::class, $this->queryMock, [$excludedEntity, $parentEntity], [DataType::typeEntity, DataType::typeEntity])
             ->willReturn($expectedCollection);
 
         $result = $this->model->getOtherEntityCollectionByParent($excludedEntity, $parentEntity, $order);
-        $this->assertInstanceOf(SismaCollection::class, $result);
+        $this->assertSame($expectedCollection, $result);
+    }
+
+    public function testGetOtherEntityCollectionByParentWithNullParent()
+    {
+        $this->initializeMock();
+        $excludedEntity = $this->createStub(SelfReferencedSample::class);
+        $expectedCollection = new SismaCollection(SelfReferencedSample::class);
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('initQuery')
+            ->willReturn($this->queryMock);
+
+        $this->queryMock->expects($this->once())
+            ->method('setWhere');
+
+        $invokedCount = $this->exactly(2);
+        $this->queryMock->expects($invokedCount)
+            ->method('appendCondition')
+            ->willReturnCallback(function ($column, $operator, $value = Placeholder::placeholder, $foreignKey = false) use ($invokedCount) {
+                switch ($invokedCount->numberOfInvocations()) {
+                    case 1:
+                        $this->assertEquals('id', $column);
+                        $this->assertEquals(ComparisonOperator::notEqual, $operator);
+                        $this->assertFalse($foreignKey);
+                        break;
+                    case 2:
+                        $this->assertEquals('parentSelfReferencedSample', $column);
+                        $this->assertEquals(ComparisonOperator::isNull, $operator);
+                        $this->assertEquals('', $value);
+                        $this->assertTrue($foreignKey);
+                        break;
+                }
+                return $this->queryMock;
+            });
+
+        $this->queryMock->expects($this->once())
+            ->method('appendAnd');
+
+        $this->queryMock->expects($this->once())
+            ->method('close');
+
+        $this->dataMapperMock->expects($this->once())
+            ->method('find')
+            ->with(SelfReferencedSample::class, $this->queryMock, [$excludedEntity], [DataType::typeEntity])
+            ->willReturn($expectedCollection);
+
+        $result = $this->model->getOtherEntityCollectionByParent($excludedEntity);
+        $this->assertSame($expectedCollection, $result);
     }
 
     public function testGetEntityTree()

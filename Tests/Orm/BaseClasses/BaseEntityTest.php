@@ -28,6 +28,8 @@ namespace SismaFramework\Tests\Orm\BaseClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\BaseClasses\BaseEntity;
 use SismaFramework\Orm\Exceptions\InvalidPropertyException;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\ProcessedEntitiesCollection;
@@ -37,8 +39,12 @@ use SismaFramework\Orm\CustomTypes\SismaTime;
 use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\DependentEntityThree;
+use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
 use SismaFramework\TestsApplication\Entities\EntityWithOneCollectionOne;
+use SismaFramework\TestsApplication\Entities\EntityWithOwnInitializationVectors;
 use SismaFramework\TestsApplication\Entities\ReferencedSample;
+use SismaFramework\TestsApplication\Entities\ReflectionCacheSample;
+use SismaFramework\TestsApplication\Entities\SimpleEntity;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
@@ -60,6 +66,7 @@ class BaseEntityTest extends TestCase
                 ->willReturnMap([
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', false],
+                    ['encryptedPropertyInitializationVectorSuffix', 'InitializationVector'],
                     ['entityNamespace', 'TestsApplication\\Entities\\'],
                     ['logDevelopmentMaxRow', 100],
                     ['logDirectoryPath', $logDirectoryPath],
@@ -70,6 +77,8 @@ class BaseEntityTest extends TestCase
                     ['ormCache', true],
         ]);
         Config::setInstance($this->configStub);
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
         $this->dataMapperMock = $this->createStub(DataMapper::class);
         $this->processedEntitiesCollectionMock = $this->createStub(ProcessedEntitiesCollection::class);
     }
@@ -412,5 +421,63 @@ class BaseEntityTest extends TestCase
         $dependentEntityThree->entityWithOneCollectionOne = $entityWithOneCollectionOne;
         $dependentEntityThree->entityWithOneCollectionTwo = 3;
         $dependentEntityThree->toArray();
+    }
+
+    public function testReflectionMetadataIsCachedPerEntityClass()
+    {
+        $baseSample = new BaseSample($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $reflectionClassFromName = BaseEntity::getReflectionClass(BaseSample::class);
+        $reflectionClassFromInstance = BaseEntity::getReflectionClass($baseSample);
+        $this->assertSame($reflectionClassFromName, $reflectionClassFromInstance);
+
+        $reflectionPropertyFromName = BaseEntity::getReflectionProperty(BaseSample::class, 'stringWithoutInitialization');
+        $reflectionPropertyFromInstance = BaseEntity::getReflectionProperty($baseSample, 'stringWithoutInitialization');
+        $this->assertSame($reflectionPropertyFromName, $reflectionPropertyFromInstance);
+
+        $finalProperties = BaseEntity::getFinalClassReflectionProperties($baseSample);
+        $this->assertArrayHasKey('stringWithoutInitialization', $finalProperties);
+        $this->assertArrayNotHasKey('modified', $finalProperties);
+        $this->assertArrayNotHasKey('config', $finalProperties);
+        $this->assertSame($reflectionPropertyFromName, $finalProperties['stringWithoutInitialization']);
+    }
+
+    public function testPropertyInitializationVectorName()
+    {
+        $entityWithOwnInitializationVectors = new EntityWithOwnInitializationVectors($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $this->assertSame('encryptedPropertyOneInitializationVector', $entityWithOwnInitializationVectors->getPropertyInitializationVectorName('encryptedPropertyOne'));
+        $this->assertTrue($entityWithOwnInitializationVectors->isInitializationVector('encryptedPropertyOneInitializationVector'));
+        $this->assertTrue($entityWithOwnInitializationVectors->isInitializationVector('initializationVector'));
+        $this->assertFalse($entityWithOwnInitializationVectors->isInitializationVector('encryptedPropertyOne'));
+        $entityWithEncryptedPropertyOne = new EntityWithEncryptedPropertyOne($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+        $this->assertSame('initializationVector', $entityWithEncryptedPropertyOne->getPropertyInitializationVectorName('encryptedPropertyOne'));
+    }
+
+    public function testBuiltinPropertiesDoNotAutoloadTypeNames()
+    {
+        $autoloadedClassNames = [];
+        $autoloader = function (string $className) use (&$autoloadedClassNames) {
+            if (str_contains($className, '\\') === false) {
+                $autoloadedClassNames[] = $className;
+            }
+        };
+        spl_autoload_register($autoloader, true, true);
+        try {
+            $simpleEntity = new SimpleEntity($this->dataMapperMock, $this->processedEntitiesCollectionMock, $this->configStub);
+            $simpleEntity->id = 1;
+            $simpleEntity->string = 'test';
+            $simpleEntity->string = 'test-modified';
+            $simpleEntity->toArray();
+        } finally {
+            spl_autoload_unregister($autoloader);
+        }
+        $this->assertSame([], $autoloadedClassNames);
+    }
+
+    public function testReflectionPropertyCachedBeforeFinalClassPropertiesIsReused()
+    {
+        $reflectionProperty = BaseEntity::getReflectionProperty(ReflectionCacheSample::class, 'text');
+        $finalProperties = BaseEntity::getFinalClassReflectionProperties(ReflectionCacheSample::class);
+        $this->assertSame($reflectionProperty, $finalProperties['text']);
+        $this->assertSame($reflectionProperty, BaseEntity::getReflectionProperty(ReflectionCacheSample::class, 'text'));
     }
 }

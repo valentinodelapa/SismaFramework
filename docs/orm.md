@@ -100,7 +100,7 @@ class Certificate extends BaseEntity
     protected int $id;
     protected string $certificate;
     protected ?string $privateKey = null;
-    protected ?string $initializationVector = null;
+    protected ?string $privateKeyInitializationVector = null;
 
     protected function setEncryptedProperties(): void
     {
@@ -111,7 +111,10 @@ class Certificate extends BaseEntity
 }
 ```
 
-- **Vettore d'inizializzazione obbligatorio**: l'entità deve dichiarare la proprietà `initializationVector` (e la tabella la colonna `initialization_vector`, binaria), in cui l'ORM conserva l'IV generato al primo salvataggio e condiviso da tutte le proprietà cifrate dell'entità. **Senza questa proprietà la cifratura non avviene**: le proprietà dichiarate cifrate vengono salvate in chiaro, senza errori né avvisi.
+- **Vettore d'inizializzazione per proprietà** (v12.11.0+): per ogni proprietà cifrata l'entità dichiara una proprietà con lo stesso nome seguito dal suffisso `InitializationVector` (configurabile con `ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX`), e la tabella la colonna corrispondente, binaria e nullable (`private_key_initialization_vector`). L'ORM genera un nuovo IV a ogni salvataggio della proprietà e lo scrive insieme al valore cifrato: proprietà diverse e versioni successive della stessa proprietà non condividono mai l'IV. **Senza vettore d'inizializzazione la cifratura non avviene**: le proprietà dichiarate cifrate vengono salvate in chiaro, senza errori né avvisi.
+- **Vettore d'inizializzazione condiviso** (deprecato dalla 12.11.0, sarà rimosso nella 13.0.0): una proprietà cifrata senza vettore proprio usa la proprietà `initializationVector` (colonna `initialization_vector`), condivisa da tutte le proprietà cifrate dell'entità e rigenerata a ogni salvataggio. Se l'entità è stata caricata solo in parte e una delle proprietà cifrate che usano l'IV condiviso non è inizializzata, l'IV caricato viene mantenuto, perché rigenerarlo renderebbe illeggibile la proprietà non riscritta; se invece l'IV condiviso non è stato caricato, ne viene generato uno nuovo e le proprietà cifrate non caricate non sono più leggibili. Con un IV condiviso, due proprietà della stessa riga con lo stesso valore, o con gli stessi primi 16 byte, producono lo stesso testo cifrato, o lo stesso primo blocco.
+- **Migrazione dall'IV condiviso**: aggiungere alla tabella le colonne `<proprietà>_initialization_vector` (nullable) e all'entità le proprietà corrispondenti, lasciando per il momento `initializationVector`. Le righe esistenti, che hanno il vettore proprio a `NULL`, vengono decifrate con l'IV condiviso; al primo salvataggio ogni proprietà viene ricifrata con il proprio IV. Quando nessuna riga ha più il vettore proprio a `NULL` per le proprietà valorizzate, `initializationVector` e la sua colonna possono essere rimossi.
+- **Query sulle colonne cifrate**: `Query::appendConditionOnEncryptedColumn()` riceve il nome della colonna del vettore d'inizializzazione: con il vettore per proprietà va indicata la colonna propria (`private_key_initialization_vector`), non `initialization_vector`.
 - **Passphrase**: la cifratura usa `ENCRYPTION_PASSPHRASE`; con la passphrase vuota le proprietà vengono salvate in chiaro.
 - **Valori nulli** (v12.8.1+): una proprietà cifrata che vale `null` viene salvata come `NULL` e letta come `null`, senza cifratura né decifratura. Prima della 12.8.1 il salvataggio e la lettura di un valore nullo sollevavano un `TypeError`.
 
@@ -192,6 +195,7 @@ $posts = $postModel->getEntityCollection('SismaFramework', ['publicationDate' =>
 Se un modello estende `DependentModel`, ottiene metodi per interrogare il database basandosi sulle relazioni.
 
 - `getBy{PropertyName}(...)` (metodo magico, vedi sezione successiva): Trova entità che corrispondono a una o più entità referenziate.
+- `getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, ?BaseEntity $baseEntity = null)`: Trova le entità collegate a `$baseEntity` tramite la proprietà `$propertyName`, escludendo `$excludedEntity`. Con `$baseEntity` a `null` trova le entità in cui la relazione è assente (v12.9.1+; fino alla 12.9.0 il parametro non ammetteva `null` e la query generata non era valida, vedi CHANGELOG 12.9.1).
 
 **Esempio:** Trova tutti i post di un certo utente.
 
@@ -203,6 +207,12 @@ $user = $userModel->getEntityById(1);
 
 // Trova tutti i post dove 'author' è l'utente con ID 1
 $userPosts = $postModel->getByAuthor($user);
+
+// Gli altri post dello stesso autore, escluso quello corrente
+$otherPosts = $postModel->getOtherEntityCollectionByEntity($post, 'author', $user); // WHERE id <> ? AND author_id = ?
+
+// Gli altri post senza autore, escluso quello corrente
+$otherOrphanPosts = $postModel->getOtherEntityCollectionByEntity($post, 'author'); // WHERE id <> ? AND author_id IS NULL
 ```
 
 ### Metodi Magici (Query Dinamiche)
@@ -294,6 +304,13 @@ Per modelli auto-referenziati, le query dinamiche supportano anche il parametro 
 ```php
 $subCategories = $categoryModel->getByParentAndActive($parentCategory, true);
 $childCount = $categoryModel->countByParentAndStatus($parentCategory, 'active');
+```
+
+`getOtherEntityCollectionByParent(BaseEntity $excludedEntity, ?BaseEntity $parentEntity = null, ?array $order = null)` restituisce le entità sorelle di `$excludedEntity`, cioè quelle con lo stesso padre esclusa l'entità stessa; con `$parentEntity` a `null` restituisce le altre entità radice. Fino alla 12.9.0 la condizione di esclusione veniva generata sulla colonna inesistente `id_id` (vedi CHANGELOG 12.9.1):
+
+```php
+$siblingCategories = $categoryModel->getOtherEntityCollectionByParent($category, $parentCategory); // WHERE id <> ? AND parent_category_id = ?
+$otherRootCategories = $categoryModel->getOtherEntityCollectionByParent($rootCategory); // WHERE id <> ? AND parent_category_id IS NULL
 ```
 
 #### Type Safety e Validazione Automatica

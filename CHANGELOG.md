@@ -129,6 +129,233 @@ public function equals(CustomTypeInterface $other): bool
 
 ---
 
+## [12.11.0] - 2026-10-18 - Vettore d'Inizializzazione per Ogni Proprietà Cifrata
+
+Minor release che rivede la cifratura delle proprietà delle entità. Ogni proprietà cifrata può ora avere un proprio vettore d'inizializzazione, rigenerato a ogni salvataggio, al posto di quello condiviso da tutte le proprietà cifrate della riga, che viene deprecato. Il rilascio corregge inoltre il riuso del vettore condiviso negli update, la perdita dei valori cifrati `''` e `'0'` in lettura e adotta `random_bytes()` per la generazione dei vettori.
+
+### ✨ Nuove Funzionalità
+
+#### `Orm/BaseClasses/BaseEntity` — vettore d'inizializzazione per proprietà
+
+Una proprietà cifrata usa come vettore d'inizializzazione la proprietà con lo stesso nome seguito dal suffisso `InitializationVector` (per esempio `privateKeyInitializationVector`, colonna `private_key_initialization_vector`), se l'entità la dichiara. A ogni salvataggio della proprietà l'ORM genera un nuovo vettore e lo scrive insieme al valore cifrato: proprietà diverse e versioni successive della stessa proprietà non condividono mai il vettore, e un'entità caricata solo in parte può essere salvata senza rendere illeggibili le proprietà cifrate non caricate.
+
+In lettura il valore viene decifrato con il vettore proprio o, se questo è `NULL` o assente, con quello condiviso: le righe scritte prima dell'adozione del vettore proprio restano leggibili e vengono ricifrate al primo salvataggio.
+
+- **`Config/config.php`**: nuova costante `ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX` (default `"InitializationVector"`), esposta come `Config::$encryptedPropertyInitializationVectorSuffix`
+- **`BaseEntity::getPropertyInitializationVectorName()`**: nuovo metodo pubblico, restituisce il nome della proprietà che contiene il vettore di una proprietà cifrata, il vettore proprio se dichiarato e altrimenti quello condiviso
+- **`BaseEntity::isInitializationVector()`**: riconosce anche i vettori propri delle proprietà cifrate, che il `DataMapper` esclude quindi dai valori ordinari come già faceva per il vettore condiviso
+
+### 🛡️ Sicurezza
+
+#### `Orm/HelperClasses/DataMapper::parseSingleProperty()` — vettore d'inizializzazione riusato negli update
+
+Il vettore condiviso veniva generato solo se l'entità non ne aveva già uno: a ogni update le proprietà cifrate venivano ricifrate con lo stesso vettore e la stessa chiave. Con `AES-256-CBC` questo rivela quando due versioni di un campo iniziano con gli stessi 16 byte; con modalità a flusso come CTR esporrebbe il contenuto. Il vettore viene ora rigenerato a ogni salvataggio. Fa eccezione il vettore condiviso di un'entità caricata solo in parte: se una delle proprietà cifrate che lo usano non è inizializzata, non verrebbe ricifrata e diventerebbe illeggibile, quindi il vettore caricato viene mantenuto, come nelle versioni precedenti. Con il vettore condiviso il rischio resta inoltre tra proprietà diverse della stessa riga, che lo condividono per costruzione: per eliminarlo va adottato il vettore per proprietà, che non ha eccezioni perché ogni vettore viene scritto insieme alla sua proprietà. L'eccezione sarà rimossa nella 13.0.0 insieme al vettore condiviso.
+
+#### `Core/HelperClasses/Encryptor::createInitializationVector()` — `random_bytes()` al posto di `openssl_random_pseudo_bytes()`
+
+I vettori d'inizializzazione sono ora generati con `random_bytes()`, il generatore crittograficamente sicuro standard di PHP, che non dipende dall'estensione OpenSSL e solleva un'eccezione se non può produrre byte sicuri. `openssl_random_pseudo_bytes()` era già sicura dalla PHP 7.4 in poi: si tratta di un rafforzamento, non della correzione di vettori deboli.
+
+### 🐛 Bug Fix
+
+#### `Orm/BaseClasses/BaseResultSet::convertToBaseEntity()` — valori cifrati `''` e `'0'` letti come testo cifrato
+
+Il risultato di `Encryptor::decryptString()` era scelto con l'operatore `?:`, che scarta tutti i valori falsy e non solo il `false` restituito in caso di errore: una proprietà cifrata con valore `''` o `'0'` veniva idratata con il testo cifrato. Il valore decifrato viene ora scartato solo se è `false`.
+
+**File modificati**:
+- **`Config/config.php`**, **`Core/HelperClasses/Config.php`**: aggiunta la costante `ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX`
+- **`Core/HelperClasses/Encryptor.php`**: `createInitializationVector()` usa `random_bytes()`
+- **`Orm/BaseClasses/BaseEntity.php`**: aggiunto `getPropertyInitializationVectorName()`; `isEncryptedProperty()` verifica il vettore della singola proprietà; `isInitializationVector()` riconosce i vettori propri
+- **`Orm/BaseClasses/BaseResultSet.php`**: la decifratura, estratta nel nuovo metodo privato `decryptValue()`, usa il vettore proprio con ripiego su quello condiviso e scarta il risultato solo se è `false`
+- **`Orm/HelperClasses/DataMapper.php`**: `parseSingleProperty()` usa il vettore della singola proprietà e lo rigenera a ogni salvataggio; il nuovo metodo privato `initializationVectorIsRenewable()` mantiene il vettore caricato quando una delle proprietà cifrate che lo usano non è inizializzata
+- **`TestsApplication/Entities/EntityWithOwnInitializationVectors.php`**: nuova entità con due proprietà cifrate, i rispettivi vettori e il vettore condiviso
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: aggiunto `testPropertyInitializationVectorName()`
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: aggiunti `testInsertEncryptsEachPropertyWithItsOwnInitializationVector()` e `testUpdateRewritesOnlyInitializationVectorOfSavedProperty()`, che falliscono con il vettore condiviso, e `testUpdatePartiallyLoadedEntityKeepsSharedInitializationVector()`, che fallisce se il vettore condiviso viene rigenerato anche con una proprietà cifrata non caricata; `testSaveNewEntityWithEncryptedPropertyOne()`, `testSaveNewEntityWithEncryptedPropertyTwo()` e `testSaveEntityWithNullEncryptedPropertyKeepsNull()` verificano che l'update scriva un vettore nuovo
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: aggiunti `testFetchWithFalsyEncryptedPropertyValues()`, `testFetchWithOwnInitializationVectors()` e `testFetchWithOwnInitializationVectorFallsBackToSharedInitializationVector()`
+- **`Tests/Orm/BaseClasses/BaseModelTest.php`**, **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**, **`Tests/Orm/ExtendedClasses/SelfDependentModelTest.php`**, **`Tests/Orm/JoinEagerLoadingTest.php`**: lo stub di `Config` restituisce il suffisso del vettore
+- **`docs/orm.md`**: sezione "Proprietà Cifrate" riscritta con il vettore per proprietà, il vettore condiviso deprecato, la procedura di migrazione e le query sulle colonne cifrate
+- **`docs/configuration-reference.md`**: documentata `ENCRYPTED_PROPERTY_INITIALIZATION_VECTOR_SUFFIX`
+- **`docs-phpdoc/`**: rigenerate le pagine di `BaseEntity`, `BaseResultSet`, `ReferencedEntity`, `SelfReferencedEntity` e `DataMapper` e l'indice di ricerca
+
+### ⚠️ Deprecazioni
+
+- **Vettore d'inizializzazione condiviso** (`initializationVector`): deprecato dalla versione 12.11.0, sarà rimosso nella versione 13.0.0. Dichiarare per ogni proprietà cifrata la proprietà `<proprietà>InitializationVector` e la relativa colonna, seguendo la procedura di migrazione in `docs/orm.md`. Con il vettore condiviso sarà rimossa anche l'eccezione che lo mantiene sulle entità caricate solo in parte. Non viene emesso alcun avviso a runtime.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le entità che dichiarano solo `initializationVector` continuano a funzionare con il vettore condiviso, e i dati esistenti restano leggibili senza migrazione.
+- **Cambiamento di comportamento osservabile**: il vettore condiviso viene rigenerato a ogni salvataggio, salvo che una delle proprietà cifrate che lo usano non sia inizializzata, e le proprietà cifrate sono ricifrate con il nuovo vettore; per lo stesso motivo un vettore impostato a mano sull'entità prima del salvataggio viene sostituito, se tutte le proprietà cifrate che lo usano sono inizializzate.
+- **Limitazione invariata**: se un'entità che usa il vettore condiviso viene caricata senza la colonna del vettore e con solo alcune delle proprietà cifrate, il salvataggio genera un vettore nuovo e le proprietà cifrate non caricate non sono più leggibili, come nelle versioni precedenti. Il vettore per proprietà non ha questa limitazione.
+- **Lettura**: le proprietà cifrate con valore `''` o `'0'` vengono ora restituite decifrate.
+
+---
+
+## [12.10.2] - 2026-10-18 - Autoload dei Tipi Nativi e Cache di Reflection nei Punti Rimanenti dell'ORM
+
+Patch che completa la 12.10.0 e la 12.10.1, estendendo il controllo sui tipi nativi e la cache dei metadati di reflection ai punti dell'ORM che non eseguono il controllo per ogni riga, ma per ogni classe di entità o per ogni query.
+
+### 🚀 Performance
+
+#### `Orm/BaseClasses/BaseEntity`, `Orm/BaseClasses/BaseAdapter`, `Orm/ExtendedClasses/DependentModel`, `Orm/HelperClasses/Cache` — autoload dei nomi dei tipi nativi
+
+Come nei punti corretti dalla 12.10.1, questi controlli passavano il nome del tipo di ogni proprietà a `is_subclass_of()`, e per le proprietà di tipo nativo l'autoloader veniva invocato con nomi come `int` o `string`, eseguendo un `file_exists()` che fallisce sempre. I controlli verificano ora che il tipo non sia nativo prima di confrontarlo con una classe:
+
+- `BaseEntity::getForeignKeyPropertyNames()`, alla prima istanziazione di ogni classe di entità;
+- `BaseEntity::forceForeignKeyPropertySet()`, per coerenza con gli altri controlli: il ramo è raggiunto solo per le proprietà con un indice di foreign key in attesa di risoluzione, che sono sempre entità;
+- `BaseAdapter::buildJoinedColumns()`, per ogni colonna delle entità in join;
+- `DependentModel::buildPropertiesConditions()`, per ogni proprietà usata come condizione nelle query per proprietà;
+- `Cache`, durante la costruzione della cache delle foreign key, per ogni proprietà di ogni entità dei moduli.
+
+Un tipo nativo non può essere un'entità, quindi il risultato dei controlli non cambia.
+
+#### `Orm/HelperClasses/Cache` — reflection delle entità ricreata
+
+La costruzione della cache delle foreign key istanziava una `\ReflectionClass` per ogni entità dei moduli. Usa ora `BaseEntity::getFinalClassReflectionProperties()`, introdotto nella 12.10.0, filtrando le proprietà `protected` come prima: le proprietà lette restano le stesse e i metadati sono condivisi con il resto dell'ORM.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseEntity.php`**: controllo `isBuiltin()` in `getForeignKeyPropertyNames()` e `forceForeignKeyPropertySet()`
+- **`Orm/BaseClasses/BaseAdapter.php`**: controllo `isBuiltin()` in `buildJoinedColumns()`
+- **`Orm/ExtendedClasses/DependentModel.php`**: controllo `isBuiltin()` in `buildPropertiesConditions()`
+- **`Orm/HelperClasses/Cache.php`**: proprietà lette da `BaseEntity::getFinalClassReflectionProperties()` e controllo `isBuiltin()` nella costruzione della cache delle foreign key
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: in `testBuiltinPropertiesDoNotAutoloadTypeNames()` l'entità è istanziata dopo la registrazione dell'autoloader di controllo, così che il test copra anche la ricerca delle foreign key nel costruttore. Fallisce senza il controllo in `getForeignKeyPropertyNames()`, se la classe non è già stata istanziata da un test precedente
+- **`docs-phpdoc/`**: rigenerata la pagina di `Cache` (numeri di riga)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: firme e comportamento invariati.
+
+---
+
+## [12.10.1] - 2026-10-18 - Autoload Superfluo sui Tipi Nativi delle Proprietà delle Entità
+
+Patch che elimina il principale costo a runtime dell'ORM: per ogni proprietà di tipo nativo (`int`, `string`, `float`, `bool`) l'idratazione, l'assegnazione, `toArray()` e il salvataggio di un'entità invocavano l'autoloader con il nome del tipo, e ogni invocazione cercava su disco un file inesistente.
+
+### 🚀 Performance
+
+#### `Orm/BaseClasses/BaseEntity` e `Orm/HelperClasses/DataMapper` — autoload dei nomi dei tipi nativi
+
+Per capire se una proprietà fosse una foreign key o un tipo custom, l'ORM passava il nome del suo tipo a `is_subclass_of()` e `is_a(..., true)`. Quando ricevono una stringa, le due funzioni caricano la classe se non è già definita: per i tipi nativi l'autoloader veniva quindi invocato con nomi come `int` o `string`. Con l'autoloader del framework ogni invocazione crea un `Autoloader` ed esegue un `file_exists()` che fallisce sempre, un esito che PHP non conserva nella sua cache. Per un'entità con 10 colonne scalari, idratata e poi letta, modificata e convertita con `toArray()`, l'autoloader veniva invocato circa 23 volte per riga.
+
+I controlli verificano ora che il tipo non sia nativo prima di confrontarlo con una classe:
+
+- `switchSettingType()`, eseguito a ogni assegnazione e quindi per ogni colonna idratata;
+- `isCustomType()`, eseguito dal tracciamento delle modifiche a ogni assegnazione;
+- `parsePropterty()`, eseguito per ogni proprietà da `toArray()`;
+- `DataMapper::parseSingleProperty()`, eseguito per ogni proprietà salvata.
+
+Un tipo nativo non può essere né un'entità né un tipo custom, quindi il risultato dei controlli non cambia.
+
+Misurato con l'autoloader del framework su un'entità con 10 colonne scalari (idratazione, due letture, un'assegnazione e `toArray()` per riga), il tempo per riga passa da ~570–710 µs a ~37 µs. Il guadagno effettivo dipende dal costo di `file_exists()` sul filesystem in uso ed è massimo su Windows e su filesystem sincronizzati o di rete.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseEntity.php`**: controllo `isBuiltin()` in `switchSettingType()`, `isCustomType()` e `parsePropterty()`
+- **`Orm/HelperClasses/DataMapper.php`**: controllo `isBuiltin()` in `parseSingleProperty()`
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: aggiunto `testBuiltinPropertiesDoNotAutoloadTypeNames()`, che registra un autoloader e verifica che assegnazioni e `toArray()` su proprietà native non richiedano classi senza namespace. Fallisce contro l'implementazione precedente
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: aggiunto `testSaveDoesNotAutoloadBuiltinTypeNames()`, la stessa verifica sul salvataggio. Fallisce contro l'implementazione precedente
+- **`docs-phpdoc/`**: rigenerate le pagine di `BaseEntity`, `ReferencedEntity` e `SelfReferencedEntity` (numeri di riga)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: firme e comportamento invariati.
+- **Autoloader personalizzati**: un autoloader registrato dall'applicazione non riceve più richieste per i nomi dei tipi nativi.
+
+---
+
+## [12.10.0] - 2026-10-17 - Cache dei Metadati di Reflection delle Entità
+
+Minor release che riduce il costo a runtime dell'ORM: gli oggetti `\ReflectionClass` e `\ReflectionProperty` delle entità, finora ricreati a ogni istanziazione, lettura, scrittura, salvataggio e idratazione, sono ora costruiti una sola volta per classe e riutilizzati per tutta la durata della richiesta. La cache è esposta da tre nuovi metodi statici pubblici di `BaseEntity`, usati da tutte le componenti dell'ORM che leggevano la struttura delle entità.
+
+### ✨ Nuove Funzionalità
+
+#### `Orm/BaseClasses/BaseEntity` — `getReflectionClass()`, `getReflectionProperty()` e `getFinalClassReflectionProperties()`
+
+I tre metodi accettano il nome di una classe di entità o un'istanza (`string|BaseEntity`) e restituiscono metadati memorizzati in cache statiche indicizzate per classe:
+
+- `getReflectionClass()` restituisce la `\ReflectionClass` dell'entità.
+- `getReflectionProperty()` restituisce la `\ReflectionProperty` della proprietà indicata.
+- `getFinalClassReflectionProperties()` restituisce, indicizzate per nome, le proprietà dichiarate in classi non astratte (quelle che `checkFinalClassReflectionProperty()` riconosce come colonne dell'entità), nell'ordine di dichiarazione.
+
+Chiamate successive per la stessa classe restituiscono le stesse istanze, in qualunque ordine i tre metodi vengano invocati.
+
+### 🚀 Performance
+
+#### `Orm/BaseClasses/BaseEntity` — reflection ricreata a ogni istanziazione e a ogni accesso alle proprietà
+
+Il costruttore istanziava una `\ReflectionClass` e scorreva tutte le proprietà per individuare le foreign key; `__get()` e `__set()` (tramite `checkFinalClassProperty()`, `forceForeignKeyPropertySet()` e `switchSettingType()`) creavano una nuova `\ReflectionProperty` a ogni accesso; `toArray()` ripeteva la scansione completa delle proprietà. L'elenco delle foreign key è ora calcolato una sola volta per classe e tutti gli accessi usano i metadati in cache. `forceForeignKeyPropertySet()` legge inoltre la reflection solo quando la proprietà non è valorizzata e ha un indice di foreign key in attesa di risoluzione, invece che a ogni lettura.
+
+#### `Orm/BaseClasses/BaseResultSet`, `Orm/HelperClasses/DataMapper`, `Orm/BaseClasses/BaseModel`, `Orm/BaseClasses/BaseAdapter`, `Orm/ExtendedClasses/DependentModel` — reflection ricreata per ogni riga e per ogni proprietà
+
+L'idratazione dei risultati creava una `\ReflectionProperty` per ogni colonna di ogni riga, il salvataggio scansionava tutte le proprietà dell'entità a ogni `save()`, e le query per proprietà e per relazione ricreavano la reflection a ogni chiamata. Tutti questi punti usano ora i metodi di `BaseEntity`; nell'idratazione il nome della colonna del vettore di inizializzazione è calcolato una volta per riga invece che per ogni colonna.
+
+### 🐛 Bug Fix
+
+#### `Orm/BaseClasses/BaseResultSet::convertToBaseEntity()` — colonna del vettore di inizializzazione assente dal risultato
+
+Per una proprietà cifrata con valore non nullo, l'entità principale leggeva la colonna del vettore di inizializzazione senza verificarne la presenza: se la query non la selezionava, l'accesso sollevava il warning `Undefined property` su `\stdClass`. Il controllo `isset()` già presente nell'idratazione delle entità collegate è ora applicato anche all'entità principale; in assenza del vettore il valore è restituito così com'è.
+
+### ♻️ Refactoring
+
+#### `Orm/BaseClasses/BaseResultSet::hydrateRelatedEntity()` e `Orm/ExtendedClasses/ReferencedEntity::toArray()` — rimozione della logica duplicata
+
+`hydrateRelatedEntity()` duplicava `convertToBaseEntity()` ed è stato rimosso: l'idratazione delle entità collegate usa ora `convertToBaseEntity()`, che accetta la classe dell'entità come secondo parametro opzionale (`?string $entityClass = null`, di default il tipo di ritorno del result set). `ReferencedEntity::toArray()` duplicava `BaseEntity::toArray()` e ora vi aggiunge soltanto le collezioni.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseEntity.php`**: aggiunte le cache statiche e i metodi `getReflectionClass()`, `getReflectionProperty()` e `getFinalClassReflectionProperties()`; foreign key calcolate una volta per classe; `checkFinalClassProperty()`, `forceForeignKeyPropertySet()`, `switchSettingType()` e `toArray()` usano i metadati in cache
+- **`Orm/BaseClasses/BaseResultSet.php`**: `convertToBaseEntity()` accetta la classe dell'entità, usa la reflection in cache e verifica la presenza della colonna del vettore di inizializzazione; rimosso `hydrateRelatedEntity()`
+- **`Orm/BaseClasses/BaseModel.php`**: risoluzione dei percorsi di relazione, `appendRelationJoin()` e costruzione delle condizioni per proprietà con la reflection in cache
+- **`Orm/BaseClasses/BaseAdapter.php`**: `buildJoinedColumns()` scorre le proprietà in cache
+- **`Orm/ExtendedClasses/DependentModel.php`**: `buildPropertiesConditions()` usa la reflection in cache
+- **`Orm/ExtendedClasses/ReferencedEntity.php`**: `toArray()` delega a `BaseEntity::toArray()`
+- **`Orm/HelperClasses/DataMapper.php`**: `parseValues()` scorre le proprietà in cache, già filtrate; rimosso il filtro corrispondente da `propertyIsParsable()`
+- **`Tests/Orm/BaseClasses/BaseEntityTest.php`**: aggiunti `testReflectionMetadataIsCachedPerEntityClass()` e `testReflectionPropertyCachedBeforeFinalClassPropertiesIsReused()`, che verifica che la `\ReflectionProperty` ottenuta prima della scansione delle proprietà non venga sostituita da un'altra istanza; il `setUp()` registra un `BaseAdapter` di default, senza il quale la classe di test falliva se eseguita da sola
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: il `setUp()` registra un `BaseAdapter` di default, per lo stesso motivo
+- **`TestsApplication/Entities/ReflectionCacheSample.php`**: nuova entità usata solo dal test sull'ordine di accesso alla cache, perché le cache statiche non sono già popolate da altri test
+- **`docs/performance.md`**: aggiunta la sezione "Cache dei Metadati di Reflection"
+- **`docs/join-eager-loading.md`**: i riferimenti a `hydrateRelatedEntity()` sostituiti con `convertToBaseEntity()`
+- **`docs-phpdoc/`**: rigenerate le pagine di `BaseEntity`, `BaseResultSet`, `ReferencedEntity`, `SelfReferencedEntity` e `DataMapper` e l'indice di ricerca
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le firme pubbliche esistenti sono invariate; i tre metodi di `BaseEntity` sono aggiunte, e il nuovo parametro di `convertToBaseEntity()`, metodo privato, è opzionale.
+- **Cambiamento di comportamento osservabile**: un risultato che contiene una proprietà cifrata ma non la colonna del vettore di inizializzazione non solleva più un warning.
+
+---
+
+## [12.9.1] - 2026-10-17 - Esclusione di un'Entità nelle Query per Relazione e per Padre
+
+Patch che corregge `DependentModel::getOtherEntityCollectionByEntity()` e `SelfDependentModel::getOtherEntityCollectionByParent()`, i metodi che restituiscono le entità collegate alla stessa entità (o allo stesso padre) di un'entità data, esclusa quest'ultima: la query generata faceva riferimento a una colonna inesistente, e il primo dei due metodi perdeva anche il valore dell'entità esclusa e non accettava `null`.
+
+### 🐛 Bug Fix
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` e `Orm/ExtendedClasses/SelfDependentModel::getOtherEntityCollectionByParent()` — condizione di esclusione sulla colonna `id_id`
+
+La condizione che esclude l'entità passata veniva aggiunta con `appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder, true)`. Il quarto parametro indica una foreign key, il cui nome colonna riceve il suffisso `Id` (`NotationManager::convertPropertyNameToColumnName()`): la condizione diventava `id_id <> ?`, su una colonna che nella tabella non esiste, e la query falliva con un errore SQL. La condizione è ora generata sulla colonna `id`, come in `BaseModel::getOtherEntityCollection()`.
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` — valore dell'entità esclusa perso
+
+Quando `$baseEntity` era valorizzata, il suo valore e il suo tipo sostituivano gli array `$bindValues` e `$bindTypes` invece di esservi aggiunti: la query aveva due placeholder (`id <> ? AND ..._id = ?`) e un solo valore, con un errore sul numero dei parametri o, a seconda del driver, l'entità di riferimento legata al placeholder dell'esclusione. I due valori sono ora entrambi legati, nell'ordine dei placeholder.
+
+#### `Orm/ExtendedClasses/DependentModel::getOtherEntityCollectionByEntity()` — `null` non accettato
+
+Il metodo prevede un ramo per `$baseEntity === null`, che genera la condizione `..._id IS NULL`, ma il parametro era dichiarato `BaseEntity`: passare `null` sollevava un `TypeError` prima di eseguire il metodo, e il ramo non era raggiungibile. Il parametro è ora `?BaseEntity $baseEntity = null`, come `$parentEntity` in `SelfDependentModel::getOtherEntityCollectionByParent()`.
+
+I test esistenti verificavano solo il numero delle chiamate ad `appendCondition()`, senza controllarne gli argomenti né i valori passati a `DataMapper::find()`. Inoltre `testGetOtherEntityCollectionByEntityWithNullEntity()`, nonostante il nome, passava un'entità invece di `null`.
+
+**File modificati**:
+- **`Orm/ExtendedClasses/DependentModel.php`**: `getOtherEntityCollectionByEntity()` genera la condizione di esclusione sulla colonna `id`, aggiunge valore e tipo di `$baseEntity` ai bind invece di sostituirli e accetta `?BaseEntity $baseEntity = null`
+- **`Orm/ExtendedClasses/SelfDependentModel.php`**: `getOtherEntityCollectionByParent()` genera la condizione di esclusione sulla colonna `id`
+- **`Tests/Orm/ExtendedClasses/DependentModelTest.php`**: `testGetOtherEntityCollectionByEntity()` e `testGetOtherEntityCollectionByEntityWithNullEntity()` verificano gli argomenti di ogni chiamata ad `appendCondition()` e i valori e i tipi passati a `find()`; il secondo passa ora `null`. Entrambi falliscono contro l'implementazione precedente
+- **`Tests/Orm/ExtendedClasses/SelfDependentModelTest.php`**: `testGetOtherEntityCollectionByParent()` verifica gli argomenti di `appendCondition()` e di `find()`; aggiunto `testGetOtherEntityCollectionByParentWithNullParent()`. Entrambi falliscono contro l'implementazione precedente
+- **`docs/orm.md`**: documentati `getOtherEntityCollectionByEntity()` nella sezione "Metodi per Relazioni" e `getOtherEntityCollectionByParent()` nella sezione "Query Gerarchiche"
+- **`docs-phpdoc/`**: rigenerate le pagine di `DependentModel` e `SelfDependentModel`, che la eredita (firma di `getOtherEntityCollectionByEntity()`)
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change per le chiamate**: la firma di `getOtherEntityCollectionByEntity()` passa da `BaseEntity $baseEntity` a `?BaseEntity $baseEntity = null`, un allargamento compatibile con tutte le chiamate esistenti.
+- **Sottoclassi che ridefiniscono il metodo**: un override che dichiara ancora `BaseEntity $baseEntity` restringe il tipo del parametro e PHP lo rifiuta con un errore fatale al caricamento della classe; va allineato a `?BaseEntity $baseEntity = null`.
+- **Cambiamento di comportamento osservabile**: i due metodi, che prima fallivano con un errore SQL, restituiscono ora le entità attese.
+
+---
+
 ## [12.9.0] - 2026-10-15 - Valori di Default della Configurazione dal Modulo e Parametri di Sessione e Cifratura con Password in Config
 
 Minor release che risolve alla radice il problema delle costanti di configurazione introdotte dopo l'installazione di un progetto: `Config` usa ora come valori di default quelli del `config.php` del modulo SismaFramework, quindi un progetto che aggiorna il framework non deve più aggiungere le nuove costanti al proprio `configFramework.php`. Su questa base, i parametri di `Session` e della cifratura con password di `Encryptor`, che la 12.8.x aveva introdotto come costanti di classe, sono spostati in `Config/config.php`, come tutti gli altri parametri del framework; l'involucro della cifratura con password passa al formato `sisma-pw2`, che dichiara tutti i propri parametri.

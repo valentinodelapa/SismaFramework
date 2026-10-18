@@ -198,11 +198,11 @@ abstract class BaseModel
         $currentEntityClass = $this->entityName;
         $parentAlias = null;
         foreach ($segments as $index => $segment) {
-            $entityReflection = new \ReflectionClass($currentEntityClass);
+            $entityReflection = BaseEntity::getReflectionClass($currentEntityClass);
             if (!$entityReflection->hasProperty($segment)) {
                 throw new InvalidArgumentException("Property '{$segment}' does not exist in entity '{$currentEntityClass}'");
             }
-            $property = $entityReflection->getProperty($segment);
+            $property = BaseEntity::getReflectionProperty($currentEntityClass, $segment);
             $propertyType = $property->getType();
             if ($propertyType === null || !is_subclass_of($propertyType->getName(), BaseEntity::class)) {
                 throw new InvalidArgumentException("Property '{$segment}' in '{$currentEntityClass}' is not a foreign key relationship");
@@ -334,11 +334,11 @@ abstract class BaseModel
 
     protected function appendRelationJoin(Query &$query, string $foreignKeyProperty, JoinType $joinType): void
     {
-        $entityReflection = new \ReflectionClass($this->entityName);
+        $entityReflection = BaseEntity::getReflectionClass($this->entityName);
         if (!$entityReflection->hasProperty($foreignKeyProperty)) {
             throw new InvalidArgumentException("Property '{$foreignKeyProperty}' does not exist in entity '{$this->entityName}'");
         }
-        $property = $entityReflection->getProperty($foreignKeyProperty);
+        $property = BaseEntity::getReflectionProperty($this->entityName, $foreignKeyProperty);
         $propertyType = $property->getType();
         if ($propertyType === null || !is_subclass_of($propertyType->getName(), BaseEntity::class)) {
             throw new InvalidArgumentException("Property '{$foreignKeyProperty}' is not a foreign key relationship");
@@ -457,7 +457,7 @@ abstract class BaseModel
     {
         foreach ($propertyNames as $propertyName) {
             $propertyValue = array_shift($arguments);
-            $reflectionProperty = new \ReflectionProperty($this->entityName, $propertyName);
+            $reflectionProperty = BaseEntity::getReflectionProperty($this->entityName, $propertyName);
             $propertyType = $reflectionProperty->getType();
             if (($propertyType->allowsNull() && ($propertyValue === null)) || ($this->isVariableOfType($propertyValue, $propertyType))) {
                 $properties[$propertyName] = $propertyValue;
@@ -506,7 +506,7 @@ abstract class BaseModel
                 $query->appendCondition($propertyName, ComparisonOperator::isNull, '');
             } else {
                 $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder);
-                $reflectionNamedType = new \ReflectionProperty($this->entityName, $propertyName);
+                $reflectionNamedType = BaseEntity::getReflectionProperty($this->entityName, $propertyName);
                 $bindValues[] = $propertyValue;
                 $bindTypes[] = DataType::fromReflection($reflectionNamedType->getType(), $propertyValue);
             }

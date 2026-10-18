@@ -130,6 +130,7 @@ class Config
     protected readonly ?string $encryptionPassphrase;
     protected readonly string $encryptionAlgorithm;
     protected readonly int $initializationVectorBytes;
+    protected readonly string $encryptedPropertyInitializationVectorSuffix;
     protected readonly int $asymmetricKeyType;
     protected readonly int $asymmetricKeyBits;
     protected readonly string $asymmetricDigestAlgorithm;

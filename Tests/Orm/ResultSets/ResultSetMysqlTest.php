@@ -29,11 +29,13 @@ namespace SismaFramework\Tests\Orm\ResultSets;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
 use SismaFramework\TestsApplication\Entities\EntityWithNullableEncryptedProperty;
+use SismaFramework\TestsApplication\Entities\EntityWithOwnInitializationVectors;
 
 /**
  * @author Valentino de Lapa
@@ -52,6 +54,7 @@ class ResultSetMysqlTest extends TestCase
                     ['defaultPrimaryKeyPropertyName', 'id'],
                     ['developmentEnvironment', true],
                     ['encryptionPassphrase', 'encryption-key'],
+                    ['encryptedPropertyInitializationVectorSuffix', 'InitializationVector'],
                     ['encryptionAlgorithm', 'AES-256-CBC'],
                     ['initializationVectorBytes', 16],
                     ['ormCache', true],
@@ -61,6 +64,8 @@ class ResultSetMysqlTest extends TestCase
                     ['encryptionPassphrase', true],
         ]);
         Config::setInstance($this->configStub);
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
         $this->PDOStatementMock = $this->createStub(\PDOStatement::class);
     }
 
@@ -204,6 +209,72 @@ class ResultSetMysqlTest extends TestCase
         $this->assertInstanceOf(EntityWithNullableEncryptedProperty::class, $entityWithNullableEncryptedProperty);
         $this->assertNull($entityWithNullableEncryptedProperty->nullableEncryptedProperty);
         $this->assertEquals($propertyValue, $entityWithNullableEncryptedProperty->encryptedProperty);
+    }
+
+    public function testFetchWithFalsyEncryptedPropertyValues()
+    {
+        $PDOStatementMock = $this->createMock(\PDOStatement::class);
+        $PDOStatementMock->method('rowCount')
+                ->willReturn(1);
+        $initializationVector = Encryptor::createInitializationVector($this->configStub);
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->encrypted_property_one = Encryptor::encryptString('', $initializationVector, $this->configStub);
+        $result->encrypted_property_two = Encryptor::encryptString('0', $initializationVector, $this->configStub);
+        $result->initialization_vector = $initializationVector;
+        $PDOStatementMock->expects($this->once())
+                ->method('fetch')
+                ->willReturn($result);
+        $resultSetMysql = new ResultSetMysql($PDOStatementMock);
+        $resultSetMysql->setReturnType(EntityWithEncryptedPropertyOne::class);
+        $entityWithEncryptedProperty = $resultSetMysql->fetch();
+        $this->assertInstanceOf(EntityWithEncryptedPropertyOne::class, $entityWithEncryptedProperty);
+        $this->assertSame('', $entityWithEncryptedProperty->encryptedPropertyOne);
+        $this->assertSame('0', $entityWithEncryptedProperty->encryptedPropertyTwo);
+    }
+
+    public function testFetchWithOwnInitializationVectors()
+    {
+        $initializationVectorOne = Encryptor::createInitializationVector($this->configStub);
+        $initializationVectorTwo = Encryptor::createInitializationVector($this->configStub);
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->encrypted_property_one = Encryptor::encryptString('value-one', $initializationVectorOne, $this->configStub);
+        $result->encrypted_property_one_initialization_vector = $initializationVectorOne;
+        $result->encrypted_property_two = Encryptor::encryptString('value-two', $initializationVectorTwo, $this->configStub);
+        $result->encrypted_property_two_initialization_vector = $initializationVectorTwo;
+        $result->initialization_vector = null;
+        $entity = $this->fetchSingleEntity($result, EntityWithOwnInitializationVectors::class);
+        $this->assertSame('value-one', $entity->encryptedPropertyOne);
+        $this->assertSame('value-two', $entity->encryptedPropertyTwo);
+    }
+
+    public function testFetchWithOwnInitializationVectorFallsBackToSharedInitializationVector()
+    {
+        $sharedInitializationVector = Encryptor::createInitializationVector($this->configStub);
+        $ownInitializationVector = Encryptor::createInitializationVector($this->configStub);
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->encrypted_property_one = Encryptor::encryptString('value-one', $sharedInitializationVector, $this->configStub);
+        $result->encrypted_property_one_initialization_vector = null;
+        $result->encrypted_property_two = Encryptor::encryptString('value-two', $ownInitializationVector, $this->configStub);
+        $result->encrypted_property_two_initialization_vector = $ownInitializationVector;
+        $result->initialization_vector = $sharedInitializationVector;
+        $entity = $this->fetchSingleEntity($result, EntityWithOwnInitializationVectors::class);
+        $this->assertSame('value-one', $entity->encryptedPropertyOne);
+        $this->assertSame('value-two', $entity->encryptedPropertyTwo);
+    }
+
+    private function fetchSingleEntity(\stdClass $result, string $entityClass): object
+    {
+        $PDOStatementStub = $this->createStub(\PDOStatement::class);
+        $PDOStatementStub->method('rowCount')
+                ->willReturn(1);
+        $PDOStatementStub->method('fetch')
+                ->willReturn($result);
+        $resultSetMysql = new ResultSetMysql($PDOStatementStub);
+        $resultSetMysql->setReturnType($entityClass);
+        return $resultSetMysql->fetch();
     }
 
     public function testFetchWithMultipleBaseEntity()

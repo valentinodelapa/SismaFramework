@@ -4032,6 +4032,26 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method___construct"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetReflectionClass\u0028\u0029",
+            "name": "getReflectionClass",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getReflectionClass"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetReflectionProperty\u0028\u0029",
+            "name": "getReflectionProperty",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getReflectionProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetFinalClassReflectionProperties\u0028\u0029",
+            "name": "getFinalClassReflectionProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getFinalClassReflectionProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetForeignKeyPropertyNames\u0028\u0029",
+            "name": "getForeignKeyPropertyNames",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getForeignKeyPropertyNames"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AunsetPrimaryKey\u0028\u0029",
             "name": "unsetPrimaryKey",
             "summary": "",
@@ -4137,10 +4157,20 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_isInitializationVector"
         },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetOwnInitializationVectorPropertyNames\u0028\u0029",
+            "name": "getOwnInitializationVectorPropertyNames",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getOwnInitializationVectorPropertyNames"
+        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetInitializationVectorPropertyName\u0028\u0029",
             "name": "getInitializationVectorPropertyName",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getInitializationVectorPropertyName"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AgetPropertyInitializationVectorName\u0028\u0029",
+            "name": "getPropertyInitializationVectorName",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#method_getPropertyInitializationVectorName"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003AsetPropertyDefaultValue\u0028\u0029",
             "name": "setPropertyDefaultValue",
@@ -4216,6 +4246,26 @@ Search.appendIndex(
             "name": "isActiveTransaction",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_isActiveTransaction"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024reflectionClasses",
+            "name": "reflectionClasses",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_reflectionClasses"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024reflectionProperties",
+            "name": "reflectionProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_reflectionProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024finalClassReflectionProperties",
+            "name": "finalClassReflectionProperties",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_finalClassReflectionProperties"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024foreignKeyPropertyNames",
+            "name": "foreignKeyPropertyNames",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseEntity.html#property_foreignKeyPropertyNames"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseEntity\u003A\u003A\u0024encryptedColumns",
             "name": "encryptedColumns",
@@ -4647,11 +4697,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_getEntityClassForAlias"
         },                {
-            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AhydrateRelatedEntity\u0028\u0029",
-            "name": "hydrateRelatedEntity",
-            "summary": "",
-            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_hydrateRelatedEntity"
-        },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AgetJoinInfoByProperty\u0028\u0029",
             "name": "getJoinInfoByProperty",
             "summary": "",
@@ -4666,6 +4711,11 @@ Search.appendIndex(
             "name": "convertToBaseEntity",
             "summary": "",
             "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_convertToBaseEntity"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003AdecryptValue\u0028\u0029",
+            "name": "decryptValue",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-BaseClasses-BaseResultSet.html#method_decryptValue"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\BaseClasses\\BaseResultSet\u003A\u003ACOLUMN_SEPARATOR",
             "name": "COLUMN_SEPARATOR",
@@ -5991,6 +6041,11 @@ Search.appendIndex(
             "name": "parseSingleProperty",
             "summary": "",
             "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_parseSingleProperty"
+        },                {
+            "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AinitializationVectorIsRenewable\u0028\u0029",
+            "name": "initializationVectorIsRenewable",
+            "summary": "",
+            "url": "classes/SismaFramework-Orm-HelperClasses-DataMapper.html#method_initializationVectorIsRenewable"
         },                {
             "fqsen": "\\SismaFramework\\Orm\\HelperClasses\\DataMapper\u003A\u003AparseForeignKeyIndexes\u0028\u0029",
             "name": "parseForeignKeyIndexes",

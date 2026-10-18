@@ -47,8 +47,8 @@ abstract class DependentModel extends BaseModel
     protected function buildPropertiesConditions(Query $query, array $properties, array &$bindValues, array &$bindTypes): void
     {
         foreach ($properties as $propertyName => $propertyValue) {
-            $reflectionProperty = new \ReflectionProperty($this->entityName, $propertyName);
-            $isForeignKey = is_subclass_of($reflectionProperty->getType()->getName(), ReferencedEntity::class);
+            $reflectionProperty = BaseEntity::getReflectionProperty($this->entityName, $propertyName);
+            $isForeignKey = ($reflectionProperty->getType()->isBuiltin() === false) && is_subclass_of($reflectionProperty->getType()->getName(), ReferencedEntity::class);
             if ($propertyValue === null) {
                 $query->appendCondition($propertyName, ComparisonOperator::isNull, '', $isForeignKey);
             } else {
@@ -62,11 +62,11 @@ abstract class DependentModel extends BaseModel
         }
     }
 
-    public function getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, BaseEntity $baseEntity): SismaCollection
+    public function getOtherEntityCollectionByEntity(BaseEntity $excludedEntity, string $propertyName, ?BaseEntity $baseEntity = null): SismaCollection
     {
         $query = $this->initQuery();
         $query->setWhere();
-        $query->appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder, true);
+        $query->appendCondition('id', ComparisonOperator::notEqual, Placeholder::placeholder);
         $bindValues = [
             $excludedEntity,
         ];
@@ -78,8 +78,8 @@ abstract class DependentModel extends BaseModel
             $query->appendCondition($propertyName, ComparisonOperator::isNull, '', true);
         } else {
             $query->appendCondition($propertyName, ComparisonOperator::equal, Placeholder::placeholder, true);
-            $bindValues = [$baseEntity];
-            $bindTypes = [DataType::typeEntity];
+            $bindValues[] = $baseEntity;
+            $bindTypes[] = DataType::typeEntity;
         }
         $query->close();
         return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
