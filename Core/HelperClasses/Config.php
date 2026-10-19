@@ -159,6 +159,7 @@ class Config
     protected readonly string $sessionCookieSameSite;
     protected readonly string $sessionTokenKey;
     protected readonly string $sessionTokenHashAlgorithm;
+    protected readonly bool $sessionTokenIncludesRemoteAddress;
     protected readonly int $sessionRotationGraceSeconds;
     protected readonly int $sessionMaximumRotationHops;
     protected readonly string $sessionRotatedAtKey;

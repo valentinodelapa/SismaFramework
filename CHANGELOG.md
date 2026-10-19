@@ -2,6 +2,55 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.13.0] - 2026-10-19 - Indirizzo IP Configurabile nel Token di Sessione e Letture Senza Effetti Collaterali in Session
+
+Minor release dedicata a `Session`. L'indirizzo IP può essere escluso dal token anti-dirottamento, per le applicazioni dietro un reverse proxy o con utenti che cambiano rete durante la navigazione, e la lettura di chiavi annidate inesistenti non scrive più nella sessione.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/HelperClasses/Session` — indirizzo IP nel token anti-dirottamento configurabile
+
+Il token anti-dirottamento, verificato da `Session::isValidSession()`, è l'impronta di `User-Agent` e indirizzo IP del client. L'indirizzo IP non sempre identifica il client: i dispositivi mobili che cambiano rete e i client dual-stack che passano da IPv4 a IPv6 cambiano indirizzo durante la navigazione, e `isValidSession()` restituisce `false` per un utente legittimo; dietro un reverse proxy, un load balancer o una CDN `REMOTE_ADDR` è invece l'indirizzo del proxy, uguale per tutti gli utenti, e non aggiunge protezione. Con la nuova costante `SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS` impostata a `false` l'impronta usa il solo `User-Agent`. Il default `true` mantiene il comportamento precedente.
+
+- **`Config/config.php`**: nuova costante `SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS` (default `true`), esposta come `Config::$sessionTokenIncludesRemoteAddress`
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Session::hasItem()`, `getItem()` e `unsetItem()` — chiavi annidate inesistenti create in sessione
+
+Con una chiave annidata, come `cart[items][0]`, i tre metodi passavano `$_SESSION['cart']` per riferimento ai rispettivi metodi ricorsivi, e PHP crea gli elementi inesistenti passati per riferimento: un semplice controllo come `Session::hasItem('cart[items][0]')` su una sessione vuota restituiva `false` ma lasciava in sessione `['cart' => ['items' => null]]`, e un successivo `Session::hasItem('cart')` restituiva `true`. I metodi ricorsivi di `hasItem()` e `getItem()` ricevono ora i valori per copia e trattano come assente un livello mancante; quello di `unsetItem()` scende solo nei livelli esistenti.
+
+### ♻️ Pulizia Codice
+
+#### `Core/HelperClasses/Session` — rimossa la proprietà `$sessionProperties`
+
+La proprietà privata `$sessionProperties` non veniva mai inizializzata né letta.
+
+### 📖 Documentazione
+
+#### `docs/configuration-reference.md` — nuova costante
+
+Documentata `SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS`.
+
+#### `docs/security.md` — token anti-dirottamento
+
+La sezione sulla sessione precisa che il framework non chiama `isValidSession()` e quando escludere l'indirizzo IP dall'impronta.
+
+**File modificati**:
+- **`Config/config.php`**, **`Core/HelperClasses/Config.php`**: aggiunta la costante `SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS`
+- **`Core/HelperClasses/Session.php`**: rimossa la proprietà `$sessionProperties`; `getClientFingerprint()` include l'indirizzo IP solo se `SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS` è `true`; `hasItemRecursive()` e `getItemRecursive()` ricevono i valori per copia, `unsetItemRecursive()` scende solo nei livelli esistenti, e tutti e tre partono da `$_SESSION` con la chiave base come primo livello
+- **`Tests/Core/HelperClasses/SessionTest.php`**: aggiunti `testSessionTokenWithoutRemoteAddressSurvivesAddressChange()`, `testSessionTokenWithRemoteAddressIsInvalidatedByAddressChange()` e `testReadingMissingNestedItemDoesNotWriteSession()`, che fallisce con il passaggio per riferimento; lo stub di `Config` restituisce la nuova costante
+- **`docs/configuration-reference.md`**: documentata la nuova costante
+- **`docs/security.md`**: aggiornata la descrizione del token anti-dirottamento
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la nuova costante ha un valore di default nel `config.php` del framework, e con il default il token è invariato.
+- **Cambiamento di comportamento osservabile**: `Session::hasItem()`, `getItem()` e `unsetItem()` con chiavi annidate non creano più in sessione i livelli inesistenti. Il codice che, senza saperlo, contava su quei livelli vuoti (per esempio un `hasItem('cart')` vero dopo un `hasItem('cart[items]')`) li trova ora assenti.
+- **Token di sessione**: impostando `SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS` a `false` con sessioni aperte, `isValidSession()` restituisce `false` per le sessioni create prima della modifica.
+
+---
+
 ## [12.12.0] - 2026-10-18 - Riscrittura della Query String nel Dispatcher e Cache delle Risorse Statiche
 
 Minor release che rivede la riscrittura della query string nel percorso eseguita dal dispatcher. Le richieste diverse da `GET` e `HEAD` non vengono più reindirizzate, i parametri di tracciamento restano nella query string, gli array annidati e i valori vuoti sopravvivono alla riscrittura e gli slash multipli in coda non causano più errori. Il rilascio rimuove inoltre gli header di cache pubblica applicati a tutte le risposte e introduce una cache configurabile per le sole risorse statiche.

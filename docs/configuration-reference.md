@@ -432,6 +432,7 @@ const SESSION_COOKIE_HTTP_ONLY = true;
 const SESSION_COOKIE_SAME_SITE = 'Lax';
 const SESSION_TOKEN_KEY = 'token';
 const SESSION_TOKEN_HASH_ALGORITHM = 'sha512';
+const SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS = true;
 const SESSION_ROTATION_GRACE_SECONDS = 30;
 const SESSION_MAXIMUM_ROTATION_HOPS = 10;
 const SESSION_ROTATED_AT_KEY = '__sismaSessionRotatedAt';
@@ -457,6 +458,11 @@ const SESSION_NEXT_SESSION_ID_KEY = '__sismaNextSessionId';
 - **Tipo**: `string` / `string`
 - **Default**: `'token'` / `'sha512'`
 - **Descrizione**: chiave di `$_SESSION` e algoritmo di hash del token anti-dirottamento (impronta di `User-Agent` e indirizzo IP) verificato da `Session::isValidSession()`. Con sessioni aperte, cambiare l'algoritmo fa risultare non valide le sessioni esistenti; cambiare la chiave fa registrare un nuovo token alla richiesta successiva, legato al client che la invia
+
+#### SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS
+- **Tipo**: `bool`
+- **Default**: `true`
+- **Descrizione**: se `true` il token anti-dirottamento include l'indirizzo IP del client oltre allo `User-Agent`, e `Session::isValidSession()` restituisce `false` quando l'indirizzo cambia. Va impostato a `false` quando l'indirizzo non identifica il client: dietro un reverse proxy, un load balancer o una CDN `REMOTE_ADDR` è l'indirizzo del proxy, uguale per tutti gli utenti, mentre i dispositivi mobili che cambiano rete e i client dual-stack che passano da IPv4 a IPv6 cambiano indirizzo durante la navigazione. Con sessioni aperte, cambiare il valore fa risultare non valide le sessioni esistenti
 
 #### SESSION_ROTATION_GRACE_SECONDS
 - **Tipo**: `int`
