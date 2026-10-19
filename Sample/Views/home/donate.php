@@ -31,7 +31,7 @@
                                 Sostienici direttamente tramite GitHub.
                             </p>
                             <a href="https://github.com/sponsors/valentinodelapa" class="btn btn-sm btn-outline-secondary">
-                                Prossimamente
+                                Sostienici
                             </a>
                         </div>
                     </div>
