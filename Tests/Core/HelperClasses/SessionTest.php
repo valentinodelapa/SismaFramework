@@ -65,6 +65,7 @@ class SessionTest extends TestCase
             'sessionCookieSameSite' => 'Lax',
             'sessionTokenKey' => 'token',
             'sessionTokenHashAlgorithm' => 'sha512',
+            'sessionTokenIncludesRemoteAddress' => true,
             'sessionRotationGraceSeconds' => self::ROTATION_GRACE_SECONDS,
             'sessionMaximumRotationHops' => 10,
             'sessionRotatedAtKey' => self::ROTATED_AT_KEY,
@@ -237,6 +238,44 @@ class SessionTest extends TestCase
         $this->assertTrue(Session::isValidSession($firstRequest));
         $this->assertFalse(Session::isValidSession($otherRequest));
 
+        Session::end();
+    }
+
+    public function testSessionTokenWithoutRemoteAddressSurvivesAddressChange()
+    {
+        $this->setConfiguration(['sessionTokenIncludesRemoteAddress' => false]);
+        $firstRequest = $this->createStub(Request::class);
+        $firstRequest->server = ['HTTP_HOST' => '', 'HTTP_USER_AGENT' => 'agent-a', 'REMOTE_ADDR' => '10.0.0.1'];
+        $sameClientOtherAddressRequest = $this->createStub(Request::class);
+        $sameClientOtherAddressRequest->server = ['HTTP_HOST' => '', 'HTTP_USER_AGENT' => 'agent-a', 'REMOTE_ADDR' => '2001:db8::1'];
+        $otherClientRequest = $this->createStub(Request::class);
+        $otherClientRequest->server = ['HTTP_HOST' => '', 'HTTP_USER_AGENT' => 'agent-b', 'REMOTE_ADDR' => '10.0.0.1'];
+        Session::start($firstRequest);
+        $this->assertTrue(Session::isValidSession($sameClientOtherAddressRequest));
+        $this->assertFalse(Session::isValidSession($otherClientRequest));
+        Session::end();
+    }
+
+    public function testSessionTokenWithRemoteAddressIsInvalidatedByAddressChange()
+    {
+        $firstRequest = $this->createStub(Request::class);
+        $firstRequest->server = ['HTTP_HOST' => '', 'HTTP_USER_AGENT' => 'agent-a', 'REMOTE_ADDR' => '10.0.0.1'];
+        $sameClientOtherAddressRequest = $this->createStub(Request::class);
+        $sameClientOtherAddressRequest->server = ['HTTP_HOST' => '', 'HTTP_USER_AGENT' => 'agent-a', 'REMOTE_ADDR' => '2001:db8::1'];
+        Session::start($firstRequest);
+        $this->assertFalse(Session::isValidSession($sameClientOtherAddressRequest));
+        Session::end();
+    }
+
+    public function testReadingMissingNestedItemDoesNotWriteSession()
+    {
+        Session::start($this->requestMock);
+        $sessionBefore = $_SESSION;
+        $this->assertFalse(Session::hasItem('cart[items][0]'));
+        $this->assertNull(@Session::getItem('cart[items][0]'));
+        Session::unsetItem('cart[items][0]');
+        $this->assertSame($sessionBefore, $_SESSION);
+        $this->assertFalse(Session::hasItem('cart'));
         Session::end();
     }
 

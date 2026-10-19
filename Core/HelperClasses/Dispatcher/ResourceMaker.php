@@ -110,7 +110,7 @@ class ResourceMaker
     {
         $fileSize = filesize($filename);
         $rangeHeader = $this->request->headers["Range"] ?? ($this->request->headers["range"] ?? null);
-        header("Expires: " . gmdate("D, d-M-Y H:i:s \G\M\T", time() + 60));
+        $this->sendCacheHeaders();
         header("Accept-Ranges: bytes");
         header("Content-type: " . $mime);
         header("X-Content-Type-Options: nosniff");
@@ -141,7 +141,7 @@ class ResourceMaker
     {
         $fileSize = filesize($filename);
         $rangeHeader = $this->request->headers["Range"] ?? ($this->request->headers["range"] ?? null);
-        header("Expires: " . gmdate("D, d-M-Y H:i:s \G\M\T", time() + 60));
+        $this->sendCacheHeaders();
         header("Accept-Ranges: bytes");
         header("Content-type: " . $mime);
         header("X-Content-Type-Options: nosniff");
@@ -153,6 +153,13 @@ class ResourceMaker
             $this->getResourceData($filename);
             return new Response();
         }
+    }
+
+    private function sendCacheHeaders(): void
+    {
+        header_remove("Pragma");
+        header("Cache-Control: public, max-age=" . $this->config->resourceCacheMaxAge);
+        header("Expires: " . gmdate("D, d M Y H:i:s \G\M\T", time() + $this->config->resourceCacheMaxAge));
     }
 
     private function servePartialContent(string $filename, int $fileSize, string $rangeHeader): Response

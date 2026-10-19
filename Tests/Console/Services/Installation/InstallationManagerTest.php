@@ -379,8 +379,6 @@ PHP
             <<<'HTACCESS'
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteCond %{QUERY_STRING} fbclid= [NC]
-RewriteRule ^(.*)$ /$1? [R=301,L]
 RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php\/(.*)$ [NC]
 RewriteRule ^(.+/)?index\.php\/(.*)$ /$1$2 [R=301,L]
 RewriteCond %{THE_REQUEST} \ /(.+/)?index\.php(.*)$ [NC]

@@ -98,6 +98,8 @@ const PRIMARY_KEY_PASS_ACCEPTED = false;
 const CONTROLLER_NAMESPACE = APPLICATION_NAMESPACE . CONTROLLERS . "\\";
 const CUSTOM_RENDERABLE_RESOURCE_TYPES = [];
 const CUSTOM_DOWNLOADABLE_RESOURCE_TYPES = [];
+const PRESERVED_QUERY_STRING_PARAMETERS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content", "utm_id", "gclid", "gbraid", "wbraid", "dclid", "fbclid", "msclkid", "mc_cid", "mc_eid", "_ga", "_gl"];
+const RESOURCE_CACHE_MAX_AGE = 86400;
 
 /* Render Constant */
 const LOCALES_PATH = APPLICATION_PATH . LOCALES . DIRECTORY_SEPARATOR;
@@ -152,6 +154,7 @@ const SESSION_COOKIE_HTTP_ONLY = true;
 const SESSION_COOKIE_SAME_SITE = "Lax";
 const SESSION_TOKEN_KEY = "token";
 const SESSION_TOKEN_HASH_ALGORITHM = "sha512";
+const SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS = true;
 const SESSION_ROTATION_GRACE_SECONDS = 30;
 const SESSION_MAXIMUM_ROTATION_HOPS = 10;
 const SESSION_ROTATED_AT_KEY = "__sismaSessionRotatedAt";

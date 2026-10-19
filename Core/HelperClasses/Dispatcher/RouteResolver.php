@@ -104,7 +104,7 @@ class RouteResolver
             throw new PageNotFoundException($this->originalPath);
         } else {
             Router::concatenateMetaUrl($this->pathController);
-            $this->path = '/' . implode('/', $this->pathParts);
+            $this->path = $this->buildPathFromParts();
             $this->defaultControllerChecked = $this->defaultActionChecked = false;
             $this->reloadAttempts++;
         }
@@ -112,7 +112,8 @@ class RouteResolver
 
     private function parsePath(): void
     {
-        $this->pathParts = explode('/', rtrim($this->path, '/'));
+        $trimmedPath = str_ends_with($this->path, '/') ? substr($this->path, 0, -1) : $this->path;
+        $this->pathParts = explode('/', $trimmedPath);
         $this->cleanPathParts = array_values(array_filter($this->pathParts, function ($var) {
                     return $var !== "";
                 }));
@@ -186,13 +187,14 @@ class RouteResolver
 
     private function injectDefaultController(): void
     {
-        array_unshift($this->pathParts, $this->config->defaultPath, $this->pathController, $this->pathAction);
-        $this->defaultControllerInjected = true;
         if ($this->defaultActionInjected) {
             $this->defaultActionInjected = false;
-            array_pop($this->pathParts);
+            array_unshift($this->pathParts, $this->config->defaultPath, $this->pathController);
+        } else {
+            array_unshift($this->pathParts, $this->config->defaultPath, $this->pathController, $this->pathAction);
         }
-        $this->path = '/' . implode('/', $this->pathParts);
+        $this->defaultControllerInjected = true;
+        $this->path = $this->buildPathFromParts();
         $this->defaultControllerChecked = true;
     }
 
@@ -200,7 +202,12 @@ class RouteResolver
     {
         $this->defaultControllerInjected = false;
         $this->pathParts = [$this->pathAction, $this->config->defaultAction, ...$this->pathParts];
-        $this->path = '/' . implode('/', $this->pathParts);
+        $this->path = $this->buildPathFromParts();
         $this->defaultActionChecked = true;
+    }
+
+    private function buildPathFromParts(): string
+    {
+        return '/' . implode('/', $this->pathParts) . (end($this->pathParts) === '' ? '/' : '');
     }
 }

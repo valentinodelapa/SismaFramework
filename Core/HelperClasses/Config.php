@@ -103,6 +103,8 @@ class Config
     protected readonly string $controllerNamespace;
     protected readonly array $customRenderableResourceTypes;
     protected readonly array $customDownloadableResourceTypes;
+    protected readonly array $preservedQueryStringParameters;
+    protected readonly int $resourceCacheMaxAge;
 
     /* Render Constant */
     protected readonly string $localesPath;
@@ -157,6 +159,7 @@ class Config
     protected readonly string $sessionCookieSameSite;
     protected readonly string $sessionTokenKey;
     protected readonly string $sessionTokenHashAlgorithm;
+    protected readonly bool $sessionTokenIncludesRemoteAddress;
     protected readonly int $sessionRotationGraceSeconds;
     protected readonly int $sessionMaximumRotationHops;
     protected readonly string $sessionRotatedAtKey;

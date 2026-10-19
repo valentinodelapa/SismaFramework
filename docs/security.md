@@ -761,7 +761,7 @@ Per default `domain` è vuoto (v12.8.2+): il cookie resta legato all'host esatto
 
 Fino alla 12.8.1 la rotazione cancellava subito la vecchia sessione (`session_regenerate_id(true)`): ogni richiesta concorrente partita con il cookie precedente riceveva una sessione vuota, e l'utente risultava disconnesso già al caricamento di una pagina con un foglio di stile e uno script serviti dal front controller.
 
-Il token anti-dirottamento (impronta di `User-Agent` e indirizzo IP, calcolata con `SESSION_TOKEN_HASH_ALGORITHM` e registrata nella chiave `SESSION_TOKEN_KEY`) viene registrato alla creazione della sessione e non più a ogni richiesta: `Session::isValidSession($request)` restituisce `false` se la richiesta corrente proviene da un client diverso da quello che ha aperto la sessione.
+Il token anti-dirottamento (impronta di `User-Agent` e indirizzo IP, calcolata con `SESSION_TOKEN_HASH_ALGORITHM` e registrata nella chiave `SESSION_TOKEN_KEY`) viene registrato alla creazione della sessione e non più a ogni richiesta: `Session::isValidSession($request)` restituisce `false` se la richiesta corrente proviene da un client diverso da quello che ha aperto la sessione. Il framework non chiama `isValidSession()`: la verifica spetta all'applicazione. Dietro un reverse proxy, o con utenti che cambiano rete durante la navigazione, l'indirizzo IP non identifica il client e va escluso dall'impronta impostando `SESSION_TOKEN_INCLUDES_REMOTE_ADDRESS` a `false` (v12.13.0+): il token resta legato al solo `User-Agent`.
 
 ### Protezione CSRF
 

@@ -46,6 +46,7 @@ use SismaFramework\Orm\HelperClasses\DataMapper;
 class Dispatcher
 {
 
+    private Config $config;
     private Request $request;
     private RouteResolver $routeResolver;
     private ControllerFactory $controllerFactory;
@@ -62,8 +63,10 @@ class Dispatcher
             ResourceHandler $resourceHandler = new ResourceHandler(),
             ?ControllerFactory $controllerFactory = null,
             ?ActionArgumentsParser $actionArgumentsParser = null,
-            ?Debugger $debugger = null)
+            ?Debugger $debugger = null,
+            ?Config $customConfig = null)
     {
+        $this->config = $customConfig ?? Config::getInstance();
         $this->request = $request;
         $this->dataMapper = $dataMapper;
         $this->debugger = $debugger ?? Debugger::getInstance();
@@ -81,12 +84,19 @@ class Dispatcher
     public function run($router = new Router()): Response
     {
         $requestUri = $this->request->server['REQUEST_URI'];
-        if ((strlen($this->request->server['QUERY_STRING'] ?? '') > 0) &&
-                ($this->resourceHandler->isResourceFile(explode('?', $requestUri, 2)[0]) === false)) {
-            return $router->reloadWithParsedQueryString();
+        if ($this->hasQueryStringToParse($requestUri)) {
+            return $router->reloadWithParsedQueryString($this->request);
         }
         $this->routeResolver->initialize($requestUri);
         return $this->handle();
+    }
+
+    private function hasQueryStringToParse(string $requestUri): bool
+    {
+        return in_array($this->request->server['REQUEST_METHOD'] ?? 'GET', ['GET', 'HEAD'], true) &&
+                (strlen($this->request->server['QUERY_STRING'] ?? '') > 0) &&
+                (count(array_diff_key($this->request->query ?? [], array_flip($this->config->preservedQueryStringParameters))) > 0) &&
+                ($this->resourceHandler->isResourceFile(explode('?', $requestUri, 2)[0]) === false);
     }
 
     private function handle(): Response
@@ -143,10 +153,10 @@ class Dispatcher
         $controller = $this->controllerFactory->createController($this->routeResolver->getRouteInfo()->controllerClassName);
         $reflectionAction = $reflectionController->getMethod($this->routeResolver->getRouteInfo()->parsedAction);
         $reflectionParameters = $reflectionAction->getParameters();
+        $arguments = $this->actionArgumentsParser->parseActionArguments($this->routeResolver->getRouteInfo()->actionArguments, $reflectionParameters);
         if (count($reflectionParameters) === 0) {
             return $controller->{$this->routeResolver->getRouteInfo()->parsedAction}();
         } else {
-            $arguments = $this->actionArgumentsParser->parseActionArguments($this->routeResolver->getRouteInfo()->actionArguments, $reflectionParameters);
             return call_user_func_array([$controller, $this->routeResolver->getRouteInfo()->parsedAction], $arguments);
         }
     }
@@ -160,16 +170,25 @@ class Dispatcher
                     $this->routeResolver->getRouteInfo()->pathController,
                     $this->routeResolver->getRouteInfo()->pathAction
             );
-            $fullCallableParts = [$this->routeResolver->getRouteInfo()->pathAction, ...$this->routeResolver->getRouteInfo()->actionArguments];
+            $fullCallableParts = [$this->routeResolver->getRouteInfo()->pathAction, ...$this->getCallableArguments()];
             return $this->routeResolver->getRouteInfo()->controllerClassName::checkCompatibility($fullCallableParts);
         }
+    }
+
+    private function getCallableArguments(): array
+    {
+        $callableArguments = $this->routeResolver->getRouteInfo()->actionArguments;
+        while (end($callableArguments) === '') {
+            array_pop($callableArguments);
+        }
+        return $callableArguments;
     }
 
     private function executeCallableController(\ReflectionClass $reflectionController): Response
     {
         $controller = $this->controllerFactory->createController($this->routeResolver->getRouteInfo()->controllerClassName);
         $action = $reflectionController->hasMethod($this->routeResolver->getRouteInfo()->parsedAction) ? $this->routeResolver->getRouteInfo()->parsedAction : $this->routeResolver->getRouteInfo()->pathAction;
-        return $controller->{$action}(...$this->routeResolver->getRouteInfo()->actionArguments);
+        return $controller->{$action}(...$this->getCallableArguments());
     }
 
     private function handleNotFound(): Response
