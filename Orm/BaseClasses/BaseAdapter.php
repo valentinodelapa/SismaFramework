@@ -102,7 +102,7 @@ abstract class BaseAdapter
      */
     protected function ensureConnected(): void
     {
-        if (!$this->isConnected) {
+        if ((!$this->isConnected) || (self::$connection === null)) {
             $this->connect($this->connectionOptions);
             $this->isConnected = true;
         }

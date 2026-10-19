@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.13.1] - 2026-10-19 - Chiusura e Riconnessione dell'Adapter MySQL e Validazione dell'ID Generato
+
+Patch che corregge `AdapterMysql::close()`, mai funzionante, e la riconnessione dopo la chiusura, e che rifiuta gli ID non validi restituiti dal database dopo un inserimento invece di assegnarli all'entità.
+
+### 🐛 Bug Fix
+
+#### `Orm/Adapters/AdapterMysql::close()` — errore a ogni chiusura
+
+`close()` eseguiva `unset(self::$connection)`, ma PHP non consente l'`unset` di una proprietà statica: con una connessione aperta il metodo sollevava sempre `Error: Attempt to unset static property` e la connessione non veniva chiusa. Ora `close()` azzera la connessione.
+
+#### `Orm/BaseClasses/BaseAdapter::ensureConnected()` — nessuna riconnessione dopo `close()`
+
+La connessione è statica e condivisa da tutti gli adapter, mentre `isConnected` è una proprietà di ogni singola istanza. Dopo una chiusura `isConnected` restava `true`, sia per l'adapter che aveva chiuso sia per gli altri, e `ensureConnected()` non riapriva la connessione: le query successive restituivano `null` e le esecuzioni `false` senza sollevare errori. `ensureConnected()` verifica ora anche che la connessione condivisa sia aperta, e `close()` azzera `isConnected`. Un adapter si riconnette quindi alla prima operazione successiva a una chiusura, anche se la chiusura è stata eseguita da un altro adapter.
+
+#### `Orm/Adapters/AdapterMysql::getLastErrorCode()` — `TypeError` prima della prima operazione
+
+`PDO::errorCode()` restituisce `null` se sulla connessione non è ancora stata eseguita alcuna operazione, e il metodo, dichiarato `string`, sollevava un `TypeError`. Il caso non si presenta con le connessioni aperte da `connect()`, che esegue subito `SET names`, ma con una connessione impostata tramite `setConnection()`. Il metodo restituisce ora `''` in questo caso, e `'-1'` come stringa in assenza di connessione al posto dell'intero `-1`, prima convertito implicitamente.
+
+#### `Orm/Adapters/AdapterMysql::lastInsertIdToDelegateAdapter()` — ID non validi assegnati all'entità
+
+`DataMapper::insert()` esclude la chiave primaria dall'`INSERT` e assegna all'entità l'ID restituito da `lastInsertId()`, che non veniva verificato:
+
+- con una tabella senza `AUTO_INCREMENT` MySQL restituisce `0`. L'entità riceveva `id = 0`, e al salvataggio successivo `DataMapper::save()` la considerava nuova e inseriva una seconda riga;
+- senza connessione il metodo restituiva `-1`. L'entità riceveva `id = -1`, e al salvataggio successivo l'`UPDATE` non trovava alcuna riga ma risultava riuscito: le modifiche andavano perse senza errori;
+- un driver che non supporta l'ID generato restituisce `false`, convertito in `0`;
+- un ID oltre `PHP_INT_MAX` (`BIGINT UNSIGNED`) sollevava un `TypeError` non descrittivo.
+
+Il metodo solleva ora un'`AdapterException` se l'ID non è un intero positivo o se non c'è connessione, come già avviene quando l'`INSERT` stesso fallisce.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseAdapter.php`**: `ensureConnected()` riapre la connessione anche quando quella condivisa è stata chiusa
+- **`Orm/Adapters/AdapterMysql.php`**: `close()` azzera la connessione e `isConnected` senza `unset()`; `getLastErrorCode()` restituisce `'-1'` senza connessione e `''` se `PDO::errorCode()` restituisce `null`; `lastInsertIdToDelegateAdapter()` valida l'ID con `FILTER_VALIDATE_INT` e solleva `AdapterException` senza connessione o con un ID non positivo
+- **`Tests/Orm/Adapters/AdapterMysqlTest.php`**: aggiunti `testCloseReleasesConnection()`, `testOperationAfterCloseReconnects()`, `testOperationAfterCloseByAnotherAdapterReconnects()`, `testGetLastErrorCodeBeforeAnyOperation()`, `testLastInsertIdWithoutConnection()` e `testInvalidLastInsertId()`, che falliscono senza le correzioni; i test che simulavano l'assenza di connessione con `setConnection(null)`, ora seguito da una riconnessione, usano un adapter il cui `connect()` non apre alcuna connessione
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: firme invariate.
+- **Cambiamento di comportamento osservabile**: dopo `close()` la prima operazione di un adapter riapre la connessione, invece di restituire `null` o `false`.
+- **Cambiamento di comportamento osservabile**: `lastInsertId()` solleva `AdapterException` invece di restituire `-1` senza connessione o un ID non positivo. Il salvataggio di un'entità in una tabella senza `AUTO_INCREMENT` fallisce ora con un'eccezione; prima riusciva, ma assegnava all'entità `id = 0` e duplicava la riga al salvataggio successivo.
+
+---
+
 ## [12.13.0] - 2026-10-19 - Indirizzo IP Configurabile nel Token di Sessione e Letture Senza Effetti Collaterali in Session
 
 Minor release dedicata a `Session`. L'indirizzo IP può essere escluso dal token anti-dirottamento, per le applicazioni dietro un reverse proxy o con utenti che cambiano rete durante la navigazione, e la lettura di chiavi annidate inesistenti non scrive più nella sessione.
