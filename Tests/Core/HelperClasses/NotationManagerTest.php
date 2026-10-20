@@ -46,18 +46,26 @@ class NotationManagerTest extends TestCase
     {
         $result = NotationManager::convertToStudlyCaps('fake-fake-fake');
         $this->assertEquals('FakeFakeFake', $result);
+        $this->assertEquals('Oauth2Client', NotationManager::convertToStudlyCaps('oauth2-client'));
+        $this->assertEquals('Oauth2Client', NotationManager::convertToStudlyCaps('oauth2_client'));
+        $this->assertEquals('B2bCustomer', NotationManager::convertToStudlyCaps('b2b_customer'));
     }
 
     public function testConvertToCamelCase()
     {
         $result = NotationManager::convertToCamelCase('fake-fake-fake');
         $this->assertEquals('fakeFakeFake', $result);
+        $this->assertEquals('sha256Hash', NotationManager::convertToCamelCase('sha256-hash'));
+        $this->assertEquals('sha256Hash', NotationManager::convertToCamelCase('sha256_hash'));
+        $this->assertEquals('b2bCustomer', NotationManager::convertToCamelCase('b2b_customer'));
     }
 
     public function testConvertToKebabKase()
     {
         $result = NotationManager::convertToKebabCase('fakeFakeFake');
         $this->assertEquals('fake-fake-fake', $result);
+        $this->assertEquals('oauth2-client', NotationManager::convertToKebabCase('oauth2Client'));
+        $this->assertEquals('b2b-customer', NotationManager::convertToKebabCase('B2bCustomer'));
     }
 
     public function testConvertToSnakeCase()
@@ -66,6 +74,15 @@ class NotationManagerTest extends TestCase
         $this->assertEquals('studly_caps', $resultOne);
         $resultTwo = NotationManager::convertToSnakeCase('camelCase');
         $this->assertEquals('camel_case', $resultTwo);
+        $this->assertEquals('oauth2_client', NotationManager::convertToSnakeCase('Oauth2Client'));
+        $this->assertEquals('sha256_hash', NotationManager::convertToSnakeCase('sha256Hash'));
+        $this->assertEquals('b2b_customer', NotationManager::convertToSnakeCase('b2bCustomer'));
+    }
+
+    public function testConvertToUpperSnakeCase()
+    {
+        $this->assertEquals('STUDLY_CAPS', NotationManager::convertToUpperSnakeCase('StudlyCaps'));
+        $this->assertEquals('SHA256_HASH', NotationManager::convertToUpperSnakeCase('sha256Hash'));
     }
 
     public function testConvertEntityToTableName()
@@ -90,11 +107,22 @@ class NotationManagerTest extends TestCase
     {
         $result = NotationManager::convertEntityNameToTableName(BaseSample::class);
         $this->assertEquals('base_sample', $result);
+        $this->assertEquals('oauth2_client', NotationManager::convertEntityNameToTableName('Module\\Entities\\Oauth2Client'));
     }
 
     public function testConvertColumnNameToPropertyName()
     {
         $result = NotationManager::convertColumnNameToPropertyName('referenced_entity_without_initialization_id');
         $this->assertEquals('referencedEntityWithoutInitialization', $result);
+        $this->assertEquals('sha256Hash', NotationManager::convertColumnNameToPropertyName('sha256_hash'));
+        $this->assertEquals('oauth2Client', NotationManager::convertColumnNameToPropertyName('oauth2_client_id'));
+    }
+
+    public function testConvertPropertyNameToColumnName()
+    {
+        $this->assertEquals('column_name', NotationManager::convertPropertyNameToColumnName('columnName'));
+        $this->assertEquals('column_name_id', NotationManager::convertPropertyNameToColumnName('columnName', true));
+        $this->assertEquals('sha256_hash', NotationManager::convertPropertyNameToColumnName('sha256Hash'));
+        $this->assertEquals('oauth2_client_id', NotationManager::convertPropertyNameToColumnName('oauth2Client', true));
     }
 }

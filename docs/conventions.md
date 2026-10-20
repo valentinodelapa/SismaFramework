@@ -48,8 +48,9 @@ const MODULE_FOLDERS = ['Blog', 'UserModule', 'ApiModule'];
     *   `Post` -> tabella `post`
     *   `User` -> tabella `user`
     *   `PostComment` -> tabella `post_comment`
+    *   `Oauth2Client` -> tabella `oauth2_client`
     *
-    **⚠️ Importante:** SismaFramework utilizza nomi di tabelle al **singolare**, non al plurale come altri framework.
+    **⚠️ Importante:** SismaFramework utilizza nomi di tabelle al **singolare**, non al plurale come altri framework. Eventuali numeri nei nomi di entità o proprietà fanno parte della parola che li precede senza underscore aggiuntivo prima della cifra (es. `$sha256Hash` <-> `sha256_hash`).
 *   **Chiave Primaria:** Si assume che la colonna della chiave primaria si chiami `id`.
 *   **Chiavi Esterne:** Vengono inferite dal nome della proprietà e dal suo tipo.
     *   `protected User $author;` -> colonna `author_id`.
