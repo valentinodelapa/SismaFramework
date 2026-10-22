@@ -505,27 +505,24 @@ const DATABASE_PASSWORD = 'password123';
 const ENCRYPTION_PASSPHRASE = 'secret';
 
 // ✅ Usa variabili ambiente
-const DATABASE_PASSWORD = $_ENV['DB_PASSWORD'] ?? '';
-const ENCRYPTION_PASSPHRASE = $_ENV['ENCRYPTION_KEY'] ?? '';
+define(__NAMESPACE__ . '\DATABASE_PASSWORD', getenv('DATABASE_PASSWORD') ?: '');
+define(__NAMESPACE__ . '\ENCRYPTION_PASSPHRASE', getenv('ENCRYPTION_PASSPHRASE') ?: '');
 ```
+
+`const` accetta solo espressioni costanti: `$_ENV` e le chiamate a funzione come `getenv()` richiedono `define()`.
 
 ### 2. Configurazione per Performance
 
 ```php
 // Produzione: cache attiva, log minimi
-if (!DEVELOPMENT_ENVIRONMENT) {
-    const ORM_CACHE = true;
-    const LOG_VERBOSE_ACTIVE = false;
-    const LOG_PRODUCTION_MAX_ROW = 100;
-}
-
 // Sviluppo: debug attivo, cache disabilitata
-if (DEVELOPMENT_ENVIRONMENT) {
-    const ORM_CACHE = false;
-    const LOG_VERBOSE_ACTIVE = true;
-    const LOG_DEVELOPMENT_MAX_ROW = 2000;
-}
+const ORM_CACHE = !DEVELOPMENT_ENVIRONMENT;
+const LOG_VERBOSE_ACTIVE = DEVELOPMENT_ENVIRONMENT;
+const LOG_PRODUCTION_MAX_ROW = 100;
+const LOG_DEVELOPMENT_MAX_ROW = 2000;
 ```
+
+`const` non può essere dichiarata dentro un blocco `if`: il valore dipendente dall'ambiente si esprime con un'espressione costante che usa `DEVELOPMENT_ENVIRONMENT`. `LOG_PRODUCTION_MAX_ROW` e `LOG_DEVELOPMENT_MAX_ROW` si dichiarano entrambe, perché il framework usa l'una o l'altra in base all'ambiente.
 
 ### 3. Sicurezza
 
