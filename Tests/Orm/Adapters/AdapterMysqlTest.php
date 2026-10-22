@@ -95,7 +95,8 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('*', $adapterMysql->escapeIdentifier("*"));
         $this->assertEquals('1', $adapterMysql->escapeIdentifier("1"));
         $this->assertEquals('1.1', $adapterMysql->escapeIdentifier("1.1"));
-        $this->assertEquals('`Table`.`column_name`', $adapterMysql->escapeIdentifier("T-a#b@l4e.c#o8l(umn_name"));
+        $this->assertEquals('`Table`.`column_name`', $adapterMysql->escapeIdentifier("T-a#b@le.c#ol(umn_name"));
+        $this->assertEquals('`Tabl4e`.`co8lumn_name2`', $adapterMysql->escapeIdentifier("T-a#b@l4e.c#o8l(umn_name2"));
     }
 
     public function testEscapeTable()
@@ -103,6 +104,7 @@ class AdapterMysqlTest extends TestCase
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('`table_name`', $adapterMysql->escapeTable("tableName"));
         $this->assertEquals('`table_name`', $adapterMysql->escapeTable("table#Name"));
+        $this->assertEquals('`oauth2_client`', $adapterMysql->escapeTable("Oauth2Client"));
     }
 
     public function testEscapeOrderIndexing()
@@ -133,6 +135,9 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('`column_name`', $adapterMysql->escapeColumn('columnName'));
         $this->assertEquals('`table_name`.`column_name_id`', $adapterMysql->escapeColumn('tableName.column#Name', true));
         $this->assertEquals('`table_name`.`column_name`', $adapterMysql->escapeColumn('tableName.column#Name'));
+        $this->assertEquals('`sha256_hash`', $adapterMysql->escapeColumn('sha256Hash'));
+        $this->assertEquals('`oauth2_client_id`', $adapterMysql->escapeColumn('oauth2Client', true));
+        $this->assertEquals('`oauth2_client`.`sha256_hash`', $adapterMysql->escapeColumn('oauth2Client.sha256#Hash'));
     }
 
     public function testEscapeValue()

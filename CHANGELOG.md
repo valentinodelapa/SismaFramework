@@ -170,6 +170,56 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 
 ---
 
+## [12.14.0] - 2026-10-20 - Numeri nei Nomi di Entità, Proprietà, Tabelle e Colonne
+
+Minor release che abilita l'uso dei numeri nei nomi di entità, proprietà, tabelle, colonne e alias delle `JOIN`.
+
+### ✨ Nuove Funzionalità
+
+#### `Orm/BaseClasses/BaseAdapter::escapeIdentifier()` — cifre ammesse negli identificatori SQL
+
+`NotationManager` trattava già i numeri come parte della parola che li precede nelle conversioni tra `StudlyCaps`/`camelCase` e `snake_case`/`kebab-case` (`Oauth2Client` ↔ `oauth2_client`, `sha256Hash` ↔ `sha256_hash`, `b2bCustomer` ↔ `b2b_customer`), ma `BaseAdapter::escapeIdentifier()` rimuoveva qualsiasi carattere diverso da lettere e underscore (`/([^a-zA-Z_]+)/`). Di conseguenza le cifre venivano eliminate dai nomi di tabelle e colonne generati da `escapeTable()` ed `escapeColumn()`, e dagli alias delle `JOIN` generati da `buildJoinOnForeignKey()`, impedendo anche l'idratazione delle entità correlate su proprietà foreign key contenenti numeri.
+
+`escapeIdentifier()` conserva ora anche le cifre (`/([^a-zA-Z0-9_]+)/`), consentendo l'uso di numeri nei nomi di entità, proprietà, tabelle, colonne e alias, purché nel database il numero faccia parte della parola che lo precede senza un underscore aggiuntivo prima della cifra.
+
+### 📖 Documentazione
+
+#### `docs/conventions.md` e `docs/helper-classes.md` — convenzione sui numeri nei nomi
+
+Documentata la regola di conversione per i nomi contenenti cifre tra `StudlyCaps`/`camelCase` e `snake_case`/`kebab-case`.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseAdapter.php`**: `escapeIdentifier()` mantiene i caratteri numerici `[0-9]` oltre a lettere e underscore
+- **`Tests/Orm/Adapters/AdapterMysqlTest.php`**: aggiornato `testEscapeIdentifier()` e aggiunte le verifiche con cifre in `testEscapeTable()` e `testEscapeColumn()`
+- **`Tests/Core/HelperClasses/NotationManagerTest.php`**: aggiunti i casi con cifre nei test di conversione tra notazioni e aggiunto `testConvertToUpperSnakeCase()` e `testConvertPropertyNameToColumnName()`
+- **`docs/conventions.md`**, **`docs/helper-classes.md`**: documentata la convenzione sui numeri nei nomi di entità, proprietà, tabelle e colonne
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: i nomi privi di cifre producono gli stessi identificatori SQL di prima.
+- **Cambiamento di comportamento osservabile**: `BaseAdapter::escapeIdentifier()`, `escapeTable()` ed `escapeColumn()` mantengono ora le cifre presenti nel nome invece di rimuoverle.
+
+---
+
+## [12.13.2] - 2026-10-19 - Comando `sisma` su un Progetto Privo di Configurazione
+
+Patch che consente di eseguire il comando `sisma`, e in particolare `sisma install`, in un progetto che non ha ancora il file `Config/configFramework.php`.
+
+### 🐛 Bug Fix
+
+#### `Console/sisma` — `Undefined constant "Config\SYSTEM_PATH"` senza `configFramework.php`
+
+Lo script carica il `Config/configFramework.php` del progetto, che dichiara le costanti nel namespace `Config`, oppure, se il file non esiste, il `Config/config.php` del framework, che le dichiara nel namespace `SismaFramework\Config`. Il controllo sulla struttura del progetto leggeva però sempre `\Config\SYSTEM_PATH`, che nel secondo caso non è definita. Ogni comando terminava quindi con `Error: Undefined constant "Config\SYSTEM_PATH"`, compreso `sisma install`, che crea proprio `configFramework.php`: su un progetto nuovo l'installazione non poteva mai essere eseguita. Lo script legge ora il percorso da `Config::getInstance()->systemPath`, che usa la costante del progetto se definita e altrimenti quella del framework, come il resto del codice.
+
+**File modificati**:
+- **`Console/sisma`**: `checkIsProjectDirectory()` riceve `Config::getInstance()->systemPath` al posto di `\Config\SYSTEM_PATH`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: nei progetti con `configFramework.php` il percorso letto è lo stesso di prima.
+
+---
+
 ## [12.13.1] - 2026-10-19 - Chiusura e Riconnessione dell'Adapter MySQL e Validazione dell'ID Generato
 
 Patch che corregge `AdapterMysql::close()`, mai funzionante, e la riconnessione dopo la chiusura, e che rifiuta gli ID non validi restituiti dal database dopo un inserimento invece di assegnarli all'entità.
