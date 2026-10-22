@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.14.1] - 2026-10-22 - Esempi di Configurazione Non Validi nelle Best Practices
+
+Patch della documentazione che corregge due esempi della sezione "Best Practices" di `docs/configuration-reference.md` che non compilavano.
+
+### 📖 Documentazione
+
+#### `docs/configuration-reference.md` — costanti dichiarate con `const` dentro un blocco `if` e con `$_ENV`
+
+L'esempio "Configurazione per Performance" dichiarava `ORM_CACHE`, `LOG_VERBOSE_ACTIVE` e i limiti del log con `const` dentro due blocchi `if (DEVELOPMENT_ENVIRONMENT)`, mentre `const` può essere usata solo al livello più esterno di un file o di un namespace. L'esempio "Gestione Password e Chiavi" indicava come forma corretta `const DATABASE_PASSWORD = $_ENV['DB_PASSWORD'] ?? '';`, ma `const` accetta solo espressioni costanti, e `$_ENV` non lo è. Entrambi gli esempi producevano un errore fatale di compilazione.
+
+Il primo esempio usa ora espressioni costanti su `DEVELOPMENT_ENVIRONMENT` (`const ORM_CACHE = !DEVELOPMENT_ENVIRONMENT;`) e dichiara entrambi i limiti del log, perché `Logger` e `SismaLogger` scelgono l'uno o l'altro in base all'ambiente. Il secondo usa `define()` con `getenv()`, lo stesso schema di `Config/config.php`, con i nomi delle variabili d'ambiente letti dal framework (`DATABASE_PASSWORD`, `ENCRYPTION_PASSPHRASE`).
+
+**File modificati**:
+- **`docs/configuration-reference.md`**: corretti gli esempi "Gestione Password e Chiavi" e "Configurazione per Performance" della sezione "Best Practices"
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la modifica riguarda solo la documentazione.
+
+---
+
 ## [12.14.0] - 2026-10-20 - Numeri nei Nomi di Entità, Proprietà, Tabelle e Colonne
 
 Minor release che abilita l'uso dei numeri nei nomi di entità, proprietà, tabelle, colonne e alias delle `JOIN`.
