@@ -68,6 +68,7 @@ class Upgrade12to13Strategy implements UpgradeStrategyInterface
             'BaseCommand: configure(), deprecated in 12.5.0, removed; help(): string is now abstract and must be implemented by every command (manual, before upgrading: unmigrated commands prevent the console from starting)',
             'CustomDateTimeInterface: now extends CustomTypeInterface; classes implementing it must declare equals(CustomTypeInterface $other): bool instead of equals(CustomDateTimeInterface $other): bool (manual)',
             'BaseEntity: shared initializationVector, deprecated in 12.11.0, removed; every encrypted property needs its own <property>InitializationVector property and column, and existing rows must be re-encrypted (manual, before upgrading: values without their own initialization vector are returned still encrypted)',
+            'DEVELOPMENT_ENVIRONMENT: read from the DEVELOPMENT_ENVIRONMENT environment variable in Config/config.php and false when the variable is not set; existing Config/configFramework.php files are not changed, set the variable in development environments for new installations (manual)',
         ];
     }
 

@@ -6,11 +6,10 @@ Mettere un'applicazione in produzione richiede alcuni passaggi aggiuntivi rispet
 
 ### 1. Imposta l'Ambiente di Produzione
 
-Questa è l'impostazione più importante. Nel tuo file `Config/config.php`, assicurati che `DEVELOPMENT_ENVIRONMENT` sia impostato su `false`.
+Questa è l'impostazione più importante. `Config/config.php` legge `DEVELOPMENT_ENVIRONMENT` dalla variabile d'ambiente omonima e, se questa è assente, attiva l'ambiente di produzione. Assicurati quindi che sul server di produzione la variabile non sia impostata, oppure che valga `false`.
 
-```php
-// in Config/config.php
-const DEVELOPMENT_ENVIRONMENT = false;
+```bash
+DEVELOPMENT_ENVIRONMENT=false
 ```
 
 Questa modifica ha diversi effetti critici:

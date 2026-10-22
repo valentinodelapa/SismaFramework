@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0 e la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà.
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, e la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default.
 
 ### 💥 Breaking Changes
 
@@ -140,6 +140,30 @@ protected ?string $privateKeyInitializationVector = null;
 - **`UPGRADING.md`**: aggiunto il breaking change 5 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
 - **`docs/orm.md`**: la sezione "Proprietà Cifrate" documenta il solo vettore per proprietà e rimanda alla procedura di migrazione
 
+#### `Config/config.php` — `DEVELOPMENT_ENVIRONMENT` letta dalla variabile d'ambiente, produzione come default
+
+`DEVELOPMENT_ENVIRONMENT` era l'unica impostazione dipendente dall'ambiente ancora scritta come letterale nel file versionato, con default `true`: un deployment che non la modificava esponeva in produzione stack trace, debug bar e log verbosi. Come le credenziali del database e `ENCRYPTION_PASSPHRASE`, la costante è ora risolta tramite `getenv()`, e il valore viene convertito con `FILTER_VALIDATE_BOOLEAN`, perché `getenv()` restituisce stringhe e `"false"` sarebbe altrimenti interpretata come vera. `true`, `1`, `on` e `yes` attivano l'ambiente di sviluppo; qualsiasi altro valore o la variabile assente attivano l'ambiente di produzione.
+
+**Prima (12.x)**:
+```php
+const DEVELOPMENT_ENVIRONMENT = true;
+```
+
+**Dopo (13.x)**:
+```php
+define(__NAMESPACE__ . '\DEVELOPMENT_ENVIRONMENT', filter_var(getenv('DEVELOPMENT_ENVIRONMENT'), FILTER_VALIDATE_BOOLEAN));
+```
+
+**File modificati**:
+- **`Config/config.php`**: `DEVELOPMENT_ENVIRONMENT` convertita da `const` a `define()` con `filter_var(getenv('DEVELOPMENT_ENVIRONMENT'), FILTER_VALIDATE_BOOLEAN)`
+- **`.env.example`**: aggiunta `DEVELOPMENT_ENVIRONMENT=true` con la descrizione dei valori accettati
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: aggiunta la voce corrispondente a `getBreakingChanges()`
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: aggiornati il numero atteso di breaking change e le voci attese
+- **`UPGRADING.md`**: aggiunto il breaking change 6 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
+- **`docs/configuration-reference.md`**, **`docs/deployment.md`**, **`docs/debug-bar.md`**: documentata la lettura della costante dalla variabile d'ambiente e il nuovo default
+
+**Migrazione**: Nei progetti installati con la 13, impostare `DEVELOPMENT_ENVIRONMENT=true` negli ambienti di sviluppo. I `Config/configFramework.php` esistenti non vengono modificati dall'aggiornamento. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
+
 **Migrazione**: Sulla 12.11.x, prima dell'aggiornamento, aggiungere a ogni entità e tabella il vettore di ciascuna proprietà cifrata e ricifrare tutte le righe esistenti salvando di nuovo le entità, verificando che nessun valore cifrato abbia il vettore proprio a `NULL`. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
 
 ### 🐛 Bug Fix
@@ -166,6 +190,7 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 - **Breaking change per i comandi console dei moduli**: un comando che non implementa `help(): string` provoca un fatal error al caricamento, che blocca l'intera console.
 - **Breaking change per i tipi custom di data e ora applicativi**: una classe che implementa `CustomDateTimeInterface` dichiarando `equals(CustomDateTimeInterface $other)` provoca un fatal error al caricamento; il codice che usa soltanto `SismaDate`, `SismaDateTime` e `SismaTime` non è interessato.
 - **Breaking change per le entità con proprietà cifrate**: le entità che dichiarano solo `initializationVector` salvano le proprietà cifrate in chiaro, e i valori cifrati con il vettore condiviso vengono letti come testo cifrato, senza errori; i dati vanno migrati sulla 12.11.x prima dell'aggiornamento.
+- **Breaking change per le nuove installazioni**: senza la variabile d'ambiente `DEVELOPMENT_ENVIRONMENT` l'applicazione gira in modalità produzione; i `Config/configFramework.php` dei progetti esistenti non sono interessati.
 - **Cambiamento di comportamento di `sisma upgrade`**: i file in `Console/Commands` dei moduli vengono ora elaborati da tutti i transformer della strategia applicata.
 
 ---

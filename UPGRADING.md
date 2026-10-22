@@ -15,7 +15,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 > **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
 
-La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface` e rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà.
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`, rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà, e legge `DEVELOPMENT_ENVIRONMENT` da una variabile d'ambiente, con l'ambiente di produzione come default.
 
 ### Breaking Changes
 
@@ -235,6 +235,31 @@ class Certificate extends BaseEntity
 
 Questa modifica non è gestita da `sisma upgrade`, perché richiede di modificare lo schema del database e di ricifrare i dati.
 
+#### 6. `DEVELOPMENT_ENVIRONMENT` letta dalla variabile d'ambiente, produzione come default
+
+**Impatto**: Basso, per le nuove installazioni e per chi allinea il proprio `configFramework.php` al `config.php` del modulo
+**Componenti interessati**: Costante `DEVELOPMENT_ENVIRONMENT` in `Config/config.php`
+
+Come già avviene per le credenziali del database e per `ENCRYPTION_PASSPHRASE`, `DEVELOPMENT_ENVIRONMENT` è risolta tramite `getenv()`. Il valore viene convertito con `FILTER_VALIDATE_BOOLEAN`: `true`, `1`, `on` e `yes` attivano l'ambiente di sviluppo, qualsiasi altro valore o la variabile assente attivano l'ambiente di produzione. Il default passa quindi da `true` a `false`, così un deployment in cui la variabile non viene impostata non espone stack trace e debug bar.
+
+**Prima (12.x)**:
+```php
+const DEVELOPMENT_ENVIRONMENT = true;
+```
+
+**Dopo (13.x)**:
+```php
+define(__NAMESPACE__ . '\DEVELOPMENT_ENVIRONMENT', filter_var(getenv('DEVELOPMENT_ENVIRONMENT'), FILTER_VALIDATE_BOOLEAN));
+```
+
+I `Config/configFramework.php` dei progetti esistenti, generati in installazione, non vengono modificati dall'aggiornamento e continuano a usare il valore che contengono.
+
+**Azione richiesta**:
+- Nei progetti installati con la 13, impostare `DEVELOPMENT_ENVIRONMENT=true` negli ambienti di sviluppo (Docker `env_file`, `SetEnv` del web server, `systemd EnvironmentFile`, export manuale, ecc.), altrimenti l'applicazione gira in modalità produzione
+- Facoltativamente, nei progetti esistenti, sostituire in `Config/configFramework.php` la costante con la versione basata su `getenv()`, impostando la variabile negli ambienti di sviluppo e verificando che sia assente o `false` in produzione
+
+Questa modifica non è gestita da `sisma upgrade`, perché riguarda la configurazione dell'ambiente di esecuzione.
+
 ### Checklist di Migrazione
 
 - [ ] **Form applicativi che estendono `BaseForm`**
@@ -253,6 +278,9 @@ Questa modifica non è gestita da `sisma upgrade`, perché richiede di modificar
   - [ ] Aggiunte le colonne `<proprietà>_initialization_vector` e le proprietà `<proprietà>InitializationVector`
   - [ ] Ricifrate tutte le righe esistenti e verificato che nessun valore cifrato abbia il vettore proprio a `NULL`
   - [ ] Dopo l'aggiornamento, rimossi la proprietà `initializationVector` e la colonna `initialization_vector`
+- [ ] **Ambiente di sviluppo**
+  - [ ] Impostata `DEVELOPMENT_ENVIRONMENT=true` negli ambienti di sviluppo dei progetti che leggono la costante da `getenv()`
+  - [ ] Verificato che in produzione la variabile sia assente o `false`
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari
   - [ ] Verificato che tutti i form dell'applicazione validino correttamente

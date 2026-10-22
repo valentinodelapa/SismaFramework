@@ -4,12 +4,10 @@ SismaFramework include una barra di debug integrata, uno strumento indispensabil
 
 ## Attivazione
 
-Per visualizzare la barra di debug, è sufficiente abilitare l'ambiente di sviluppo nel file `Config/config.php`:
+Per visualizzare la barra di debug, è sufficiente abilitare l'ambiente di sviluppo impostando la variabile d'ambiente letta da `Config/config.php`:
 
-```php
-// in Config/config.php
-const DEVELOPMENT_ENVIRONMENT = true;
-
+```bash
+DEVELOPMENT_ENVIRONMENT=true
 ```
 
 Sezioni della Barra

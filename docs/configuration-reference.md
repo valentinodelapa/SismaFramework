@@ -30,8 +30,8 @@ Il default è il valore calcolato nel file del modulo: per le costanti derivate 
 ### Ambiente e Debug
 
 ```php
-// Abilita ambiente di sviluppo
-const DEVELOPMENT_ENVIRONMENT = true;
+// Abilita ambiente di sviluppo se la variabile d'ambiente DEVELOPMENT_ENVIRONMENT è true/1/on/yes
+define(__NAMESPACE__ . '\DEVELOPMENT_ENVIRONMENT', filter_var(getenv('DEVELOPMENT_ENVIRONMENT'), FILTER_VALIDATE_BOOLEAN));
 
 // Forza l'uso di HTTPS
 const HTTPS_IS_FORCED = false;
@@ -39,20 +39,22 @@ const HTTPS_IS_FORCED = false;
 
 #### DEVELOPMENT_ENVIRONMENT
 - **Tipo**: `bool`
-- **Default**: `true`
-- **Descrizione**: Controlla l'ambiente dell'applicazione
+- **Default**: `false` (letta da `getenv('DEVELOPMENT_ENVIRONMENT')`)
+- **Descrizione**: Controlla l'ambiente dell'applicazione. Il valore della variabile d'ambiente viene convertito con `FILTER_VALIDATE_BOOLEAN`: `true`, `1`, `on` e `yes` attivano l'ambiente di sviluppo, qualsiasi altro valore o la variabile assente attivano l'ambiente di produzione
 - **Effetti**:
   - `true`: Mostra errori dettagliati, abilita debug bar
   - `false`: Nasconde errori, disabilita debug, ambiente produzione
 
 **Esempio**:
-```php
-// Sviluppo
-const DEVELOPMENT_ENVIRONMENT = true;
+```bash
+# Sviluppo
+DEVELOPMENT_ENVIRONMENT=true
 
-// Produzione
-const DEVELOPMENT_ENVIRONMENT = false;
+# Produzione: variabile assente oppure
+DEVELOPMENT_ENVIRONMENT=false
 ```
+
+L'assenza della variabile equivale alla produzione, così un deployment in cui non viene impostata non espone stack trace e debug bar.
 
 #### HTTPS_IS_FORCED
 - **Tipo**: `bool`
