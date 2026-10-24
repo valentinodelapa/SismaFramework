@@ -25,11 +25,10 @@ Assicurati che la configurazione del tuo web server (es. il file `.htaccess` per
 
 Per la sicurezza, è fondamentale che la tua applicazione giri su HTTPS in produzione. Il reindirizzamento da HTTP a HTTPS va configurato nel web server, per esempio con una regola di riscrittura nel `.htaccess` o nel virtual host: il framework non lo esegue.
 
-Se il TLS è terminato da un reverse proxy, un load balancer o una CDN, PHP riceve la richiesta in HTTP e il framework non può riconoscere che l'utente sta usando HTTPS. In questo caso imposta la seguente costante, così gli URL assoluti usano `https://` e il cookie di sessione riceve l'attributo `secure`:
+Se il TLS è terminato da un reverse proxy, un load balancer o una CDN, PHP riceve la richiesta in HTTP e il framework non può riconoscere che l'utente sta usando HTTPS. In questo caso imposta la variabile d'ambiente letta da `Config/config.php`, così gli URL assoluti usano `https://` e il cookie di sessione riceve l'attributo `secure`:
 
-```php
-// in Config/config.php
-const HTTPS_IS_FORCED = true;
+```bash
+HTTPS_IS_FORCED=true
 ```
 
 Se il server serve direttamente HTTPS non serve impostarla: il protocollo viene rilevato dalla richiesta.

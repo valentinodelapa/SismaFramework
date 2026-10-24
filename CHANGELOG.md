@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, e la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default.
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default e la lettura di `HTTPS_IS_FORCED` da variabile d'ambiente.
 
 ### 💥 Breaking Changes
 
@@ -166,6 +166,27 @@ define(__NAMESPACE__ . '\DEVELOPMENT_ENVIRONMENT', filter_var(getenv('DEVELOPMEN
 
 **Migrazione**: Sulla 12.11.x, prima dell'aggiornamento, aggiungere a ogni entità e tabella il vettore di ciascuna proprietà cifrata e ricifrare tutte le righe esistenti salvando di nuovo le entità, verificando che nessun valore cifrato abbia il vettore proprio a `NULL`. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
 
+### ✨ Nuove Funzionalità
+
+#### `Config/config.php` — `HTTPS_IS_FORCED` letta dalla variabile d'ambiente
+
+Come `DEVELOPMENT_ENVIRONMENT`, anche `HTTPS_IS_FORCED` dipende dall'infrastruttura su cui gira l'applicazione e non dal codice: vale `false` in sviluppo e su un server che serve direttamente HTTPS, e `true` dietro un reverse proxy, un load balancer o una CDN che terminano il TLS. La costante è ora risolta tramite `getenv()`, con la stessa conversione `FILTER_VALIDATE_BOOLEAN` di `DEVELOPMENT_ENVIRONMENT`. Il default resta `false`: senza la costante il protocollo viene rilevato dalla richiesta, mentre un default `true` renderebbe `Secure` il cookie di sessione, che il browser scarta, su qualsiasi ambiente servito in HTTP.
+
+**Prima (12.x)**:
+```php
+const HTTPS_IS_FORCED = false;
+```
+
+**Dopo (13.x)**:
+```php
+define(__NAMESPACE__ . '\HTTPS_IS_FORCED', filter_var(getenv('HTTPS_IS_FORCED'), FILTER_VALIDATE_BOOLEAN));
+```
+
+**File modificati**:
+- **`Config/config.php`**: `HTTPS_IS_FORCED` convertita da `const` a `define()` con `filter_var(getenv('HTTPS_IS_FORCED'), FILTER_VALIDATE_BOOLEAN)`
+- **`.env.example`**: aggiunta `HTTPS_IS_FORCED=false` con la descrizione dei valori accettati
+- **`docs/configuration-reference.md`**, **`docs/deployment.md`**: documentata la lettura della costante dalla variabile d'ambiente
+
 ### 🐛 Bug Fix
 
 #### `Console/Services/Upgrade/Utils/FileScanner` — i comandi console dei moduli non venivano elaborati da `sisma upgrade`
@@ -191,6 +212,7 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 - **Breaking change per i tipi custom di data e ora applicativi**: una classe che implementa `CustomDateTimeInterface` dichiarando `equals(CustomDateTimeInterface $other)` provoca un fatal error al caricamento; il codice che usa soltanto `SismaDate`, `SismaDateTime` e `SismaTime` non è interessato.
 - **Breaking change per le entità con proprietà cifrate**: le entità che dichiarano solo `initializationVector` salvano le proprietà cifrate in chiaro, e i valori cifrati con il vettore condiviso vengono letti come testo cifrato, senza errori; i dati vanno migrati sulla 12.11.x prima dell'aggiornamento.
 - **Breaking change per le nuove installazioni**: senza la variabile d'ambiente `DEVELOPMENT_ENVIRONMENT` l'applicazione gira in modalità produzione; i `Config/configFramework.php` dei progetti esistenti non sono interessati.
+- **`HTTPS_IS_FORCED`**: con la variabile d'ambiente assente la costante vale `false`, come il default precedente; i `Config/configFramework.php` dei progetti esistenti non sono interessati.
 - **Cambiamento di comportamento di `sisma upgrade`**: i file in `Console/Commands` dei moduli vengono ora elaborati da tutti i transformer della strategia applicata.
 
 ---
