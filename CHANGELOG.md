@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.17] - 2026-10-24 - Descrizione di `HTTPS_IS_FORCED` nella Documentazione
+
+Patch della documentazione che corregge la descrizione di `HTTPS_IS_FORCED`, presentata come un redirect da HTTP a HTTPS.
+
+### 📖 Documentazione
+
+#### `docs/configuration-reference.md` e `docs/deployment.md` — `HTTPS_IS_FORCED` descritta come redirect da HTTP a HTTPS
+
+La documentazione descriveva `HTTPS_IS_FORCED` come la costante che forza il redirect da HTTP a HTTPS, da impostare a `true` in produzione per sicurezza. La costante non esegue alcun redirect: in `Communication::getCommunicationProtocol()` fa considerare HTTPS ogni richiesta, senza leggere `$_SERVER['HTTPS']` e `SERVER_PORT`, e determina così il protocollo degli URL assoluti generati dal router e l'attributo `secure` del cookie di sessione. Senza la costante il protocollo viene già rilevato dalla richiesta: serve quindi solo quando il TLS è terminato da un reverse proxy, un load balancer o una CDN, che inoltrano a PHP la richiesta in HTTP. Su un ambiente servito in HTTP, impostarla come suggerito rendeva il cookie di sessione `Secure`, che il browser scarta, e puntava gli URL assoluti a `https://`. La documentazione descrive ora il comportamento reale e indica che il redirect va configurato nel web server.
+
+**File modificati**:
+- **`docs/configuration-reference.md`**: corretti la descrizione di `HTTPS_IS_FORCED` e il commento dell'esempio della sezione "Ambiente e Debug"
+- **`docs/deployment.md`**: la sezione "Forza l'HTTPS" indica che il redirect va configurato nel web server e quando impostare `HTTPS_IS_FORCED`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la modifica riguarda solo la documentazione.
+
+---
+
 ## [11.9.16]
 
 Patch 11.9.16, non ancora rilasciata, che riporta sulla 11.x le correzioni di bug e di sicurezza delle versioni dalla 12.3.1 alla 12.13.1 che riguardano codice presente anche nella 11. Non sono riportate le correzioni legate a funzionalità introdotte nella 12.x: le chiavi di localizzazione composte degli enum (12.2.0), le colonne JSON (12.7.0) e il caricamento di `Config/config.php` nel namespace del modulo (12.13.2).
