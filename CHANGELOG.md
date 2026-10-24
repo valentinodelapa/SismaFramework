@@ -195,6 +195,26 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 
 ---
 
+## [12.14.2] - 2026-10-24 - Descrizione di `HTTPS_IS_FORCED` nella Documentazione
+
+Patch della documentazione che corregge la descrizione di `HTTPS_IS_FORCED`, presentata come un redirect da HTTP a HTTPS.
+
+### 📖 Documentazione
+
+#### `docs/configuration-reference.md` e `docs/deployment.md` — `HTTPS_IS_FORCED` descritta come redirect da HTTP a HTTPS
+
+La documentazione descriveva `HTTPS_IS_FORCED` come la costante che forza il redirect da HTTP a HTTPS, da impostare a `true` in produzione per sicurezza. La costante non esegue alcun redirect: in `Communication::getCommunicationProtocol()` fa considerare HTTPS ogni richiesta, senza leggere `$_SERVER['HTTPS']` e `SERVER_PORT`, e determina così il protocollo degli URL assoluti generati dal router e l'attributo `secure` del cookie di sessione. Senza la costante il protocollo viene già rilevato dalla richiesta: serve quindi solo quando il TLS è terminato da un reverse proxy, un load balancer o una CDN, che inoltrano a PHP la richiesta in HTTP. Su un ambiente servito in HTTP, impostarla come suggerito rendeva il cookie di sessione `Secure`, che il browser scarta, e puntava gli URL assoluti a `https://`. La documentazione descrive ora il comportamento reale e indica che il redirect va configurato nel web server.
+
+**File modificati**:
+- **`docs/configuration-reference.md`**: corretti la descrizione di `HTTPS_IS_FORCED` e il commento dell'esempio della sezione "Ambiente e Debug"
+- **`docs/deployment.md`**: la sezione "Forza l'HTTPS" indica che il redirect va configurato nel web server e quando impostare `HTTPS_IS_FORCED`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la modifica riguarda solo la documentazione.
+
+---
+
 ## [12.14.1] - 2026-10-22 - Esempi di Configurazione Non Validi nelle Best Practices
 
 Patch della documentazione che corregge due esempi della sezione "Best Practices" di `docs/configuration-reference.md` che non compilavano.
