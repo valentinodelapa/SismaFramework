@@ -33,7 +33,7 @@ Il default è il valore calcolato nel file del modulo: per le costanti derivate 
 // Abilita ambiente di sviluppo
 const DEVELOPMENT_ENVIRONMENT = true;
 
-// Forza l'uso di HTTPS
+// Considera HTTPS ogni richiesta, per il TLS terminato da un proxy
 const HTTPS_IS_FORCED = false;
 ```
 
@@ -57,8 +57,8 @@ const DEVELOPMENT_ENVIRONMENT = false;
 #### HTTPS_IS_FORCED
 - **Tipo**: `bool`
 - **Default**: `false`
-- **Descrizione**: Forza il redirect da HTTP a HTTPS
-- **Uso**: Impostare `true` in produzione per sicurezza
+- **Descrizione**: Fa considerare HTTPS ogni richiesta, senza leggere `$_SERVER['HTTPS']` e `SERVER_PORT`. Determina il protocollo degli URL assoluti generati dal router e l'attributo `secure` del cookie di sessione. Non esegue alcun redirect da HTTP a HTTPS, che va configurato nel web server
+- **Uso**: Impostare `true` quando il TLS è terminato da un reverse proxy, un load balancer o una CDN, che inoltrano a PHP la richiesta in HTTP. Con `false` il protocollo viene rilevato dalla richiesta, quindi un server che serve direttamente HTTPS non richiede di impostarla. Su un ambiente servito in HTTP va lasciata a `false`: il browser scarterebbe il cookie di sessione `Secure` e gli URL assoluti punterebbero a `https://`
 
 ### Lingua e Localizzazione
 
