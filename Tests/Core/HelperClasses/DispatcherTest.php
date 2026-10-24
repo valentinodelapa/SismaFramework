@@ -118,6 +118,7 @@ class DispatcherTest extends TestCase
         $dispatcher = $this->createDispatcherWithResourceMakerMock();
         $this->requestMock->server['REQUEST_URI'] = 'sample/error?message=error';
         $this->requestMock->server['QUERY_STRING'] = 'message=error';
+        $this->requestMock->query = ['message' => 'error'];
         $this->resourceMakerMock->expects($this->once())
                 ->method('isAcceptedResourceFile')
                 ->willReturn(false);
@@ -382,6 +383,54 @@ class DispatcherTest extends TestCase
         $this->requestMock->server['REQUEST_URI'] = '/slug/real-action-with-1-number-in-name/';
         $dispatcher = $this->createDispatcherWithResourceMakerStub();
         $this->assertInstanceOf(Response::class, $dispatcher->run());
+    }
+
+    public function testPostWithQueryStringDoesNotReload()
+    {
+        $this->expectOutputRegex('/(?=.*sample - notify)(?=.*post message)/s');
+        $this->requestMock->server['REQUEST_METHOD'] = 'POST';
+        $this->requestMock->server['REQUEST_URI'] = '/notify?message=post+message';
+        $this->requestMock->server['QUERY_STRING'] = 'message=post+message';
+        $this->requestMock->query = ['message' => 'post message'];
+        $dispatcher = $this->createDispatcherWithResourceMakerStub();
+        $this->assertInstanceOf(Response::class, $dispatcher->run());
+    }
+
+    public function testPathWithTrailingEmptyParameter()
+    {
+        $this->expectOutputRegex('/(?=.*other - index)/s');
+        $this->requestMock->server['REQUEST_URI'] = '/other/parameter//';
+        $dispatcher = $this->createDispatcherWithResourceMakerStub();
+        $this->assertInstanceOf(Response::class, $dispatcher->run());
+        $this->assertSame(['parameter' => ''], $this->requestMock->query);
+    }
+
+
+    public function testPathWithMultipleTrailingSlashes()
+    {
+        $this->expectOutputRegex('/(?=.*sample - index)/s');
+        $this->requestMock->server['REQUEST_URI'] = '/sample/index///';
+        $dispatcher = $this->createDispatcherWithResourceMakerStub();
+        $this->assertInstanceOf(Response::class, $dispatcher->run());
+        $this->assertSame([], $this->requestMock->query);
+    }
+
+    public function testPathWithEmptyValueFollowedByOtherParameters()
+    {
+        $this->expectOutputRegex('/(?=.*sample - index)/s');
+        $this->requestMock->server['REQUEST_URI'] = '/sample/index/q//page/2/';
+        $dispatcher = $this->createDispatcherWithResourceMakerStub();
+        $this->assertInstanceOf(Response::class, $dispatcher->run());
+        $this->assertSame(['q' => '', 'page' => '2'], $this->requestMock->query);
+    }
+
+    public function testPathWithNestedArrayParameters()
+    {
+        $this->expectOutputRegex('/(?=.*sample - index)/s');
+        $this->requestMock->server['REQUEST_URI'] = '/sample/index/filter%5Bstatus%5D/active/filter%5Btags%5D%5B%5D/php/filter%5Btags%5D%5B%5D/orm/';
+        $dispatcher = $this->createDispatcherWithResourceMakerStub();
+        $this->assertInstanceOf(Response::class, $dispatcher->run());
+        $this->assertSame(['filter' => ['status' => 'active', 'tags' => ['php', 'orm']]], $this->requestMock->query);
     }
 
     public function tearDown(): void

@@ -209,10 +209,10 @@ class DataMapper
         $parsedValue = Parser::unparseValue($currentValue);
         if ($entity->isEncryptedProperty($reflectionProperty->getName()) && ($parsedValue !== null)) {
             $initializationVectorPropertyName = $entity->getInitializationVectorPropertyName();
-            if (empty($entity->$initializationVectorPropertyName)) {
-                $entity->{$entity->getInitializationVectorPropertyName()} = Encryptor::createInitializationVector();
-            }
             if ($query->hasColumn($initializationVectorPropertyName) === false) {
+                if ($this->initializationVectorIsRenewable($entity)) {
+                    $entity->$initializationVectorPropertyName = Encryptor::createInitializationVector();
+                }
                 $query->appendColumnValue($initializationVectorPropertyName);
                 $bindTypes[] = DataType::typeBinary;
                 $bindValues[] = Parser::unparseValue($entity->$initializationVectorPropertyName);
@@ -222,6 +222,22 @@ class DataMapper
         $bindTypes[] = DataType::fromReflection($reflectionProperty->getType(), $parsedValue);
         $query->appendColumnValue($reflectionProperty->getName(), Placeholder::placeholder, is_subclass_of($reflectionProperty->getType()->getName(), BaseEntity::class));
         $bindValues[] = $parsedValue;
+    }
+
+    private function initializationVectorIsRenewable(BaseEntity $entity): bool
+    {
+        if (empty($entity->{$entity->getInitializationVectorPropertyName()})) {
+            return true;
+        }
+        $reflectionClass = new \ReflectionClass($entity);
+        foreach ($reflectionClass->getProperties() as $reflectionProperty) {
+            if (BaseEntity::checkFinalClassReflectionProperty($reflectionProperty) &&
+                    $entity->isEncryptedProperty($reflectionProperty->getName()) &&
+                    ($reflectionProperty->isInitialized($entity) === false)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private function parseForeignKeyIndexes(BaseEntity $entity, Query $query, array &$bindValues, array &$bindTypes): void

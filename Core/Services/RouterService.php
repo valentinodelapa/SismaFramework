@@ -26,6 +26,7 @@
 
 namespace SismaFramework\Core\Services;
 
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HttpClasses\Communication;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
@@ -134,16 +135,45 @@ class RouterService
         $this->metaUrl = "";
     }
 
-    public function reloadWithParsedQueryString(Request $request = new Request()): Response
+    public function reloadWithParsedQueryString(Request $request = new Request(), ?Config $customConfig = null): Response
     {
-        $requestUriParts = explode('?', $request->server["REQUEST_URI"], 2);
-        $baseUrl = $requestUriParts[0];
-        $this->parsedUrl = str_ends_with($baseUrl, "/") ? $baseUrl : $baseUrl . "/";
-        foreach ($request->query as $key => $value) {
-            $this->parsedUrl .= $key . "/" . urlencode($value ?? "empty") . "/";
+        $config = $customConfig ?? Config::getInstance();
+        $baseUrl = explode('?', $request->server["REQUEST_URI"], 2)[0];
+        if (trim($baseUrl, "/") === "") {
+            $this->parsedUrl = "/" . $config->defaultPath . "/" . $config->defaultAction . "/";
+        } else {
+            $this->parsedUrl = str_ends_with($baseUrl, "/") ? $baseUrl : $baseUrl . "/";
         }
+        $this->appendQueryArguments($request->query);
         header("Location: " . $this->metaUrl . $this->parsedUrl);
         return new Response();
+    }
+
+    private function appendQueryArguments(array $queryArguments, string $keyPrefix = ""): void
+    {
+        foreach ($queryArguments as $key => $value) {
+            $fullKey = ($keyPrefix === "") ? strval($key) : $keyPrefix . "[" . $key . "]";
+            if (is_array($value) && $this->isScalarList($value)) {
+                $listKey = ($keyPrefix === "") ? $fullKey : $fullKey . "[]";
+                foreach ($value as $listValue) {
+                    $this->appendQueryArgument($listKey, $listValue);
+                }
+            } elseif (is_array($value)) {
+                $this->appendQueryArguments($value, $fullKey);
+            } else {
+                $this->appendQueryArgument($fullKey, $value);
+            }
+        }
+    }
+
+    private function isScalarList(array $values): bool
+    {
+        return array_is_list($values) && (count(array_filter($values, 'is_array')) === 0);
+    }
+
+    private function appendQueryArgument(string $key, ?string $value): void
+    {
+        $this->parsedUrl .= urlencode($key) . "/" . urlencode($value ?? "empty") . "/";
     }
 
     public function getParsedUrl(): ?string

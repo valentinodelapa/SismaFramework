@@ -187,19 +187,19 @@ class Session
         if (count($matches[1]) > 0) {
             $match = [];
             preg_match("/^[^\\[]*/", $key, $match);
-            self::unsetItemRecursive($_SESSION[$match[0]], $matches[1]);
+            self::unsetItemRecursive($_SESSION, [$match[0], ...$matches[1]]);
         } else {
             unset($_SESSION[$key]);
         }
     }
 
-    private static function unsetItemRecursive(mixed &$currentPosition, array $keys): void
+    private static function unsetItemRecursive(array &$currentPosition, array $keys): void
     {
         $actualKey = array_shift($keys);
-        if (count($keys) > 0) {
-            self::unsetItemRecursive($currentPosition[$actualKey], $keys);
-        } else {
+        if (count($keys) === 0) {
             unset($currentPosition[$actualKey]);
+        } elseif (isset($currentPosition[$actualKey]) && is_array($currentPosition[$actualKey])) {
+            self::unsetItemRecursive($currentPosition[$actualKey], $keys);
         }
     }
 
@@ -218,17 +218,17 @@ class Session
             return unserialize($_SESSION[$key]);
         } elseif (count($matches[1]) > 0) {
             preg_match("/^[^\\[]*/", $key, $match);
-            return self::getItemRecursive($_SESSION[$match[0]], $matches[1]);
+            return self::getItemRecursive($_SESSION, [$match[0], ...$matches[1]]);
         } else {
             return $_SESSION[$key];
         }
     }
 
-    private static function getItemRecursive(mixed &$currentPosition, array $keys): mixed
+    private static function getItemRecursive(mixed $currentPosition, array $keys): mixed
     {
         $actualKey = array_shift($keys);
         if (count($keys) > 0) {
-            return self::getItemRecursive($currentPosition[$actualKey], $keys);
+            return self::getItemRecursive($currentPosition[$actualKey] ?? null, $keys);
         } else {
             return $currentPosition[$actualKey];
         }
@@ -247,17 +247,17 @@ class Session
         }
         if (count($matches[1]) > 0) {
             preg_match("/^[^\\[]*/", $key, $match);
-            return self::hasItemRecursive($_SESSION[$match[0]], $matches[1]);
+            return self::hasItemRecursive($_SESSION, [$match[0], ...$matches[1]]);
         } else {
             return isset($_SESSION[$key]);
         }
     }
 
-    private static function hasItemRecursive(mixed &$currentPosition, array $keys): bool
+    private static function hasItemRecursive(mixed $currentPosition, array $keys): bool
     {
         $actualKey = array_shift($keys);
         if (count($keys) > 0) {
-            return self::hasItemRecursive($currentPosition[$actualKey], $keys);
+            return self::hasItemRecursive($currentPosition[$actualKey] ?? null, $keys);
         } else {
             return isset($currentPosition[$actualKey]);
         }

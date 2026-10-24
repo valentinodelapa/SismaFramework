@@ -180,6 +180,18 @@ class SessionTest extends TestCase
         Session::end();
     }
 
+    public function testReadingMissingNestedItemDoesNotWriteSession()
+    {
+        Session::start($this->requestMock);
+        $sessionBefore = $_SESSION;
+        $this->assertFalse(Session::hasItem('cart[items][0]'));
+        $this->assertNull(@Session::getItem('cart[items][0]'));
+        Session::unsetItem('cart[items][0]');
+        $this->assertSame($sessionBefore, $_SESSION);
+        $this->assertFalse(Session::hasItem('cart'));
+        Session::end();
+    }
+
     public function testSessionSetUnsetSampleItemStatic()
     {
         $this->assertEquals(PHP_SESSION_NONE, session_status());

@@ -47,6 +47,8 @@ class RouterServiceTest extends TestCase
         $configStub = $this->createStub(Config::class);
         $configStub->method('__get')
                 ->willReturnMap([
+                    ['defaultAction', 'index'],
+                    ['defaultPath', 'sample'],
                     ['developmentEnvironment', true],
                     ['httpsIsForced', false],
         ]);
@@ -191,5 +193,49 @@ class RouterServiceTest extends TestCase
         $response = $service->reloadWithParsedQueryString($this->requestMock);
         
         $this->assertStringContainsString('param/empty/', $service->getParsedUrl());
+    }
+
+    public function testReloadWithParsedQueryStringHandlesArrayValues(): void
+    {
+        $service = RouterService::getInstance();
+        $this->requestMock->server['REQUEST_URI'] = '/other/action-with-array?array[]=first&array[]=second';
+        $this->requestMock->query = [
+            "array" => ["first", "second"],
+        ];
+
+        $response = $service->reloadWithParsedQueryString($this->requestMock);
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals('/other/action-with-array/array/first/array/second/', $service->getParsedUrl());
+    }
+
+    public function testReloadWithParsedQueryStringHandlesNestedArrayValues(): void
+    {
+        $service = RouterService::getInstance();
+        $this->requestMock->server['REQUEST_URI'] = '/other/action-with-array?filter[status]=active&filter[tags][]=php&filter[tags][]=orm';
+        $this->requestMock->query = [
+            "filter" => [
+                "status" => "active",
+                "tags" => ["php", "orm"],
+            ],
+        ];
+
+        $service->reloadWithParsedQueryString($this->requestMock);
+
+        $this->assertEquals('/other/action-with-array/filter%5Bstatus%5D/active/filter%5Btags%5D%5B%5D/php/filter%5Btags%5D%5B%5D/orm/', $service->getParsedUrl());
+    }
+
+    public function testReloadWithParsedQueryStringOnRootPath(): void
+    {
+        $service = RouterService::getInstance();
+        $this->requestMock->server['REQUEST_URI'] = '/?page=2';
+        $this->requestMock->query = [
+            "page" => "2",
+        ];
+
+        $response = $service->reloadWithParsedQueryString($this->requestMock);
+
+        $this->assertInstanceOf(Response::class, $response);
+        $this->assertEquals('/sample/index/page/2/', $service->getParsedUrl());
     }
 }

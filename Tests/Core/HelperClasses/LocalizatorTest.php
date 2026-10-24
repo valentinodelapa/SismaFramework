@@ -27,8 +27,11 @@
 namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Localizator;
+use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Core\Enumerations\Resource;
 
 /**
  * @author Valentino de Lapa
@@ -101,6 +104,52 @@ class LocalizatorTest extends TestCase
     {
         Localizator::setLanguage(Language::english);
         Localizator::unsetLanguage();
-        $this->assertTrue(true); 
+        $this->assertTrue(true);
+    }
+
+    public function testGetPageLocaleArrayWithoutRootCommon()
+    {
+        $localizator = $this->getLocalizatorWithLocale(['pages' => ['sample' => ['common' => ['section' => 'Esempi'], 'index' => ['title' => 'Homepage']]]]);
+        $this->assertEquals(['section' => 'Esempi', 'title' => 'Homepage'], $localizator->getPageLocaleArray('sample/index'));
+    }
+
+    public function testGetPageLocaleArrayWithoutPagesSection()
+    {
+        $localizator = $this->getLocalizatorWithLocale(['templates' => []]);
+        $this->assertEquals([], $localizator->getPageLocaleArray('sample/index'));
+    }
+
+    public function testGetTemplateLocaleArrayWithoutTemplatesSection()
+    {
+        $localizator = $this->getLocalizatorWithLocale(['pages' => []]);
+        $this->assertEquals([], $localizator->getTemplateLocaleArray('welcome'));
+    }
+
+    protected function tearDown(): void
+    {
+        $moduleDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'LocalizatorTestModule';
+        if (is_dir($moduleDirectory)) {
+            unlink($moduleDirectory . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR . 'it_IT.json');
+            rmdir($moduleDirectory . DIRECTORY_SEPARATOR . 'Locales');
+            rmdir($moduleDirectory);
+        }
+    }
+
+    private function getLocalizatorWithLocale(array $locale): Localizator
+    {
+        $localesDirectory = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'LocalizatorTestModule' . DIRECTORY_SEPARATOR . 'Locales';
+        mkdir($localesDirectory, 0777, true);
+        file_put_contents($localesDirectory . DIRECTORY_SEPARATOR . 'it_IT.json', json_encode($locale));
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnMap([
+                    ['rootPath', sys_get_temp_dir() . DIRECTORY_SEPARATOR],
+                    ['localesPath', 'Locales' . DIRECTORY_SEPARATOR],
+        ]);
+        Config::setInstance($configStub);
+        ModuleManager::setApplicationModule('LocalizatorTestModule');
+        ModuleManager::unsetCustomVisualizationModule();
+        ModuleManager::getExistingFilePath($configStub->localesPath . Language::italian->value, Resource::json, $configStub);
+        return new Localizator(Language::italian, $configStub);
     }
 }

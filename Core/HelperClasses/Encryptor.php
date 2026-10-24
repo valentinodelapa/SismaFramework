@@ -68,7 +68,7 @@ class Encryptor
     public static function createInitializationVector(?Config $customConfig = null): string
     {
         $config = $customConfig ?? Config::getInstance();
-        return openssl_random_pseudo_bytes($config->initializationVectorBytes);
+        return random_bytes($config->initializationVectorBytes);
     }
 
     public static function encryptString(string $plainText, string $initializationVector, ?Config $customConfig = null): string

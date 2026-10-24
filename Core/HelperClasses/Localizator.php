@@ -51,14 +51,10 @@ class Localizator
 
     public function getPageLocaleArray(string $view): array
     {
-        $viewParts = \explode('/', $view);
-        $locale = $this->getLocale();
-        $actualLocale = $locale['pages'];
-        $commonLocale = $locale['pages']['common'];
-        foreach ($viewParts as $part) {
-            if (isset($actualLocale['common'])) {
-                $commonLocale = array_merge($commonLocale, $actualLocale['common']);
-            }
+        $actualLocale = $this->getLocale()['pages'] ?? [];
+        $commonLocale = [];
+        foreach (\explode('/', $view) as $part) {
+            $commonLocale = array_merge($commonLocale, $actualLocale['common'] ?? []);
             $actualLocale = $actualLocale[$part] ?? [];
         }
         return array_merge($commonLocale, $actualLocale);
@@ -79,9 +75,7 @@ class Localizator
 
     public function getTemplateLocaleArray(string $template): array
     {
-        $locale = $this->getLocale();
-        $actualLocale = array_key_exists($template, $locale['templates']) ? $locale['templates'][$template] : [];
-        return $actualLocale;
+        return $this->getLocale()['templates'][$template] ?? [];
     }
 
     public function getEnumerationLocaleArray(\UnitEnum $enumeration): string

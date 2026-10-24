@@ -40,7 +40,7 @@ class Templater
     {
         $config = $customConfig ?? Config::getInstance();
         $templatePath = ModuleManager::getExistingFilePath($config->templatesPath . $template, Resource::tpl);
-        $varsAndLocales = array_merge($vars, $localizator->getTemplateLocaleArray($template));
+        $varsAndLocales = array_merge($localizator->getTemplateLocaleArray($template), $vars);
         return self::parseTemplate($templatePath, $varsAndLocales);
     }
 

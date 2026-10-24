@@ -52,12 +52,15 @@ class ActionArgumentsParser
 
     public function parseActionArguments(array $urlArguments, array $reflectionParameters): array
     {
+        $queryArguments = [];
+        foreach ($this->request->query ?? [] as $key => $value) {
+            $queryArguments[NotationManager::convertToCamelCase($key)] = $value;
+        }
+        $associativeArguments = array_merge($queryArguments, $this->convertUrlArgumentsToAssociative($urlArguments));
+        $this->request->query = $associativeArguments;
         if (count($reflectionParameters) === 0) {
             return [];
         }
-
-        $associativeArguments = $this->convertUrlArgumentsToAssociative($urlArguments);
-        $this->request->query = $associativeArguments;
         return $this->mapArgumentsToParameters($associativeArguments, $reflectionParameters);
     }
 
@@ -65,20 +68,38 @@ class ActionArgumentsParser
     {
         $keys = [];
         $values = [];
+        $nestedQueryParts = [];
+        $this->removeLeadingEmptyArguments($urlArguments);
         while (count($urlArguments) > 1) {
-            $keys[] = NotationManager::convertToCamelCase($this->cleanArrayShift($urlArguments));
-            $values[] = urldecode(array_shift($urlArguments));
+            $key = $this->convertArgumentKey(urldecode(array_shift($urlArguments)));
+            $value = urldecode(array_shift($urlArguments));
+            if (str_contains($key, '[')) {
+                $nestedQueryParts[] = urlencode($key) . '=' . urlencode($value);
+            } else {
+                $keys[] = $key;
+                $values[] = $value;
+            }
+            $this->removeLeadingEmptyArguments($urlArguments);
         }
-        return $this->combineArrayToAssociativeArray($keys, $values);
+        parse_str(implode('&', $nestedQueryParts), $nestedArguments);
+        return array_merge($this->combineArrayToAssociativeArray($keys, $values), $nestedArguments);
     }
 
-    private function cleanArrayShift(array &$array): string
+    private function removeLeadingEmptyArguments(array &$urlArguments): void
     {
-        $element = '';
-        while ($element === '') {
-            $element = array_shift($array);
+        while (reset($urlArguments) === '') {
+            array_shift($urlArguments);
         }
-        return $element;
+    }
+
+    private function convertArgumentKey(string $key): string
+    {
+        $bracketPosition = strpos($key, '[');
+        if (($bracketPosition === false) || ($bracketPosition === 0)) {
+            return NotationManager::convertToCamelCase($key);
+        } else {
+            return NotationManager::convertToCamelCase(substr($key, 0, $bracketPosition)) . substr($key, $bracketPosition);
+        }
     }
 
     private function combineArrayToAssociativeArray(array $keys, array $values): array

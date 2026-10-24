@@ -230,8 +230,8 @@ abstract class BaseResultSet implements \Iterator
                 $reflectionType = $reflectionProperty->getType();
 
                 $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
-                if ($entity->isEncryptedProperty($property) && ($value !== null) && isset($data->$initializationVectorColumnName) && ($data->$initializationVectorColumnName !== null)) {
-                    $value = Encryptor::decryptString($value, $data->$initializationVectorColumnName) ?: $value;
+                if ($entity->isEncryptedProperty($property) && ($value !== null) && isset($data->$initializationVectorColumnName)) {
+                    $value = $this->decryptValue($value, $data->$initializationVectorColumnName);
                 }
 
                 $entity->$property = Parser::parseValue($reflectionType, $value, false);
@@ -272,13 +272,19 @@ abstract class BaseResultSet implements \Iterator
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
                 $initializationVectorColumnName = NotationManager::convertToSnakeCase($entity->getInitializationVectorPropertyName());
-                if ($entity->isEncryptedProperty($property) && ($value !== null) && ($standardClass->$initializationVectorColumnName !== null)) {
-                    $value = Encryptor::decryptString($value, $standardClass->$initializationVectorColumnName) ?: $value;
+                if ($entity->isEncryptedProperty($property) && ($value !== null) && isset($standardClass->$initializationVectorColumnName)) {
+                    $value = $this->decryptValue($value, $standardClass->$initializationVectorColumnName);
                 }
                 $entity->$property = Parser::parseValue($reflectionType, $value, false);
             }
         }
         $entity->modified = false;
         return $entity;
+    }
+
+    private function decryptValue(string $value, string $initializationVector): string
+    {
+        $decryptedValue = Encryptor::decryptString($value, $initializationVector);
+        return ($decryptedValue === false) ? $value : $decryptedValue;
     }
 }

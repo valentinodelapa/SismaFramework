@@ -729,9 +729,11 @@ class DataMapperTest extends TestCase
                         case 2:
                             $this->assertCount(4, $param2);
                             $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
-                            $this->assertEquals($initializationVector, $param2[0]);
-                            $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
-                            $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $initializationVector);
+                            $this->assertNotNull($param2[0]);
+                            $this->assertNotEquals($initializationVector, $param2[0]);
+                            $updatedInitializationVector = $param2[0];
+                            $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $updatedInitializationVector);
+                            $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $updatedInitializationVector);
                             $this->assertEquals($encryptedPropertyValueOne, $param2[1]);
                             $this->assertEquals($encryptedPropertyValueThree, $param2[2]);
                     }
@@ -829,9 +831,11 @@ class DataMapperTest extends TestCase
                         case 2:
                             $this->assertCount(4, $param2);
                             $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
-                            $this->assertEquals($initializationVector, $param2[0]);
-                            $this->assertEquals(Encryptor::encryptString($nullableValue, $initializationVector), $param2[1]);
-                            $this->assertEquals(Encryptor::encryptString($encryptedValue, $initializationVector), $param2[2]);
+                            $this->assertNotNull($param2[0]);
+                            $this->assertNotEquals($initializationVector, $param2[0]);
+                            $updatedInitializationVector = $param2[0];
+                            $this->assertEquals(Encryptor::encryptString($nullableValue, $updatedInitializationVector), $param2[1]);
+                            $this->assertEquals(Encryptor::encryptString($encryptedValue, $updatedInitializationVector), $param2[2]);
                     }
                     return true;
                 });
@@ -897,9 +901,11 @@ class DataMapperTest extends TestCase
                         case 2:
                             $this->assertCount(4, $param2);
                             $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeString, DataType::typeInteger], $param3);
-                            $this->assertEquals($initializationVector, $param2[0]);
-                            $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $initializationVector);
-                            $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $initializationVector);
+                            $this->assertNotNull($param2[0]);
+                            $this->assertNotEquals($initializationVector, $param2[0]);
+                            $updatedInitializationVector = $param2[0];
+                            $encryptedPropertyValueOne = Encryptor::encryptString($propertyValueOne, $updatedInitializationVector);
+                            $encryptedPropertyValueThree = Encryptor::encryptString($propertyValueThree, $updatedInitializationVector);
                             $this->assertEquals($encryptedPropertyValueOne, $param2[1]);
                             $this->assertEquals($encryptedPropertyValueThree, $param2[2]);
                     }
@@ -972,6 +978,31 @@ class DataMapperTest extends TestCase
         $dataMapper->save($entityWithEncryptedPropertyTwo, $this->queryMock);
         $entityWithEncryptedPropertyTwo->encryptedPropertyTwo = $propertyValueThree;
         $dataMapper->save($entityWithEncryptedPropertyTwo, $this->queryMock);
+    }
+
+    public function testUpdatePartiallyLoadedEntityKeepsInitializationVector()
+    {
+        $this->initializeStub();
+        $this->queryMock->method('getCommandToExecute')
+                ->willReturn('query');
+        $initializationVector = Encryptor::createInitializationVector();
+        $propertyValueOne = 'test-value-one';
+        $this->baseAdapterMock->expects($this->once())
+                ->method('execute')
+                ->willReturnCallback(function ($param1, $param2, $param3) use ($initializationVector, $propertyValueOne) {
+                    $this->assertEquals([DataType::typeBinary, DataType::typeString, DataType::typeInteger], $param3);
+                    $this->assertSame($initializationVector, $param2[0]);
+                    $this->assertEquals(Encryptor::encryptString($propertyValueOne, $initializationVector), $param2[1]);
+                    $this->assertSame(1, $param2[2]);
+                    return true;
+                });
+        $entityWithEncryptedPropertyOne = new EntityWithEncryptedPropertyOne();
+        $entityWithEncryptedPropertyOne->id = 1;
+        $entityWithEncryptedPropertyOne->initializationVector = $initializationVector;
+        $entityWithEncryptedPropertyOne->encryptedPropertyOne = $propertyValueOne;
+        $dataMapper = $this->createDataMapperWithMockedAdapter();
+        $dataMapper->save($entityWithEncryptedPropertyOne, $this->queryMock);
+        $this->assertSame($initializationVector, $entityWithEncryptedPropertyOne->initializationVector);
     }
 
     public function testSaveNewDependentEntityWithForeignKeyIndex()

@@ -2,6 +2,123 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.16]
+
+Patch 11.9.16, non ancora rilasciata, che riporta sulla 11.x le correzioni di bug e di sicurezza delle versioni dalla 12.3.1 alla 12.13.1 che riguardano codice presente anche nella 11. Non sono riportate le correzioni legate a funzionalità introdotte nella 12.x: le chiavi di localizzazione composte degli enum (12.2.0), le colonne JSON (12.7.0) e il caricamento di `Config/config.php` nel namespace del modulo (12.13.2).
+
+### 🛡️ Sicurezza
+
+#### `Public/index.php` — `Cache-Control: public` su tutte le risposte (12.12.0)
+
+`index.php` impostava `Pragma: cache` e `Cache-control: public` su ogni richiesta, dopo `Session::start()`, sostituendo gli header anti-cache inviati da `session_start()`. Un reverse proxy o una CDN potevano quindi mettere in cache e servire ad altri utenti pagine generate con i dati della sessione. Gli header sono stati rimossi: le pagine generate dai controller mantengono gli header anti-cache della sessione. Le risorse servite da `ResourceMaker` continuano a ricevere `Cache-Control: public` e la scadenza di 60 secondi già presente, e ora rimuovono il `Pragma: no-cache` della sessione. Diversamente dalla 12.12.0, la durata della cache delle risorse statiche non diventa configurabile.
+
+#### `Security/HttpClasses/Authentication::checkCsrfToken()` — confronto del token non a tempo costante (12.9.0)
+
+Il token inviato dal form era confrontato con quello in sessione tramite `===`, il cui tempo di esecuzione dipende dalla posizione del primo carattere diverso. Il confronto usa ora `hash_equals()`, come già `Session::isValidSession()`.
+
+#### `Orm/HelperClasses/DataMapper::parseSingleProperty()` — vettore d'inizializzazione riusato negli update (12.11.0)
+
+Il vettore d'inizializzazione veniva generato solo se l'entità non ne aveva già uno: a ogni update le proprietà cifrate venivano ricifrate con lo stesso vettore e la stessa chiave. Con `AES-256-CBC` questo rivela quando due versioni di un campo iniziano con gli stessi 16 byte. Il vettore viene ora rigenerato a ogni salvataggio. Fa eccezione un'entità caricata solo in parte: se una delle sue proprietà cifrate non è inizializzata, non verrebbe ricifrata e diventerebbe illeggibile, quindi il vettore caricato viene mantenuto, come in precedenza. Il vettore resta condiviso tra le proprietà cifrate della stessa riga: il vettore per proprietà, introdotto nella 12.11.0, è una nuova funzionalità e non viene riportato.
+
+#### `Core/HelperClasses/Encryptor::createInitializationVector()` — `random_bytes()` al posto di `openssl_random_pseudo_bytes()` (12.11.0)
+
+I vettori d'inizializzazione sono ora generati con `random_bytes()`, il generatore crittograficamente sicuro standard di PHP, che non dipende dall'estensione OpenSSL e solleva un'eccezione se non può produrre byte sicuri. `openssl_random_pseudo_bytes()` era già sicura dalla PHP 7.4 in poi: si tratta di un rafforzamento, non della correzione di vettori deboli.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Templater::generateTemplate()` — le label di localizzazione sovrascrivevano le variabili passate dal codice (12.3.1)
+
+`generateTemplate()` combinava le variabili e le label con `array_merge($vars, $locale)`, che a parità di chiave dà precedenza al secondo array: la label del file di localizzazione sostituiva la variabile passata dal chiamante, al contrario di quanto avviene nelle view con `RenderService`. L'ordine degli argomenti è stato invertito: le label sono valori di default che le variabili possono sovrascrivere.
+
+#### `Core/HelperClasses/Localizator` — sezioni e `common` radice obbligatori (12.4.0)
+
+`getPageLocaleArray()` leggeva `$locale['pages']['common']` senza verificarne l'esistenza, e `getTemplateLocaleArray()` passava `$locale['templates']` direttamente ad `array_key_exists()`: un file di localizzazione privo di `pages.common`, di `pages` o di `templates` produceva un warning seguito da un `TypeError`. Tutti e tre sono ora facoltativi, e la loro assenza equivale a una sezione vuota.
+
+#### `Orm/BaseClasses/BaseResultSet::convertToBaseEntity()` — colonna del vettore di inizializzazione assente dal risultato (12.10.0)
+
+Per una proprietà cifrata con valore non nullo, l'entità principale leggeva la colonna del vettore di inizializzazione senza verificarne la presenza: se la query non la selezionava, l'accesso sollevava il warning `Undefined property` su `\stdClass`. Il controllo `isset()` già presente nell'idratazione delle entità collegate è ora applicato anche all'entità principale; in assenza del vettore il valore è restituito così com'è.
+
+#### `Orm/BaseClasses/BaseResultSet` — valori cifrati `''` e `'0'` letti come testo cifrato (12.11.0)
+
+Il risultato di `Encryptor::decryptString()` era scelto con l'operatore `?:`, che scarta tutti i valori falsy e non solo il `false` restituito in caso di errore: una proprietà cifrata con valore `''` o `'0'` veniva idratata con il testo cifrato. Il valore decifrato viene ora scartato solo se è `false`.
+
+#### `Core/HelperClasses/Dispatcher::run()` — corpo delle richieste `POST` perso con la query string (12.12.0)
+
+Il redirect della riscrittura della query string veniva eseguito con qualunque metodo: una `POST` verso un URL con query string (un webhook come `/api/webhook?provider=stripe` o un form con `action` contenente parametri) veniva trasformata dal client in una `GET` e il corpo della richiesta andava perso. La riscrittura è ora eseguita solo per `GET` e `HEAD`; per gli altri metodi `ActionArgumentsParser` legge i parametri direttamente dalla query string e li unisce a quelli del percorso, che hanno la precedenza.
+
+#### `Core/Services/RouterService::reloadWithParsedQueryString()` — errore fatale con parametri array (12.12.0)
+
+Un parametro array come `?tag[]=php&tag[]=orm` veniva passato a `urlencode()`, che solleva un `TypeError`. Le liste semplici sono ora riscritte ripetendo la chiave (`tag/php/tag/orm/`), come già accettato dal parser; gli array associativi e annidati, come `?filter[status]=active&filter[tags][]=php`, usano la notazione con parentesi codificata (`filter%5Bstatus%5D/active/filter%5Btags%5D%5B%5D/php/`), che `ActionArgumentsParser` ricostruisce con `parse_str()`.
+
+#### `Core/Services/RouterService::reloadWithParsedQueryString()` — query string sulla root (12.12.0)
+
+Una richiesta alla root con query string, come `/?page=2`, veniva riscritta in `/page/2/` e `page` veniva interpretato come nome del controller. La root viene ora riscritta nel percorso predefinito (`/<DEFAULT_PATH>/<DEFAULT_ACTION>/page/2/`).
+
+#### `Core/HelperClasses/Dispatcher/RouteResolver::parsePath()` — valore vuoto in coda perso (12.12.0)
+
+Un parametro vuoto in fondo alla query string (`?page=2&q=`) produce un percorso che termina con `q//`. `parsePath()` rimuoveva con `rtrim()` tutti gli slash finali, `q` restava senza valore e veniva scartato. Viene ora rimosso un solo slash e `q` riceve il valore `''`. `injectDefaultController()` non usa più `array_pop()` per togliere l'action di default iniettata, che con un elemento vuoto in coda avrebbe rimosso quest'ultimo al posto dell'action, e gli argomenti passati ai `CallableController` sono ripuliti dagli elementi vuoti in coda come in precedenza.
+
+#### `Core/HelperClasses/Dispatcher/ActionArgumentsParser` — `TypeError` con slash multipli in coda (12.12.0)
+
+Con più elementi vuoti in coda, come in `/home/index///`, `cleanArrayShift()` esauriva gli argomenti e restituiva `null` da un metodo con tipo di ritorno `string`, causando un errore 500. Il parser scarta ora gli elementi vuoti prima di ogni coppia chiave/valore e si ferma quando non ne resta una completa.
+
+#### `Core/HelperClasses/Session::hasItem()`, `getItem()` e `unsetItem()` — chiavi annidate inesistenti create in sessione (12.13.0)
+
+Con una chiave annidata, come `cart[items][0]`, i tre metodi passavano `$_SESSION['cart']` per riferimento ai rispettivi metodi ricorsivi, e PHP crea gli elementi inesistenti passati per riferimento: un semplice `Session::hasItem('cart[items][0]')` su una sessione vuota restituiva `false` ma lasciava in sessione `['cart' => ['items' => null]]`, e un successivo `Session::hasItem('cart')` restituiva `true`. I metodi ricorsivi di `hasItem()` e `getItem()` ricevono ora i valori per copia e trattano come assente un livello mancante; quello di `unsetItem()` scende solo nei livelli esistenti.
+
+#### `Orm/Adapters/AdapterMysql::close()` — errore a ogni chiusura (12.13.1)
+
+`close()` eseguiva `unset(self::$connection)`, ma PHP non consente l'`unset` di una proprietà statica: con una connessione aperta il metodo sollevava sempre `Error: Attempt to unset static property` e la connessione non veniva chiusa. Ora `close()` azzera la connessione.
+
+#### `Orm/BaseClasses/BaseAdapter::ensureConnected()` — nessuna riconnessione dopo `close()` (12.13.1)
+
+La connessione è statica e condivisa da tutti gli adapter, mentre `isConnected` è una proprietà di ogni singola istanza. Dopo una chiusura `isConnected` restava `true` e `ensureConnected()` non riapriva la connessione: le query successive restituivano `null` e le esecuzioni `false` senza sollevare errori. `ensureConnected()` verifica ora anche che la connessione condivisa sia aperta, e `close()` azzera `isConnected`.
+
+#### `Orm/Adapters/AdapterMysql::getLastErrorCode()` — `TypeError` prima della prima operazione (12.13.1)
+
+`PDO::errorCode()` restituisce `null` se sulla connessione non è ancora stata eseguita alcuna operazione, e il metodo, dichiarato `string`, sollevava un `TypeError`. Il metodo restituisce ora `''` in questo caso, e `'-1'` come stringa in assenza di connessione al posto dell'intero `-1`, prima convertito implicitamente.
+
+#### `Orm/Adapters/AdapterMysql::lastInsertIdToDelegateAdapter()` — ID non validi assegnati all'entità (12.13.1)
+
+`DataMapper::insert()` assegnava all'entità l'ID restituito da `lastInsertId()` senza verificarlo: con una tabella senza `AUTO_INCREMENT` l'entità riceveva `id = 0` e al salvataggio successivo veniva inserita una seconda riga; senza connessione riceveva `id = -1` e l'`UPDATE` successivo non trovava alcuna riga ma risultava riuscito; un ID oltre `PHP_INT_MAX` sollevava un `TypeError` non descrittivo. Il metodo solleva ora un'`AdapterException` se l'ID non è un intero positivo o se non c'è connessione.
+
+**File modificati**:
+- **`Public/index.php`**: rimossi gli header `Pragma: cache` e `Cache-control: public`
+- **`Core/HelperClasses/Dispatcher/ResourceMaker.php`**: il nuovo metodo privato `sendCacheHeaders()` rimuove `Pragma` e imposta `Cache-Control: public` e `Expires` sulle risorse servite
+- **`Security/HttpClasses/Authentication.php`**: `checkCsrfToken()` confronta il token con `hash_equals()`
+- **`Orm/HelperClasses/DataMapper.php`**: `parseSingleProperty()` rigenera il vettore d'inizializzazione a ogni salvataggio; il nuovo metodo privato `initializationVectorIsRenewable()` mantiene il vettore caricato quando una proprietà cifrata non è inizializzata
+- **`Core/HelperClasses/Encryptor.php`**: `createInitializationVector()` usa `random_bytes()`
+- **`Core/HelperClasses/Templater.php`**: `generateTemplate()` usa `array_merge($localizator->getTemplateLocaleArray($template), $vars)`
+- **`Core/HelperClasses/Localizator.php`**: `getPageLocaleArray()` e `getTemplateLocaleArray()` trattano come vuote le sezioni assenti
+- **`Orm/BaseClasses/BaseResultSet.php`**: `convertToBaseEntity()` verifica la presenza della colonna del vettore d'inizializzazione; la decifratura, estratta nel nuovo metodo privato `decryptValue()`, scarta il risultato solo se è `false`
+- **`Core/HelperClasses/Dispatcher.php`**: la riscrittura della query string è limitata a `GET` e `HEAD`; gli argomenti vengono analizzati anche per le action senza parametri; il nuovo metodo privato `getCallableArguments()` ripulisce gli elementi vuoti in coda per i `CallableController`
+- **`Core/HelperClasses/Dispatcher/ActionArgumentsParser.php`**: `parseActionArguments()` unisce i parametri della query string a quelli del percorso; `convertUrlArgumentsToAssociative()` scarta gli elementi vuoti e ricostruisce le chiavi con parentesi con `parse_str()`; `cleanArrayShift()` sostituito da `removeLeadingEmptyArguments()` e `convertArgumentKey()`
+- **`Core/HelperClasses/Dispatcher/RouteResolver.php`**: `parsePath()` rimuove un solo slash finale; `injectDefaultController()` non usa più `array_pop()`; il nuovo metodo privato `buildPathFromParts()` conserva lo slash finale dopo un elemento vuoto
+- **`Core/Services/RouterService.php`**: `reloadWithParsedQueryString()` accetta un `Config` opzionale, riscrive la root nel percorso predefinito e gestisce i parametri array tramite i nuovi metodi privati `appendQueryArguments()`, `isScalarList()` e `appendQueryArgument()`
+- **`Core/HelperClasses/Session.php`**: `hasItemRecursive()` e `getItemRecursive()` ricevono i valori per copia, `unsetItemRecursive()` scende solo nei livelli esistenti, e tutti e tre partono da `$_SESSION` con la chiave base come primo livello
+- **`Orm/Adapters/AdapterMysql.php`**: `close()` azzera la connessione e `isConnected` senza `unset()`; `getLastErrorCode()` restituisce `'-1'` senza connessione e `''` se `PDO::errorCode()` restituisce `null`; `lastInsertIdToDelegateAdapter()` valida l'ID con `FILTER_VALIDATE_INT` e solleva `AdapterException` senza connessione o con un ID non positivo
+- **`Orm/BaseClasses/BaseAdapter.php`**: `ensureConnected()` riapre la connessione anche quando quella condivisa è stata chiusa
+- **`Tests/Core/HelperClasses/TemplaterTest.php`**: aggiunto `testGenerateTemplateVarsOverrideLocaleLabels()`
+- **`Tests/Core/HelperClasses/LocalizatorTest.php`**: aggiunti `testGetPageLocaleArrayWithoutRootCommon()`, `testGetPageLocaleArrayWithoutPagesSection()` e `testGetTemplateLocaleArrayWithoutTemplatesSection()`
+- **`Tests/Orm/HelperClasses/DataMapperTest.php`**: `testSaveNewEntityWithEncryptedPropertyOne()`, `testSaveNewEntityWithEncryptedPropertyTwo()` e `testSaveEntityWithNullEncryptedPropertyKeepsNull()` verificano che l'update scriva un vettore nuovo; aggiunto `testUpdatePartiallyLoadedEntityKeepsInitializationVector()`
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: aggiunti `testFetchWithFalsyEncryptedPropertyValues()` e `testFetchWithEncryptedPropertyWithoutInitializationVectorColumn()`; il `setUp()` registra un `BaseAdapter` di default, perché i test che idratano entità fallivano se eseguiti senza il resto della suite
+- **`Tests/Core/HelperClasses/DispatcherTest.php`**: aggiunti `testPostWithQueryStringDoesNotReload()`, `testPathWithTrailingEmptyParameter()`, `testPathWithMultipleTrailingSlashes()`, `testPathWithEmptyValueFollowedByOtherParameters()` e `testPathWithNestedArrayParameters()`
+- **`Tests/Core/Services/RouterServiceTest.php`**: aggiunti `testReloadWithParsedQueryStringHandlesArrayValues()`, `testReloadWithParsedQueryStringHandlesNestedArrayValues()` e `testReloadWithParsedQueryStringOnRootPath()`
+- **`Tests/Core/HelperClasses/SessionTest.php`**: aggiunto `testReadingMissingNestedItemDoesNotWriteSession()`
+- **`Tests/Orm/Adapters/AdapterMysqlTest.php`**: aggiunti `testCloseReleasesConnection()`, `testOperationAfterCloseReconnects()`, `testOperationAfterCloseByAnotherAdapterReconnects()`, `testGetLastErrorCodeBeforeAnyOperation()`, `testLastInsertIdWithoutConnection()` e `testInvalidLastInsertId()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: firme pubbliche invariate; `RouterService::reloadWithParsedQueryString()` riceve un secondo parametro opzionale.
+- **`Public/index.php` dei progetti esistenti**: il file viene copiato nel progetto in installazione e non è aggiornato dall'aggiornamento del framework. Per applicare la correzione rimuovere da `Public/index.php` del progetto le righe `header('Pragma: cache');` e `header('Cache-control: public');`.
+- **Cambiamento di comportamento osservabile**: a ogni update di un'entità con proprietà cifrate il vettore d'inizializzazione cambia, e con esso il testo cifrato di tutte le proprietà cifrate della riga.
+- **Cambiamento di comportamento osservabile**: nei template generati da `Templater`, a parità di chiave la variabile passata dal codice prevale sulla label di localizzazione.
+- **Cambiamento di comportamento osservabile**: le richieste diverse da `GET` e `HEAD` con query string non vengono più reindirizzate; i parametri della query string arrivano all'action insieme a quelli del percorso.
+- **Cambiamento di comportamento osservabile**: `Session::hasItem()`, `getItem()` e `unsetItem()` con chiavi annidate non creano più in sessione i livelli inesistenti.
+- **Cambiamento di comportamento osservabile**: dopo `close()` la prima operazione di un adapter riapre la connessione, e `lastInsertId()` solleva `AdapterException` invece di restituire `-1` o un ID non positivo. Il salvataggio di un'entità in una tabella senza `AUTO_INCREMENT` fallisce ora con un'eccezione; prima riusciva, ma assegnava all'entità `id = 0` e duplicava la riga al salvataggio successivo.
+
+---
+
 ## [11.9.15] - 2026-10-22 - Esempi di Configurazione Non Validi nelle Best Practices
 
 Patch della documentazione che corregge due esempi della sezione "Best Practices" di `docs/configuration-reference.md` che non compilavano. Riporta sulla 11.x la correzione della 12.14.1.

@@ -116,7 +116,7 @@ class Authentication extends BaseAuthentication
         } elseif ($this->filter->isString($this->request->input["csrfToken"]) === false) {
             return false;
         } else {
-            return $this->request->input["csrfToken"] === $this->session->csrfToken;
+            return hash_equals((string) $this->session->csrfToken, $this->request->input["csrfToken"]);
         }
     }
 

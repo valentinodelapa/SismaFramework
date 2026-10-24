@@ -671,9 +671,35 @@ class AdapterMysqlTest extends TestCase
                 ->willReturn('1');
         AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
-        $this->assertEquals('1', $adapterMysql->lastInsertId(''));
-        AdapterMysql::setConnection(null);
-        $this->assertEquals(-1, $adapterMysql->lastInsertId(''));
+        $this->assertSame(1, $adapterMysql->lastInsertId());
+    }
+
+    public function testLastInsertIdWithoutConnection()
+    {
+        $adapterMysql = $this->createAdapterWithUnavailableConnection();
+        $this->expectException(AdapterException::class);
+        $adapterMysql->lastInsertId();
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('invalidLastInsertIdProvider')]
+    public function testInvalidLastInsertId(string|false $lastInsertId)
+    {
+        $connectionStub = $this->createStub(\PDO::class);
+        $connectionStub->method('lastInsertId')
+                ->willReturn($lastInsertId);
+        AdapterMysql::setConnection($connectionStub);
+        $adapterMysql = new AdapterMysql();
+        $this->expectException(AdapterException::class);
+        $adapterMysql->lastInsertId();
+    }
+
+    public static function invalidLastInsertIdProvider(): array
+    {
+        return [
+            'no auto increment' => ['0'],
+            'unsupported by driver' => [false],
+            'beyond integer range' => ['18446744073709551615'],
+        ];
     }
 
     public function testBeginTransaction()
@@ -685,7 +711,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
         $this->assertTrue($adapterMysql->beginTransaction());
-        AdapterMysql::setConnection(null);
+        $adapterMysql = $this->createAdapterWithUnavailableConnection();
         $this->assertfalse($adapterMysql->beginTransaction());
     }
 
@@ -698,7 +724,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
         $this->assertTrue($adapterMysql->commitTransaction());
-        AdapterMysql::setConnection(null);
+        $adapterMysql = $this->createAdapterWithUnavailableConnection();
         $this->assertFalse($adapterMysql->commitTransaction());
     }
 
@@ -711,7 +737,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
         $this->assertTrue($adapterMysql->rollbackTransaction());
-        AdapterMysql::setConnection(null);
+        $adapterMysql = $this->createAdapterWithUnavailableConnection();
         $this->assertFalse($adapterMysql->rollbackTransaction());
     }
 
@@ -724,7 +750,7 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('error message', $adapterMysql->getLastErrorMsg());
-        AdapterMysql::setConnection(null);
+        $adapterMysql = $this->createAdapterWithUnavailableConnection();
         $this->assertEquals('', $adapterMysql->getLastErrorMsg());
     }
 
@@ -737,7 +763,83 @@ class AdapterMysqlTest extends TestCase
         AdapterMysql::setConnection($connectionMock);
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('code', $adapterMysql->getLastErrorCode());
+        $adapterMysql = $this->createAdapterWithUnavailableConnection();
+        $this->assertSame('-1', $adapterMysql->getLastErrorCode());
+    }
+
+    public function testGetLastErrorCodeBeforeAnyOperation()
+    {
+        $connectionMock = $this->createStub(\PDO::class);
+        $connectionMock->method('errorCode')
+                ->willReturn(null);
+        AdapterMysql::setConnection($connectionMock);
+        $adapterMysql = new AdapterMysql();
+        $this->assertSame('', $adapterMysql->getLastErrorCode());
+    }
+
+    public function testCloseReleasesConnection()
+    {
+        $adapterMysql = new AdapterMysql();
+        $adapterMysql->close();
+        $this->assertSame('-1', $adapterMysql->getLastErrorCode());
+    }
+
+    public function testOperationAfterCloseReconnects()
+    {
+        $connectionStub = $this->createStub(\PDO::class);
+        $connectionStub->method('beginTransaction')
+                ->willReturn(true);
+        $adapterMysql = $this->createAdapterConnectingTo($connectionStub);
+        $this->assertTrue($adapterMysql->beginTransaction());
+        $adapterMysql->close();
+        $this->assertTrue($adapterMysql->beginTransaction());
+        $this->assertSame(2, $adapterMysql->openedConnections);
+    }
+
+    public function testOperationAfterCloseByAnotherAdapterReconnects()
+    {
+        $connectionStub = $this->createStub(\PDO::class);
+        $connectionStub->method('beginTransaction')
+                ->willReturn(true);
+        $closingAdapter = $this->createAdapterConnectingTo($connectionStub);
+        $otherAdapter = $this->createAdapterConnectingTo($connectionStub);
+        $this->assertTrue($closingAdapter->beginTransaction());
+        $this->assertTrue($otherAdapter->beginTransaction());
+        $closingAdapter->close();
+        $this->assertTrue($otherAdapter->beginTransaction());
+        $this->assertSame(2, $otherAdapter->openedConnections);
+    }
+
+    private function createAdapterWithUnavailableConnection(): AdapterMysql
+    {
         AdapterMysql::setConnection(null);
-        $this->assertEquals(-1, $adapterMysql->getLastErrorCode());
+        return new class extends AdapterMysql {
+
+            #[\Override]
+            public function connect(array $options = []): void
+            {
+            }
+        };
+    }
+
+    private function createAdapterConnectingTo(\PDO $connection): AdapterMysql
+    {
+        AdapterMysql::setConnection(null);
+        return new class($connection) extends AdapterMysql {
+
+            public int $openedConnections = 0;
+
+            public function __construct(private \PDO $connectionToOpen)
+            {
+                parent::__construct();
+            }
+
+            #[\Override]
+            public function connect(array $options = []): void
+            {
+                $this->openedConnections++;
+                self::setConnection($this->connectionToOpen);
+            }
+        };
     }
 }
