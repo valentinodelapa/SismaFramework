@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.15.0] - 2026-10-26 - Moduli JavaScript `.mjs` come Risorse Statiche
+
+Minor release che consente di servire come risorse statiche i moduli JavaScript con estensione `.mjs`, serve i file JavaScript con il MIME standard `text/javascript`, depreca l'estensione `.jsm` e corregge l'esempio dei tipi di risorsa personalizzati nella documentazione.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/Enumerations/Resource` — estensione `mjs`
+
+Il dispatcher tratta una richiesta come risorsa statica solo se l'estensione del file è un caso di `Resource` o è dichiarata in `CUSTOM_RENDERABLE_RESOURCE_TYPES` o `CUSTOM_DOWNLOADABLE_RESOURCE_TYPES` (`ResourceMaker::isAcceptedResourceFile()`). L'estensione `.mjs`, usata dai moduli ECMAScript e dai build ESM di molti pacchetti npm, non era prevista: senza dichiararla nella configurazione del progetto, le richieste di questi file venivano interpretate come rotte verso un controller e non restituivano il file. Inoltre i browser rifiutano gli script `type="module"` serviti con un MIME diverso da quello JavaScript, che andava quindi indicato anche nella dichiarazione personalizzata. `Resource` include ora il caso `mjs`, renderizzabile e scaricabile come `js`, servito con `ContentType::textJavascript`.
+
+**File modificati**:
+- **`Core/Enumerations/Resource.php`**: aggiunto il caso `mjs` in `isRenderable()`, `isDownloadable()` e `getContentType()`
+- **`Tests/Core/Enumerations/ResourceTest.php`**: nuovo test dell'enumerazione `Resource`
+
+#### `Core/Enumerations/ContentType::getMime()` — `text/javascript` per i file JavaScript
+
+I file `.js` e `.jsm`, e ora `.mjs`, venivano serviti con `Content-Type: application/javascript`. L'RFC 9239 (2022), che sostituisce l'RFC 4329, indica `text/javascript` come unico MIME standard per JavaScript e dichiara obsoleto `application/javascript`; anche la specifica HTML del WHATWG prescrive `text/javascript`. I browser accettano entrambi, quindi il caricamento degli script, compresi i moduli, non cambia. I casi `applicationJavascript` e `applicationJsm` di `ContentType`, che restituiscono ora `text/javascript`, sono rinominati in `textJavascript` e `textJsm`, coerentemente con il MIME e con gli altri casi dell'enumerazione, e `getByMime()` continua a riconoscere entrambi i MIME.
+
+**File modificati**:
+- **`Core/Enumerations/ContentType.php`**: `applicationJavascript` e `applicationJsm` rinominati in `textJavascript` e `textJsm`; `getMime()` restituisce `text/javascript` per entrambi
+- **`Core/Enumerations/Resource.php`**: `getContentType()` restituisce `ContentType::textJavascript` per `js`, `jsm` e `mjs`
+- **`Tests/Core/Enumerations/ContentTypeTest.php`**: aggiornati i nomi dei casi e il MIME atteso, e aggiunta la verifica di `getByMime('application/javascript')`
+
+### 📖 Documentazione
+
+#### `docs/configuration-reference.md` — formato di `CUSTOM_RENDERABLE_RESOURCE_TYPES` e `CUSTOM_DOWNLOADABLE_RESOURCE_TYPES`
+
+L'esempio dichiarava le due costanti come liste di estensioni (`['xml', 'rss']`), mentre `ResourceMaker` le legge come array che associano a ogni estensione il MIME con cui servire il file: con la forma documentata le chiavi sono indici numerici, e le estensioni indicate non venivano mai riconosciute. L'esempio usava inoltre estensioni già gestite da `Resource` (`xml`, `pdf`, `docx`), che hanno la precedenza sulle dichiarazioni personalizzate. La documentazione descrive ora il formato `estensione => MIME`, con estensioni non gestite dal framework.
+
+**File modificati**:
+- **`docs/configuration-reference.md`**: corretto l'esempio della sezione "Tipi di Risorsa Personalizzati" e descritto il formato delle due costanti
+
+### ⚠️ Deprecazioni
+
+- **Estensione `.jsm`** (`Resource::jsm`, `ContentType::textJsm`): deprecata dalla versione 12.15.0, sarà rimossa nella versione 13.0.0. `.jsm` era l'estensione dei moduli JavaScript proprietari di Mozilla, dismessi da Firefox a favore dei moduli ECMAScript standard (`.mjs`). Rinominare i file in `.mjs` o, per continuare a servirli con l'estensione attuale, dichiararla in `CUSTOM_RENDERABLE_RESOURCE_TYPES` (`'jsm' => 'text/javascript'`). Non viene emesso alcun avviso a runtime.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le estensioni già gestite mantengono lo stesso comportamento. `ContentType` è un'enumerazione interna (`@internal`), per cui la ridenominazione dei casi non riguarda l'API pubblica.
+- **Cambiamento di comportamento osservabile**: le richieste di file `.mjs` vengono servite come risorse statiche invece di essere instradate verso un controller.
+- **Cambiamento di comportamento osservabile**: i file `.js` e `.jsm` vengono serviti con `Content-Type: text/javascript` invece di `application/javascript`; i browser accettano entrambi i valori.
+
+---
+
 ## [12.14.2] - 2026-10-24 - Descrizione di `HTTPS_IS_FORCED` nella Documentazione
 
 Patch della documentazione che corregge la descrizione di `HTTPS_IS_FORCED`, presentata come un redirect da HTTP a HTTPS.

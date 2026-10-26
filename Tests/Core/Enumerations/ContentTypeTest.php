@@ -42,7 +42,7 @@ class ContentTypeTest extends TestCase
         $this->assertEquals('application/json', ContentType::applicationJson->getMime());
         $this->assertEquals('text/html', ContentType::textHtml->getMime());
         $this->assertEquals('text/css', ContentType::textCss->getMime());
-        $this->assertEquals('application/javascript', ContentType::applicationJavascript->getMime());
+        $this->assertEquals('text/javascript', ContentType::textJavascript->getMime());
         $this->assertEquals('image/png', ContentType::imagePng->getMime());
         $this->assertEquals('image/jpeg', ContentType::imageJpeg->getMime());
         $this->assertEquals('application/pdf', ContentType::applicationPdf->getMime());
@@ -55,7 +55,7 @@ class ContentTypeTest extends TestCase
         $this->assertEquals('application/x-www-form-urlencoded',
             ContentType::applicationFormUrlencoded->getMime());
         $this->assertEquals('application/geo+json', ContentType::applicationGeoJson->getMime());
-        $this->assertEquals('application/javascript', ContentType::applicationJsm->getMime());
+        $this->assertEquals('text/javascript', ContentType::textJsm->getMime());
         $this->assertEquals('application/vnd.ms-excel', ContentType::applicationXls->getMime());
         $this->assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ContentType::applicationXlsx->getMime());
@@ -103,7 +103,8 @@ class ContentTypeTest extends TestCase
         $this->assertEquals(ContentType::applicationPdf, ContentType::getByMime('application/pdf'));
 
         // Test JavaScript alias
-        $this->assertEquals(ContentType::applicationJavascript, ContentType::getByMime('text/javascript'));
+        $this->assertEquals(ContentType::textJavascript, ContentType::getByMime('text/javascript'));
+        $this->assertEquals(ContentType::textJavascript, ContentType::getByMime('application/javascript'));
 
         // Test null for unknown MIME type
         $this->assertNull(ContentType::getByMime('unknown/mime-type'));
@@ -131,7 +132,7 @@ class ContentTypeTest extends TestCase
         $this->assertEquals(Resource::json, ContentType::applicationJson->toResource());
         $this->assertEquals(Resource::html, ContentType::textHtml->toResource());
         $this->assertEquals(Resource::css, ContentType::textCss->toResource());
-        $this->assertEquals(Resource::js, ContentType::applicationJavascript->toResource());
+        $this->assertEquals(Resource::js, ContentType::textJavascript->toResource());
         $this->assertEquals(Resource::png, ContentType::imagePng->toResource());
         $this->assertEquals(Resource::jpg, ContentType::imageJpeg->toResource());
         $this->assertEquals(Resource::pdf, ContentType::applicationPdf->toResource());
@@ -153,7 +154,7 @@ class ContentTypeTest extends TestCase
     public function testToResourceSpecialTypes()
     {
         $this->assertEquals(Resource::geojson, ContentType::applicationGeoJson->toResource());
-        $this->assertEquals(Resource::js, ContentType::applicationJsm->toResource());
+        $this->assertEquals(Resource::js, ContentType::textJsm->toResource());
         $this->assertEquals(Resource::zip, ContentType::applicationZip->toResource());
         $this->assertEquals(Resource::rar, ContentType::applicationRar->toResource());
         $this->assertEquals(Resource::svg, ContentType::imageSvgXml->toResource());
@@ -171,7 +172,7 @@ class ContentTypeTest extends TestCase
         // Verify some key cases are present
         $caseNames = array_map(fn($case) => $case->name, $cases);
         $expectedCases = [
-            'applicationJson', 'textHtml', 'textCss', 'applicationJavascript',
+            'applicationJson', 'textHtml', 'textCss', 'textJavascript',
             'imagePng', 'imageJpeg', 'applicationPdf', 'multipartFormData'
         ];
 
