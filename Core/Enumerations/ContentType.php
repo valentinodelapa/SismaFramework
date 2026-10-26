@@ -37,8 +37,6 @@ enum ContentType
     case applicationDocx;
     case applicationFormUrlencoded;
     case applicationGeoJson;
-    case applicationJavascript;
-    case applicationJsm;
     case applicationJson;
     case applicationMsword;
     case applicationPdf;
@@ -62,6 +60,8 @@ enum ContentType
     case multipartFormData;
     case textCss;
     case textHtml;
+    case textJavascript;
+    case textJsm;
     case textPlain;
     case textTpl;
     case videoMp4;
@@ -72,7 +72,6 @@ enum ContentType
             self::applicationDocx => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             self::applicationFormUrlencoded => 'application/x-www-form-urlencoded',
             self::applicationGeoJson => 'application/geo+json',
-            self::applicationJavascript, self::applicationJsm => 'application/javascript',
             self::applicationJson => 'application/json',
             self::applicationPdf => 'application/pdf',
             self::applicationPhp => 'application/x-httpd-php',
@@ -95,6 +94,7 @@ enum ContentType
             self::multipartFormData => 'multipart/form-data',
             self::textCss => 'text/css',
             self::textHtml => 'text/html',
+            self::textJavascript, self::textJsm => 'text/javascript',
             self::textPlain, self::textTpl => 'text/plain',
             self::applicationMsword => 'application/msword',
             self::videoMp4 => 'video/mp4',
@@ -108,7 +108,7 @@ enum ContentType
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => self::applicationDocx,
             'application/x-www-form-urlencoded' => self::applicationFormUrlencoded,
             'application/geo+json' => self::applicationGeoJson,
-            'application/javascript', 'text/javascript' => self::applicationJavascript,
+            'application/javascript', 'text/javascript' => self::textJavascript,
             'application/json' => self::applicationJson,
             'application/pdf' => self::applicationPdf,
             'application/x-httpd-php' => self::applicationPhp,
@@ -143,7 +143,6 @@ enum ContentType
         return match ($this) {
             self::applicationDocx => Resource::docx,
             self::applicationGeoJson => Resource::geojson,
-            self::applicationJavascript, self::applicationJsm => Resource::js,
             self::applicationJson => Resource::json,
             self::applicationMsword => Resource::doc,
             self::applicationPdf => Resource::pdf,
@@ -167,6 +166,7 @@ enum ContentType
             self::multipartFormData => null,
             self::textCss => Resource::css,
             self::textHtml => Resource::html,
+            self::textJavascript, self::textJsm => Resource::js,
             self::textPlain => Resource::txt,
             self::textTpl => Resource::tpl,
             self::videoMp4 => Resource::mp4,

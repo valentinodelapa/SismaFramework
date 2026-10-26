@@ -241,12 +241,20 @@ const DEFAULT_ACTION = 'index';
 
 ### Tipi di Risorsa Personalizzati
 
+Le due costanti associano a ogni estensione, senza punto, il MIME con cui il file viene servito. Le estensioni gestite dal framework (CSS, JavaScript, immagini, font, documenti) hanno la precedenza e non vanno dichiarate.
+
 ```php
 // Tipi di file renderizzabili custom
-const CUSTOM_RENDERABLE_RESOURCE_TYPES = ['xml', 'rss'];
+const CUSTOM_RENDERABLE_RESOURCE_TYPES = [
+    'rss' => 'application/rss+xml',
+    'webmanifest' => 'application/manifest+json',
+];
 
 // Tipi di file scaricabili custom
-const CUSTOM_DOWNLOADABLE_RESOURCE_TYPES = ['pdf', 'docx'];
+const CUSTOM_DOWNLOADABLE_RESOURCE_TYPES = [
+    'csv' => 'text/csv',
+    '7z' => 'application/x-7z-compressed',
+];
 ```
 
 #### RESOURCE_CACHE_MAX_AGE
