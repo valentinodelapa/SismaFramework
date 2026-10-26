@@ -69,6 +69,7 @@ class Upgrade12to13Strategy implements UpgradeStrategyInterface
             'CustomDateTimeInterface: now extends CustomTypeInterface; classes implementing it must declare equals(CustomTypeInterface $other): bool instead of equals(CustomDateTimeInterface $other): bool (manual)',
             'BaseEntity: shared initializationVector, deprecated in 12.11.0, removed; every encrypted property needs its own <property>InitializationVector property and column, and existing rows must be re-encrypted (manual, before upgrading: values without their own initialization vector are returned still encrypted)',
             'DEVELOPMENT_ENVIRONMENT: read from the DEVELOPMENT_ENVIRONMENT environment variable in Config/config.php and false when the variable is not set; existing Config/configFramework.php files are not changed, set the variable in development environments for new installations (manual)',
+            'Resource: jsm extension, deprecated in 12.15.0, removed; .jsm files are no longer served as static resources, rename them to .mjs or declare "jsm" => "text/javascript" in CUSTOM_RENDERABLE_RESOURCE_TYPES (manual)',
         ];
     }
 

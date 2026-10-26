@@ -15,7 +15,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 > **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
 
-La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`, rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà, e legge `DEVELOPMENT_ENVIRONMENT` da una variabile d'ambiente, con l'ambiente di produzione come default.
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`, rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà, legge `DEVELOPMENT_ENVIRONMENT` da una variabile d'ambiente, con l'ambiente di produzione come default, e rimuove l'estensione `.jsm` dalle risorse statiche, deprecata nella 12.15.0.
 
 ### Breaking Changes
 
@@ -260,6 +260,25 @@ I `Config/configFramework.php` dei progetti esistenti, generati in installazione
 
 Questa modifica non è gestita da `sisma upgrade`, perché riguarda la configurazione dell'ambiente di esecuzione.
 
+#### 7. Rimossa l'estensione `.jsm` dalle risorse statiche
+
+**Impatto**: Basso, solo per i moduli che servono file `.jsm`
+**Componenti interessati**: Enumerazioni `Resource` e `ContentType`
+
+`.jsm` era l'estensione dei moduli JavaScript proprietari di Mozilla, dismessi da Firefox a favore dei moduli ECMAScript standard, che usano `.mjs`. L'estensione, deprecata in 12.15.0, non è più gestita dal framework: le richieste di file `.jsm` non vengono servite come risorse statiche, salvo che l'estensione sia dichiarata nella configurazione del progetto.
+
+**Azione richiesta**:
+- Rinominare in `.mjs` i file `.jsm` presenti in `Assets` dei moduli, aggiornando i riferimenti nei template e negli `import` degli altri moduli JavaScript
+- In alternativa, per continuare a servirli con l'estensione attuale, dichiararla in `Config/configFramework.php`:
+
+```php
+const CUSTOM_RENDERABLE_RESOURCE_TYPES = [
+    'jsm' => 'text/javascript',
+];
+```
+
+Questa modifica non è gestita da `sisma upgrade`, perché riguarda i file statici e non il codice PHP.
+
 ### Checklist di Migrazione
 
 - [ ] **Form applicativi che estendono `BaseForm`**
@@ -281,6 +300,8 @@ Questa modifica non è gestita da `sisma upgrade`, perché riguarda la configura
 - [ ] **Ambiente di sviluppo**
   - [ ] Impostata `DEVELOPMENT_ENVIRONMENT=true` negli ambienti di sviluppo dei progetti che leggono la costante da `getenv()`
   - [ ] Verificato che in produzione la variabile sia assente o `false`
+- [ ] **File JavaScript `.jsm`** (se presenti)
+  - [ ] Rinominati in `.mjs`, con i relativi riferimenti, o dichiarata l'estensione in `CUSTOM_RENDERABLE_RESOURCE_TYPES`
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari
   - [ ] Verificato che tutti i form dell'applicazione validino correttamente

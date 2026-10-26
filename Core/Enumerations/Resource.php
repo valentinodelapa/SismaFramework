@@ -44,7 +44,6 @@ enum Resource: string
     case jpg = 'jpg';
     case jpeg = 'jpeg';
     case js = 'js';
-    case jsm = 'jsm';
     case json = 'json';
     case map = 'map';
     case mjs = 'mjs';
@@ -72,7 +71,7 @@ enum Resource: string
     {
         return match ($this) {
             self::css, self::doc, self::docx, self::geojson, self::htm, self::html,
-            self::ico, self::jpg, self::jpeg, self::js, self::jsm, self::json, self::map,
+            self::ico, self::jpg, self::jpeg, self::js, self::json, self::map,
             self::mjs, self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
             self::rar, self::svg, self::ttf, self::txt, self::woff, self::woff2, self::xls,
             self::xlsx, self::xml => true,
@@ -84,7 +83,7 @@ enum Resource: string
     {
         return match ($this) {
             self::css, self::doc, self::docx, self::geojson, self::htm, self::html,
-            self::ico, self::jpg, self::jpeg, self::js, self::jsm, self::json, self::map,
+            self::ico, self::jpg, self::jpeg, self::js, self::json, self::map,
             self::mjs, self::mp3, self::mp4, self::otf, self::pdf, self::png, self::ppt, self::pptx,
             self::rar, self::svg, self::ttf, self::txt, self::woff, self::woff2, self::xls,
             self::xlsx, self::xml, self::zip => true,
@@ -102,7 +101,7 @@ enum Resource: string
             self::htm, self::html => ContentType::textHtml,
             self::ico => ContentType::imageIcon,
             self::jpg, self::jpeg => ContentType::imageJpeg,
-            self::js, self::jsm, self::mjs => ContentType::textJavascript,
+            self::js, self::mjs => ContentType::textJavascript,
             self::json, self::map => ContentType::applicationJson,
             self::mp3 => ContentType::audioMp3,
             self::mp4 => ContentType::videoMp4,

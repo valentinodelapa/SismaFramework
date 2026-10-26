@@ -61,7 +61,6 @@ enum ContentType
     case textCss;
     case textHtml;
     case textJavascript;
-    case textJsm;
     case textPlain;
     case textTpl;
     case videoMp4;
@@ -94,7 +93,7 @@ enum ContentType
             self::multipartFormData => 'multipart/form-data',
             self::textCss => 'text/css',
             self::textHtml => 'text/html',
-            self::textJavascript, self::textJsm => 'text/javascript',
+            self::textJavascript => 'text/javascript',
             self::textPlain, self::textTpl => 'text/plain',
             self::applicationMsword => 'application/msword',
             self::videoMp4 => 'video/mp4',
@@ -166,7 +165,7 @@ enum ContentType
             self::multipartFormData => null,
             self::textCss => Resource::css,
             self::textHtml => Resource::html,
-            self::textJavascript, self::textJsm => Resource::js,
+            self::textJavascript => Resource::js,
             self::textPlain => Resource::txt,
             self::textTpl => Resource::tpl,
             self::videoMp4 => Resource::mp4,

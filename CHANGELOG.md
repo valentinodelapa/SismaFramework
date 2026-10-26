@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default e la lettura di `HTTPS_IS_FORCED` da variabile d'ambiente.
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default, la lettura di `HTTPS_IS_FORCED` da variabile d'ambiente e la rimozione dell'estensione `.jsm` dalle risorse statiche, deprecata in 12.15.0.
 
 ### 💥 Breaking Changes
 
@@ -166,6 +166,20 @@ define(__NAMESPACE__ . '\DEVELOPMENT_ENVIRONMENT', filter_var(getenv('DEVELOPMEN
 
 **Migrazione**: Sulla 12.11.x, prima dell'aggiornamento, aggiungere a ogni entità e tabella il vettore di ciascuna proprietà cifrata e ricifrare tutte le righe esistenti salvando di nuovo le entità, verificando che nessun valore cifrato abbia il vettore proprio a `NULL`. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
 
+#### `Core/Enumerations/Resource` — rimossa l'estensione `jsm`
+
+`.jsm` era l'estensione dei moduli JavaScript proprietari di Mozilla, dismessi da Firefox a favore dei moduli ECMAScript standard, che usano `.mjs`, gestita come risorsa statica dalla 12.15.0. Il caso `jsm` di `Resource` e il caso `textJsm` di `ContentType`, deprecati in 12.15.0, sono rimossi: le richieste di file `.jsm` non vengono più servite come risorse statiche, salvo che l'estensione sia dichiarata nella configurazione del progetto.
+
+**File modificati**:
+- **`Core/Enumerations/Resource.php`**: rimosso il caso `jsm` da `isRenderable()`, `isDownloadable()` e `getContentType()`
+- **`Core/Enumerations/ContentType.php`**: rimosso il caso `textJsm` da `getMime()` e `toResource()`
+- **`Tests/Core/Enumerations/ContentTypeTest.php`**: rimosse le verifiche su `ContentType::textJsm`
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: aggiunta la voce corrispondente a `getBreakingChanges()`
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: aggiornati il numero atteso di breaking change e le voci attese
+- **`UPGRADING.md`**: aggiunto il breaking change 7 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
+
+**Migrazione**: Rinominare in `.mjs` i file `.jsm` dei moduli, aggiornando i riferimenti nei template e negli `import`, oppure dichiarare `'jsm' => 'text/javascript'` in `CUSTOM_RENDERABLE_RESOURCE_TYPES`. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
+
 ### ✨ Nuove Funzionalità
 
 #### `Config/config.php` — `HTTPS_IS_FORCED` letta dalla variabile d'ambiente
@@ -213,6 +227,7 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 - **Breaking change per le entità con proprietà cifrate**: le entità che dichiarano solo `initializationVector` salvano le proprietà cifrate in chiaro, e i valori cifrati con il vettore condiviso vengono letti come testo cifrato, senza errori; i dati vanno migrati sulla 12.11.x prima dell'aggiornamento.
 - **Breaking change per le nuove installazioni**: senza la variabile d'ambiente `DEVELOPMENT_ENVIRONMENT` l'applicazione gira in modalità produzione; i `Config/configFramework.php` dei progetti esistenti non sono interessati.
 - **`HTTPS_IS_FORCED`**: con la variabile d'ambiente assente la costante vale `false`, come il default precedente; i `Config/configFramework.php` dei progetti esistenti non sono interessati.
+- **Breaking change per i moduli che servono file `.jsm`**: le richieste di questi file non vengono più servite come risorse statiche; i file `.js` e `.mjs` non sono interessati.
 - **Cambiamento di comportamento di `sisma upgrade`**: i file in `Console/Commands` dei moduli vengono ora elaborati da tutti i transformer della strategia applicata.
 
 ---
