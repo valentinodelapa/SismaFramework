@@ -441,16 +441,12 @@ abstract class BaseModel
         $properties = [];
         $propertyNames = array_map('lcfirst', explode('And', $nameParts[1]));
         $this->buildPropertiesArray($propertyNames, $arguments, $properties);
-        switch ($action) {
-            case 'count':
-                return $this->countEntityCollectionByProperties($properties, ...$arguments);
-            case 'get':
-                return $this->getEntityCollectionByProperties($properties, ...$arguments);
-            case 'delete':
-                return $this->deleteEntityCollectionByProperties($properties, ...$arguments);
-            default:
-                throw new ModelException($name);
-        }
+        return match ($action) {
+            'count' => $this->countEntityCollectionByProperties($properties, ...$arguments),
+            'get' => $this->getEntityCollectionByProperties($properties, ...$arguments),
+            'delete' => $this->deleteEntityCollectionByProperties($properties, ...$arguments),
+            default => throw new ModelException($name),
+        };
     }
 
     protected function buildPropertiesArray(array $propertyNames, array &$arguments, array &$properties): void

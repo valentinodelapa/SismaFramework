@@ -47,10 +47,10 @@ abstract class ReferencedEntity extends BaseEntity
         return $this->collections;
     }
 
-    public function getCollectionNames()
+    public function getCollectionNames(): array
     {
         $collectionNames = [];
-        $collections = Cache::getForeignKeyData(get_called_class());
+        $collections = Cache::getForeignKeyData(static::class);
         foreach ($collections as $collectionName => $reference) {
             foreach (array_keys($reference) as $refenrenceName) {
                 $collectionNames[] = $collectionName . $this->config->foreignKeySuffix . ucfirst($refenrenceName);
@@ -77,9 +77,9 @@ abstract class ReferencedEntity extends BaseEntity
     {
         if (str_contains($collectionName, $this->config->foreignKeySuffix) === false) {
             return false;
-        } elseif (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(get_called_class(), $this->getForeignKeyReference($collectionName))) === 1) {
+        } elseif (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(static::class, $this->getForeignKeyReference($collectionName))) === 1) {
             return true;
-        } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false) && (isset(Cache::getForeignKeyData(get_called_class(), $this->getForeignKeyReference($collectionName))[$this->getForeignKeyName($collectionName)]))) {
+        } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false) && (isset(Cache::getForeignKeyData(static::class, $this->getForeignKeyReference($collectionName))[$this->getForeignKeyName($collectionName)]))) {
             return true;
         } else {
             return false;
@@ -111,7 +111,7 @@ abstract class ReferencedEntity extends BaseEntity
 
     public function getCollectionDataInformation(string $collectionName): string
     {
-        return Cache::getForeignKeyData(get_called_class(), $this->getForeignKeyReference($collectionName))[$this->getForeignKeyName($collectionName)];
+        return Cache::getForeignKeyData(static::class, $this->getForeignKeyReference($collectionName))[$this->getForeignKeyName($collectionName)];
     }
 
     protected function getForeignKeyReference(string $collectionName): string
@@ -123,9 +123,9 @@ abstract class ReferencedEntity extends BaseEntity
     protected function getForeignKeyName(string $collectionName): ?string
     {
         $collectionNameParts = array_diff(explode($this->config->foreignKeySuffix, $collectionName), ['']);
-        if (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])) === 1) {
-            return array_key_first(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0]));
-        } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false) && isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
+        if (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(static::class, $collectionNameParts[0])) === 1) {
+            return array_key_first(Cache::getForeignKeyData(static::class, $collectionNameParts[0]));
+        } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false) && isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(static::class, $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
             return lcfirst($collectionNameParts[1]);
         } else {
             return null;

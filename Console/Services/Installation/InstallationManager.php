@@ -168,12 +168,8 @@ class InstallationManager
         foreach ($config as $key => $value) {
             $constPattern = "/(const\s+{$key}\s*=\s*)(['\"])[^'\"]*\\2/";
             $envPattern = "/(define\(__NAMESPACE__ \. '\\\\{$key}', getenv\('{$key}'\) \?: )(['\"])[^'\"]*\\2(\))/";
-            $content = preg_replace_callback($constPattern, function (array $matches) use ($value): string {
-                return $matches[1] . $matches[2] . $value . $matches[2];
-            }, $content);
-            $content = preg_replace_callback($envPattern, function (array $matches) use ($value): string {
-                return $matches[1] . $matches[2] . $value . $matches[2] . $matches[3];
-            }, $content);
+            $content = preg_replace_callback($constPattern, fn(array $matches): string => $matches[1] . $matches[2] . $value . $matches[2], $content);
+            $content = preg_replace_callback($envPattern, fn(array $matches): string => $matches[1] . $matches[2] . $value . $matches[2] . $matches[3], $content);
         }
         if (!file_put_contents($configPath, $content)) {
             throw new \RuntimeException("Failed to update config file.");

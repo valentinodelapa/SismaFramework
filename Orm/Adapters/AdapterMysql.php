@@ -106,29 +106,15 @@ class AdapterMysql extends BaseAdapter
 
     protected function translateDataType(DataType $ormType): int|false
     {
-
-        switch ($ormType) {
-            case DataType::typeBoolean:
-                return \PDO::PARAM_BOOL;
-            case DataType::typeNull:
-                return \PDO::PARAM_NULL;
-            case DataType::typeInteger:
-            case DataType::typeEntity:
-                return \PDO::PARAM_INT;
-            case DataType::typeEnumeration:
-            case DataType::typeString:
-            case DataType::typeDecimal:
-            case DataType::typeDate:
-            case DataType::typeJson:
-                return \PDO::PARAM_STR;
-            case DataType::typeBinary:
-                return \PDO::PARAM_LOB;
-            case DataType::typeStatement:
-                return \PDO::PARAM_STMT;
-            case DataType::typeGeneric:
-            default:
-                return false;
-        }
+        return match ($ormType) {
+            DataType::typeBoolean => \PDO::PARAM_BOOL,
+            DataType::typeNull => \PDO::PARAM_NULL,
+            DataType::typeInteger, DataType::typeEntity => \PDO::PARAM_INT,
+            DataType::typeEnumeration, DataType::typeString, DataType::typeDecimal, DataType::typeDate, DataType::typeJson => \PDO::PARAM_STR,
+            DataType::typeBinary => \PDO::PARAM_LOB,
+            DataType::typeStatement => \PDO::PARAM_STMT,
+            DataType::typeGeneric => false,
+        };
     }
 
     protected function parseBind(array &$bindValues = [], array &$bindTypes = []): void
@@ -157,7 +143,7 @@ class AdapterMysql extends BaseAdapter
 
     private function parseGenericBindType(mixed $value): DataType
     {
-        if (is_integer($value)) {
+        if (is_int($value)) {
             return DataType::typeInteger;
         } elseif (is_float($value)) {
             return DataType::typeDecimal;
@@ -234,7 +220,7 @@ class AdapterMysql extends BaseAdapter
             return true;
         } else {
             $errorInfo = $statement->errorInfo();
-            Throw new AdapterException($errorInfo[0] . ' - ' . $errorInfo[2] . ' - ' . $cmd, intval($errorInfo[1]));
+            throw new AdapterException($errorInfo[0] . ' - ' . $errorInfo[2] . ' - ' . $cmd, (int) $errorInfo[1]);
         }
     }
 

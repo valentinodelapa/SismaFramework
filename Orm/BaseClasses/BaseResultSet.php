@@ -59,7 +59,7 @@ use SismaFramework\Core\HelperClasses\Parser;
  */
 abstract class BaseResultSet implements \Iterator
 {
-    protected const COLUMN_SEPARATOR = '__';
+    protected const string COLUMN_SEPARATOR = '__';
 
     protected string $returnType = StandardEntity::class;
     protected int $currentRecord = 0;
@@ -75,7 +75,7 @@ abstract class BaseResultSet implements \Iterator
 
     public function setReturnType(string $type): void
     {
-        $this->returnType = strval($type);
+        $this->returnType = $type;
     }
 
     public function setJoinMetadata(array $joinMetadata): void

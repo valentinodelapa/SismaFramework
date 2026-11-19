@@ -92,11 +92,6 @@ const LANGUAGE = 'fr_FR';  // Francese
 ### Requisiti PHP
 
 ```php
-// Versione minima PHP richiesta
-const MINIMUM_MAJOR_PHP_VERSION = 8;
-const MINIMUM_MINOR_PHP_VERSION = 1;
-const MINIMUM_RELEASE_PHP_VERSION = 0;
-
 // Numero massimo tentativi reload
 const MAX_RELOAD_ATTEMPTS = 3;
 ```

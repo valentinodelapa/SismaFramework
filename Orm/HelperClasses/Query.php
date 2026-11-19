@@ -199,7 +199,7 @@ class Query
         return $this;
     }
 
-    private function initializeColumn()
+    private function initializeColumn(): void
     {
         if (count($this->columns) === 0) {
             $this->columns = [$this->adapter->allColumns($this->tableName)];
@@ -277,13 +277,13 @@ class Query
 
     public function &setOffset(int $offset): self
     {
-        $this->offset = intval($offset);
+        $this->offset = $offset;
         return $this;
     }
 
     public function &setLimit(int $limit): self
     {
-        $this->limit = intval($limit);
+        $this->limit = $limit;
         return $this;
     }
 
@@ -501,7 +501,7 @@ class Query
 
     public function &setCommand(string $cmd): self
     {
-        $this->command = strval($cmd);
+        $this->command = $cmd;
         $this->close();
         return $this;
     }
@@ -509,24 +509,13 @@ class Query
     public function getCommandToExecute(Statement $cmdType = Statement::select): ?string
     {
         if ($this->closed) {
-            switch ($cmdType) {
-                case Statement::insert:
-                    $this->command = $this->adapter->parseInsert($this->table, $this->columns, $this->values);
-                    break;
-                case Statement::update:
-                    $this->command = $this->adapter->parseUpdate($this->table, $this->columns, $this->values, $this->where);
-                    break;
-                case Statement::delete:
-                    $this->command = $this->adapter->parseDelete($this->table, $this->where);
-                    break;
-                case Statement::set:
-                    $this->command = $this->adapter->parseSet($this->variable, $this->value);
-                    break;
-                case Statement::select:
-                default:
-                    $this->command = $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns($this->tableName)], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit, $this->joins);
-                    break;
-            }
+            $this->command = match ($cmdType) {
+                Statement::insert => $this->adapter->parseInsert($this->table, $this->columns, $this->values),
+                Statement::update => $this->adapter->parseUpdate($this->table, $this->columns, $this->values, $this->where),
+                Statement::delete => $this->adapter->parseDelete($this->table, $this->where),
+                Statement::set => $this->adapter->parseSet($this->variable, $this->value),
+                Statement::select => $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns($this->tableName)], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit, $this->joins),
+            };
             return $this->command;
         } else {
             return null;

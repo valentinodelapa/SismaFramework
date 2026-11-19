@@ -39,13 +39,13 @@ use SismaFramework\Console\Services\Upgrade\DTO\TransformationResult;
 class ExceptionBaseClassTransformer implements TransformerInterface
 {
 
-    private const BASE_EXCEPTION_USE = 'use SismaFramework\Security\BaseClasses\BaseException;';
-    private const SHOULD_BE_LOGGED_USE = 'use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;';
+    private const string BASE_EXCEPTION_USE = 'use SismaFramework\Security\BaseClasses\BaseException;';
+    private const string SHOULD_BE_LOGGED_USE = 'use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;';
 
     /**
      * @var array<string, bool> Removed class name => whether ShouldBeLoggedException must be implemented
      */
-    private const REMOVED_CLASSES = [
+    private const array REMOVED_CLASSES = [
         'NoLogException' => false,
         'LogException' => true,
     ];

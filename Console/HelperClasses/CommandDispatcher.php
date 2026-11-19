@@ -154,7 +154,7 @@ ERROR);
     {
         $positionalIndex = 0;
         foreach ($this->commandParts as $arg) {
-            if (strpos($arg, '--') === 0) {
+            if (str_starts_with($arg, '--')) {
                 $this->parseOption(substr($arg, 2));
             } else {
                 $this->arguments[$positionalIndex] = $arg;
@@ -165,8 +165,8 @@ ERROR);
 
     private function parseOption(string $option): void
     {
-        if (strpos($option, '=') !== false) {
-            list($key, $value) = explode('=', $option, 2);
+        if (str_contains($option, '=')) {
+            [$key, $value] = explode('=', $option, 2);
             $this->options[$key] = $value;
         } else {
             $this->options[$option] = true;

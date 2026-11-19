@@ -67,7 +67,7 @@ abstract class BaseVoter
 
     static public function isAllowed(mixed $subject, AccessControlEntry $accessControlEntry, ?AuthenticableInterface $authenticable = null):bool
     {
-        $class = get_called_class();
+        $class = static::class;
         self::$instance = new $class($subject, $accessControlEntry, $authenticable);
         self::$instance->setSubject($subject);
         self::$instance->setAccessControlEntry($accessControlEntry);

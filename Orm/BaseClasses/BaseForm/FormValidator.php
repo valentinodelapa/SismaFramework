@@ -94,7 +94,7 @@ class FormValidator
 
     private function parseCollectionProperties(): void
     {
-        $entityName = get_class($this->entity);
+        $entityName = $this->entity::class;
         foreach (Cache::getForeignKeyData($entityName) as $propertyName => $propertyData) {
             if (array_key_exists($propertyName . $this->config->foreignKeySuffix, $this->request->input)) {
                 $this->switchFormPropertyType($propertyName . $this->config->foreignKeySuffix);
@@ -115,7 +115,7 @@ class FormValidator
             $currentForm = $this->entityFromForm[$propertyName];
             $this->entityData->{$propertyName} = $this->switchForm($currentForm);
             $this->formFilterError->$propertyName = $currentForm->getFilterErrors();
-            array_push($this->entityToResolve, $propertyName);
+            $this->entityToResolve[] = $propertyName;
         }
     }
 
@@ -128,7 +128,7 @@ class FormValidator
                 $currentForm = $this->entityFromForm[$propertyName][$key];
                 $this->entityData->{$propertyName}[$key] = $this->switchForm($currentForm);
                 $this->formFilterError->$propertyName[$key] = $currentForm->getFilterErrors();
-                array_push($this->sismaCollectionToResolve, $propertyName);
+                $this->sismaCollectionToResolve[] = $propertyName;
             }
         }
     }
@@ -155,7 +155,7 @@ class FormValidator
     {
         $foreignKeyPropertyName = array_key_first($propertyData);
         $referentEntity = $propertyData[$foreignKeyPropertyName];
-        if (str_contains($foreignKeyPropertyName, $this->config->parentPrefixPropertyName) && ($referentEntity === get_class($this->entity))) {
+        if (str_contains($foreignKeyPropertyName, $this->config->parentPrefixPropertyName) && ($referentEntity === $this->entity::class)) {
             return true;
         } else {
             return false;

@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Core\HelperClasses;
 
-use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 
 /**
@@ -37,38 +36,26 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
 class PhpVersionChecker
 {
 
-    private static int $currentMajorVersion = PHP_MAJOR_VERSION;
-    private static int $currentMinorVersion = PHP_MINOR_VERSION;
-    private static int $currentReleaseVersion = PHP_RELEASE_VERSION;
-
-    public static function checkPhpVersion(?Config $customConfig = null): void
+    public static function checkPhpVersion(?string $customComposerJsonPath = null): void
     {
-        $config = $customConfig ?? Config::getInstance();
-        if (self::$currentMajorVersion < $config->minimumMajorPhpVersion) {
-            throw new PhpVersionException($config);
-        } elseif (self::$currentMajorVersion === $config->minimumMajorPhpVersion) {
-            if (self::$currentMinorVersion < $config->minimumMinorPhpVersion) {
-                throw new PhpVersionException($config);
-            } elseif (self::$currentMinorVersion === $config->minimumMinorPhpVersion) {
-                if (self::$currentReleaseVersion < $config->minimumReleasePhpVersion) {
-                    throw new PhpVersionException();
-                }
-            }
+        $minimumPhpVersion = self::getMinimumPhpVersion($customComposerJsonPath);
+        $currentPhpVersion = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION;
+        if (($minimumPhpVersion !== null) && version_compare($currentPhpVersion, $minimumPhpVersion, '<')) {
+            throw new PhpVersionException($minimumPhpVersion);
         }
     }
-    
-    public static function forceCurrentMajorVersionValue(int $customCurrentMajorVersion):void
+
+    public static function getMinimumPhpVersion(?string $customComposerJsonPath = null): ?string
     {
-        self::$currentMajorVersion = $customCurrentMajorVersion;
-    }
-    
-    public static function forceCurrentMinorVersionValue(int $customCurrentMinorVersion):void
-    {
-        self::$currentMinorVersion = $customCurrentMinorVersion;
-    }
-    
-    public static function forceCurrentReleaseVersionValue(int $customCurrentReleaseVersion):void
-    {
-        self::$currentReleaseVersion = $customCurrentReleaseVersion;
+        $composerJsonPath = $customComposerJsonPath ?? dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'composer.json';
+        if (is_file($composerJsonPath) === false) {
+            return null;
+        }
+        $composerData = json_decode(file_get_contents($composerJsonPath), true);
+        $phpRequirement = $composerData['require']['php'] ?? '';
+        if (preg_match('/(\d+)\.(\d+)(?:\.(\d+))?/', $phpRequirement, $matches) === 1) {
+            return $matches[1] . '.' . $matches[2] . '.' . ($matches[3] ?? '0');
+        }
+        return null;
     }
 }

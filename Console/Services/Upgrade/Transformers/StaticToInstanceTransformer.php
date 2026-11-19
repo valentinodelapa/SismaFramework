@@ -35,12 +35,12 @@ use SismaFramework\Console\Services\Upgrade\DTO\TransformationResult;
  */
 class StaticToInstanceTransformer implements TransformerInterface
 {
-    private const STATIC_CLASSES = [
+    private const array STATIC_CLASSES = [
         'ErrorHandler' => 'errorHandler',
         'Debugger' => 'debugger'
     ];
 
-    private const METHOD_RENAMES = [
+    private const array METHOD_RENAMES = [
         'handleNonThrowableError' => 'registerNonThrowableErrorHandler'
     ];
 

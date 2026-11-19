@@ -39,12 +39,10 @@ class ReferencedEntityDeletionVoter extends BaseVoter
 
     protected function checkVote(): bool
     {
-        switch ($this->accessControlEntry) {
-            case AccessControlEntry::allow:
-                return $this->canDeleteReferencedEntity($this->subject);
-            default:
-                return false;
-        }
+        return match ($this->accessControlEntry) {
+            AccessControlEntry::allow => $this->canDeleteReferencedEntity($this->subject),
+            default => false,
+        };
     }
 
     private function canDeleteReferencedEntity(ReferencedEntity $referencedEntity): bool

@@ -65,16 +65,12 @@ abstract class SelfDependentModel extends DependentModel
             $parentEntity = array_shift($arguments);
             $propertyNames = array_map('lcfirst', explode('And', $nameParts[1]));
             $this->buildPropertiesArray(array_slice($propertyNames, 1), $arguments, $properties);
-            switch ($action) {
-                case 'count':
-                    return $this->countEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments);
-                case 'get':
-                    return $this->getEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments);
-                case 'delete':
-                    return $this->deleteEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments);
-                default:
-                    throw new ModelException($name);
-            }
+            return match ($action) {
+                'count' => $this->countEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments),
+                'get' => $this->getEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments),
+                'delete' => $this->deleteEntityCollectionByParentAndProperties($properties, $parentEntity, ...$arguments),
+                default => throw new ModelException($name),
+            };
         } else {
             return parent::__call($name, $arguments);
         }

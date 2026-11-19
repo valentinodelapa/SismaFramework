@@ -232,6 +232,77 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 
 ---
 
+## [12.15.1] - 2026-11-19 - Compatibilità con PHP 8.6, Versione Minima PHP da `composer.json` e Modernizzazione a PHP 8.3
+
+Patch che sostituisce l'alias deprecato `is_integer()` con la funzione canonica `is_int()` in vista di PHP 8.6, fa leggere a `PhpVersionChecker` la versione minima di PHP direttamente da `composer.json` rimuovendo le costanti ridondanti `MINIMUM_MAJOR_PHP_VERSION`, `MINIMUM_MINOR_PHP_VERSION` e `MINIMUM_RELEASE_PHP_VERSION`, e modernizza i costrutti pre-PHP 8.3 rimasti nel framework (costanti di classe tipizzate, `match`, `$object::class`, `static::class`, first-class callable, arrow function, `str_starts_with()`, `str_contains()`, unpacking degli argomenti e tipizzazione esplicita).
+
+### 🔧 Manutenzione
+
+#### `Core/HelperClasses/Filter::isInteger()` e `Orm/Adapters/AdapterMysql::parseGenericBindType()` — `is_int()` al posto di `is_integer()`
+
+PHP 8.6 depreca gli alias non canonici delle funzioni di controllo del tipo (`is_integer()`, `is_long()`, `is_double()`, `doubleval()`), emettendo un avviso `E_DEPRECATED` a ogni chiamata. Le due occorrenze di `is_integer()` sono state sostituite con `is_int()`, già usato nel resto del framework.
+
+**File modificati**:
+- **`Core/HelperClasses/Filter.php`**: `is_int()` in `isInteger()`
+- **`Orm/Adapters/AdapterMysql.php`**: `is_int()` in `parseGenericBindType()`
+
+#### `Core/HelperClasses/PhpVersionChecker` e `Core/Exceptions/PhpVersionException` — versione minima di PHP letta da `composer.json` e rimozione delle costanti `MINIMUM_*_PHP_VERSION`
+
+Il requisito minimo di PHP del framework era duplicato tra `composer.json` (`"php": ">=8.3.0"`) e le tre costanti `MINIMUM_MAJOR_PHP_VERSION`, `MINIMUM_MINOR_PHP_VERSION` e `MINIMUM_RELEASE_PHP_VERSION` di `Config/config.php` (rimaste a `8.1.0` e copiate anche nel `Config/configFramework.php` dei progetti installati, dove avevano la precedenza sul valore del framework). `PhpVersionChecker` ricava ora la versione minima direttamente dal campo `require.php` di `composer.json` tramite il nuovo metodo `PhpVersionChecker::getMinimumPhpVersion()`, la confronta con la versione in uso tramite `version_compare()` e, se non è soddisfatta, la passa come stringa a `PhpVersionException` (marcata `@internal` come `PhpVersionChecker` e `Config`). Le tre costanti e le corrispondenti proprietà di `Config` sono state rimosse, e `docs/configuration-reference.md` non le elenca più nella sezione "Requisiti PHP".
+
+Di conseguenza cambiano le firme delle due classi interne:
+- `PhpVersionChecker::checkPhpVersion(?Config $customConfig = null)` → `checkPhpVersion(?string $customComposerJsonPath = null)`
+- `PhpVersionException::__construct(?Config $customConfig = null, int $code = 0, ?\Throwable $previous = null)` → `__construct(string $minimumPhpVersion, int $code = 0, ?\Throwable $previous = null)`: l'eccezione riceve la versione minima già letta dal checker e si limita a comporre il messaggio
+- rimossi `PhpVersionChecker::forceCurrentMajorVersionValue()`, `forceCurrentMinorVersionValue()` e `forceCurrentReleaseVersionValue()` e le relative proprietà statiche, usati solo dai test
+
+Se il `composer.json` del framework non esiste o non dichiara `require.php`, `getMinimumPhpVersion()` restituisce `null` e il controllo viene saltato. La lettura del file a ogni richiesta costa circa un decimo di millisecondo, un prezzo accettabile per avere `composer.json` come unico punto di verità del requisito.
+
+Il controllo eseguito da `Public/index.php` richiede quindi PHP 8.3.0, il requisito reale del framework, invece dell'8.1.0 delle costanti rimosse. Il controllo resta necessario: nei progetti installati il framework non è una dipendenza Composer, quindi il `platform_check.php` del progetto verifica solo i requisiti delle sue dipendenze (come `psr/log`) e non quello del framework.
+
+**File modificati**:
+- **`Core/HelperClasses/PhpVersionChecker.php`**: nuovo metodo `getMinimumPhpVersion()`, confronto con `version_compare()` e rimozione dei metodi `force*`
+- **`Core/Exceptions/PhpVersionException.php`**: versione minima ricevuta come stringa dal chiamante; classe marcata `@internal`
+- **`Config/config.php`**, **`Core/HelperClasses/Config.php`**: rimosse le costanti `MINIMUM_*_PHP_VERSION` e le proprietà corrispondenti
+- **`docs/configuration-reference.md`**: rimosse le tre costanti dalla sezione "Requisiti PHP"
+
+### ♻️ Refactoring e Pulizia Codice
+
+#### Costanti di classe tipizzate (PHP 8.3)
+
+Aggiunto il tipo esplicito a tutte le costanti di classe del framework: `FormFilterError` (`public const string`), `BaseResultSet` (`protected const string COLUMN_SEPARATOR`), `SismaJson` (`private const int ENCODE_FLAGS`), `SismaTime` (`private const string REFERENCE_DATE`) e i transformer di `Console/Services/Upgrade/Transformers/` (`ExceptionBaseClassTransformer`, `FulltextIndexColumnTransformer`, `StaticToInstanceTransformer`).
+
+#### Risoluzione dei nomi di classe con `$object::class` e `static::class`
+
+Sostituite tutte le chiamate a `get_class($object)` con `$object::class` (PHP 8.0+) in `FormValidator`, `ErrorHandler`, `NotationManager`, `Cache` e `DataMapper`, e tutte le chiamate a `get_called_class()` con `static::class` in `ReferencedEntity`, `SelfReferencedEntity`, `BasePermission` e `BaseVoter`.
+
+#### Espressioni `match` al posto di `switch`
+
+Convertiti in espressioni `match` gli `switch` di `AdapterMysql::translateDataType()`, `Query::getCommandToExecute()`, `QueryExecutor::findFirst()`, `BaseModel::__call()`, `SelfDependentModel::__call()` e `ReferencedEntityDeletionVoter::checkVote()`.
+
+#### First-class callable, arrow function, unpacking e funzioni stringa moderne
+
+- **`NotationManager`**: le closure di `convertToKebabCase()`, `convertToSnakeCase()` e `convertToUpperSnakeCase()` usano la sintassi first-class callable `strtolower(...)` e `strtoupper(...)`.
+- **`RouteResolver::parsePath()`** e **`InstallationManager::updateConfigFile()`**: le closure a singolo `return` usano arrow function `fn()`.
+- **`Dispatcher::callControllerAction()`**: sostituito `call_user_func_array()` con l'invocazione diretta tramite argument unpacking `...$arguments`.
+- **`CommandDispatcher`**: sostituiti `list($key, $value)` con `[$key, $value]`, `strpos($arg, '--') === 0` con `str_starts_with($arg, '--')` e `strpos($option, '=') !== false` con `str_contains($option, '=')`.
+- **`Filter::isNotNull()`** e **`FormValidator`**: sostituiti `is_null($value) ? false : true` con `$value !== null` e `array_push()` a singolo elemento con `$array[] = $propertyName`.
+- **Conversioni scalari e firme**: sostituite le chiamate a `intval()` e `strval()` con cast `(int)` e `(string)` (o rimosse dove il parametro era già tipizzato in `BaseResultSet::setReturnType()`, `Query::setOffset()`, `Query::setLimit()` e `Query::setCommand()`), e aggiunti i tipi mancanti in `AdapterType::getAdapterClass(): string`, `ReferencedEntity::getCollectionNames(): array`, `Cache::scanModuleEntities()`, `Cache::clearForeighKeyDataCache(): void`, `Query::initializeColumn(): void`, `FixturesManager::executeFixture()`, `ModuleManager::initializeApplicationModule(): void`, `Filter::noFilter(mixed $value)` e `Parser::parseValue(..., bool $parseEntity = true)`.
+
+### 🧪 Test
+
+#### `Tests/Core/HelperClasses/PhpVersionCheckerTest` — versione minima letta da un `composer.json` di prova
+
+I test non dipendono più dal `composer.json` del framework, dallo stub di `Config` né dai metodi `force*`: ognuno scrive un `composer.json` temporaneo con una versione minima calcolata a partire da quella di PHP in uso (major, minor o release successiva per i casi di fallimento, la versione corrente per il caso di successo) e lo passa a `checkPhpVersion()`. Coperti anche il controllo saltato in assenza di `composer.json` e `getMinimumPhpVersion()` con vincoli `>=`, `^`, `~`, alternative `||`, campo `require.php` assente e lettura dal `composer.json` del framework quando non viene passato alcun percorso.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change sull'API pubblica**: `Config`, `PhpVersionChecker` e `PhpVersionException` sono classi interne (`@internal`); le loro firme cambiano come descritto sopra.
+- **Costanti `MINIMUM_*_PHP_VERSION` nei progetti installati**: se sono ancora presenti in `Config/configFramework.php` non generano errori, ma **vengono ignorate**. Un progetto che le usava per richiedere una versione di PHP superiore a quella del framework deve ora affidarsi al vincolo `require.php` del proprio `composer.json`. Le costanti possono essere rimosse.
+- **Versione minima effettiva**: il controllo all'avvio passa da 8.1.0 a 8.3.0. Su PHP 8.1 o 8.2 il controllo non passa più, mentre prima il problema emergeva solo più avanti, con errori dovuti ai costrutti PHP 8.3 già presenti nel framework.
+- **Refactoring**: le altre modifiche riguardano l'implementazione interna o aggiungono tipi coerenti con i contratti esistenti su PHP >= 8.3.
+
+---
+
 ## [12.15.0] - 2026-10-26 - Moduli JavaScript `.mjs` come Risorse Statiche
 
 Minor release che consente di servire come risorse statiche i moduli JavaScript con estensione `.mjs`, serve i file JavaScript con il MIME standard `text/javascript`, depreca l'estensione `.jsm` e corregge l'esempio dei tipi di risorsa personalizzati nella documentazione.

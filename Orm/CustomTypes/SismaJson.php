@@ -34,7 +34,7 @@ use SismaFramework\Orm\Interfaces\CustomTypeInterface;
 class SismaJson implements CustomTypeInterface, \ArrayAccess, \IteratorAggregate, \Countable, \JsonSerializable
 {
 
-    private const ENCODE_FLAGS = JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION;
+    private const int ENCODE_FLAGS = JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION;
 
     public function __construct(private readonly array $data = [])
     {

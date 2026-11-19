@@ -47,28 +47,22 @@ class NotationManager
 
     public static function convertToKebabCase(string $studlyCapsOrCamelCaseString): string
     {
-        return implode('-', array_map(function ($value) {
-                    return strtolower($value);
-                }, array_filter(preg_split('/(?=[A-Z])/', $studlyCapsOrCamelCaseString))));
+        return implode('-', array_map(strtolower(...), array_filter(preg_split('/(?=[A-Z])/', $studlyCapsOrCamelCaseString))));
     }
 
     public static function convertToSnakeCase(string $studlyCapsOrCamelCaseString): string
     {
-        return implode('_', array_map(function ($value) {
-                    return strtolower($value);
-                }, array_filter(preg_split('/(?=[A-Z])/', $studlyCapsOrCamelCaseString))));
+        return implode('_', array_map(strtolower(...), array_filter(preg_split('/(?=[A-Z])/', $studlyCapsOrCamelCaseString))));
     }
 
     public static function convertToUpperSnakeCase(string $studlyCapsOrCamelCaseString): string
     {
-        return implode('_', array_map(function ($value) {
-                    return strtoupper($value);
-                }, array_filter(preg_split('/(?=[A-Z])/', $studlyCapsOrCamelCaseString))));
+        return implode('_', array_map(strtoupper(...), array_filter(preg_split('/(?=[A-Z])/', $studlyCapsOrCamelCaseString))));
     }
 
     public static function convertEntityToTableName(BaseEntity $entity): string
     {
-        return self::convertEntityNameToTableName(get_class($entity));
+        return self::convertEntityNameToTableName($entity::class);
     }
 
     public static function convertEntityNameToTableName(string $entityName): string

@@ -37,7 +37,7 @@ enum AdapterType: string
 
     case mysql = "mysql";
     
-    public function getAdapterClass()
+    public function getAdapterClass(): string
     {
         return match ($this) {
             self::mysql => AdapterMysql::class

@@ -45,7 +45,7 @@ class Parser
 
     public static function parseValue(\ReflectionNamedType $reflectionNamedType,
             null|string|array $value,
-            $parseEntity = true,
+            bool $parseEntity = true,
             DataMapper $dataMapper = new DataMapper(),
             ?Config $customConfig = null): mixed
     {
@@ -56,9 +56,9 @@ class Parser
             return $value;
         } elseif (is_subclass_of($reflectionNamedType->getName(), BaseEntity::class)) {
             if ($parseEntity) {
-                return self::parseEntity($reflectionNamedType->getName(), intval($value), $dataMapper, $customConfig);
+                return self::parseEntity($reflectionNamedType->getName(), (int) $value, $dataMapper, $customConfig);
             } else {
-                return intval($value);
+                return (int) $value;
             }
         } elseif (enum_exists($reflectionNamedType->getName())) {
             return self::parseEnumeration($reflectionNamedType->getName(), $value);

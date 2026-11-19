@@ -68,7 +68,7 @@ class ErrorHandler
     {
         \ob_start();
         register_shutdown_function(function () use ($controller) {
-            ModuleManager::setApplicationModuleByClassName(get_class($controller));
+            ModuleManager::setApplicationModuleByClassName($controller::class);
             $error = error_get_last();
             $backtrace = debug_backtrace();
             if (is_array($error) === false) {
@@ -117,10 +117,10 @@ class ErrorHandler
             $this->logException($exception);
         }
         if ($this->config->developmentEnvironment) {
-            ModuleManager::setApplicationModuleByClassName(get_class($structuralController));
+            ModuleManager::setApplicationModuleByClassName($structuralController::class);
             return $this->callThrowableErrorAction($structuralController, $exception);
         } else {
-            ModuleManager::setApplicationModuleByClassName(get_class($defaultController));
+            ModuleManager::setApplicationModuleByClassName($defaultController::class);
             return $this->callDefaultControllerError($defaultController, $exception);
         }
     }
@@ -133,7 +133,7 @@ class ErrorHandler
 
     private function callDefaultControllerError(DefaultControllerInterface $controller, BaseException $exception): Response
     {
-        $fullControllerName = get_class($controller);
+        $fullControllerName = $controller::class;
         $controllerName = basename(str_replace('\\', DIRECTORY_SEPARATOR, $fullControllerName));
         Router::setActualCleanUrl(str_replace('Controller', '', $controllerName), 'error');
         return $controller->error($exception->getMessage(), $exception->getResponseType());
@@ -143,7 +143,7 @@ class ErrorHandler
             StructuralControllerInterface $structuralController = new FrameworkController()): Response
     {
         BufferManager::clear();
-        ModuleManager::setApplicationModuleByClassName(get_class($structuralController));
+        ModuleManager::setApplicationModuleByClassName($structuralController::class);
         $this->logException($throwable);
         if ($this->config->developmentEnvironment) {
             return $this->callThrowableErrorAction($structuralController, $throwable);
