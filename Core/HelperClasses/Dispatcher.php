@@ -157,7 +157,7 @@ class Dispatcher
         if (count($reflectionParameters) === 0) {
             return $controller->{$this->routeResolver->getRouteInfo()->parsedAction}();
         } else {
-            return call_user_func_array([$controller, $this->routeResolver->getRouteInfo()->parsedAction], $arguments);
+            return $controller->{$this->routeResolver->getRouteInfo()->parsedAction}(...$arguments);
         }
     }
 

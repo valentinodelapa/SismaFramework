@@ -38,7 +38,7 @@ use SismaFramework\Orm\CustomTypes\SismaJson;
  */
 class Filter
 {
-    public function noFilter($value): bool
+    public function noFilter(mixed $value): bool
     {
         return true;
     }
@@ -50,7 +50,7 @@ class Filter
 
     public function isNotNull(mixed $value): bool
     {
-        return is_null($value) ? false : true;
+        return $value !== null;
     }
 
     public function isNotFalse(mixed $value): bool
@@ -192,7 +192,7 @@ class Filter
     {
         $result = true;
         $result = ($this->isNumeric($value)) ? $result : false;
-        $result = (is_integer($value)) ? $result : false;
+        $result = (is_int($value)) ? $result : false;
         return $result;
     }
 

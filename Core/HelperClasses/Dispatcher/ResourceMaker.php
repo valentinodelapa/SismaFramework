@@ -177,8 +177,8 @@ class ResourceMaker
         if (!preg_match("/bytes=(\d+)-(\d*)/", $rangeHeader, $matches)) {
             throw new RangeNotSatisfiableException("Invalid range header format: " . $rangeHeader, $fileSize);
         }
-        $start = intval($matches[1]);
-        $end = !empty($matches[2]) ? intval($matches[2]) : $fileSize - 1;
+        $start = (int) $matches[1];
+        $end = !empty($matches[2]) ? (int) $matches[2] : $fileSize - 1;
         if ($start > $end || $start >= $fileSize || $end >= $fileSize) {
             throw new RangeNotSatisfiableException("Range not satisfiable: bytes=" . $start . "-" . $end . " for file size " . $fileSize, $fileSize);
         }

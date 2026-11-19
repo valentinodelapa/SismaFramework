@@ -39,7 +39,7 @@ use SismaFramework\Console\Services\Upgrade\DTO\TransformationResult;
 class FulltextIndexColumnTransformer implements TransformerInterface
 {
 
-    private const METHOD_NAME = 'setFulltextIndexColumn';
+    private const string METHOD_NAME = 'setFulltextIndexColumn';
 
     public function canTransform(string $filePath, string $content): bool
     {

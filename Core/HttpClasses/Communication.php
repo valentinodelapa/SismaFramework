@@ -43,7 +43,7 @@ class Communication
         } elseif (isset($request->server['HTTPS'])) {
             return ($request->server['HTTPS'] === 'on') ? CommunicationProtocol::https : CommunicationProtocol::http;
         } elseif (isset($request->server['SERVER_PORT'])) {
-            return (intval($request->server['SERVER_PORT']) === 443) ? CommunicationProtocol::https : CommunicationProtocol::http;
+            return ((int) $request->server['SERVER_PORT'] === 443) ? CommunicationProtocol::https : CommunicationProtocol::http;
         } else {
             return $config->developmentEnvironment ? CommunicationProtocol::http : CommunicationProtocol::https;
         }

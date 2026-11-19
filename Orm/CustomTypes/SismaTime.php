@@ -33,7 +33,7 @@ use SismaFramework\Orm\Interfaces\CustomDateTimeInterface;
  */
 class SismaTime extends \DateTimeImmutable implements CustomDateTimeInterface
 {
-    private const REFERENCE_DATE = '1970-01-01';
+    private const string REFERENCE_DATE = '1970-01-01';
 
     public static function createFromStandardTimeFormat(string $time): self
     {

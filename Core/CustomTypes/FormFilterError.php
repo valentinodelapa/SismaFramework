@@ -31,9 +31,9 @@ namespace SismaFramework\Core\CustomTypes;
  */
 class FormFilterError
 {
-    const ERROR_PLACEHOLDER = 'Error';
-    const CUSTOM_MESSAGE_PLACEHOLDER = 'CustomMessage';
-    const COLLECTION_PLACEHOLDER = 'Collection';
+    public const string ERROR_PLACEHOLDER = 'Error';
+    public const string CUSTOM_MESSAGE_PLACEHOLDER = 'CustomMessage';
+    public const string COLLECTION_PLACEHOLDER = 'Collection';
 
     private array $errors = [];
     private array $customMessages = [];

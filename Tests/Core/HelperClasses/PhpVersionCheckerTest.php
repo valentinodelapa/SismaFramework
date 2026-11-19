@@ -26,8 +26,8 @@
 
 namespace SismaFramework\Tests\Core\HelperClasses;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\PhpVersionChecker;
 use SismaFramework\Core\Exceptions\PhpVersionException;
 
@@ -39,42 +39,89 @@ use SismaFramework\Core\Exceptions\PhpVersionException;
 class PhpVersionCheckerTest extends TestCase
 {
 
-    private Config $configStub;
+    private string $composerJsonPath;
 
     #[\Override]
-    public function setUp(): void
+    protected function setUp(): void
     {
-        $this->configStub = $this->createStub(Config::class);
-        $this->configStub->method('__get')
-                ->willReturnMap([
-                    ['minimumMajorPhpVersion', 8],
-                    ['minimumMinorPhpVersion', 1],
-                    ['minimumReleasePhpVersion', 1],
-        ]);
-        Config::setInstance($this->configStub);
+        $this->composerJsonPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'sisma_composer_' . uniqid() . '.json';
     }
 
-    public function testMinimumMajorVersionNotPassed()
+    #[\Override]
+    protected function tearDown(): void
     {
-        $this->expectException(PhpVersionException::class);
-        PhpVersionChecker::forceCurrentMajorVersionValue(7);
-        PhpVersionChecker::checkPhpVersion($this->configStub);
+        if (is_file($this->composerJsonPath)) {
+            unlink($this->composerJsonPath);
+        }
     }
 
-    public function testMinimumMinorVersionNotPassed()
+    private function writeComposerJson(?string $phpRequirement): void
     {
-        $this->expectException(PhpVersionException::class);
-        PhpVersionChecker::forceCurrentMajorVersionValue(8);
-        PhpVersionChecker::forceCurrentMinorVersionValue(0);
-        PhpVersionChecker::checkPhpVersion($this->configStub);
+        $require = $phpRequirement === null ? ['psr/log' => '^3.0'] : ['php' => $phpRequirement];
+        file_put_contents($this->composerJsonPath, json_encode(['name' => 'test/test', 'require' => $require]));
     }
 
-    public function testMinimumReleaseVersionNotPassed()
+    private function assertMinimumVersionNotPassed(string $minimumPhpVersion): void
     {
+        $this->writeComposerJson('>=' . $minimumPhpVersion);
         $this->expectException(PhpVersionException::class);
-        PhpVersionChecker::forceCurrentMajorVersionValue(8);
-        PhpVersionChecker::forceCurrentMinorVersionValue(1);
-        PhpVersionChecker::forceCurrentReleaseVersionValue(0);
-        PhpVersionChecker::checkPhpVersion($this->configStub);
+        $this->expectExceptionMessage('The minimum required version of PHP is ' . $minimumPhpVersion . '.');
+        PhpVersionChecker::checkPhpVersion($this->composerJsonPath);
+    }
+
+    public function testMinimumMajorVersionNotPassed(): void
+    {
+        $this->assertMinimumVersionNotPassed((PHP_MAJOR_VERSION + 1) . '.0.0');
+    }
+
+    public function testMinimumMinorVersionNotPassed(): void
+    {
+        $this->assertMinimumVersionNotPassed(PHP_MAJOR_VERSION . '.' . (PHP_MINOR_VERSION + 1) . '.0');
+    }
+
+    public function testMinimumReleaseVersionNotPassed(): void
+    {
+        $this->assertMinimumVersionNotPassed(PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . (PHP_RELEASE_VERSION + 1));
+    }
+
+    public function testMinimumVersionPassed(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->writeComposerJson('>=' . PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION);
+        PhpVersionChecker::checkPhpVersion($this->composerJsonPath);
+    }
+
+    public function testCheckSkippedWithoutComposerJson(): void
+    {
+        $this->expectNotToPerformAssertions();
+        PhpVersionChecker::checkPhpVersion($this->composerJsonPath);
+    }
+
+    #[DataProvider('phpRequirementProvider')]
+    public function testGetMinimumPhpVersion(?string $phpRequirement, ?string $expectedVersion): void
+    {
+        $this->writeComposerJson($phpRequirement);
+        $this->assertSame($expectedVersion, PhpVersionChecker::getMinimumPhpVersion($this->composerJsonPath));
+    }
+
+    public static function phpRequirementProvider(): array
+    {
+        return [
+            'greater or equal with release' => ['>=8.3.0', '8.3.0'],
+            'caret without release' => ['^8.4', '8.4.0'],
+            'tilde with release' => ['~8.3.5', '8.3.5'],
+            'alternative constraints' => ['^8.3 || ^9.0', '8.3.0'],
+            'missing requirement' => [null, null],
+        ];
+    }
+
+    public function testGetMinimumPhpVersionWithoutComposerJson(): void
+    {
+        $this->assertNull(PhpVersionChecker::getMinimumPhpVersion($this->composerJsonPath));
+    }
+
+    public function testGetMinimumPhpVersionFromFrameworkComposerJson(): void
+    {
+        $this->assertTrue(version_compare(PhpVersionChecker::getMinimumPhpVersion(), '8.3.0', '>='));
     }
 }

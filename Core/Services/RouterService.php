@@ -154,7 +154,7 @@ class RouterService
     private function appendQueryArguments(array $queryArguments, string $keyPrefix = ""): void
     {
         foreach ($queryArguments as $key => $value) {
-            $fullKey = ($keyPrefix === "") ? strval($key) : $keyPrefix . "[" . $key . "]";
+            $fullKey = ($keyPrefix === "") ? (string) $key : $keyPrefix . "[" . $key . "]";
             if (is_array($value) && $this->isScalarList($value)) {
                 $listKey = ($keyPrefix === "") ? $fullKey : $fullKey . "[]";
                 foreach ($value as $listValue) {

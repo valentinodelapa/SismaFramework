@@ -89,9 +89,9 @@ abstract class SelfReferencedEntity extends ReferencedEntity
         if ($collectionName === $this->config->sonCollectionPropertyName) {
             $entityName = $this->getShortClassName();
             return $this->config->parentPrefixPropertyName . $entityName;
-        } elseif (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])) === 1) {
-            return array_key_first(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0]));
-        } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(get_called_class(), $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
+        } elseif (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(static::class, $collectionNameParts[0])) === 1) {
+            return array_key_first(Cache::getForeignKeyData(static::class, $collectionNameParts[0]));
+        } elseif ((str_ends_with($collectionName, $this->config->foreignKeySuffix) === false)&& isset($collectionNameParts[1]) && (isset(Cache::getForeignKeyData(static::class, $collectionNameParts[0])[lcfirst($collectionNameParts[1])]))) {
             return lcfirst($collectionNameParts[1]);
         } else {
             return null;

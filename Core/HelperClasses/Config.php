@@ -55,9 +55,6 @@ class Config
 
     /* Base Constant */
     protected readonly Language $language;
-    protected readonly int $minimumMajorPhpVersion;
-    protected readonly int $minimumMinorPhpVersion;
-    protected readonly int $minimumReleasePhpVersion;
     protected readonly int $maxReloadAttempts;
     protected readonly string $rootPath;
     protected readonly string $applicationPath;

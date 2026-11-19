@@ -47,7 +47,7 @@ class ModuleManager
         return $config->moduleFolders;
     }
 
-    public static function initializeApplicationModule()
+    public static function initializeApplicationModule(): void
     {
         self::$applicationModule = "";
     }

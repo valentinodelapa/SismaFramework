@@ -70,7 +70,7 @@ abstract class BasePermission
 
     static public function isAllowed(mixed $subject, AccessControlEntry $accessControlEntry, ?AuthenticableInterface $authenticable = null): void
     {
-        $class = get_called_class();
+        $class = static::class;
         self::$instance = new $class($subject, $accessControlEntry, $authenticable);
     }
 }

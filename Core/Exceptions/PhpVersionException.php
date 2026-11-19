@@ -26,23 +26,21 @@
 
 namespace SismaFramework\Core\Exceptions;
 
-use SismaFramework\Core\HelperClasses\Config;
-
 /**
+ * @internal
+ *
  * @author Valentino de Lapa
  */
 class PhpVersionException extends \Exception
 {
 
-    public function __construct(?Config $customConfig = null, int $code = 0, ?\Throwable $previous = null)
+    public function __construct(string $minimumPhpVersion, int $code = 0, ?\Throwable $previous = null)
     {
-        $config = $customConfig ?? Config::getInstance();
-        $phpMinimumVersionRequired = $config->minimumMajorPhpVersion . '.' . $config->minimumMinorPhpVersion . '.' . $config->minimumReleasePhpVersion;
         $phpActualVersion = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION;
         $message = <<<MESSAGE
-The minimum required version of PHP is $phpMinimumVersionRequired.
+The minimum required version of PHP is $minimumPhpVersion.
 Your version of PHP is $phpActualVersion.
-Please update your PHP version to $phpMinimumVersionRequired or higher in order to use this application.
+Please update your PHP version to $minimumPhpVersion or higher in order to use this application.
 MESSAGE;
         parent::__construct($message, $code, $previous);
     }

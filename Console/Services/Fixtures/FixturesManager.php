@@ -85,7 +85,7 @@ class FixturesManager
         }
     }
 
-    private function executeFixture($fixture): void
+    private function executeFixture(string $fixture): void
     {
         if ($this->fixturesArray[$fixture] === false) {
             $fixtureInstance = new $fixture($this->dataMapper);

@@ -46,7 +46,7 @@ class Cache
 
     public static function setEntity(BaseEntity $entity): void
     {
-        static::$entityCache[get_class($entity)][$entity->id] = $entity;
+        static::$entityCache[$entity::class][$entity->id] = $entity;
     }
 
     public static function checkEntityPresenceInCache(string $entityName, int $entityId): bool
@@ -161,7 +161,7 @@ class Cache
         self::$locker->lockFolder($config->referenceCacheDirectory);
     }
 
-    private static function scanModuleEntities($module, $directory, Config $config): void
+    private static function scanModuleEntities(string $module, string $directory, Config $config): void
     {
         foreach (array_diff(scandir($directory), ['.', '..']) as $entityFileName) {
             $entitySimpleName = str_replace('.php', '', $entityFileName);
@@ -174,7 +174,7 @@ class Cache
         }
     }
 
-    public static function clearForeighKeyDataCache()
+    public static function clearForeighKeyDataCache(): void
     {
         self::$foreighKeyDataCache = [];
     }

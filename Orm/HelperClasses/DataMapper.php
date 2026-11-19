@@ -127,7 +127,7 @@ class DataMapper
                 return true;
             } else {
                 $this->transactionManager->rollback();
-                throw new DataMapperException('Failed to save entity: ' . get_class($entity));
+                throw new DataMapperException('Failed to save entity: ' . $entity::class);
             }
         }
     }

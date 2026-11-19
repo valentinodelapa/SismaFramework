@@ -96,14 +96,11 @@ class QueryExecutor
         if ($result === null) {
             return null;
         } else {
-            switch ($result->numRows()) {
-                case 0:
-                    return null;
-                case 1:
-                    return $this->selectLastModifiedEntity($entityName, $result->fetch(), $ormCacheEnabled);
-                default:
-                    throw new DataMapperException('findFirst() returned more than one row for entity: ' . $entityName);
-            }
+            return match ($result->numRows()) {
+                0 => null,
+                1 => $this->selectLastModifiedEntity($entityName, $result->fetch(), $ormCacheEnabled),
+                default => throw new DataMapperException('findFirst() returned more than one row for entity: ' . $entityName),
+            };
         }
     }
 

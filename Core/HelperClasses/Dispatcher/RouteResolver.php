@@ -114,9 +114,7 @@ class RouteResolver
     {
         $trimmedPath = str_ends_with($this->path, '/') ? substr($this->path, 0, -1) : $this->path;
         $this->pathParts = explode('/', $trimmedPath);
-        $this->cleanPathParts = array_values(array_filter($this->pathParts, function ($var) {
-                    return $var !== "";
-                }));
+        $this->cleanPathParts = array_values(array_filter($this->pathParts, fn($var) => $var !== ""));
         $cleanPathPartsNumber = count($this->cleanPathParts);
         if ($cleanPathPartsNumber === 0) {
             $this->pathController = $this->config->defaultPath;
