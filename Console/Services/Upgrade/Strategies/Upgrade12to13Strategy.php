@@ -70,6 +70,7 @@ class Upgrade12to13Strategy implements UpgradeStrategyInterface
             'BaseEntity: shared initializationVector, deprecated in 12.11.0, removed; every encrypted property needs its own <property>InitializationVector property and column, and existing rows must be re-encrypted (manual, before upgrading: values without their own initialization vector are returned still encrypted)',
             'DEVELOPMENT_ENVIRONMENT: read from the DEVELOPMENT_ENVIRONMENT environment variable in Config/config.php and false when the variable is not set; existing Config/configFramework.php files are not changed, set the variable in development environments for new installations (manual)',
             'Resource: jsm extension, deprecated in 12.15.0, removed; .jsm files are no longer served as static resources, rename them to .mjs or declare "jsm" => "text/javascript" in CUSTOM_RENDERABLE_RESOURCE_TYPES (manual)',
+            'Console/sisma: direct loading of Config/configFramework.php, deprecated in 12.16.0, removed; projects must provide Config/bootstrap.php, otherwise the console loads the SismaFramework module configuration instead of the project one (manual, before upgrading)',
         ];
     }
 

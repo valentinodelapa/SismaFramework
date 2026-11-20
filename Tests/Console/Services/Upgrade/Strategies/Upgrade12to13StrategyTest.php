@@ -86,7 +86,7 @@ class Upgrade12to13StrategyTest extends TestCase
         $breakingChanges = $this->strategy->getBreakingChanges();
 
         $this->assertNotEmpty($breakingChanges);
-        $this->assertCount(10, $breakingChanges);
+        $this->assertCount(11, $breakingChanges);
     }
 
     public function testGetBreakingChangesContainsExpectedItems(): void
@@ -108,6 +108,7 @@ class Upgrade12to13StrategyTest extends TestCase
         $this->assertStringContainsString('initializationVector', $joined);
         $this->assertStringContainsString('DEVELOPMENT_ENVIRONMENT', $joined);
         $this->assertStringContainsString('jsm', $joined);
+        $this->assertStringContainsString('Config/bootstrap.php', $joined);
         $this->assertStringContainsString('SismaFramework\\Core\\BaseClasses', $joined);
         $this->assertStringContainsString('SismaFramework\\Orm\\BaseClasses', $joined);
     }

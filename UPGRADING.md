@@ -15,7 +15,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 > **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
 
-La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`, rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà, legge `DEVELOPMENT_ENVIRONMENT` da una variabile d'ambiente, con l'ambiente di produzione come default, e rimuove l'estensione `.jsm` dalle risorse statiche, deprecata nella 12.15.0.
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`, rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà, legge `DEVELOPMENT_ENVIRONMENT` da una variabile d'ambiente, con l'ambiente di produzione come default, rimuove l'estensione `.jsm` dalle risorse statiche, deprecata nella 12.15.0, e rimuove il caricamento diretto di `Config/configFramework.php` da parte del comando `sisma`, deprecato nella 12.16.0 a favore di `Config/bootstrap.php`.
 
 ### Breaking Changes
 
@@ -279,6 +279,30 @@ const CUSTOM_RENDERABLE_RESOURCE_TYPES = [
 
 Questa modifica non è gestita da `sisma upgrade`, perché riguarda i file statici e non il codice PHP.
 
+#### 8. Il comando `sisma` richiede `Config/bootstrap.php`
+
+**Impatto**: Medio, per i progetti installati prima della 12.16.0
+**Componenti interessati**: Comando `sisma`, `Config/bootstrap.php` del progetto
+
+La 12.16.0 ha introdotto `Config/bootstrap.php`, il file del progetto che carica la configurazione del framework, quelle dei moduli e `vendor/autoload.php`, mantenendo per compatibilità il caricamento diretto di `Config/configFramework.php` quando il bootstrap manca, con un avviso di deprecazione. Quel fallback è rimosso: `sisma` carica il bootstrap del progetto e, se manca, quello del modulo SismaFramework. In un progetto senza bootstrap la console non segnala errori, ma usa la configurazione del modulo invece di quella del progetto. Le richieste web non sono interessate: `Public/index.php` carica i file che vi sono indicati.
+
+**Azione richiesta** (prima dell'aggiornamento, sulla 12.16.x, finché `sisma` mostra l'avviso di deprecazione):
+- Creare `Config/bootstrap.php` nella root del progetto:
+
+```php
+<?php
+
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'configFramework.php';
+if (file_exists(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
+    require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+}
+```
+
+- Aggiungere in coda i `require_once` dei file di configurazione dei moduli, oggi presenti in `Public/index.php`
+- Facoltativamente, sostituire in `Public/index.php` i `require_once` della configurazione e di `vendor/autoload.php` con quello del bootstrap (vedi [Bootstrap del Progetto e Configurazioni dei Moduli](docs/configuration-reference.md#bootstrap-del-progetto-e-configurazioni-dei-moduli))
+
+Questa modifica non è gestita da `sisma upgrade`, che senza bootstrap verrebbe eseguito con la configurazione del modulo.
+
 ### Checklist di Migrazione
 
 - [ ] **Form applicativi che estendono `BaseForm`**
@@ -302,6 +326,9 @@ Questa modifica non è gestita da `sisma upgrade`, perché riguarda i file stati
   - [ ] Verificato che in produzione la variabile sia assente o `false`
 - [ ] **File JavaScript `.jsm`** (se presenti)
   - [ ] Rinominati in `.mjs`, con i relativi riferimenti, o dichiarata l'estensione in `CUSTOM_RENDERABLE_RESOURCE_TYPES`
+- [ ] **Bootstrap del progetto** (prima dell'aggiornamento, sulla 12.16.x)
+  - [ ] Creato `Config/bootstrap.php` con `configFramework.php`, `vendor/autoload.php` e le configurazioni dei moduli
+  - [ ] Verificato che `sisma` non mostri più l'avviso di deprecazione
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari
   - [ ] Verificato che tutti i form dell'applicazione validino correttamente

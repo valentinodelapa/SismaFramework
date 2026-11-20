@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default, la lettura di `HTTPS_IS_FORCED` da variabile d'ambiente e la rimozione dell'estensione `.jsm` dalle risorse statiche, deprecata in 12.15.0.
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default, la lettura di `HTTPS_IS_FORCED` da variabile d'ambiente, la rimozione dell'estensione `.jsm` dalle risorse statiche, deprecata in 12.15.0, e la rimozione del caricamento diretto di `Config/configFramework.php` da parte del comando `sisma`, deprecato in 12.16.0 a favore di `Config/bootstrap.php`.
 
 ### 💥 Breaking Changes
 
@@ -180,6 +180,35 @@ define(__NAMESPACE__ . '\DEVELOPMENT_ENVIRONMENT', filter_var(getenv('DEVELOPMEN
 
 **Migrazione**: Rinominare in `.mjs` i file `.jsm` dei moduli, aggiornando i riferimenti nei template e negli `import`, oppure dichiarare `'jsm' => 'text/javascript'` in `CUSTOM_RENDERABLE_RESOURCE_TYPES`. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
 
+#### `Console/sisma` — rimosso il caricamento diretto di `Config/configFramework.php`
+
+La 12.16.0 ha introdotto `Config/bootstrap.php`, il file del progetto che carica la configurazione del framework, quelle dei moduli e `vendor/autoload.php`, mantenendo come fallback deprecato il caricamento diretto di `Config/configFramework.php` nei progetti che non avevano ancora il bootstrap. Il fallback è rimosso: `sisma` carica `Config/bootstrap.php` del progetto e, se manca, quello del modulo SismaFramework. In un progetto senza bootstrap la console usa quindi la configurazione del modulo invece di quella del progetto, senza errori. Le richieste web non sono interessate.
+
+**Prima (12.x)**:
+```php
+if (file_exists($projectBootstrap)) {
+    require_once $projectBootstrap;
+} elseif (file_exists($projectConfig)) {
+    require_once $projectConfig;
+} else {
+    require_once dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+}
+```
+
+**Dopo (13.x)**:
+```php
+require_once file_exists($projectBootstrap) ? $projectBootstrap : dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+```
+
+**File modificati**:
+- **`Console/sisma`**: rimossi il ramo che caricava `Config/configFramework.php` e l'avviso di deprecazione
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: aggiunta la voce corrispondente a `getBreakingChanges()`
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: aggiornati il numero atteso di breaking change e le voci attese
+- **`UPGRADING.md`**: aggiunto il breaking change 8 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
+- **`docs/configuration-reference.md`**: l'ordine di caricamento di `sisma` non comprende più `Config/configFramework.php`, e l'adozione del bootstrap è indicata come passo da completare prima dell'aggiornamento
+
+**Migrazione**: Sulla 12.16.x, prima dell'aggiornamento, creare `Config/bootstrap.php` nella root del progetto, includendo le configurazioni dei moduli, finché `sisma` non mostra più l'avviso di deprecazione. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
+
 ### ✨ Nuove Funzionalità
 
 #### `Config/config.php` — `HTTPS_IS_FORCED` letta dalla variabile d'ambiente
@@ -229,6 +258,7 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 - **`HTTPS_IS_FORCED`**: con la variabile d'ambiente assente la costante vale `false`, come il default precedente; i `Config/configFramework.php` dei progetti esistenti non sono interessati.
 - **Breaking change per i moduli che servono file `.jsm`**: le richieste di questi file non vengono più servite come risorse statiche; i file `.js` e `.mjs` non sono interessati.
 - **Cambiamento di comportamento di `sisma upgrade`**: i file in `Console/Commands` dei moduli vengono ora elaborati da tutti i transformer della strategia applicata.
+- **Breaking change per i progetti senza `Config/bootstrap.php`**: la console usa la configurazione del modulo SismaFramework invece di quella del progetto, senza errori; le richieste web non sono interessate.
 
 ---
 

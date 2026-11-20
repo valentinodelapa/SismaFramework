@@ -46,13 +46,9 @@ In questo modo sono disponibili sia nelle richieste web sia nei comandi `sisma`,
 
 `vendor/autoload.php` viene incluso solo se esiste: la console funziona anche prima di aver eseguito `composer install` nel progetto.
 
-Il comando `sisma` cerca i file in quest'ordine:
+Il comando `sisma` carica `Config/bootstrap.php` del progetto e, se manca (framework non ancora installato), `Config/bootstrap.php` del modulo SismaFramework, che carica `Config/config.php`. Dalla 13.0.0 `sisma` non carica più direttamente `Config/configFramework.php`: in un progetto senza bootstrap la console userebbe la configurazione del modulo invece di quella del progetto.
 
-1. `Config/bootstrap.php` del progetto;
-2. se manca, `Config/configFramework.php` del progetto, caricato direttamente come nelle versioni precedenti, con un avviso di deprecazione su standard error. Questo fallback sarà rimosso nella 13.0.0;
-3. se manca anche questo (framework non ancora installato), `Config/bootstrap.php` del modulo SismaFramework, che carica `Config/config.php`.
-
-Un progetto installato prima della 12.16.0 adotta il bootstrap creando `Config/bootstrap.php` con il contenuto mostrato sopra e sostituendo in `Public/index.php` i `require_once` della configurazione e di `vendor/autoload.php` con quello del bootstrap:
+Un progetto installato prima della 12.16.0 deve quindi adottare il bootstrap prima dell'aggiornamento alla 13, creando `Config/bootstrap.php` con il contenuto mostrato sopra e sostituendo in `Public/index.php` i `require_once` della configurazione e di `vendor/autoload.php` con quello del bootstrap:
 
 ```php
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
