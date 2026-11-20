@@ -262,6 +262,40 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 
 ---
 
+## [12.16.1] - 2026-11-20 - Lettura delle Proprietà Scalari che Terminano in `Id`
+
+Patch che fa caricare dall'ORM le proprietà scalari il cui nome termina in `Id`, come gli identificativi provenienti da API esterne. In lettura ogni colonna con suffisso `_id` veniva trattata come chiave esterna, anche quando la proprietà corrispondente non era un'entità.
+
+### 🐛 Bug Fix
+
+#### `Orm/BaseClasses/BaseResultSet::convertToBaseEntity()` — proprietà scalari con suffisso `Id` mai caricate
+
+In scrittura il suffisso `_id` viene aggiunto alla colonna solo se la proprietà è di tipo entità (`DataMapper`, `BaseAdapter`). Una proprietà `protected int $externalEventId;` viene quindi salvata correttamente nella colonna `external_event_id`. In lettura, invece, il nome della proprietà veniva ricavato dalla colonna con `NotationManager::convertColumnNameToPropertyName()`, che toglie sempre il suffisso `_id` senza considerare il tipo. La colonna `external_event_id` veniva cercata nella proprietà `externalEvent`. Se la proprietà non esisteva, il valore veniva scartato e `externalEventId` non veniva mai caricata. Se esisteva una proprietà scalare `externalEvent`, il valore di `external_event_id` sovrascriveva quello della colonna `external_event`.
+
+La lettura segue ora la stessa regola della scrittura, basata sul tipo. Una colonna che termina in `_id` viene assegnata alla proprietà senza suffisso solo se questa esiste ed è di tipo entità. Altrimenti, se l'entità ha una proprietà con il nome completo della colonna (`externalEventId`), il valore viene assegnato a quella. Negli altri casi il comportamento resta quello precedente. `NotationManager::convertColumnNameToPropertyName()` non cambia.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseResultSet.php`**: nuovi metodi privati `resolvePropertyName()` e `isEntityProperty()`, usati da `convertToBaseEntity()` per ricavare il nome della proprietà dalla colonna
+
+### 📖 Documentazione
+
+#### `docs/conventions.md` — proprietà scalari con suffisso `Id`
+
+Nella sezione sulle chiavi esterne è descritta la mappatura delle proprietà scalari che terminano in `Id`.
+
+### 🧪 Test
+
+#### `Tests/Orm/ResultSets/ResultSetMysqlTest` — proprietà scalari con suffisso `Id`
+
+Coperti il caricamento di una proprietà scalare che termina in `Id`, la lettura di un'entità con una proprietà scalare `externalCode` e una `externalCodeId`, e la risoluzione di una chiave esterna insieme alle proprietà scalari con suffisso `Id`. Nuova entità di test `TestsApplication/Entities/EntityWithExternalIdentifiers`.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le chiavi esterne, cioè le proprietà di tipo entità, vengono lette come prima.
+- **Cambiamento di comportamento osservabile**: in un'entità con una proprietà scalare `x` e una proprietà `xId`, la colonna `x_id` viene ora letta in `xId` e non sovrascrive più `x`.
+
+---
+
 ## [12.16.0] - 2026-11-20 - Bootstrap del Progetto e Configurazioni dei Moduli nella Console
 
 Minor release che introduce `Config/bootstrap.php`, il file del progetto che carica la configurazione del framework, quelle dei moduli e l'autoloader di Composer. `Public/index.php` e il comando `sisma` caricano ora il bootstrap invece dei singoli file. Le configurazioni dei moduli, che finora venivano incluse a mano solo in `Public/index.php`, sono così disponibili anche nei comandi della console. Il caricamento diretto di `Config/configFramework.php` da parte di `sisma`, in assenza del bootstrap, resta come fallback deprecato.

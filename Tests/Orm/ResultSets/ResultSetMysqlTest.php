@@ -34,6 +34,7 @@ use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
+use SismaFramework\TestsApplication\Entities\EntityWithExternalIdentifiers;
 use SismaFramework\TestsApplication\Entities\EntityWithNullableEncryptedProperty;
 
 /**
@@ -255,6 +256,49 @@ class ResultSetMysqlTest extends TestCase
         $resultSetMysql->setReturnType(EntityWithEncryptedPropertyOne::class);
         $entity = $resultSetMysql->fetch();
         $this->assertSame($encryptedValue, $entity->encryptedPropertyOne);
+    }
+
+    public function testFetchWithScalarPropertyEndingInId()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_event_id = 4815;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame(4815, $entity->externalEventId);
+    }
+
+    public function testFetchWithScalarPropertyEndingInIdAndScalarPropertyWithoutSuffix()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_code = 'code';
+        $result->external_code_id = 1623;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame('code', $entity->externalCode);
+        $this->assertSame(1623, $entity->externalCodeId);
+    }
+
+    public function testFetchWithForeignKeyAlongsideScalarPropertiesEndingInId()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_event_id = 42;
+        $result->reflection_cache_sample_id = 987654;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame(42, $entity->externalEventId);
+        $this->assertSame(['reflectionCacheSample' => 987654], $entity->getForeignKeyIndexes());
+    }
+
+    private function fetchSingleEntity(\stdClass $result, string $entityClass): object
+    {
+        $PDOStatementStub = $this->createStub(\PDOStatement::class);
+        $PDOStatementStub->method('rowCount')
+                ->willReturn(1);
+        $PDOStatementStub->method('fetch')
+                ->willReturn($result);
+        $resultSetMysql = new ResultSetMysql($PDOStatementStub);
+        $resultSetMysql->setReturnType($entityClass);
+        return $resultSetMysql->fetch();
     }
 
     public function testFetchWithMultipleBaseEntity()
