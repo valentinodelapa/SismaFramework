@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.16.0] - 2026-11-20 - Bootstrap del Progetto e Configurazioni dei Moduli nella Console
+
+Minor release che introduce `Config/bootstrap.php`, il file del progetto che carica la configurazione del framework, quelle dei moduli e l'autoloader di Composer. `Public/index.php` e il comando `sisma` caricano ora il bootstrap invece dei singoli file. Le configurazioni dei moduli, che finora venivano incluse a mano solo in `Public/index.php`, sono così disponibili anche nei comandi della console. Il caricamento diretto di `Config/configFramework.php` da parte di `sisma`, in assenza del bootstrap, resta come fallback deprecato.
+
+### ✨ Nuove Funzionalità
+
+#### `Config/bootstrap.php` — composizione del progetto in un unico file
+
+Il comando `sisma` caricava soltanto la configurazione del framework: `Config/configFramework.php` del progetto oppure, prima dell'installazione, `Config/config.php` del modulo. Le configurazioni dei moduli erano incluse solo da `Public/index.php`, quindi non erano disponibili nei comandi della console, né in quelli del framework né in quelli dei moduli.
+
+Il nuovo file `Config/bootstrap.php` raccoglie tutto ciò che compone il progetto: la configurazione del framework, le configurazioni dei moduli (da aggiungere in coda) e `vendor/autoload.php`. `vendor/autoload.php` è incluso solo se esiste, così la console continua a funzionare anche prima di `composer install`. L'autoloader del framework (`Autoload/autoload.php`) non fa parte del bootstrap: è un meccanismo interno del framework, uguale in ogni progetto, e resta a carico dei punti d'ingresso, che lo includono subito dopo il bootstrap. Così un file che il progetto modifica a mano non contiene percorsi interni del framework.
+
+Il modulo SismaFramework ha un proprio `Config/bootstrap.php`, che carica `Config/config.php` e il `vendor/autoload.php` del modulo: viene usato quando il framework non è ancora installato in un progetto, come accadeva prima con `Config/config.php`.
+
+Il comando `sisma` cerca i file in quest'ordine:
+1. `Config/bootstrap.php` del progetto;
+2. `Config/configFramework.php` del progetto, caricato direttamente come nelle versioni precedenti (fallback deprecato, vedi sotto);
+3. `Config/bootstrap.php` del modulo SismaFramework.
+
+**File modificati**:
+- **`Config/bootstrap.php`**: nuovo file, carica `config.php` e, se presente, `vendor/autoload.php`
+- **`Console/sisma`**: caricamento del bootstrap del progetto con fallback a `configFramework.php` e al bootstrap del modulo
+- **`Public/index.php`**: carica `Config/bootstrap.php` al posto di `Config/config.php` e `vendor/autoload.php`
+
+#### `Console/Services/Installation/InstallationManager` — generazione di `Config/bootstrap.php`
+
+`sisma install` genera `Config/bootstrap.php` nella root del progetto a partire da quello del modulo, sostituendo `config.php` con `configFramework.php`. Un bootstrap già presente non viene sovrascritto, perché può contenere le configurazioni dei moduli, a meno di usare `--force`. Poiché `Public/index.php` carica ora `Config/bootstrap.php`, un percorso uguale nel modulo e nel progetto, l'installazione non riscrive più il percorso della configurazione in `index.php`: rimane solo la riscrittura del percorso dell'autoloader del framework.
+
+**File modificati**:
+- **`Console/Services/Installation/InstallationManager.php`**: nuovo metodo `copyBootstrapFile()`; rimossa da `copyPublicFolder()` la sostituzione di `config.php` con `configFramework.php`
+- **`Console/Commands/InstallationCommand.php`**: `Config/bootstrap.php` nell'elenco dei file creati
+
+### 📖 Documentazione
+
+#### `docs/configuration-reference.md`, `docs/installation.md` e `docs/module-architecture.md` — bootstrap del progetto
+
+- **`docs/configuration-reference.md`**: nuova sezione "Bootstrap del Progetto e Configurazioni dei Moduli", con il contenuto del bootstrap, l'ordine di caricamento di `sisma`, il vincolo di non introdurre effetti collaterali nei file di configurazione e la migrazione dei progetti esistenti
+- **`docs/installation.md`**: `Config/bootstrap.php` tra i file creati dall'installazione automatica e tra quelli da copiare nell'installazione manuale; in `Public/index.php` va modificato solo il percorso dell'autoloader
+- **`docs/module-architecture.md`**: le configurazioni dei moduli vanno incluse in `Config/bootstrap.php`
+- **`Sample/Views/home/index.php`**: `Config/bootstrap.php` nella struttura del progetto installato
+
+### 🧪 Test
+
+#### `Tests/Console/Services/Installation/InstallationManagerTest` — bootstrap del progetto
+
+Coperti la generazione di `Config/bootstrap.php`, la conservazione di un bootstrap esistente senza `--force` e la sua sovrascrittura con `--force`. Due test eseguono il bootstrap generato dal `Config/bootstrap.php` reale del modulo e verificano che carichi `configFramework.php` e `vendor/autoload.php`, e che salti quest'ultimo se manca. Il test sull'ordine dei `require_once` in `Public/index.php` verifica ora che il bootstrap preceda l'autoloader del framework.
+
+### ⚠️ Deprecazioni
+
+- **Caricamento diretto di `Config/configFramework.php` da parte di `sisma`**: deprecato dalla versione 12.16.0, sarà rimosso nella versione 13.0.0. Se il progetto non ha `Config/bootstrap.php`, il comando continua a caricare `Config/configFramework.php` e scrive un avviso su standard error. Per adeguarsi basta creare `Config/bootstrap.php` come descritto in `docs/configuration-reference.md`. Senza bootstrap, dalla 13.0.0 `sisma` caricherebbe la configurazione interna del modulo invece di quella del progetto.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: i progetti installati prima della 12.16.0, senza `Config/bootstrap.php`, mantengono il comportamento attuale sia nella console (con l'avviso di deprecazione) sia nel web, perché il loro `Public/index.php` non cambia.
+- **Migrazione graduale**: un progetto può creare `Config/bootstrap.php` e lasciare invariato `Public/index.php`. `require_once` riconosce lo stesso file anche quando viene raggiunto con percorsi diversi, quindi `configFramework.php` e `vendor/autoload.php` vengono inclusi una sola volta.
+- **Cambiamento di comportamento osservabile**: con il bootstrap, `sisma` carica anche le configurazioni dei moduli e `vendor/autoload.php`. I file di configurazione con effetti collaterali (header, sessione, output) li producono anche in console.
+- **Cambiamento di comportamento osservabile**: nel nuovo `Public/index.php` l'autoloader di Composer viene registrato prima di quello del framework, mentre prima veniva registrato dopo. I due autoloader non si sovrappongono: ognuno ignora le classi che non trova.
+- **Cambiamento di comportamento osservabile**: nel nuovo `Public/index.php` un `vendor/autoload.php` mancante non provoca più un errore fatale all'inclusione. L'errore emerge al primo uso di una classe delle dipendenze.
+
+---
+
 ## [12.15.1] - 2026-11-19 - Compatibilità con PHP 8.6, Versione Minima PHP da `composer.json` e Modernizzazione a PHP 8.3
 
 Patch che sostituisce l'alias deprecato `is_integer()` con la funzione canonica `is_int()` in vista di PHP 8.6, fa leggere a `PhpVersionChecker` la versione minima di PHP direttamente da `composer.json` rimuovendo le costanti ridondanti `MINIMUM_MAJOR_PHP_VERSION`, `MINIMUM_MINOR_PHP_VERSION` e `MINIMUM_RELEASE_PHP_VERSION`, e modernizza i costrutti pre-PHP 8.3 rimasti nel framework (costanti di classe tipizzate, `match`, `$object::class`, `static::class`, first-class callable, arrow function, `str_starts_with()`, `str_contains()`, unpacking degli argomenti e tipizzazione esplicita).

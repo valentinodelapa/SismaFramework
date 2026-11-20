@@ -53,6 +53,7 @@ class InstallationManager
         try {
             $this->createProjectStructure();
             $this->copyConfigFolder($projectName);
+            $this->copyBootstrapFile();
             $this->copyPublicFolder();
             $this->copyHtaccessFile();
             $this->createAdditionalFolders();
@@ -112,6 +113,22 @@ class InstallationManager
         }
     }
 
+    private function copyBootstrapFile(): void
+    {
+        $sourceBootstrap = $this->frameworkPath . DIRECTORY_SEPARATOR . "Config" . DIRECTORY_SEPARATOR . "bootstrap.php";
+        $destBootstrap = $this->projectRoot . DIRECTORY_SEPARATOR . "Config" . DIRECTORY_SEPARATOR . "bootstrap.php";
+        if (!file_exists($sourceBootstrap)) {
+            throw new \RuntimeException("Source bootstrap file not found in framework.");
+        }
+        if (file_exists($destBootstrap) && !$this->force) {
+            return;
+        }
+        $content = str_replace("'config.php'", "'configFramework.php'", file_get_contents($sourceBootstrap));
+        if (!file_put_contents($destBootstrap, $content)) {
+            throw new \RuntimeException("Failed to create bootstrap file.");
+        }
+    }
+
     private function copyPublicFolder(): void
     {
         $sourcePublic = $this->frameworkPath . DIRECTORY_SEPARATOR . "Public";
@@ -125,7 +142,6 @@ class InstallationManager
         $indexPath = $destPublic . DIRECTORY_SEPARATOR . "index.php";
         if (file_exists($indexPath)) {
             $content = file_get_contents($indexPath);
-            $content = str_replace("'Config' . DIRECTORY_SEPARATOR . 'config.php'", "'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'", $content);
             $content = str_replace("dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload'", "dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'", $content);
             file_put_contents($indexPath, $content);
         }

@@ -64,7 +64,7 @@ sisma install NomeDelProgetto
 ```
 
 Questo comando creerà automaticamente:
-- La cartella `Config/` con il file `configFramework.php` pre-configurato con il nome del progetto
+- La cartella `Config/` con il file `configFramework.php` pre-configurato con il nome del progetto e il file `bootstrap.php`, che carica la configurazione del progetto e `vendor/autoload.php` (vedi [Bootstrap del Progetto](configuration-reference.md#bootstrap-del-progetto-e-configurazioni-dei-moduli))
 - La cartella `Public/` con `index.php` configurato (path dell'autoloader aggiornati automaticamente)
 - Le cartelle `Cache/`, `Logs/` e `filesystemMedia/` con permessi **0777** (lettura, scrittura, esecuzione per tutti)
 
@@ -134,13 +134,13 @@ sisma install BlogPersonale \
 
 #### Comportamento con File Esistenti
 
-Se esegui il comando `install` in una directory dove `Config/configFramework.php` esiste già, il comando **fallirà** per proteggere da sovrascritture accidentali. Per forzare la sovrascrittura, usa l'opzione `--force`:
+Se esegui il comando `install` in una directory dove `Config/configFramework.php` esiste già, il comando **fallirà** per proteggere da sovrascritture accidentali. Un `Config/bootstrap.php` già presente viene lasciato invariato. Per forzare la sovrascrittura, usa l'opzione `--force`:
 
 ```bash
 sisma install MyProject --force
 ```
 
-⚠️ **Attenzione:** L'opzione `--force` sovrascriverà tutti i file di configurazione esistenti. Usala solo se sei sicuro.
+⚠️ **Attenzione:** L'opzione `--force` sovrascriverà tutti i file di configurazione esistenti, compreso `Config/bootstrap.php` con le configurazioni dei moduli che vi hai aggiunto. Usala solo se sei sicuro.
 
 #### Note sui Permessi delle Cartelle
 
@@ -202,12 +202,19 @@ Se preferisci configurare manualmente il progetto, segui questi passaggi.
 
 ### Passo 2: Prepara la struttura del progetto
 
-Per garantire che gli aggiornamenti del framework non sovrascrivano le tue configurazioni, devi copiare il file di configurazione del framework e la cartella `Public` dalla libreria alla root del tuo progetto. Il file di configurazione va copiato come `Config/configFramework.php`; gli altri file di `SismaFramework/Config/` (come `openssl.cnf`) restano nel modulo, da cui il framework li legge.
+Per garantire che gli aggiornamenti del framework non sovrascrivano le tue configurazioni, devi copiare il file di configurazione del framework, il file di bootstrap e la cartella `Public` dalla libreria alla root del tuo progetto. Il file di configurazione va copiato come `Config/configFramework.php`; gli altri file di `SismaFramework/Config/` (come `openssl.cnf`) restano nel modulo, da cui il framework li legge.
 
 ```bash
 mkdir Config
 cp SismaFramework/Config/config.php Config/configFramework.php
+cp SismaFramework/Config/bootstrap.php Config/bootstrap.php
 cp -R SismaFramework/Public/ .
+```
+
+Nel bootstrap copiato sostituisci `'config.php'` con `'configFramework.php'`, così che carichi la configurazione del progetto:
+
+```bash
+sed -i "s/'config.php'/'configFramework.php'/" Config/bootstrap.php
 ```
 
 Nel file copiato sostituisci il namespace del modulo con quello del progetto, cioè la riga `namespace SismaFramework\Config;` con `namespace Config;`:
@@ -233,6 +240,7 @@ La struttura della tua cartella di progetto dovrebbe ora essere simile a questa:
 il-mio-progetto/
 ├── Cache/
 ├── Config/
+│   ├── bootstrap.php
 │   └── configFramework.php
 ├── Logs/
 ├── Public/
@@ -248,19 +256,17 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
 
 1. **Modifica `Public/index.php`**
 
-   Apri il file `Public/index.php` e modifica i percorsi di inclusione per puntare alla sottocartella `SismaFramework`.
+   Apri il file `Public/index.php` e modifica il percorso dell'autoloader per puntare alla sottocartella `SismaFramework`. Il bootstrap resta quello del progetto, in `Config/bootstrap.php`.
 
-   _Cerca queste righe:_
+   _Cerca questa riga:_
 
    ```php
-   require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
    require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
    ```
 
-   _E modificale in:_
+   _E modificala in:_
 
    ```php
-   require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
    require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
    ```
 

@@ -156,6 +156,7 @@ class HomeController extends BaseController
                         <pre class="mb-0" style="background: #f8f9fa; padding: 1rem; border-radius: 4px; font-size: 0.85rem;"><code>mio-progetto/
 ├── <span class="text-success fw-bold">Cache/</span>               <span class="text-success"># creata</span>
 ├── <span class="text-success fw-bold">Config/</span>              <span class="text-success"># creata</span>
+│   ├── bootstrap.php
 │   └── configFramework.php
 ├── <span class="text-success fw-bold">filesystemMedia/</span>     <span class="text-success"># creata</span>
 ├── <span class="text-success fw-bold">Logs/</span>                <span class="text-success"># creata</span>
