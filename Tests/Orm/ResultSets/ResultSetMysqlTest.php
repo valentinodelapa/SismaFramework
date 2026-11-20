@@ -34,6 +34,7 @@ use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
+use SismaFramework\TestsApplication\Entities\EntityWithExternalIdentifiers;
 use SismaFramework\TestsApplication\Entities\EntityWithNullableEncryptedProperty;
 use SismaFramework\TestsApplication\Entities\EntityWithOwnInitializationVectors;
 
@@ -263,6 +264,37 @@ class ResultSetMysqlTest extends TestCase
         $entity = $this->fetchSingleEntity($result, EntityWithOwnInitializationVectors::class);
         $this->assertSame('value-one', $entity->encryptedPropertyOne);
         $this->assertSame('value-two', $entity->encryptedPropertyTwo);
+    }
+
+    public function testFetchWithScalarPropertyEndingInId()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_event_id = 4815;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame(4815, $entity->externalEventId);
+    }
+
+    public function testFetchWithScalarPropertyEndingInIdAndScalarPropertyWithoutSuffix()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_code = 'code';
+        $result->external_code_id = 1623;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame('code', $entity->externalCode);
+        $this->assertSame(1623, $entity->externalCodeId);
+    }
+
+    public function testFetchWithForeignKeyAlongsideScalarPropertiesEndingInId()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_event_id = 42;
+        $result->reflection_cache_sample_id = 987654;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame(42, $entity->externalEventId);
+        $this->assertSame(['reflectionCacheSample' => 987654], $entity->getForeignKeyIndexes());
     }
 
     private function fetchSingleEntity(\stdClass $result, string $entityClass): object

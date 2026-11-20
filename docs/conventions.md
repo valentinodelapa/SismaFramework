@@ -54,6 +54,7 @@ const MODULE_FOLDERS = ['Blog', 'UserModule', 'ApiModule'];
 *   **Chiave Primaria:** Si assume che la colonna della chiave primaria si chiami `id`.
 *   **Chiavi Esterne:** Vengono inferite dal nome della proprietà e dal suo tipo.
     *   `protected User $author;` -> colonna `author_id`.
+    *   Una proprietà scalare il cui nome termina in `Id` non è una chiave esterna: si mappa sulla colonna con lo stesso nome in `snake_case`, sia in scrittura sia in lettura (es. `protected int $externalEventId;` <-> `external_event_id`, utile per gli identificativi provenienti da sistemi esterni). Una colonna che termina in `_id` viene trattata come chiave esterna solo se la proprietà senza suffisso esiste ed è di tipo entità.
 *   **Collezioni Inverse (Lazy-Loaded):** Una "proprietà magica" viene aggiunta a un'entità per accedere alle entità che la referenziano.
     *   `$user->postCollection` -> restituisce una collezione di tutti i `Post` il cui `author` è `$user`.
 

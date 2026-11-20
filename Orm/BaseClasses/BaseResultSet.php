@@ -243,8 +243,8 @@ abstract class BaseResultSet implements \Iterator
     {
         $class = $entityClass ?? $this->returnType;
         $entity = new $class();
-        foreach ($standardClass as $property => $value) {
-            $property = NotationManager::convertColumnNameToPropertyName($property);
+        foreach ($standardClass as $columnName => $value) {
+            $property = $this->resolvePropertyName($class, $columnName);
             if (property_exists($entity, $property)) {
                 $reflectionProperty = BaseEntity::getReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
@@ -256,6 +256,25 @@ abstract class BaseResultSet implements \Iterator
         }
         $entity->modified = false;
         return $entity;
+    }
+
+    private function resolvePropertyName(string $entityClass, string $columnName): string
+    {
+        $propertyName = NotationManager::convertColumnNameToPropertyName($columnName);
+        $fullPropertyName = NotationManager::convertToCamelCase($columnName);
+        if (($propertyName !== $fullPropertyName) && property_exists($entityClass, $fullPropertyName) && ($this->isEntityProperty($entityClass, $propertyName) === false)) {
+            return $fullPropertyName;
+        }
+        return $propertyName;
+    }
+
+    private function isEntityProperty(string $entityClass, string $propertyName): bool
+    {
+        if (property_exists($entityClass, $propertyName) === false) {
+            return false;
+        }
+        $reflectionType = BaseEntity::getReflectionProperty($entityClass, $propertyName)->getType();
+        return ($reflectionType instanceof \ReflectionNamedType) && ($reflectionType->isBuiltin() === false) && is_subclass_of($reflectionType->getName(), BaseEntity::class);
     }
 
     private function decryptValue(\stdClass $standardClass, BaseEntity $entity, string $propertyName, string $value): string
