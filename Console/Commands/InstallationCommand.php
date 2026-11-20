@@ -111,6 +111,7 @@ class InstallationCommand extends BaseCommand
         $this->output("");
         $this->output("Project structure created:");
         $this->output("  - Config/configFramework.php");
+        $this->output("  - Config/bootstrap.php");
         $this->output("  - Public/index.php");
         $this->output("  - .htaccess");
         $this->output("  - composer.json");

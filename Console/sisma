@@ -8,8 +8,16 @@ use SismaFramework\Console\HelperClasses\CommandLineInterfaceSettingsChecker;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\ErrorHandler;
 
+$projectBootstrap = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 $projectConfig = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'configFramework.php';
-require_once file_exists($projectConfig) ? $projectConfig : dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
+if (file_exists($projectBootstrap)) {
+    require_once $projectBootstrap;
+} elseif (file_exists($projectConfig)) {
+    file_put_contents('php://stderr', "Deprecated: Config/bootstrap.php not found, loading Config/configFramework.php directly. This fallback will be removed in 13.0.0: create Config/bootstrap.php in the project root." . PHP_EOL);
+    require_once $projectConfig;
+} else {
+    require_once dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+}
 require_once dirname(__DIR__, 1) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 ErrorHandler::enableErrorDisplay();

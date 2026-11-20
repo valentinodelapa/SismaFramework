@@ -23,6 +23,44 @@ Dalla 12.9.0 `Config` cerca ogni costante prima in `Config\` (il file del proget
 
 Il default è il valore calcolato nel file del modulo: per le costanti derivate da altre costanti o da `__DIR__` (path, namespace) va dichiarata esplicitamente nel progetto.
 
+### Bootstrap del Progetto e Configurazioni dei Moduli
+
+Dalla 12.16.0 i file di configurazione non vengono caricati direttamente da `Public/index.php` e dal comando `sisma`, ma da `Config/bootstrap.php`. Il bootstrap descrive di cosa è composto il progetto: la configurazione del framework, quelle dei moduli e l'autoloader di Composer. L'autoloader del framework (`SismaFramework/Autoload/autoload.php`) resta invece a carico dei due punti d'ingresso, che lo includono subito dopo il bootstrap.
+
+Il bootstrap generato da `sisma install` è:
+
+```php
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'configFramework.php';
+if (file_exists(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
+    require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+}
+```
+
+Le configurazioni dei moduli si aggiungono in coda:
+
+```php
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'configMyBlog.php';
+```
+
+In questo modo sono disponibili sia nelle richieste web sia nei comandi `sisma`, compresi quelli dei moduli. Poiché vengono eseguiti anche dalla console, i file di configurazione devono limitarsi a dichiarare costanti (`const` o `define()`), senza effetti collaterali come l'invio di header, l'avvio della sessione o la stampa di output.
+
+`vendor/autoload.php` viene incluso solo se esiste: la console funziona anche prima di aver eseguito `composer install` nel progetto.
+
+Il comando `sisma` cerca i file in quest'ordine:
+
+1. `Config/bootstrap.php` del progetto;
+2. se manca, `Config/configFramework.php` del progetto, caricato direttamente come nelle versioni precedenti, con un avviso di deprecazione su standard error. Questo fallback sarà rimosso nella 13.0.0;
+3. se manca anche questo (framework non ancora installato), `Config/bootstrap.php` del modulo SismaFramework, che carica `Config/config.php`.
+
+Un progetto installato prima della 12.16.0 adotta il bootstrap creando `Config/bootstrap.php` con il contenuto mostrato sopra e sostituendo in `Public/index.php` i `require_once` della configurazione e di `vendor/autoload.php` con quello del bootstrap:
+
+```php
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
+```
+
+L'aggiornamento di `Public/index.php` può anche essere rimandato: lasciando i `require_once` esistenti, ogni file viene comunque incluso una sola volta, perché `require_once` riconosce lo stesso file anche quando è raggiunto con percorsi diversi.
+
 ---
 
 ## Configurazione Base

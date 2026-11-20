@@ -60,6 +60,8 @@ const MODULE_FOLDERS = [
 
 L'autoloader del framework userà questo array per trovare e caricare automaticamente le classi da tutti i moduli registrati.
 
+Se il modulo ha un proprio file di configurazione, includilo in `Config/bootstrap.php` del progetto: così le sue costanti sono disponibili sia nelle richieste web sia nei comandi `sisma`. Vedi [Bootstrap del Progetto e Configurazioni dei Moduli](configuration-reference.md#bootstrap-del-progetto-e-configurazioni-dei-moduli).
+
 ### Comandi Console e Moduli (`--module`)
 
 Quando più moduli registrano un comando console con lo stesso nome (ad esempio un comando `install` proprio di un modulo), puoi selezionare esplicitamente quale modulo deve gestirlo con l'opzione globale `--module=NomeModulo`:

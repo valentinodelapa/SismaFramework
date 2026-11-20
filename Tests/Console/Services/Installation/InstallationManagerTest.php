@@ -123,7 +123,86 @@ class InstallationManagerTest extends TestCase
 
         $content = file_get_contents($indexFile);
         $this->assertStringContainsString("'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'", $content);
-        $this->assertStringContainsString("'Config' . DIRECTORY_SEPARATOR . 'configFramework.php'", $content);
+        $this->assertStringContainsString("'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php'", $content);
+        $this->assertStringNotContainsString("configFramework.php", $content);
+    }
+
+    public function testInstallCreatesBootstrapFile(): void
+    {
+        $this->manager->install('MyTestProject');
+
+        $bootstrapFile = $this->testProjectRoot . '/Config/bootstrap.php';
+        $this->assertFileExists($bootstrapFile);
+
+        $content = file_get_contents($bootstrapFile);
+        $this->assertStringContainsString("require_once __DIR__ . DIRECTORY_SEPARATOR . 'configFramework.php';", $content);
+        $this->assertStringNotContainsString("'config.php'", $content);
+        $this->assertStringContainsString("'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'", $content);
+    }
+
+    public function testInstallDoesNotOverwriteExistingBootstrapWithoutForce(): void
+    {
+        mkdir($this->testProjectRoot . '/Config', 0755, true);
+        $existingContent = "<?php
+require_once __DIR__ . '/configFramework.php';
+require_once __DIR__ . '/configModule.php';
+";
+        file_put_contents($this->testProjectRoot . '/Config/bootstrap.php', $existingContent);
+
+        $this->manager->install('MyTestProject');
+
+        $this->assertEquals($existingContent, file_get_contents($this->testProjectRoot . '/Config/bootstrap.php'));
+    }
+
+    public function testInstallOverwritesExistingBootstrapWithForce(): void
+    {
+        mkdir($this->testProjectRoot . '/Config', 0755, true);
+        file_put_contents($this->testProjectRoot . '/Config/bootstrap.php', "<?php
+require_once __DIR__ . '/configModule.php';
+");
+
+        $this->manager->setForce(true);
+        $this->manager->install('MyTestProject');
+
+        $content = file_get_contents($this->testProjectRoot . '/Config/bootstrap.php');
+        $this->assertStringNotContainsString('configModule.php', $content);
+        $this->assertStringContainsString("'configFramework.php'", $content);
+    }
+
+    public function testInstalledBootstrapLoadsProjectConfigurationAndVendorAutoload(): void
+    {
+        $realFrameworkBootstrap = dirname(__DIR__, 4) . '/Config/bootstrap.php';
+        copy($realFrameworkBootstrap, $this->testFrameworkPath . '/Config/bootstrap.php');
+        $this->manager->install('MyTestProject');
+        file_put_contents($this->testProjectRoot . '/Config/configFramework.php', "<?php
+\$GLOBALS['sismaBootstrapLoaded'][] = 'configFramework';
+");
+        mkdir($this->testProjectRoot . '/vendor', 0755, true);
+        file_put_contents($this->testProjectRoot . '/vendor/autoload.php', "<?php
+\$GLOBALS['sismaBootstrapLoaded'][] = 'vendor';
+");
+        $GLOBALS['sismaBootstrapLoaded'] = [];
+
+        require $this->testProjectRoot . '/Config/bootstrap.php';
+
+        $this->assertSame(['configFramework', 'vendor'], $GLOBALS['sismaBootstrapLoaded']);
+        unset($GLOBALS['sismaBootstrapLoaded']);
+    }
+
+    public function testInstalledBootstrapSkipsMissingVendorAutoload(): void
+    {
+        $realFrameworkBootstrap = dirname(__DIR__, 4) . '/Config/bootstrap.php';
+        copy($realFrameworkBootstrap, $this->testFrameworkPath . '/Config/bootstrap.php');
+        $this->manager->install('MyTestProject');
+        file_put_contents($this->testProjectRoot . '/Config/configFramework.php', "<?php
+\$GLOBALS['sismaBootstrapLoaded'][] = 'configFramework';
+");
+        $GLOBALS['sismaBootstrapLoaded'] = [];
+
+        require $this->testProjectRoot . '/Config/bootstrap.php';
+
+        $this->assertSame(['configFramework'], $GLOBALS['sismaBootstrapLoaded']);
+        unset($GLOBALS['sismaBootstrapLoaded']);
     }
 
     public function testInstallWithDatabaseConfig(): void
@@ -275,20 +354,17 @@ PHP
         $this->assertEquals('^2.0 || ^3.0', $composer['require']['psr/log']);
     }
 
-    public function testInstallAddsVendorAutoloadToIndexPhp(): void
+    public function testInstallLoadsBootstrapBeforeFrameworkAutoloadInIndexPhp(): void
     {
-        $projectName = 'MyTestProject';
+        $this->manager->install('MyTestProject');
 
-        $this->manager->install($projectName);
+        $content = file_get_contents($this->testProjectRoot . '/Public/index.php');
 
-        $indexFile = $this->testProjectRoot . '/Public/index.php';
-        $content = file_get_contents($indexFile);
-
-        $this->assertStringContainsString("'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'", $content);
-
-        $vendorAutoloadPos = strpos($content, "'vendor' . DIRECTORY_SEPARATOR . 'autoload.php'");
+        $bootstrapPos = strpos($content, "'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php'");
         $frameworkAutoloadPos = strpos($content, "'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload'");
-        $this->assertLessThan($vendorAutoloadPos, $frameworkAutoloadPos);
+        $this->assertNotFalse($bootstrapPos);
+        $this->assertNotFalse($frameworkAutoloadPos);
+        $this->assertLessThan($frameworkAutoloadPos, $bootstrapPos);
     }
 
     public function testInstallCopiesHtaccessFile(): void
@@ -360,6 +436,16 @@ const MODULE_FOLDERS = [
 ];
 PHP
         );
+        file_put_contents(
+            $configDir . '/bootstrap.php',
+            <<<'PHP'
+<?php
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'config.php';
+if (file_exists(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
+    require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+}
+PHP
+        );
 
         // Crea Public/index.php con il formato reale del framework
         $publicDir = $this->testFrameworkPath . '/Public';
@@ -368,7 +454,7 @@ PHP
             $publicDir . '/index.php',
             <<<'PHP'
 <?php
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'bootstrap.php';
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
 PHP
         );
