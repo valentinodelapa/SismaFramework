@@ -6,6 +6,22 @@
         "sampleType": {
             "one": "uno",
             "two": "due"
+        },
+        "sampleRank": {
+            "knight": {
+                "label": "Cavaliere",
+                "description": "Primo grado",
+                "initials": null,
+                "male": {
+                    "label": "Cavaliere",
+                    "initial": "Cav."
+                },
+                "female": "Dama"
+            },
+            "officer": {
+                "male": "Ufficiale",
+                "female": "Ufficiale"
+            }
         }
     },
     "pages": {

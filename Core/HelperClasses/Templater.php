@@ -28,6 +28,7 @@ namespace SismaFramework\Core\HelperClasses;
 
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\Enumerations\Resource;
+use SismaFramework\Core\Exceptions\LocalizatorException;
 
 /**
  *
@@ -42,6 +43,15 @@ class Templater
         $templatePath = ModuleManager::getExistingFilePath($config->templatesPath . $template, Resource::tpl);
         $varsAndLocales = array_merge($localizator->getTemplateLocaleArray($template), $vars);
         return self::parseTemplate($templatePath, $varsAndLocales);
+    }
+
+    public static function getTemplateLabel(string $template, string $label, Localizator $localizator = new Localizator()): string
+    {
+        $templateLocale = $localizator->getTemplateLocaleArray($template);
+        if (is_string($templateLocale[$label] ?? null) === false) {
+            throw new LocalizatorException('Label ' . $label . ' non trovata per il template ' . $template);
+        }
+        return $templateLocale[$label];
     }
 
     public static function parseTemplate(string $templatePath, array $vars): string

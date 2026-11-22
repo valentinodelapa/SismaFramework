@@ -28,6 +28,7 @@ namespace SismaFramework\Tests\Core\HelperClasses;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Core\Exceptions\LocalizatorException;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Localizator;
 use SismaFramework\Core\HelperClasses\ModuleManager;
@@ -170,6 +171,36 @@ class TemplaterTest extends TestCase
 
         $result = Templater::generateTemplate('test', ['name' => 'John'], $localizatorStub, $configStub);
         $this->assertEquals('Hello John, welcome to Locale site!', $result);
+    }
+
+    public function testGetTemplateLabel()
+    {
+        $this->assertEquals('Attivazione account', Templater::getTemplateLabel('emails/account/activation', 'subject', $this->getTestsApplicationLocalizator()));
+    }
+
+    public function testGetTemplateLabelInheritsCommonLabels()
+    {
+        $this->assertEquals('Gestione account', Templater::getTemplateLabel('emails/account/activation', 'footer', $this->getTestsApplicationLocalizator()));
+    }
+
+    public function testGetTemplateLabelWithMissingLabelThrowsException()
+    {
+        $this->expectException(LocalizatorException::class);
+        Templater::getTemplateLabel('emails/welcome', 'footer', $this->getTestsApplicationLocalizator());
+    }
+
+    private function getTestsApplicationLocalizator(): Localizator
+    {
+        $configStub = $this->createStub(Config::class);
+        $configStub->method('__get')
+                ->willReturnMap([
+                    ['rootPath', dirname(__DIR__, 4) . DIRECTORY_SEPARATOR],
+                    ['localesPath', 'TestsApplication' . DIRECTORY_SEPARATOR . 'Locales' . DIRECTORY_SEPARATOR],
+        ]);
+        Config::setInstance($configStub);
+        ModuleManager::setApplicationModule('SismaFramework');
+        ModuleManager::unsetCustomVisualizationModule();
+        return new Localizator(Language::italian, $configStub);
     }
 
     public function testGenerateNestedTemplateWithHierarchicalLocale()

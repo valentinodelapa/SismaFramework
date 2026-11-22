@@ -2,15 +2,47 @@
 
 I **Traits** di SismaFramework estendono le funzionalità delle [enumerazioni](enumerations.md) PHP 8.3+, fornendo capacità avanzate per localizzazione, gestione gerarchica e creazione di dropdown dinamici.
 
+## `LocalizableEnumeration`
+
+Il trait di base per le enumerazioni i cui case hanno label nel file di localizzazione. Le regole con cui vengono letti i valori (la chiave riservata `label`, i percorsi, i valori `null`) sono descritte in [Localizzazione delle Enumerazioni](internationalization.md#localizzazione-delle-enumerazioni).
+
+È adatto agli enum che hanno bisogno delle label ma non vanno offerti come scelte di una select, come i messaggi d'errore.
+
+```php
+use SismaFramework\Core\Traits\LocalizableEnumeration;
+
+enum FormError: string
+{
+    use LocalizableEnumeration;
+
+    case missingName = 'MN';
+    case invalidDate = 'ID';
+
+    public function getMessage(string ...$arguments): string
+    {
+        return vsprintf($this->getFriendlyLabel(), $arguments);
+    }
+}
+```
+
+### Metodi Disponibili
+
+#### `getFriendlyLabel(string|array $path = [], Localizator $localizator = new Localizator()): string`
+Restituisce la label del case o, se è indicato un percorso, dell'elemento che si trova in quel punto. Il percorso è una stringa per un solo livello o un array di chiavi per più livelli.
+
+#### `getLocalizedAttribute(string|array $path, Localizator $localizator = new Localizator()): string|array|null`
+Restituisce il valore grezzo che si trova nel punto indicato dal percorso.
+
+In entrambi i metodi il `Localizator` determina la lingua: senza indicarlo si usa la lingua della richiesta o quella di configurazione (vedi [Scelta della Lingua](internationalization.md#scelta-della-lingua)).
+
 ## `SelectableEnumeration`
 
-Il trait fondamentale che aggiunge supporto per la localizzazione automatica e la creazione di array per form `<select>`.
+Estende `LocalizableEnumeration` con la creazione di array di scelte per i form `<select>`. Un enum selezionabile dispone quindi anche di `getFriendlyLabel()` e `getLocalizedAttribute()`.
 
 ### Funzionalità Principali
 
 ```php
 use SismaFramework\Core\Traits\SelectableEnumeration;
-use SismaFramework\Core\Enumerations\Language;
 
 enum Status: string
 {
@@ -21,22 +53,18 @@ enum Status: string
     case pending = 'pending';
 }
 
-// Ottenere etichetta localizzata
-$language = Language::it_IT;
-$label = Status::active->getFriendlyLabel($language); // "Attivo" (dal file di lingua)
+$label = Status::active->getFriendlyLabel(); // "Attivo" (dal file di lingua)
 
-// Creare array per dropdown
-$choices = Status::getChoiceFromEnumerations($language);
+$choices = Status::getChoiceFromEnumerations();
 // ['Attivo' => 'active', 'Inattivo' => 'inactive', 'In Attesa' => 'pending']
 ```
 
 ### Metodi Disponibili
 
-#### `getFriendlyLabel(Language $language): string`
-Restituisce l'etichetta localizzata per il case enum corrente.
+#### `getChoiceFromEnumerations(string|array $path = [], Localizator $localizator = new Localizator()): array`
+Metodo statico che restituisce un array associativo `[label => valore]` per tutti i case dell'enum, ideale per form HTML. Con un percorso, la label di ogni case viene letta in quel punto: ad esempio `getChoiceFromEnumerations('female')` costruisce le scelte con le label femminili.
 
-#### `getChoiceFromEnumerations(Language $language): array`
-Metodo statico che restituisce un array associativo `[etichetta => valore]` per tutti i case dell'enum, ideale per form HTML.
+> **Deprecato dalla versione 12.17.0, sarà rimosso nella versione 13.0.0**: `getFriendlyLabel()` e `getChoiceFromEnumerations()` accettano ancora un `Language` come primo argomento. Sostituisci `getFriendlyLabel($language)` con `getFriendlyLabel([], new Localizator($language))`, oppure imposta la lingua della richiesta con `Localizator::setLanguage()` e ometti l'argomento.
 
 ## `ReferencedSelectableEnumeration`
 
@@ -72,15 +100,17 @@ enum Region: string
 }
 
 // Ottenere città per regione specifica
-$northCities = City::getRegionChoiceBy($language, Region::north);
+$northCities = City::rome->getRegionChoiceBy(new Localizator(), Region::north);
 // ['Milano' => 'milan', 'Torino' => 'turin']
 ```
 
 ### Funzionalità Magic Methods
 
-Il trait utilizza `__call()` per creare metodi dinamici nel formato `{metodo}ChoiceBy()`:
-- `getRegionChoiceBy($language, $region)` → filtro per regione
-- `getCategoryChoiceBy($language, $category)` → filtro per categoria
+Il trait utilizza `__call()` per creare metodi dinamici nel formato `{metodo}ChoiceBy()`, che ricevono un `Localizator` e il valore da filtrare:
+- `getRegionChoiceBy($localizator, $region)` → filtro per regione
+- `getCategoryChoiceBy($localizator, $category)` → filtro per categoria
+
+> **Deprecato dalla versione 12.17.0, sarà rimosso nella versione 13.0.0**: al posto del `Localizator` è ancora accettato un `Language`.
 
 ## `SelfReferencedEnumeration`
 
@@ -151,10 +181,13 @@ enum Permission: string
 }
 
 // Ottenere dropdown con i figli di un permesso
-$language = Language::it_IT;
-$userManagementChoices = Permission::user_management->getChoiceByMultipleParent($language);
+$userManagementChoices = Permission::user_management->getChoiceByMultipleParent();
 // ['Crea Utente' => 'user_create', 'Modifica Utente' => 'user_edit', 'Elimina Utente' => 'user_delete']
 ```
+
+`getChoiceByMultipleParent()` accetta un `Localizator` per indicare una lingua diversa da quella della richiesta.
+
+> **Deprecato dalla versione 12.17.0, sarà rimosso nella versione 13.0.0**: al posto del `Localizator` è ancora accettato un `Language`.
 
 ## Integrazione con Form HTML
 
@@ -162,7 +195,7 @@ $userManagementChoices = Permission::user_management->getChoiceByMultipleParent(
 
 ```php
 // Nel controller
-$statuses = Status::getChoiceFromEnumerations($language);
+$statuses = Status::getChoiceFromEnumerations();
 $this->vars['statusChoices'] = $statuses;
 
 // Nella vista
@@ -178,7 +211,7 @@ echo '</select>';
 ```php
 // JavaScript per dropdown dinamici
 echo '<select id="region" onchange="updateCities()">';
-foreach (Region::getChoiceFromEnumerations($language) as $label => $value) {
+foreach (Region::getChoiceFromEnumerations() as $label => $value) {
     echo '<option value="' . $value . '">' . $label . '</option>';
 }
 echo '</select>';
@@ -186,30 +219,30 @@ echo '</select>';
 echo '<select id="cities"></select>';
 
 // La funzione updateCities() chiamerà un endpoint AJAX che userà:
-// City::getRegionChoiceBy($language, $selectedRegion)
+// City::rome->getRegionChoiceBy(new Localizator(), $selectedRegion)
 ```
 
 ## Pattern di Localizzazione
 
 ### File di Lingua per Trait
 
-Nel file `Lang/it_IT.php`:
+Nel file `Application/Locales/it_IT.json`, sotto il nome breve dell'enumerazione con l'iniziale minuscola:
 
-```php
-return [
-    'enumerations' => [
-        'Status' => [
-            'active' => 'Attivo',
-            'inactive' => 'Inattivo',
-            'pending' => 'In Attesa'
-        ],
-        'Permission' => [
-            'admin' => 'Amministratore',
-            'user_management' => 'Gestione Utenti',
-            'user_create' => 'Crea Utente'
-        ]
-    ]
-];
+```json
+{
+    "enumerations": {
+        "status": {
+            "active": "Attivo",
+            "inactive": "Inattivo",
+            "pending": "In Attesa"
+        },
+        "permission": {
+            "admin": "Amministratore",
+            "user_management": "Gestione Utenti",
+            "user_create": "Crea Utente"
+        }
+    }
+}
 ```
 
 ## Best Practices
@@ -219,9 +252,9 @@ return [
 - Metodi `getSons()` per array di figli
 - Usa nomi descrittivi per le relazioni
 
-### 2. Performance
-- I trait utilizzano caching interno per evitare ricalcoli
-- Le chiamate a `getFriendlyLabel()` sono ottimizzate
+### 2. Lingua
+- Imposta la lingua della richiesta con `Localizator::setLanguage()` invece di passarla a ogni chiamata
+- Passa un `Localizator` solo quando serve una lingua diversa da quella della richiesta
 
 ### 3. Manutenibilità
 - Definisci sempre un case `default` nei match

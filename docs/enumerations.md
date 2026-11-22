@@ -240,26 +240,23 @@ enum Language: string
 
 ```php
 use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Core\HelperClasses\Localizator;
 
-// Ottenere nomi localizzati delle lingue
-$currentLang = Language::english;
+// Nomi delle lingue nella lingua della richiesta
+$italianName = Language::italian->getFriendlyLabel();  // "Italiano" con interfaccia in italiano
 
-$italianName = Language::italian->getFriendlyLabel($currentLang);  // "Italian"
-$frenchName = Language::french->getFriendlyLabel($currentLang);    // "French"
-$germanName = Language::german->getFriendlyLabel($currentLang);    // "German"
-
-// Con lingua italiana
-$currentLang = Language::italian;
-$englishName = Language::english->getFriendlyLabel($currentLang);  // "Inglese"
-$frenchName = Language::french->getFriendlyLabel($currentLang);    // "Francese"
+// Nomi delle lingue in una lingua specifica
+$english = new Localizator(Language::english);
+$italianName = Language::italian->getFriendlyLabel([], $english);  // "Italian"
+$frenchName = Language::french->getFriendlyLabel([], $english);    // "French"
 
 // Language switcher per UI
 class LanguageSwitcherComponent {
-    public function render(Language $userLanguage): string {
+    public function render(): string {
         $options = '';
 
         foreach (Language::cases() as $language) {
-            $label = $language->getFriendlyLabel($userLanguage);
+            $label = $language->getFriendlyLabel();
             $value = $language->value;
             $options .= "<option value='{$value}'>{$label}</option>";
         }
@@ -270,8 +267,8 @@ class LanguageSwitcherComponent {
 
 // Dropdown localizzato
 class LocalizationService {
-    public function getAvailableLanguages(Language $userLanguage): array {
-        return Language::getChoiceFromEnumerations($userLanguage);
+    public function getAvailableLanguages(): array {
+        return Language::getChoiceFromEnumerations();
         // Restituisce ['Inglese' => 'en_GB', 'Francese' => 'fr_FR', ...]
     }
 }

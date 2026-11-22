@@ -31,6 +31,8 @@ use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
+use SismaFramework\Core\HelperClasses\Localizator;
+use SismaFramework\TestsApplication\Enumerations\SampleRank;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
@@ -70,5 +72,25 @@ class SelectableEnumerationTest extends TestCase
             "uno" => "O",
             "due" => "T"
                 ], $choices);
+    }
+
+    public function testGetChoiceFromEnumerationsUsesContextualLanguage()
+    {
+        ModuleManager::setApplicationModule('SismaFramework');
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
+        $this->assertEquals([
+            "uno" => "O",
+            "due" => "T"
+                ], SampleType::getChoiceFromEnumerations());
+    }
+
+    public function testGetChoiceFromEnumerationsWithPath()
+    {
+        ModuleManager::setApplicationModule('SismaFramework');
+        ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
+        $this->assertEquals([
+            "Cavaliere" => "K",
+            "Ufficiale" => "O"
+                ], SampleRank::getChoiceFromEnumerations('male', new Localizator(Language::italian)));
     }
 }
