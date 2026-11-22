@@ -27,6 +27,7 @@
 namespace SismaFramework\Core\Traits;
 
 use SismaFramework\Core\Enumerations\Language;
+use SismaFramework\Core\HelperClasses\Localizator;
 
 /**
  * @author Valentino de Lapa
@@ -37,12 +38,13 @@ trait MultipleSelfReferencedEnumeration
 
     abstract public function getSons(): array;
 
-    public function getChoiceByMultipleParent(Language $language): array
+    public function getChoiceByMultipleParent(Language|Localizator $localizator = new Localizator()): array
     {
+        $localizator = self::resolveLocalizator($localizator);
         $choice = $sons = [];
         $sons = $this->getSons();
         foreach ($sons as $case) {
-            $choice[$case->getFriendlyLabel($language)] = $case->value;
+            $choice[$case->getFriendlyLabel([], $localizator)] = $case->value;
         }
         return $choice;
     }

@@ -32,6 +32,9 @@ use SismaFramework\Core\HelperClasses\Localizator;
 use SismaFramework\Core\HelperClasses\ModuleManager;
 use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\Enumerations\Resource;
+use SismaFramework\Core\Exceptions\LocalizatorException;
+use SismaFramework\TestsApplication\Enumerations\SampleRank;
+use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
  * @author Valentino de Lapa
@@ -163,6 +166,39 @@ class LocalizatorTest extends TestCase
             'signature' => 'Il team di Sisma',
             'greeting' => 'Ciao',
         ], $this->getTestsApplicationLocalizator()->getTemplateLocaleArray('emails/reminder'));
+    }
+
+    public function testGetEnumerationLocaleLabelWithPath()
+    {
+        $this->assertEquals('Dama', $this->getTestsApplicationLocalizator()->getEnumerationLocaleLabel(SampleRank::knight, 'female'));
+    }
+
+    public function testGetEnumerationLocaleLabelWithoutLabelThrowsException()
+    {
+        $this->expectException(LocalizatorException::class);
+        $this->getTestsApplicationLocalizator()->getEnumerationLocaleLabel(SampleRank::officer);
+    }
+
+    public function testGetComposedEnumerationLocaleOnSimpleValueThrowsException()
+    {
+        $this->expectException(LocalizatorException::class);
+        $this->getTestsApplicationLocalizator()->getComposedEnumerationLocale(SampleType::one);
+    }
+
+    public function testGetEnumerationLocaleAttributeWithNestedPath()
+    {
+        $this->assertEquals('Cav.', $this->getTestsApplicationLocalizator()->getEnumerationLocaleAttribute(SampleRank::knight, 'male', 'initial'));
+    }
+
+    public function testGetEnumerationLocaleAttributeWithNullValue()
+    {
+        $this->assertNull($this->getTestsApplicationLocalizator()->getEnumerationLocaleAttribute(SampleRank::knight, 'initials'));
+    }
+
+    public function testGetEnumerationLocaleAttributeWithMissingPathThrowsException()
+    {
+        $this->expectException(LocalizatorException::class);
+        $this->getTestsApplicationLocalizator()->getEnumerationLocaleAttribute(SampleRank::knight, 'male', 'missing');
     }
 
     private function getTestsApplicationLocalizator(): Localizator

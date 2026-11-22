@@ -35,18 +35,13 @@ use SismaFramework\Core\HelperClasses\Localizator;
  */
 trait SelectableEnumeration
 {
+    use LocalizableEnumeration;
 
-    public function getFriendlyLabel(Language $language): string
-    {
-        $localizator = new Localizator($language);
-        return $localizator->getEnumerationLocaleLabel($this);
-    }
-
-    public static function getChoiceFromEnumerations(Language $language): array
+    public static function getChoiceFromEnumerations(Language|string|array $path = [], Localizator $localizator = new Localizator()): array
     {
         $choice = [];
         foreach (self::cases() as $value) {
-            $choiceKey = $value->getFriendlyLabel($language);
+            $choiceKey = $value->getFriendlyLabel($path, $localizator);
             $choice[$choiceKey] = $value->value;
         }
         return $choice;

@@ -262,6 +262,83 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 
 ---
 
+## [12.17.0] - 2026-11-22 - Localizator come API Pubblica, Trait `LocalizableEnumeration` e Label dei Template
+
+Minor release che rende coerente il modo in cui viste, template ed enumerazioni scelgono la lingua. `Templater` e `RenderService` ricevevano già un `Localizator` e lasciavano a quest'ultimo la scelta della lingua (lingua passata, lingua della richiesta impostata con `Localizator::setLanguage()`, lingua di configurazione), mentre i trait delle enumerazioni ricevevano un `Language` obbligatorio e costruivano al proprio interno un `Localizator` con quella lingua, scavalcando la lingua della richiesta. Ora anche i trait delle enumerazioni ricevono un `Localizator`, facoltativo; il `Language` resta accettato ma è deprecato.
+
+`Localizator` non è più `@internal`: compariva già nelle firme pubbliche di `Templater::generateTemplate()`, `RenderService::generateView()` e `RenderService::generateData()`, e `setLanguage()`/`unsetLanguage()` esistono solo per essere chiamati dalle applicazioni. Restano `@internal` i metodi con cui i componenti del framework leggono le label, per i quali sono ora disponibili punti d'accesso pubblici: il nuovo trait `LocalizableEnumeration` per le enumerazioni e il nuovo metodo `Templater::getTemplateLabel()` per i template.
+
+### ✨ Nuove Funzionalità
+
+#### `Core/Traits/LocalizableEnumeration` — label e attributi localizzati delle enumerazioni
+
+Nuovo trait per le enumerazioni i cui case hanno label nel file di localizzazione, anche se non vanno offerti come scelte di una select (ad esempio i messaggi d'errore). Fornisce:
+
+- **`getFriendlyLabel(string|array $path = [], Localizator $localizator = new Localizator()): string`**: la label del case o dell'elemento che si trova nel punto indicato dal percorso;
+- **`getLocalizedAttribute(string|array $path, Localizator $localizator = new Localizator()): string|array|null`**: il valore grezzo che si trova nel punto indicato dal percorso.
+
+Il percorso è una stringa per un solo livello o un array di chiavi per più livelli, e permette di leggere valori composti e annidati, ad esempio declinati per genere: `getFriendlyLabel('female')`, `getLocalizedAttribute(['male', 'initial'])`. Il framework non conosce la semantica dei livelli, che resta a carico dell'applicazione.
+
+La label segue una regola ora esplicita: ogni elemento della localizzazione di un case ha la sua rappresentazione testuale sotto la chiave riservata `label`, e una stringa è la forma abbreviata di `{"label": "…"}`.
+
+`getFriendlyLabel()` è stato spostato in questo trait da `SelectableEnumeration`, che ora lo usa: un enum selezionabile dispone quindi anche di `getLocalizedAttribute()`.
+
+#### `Core/Traits/SelectableEnumeration::getChoiceFromEnumerations()` — percorso e `Localizator`
+
+La firma diventa `getChoiceFromEnumerations(string|array $path = [], Localizator $localizator = new Localizator()): array`. Con un percorso, la label di ogni case viene letta in quel punto, così ad esempio si possono costruire le scelte con le label femminili. Lo stesso `Localizator` viene usato per tutti i case.
+
+#### `Core/HelperClasses/Templater::getTemplateLabel()` — lettura di una singola label di un template
+
+Nuovo metodo `getTemplateLabel(string $template, string $label, Localizator $localizator = new Localizator()): string` che restituisce una label di un template senza generarlo, ad esempio l'oggetto di un'email da usare nell'intestazione del messaggio. La label viene cercata con le stesse regole di `generateTemplate()`, comprese le label `common` dei livelli superiori. Se la label non esiste viene sollevata una `LocalizatorException`. Sostituisce la lettura diretta di `Localizator::getTemplateLocaleArray()`, che diventa `@internal`.
+
+#### `Core/Traits/ReferencedSelectableEnumeration` e `Core/Traits/MultipleSelfReferencedEnumeration` — `Localizator` al posto di `Language`
+
+I metodi dinamici `{metodo}ChoiceBy()` di `ReferencedSelectableEnumeration` ricevono come primo argomento un `Localizator`. `getChoiceByMultipleParent()` di `MultipleSelfReferencedEnumeration` riceve un `Localizator` facoltativo e, senza argomenti, usa la lingua della richiesta.
+
+### 🐛 Bug Fix
+
+#### `Core/HelperClasses/Localizator::getEnumerationLocaleAttribute()` — `TypeError` sui valori `null`
+
+Il metodo era tipizzato `string|array`, quindi un attributo valorizzato esplicitamente a `null` nel file di localizzazione (ad esempio una sigla che per alcuni case non esiste) produceva un `TypeError`. Il tipo di ritorno è ora `string|array|null`.
+
+#### `Core/HelperClasses/Localizator` — chiavi mancanti e label assenti
+
+Un'enumerazione, un case o un attributo assenti dal file di localizzazione producevano un warning "undefined array key" seguito, a seconda del metodo, da un `TypeError` o da un valore `null` restituito silenziosamente. Allo stesso modo, `getEnumerationLocaleLabel()` su un valore composto senza la chiave `label` produceva un warning. In tutti questi casi viene ora sollevata una `LocalizatorException` che indica l'enumerazione, il case e il percorso.
+
+### ⚠️ Deprecazioni
+
+- **`Language` come argomento dei trait delle enumerazioni**: deprecato dalla versione 12.17.0, sarà rimosso nella versione 13.0.0. `getFriendlyLabel()` e `getChoiceFromEnumerations()` accettano ancora un `Language` come primo argomento, e i metodi di `ReferencedSelectableEnumeration` e `MultipleSelfReferencedEnumeration` lo accettano al posto del `Localizator`. Per migrare si imposta la lingua della richiesta con `Localizator::setLanguage()` e si omette l'argomento, oppure si passa un `Localizator`: `getFriendlyLabel($language)` diventa `getFriendlyLabel([], new Localizator($language))`. Come per le deprecazioni precedenti, la deprecazione è solo documentale.
+
+### 📖 Documentazione
+
+- **`docs/internationalization.md`**: nuove sezioni "Localizzazione delle Enumerazioni" (struttura dei valori, regola della label, attributi) e "Scelta della Lingua" (ordine di scelta, lingua della richiesta, lingua della singola chiamata); `Templater::getTemplateLabel()` in "Utilizzo nei Template"
+- **`docs/traits.md`**: nuova sezione `LocalizableEnumeration`; firme ed esempi di `SelectableEnumeration`, `ReferencedSelectableEnumeration` e `MultipleSelfReferencedEnumeration` aggiornati, con le note di deprecazione; esempio del file di localizzazione corretto in JSON, nel percorso `Application/Locales/` e con i nomi delle enumerazioni con l'iniziale minuscola, come li legge `Localizator`; rimossi i riferimenti a un caching interno dei trait che non esiste
+- **`docs/enumerations.md`**: esempi di `Language` aggiornati alla lingua della richiesta e al `Localizator`
+- **`docs-phpdoc/`**: rigenerata tramite `composer phpdoc`. Nuove pagine per `Localizator`, che non essendo più `@internal` compare ora nella documentazione generata (senza i metodi `@internal`), e per `LocalizableEnumeration`; aggiornate le pagine di `Templater`, `RenderService` e dei trait delle enumerazioni. La rigenerazione ha aggiornato anche 32 pagine rimaste indietro rispetto a modifiche di release precedenti (es. `BaseResultSet` per la 12.16.1)
+
+**File modificati**:
+- **`Core/HelperClasses/Localizator.php`**: rimosso `@internal` dalla classe e aggiunto ai metodi `getPageLocaleArray()`, `getTemplateLocaleArray()`, `getEnumerationLocaleLabel()`, `getComposedEnumerationLocale()` e `getEnumerationLocaleAttribute()`; i tre metodi sulle enumerazioni ricevono un percorso variadico; il metodo privato `getEnumerationLocaleField()` scende lungo il percorso e solleva `LocalizatorException` per le chiavi mancanti; nuovo metodo privato `getEnumerationLocaleReference()` per i messaggi d'errore
+- **`Core/HelperClasses/Templater.php`**: nuovo metodo `getTemplateLabel()`
+- **`Core/Traits/LocalizableEnumeration.php`** *(nuovo)*: `getFriendlyLabel()`, `getLocalizedAttribute()` e il metodo privato `resolveLocalizator()`
+- **`Core/Traits/SelectableEnumeration.php`**: usa `LocalizableEnumeration`; nuova firma di `getChoiceFromEnumerations()`
+- **`Core/Traits/ReferencedSelectableEnumeration.php`**, **`Core/Traits/MultipleSelfReferencedEnumeration.php`**: `Localizator` al posto di `Language`
+
+### 🧪 Test
+
+- **`Tests/Core/Traits/LocalizableEnumerationTest.php`** *(nuovo)*: lingua della richiesta, `Localizator` esplicito, `Language` deprecato, label di valori semplici e composti, percorsi verso stringhe e verso valori composti, attributi annidati e nulli, eccezioni per label assenti e chiavi mancanti
+- **`Tests/Core/Traits/SelectableEnumerationTest.php`**: scelte con la lingua della richiesta e con un percorso
+- **`Tests/Core/HelperClasses/LocalizatorTest.php`**: percorsi, valori nulli ed eccezioni dei metodi sulle enumerazioni
+- **`Tests/Core/HelperClasses/TemplaterTest.php`**: `getTemplateLabel()`, label `common` ereditate e label mancante
+- **`TestsApplication/Enumerations/SampleRank.php`** *(nuovo)* e **`TestsApplication/Locales/it_IT.json`**: enumerazione di test con valori composti, annidati, declinati e nulli
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: le firme di `getFriendlyLabel()`, `getChoiceFromEnumerations()`, dei metodi `{metodo}ChoiceBy()` e di `getChoiceByMultipleParent()` accettano ancora un `Language` nella stessa posizione, con lo stesso comportamento. I metodi di `Localizator` diventati `@internal` non cambiano comportamento, a parte quanto descritto nei Bug Fix, e la classe era già interamente `@internal`.
+- **Cambiamento di comportamento osservabile**: chiavi mancanti e label assenti nella localizzazione delle enumerazioni sollevano ora una `LocalizatorException` invece di un warning, seguito da un `TypeError` o da un valore `null`.
+- **Cambiamento di comportamento osservabile**: un enum che usa `SelectableEnumeration` dispone ora anche del metodo `getLocalizedAttribute()`. Un enum che dichiara già un metodo con questo nome mantiene il proprio, perché i metodi della classe prevalgono su quelli dei trait.
+
+---
+
 ## [12.16.1] - 2026-11-20 - Lettura delle Proprietà Scalari che Terminano in `Id`
 
 Patch che fa caricare dall'ORM le proprietà scalari il cui nome termina in `Id`, come gli identificativi provenienti da API esterne. In lettura ogni colonna con suffisso `_id` veniva trattata come chiave esterna, anche quando la proprietà corrispondente non era un'entità.

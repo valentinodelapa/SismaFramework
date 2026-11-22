@@ -31,8 +31,6 @@ use SismaFramework\Core\Enumerations\Resource;
 use SismaFramework\Core\Exceptions\LocalizatorException;
 
 /**
- * @internal
- *
  * @author Valentino de Lapa
  */
 class Localizator
@@ -47,6 +45,9 @@ class Localizator
         $this->config = $customConfig ?? Config::getInstance();
     }
 
+    /**
+     * @internal
+     */
     public function getPageLocaleArray(string $view): array
     {
         return $this->getHierarchicalLocaleArray($this->getLocale()['pages'] ?? [], $view);
@@ -76,38 +77,63 @@ class Localizator
         return ModuleManager::getConsequentFilePath($this->config->localesPath . $language->value, Resource::json);
     }
 
+    /**
+     * @internal
+     */
     public function getTemplateLocaleArray(string $template): array
     {
         return $this->getHierarchicalLocaleArray($this->getLocale()['templates'] ?? [], $template);
     }
 
-    public function getEnumerationLocaleLabel(\UnitEnum $enumeration): string
+    /**
+     * @internal
+     */
+    public function getEnumerationLocaleLabel(\UnitEnum $enumeration, string ...$path): string
     {
-        $field = $this->getEnumerationLocaleField($enumeration);
-        return is_array($field) ? $field['label'] : $field;
+        $field = $this->getEnumerationLocaleField($enumeration, $path);
+        $label = is_array($field) ? ($field['label'] ?? null) : $field;
+        if (is_string($label) === false) {
+            throw new LocalizatorException('Il valore di localizzazione per ' . $this->getEnumerationLocaleReference($enumeration, $path) . ' non ha una label');
+        }
+        return $label;
     }
 
-    public function getComposedEnumerationLocale(\UnitEnum $enumeration): array
+    /**
+     * @internal
+     */
+    public function getComposedEnumerationLocale(\UnitEnum $enumeration, string ...$path): array
     {
-        $field = $this->getEnumerationLocaleField($enumeration);
+        $field = $this->getEnumerationLocaleField($enumeration, $path);
         if (is_array($field) === false) {
-            throw new LocalizatorException('Il valore di localizzazione per ' . $enumeration::class . '::' . $enumeration->name . ' non è composto');
+            throw new LocalizatorException('Il valore di localizzazione per ' . $this->getEnumerationLocaleReference($enumeration, $path) . ' non è composto');
         }
         return $field;
     }
 
-    public function getEnumerationLocaleAttribute(\UnitEnum $enumeration, string $attribute): string|array
+    /**
+     * @internal
+     */
+    public function getEnumerationLocaleAttribute(\UnitEnum $enumeration, string ...$path): string|array|null
     {
-        return $this->getComposedEnumerationLocale($enumeration)[$attribute];
+        return $this->getEnumerationLocaleField($enumeration, $path);
     }
 
-    private function getEnumerationLocaleField(\UnitEnum $enumeration): string|array
+    private function getEnumerationLocaleField(\UnitEnum $enumeration, array $path): string|array|null
     {
-        $reflectionEnumeration = new \ReflectionClass($enumeration);
-        $enumerationName = $reflectionEnumeration->getShortName();
-        $locale = $this->getLocale();
-        $field = $locale['enumerations'][lcfirst($enumerationName)];
-        return $field[$enumeration->name];
+        $enumerationName = (new \ReflectionClass($enumeration))->getShortName();
+        $field = $this->getLocale();
+        foreach (['enumerations', lcfirst($enumerationName), $enumeration->name, ...$path] as $key) {
+            if ((is_array($field) && array_key_exists($key, $field)) === false) {
+                throw new LocalizatorException('Valore di localizzazione non trovato per ' . $this->getEnumerationLocaleReference($enumeration, $path));
+            }
+            $field = $field[$key];
+        }
+        return $field;
+    }
+
+    private function getEnumerationLocaleReference(\UnitEnum $enumeration, array $path): string
+    {
+        return implode('.', [$enumeration::class . '::' . $enumeration->name, ...$path]);
     }
 
     public static function setLanguage(Language $language): void
