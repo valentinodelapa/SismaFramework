@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default, la lettura di `HTTPS_IS_FORCED` da variabile d'ambiente, la rimozione dell'estensione `.jsm` dalle risorse statiche, deprecata in 12.15.0, e la rimozione del caricamento diretto di `Config/configFramework.php` da parte del comando `sisma`, deprecato in 12.16.0 a favore di `Config/bootstrap.php`.
+Modifiche presenti nel ramo della versione 13 e non ancora incluse in una release. Oltre a tutte le modifiche già rilasciate fino alla 12.11.0, comprende la rimozione del supporto alla chiave piatta per la localizzazione dei template in sottocartelle, deprecata in [12.4.0](#1240---2026-09-27---localizzazione-gerarchica-dei-template-e-label-common-facoltative-in-localizator), la rimozione del metodo `configure()` dei comandi console, deprecato in 12.5.0 a favore di `help()`, l'unificazione delle interfacce dei tipi custom introdotte con la 12.6.0, la rimozione del vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato in 12.11.0 a favore del vettore per proprietà, la lettura di `DEVELOPMENT_ENVIRONMENT` da variabile d'ambiente con l'ambiente di produzione come default, la lettura di `HTTPS_IS_FORCED` da variabile d'ambiente, la rimozione dell'estensione `.jsm` dalle risorse statiche, deprecata in 12.15.0, la rimozione del caricamento diretto di `Config/configFramework.php` da parte del comando `sisma`, deprecato in 12.16.0 a favore di `Config/bootstrap.php`, e la rimozione degli argomenti `Language` dei trait delle enumerazioni, deprecati in [12.17.0](#12170---2026-11-22---localizator-come-api-pubblica-trait-localizableenumeration-e-label-dei-template) a favore di `Localizator`.
 
 ### 💥 Breaking Changes
 
@@ -209,6 +209,37 @@ require_once file_exists($projectBootstrap) ? $projectBootstrap : dirname(__DIR_
 
 **Migrazione**: Sulla 12.16.x, prima dell'aggiornamento, creare `Config/bootstrap.php` nella root del progetto, includendo le configurazioni dei moduli, finché `sisma` non mostra più l'avviso di deprecazione. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
 
+#### `Core/Traits` — rimossi gli argomenti `Language` dei trait delle enumerazioni
+
+La 12.17.0 ha fatto ricevere ai trait delle enumerazioni un `Localizator`, come già `Templater` e `RenderService`, lasciando accettati per compatibilità gli argomenti `Language`, deprecati. Il supporto è rimosso: `getFriendlyLabel()` e `getChoiceFromEnumerations()` ricevono un percorso nella localizzazione e un `Localizator`, i metodi dinamici `{metodo}ChoiceBy()` di `ReferencedSelectableEnumeration` e `getChoiceByMultipleParent()` di `MultipleSelfReferencedEnumeration` ricevono un `Localizator`. Passare un `Language` provoca un `TypeError`.
+
+**Prima (12.x)**:
+```php
+public function getFriendlyLabel(Language|string|array $path = [], Localizator $localizator = new Localizator()): string
+public static function getChoiceFromEnumerations(Language|string|array $path = [], Localizator $localizator = new Localizator()): array
+public function getChoiceByMultipleParent(Language|Localizator $localizator = new Localizator()): array
+```
+
+**Dopo (13.x)**:
+```php
+public function getFriendlyLabel(string|array $path = [], Localizator $localizator = new Localizator()): string
+public static function getChoiceFromEnumerations(string|array $path = [], Localizator $localizator = new Localizator()): array
+public function getChoiceByMultipleParent(Localizator $localizator = new Localizator()): array
+```
+
+**File modificati**:
+- **`Core/Traits/LocalizableEnumeration.php`**: `getFriendlyLabel()` non accetta più un `Language`; rimosso il metodo privato `resolveLocalizator()`
+- **`Core/Traits/SelectableEnumeration.php`**: `getChoiceFromEnumerations()` non accetta più un `Language`
+- **`Core/Traits/ReferencedSelectableEnumeration.php`**, **`Core/Traits/MultipleSelfReferencedEnumeration.php`**: ricevono solo un `Localizator`
+- **`Console/Services/Upgrade/Strategies/Upgrade12to13Strategy.php`**: aggiunta la voce corrispondente a `getBreakingChanges()`
+- **`Tests/Console/Services/Upgrade/Strategies/Upgrade12to13StrategyTest.php`**: aggiornati il numero atteso di breaking change e le voci attese
+- **`Tests/Core/Traits/LocalizableEnumerationTest.php`**, **`Tests/Core/Traits/SelectableEnumerationTest.php`**: rimosso il test sul `Language` deprecato; i test che indicavano la lingua usano un `Localizator`
+- **`UPGRADING.md`**: aggiunto il breaking change 9 e la voce corrispondente nella checklist della sezione "Da 12.x a 13.x"
+- **`docs/internationalization.md`**, **`docs/traits.md`**: le note di deprecazione sono sostituite dalla nota sulla rimozione
+- **`docs-phpdoc/`**: rigenerata tramite `composer phpdoc` per le nuove firme dei trait
+
+**Migrazione**: Impostare la lingua della richiesta con `Localizator::setLanguage()` e omettere l'argomento, oppure passare un `Localizator`: `getFriendlyLabel($language)` diventa `getFriendlyLabel([], new Localizator($language))`. La migrazione si può fare già sulla 12.17.x. Vedi [UPGRADING.md](UPGRADING.md#da-12x-a-13x).
+
 ### ✨ Nuove Funzionalità
 
 #### `Config/config.php` — `HTTPS_IS_FORCED` letta dalla variabile d'ambiente
@@ -259,6 +290,7 @@ Lo spostamento di `Filter` dal modulo `Core` al modulo `Orm` non aveva aggiornat
 - **Breaking change per i moduli che servono file `.jsm`**: le richieste di questi file non vengono più servite come risorse statiche; i file `.js` e `.mjs` non sono interessati.
 - **Cambiamento di comportamento di `sisma upgrade`**: i file in `Console/Commands` dei moduli vengono ora elaborati da tutti i transformer della strategia applicata.
 - **Breaking change per i progetti senza `Config/bootstrap.php`**: la console usa la configurazione del modulo SismaFramework invece di quella del progetto, senza errori; le richieste web non sono interessate.
+- **Breaking change per le applicazioni che passano un `Language` ai trait delle enumerazioni**: la chiamata provoca un `TypeError`; le chiamate senza argomenti o con un `Localizator` non sono interessate.
 
 ---
 

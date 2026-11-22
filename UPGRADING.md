@@ -15,7 +15,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 > **Nota**: la 13.0.0 è al momento distribuita come pre-release (alpha). L'elenco dei breaking change in questa sezione riflette lo stato corrente e potrebbe crescere prima del rilascio definitivo.
 
-La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`, rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà, legge `DEVELOPMENT_ENVIRONMENT` da una variabile d'ambiente, con l'ambiente di produzione come default, rimuove l'estensione `.jsm` dalle risorse statiche, deprecata nella 12.15.0, e rimuove il caricamento diretto di `Config/configFramework.php` da parte del comando `sisma`, deprecato nella 12.16.0 a favore di `Config/bootstrap.php`.
+La versione 13.0.0 introduce un breaking change nella collocazione a modulo di `BaseForm`, `Filter` e `FilterType`, rimuove il supporto alla chiave piatta per la localizzazione dei template in sottocartelle, rimuove il metodo `configure()` dei comandi console, deprecato nella 12.5.0 a favore di `help()`, rende `CustomDateTimeInterface` un'estensione di `CustomTypeInterface`, rimuove il vettore d'inizializzazione condiviso delle proprietà cifrate, deprecato nella 12.11.0 a favore del vettore per proprietà, legge `DEVELOPMENT_ENVIRONMENT` da una variabile d'ambiente, con l'ambiente di produzione come default, rimuove l'estensione `.jsm` dalle risorse statiche, deprecata nella 12.15.0, rimuove il caricamento diretto di `Config/configFramework.php` da parte del comando `sisma`, deprecato nella 12.16.0 a favore di `Config/bootstrap.php`, e rimuove dai trait delle enumerazioni gli argomenti `Language`, deprecati nella 12.17.0 a favore di `Localizator`.
 
 ### Breaking Changes
 
@@ -303,6 +303,48 @@ if (file_exists(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SE
 
 Questa modifica non è gestita da `sisma upgrade`, che senza bootstrap verrebbe eseguito con la configurazione del modulo.
 
+#### 9. I trait delle enumerazioni non accettano più `Language`
+
+**Impatto**: Medio, per le applicazioni che leggono le label degli enum indicando la lingua
+**Componenti interessati**: Trait `LocalizableEnumeration`, `SelectableEnumeration`, `ReferencedSelectableEnumeration` e `MultipleSelfReferencedEnumeration`
+
+La 12.17.0 ha allineato le enumerazioni a viste e template: la lingua viene scelta da `Localizator`, che usa la lingua indicata per la singola chiamata, quella della richiesta impostata con `Localizator::setLanguage()` o quella di configurazione. Per compatibilità i trait accettavano ancora un `Language`, deprecato. Ora accettano solo un `Localizator`, e passare un `Language` provoca un `TypeError`.
+
+**Prima (12.x)**:
+```php
+$label = $stato->getFriendlyLabel($language);
+$scelte = Stato::getChoiceFromEnumerations($language);
+$figli = $permesso->getChoiceByMultipleParent($language);
+$citta = City::rome->getRegionChoiceBy($language, Region::north);
+```
+
+**Dopo (13.x)**, con la lingua della richiesta:
+```php
+Localizator::setLanguage($language);
+
+$label = $stato->getFriendlyLabel();
+$scelte = Stato::getChoiceFromEnumerations();
+$figli = $permesso->getChoiceByMultipleParent();
+$citta = City::rome->getRegionChoiceBy(new Localizator(), Region::north);
+```
+
+**Dopo (13.x)**, con una lingua diversa da quella della richiesta:
+```php
+$localizator = new Localizator($language);
+
+$label = $stato->getFriendlyLabel([], $localizator);
+$scelte = Stato::getChoiceFromEnumerations([], $localizator);
+$figli = $permesso->getChoiceByMultipleParent($localizator);
+$citta = City::rome->getRegionChoiceBy($localizator, Region::north);
+```
+
+**Azione richiesta** (anche prima dell'aggiornamento, sulla 12.17.x):
+- Impostare la lingua della richiesta con `Localizator::setLanguage()`, tipicamente nel costruttore del controller, e omettere la lingua nelle chiamate che usano quella dell'interfaccia
+- Nelle chiamate che richiedono una lingua diversa, passare un `Localizator` costruito con quella lingua
+- Sostituire con `Localizator::setLanguage()` o con un `Localizator` anche le chiamate che passano `Config::getInstance()->language`
+
+Questa modifica non è gestita da `sisma upgrade`: le applicazioni possono dichiarare metodi con gli stessi nomi e firme proprie (ad esempio un `getFriendlyLabel(Language $language, Gender $gender)` in un trait applicativo), che una riscrittura automatica romperebbe.
+
 ### Checklist di Migrazione
 
 - [ ] **Form applicativi che estendono `BaseForm`**
@@ -329,6 +371,9 @@ Questa modifica non è gestita da `sisma upgrade`, che senza bootstrap verrebbe 
 - [ ] **Bootstrap del progetto** (prima dell'aggiornamento, sulla 12.16.x)
   - [ ] Creato `Config/bootstrap.php` con `configFramework.php`, `vendor/autoload.php` e le configurazioni dei moduli
   - [ ] Verificato che `sisma` non mostri più l'avviso di deprecazione
+- [ ] **Label delle enumerazioni** (anche prima dell'aggiornamento, sulla 12.17.x)
+  - [ ] Impostata la lingua della richiesta con `Localizator::setLanguage()`
+  - [ ] Rimosso o sostituito con un `Localizator` ogni `Language` passato a `getFriendlyLabel()`, `getChoiceFromEnumerations()`, `{metodo}ChoiceBy()` e `getChoiceByMultipleParent()`
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari
   - [ ] Verificato che tutti i form dell'applicazione validino correttamente

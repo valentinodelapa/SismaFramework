@@ -86,7 +86,7 @@ class Upgrade12to13StrategyTest extends TestCase
         $breakingChanges = $this->strategy->getBreakingChanges();
 
         $this->assertNotEmpty($breakingChanges);
-        $this->assertCount(11, $breakingChanges);
+        $this->assertCount(12, $breakingChanges);
     }
 
     public function testGetBreakingChangesContainsExpectedItems(): void
@@ -109,6 +109,8 @@ class Upgrade12to13StrategyTest extends TestCase
         $this->assertStringContainsString('DEVELOPMENT_ENVIRONMENT', $joined);
         $this->assertStringContainsString('jsm', $joined);
         $this->assertStringContainsString('Config/bootstrap.php', $joined);
+        $this->assertStringContainsString('SelectableEnumeration', $joined);
+        $this->assertStringContainsString('getFriendlyLabel([], new Localizator($language))', $joined);
         $this->assertStringContainsString('SismaFramework\\Core\\BaseClasses', $joined);
         $this->assertStringContainsString('SismaFramework\\Orm\\BaseClasses', $joined);
     }

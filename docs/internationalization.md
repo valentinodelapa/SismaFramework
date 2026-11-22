@@ -196,7 +196,7 @@ $stato = ArticleStatus::draft->getFriendlyLabel([], $localizator);
 
 Lo stesso `Localizator` può essere passato anche a `Render::generateView()` e `Render::generateData()`.
 
-> **Deprecato dalla versione 12.17.0, sarà rimosso nella versione 13.0.0**: i metodi dei trait delle enumerazioni accettano ancora un `Language` al posto del `Localizator` (es. `getFriendlyLabel(Language::english)`, `getChoiceFromEnumerations(Language::english)`). Usa la lingua della richiesta oppure passa un `Localizator`: `getFriendlyLabel([], new Localizator(Language::english))`.
+> **Nota**: dalla versione 13.0.0 i trait delle enumerazioni non accettano più un `Language`, deprecato nella 12.17.0. Usa la lingua della richiesta oppure passa un `Localizator`: `getFriendlyLabel($language)` diventa `getFriendlyLabel([], new Localizator($language))`; vedi [UPGRADING.md](../UPGRADING.md#da-12x-a-13x).
 
 * * *
 

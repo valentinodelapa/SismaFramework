@@ -64,7 +64,7 @@ $choices = Status::getChoiceFromEnumerations();
 #### `getChoiceFromEnumerations(string|array $path = [], Localizator $localizator = new Localizator()): array`
 Metodo statico che restituisce un array associativo `[label => valore]` per tutti i case dell'enum, ideale per form HTML. Con un percorso, la label di ogni case viene letta in quel punto: ad esempio `getChoiceFromEnumerations('female')` costruisce le scelte con le label femminili.
 
-> **Deprecato dalla versione 12.17.0, sarà rimosso nella versione 13.0.0**: `getFriendlyLabel()` e `getChoiceFromEnumerations()` accettano ancora un `Language` come primo argomento. Sostituisci `getFriendlyLabel($language)` con `getFriendlyLabel([], new Localizator($language))`, oppure imposta la lingua della richiesta con `Localizator::setLanguage()` e ometti l'argomento.
+> **Nota**: dalla versione 13.0.0 i trait delle enumerazioni non accettano più un `Language`, deprecato nella 12.17.0. Usa la lingua della richiesta oppure passa un `Localizator`: `getFriendlyLabel($language)` diventa `getFriendlyLabel([], new Localizator($language))`; vedi [UPGRADING.md](../UPGRADING.md#da-12x-a-13x).
 
 ## `ReferencedSelectableEnumeration`
 
@@ -109,8 +109,6 @@ $northCities = City::rome->getRegionChoiceBy(new Localizator(), Region::north);
 Il trait utilizza `__call()` per creare metodi dinamici nel formato `{metodo}ChoiceBy()`, che ricevono un `Localizator` e il valore da filtrare:
 - `getRegionChoiceBy($localizator, $region)` → filtro per regione
 - `getCategoryChoiceBy($localizator, $category)` → filtro per categoria
-
-> **Deprecato dalla versione 12.17.0, sarà rimosso nella versione 13.0.0**: al posto del `Localizator` è ancora accettato un `Language`.
 
 ## `SelfReferencedEnumeration`
 
@@ -186,8 +184,6 @@ $userManagementChoices = Permission::user_management->getChoiceByMultipleParent(
 ```
 
 `getChoiceByMultipleParent()` accetta un `Localizator` per indicare una lingua diversa da quella della richiesta.
-
-> **Deprecato dalla versione 12.17.0, sarà rimosso nella versione 13.0.0**: al posto del `Localizator` è ancora accettato un `Language`.
 
 ## Integrazione con Form HTML
 

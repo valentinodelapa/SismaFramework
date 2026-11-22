@@ -3786,11 +3786,6 @@ Search.appendIndex(
             "summary": "",
             "url": "classes/SismaFramework-Core-Traits-LocalizableEnumeration.html#method_getLocalizedAttribute"
         },                {
-            "fqsen": "\\SismaFramework\\Core\\Traits\\LocalizableEnumeration\u003A\u003AresolveLocalizator\u0028\u0029",
-            "name": "resolveLocalizator",
-            "summary": "",
-            "url": "classes/SismaFramework-Core-Traits-LocalizableEnumeration.html#method_resolveLocalizator"
-        },                {
             "fqsen": "\\SismaFramework\\Core\\Traits\\MultipleSelfReferencedEnumeration",
             "name": "MultipleSelfReferencedEnumeration",
             "summary": "",

@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Core\Traits;
 
-use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\HelperClasses\Localizator;
 
 /**
@@ -36,21 +35,13 @@ use SismaFramework\Core\HelperClasses\Localizator;
 trait LocalizableEnumeration
 {
 
-    public function getFriendlyLabel(Language|string|array $path = [], Localizator $localizator = new Localizator()): string
+    public function getFriendlyLabel(string|array $path = [], Localizator $localizator = new Localizator()): string
     {
-        if ($path instanceof Language) {
-            return $this->getFriendlyLabel([], new Localizator($path));
-        }
         return $localizator->getEnumerationLocaleLabel($this, ...(array) $path);
     }
 
     public function getLocalizedAttribute(string|array $path, Localizator $localizator = new Localizator()): string|array|null
     {
         return $localizator->getEnumerationLocaleAttribute($this, ...(array) $path);
-    }
-
-    private static function resolveLocalizator(Language|Localizator $localizator): Localizator
-    {
-        return ($localizator instanceof Language) ? new Localizator($localizator) : $localizator;
     }
 }

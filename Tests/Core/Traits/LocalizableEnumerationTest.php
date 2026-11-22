@@ -71,11 +71,6 @@ class LocalizableEnumerationTest extends TestCase
         $this->assertEquals('due', SampleType::two->getFriendlyLabel([], new Localizator(Language::italian, $this->configStub)));
     }
 
-    public function testGetFriendlyLabelWithDeprecatedLanguage()
-    {
-        $this->assertEquals('uno', SampleType::one->getFriendlyLabel(Language::italian));
-    }
-
     public function testGetFriendlyLabelOfComposedValue()
     {
         $this->assertEquals('Cavaliere', SampleRank::knight->getFriendlyLabel());

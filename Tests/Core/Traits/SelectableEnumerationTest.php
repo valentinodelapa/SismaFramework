@@ -58,15 +58,15 @@ class SelectableEnumerationTest extends TestCase
     {
         ModuleManager::setApplicationModule('SismaFramework');
         ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
-        $this->assertEquals('uno', SampleType::one->getFriendlyLabel(Language::italian));
-        $this->assertEquals('due', SampleType::two->getFriendlyLabel(Language::italian));
+        $this->assertEquals('uno', SampleType::one->getFriendlyLabel([], new Localizator(Language::italian)));
+        $this->assertEquals('due', SampleType::two->getFriendlyLabel([], new Localizator(Language::italian)));
     }
 
     public function testGetChoiceFromEnumerations()
     {
         ModuleManager::setApplicationModule('SismaFramework');
         ModuleManager::getExistingFilePath('TestsApplication' . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'sample' . DIRECTORY_SEPARATOR . 'index', Resource::php);
-        $choices = SampleType::getChoiceFromEnumerations(Language::italian);
+        $choices = SampleType::getChoiceFromEnumerations([], new Localizator(Language::italian));
         $this->assertIsArray($choices);
         $this->assertEquals([
             "uno" => "O",

@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Core\Traits;
 
-use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\HelperClasses\Localizator;
 
 /**
@@ -37,7 +36,7 @@ trait SelectableEnumeration
 {
     use LocalizableEnumeration;
 
-    public static function getChoiceFromEnumerations(Language|string|array $path = [], Localizator $localizator = new Localizator()): array
+    public static function getChoiceFromEnumerations(string|array $path = [], Localizator $localizator = new Localizator()): array
     {
         $choice = [];
         foreach (self::cases() as $value) {

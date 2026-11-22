@@ -26,7 +26,6 @@
 
 namespace SismaFramework\Core\Traits;
 
-use SismaFramework\Core\Enumerations\Language;
 use SismaFramework\Core\HelperClasses\Localizator;
 
 /**
@@ -37,9 +36,8 @@ trait ReferencedSelectableEnumeration
 {
     use SelectableEnumeration;
 
-    private static function getChoiceByReferencedEnumeration(Language|Localizator $localizator, string $referencingMethodName, ?\UnitEnum $referencedEnumeration = null): array
+    private static function getChoiceByReferencedEnumeration(Localizator $localizator, string $referencingMethodName, ?\UnitEnum $referencedEnumeration = null): array
     {
-        $localizator = self::resolveLocalizator($localizator);
         $choice = [];
         foreach (self::cases() as $case) {
             if ($case->$referencingMethodName() === $referencedEnumeration) {
