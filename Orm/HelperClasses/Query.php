@@ -54,6 +54,8 @@
  *   * Supporto per tutti i tipi di JOIN: INNER, LEFT, RIGHT, CROSS tramite enum JoinType
  * - Aggiunta del supporto alle query su colonne JSON (v12.7.0): setJsonExtractColumn(), appendOrderByJsonPath(),
  *   appendJsonCondition(), appendJsonContainsCondition(), appendJsonPathExistsCondition(), appendJsonNullCondition().
+ * - Sostituzione di $tableName con $tableReference, valorizzata con l'alias della tabella quando presente, per qualificare
+ *   correttamente le colonne di default e le JOIN su foreign key nelle query con tabella aliasata (v12.17.1).
  */
 
 namespace SismaFramework\Orm\HelperClasses;
@@ -75,7 +77,7 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 class Query
 {
 
-    protected string $tableName = '';
+    protected string $tableReference = '';
     protected string $table = '';
     protected bool $distinct = false;
     protected array $columns = [];
@@ -202,7 +204,7 @@ class Query
     private function initializeColumn(): void
     {
         if (count($this->columns) === 0) {
-            $this->columns = [$this->adapter->allColumns($this->tableName)];
+            $this->columns = [$this->adapter->allColumns($this->tableReference)];
         }
     }
 
@@ -232,9 +234,10 @@ class Query
 
     public function &setTable(string $table, ?string $tableAlias = null): self
     {
-        $this->tableName = $this->table = $this->adapter->escapeTable($table);
+        $this->tableReference = $this->table = $this->adapter->escapeTable($table);
         if ($tableAlias !== null) {
-            $this->table .= ' as ' . $this->adapter->escapeTable($tableAlias);
+            $this->tableReference = $this->adapter->escapeTable($tableAlias);
+            $this->table .= ' as ' . $this->tableReference;
         }
         return $this;
     }
@@ -256,7 +259,7 @@ class Query
 
     public function &appendJoinOnForeignKey(JoinType $joinType, string $foreignKeyProperty, string $relatedEntityClass): self
     {
-        $this->joins[] = $this->adapter->buildJoinOnForeignKey($joinType, $foreignKeyProperty, $relatedEntityClass, $this->table);
+        $this->joins[] = $this->adapter->buildJoinOnForeignKey($joinType, $foreignKeyProperty, $relatedEntityClass, $this->tableReference);
         return $this;
     }
 
@@ -514,7 +517,7 @@ class Query
                 Statement::update => $this->adapter->parseUpdate($this->table, $this->columns, $this->values, $this->where),
                 Statement::delete => $this->adapter->parseDelete($this->table, $this->where),
                 Statement::set => $this->adapter->parseSet($this->variable, $this->value),
-                Statement::select => $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns($this->tableName)], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit, $this->joins),
+                Statement::select => $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns($this->tableReference)], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit, $this->joins),
             };
             return $this->command;
         } else {

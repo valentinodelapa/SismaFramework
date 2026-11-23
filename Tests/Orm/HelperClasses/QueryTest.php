@@ -32,6 +32,7 @@ use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\Enumerations\AdapterType;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\JoinType;
 use SismaFramework\Orm\Enumerations\JsonValueType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\Statement;
@@ -829,12 +830,47 @@ class QueryTest extends TestCase
                 });
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
-                ->with(false, ['table_name.*'], 'table_name as a', [], [], [], [], 0, 0);
+                ->with(false, ['a.*'], 'table_name as a', [], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setTable('tableName', 'A')
                 ->setWhere()
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testAppendColumnWithTableAlias()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('escapeTable')
+                ->willReturnCallback(fn($tableName) => $tableName === 'tableName' ? 'table_name' : 'a');
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['a.*', 'column'], 'table_name as a', [], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName', 'A')
+                ->appendColumn('column')
+                ->setWhere()
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testAppendJoinOnForeignKeyWithTableAlias()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('escapeTable')
+                ->willReturnCallback(fn($tableName) => $tableName === 'tableName' ? 'table_name' : 'a');
+        $baseAdapterMock->expects($this->once())
+                ->method('buildJoinOnForeignKey')
+                ->with(JoinType::left, 'foreignKey', 'RelatedEntity', 'a')
+                ->willReturn([]);
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName', 'A')
+                ->appendJoinOnForeignKey(JoinType::left, 'foreignKey', 'RelatedEntity');
     }
 
     public function testOffsetLimit()

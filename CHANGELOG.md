@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.17.1] - 2026-11-23 - Query con Alias della Tabella Principale
+
+Patch che corregge le query costruite con un alias sulla tabella principale (`setTable('event', 'parentEvent')`). Le colonne selezionate di default e le JOIN su foreign key erano qualificate con il nome della tabella invece che con l'alias, e MySQL rifiutava la query con l'errore 1051 `Unknown table`.
+
+### 🐛 Bug Fix
+
+#### `Orm/HelperClasses/Query` — colonne di default qualificate con il nome della tabella invece che con l'alias
+
+Dalla 10.1.0, con l'introduzione delle JOIN, le colonne di default di una `SELECT` vengono qualificate con la tabella (`tabella.*`) anziché essere un semplice `*`. `Query` usava però sempre il nome della tabella, anche quando `setTable()` riceveva un alias. Una volta assegnato l'alias, MySQL non riconosce più il nome della tabella in quella query:
+
+```sql
+SELECT `event`.* FROM `event` as `parent_event` WHERE ...
+```
+
+e risponde con `Unknown table 'event'`. Il difetto riguardava sia la `SELECT` senza colonne esplicite, sia i metodi che aggiungono una colonna a quelle di default: `appendColumn()` e, con `$append = true`, `setAVG()`, `setMax()`, `setMin()`, `setSum()`, `setFulltextIndexColumn()`, `setJsonExtractColumn()` e `setSubqueryColumn()`. Ora le colonne vengono qualificate con l'alias:
+
+```sql
+SELECT `parent_event`.* FROM `event` as `parent_event` WHERE ...
+```
+
+#### `Orm/HelperClasses/Query::appendJoinOnForeignKey()` — condizione `ON` non valida con l'alias
+
+La tabella principale veniva passata a `BaseAdapter::buildJoinOnForeignKey()` comprensiva della dichiarazione dell'alias, e la condizione risultante (`` `event` as `parent_event`.`x_id` = ... ``) non era SQL valido. Ora viene passato l'alias, e la condizione diventa `` `parent_event`.`x_id` = ... ``. La correzione vale anche per le JOIN generate dall'eager loading dei model (`appendRelationJoin()`, `appendSelfReferencedJoin()`, relazioni annidate) quando la query ha un alias.
+
+**File modificati**:
+- **`Orm/HelperClasses/Query.php`**: la proprietà `$tableName` è sostituita da `$tableReference`, che contiene l'alias quando è presente e altrimenti il nome della tabella; la usano `initializeColumn()`, `build()` e `appendJoinOnForeignKey()`
+
+### 🧪 Test
+
+#### `Tests/Orm/HelperClasses/QueryTest` — query con alias della tabella
+
+`testSetTableWithAlias` verifica ora che le colonne di default siano qualificate con l'alias. Nuovi test per `appendColumn()` e `appendJoinOnForeignKey()` su una query con alias.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: senza alias le query generate non cambiano.
+- **Proprietà rinominata**: la proprietà protetta `Query::$tableName` diventa `$tableReference`. Riguarda solo eventuali sottoclassi di `Query` che la leggono direttamente.
+
+---
+
 ## [12.17.0] - 2026-11-22 - Localizator come API Pubblica, Trait `LocalizableEnumeration` e Label dei Template
 
 Minor release che rende coerente il modo in cui viste, template ed enumerazioni scelgono la lingua. `Templater` e `RenderService` ricevevano già un `Localizator` e lasciavano a quest'ultimo la scelta della lingua (lingua passata, lingua della richiesta impostata con `Localizator::setLanguage()`, lingua di configurazione), mentre i trait delle enumerazioni ricevevano un `Language` obbligatorio e costruivano al proprio interno un `Localizator` con quella lingua, scavalcando la lingua della richiesta. Ora anche i trait delle enumerazioni ricevono un `Localizator`, facoltativo; il `Language` resta accettato ma è deprecato.
