@@ -43,6 +43,7 @@
  *   * Aggiunta di getEntityClassForAlias() per risoluzione entity class da alias JOIN
  *   * Integrazione con Cache per Identity Map pattern su entità nested
  *   * Supporto per navigazione gerarchica delle relazioni tramite alias path
+ * - Risoluzione in getEntityClassForAlias() tramite la chiave aliasPath dei metadati JOIN, non escapata dall'adapter (v12.17.2).
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -212,7 +213,7 @@ abstract class BaseResultSet implements \Iterator
     private function getEntityClassForAlias(string $alias): ?string
     {
         foreach ($this->joinMetadata as $join) {
-            if (isset($join['alias']) && $join['alias'] === $alias) {
+            if (($join['aliasPath'] ?? $join['alias'] ?? null) === $alias) {
                 return $join['relatedEntityClass'] ?? $join['entityClass'] ?? null;
             }
         }

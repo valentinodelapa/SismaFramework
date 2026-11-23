@@ -2,6 +2,153 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.17.2] - 2026-11-23 - Query con JOIN, Eager Loading, `GROUP BY` e Documentazione delle JOIN
+
+Patch che corregge i difetti delle query con JOIN e dell'eager loading emersi verificando l'ORM su un database MariaDB reale:
+- le condizioni WHERE usavano colonne non qualificate, che MySQL rifiuta come ambigue quando la colonna esiste in più tabelle della query;
+- gli alias delle JOIN non seguivano la convenzione snake_case, per cui una condizione su una colonna di una relazione con nome composto (`parentCategory.name`) non trovava la tabella;
+- con l'adapter MySQL l'eager loading eseguiva la JOIN ma ne scartava i dati, e le entità collegate venivano caricate in modo lazy con una query aggiuntiva per riga;
+- l'eager loading delle collection falliva sempre con un'`EntityException`;
+- le relazioni annidate con un segmento in comune (`['author' => ['country']]`) ripetevano la stessa JOIN, e MySQL rifiutava la query;
+- la CROSS JOIN generava una clausola `ON` vuota;
+- `setGroupBy()` generava la parola chiave `GROUP_BY`, che non è SQL valido.
+
+La documentazione delle JOIN è stata riscritta sull'API reale.
+
+### 🐛 Bug Fix
+
+#### `Orm/HelperClasses/Query` — colonne ambigue nelle condizioni WHERE con JOIN
+
+Le colonne delle condizioni WHERE non erano qualificate con la tabella. In una query con JOIN, una condizione su una colonna presente in più tabelle (`id`, ma anche `name`, `text`, ecc.) veniva rifiutata da MySQL con l'errore 1052 `Column '…' in WHERE is ambiguous`. `BaseModel::getEntityByIdWithRelations()` falliva quindi sempre, perché filtra per `id` dopo aver aggiunto le JOIN:
+
+```sql
+SELECT … FROM `article` LEFT JOIN `user` AS `author` ON … WHERE `id` = ?
+```
+
+Ora le colonne delle condizioni WHERE vengono qualificate con la tabella della query, o con il suo alias quando è presente:
+
+```sql
+SELECT … FROM `article` LEFT JOIN `user` AS `author` ON … WHERE `article`.`id` = ?
+```
+
+La qualificazione riguarda `appendCondition()`, `appendConditionOnEncryptedColumn()`, `appendFulltextCondition()`, `appendJsonCondition()`, `appendJsonContainsCondition()`, `appendJsonPathExistsCondition()` e `appendJsonNullCondition()`. Inoltre:
+- vale per tutte le query con una tabella impostata tramite `setTable()`, con o senza JOIN, comprese quelle di `UPDATE` e `DELETE` generate da `DataMapper`;
+- non si applica alle colonne già qualificate (`appendCondition('author.country', …)`), che restano invariate;
+- non si applica alle condizioni HAVING, dove le colonne sono di norma alias della `SELECT`;
+- nelle subquery usa la tabella della subquery, cioè la stessa che MySQL sceglie per le colonne non qualificate: le subquery correlate continuano a funzionare.
+
+`Query` passa all'adapter il nome della colonna già qualificato (`article.id`) e lascia all'adapter l'escape, come già avveniva per le colonne qualificate dall'utente: le firme dei metodi di `BaseAdapter` non cambiano.
+
+#### `Orm/HelperClasses/Query::appendJoin()`, `Orm/BaseClasses/BaseAdapter` e `Orm/BaseClasses/BaseModel` — alias delle JOIN in snake_case
+
+L'alias della tabella principale passava da `escapeTable()` e veniva quindi convertito in snake_case (`parentEvent` → `parent_event`), mentre quello delle JOIN passava da `escapeIdentifier()` e restava invariato (`parentCategory`). Una condizione su una colonna di una relazione con nome composto, come `appendCondition('parentCategory.name', …)`, veniva convertita in `` `parent_category`.`name` `` e MySQL rispondeva con l'errore 1054 `Unknown column`, perché la tabella joinata si chiamava `parentCategory`. Ora anche gli alias delle JOIN vengono convertiti in snake_case, in `appendJoin()`, in `BaseAdapter::buildJoinOnForeignKey()`, in `BaseAdapter::buildJoinedColumns()` e nelle condizioni `ON` delle JOIN annidate di `BaseModel::appendNestedRelationJoin()`:
+
+```sql
+LEFT JOIN `category` AS `parent_category` ON `category`.`parent_category_id` = `parent_category`.id
+```
+
+Il prefisso delle colonne della tabella joinata nel risultato (`parentCategory__name`) non cambia, perché serve all'idratazione.
+
+#### `Orm/BaseClasses/BaseResultSet` — entità collegate tramite JOIN mai idratate con l'adapter MySQL
+
+L'adapter MySQL salva l'alias delle JOIN nei metadati con i backtick (`` `author` ``), mentre le colonne della tabella collegata arrivano nel risultato con il prefisso senza backtick (`author__name`). `getEntityClassForAlias()` confrontava i due valori, non trovava corrispondenze e saltava l'entità collegata. Ogni relazione richiesta all'eager loading (`getEntityByIdWithRelations()`, `getEntityCollectionWithRelations()`) veniva poi caricata in modo lazy. I risultati erano corretti, ma ogni relazione costava una query in più per riga. Ora i metadati delle JOIN contengono anche la chiave `aliasPath`, con il nome della relazione così com'è, e `getEntityClassForAlias()` usa quella.
+
+#### `Orm/Enumerations/Keyword::groupBy` — `GROUP_BY` al posto di `GROUP BY`
+
+La parola chiave restituita per l'adapter MySQL era `GROUP_BY`, per cui qualunque query con `setGroupBy()` veniva rifiutata dal database. Ora è `GROUP BY`.
+
+#### `Orm/BaseClasses/BaseModel::loadCollectionForEntities()` — eager loading delle collection sempre in errore
+
+`getEntityCollectionWithRelations()` con una collection (`['articleCollection']`, `['sonCollection']`) passava da `loadCollectionForEntities()`, che chiama `getForeignKeyName()` sulle entità. Il metodo era `protected` in `ReferencedEntity` e `SelfReferencedEntity`: la chiamata finiva nel `__call()` dell'entità, che sollevava `EntityException: getForeignKeyName`. Ora `getForeignKeyName()` è pubblico, come `getCollectionDataInformation()`.
+
+Per raggruppare i figli per entità padre, inoltre, `loadCollectionForEntities()` leggeva la proprietà della chiave esterna di ogni figlio, caricando in modo lazy l'entità padre. Ora legge l'id con `getForeignKeyIndexes()`, senza query aggiuntive.
+
+#### `Orm/BaseClasses/BaseModel::appendNestedRelationJoin()` — JOIN ripetute per i segmenti condivisi
+
+Con le relazioni annidate in forma di array (`['author' => ['country']]`) o con più percorsi che iniziano dalla stessa relazione (`['author.country', 'author.publisher']`), la JOIN del segmento comune veniva aggiunta una volta per percorso, con lo stesso alias. MySQL rifiutava la query con l'errore 1066 `Not unique table/alias`. Ora la JOIN di un segmento già presente nella query non viene ripetuta. La sola notazione puntata con un unico percorso (`['author.country']`) funzionava già.
+
+#### `Orm/BaseClasses/BaseAdapter::buildJoinClause()` — CROSS JOIN con clausola `ON` vuota
+
+La clausola `ON` veniva aggiunta a ogni JOIN, anche senza condizione: una CROSS JOIN diventava `` CROSS JOIN `color` AS `color` ON `` e la query non era valida. Ora `ON` viene omessa quando la condizione è vuota.
+
+**File modificati**:
+- **`Orm/HelperClasses/Query.php`**: nuova proprietà `$tableReferenceName` e nuovi metodi privati `qualifyColumn()` e `qualifyColumnForCurrentCondition()`, usati dai metodi delle condizioni; alias di `appendJoin()` convertito con `escapeTable()` e chiave `aliasPath` nei metadati
+- **`Orm/BaseClasses/BaseAdapter.php`**: alias convertito con `escapeTable()` in `buildJoinOnForeignKey()` e `buildJoinedColumns()`; chiave `aliasPath` nei metadati di `buildJoinOnForeignKey()`; clausola `ON` omessa in `buildJoinClause()` per le JOIN senza condizione
+- **`Orm/BaseClasses/BaseModel.php`**: alias convertiti con `escapeTable()` nelle condizioni `ON` di `appendNestedRelationJoin()`; nuovi metodi privati `isRelationJoined()` e `appendRelationSegmentJoin()`; raggruppamento dei figli in `loadCollectionForEntities()` tramite `getForeignKeyIndexes()`
+- **`Orm/BaseClasses/BaseResultSet.php`**: `getEntityClassForAlias()` confronta l'alias con `aliasPath`, e con `alias` per i metadati che non hanno questa chiave
+- **`Orm/ExtendedClasses/ReferencedEntity.php`** e **`Orm/ExtendedClasses/SelfReferencedEntity.php`**: `getForeignKeyName()` da `protected` a `public`
+- **`Orm/Enumerations/Keyword.php`**: `GROUP BY` per `Keyword::groupBy`
+
+### 📖 Documentazione
+
+#### `docs/join-eager-loading.md` — riscrittura sull'API reale
+
+Gli esempi delle query personalizzate usavano API inesistenti (`Operator::eq`, `getEntityCollection(customQuery: …)`, `setHaving()` con una condizione, `Query::build()`, `new DataMapper(Article::class)`, `DataMapper::getAdapter()`, `DataMapper::getEntityCollection()`), condizioni senza `setWhere()` e senza `appendAnd()`, e valori letterali, che l'adapter inserisce nell'SQL senza apici. Il documento è stato riscritto:
+- gli esempi delle query personalizzate sono metodi del model, con `initQuery()`, `setWhere()`, placeholder e valori legati in `DataMapper::find()`;
+- nuove sezioni sulle regole generali delle query personalizzate, sulla convenzione snake_case degli alias e sulla qualificazione delle colonne;
+- le JOIN scritte a mano aggiungono anche le colonne con `buildJoinedColumns()`, senza le quali l'entità collegata non viene idratata;
+- le aggregazioni e la CROSS JOIN usano `select()` dell'adapter, e l'esempio con la JOIN su subquery, non supportata, è sostituito da una subquery correlata;
+- gli esempi di `getEntityByIdWithRelations()` usano solo chiavi esterne dirette;
+- gli esempi SQL usano i nomi di tabella previsti dalle convenzioni e gli alias in snake_case;
+- le limitazioni attuali sono elencate per intero.
+
+#### `docs/advanced-orm.md` — riscrittura sull'API reale
+
+Gli esempi costruivano le query da servizi esterni con `$this->postModel->initQuery()`, che è `protected`, e usavano API inesistenti: `ComparisonOperator::greaterThan`, `lessThanOrEqual` e `greaterThanOrEqual`, `DataType::typeArrayInteger` e `typeDateTime`, `find('Post', …)` con il nome breve dell'entità, getter e setter sulle entità (`getAuthorId()`, `setTitle()`), `beginTransaction()`, `commit()` e `rollback()` sul `DataMapper`, `DataMapper::getAdapter()`, `fetchAll()`, `getEntityCollectionByIds()`. La sezione sulle JOIN affermava che il query builder non le supporta. Il documento è stato riscritto:
+- le query personalizzate sono metodi del model, con le regole su `setWhere()`, operatori logici, placeholder e nomi delle proprietà;
+- `IN` usa un placeholder per ogni valore, legato singolarmente;
+- i metodi magici dei model sono descritti com'è il loro comportamento: sono definiti in `BaseModel`, valgono per qualunque proprietà e accettano `null` solo per le proprietà nullable;
+- `add{NomeEntità}()` delle `ReferencedEntity` è indicato come disponibile solo per la forma abbreviata della collezione;
+- il problema N+1 rimanda all'eager loading con JOIN;
+- le transazioni usano `startTransaction()` e `commitTransaction()`, con il rollback automatico dei salvataggi falliti e l'assenza di un metodo di rollback esplicito;
+- le aggregazioni e il reporting usano `select()` dell'adapter, che restituisce `StandardEntity`.
+
+La sezione sulle colonne JSON non cambia.
+
+#### `docs/performance.md` — riscrittura sull'API reale
+
+La guida usava le stesse API inesistenti di `advanced-orm.md` e altre ancora (`findRaw()`, `executeBatch()`, `Cache::getHitCount()`, `getMissCount()` e `getAllCachedEntities()`, un file `config/database.php` con chiavi non previste dal framework), proponeva un monitor delle query e un middleware che il framework non ha, e sosteneva che il framework non supporta le JOIN. Il ciclo di paginazione d'esempio leggeva la collezione dopo averla distrutta. Il documento è stato riscritto:
+- il problema N+1 si risolve con l'eager loading con JOIN;
+- la cache delle entità è descritta com'è il suo comportamento: per `getEntityById()` evita la query, per le altre query sostituisce le entità con l'istanza in memoria, e `Cache::clearEntityCache()` la svuota;
+- le elaborazioni di grandi quantità di dati procedono a pagine, svuotando la cache delle entità a ogni pagina;
+- la cache applicativa salva valori semplici e non entità;
+- il monitoraggio usa la barra di debug, e la configurazione le costanti `DEVELOPMENT_ENVIRONMENT`, `ORM_CACHE` e `DATABASE_*`.
+
+La sezione sulla cache dei metadati di reflection non cambia.
+
+#### `docs/orm.md`, `docs/getting-started.md` e `docs/enumerations.md` — esempi dei model e degli enum dell'ORM
+
+- **`docs/orm.md`** e **`docs/getting-started.md`**: `getEntityName()` dei model era dichiarato `static`, mentre in `BaseModel` è un metodo d'istanza; l'esempio di `appendSearchCondition()` di `orm.md` usava un metodo `where()` inesistente.
+- **`docs/enumerations.md`**: `ComparisonOperator` e `LogicalOperator` erano descritti come enumerazioni con valori stringa e con casi inesistenti (`greaterThan`, `greaterThanOrEqual`, …), e gli esempi usavano un query builder immaginario. Le sezioni di `DataType`, `ComparisonOperator` e `LogicalOperator` mostrano ora l'uso reale con `Query` e la corrispondenza tra valori e `DataType`.
+
+### 🧪 Test
+
+#### `Tests/Orm/HelperClasses/QueryTest` — qualificazione delle condizioni WHERE
+
+`testSelectWhere` e i test sulle condizioni fulltext verificano ora le colonne qualificate con la tabella. Nuovi test per le condizioni con alias della tabella, con colonna già qualificata, senza tabella impostata e nella clausola HAVING, che resta non qualificata.
+
+#### `Tests/Orm/Adapters/AdapterMysqlTest` — SQL generato per le JOIN e le condizioni
+
+Nuovi test con l'adapter reale per `buildJoinOnForeignKey()` e `buildJoinedColumns()`, per una query con JOIN e condizioni sulla tabella principale e su quella joinata, per una CROSS JOIN e per una query con alias in cui le condizioni cifrate, fulltext e JSON vengono qualificate nel WHERE e non nell'HAVING. `testParseSelect` verifica `GROUP BY`.
+
+#### `Tests/Orm/ResultSets/ResultSetMysqlTest` — idratazione di un'entità collegata tramite JOIN
+
+Nuovo test che idrata un'entità con JOIN su foreign key usando i metadati generati da `AdapterMysql`, con l'alias tra backtick.
+
+#### `Tests/Orm/JoinEagerLoadingTest` — eager loading e metadati di `appendJoin()`
+
+Nuovi test per l'eager loading di `sonCollection`, con i figli assegnati alle entità padre corrette, e per le relazioni annidate in forma di array, con una sola JOIN per il segmento comune. Verificati l'alias convertito con `escapeTable()` e la chiave `aliasPath` nei metadati di `appendJoin()`.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change nell'API pubblica**: le firme dei metodi non cambiano; `getForeignKeyName()` di `ReferencedEntity` e `SelfReferencedEntity` passa da `protected` a `public`, e le eventuali sottoclassi che lo ridefiniscono devono dichiararlo `public`.
+- **Cambiamento dell'SQL generato**: nelle condizioni WHERE le colonne sono ora qualificate con la tabella (`` `website_id` = ? `` diventa `` `event`.`website_id` = ? ``), e gli alias delle JOIN sono in snake_case. Il significato delle query non cambia.
+- **Condizioni `ON` scritte a mano**: con `appendJoin()` l'alias viene ora convertito in snake_case, per cui una condizione `ON` che lo indica in camelCase (`authorCountry.id`) va riscritta in snake_case (`author_country.id`). Gli alias già in snake_case o di una sola parola non cambiano.
+- **Subquery correlate**: una subquery che, con una condizione su una colonna non qualificata, intendeva riferirsi a una colonna della query esterna assente nella propria tabella deve ora qualificare quella colonna esplicitamente.
+- **Metadati delle JOIN**: `Query::getJoins()` restituisce anche la chiave `aliasPath`.
+
+---
+
 ## [12.17.1] - 2026-11-23 - Query con Alias della Tabella Principale
 
 Patch che corregge le query costruite con un alias sulla tabella principale (`setTable('event', 'parentEvent')`). Le colonne selezionate di default e le JOIN su foreign key erano qualificate con il nome della tabella invece che con l'alias, e MySQL rifiutava la query con l'errore 1051 `Unknown table`.

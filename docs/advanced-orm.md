@@ -1,82 +1,73 @@
 # Advanced ORM
 
-Questa guida copre gli aspetti avanzati dell'ORM di SismaFramework, incluse tecniche per query complesse, ottimizzazione delle performance, gestione delle relazioni e patterns architetturali per applicazioni enterprise.
+Questa guida copre gli aspetti avanzati dell'ORM di SismaFramework: query complesse, metodi magici, lazy loading, ottimizzazione delle performance, transazioni e organizzazione del codice di accesso ai dati.
 
 ## Panoramica
 
 L'ORM di SismaFramework implementa il pattern **Data Mapper**, offrendo:
 - **Mappatura automatica** tra oggetti e database
 - **Lazy loading** automatico per le relazioni
+- **Eager loading** con JOIN per evitare il problema N+1 (vedi [JOIN con Idratazione Gerarchica](join-eager-loading.md))
 - **Query builder** per condizioni complesse
-- **Cache intelligente** per performance ottimali
-- **Metodi magici** per query basate su relazioni
+- **Cache delle entità** per non ricaricare le entità già lette
+- **Metodi magici** per query basate sulle proprietà delle entità
 - **Gestione transazioni** per operazioni atomiche
 
 ---
 
 ## Query Avanzate con Data Mapper
 
+Le query personalizzate si scrivono come metodi del model: `initQuery()` restituisce una `Query` con la tabella dell'entità già impostata, e `$this->dataMapper->find()` la esegue restituendo una `SismaCollection` di entità. `initQuery()` è `protected`, per cui le query vanno costruite all'interno del model e non da un servizio esterno.
+
+Regole da seguire:
+- **`setWhere()` prima delle condizioni**: senza `setWhere()` (o `setHaving()`) le condizioni aggiunte vengono ignorate.
+- **Operatori logici espliciti**: le condizioni si collegano con `appendAnd()` e `appendOr()`, e si raggruppano con `appendOpenBlock()` e `appendCloseBlock()`.
+- **Valori tramite placeholder**: i valori si indicano con `Placeholder::placeholder` e si legano in `find()` con `$bindValues` e `$bindTypes`, nello stesso ordine in cui compaiono nella query. Un valore letterale viene inserito nell'SQL così com'è, senza apici: va usato solo per riferimenti a colonne.
+- **Nomi delle proprietà**: colonne e ordinamenti si indicano con i nomi delle proprietà (`publishedAt`), che vengono convertiti in snake_case. Per le chiavi esterne si passa `true` come ultimo argomento di `appendCondition()`, che aggiunge il suffisso `_id`.
+
 ### Query Builder con Condizioni Complesse
 
 ```php
+use SismaFramework\Orm\CustomTypes\SismaCollection;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
-use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\ExtendedClasses\DependentModel;
 
-class AdvancedPostService
+class PostModel extends DependentModel
 {
-    private PostModel $postModel;
-    private DataMapper $dataMapper;
-
-    public function findPostsByComplexCriteria(
-        string $titlePattern,
-        \DateTime $fromDate,
-        array $authorIds,
-        bool $isPublished = true
-    ): SismaCollection {
-        $query = $this->postModel->initQuery();
-        $bindValues = [];
-        $bindTypes = [];
-
+    public function findPostsByComplexCriteria(string $titlePattern, SismaDateTime $fromDate, array $authors, PostStatus $status): SismaCollection
+    {
+        $query = $this->initQuery();
         $query->setWhere()
-            // Titolo contiene pattern
             ->appendCondition('title', ComparisonOperator::like, Placeholder::placeholder)
             ->appendAnd()
-            // Data pubblicazione maggiore di
-            ->appendCondition('published_at', ComparisonOperator::greaterThan, Placeholder::placeholder)
+            ->appendCondition('publishedAt', ComparisonOperator::greater, Placeholder::placeholder)
             ->appendAnd()
-            // Autore in lista
-            ->appendCondition('author_id', ComparisonOperator::in, Placeholder::placeholder)
+            ->appendCondition('author', ComparisonOperator::in, array_fill(0, count($authors), Placeholder::placeholder), true)
             ->appendAnd()
-            // Status pubblicato
             ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        $query->setOrderBy(['publishedAt' => Indexing::desc]);
 
-        $bindValues = [
-            "%{$titlePattern}%",
-            $fromDate->format('Y-m-d H:i:s'),
-            $authorIds,
-            $isPublished ? 'published' : 'draft'
-        ];
-
+        $bindValues = ["%{$titlePattern}%", $fromDate, ...$authors, $status];
         $bindTypes = [
             DataType::typeString,
-            DataType::typeString,
-            DataType::typeArrayInteger,
-            DataType::typeString
+            DataType::typeDate,
+            ...array_fill(0, count($authors), DataType::typeEntity),
+            DataType::typeEnumeration,
         ];
 
-        $query->setOrderBy(['published_at' => 'DESC']);
         $query->close();
-
-        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 
     public function findPostsWithLogicalGrouping(): SismaCollection
     {
-        $query = $this->postModel->initQuery();
+        $query = $this->initQuery();
 
-        // WHERE (status = 'published' OR status = 'featured')
-        //   AND (view_count > 100 OR comment_count > 10)
+        // WHERE (status = ? OR status = ?) AND (view_count > ? OR comment_count > ?)
         $query->setWhere()
             ->appendOpenBlock()
                 ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder)
@@ -85,24 +76,26 @@ class AdvancedPostService
             ->appendCloseBlock()
             ->appendAnd()
             ->appendOpenBlock()
-                ->appendCondition('view_count', ComparisonOperator::greaterThan, Placeholder::placeholder)
+                ->appendCondition('viewCount', ComparisonOperator::greater, Placeholder::placeholder)
                 ->appendOr()
-                ->appendCondition('comment_count', ComparisonOperator::greaterThan, Placeholder::placeholder)
+                ->appendCondition('commentCount', ComparisonOperator::greater, Placeholder::placeholder)
             ->appendCloseBlock();
 
-        $bindValues = ['published', 'featured', 100, 10];
+        $bindValues = [PostStatus::published, PostStatus::featured, 100, 10];
         $bindTypes = [
-            DataType::typeString,
-            DataType::typeString,
+            DataType::typeEnumeration,
+            DataType::typeEnumeration,
             DataType::typeInteger,
-            DataType::typeInteger
+            DataType::typeInteger,
         ];
 
         $query->close();
-        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 }
 ```
+
+Con `ComparisonOperator::in` serve un placeholder per ogni valore, e ogni valore va legato singolarmente. Le entità passate come valori di una chiave esterna si legano con `DataType::typeEntity`, le date (`SismaDate`, `SismaDateTime`, `SismaTime`) con `DataType::typeDate` e le enumerazioni con `DataType::typeEnumeration`.
 
 ### Fulltext Search
 
@@ -115,43 +108,38 @@ La ricerca fulltext utilizza l'enumerazione `TextSearchMode` (introdotta nella 1
 ```php
 use SismaFramework\Orm\Enumerations\TextSearchMode;
 
-class PostSearchService
+class PostModel extends DependentModel
 {
     public function searchPosts(string $searchTerms): SismaCollection
     {
-        $query = $this->postModel->initQuery();
-
-        // Usa fulltext search su colonne indicizzate
+        $query = $this->initQuery();
         $query->setWhere()
             ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder, TextSearchMode::inBooleanMode);
 
-        $bindValues = [$searchTerms];
-        $bindTypes = [DataType::typeString];
-
         $query->close();
-        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, [$searchTerms], [DataType::typeString]);
     }
 
     public function searchWithRelevanceScore(string $searchTerms): SismaCollection
     {
-        $query = $this->postModel->initQuery();
+        $query = $this->initQuery();
 
-        // Aggiunge score di relevance come colonna
         // Firma: setFulltextIndexColumn(array $columns, $value, TextSearchMode $textSearchMode, ?string $columnAlias, bool $append)
         $query->setFulltextIndexColumn(['title', 'content'], Placeholder::placeholder, TextSearchMode::inNaturaLanguageMode, 'relevance_score', true)
             ->setWhere()
             ->appendFulltextCondition(['title', 'content'], Placeholder::placeholder, TextSearchMode::inNaturaLanguageMode);
+        $query->setOrderBy(['relevance_score' => Indexing::desc]);
 
         $bindValues = [$searchTerms, $searchTerms];
         $bindTypes = [DataType::typeString, DataType::typeString];
 
-        $query->setOrderBy(['relevance_score' => 'DESC']);
         $query->close();
-
-        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 }
 ```
+
+Il primo valore legato è quello della colonna di rilevanza, che nella query precede la condizione. Il punteggio serve all'ordinamento: l'entità non ha una proprietà corrispondente e non lo riporta.
 
 > **Nota (12.0.0):** prima della 12.0.0 il parametro `$textSearchMode` era l'ultimo argomento di `setFulltextIndexColumn()`; da questa versione precede `$columnAlias` e `$append`. Il comando `sisma upgrade` corregge automaticamente le chiamate esistenti.
 
@@ -259,43 +247,36 @@ Un valore legato con `DataType::typeJson` deve essere già JSON, cioè un `Sisma
 
 ### Metodi Magici in BaseEntity
 
-Le entità di SismaFramework utilizzano i **metodi magici** di PHP per implementare funzionalità avanzate in modo trasparente. Questi metodi intercettano operazioni su proprietà per gestire lazy loading, tracking delle modifiche e validazione.
+Le entità di SismaFramework utilizzano i **metodi magici** di PHP per implementare funzionalità avanzate in modo trasparente. Le proprietà delle entità sono `protected`, e i metodi magici ne intercettano lettura, scrittura e verifica per gestire lazy loading, tracking delle modifiche e validazione.
 
 #### `__get($name)` - Magic Getter
 
 Intercetta l'accesso in lettura alle proprietà per abilitare il lazy loading:
 
 ```php
-// Esempio di utilizzo
 $post = $postModel->getEntityById(1);
-$authorName = $post->author->name; // Trigger di __get('author')
+$authorName = $post->author->name; // __get('author')
 
 // Cosa succede internamente:
 // 1. Verifica che la proprietà 'author' esista nella classe finale
 // 2. Chiama forceForeignKeyPropertySet('author')
 // 3. Se author è un ID non convertito, carica l'entità User dal database
-// 4. Ritorna l'istanza di User caricata
+// 4. Restituisce l'istanza di User
 ```
 
 **Comportamento:**
-- Valida che la proprietà esista ed appartenga alla classe finale (non a BaseEntity)
-- Attiva automaticamente il lazy loading per foreign keys
+- Valida che la proprietà esista e appartenga alla classe finale (non a `BaseEntity`)
+- Attiva automaticamente il lazy loading per le foreign key
 - Lancia `InvalidPropertyException` se la proprietà non esiste
-
-**Quando viene chiamato:**
-- Accesso diretto: `$post->author`
-- Isset check: `isset($post->author)` (chiama anche `__isset`)
-- In metodi getter: `$post->getAuthor()`
 
 #### `__set($name, $value)` - Magic Setter
 
 Intercetta l'assegnazione alle proprietà per gestire il tracking delle modifiche:
 
 ```php
-// Esempio di utilizzo
-$post->author = 5; // Trigger di __set('author', 5)
-$post->author = $userEntity; // Trigger di __set('author', $userEntity)
-$post->author = null; // Trigger di __set('author', null)
+$post->author = 5;           // __set('author', 5)
+$post->author = $userEntity; // __set('author', $userEntity)
+$post->author = null;        // __set('author', null)
 
 // Cosa succede internamente:
 // 1. Verifica che la proprietà esista nella classe finale
@@ -306,23 +287,22 @@ $post->author = null; // Trigger di __set('author', null)
 
 **Comportamento:**
 - Valida che la proprietà esista
-- Delega a `switchSettingType()` per la gestione specifica del tipo
+- Delega a `switchSettingType()` la gestione specifica del tipo
 - Aggiorna il flag `$modified` quando necessario
 - Rimuove l'entità da `ProcessedEntitiesCollection` se modificata
 - Lancia `InvalidPropertyException` se la proprietà non esiste
 
 **Gestione dei tipi:**
-- **Intero (ID)**: Memorizza in `$foreignKeyIndexes` per lazy loading
-- **BaseEntity**: Assegna direttamente l'entità
-- **null**: Rimuove la relazione
-- **Altri tipi**: Assegna direttamente e traccia le modifiche
+- **Intero (ID)**: memorizzato in `$foreignKeyIndexes` per il lazy loading, o sostituito dall'entità se è già in cache
+- **BaseEntity**: assegnata direttamente
+- **null**: rimuove la relazione
+- **Altri tipi**: assegnati direttamente, con il tracking delle modifiche
 
 #### `__isset($name)` - Magic Isset
 
 Intercetta i controlli di esistenza delle proprietà:
 
 ```php
-// Esempio di utilizzo
 if (isset($post->author)) {
     echo $post->author->name;
 }
@@ -330,22 +310,16 @@ if (isset($post->author)) {
 // Cosa succede internamente:
 // 1. Verifica che la proprietà esista nella classe finale
 // 2. Attiva il lazy loading se necessario
-// 3. Ritorna true/false in base allo stato della proprietà
+// 3. Restituisce true/false in base allo stato della proprietà
 ```
 
 **Comportamento:**
-- Valida che la proprietà esista
-- Attiva il lazy loading prima di verificare isset()
-- Permette controlli consistenti anche con lazy loading
-
-**Casi d'uso:**
-- Verificare se una relazione è impostata prima di accedervi
-- Controlli condizionali in cicli e template
-- Validazione dell'esistenza di dati
+- Attiva il lazy loading prima di verificare `isset()`, per cui il controllo è coerente anche per le relazioni non ancora caricate
+- Per le proprietà inesistenti restituisce `false`
 
 #### Tracking delle Modifiche
 
-Il sistema di tracking monitora tutte le modifiche alle proprietà per determinare se l'entità deve essere salvata:
+Il sistema di tracking monitora le modifiche alle proprietà per determinare se l'entità deve essere aggiornata al salvataggio:
 
 ```php
 $post = $postModel->getEntityById(1);
@@ -360,180 +334,144 @@ echo $post->modified; // true - foreign key modificata
 
 **Quando una proprietà è considerata modificata:**
 
-1. **Proprietà builtin/enum**: Valore diverso dal precedente
+1. **Proprietà builtin o enum**: valore diverso dal precedente
 2. **Foreign key (int)**: ID diverso dal precedente
-3. **Foreign key (entity)**: Entità diversa dalla precedente
-4. **CustomDateTime**: Date diverse (usa `equals()`)
-5. **null**: Proprietà precedentemente valorizzata
+3. **Foreign key (entità)**: entità diversa dalla precedente
+4. **Tipi custom** (`SismaDate`, `SismaDateTime`, `SismaTime`, `SismaJson`): valore diverso secondo `equals()`
+5. **null**: proprietà precedentemente valorizzata
 
 **Integrazione con DataMapper:**
 
-Il tracking si integra con `ProcessedEntitiesCollection` per evitare duplicazioni nel salvataggio:
+Il tracking si integra con `ProcessedEntitiesCollection`, che evita di salvare più volte la stessa entità durante un salvataggio a cascata:
 
 ```php
-// Prima modifica: entità rimossa dalla collection
 $post->title = "Titolo A";
-// $processedEntitiesCollection->remove($post) chiamato automaticamente
+// l'entità viene rimossa da ProcessedEntitiesCollection
 
-// Il DataMapper può ora salvare l'entità anche se già processata
-$dataMapper->save($post);
+$dataMapper->save($post); // l'entità modificata viene salvata di nuovo
 ```
 
 #### Esempio Completo
 
 ```php
-class EntityMagicMethodsDemo
-{
-    public function demonstrateMagicMethods(): void
-    {
-        $postModel = new PostModel($this->dataMapper);
+$postModel = new PostModel();
+$post = $postModel->getEntityById(1);
 
-        // Carica post (lazy loading pronto)
-        $post = $postModel->getEntityById(1);
-
-        // __isset: verifica esistenza autore
-        if (isset($post->author)) {
-            // __get: attiva lazy loading e carica User
-            echo "Autore: " . $post->author->name;
-        }
-
-        // __set: assegna nuovo autore (tracking attivato)
-        $post->author = 5;
-        echo $post->modified; // true
-
-        // __set: assegna entità completa
-        $newAuthor = new User();
-        $newAuthor->id = 5;
-        $newAuthor->name = "Mario Rossi";
-        $post->author = $newAuthor; // Nessuna query, entità già in memoria
-
-        // __set: rimuove relazione
-        $post->author = null;
-
-        // Salva le modifiche
-        $this->dataMapper->save($post);
-    }
-
-    public function demonstratePerformanceImpact(): void
-    {
-        $posts = $this->postModel->getEntityCollection();
-
-        // ❌ INEFFICIENTE: __get chiamato in loop, N+1 queries
-        foreach ($posts as $post) {
-            if (isset($post->author)) { // __isset + __get
-                echo $post->author->name; // Lazy loading per ogni post
-            }
-        }
-
-        // ✅ EFFICIENTE: Batch loading
-        $this->batchLoadAuthors($posts);
-        foreach ($posts as $post) {
-            if (isset($post->author)) {
-                echo $post->author->name; // Nessuna query, già caricato
-            }
-        }
-    }
+// __isset e __get: verifica l'autore e lo carica in modo lazy
+if (isset($post->author)) {
+    echo "Autore: " . $post->author->name;
 }
+
+// __set con un ID: tracking attivato
+$post->author = 5;
+echo $post->modified; // true
+
+// __set con un'entità già in memoria: nessuna query
+$userModel = new UserModel();
+$post->author = $userModel->getEntityById(5);
+
+// __set con null: rimuove la relazione (la proprietà deve essere nullable)
+$post->category = null;
+
+$dataMapper = new DataMapper();
+$dataMapper->save($post);
 ```
 
 ### Metodi Magici dei Model (Dynamic Query Methods)
 
-I `DependentModel` e `SelfDependentModel` di SismaFramework implementano il metodo magico `__call()` per generare **dinamicamente** metodi di query basati sulle relazioni tra entità. Questi metodi **non esistono fisicamente** nel codice ma vengono creati al volo interpretando il nome del metodo chiamato.
+Tutti i model di SismaFramework ereditano da `BaseModel` il metodo magico `__call()`, che genera **dinamicamente** metodi di query basati sulle proprietà dell'entità. Questi metodi **non esistono fisicamente** nel codice ma vengono interpretati a partire dal nome del metodo chiamato. `SelfDependentModel` aggiunge i metodi basati sull'entità padre (vedi [ORM](orm.md)).
 
 #### Come Funziona il Parsing
 
-Il metodo `__call()` intercetta chiamate a metodi inesistenti e li interpreta seguendo questa convenzione di naming:
+Il metodo `__call()` intercetta le chiamate a metodi inesistenti e le interpreta secondo questa convenzione:
 
 ```
 {azione}By{Proprietà}[And{AltraProprietà}]*
 ```
 
 **Azioni supportate:**
-- `get` → Ritorna `SismaCollection`
-- `count` → Ritorna `int`
-- `delete` → Ritorna `bool`
+- `get` → restituisce `SismaCollection`
+- `count` → restituisce `int`
+- `delete` → restituisce `bool`
+
+Le proprietà possono essere foreign key, scalari, enumerazioni o tipi custom.
 
 **Esempi di metodi generati automaticamente:**
 
 ```php
-// Esempio di entità Post con foreign keys
-class Post extends DependentEntity
+class Post extends BaseEntity
 {
-    public int $id;
-    public string $title;
-    public User $author;        // Foreign key
-    public Category $category;  // Foreign key
-    public Status $status;      // Enum
+    protected int $id;
+    protected string $title;
+    protected User $author;               // foreign key
+    protected ?Category $category = null; // foreign key nullable
+    protected PostStatus $status;         // enumerazione
+
+    // setPropertyDefaultValue() e setEncryptedProperties() omessi
 }
 
 class PostModel extends DependentModel
 {
-    // NESSUN METODO DEFINITO ESPLICITAMENTE!
-    // Tutti i metodi sotto vengono generati al volo da __call()
+    // getEntityName() e appendSearchCondition() omessi:
+    // nessun metodo getBy/countBy/deleteBy definito esplicitamente
 }
 
-// Utilizzo:
-$postModel = new PostModel($dataMapper);
+$postModel = new PostModel();
 $user = $userModel->getEntityById(5);
 $category = $categoryModel->getEntityById(3);
 
-// 1. Query per singola foreign key
+// 1. Query per una foreign key
 $posts = $postModel->getByAuthor($user);
-// SELECT * FROM post WHERE author_id = 5
+// SELECT … FROM post WHERE post.author_id = ?
 
-// 2. Count per singola foreign key
+// 2. Conteggio per una foreign key
 $count = $postModel->countByAuthor($user);
-// SELECT COUNT(*) FROM post WHERE author_id = 5
+// SELECT COUNT(*) … FROM post WHERE post.author_id = ?
 
-// 3. Delete per singola foreign key
+// 3. Cancellazione per una foreign key
 $deleted = $postModel->deleteByAuthor($user);
-// DELETE FROM post WHERE author_id = 5
+// DELETE FROM post WHERE post.author_id = ?
 
-// 4. Query per multiple foreign keys (AND)
+// 4. Query per più proprietà (AND)
 $posts = $postModel->getByAuthorAndCategory($user, $category);
-// SELECT * FROM post WHERE author_id = 5 AND category_id = 3
+// SELECT … FROM post WHERE post.author_id = ? AND post.category_id = ?
 
-// 5. Count per multiple foreign keys
-$count = $postModel->countByAuthorAndCategory($user, $category);
-// SELECT COUNT(*) FROM post WHERE author_id = 5 AND category_id = 3
+// 5. Query per una proprietà non relazionale
+$posts = $postModel->getByStatus(PostStatus::published);
+// SELECT … FROM post WHERE post.status = ?
 
-// 6. Delete per multiple foreign keys
-$deleted = $postModel->deleteByAuthorAndCategory($user, $category);
-// DELETE FROM post WHERE author_id = 5 AND category_id = 3
-
-// 7. Query con foreign key null
-$orphanedPosts = $postModel->getByCategory(null);
-// SELECT * FROM post WHERE category_id IS NULL
+// 6. Query con foreign key null (solo per le proprietà nullable)
+$uncategorizedPosts = $postModel->getByCategory(null);
+// SELECT … FROM post WHERE post.category_id IS NULL
 ```
 
 #### Anatomia del Parsing
 
-Il metodo `__call()` esegue questi step:
+Il metodo `__call()` esegue questi passaggi:
 
-1. **Split del nome**: `getByAuthorAndCategory` → `['get', 'AuthorAndCategory']`
-2. **Estrae azione**: `get` → determina l'operazione (get/count/delete)
-3. **Estrae entità**: `AuthorAndCategory` → `['Author', 'Category']`
-4. **Valida parametri**: Verifica che gli argomenti siano istanze delle entità corrette
-5. **Converte in property names**: `Author` → `author`, `Category` → `category`
-6. **Costruisce query**: Crea condizioni WHERE per ogni foreign key
-7. **Esegue query**: Delega al DataMapper
+1. **Divisione del nome**: `getByAuthorAndCategory` → `['get', 'AuthorAndCategory']`
+2. **Azione**: `get` determina l'operazione (get/count/delete)
+3. **Proprietà**: `AuthorAndCategory` → `['author', 'category']`
+4. **Validazione**: verifica che ogni argomento sia del tipo della proprietà corrispondente, o `null` se la proprietà è nullable
+5. **Query**: costruisce una condizione WHERE per ogni proprietà, unite in AND
+6. **Esecuzione**: delega a `getEntityCollectionByProperties()`, `countEntityCollectionByProperties()` o `deleteEntityCollectionByProperties()`
 
 #### Signature dei Metodi Generati
 
 ```php
 // Pattern generale:
 public function {azione}By{Proprietà}[And{AltraProprietà}]*(
-    BaseEntity|null ${proprietà},
-    [BaseEntity|null ${altraProprietà},]*
+    mixed ${proprietà},
+    [mixed ${altraProprietà},]*
     ?string $searchKey = null,
-    ?array $order = null,      // Solo per get*
-    ?int $offset = null,        // Solo per get*
-    ?int $limit = null          // Solo per get*
+    ?array $order = null,      // solo per get*
+    ?int $offset = null,       // solo per get*
+    ?int $limit = null         // solo per get*
 ): SismaCollection|int|bool;
 
 // Esempi concreti:
 public function getByAuthor(
-    User|null $author,
+    User $author,
     ?string $searchKey = null,
     ?array $order = null,
     ?int $offset = null,
@@ -541,62 +479,64 @@ public function getByAuthor(
 ): SismaCollection;
 
 public function countByAuthorAndCategory(
-    User|null $author,
-    Category|null $category,
+    User $author,
+    ?Category $category,
     ?string $searchKey = null
 ): int;
 
 public function deleteByStatus(
-    Status|null $status,
+    PostStatus $status,
     ?string $searchKey = null
 ): bool;
 ```
 
 #### Validazione degli Argomenti
 
-Il sistema valida automaticamente che gli argomenti passati corrispondano al tipo delle foreign keys:
+Il sistema verifica che gli argomenti corrispondano al tipo delle proprietà:
 
 ```php
 // ✅ VALIDO
-$user = new User();
 $posts = $postModel->getByAuthor($user);
 
-// ✅ VALIDO (null per IS NULL)
-$posts = $postModel->getByAuthor(null);
+// ✅ VALIDO: category è nullable, null diventa IS NULL
+$posts = $postModel->getByCategory(null);
 
-// ❌ INVALIDO - TypeError
-$category = new Category();
-$posts = $postModel->getByAuthor($category); // Expects User, got Category
+// ❌ INVALIDO: author non è nullable
+$posts = $postModel->getByAuthor(null);
+// Lancia InvalidArgumentException
+
+// ❌ INVALIDO: tipo errato
+$posts = $postModel->getByAuthor($category);
 // Lancia InvalidArgumentException
 ```
 
 #### Combinazione con searchKey
 
-Tutti i metodi magici supportano il parametro opzionale `$searchKey` per filtrare ulteriormente:
+Tutti i metodi magici accettano il parametro opzionale `$searchKey`, che il model applica con `appendSearchCondition()`:
 
 ```php
 class PostModel extends DependentModel
 {
-    protected function appendSearchCondition(
-        Query &$query,
-        string $searchKey,
-        array &$bindValues,
-        array &$bindTypes
-    ): void {
-        // Ricerca nel titolo
-        $query->appendCondition('title', ComparisonOperator::like, Placeholder::placeholder);
+    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
+    {
+        $query->appendOpenBlock()
+            ->appendCondition('title', ComparisonOperator::like, Placeholder::placeholder)
+            ->appendOr()
+            ->appendCondition('content', ComparisonOperator::like, Placeholder::placeholder)
+            ->appendCloseBlock();
         $bindValues[] = "%{$searchKey}%";
+        $bindValues[] = "%{$searchKey}%";
+        $bindTypes[] = DataType::typeString;
         $bindTypes[] = DataType::typeString;
     }
 }
 
 // Utilizzo:
 $posts = $postModel->getByAuthor($user, 'framework');
-// SELECT * FROM post WHERE author_id = 5 AND title LIKE '%framework%'
-
-$count = $postModel->countByCategory($category, 'tutorial');
-// SELECT COUNT(*) FROM post WHERE category_id = 3 AND title LIKE '%tutorial%'
+// SELECT … FROM post WHERE post.author_id = ? AND (post.title LIKE ? OR post.content LIKE ?)
 ```
+
+`appendSearchCondition()` viene chiamato dopo `setWhere()` e, quando ci sono condizioni sulle proprietà, dopo `appendAnd()`: il metodo deve aggiungere solo le proprie condizioni. Le condizioni in OR vanno racchiuse in un blocco, altrimenti la precedenza degli operatori le separa dalle condizioni sulle proprietà.
 
 #### Esempi Pratici
 
@@ -605,104 +545,55 @@ class RelationalQueryService
 {
     public function getUserContent(User $user): array
     {
-        $postModel = new PostModel($this->dataMapper);
-        $commentModel = new CommentModel($this->dataMapper);
+        $postModel = new PostModel();
+        $commentModel = new CommentModel();
 
-        // Metodi magici generati dinamicamente!
-        $userPosts = $postModel->getByAuthor($user);
-        $userComments = $commentModel->getByAuthor($user);
-
-        $stats = [
+        return [
             'posts_count' => $postModel->countByAuthor($user),
             'comments_count' => $commentModel->countByAuthor($user),
-            'posts' => $userPosts,
-            'comments' => $userComments
+            'posts' => $postModel->getByAuthor($user),
+            'comments' => $commentModel->getByAuthor($user),
         ];
-
-        return $stats;
-    }
-
-    public function getPostsByCategory(Category $category): SismaCollection
-    {
-        $postModel = new PostModel($this->dataMapper);
-
-        // Metodo magico: getByCategory()
-        return $postModel->getByCategory($category);
-    }
-
-    public function getCommentsByPost(Post $post): SismaCollection
-    {
-        $commentModel = new CommentModel($this->dataMapper);
-
-        // Metodo magico: getByPost()
-        return $commentModel->getByPost($post);
     }
 
     public function getFeaturedPostsByAuthor(User $author): SismaCollection
     {
-        $postModel = new PostModel($this->dataMapper);
-        $featuredStatus = Status::Featured;
-
-        // Metodo magico con AND: getByAuthorAndStatus()
-        return $postModel->getByAuthorAndStatus($author, $featuredStatus);
+        $postModel = new PostModel();
+        return $postModel->getByAuthorAndStatus($author, PostStatus::featured);
     }
 
-    public function bulkDeleteUserContent(User $user): bool
+    public function getUncategorizedPosts(): SismaCollection
     {
-        $postModel = new PostModel($this->dataMapper);
-        $commentModel = new CommentModel($this->dataMapper);
-
-        $this->dataMapper->beginTransaction();
-
-        try {
-            // Metodi magici: deleteByAuthor()
-            $postModel->deleteByAuthor($user);
-            $commentModel->deleteByAuthor($user);
-
-            $this->dataMapper->commit();
-            return true;
-
-        } catch (\Exception $e) {
-            $this->dataMapper->rollback();
-            throw $e;
-        }
-    }
-
-    public function getOrphanedComments(): SismaCollection
-    {
-        $commentModel = new CommentModel($this->dataMapper);
-
-        // Metodo magico con null: getByPost(null)
-        // Trova commenti dove post_id IS NULL
-        return $commentModel->getByPost(null);
+        $postModel = new PostModel();
+        return $postModel->getByCategory(null);
     }
 }
 ```
 
 #### Vantaggi dei Metodi Magici
 
-✅ **Zero boilerplate**: Nessun metodo da scrivere manualmente
-✅ **Type-safe**: Validazione automatica dei tipi
-✅ **Consistenza**: Naming convention uniforme
-✅ **Flessibilità**: Supporta combinazioni multiple con AND
-✅ **Null-safe**: Gestione automatica di IS NULL
+✅ **Zero boilerplate**: nessun metodo da scrivere manualmente
+✅ **Validazione dei tipi**: gli argomenti vengono verificati
+✅ **Consistenza**: naming convention uniforme
+✅ **Flessibilità**: combinazioni di più proprietà in AND
+✅ **Null-safe**: `IS NULL` per le proprietà nullable
 
 #### Limitazioni
 
-⚠️ **Nessun IDE autocomplete**: I metodi non esistono fisicamente
-⚠️ **Solo AND logic**: Non supporta OR tra foreign keys
-⚠️ **Convention rigida**: Naming deve seguire lo schema esatto
-⚠️ **Debugging**: Stack trace meno chiaro per errori nei metodi magici
+⚠️ **Nessun autocompletamento nell'IDE**: i metodi non esistono fisicamente
+⚠️ **Solo AND**: non supportano OR tra le proprietà
+⚠️ **Convenzione rigida**: il nome deve seguire lo schema esatto
+⚠️ **Debugging**: stack trace meno chiari per gli errori nei metodi magici
 
 #### Best Practices
 
-1. **Documenta i metodi disponibili** nel PHPDoc del Model:
+1. **Documenta i metodi disponibili** nel PHPDoc del model:
 ```php
 /**
  * @method SismaCollection getByAuthor(User $author, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null)
  * @method int countByAuthor(User $author, ?string $searchKey = null)
  * @method bool deleteByAuthor(User $author, ?string $searchKey = null)
- * @method SismaCollection getByCategory(Category $category, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null)
+ * @method SismaCollection getByCategory(?Category $category, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null)
  */
 class PostModel extends DependentModel
 {
@@ -711,16 +602,16 @@ class PostModel extends DependentModel
 ```
 
 2. **Usa nomi di proprietà chiari** nelle entità
-3. **Testa i metodi magici** con unit tests
-4. **Considera metodi espliciti** per logiche complesse
+3. **Testa i metodi magici** con unit test
+4. **Scrivi metodi espliciti** per le logiche complesse
 
 ### Metodi Magici in ReferencedEntity (Gestione Collezioni)
 
-Le entità che estendono `ReferencedEntity` hanno accesso a metodi magici aggiuntivi per gestire le **collezioni inverse** (one-to-many). Questi metodi sono generati dinamicamente tramite `__call()` e permettono di manipolare le entità figlie senza scrivere codice boilerplate.
+Le entità che estendono `ReferencedEntity` hanno metodi magici aggiuntivi per gestire le **collezioni inverse** (one-to-many). Questi metodi sono interpretati da `__call()` e permettono di manipolare le entità figlie senza codice boilerplate.
 
 #### Come Funzionano le Collezioni
 
-Quando un'entità è referenziata da altre entità (es. `User` referenziato da `Post.author`), la `ReferencedEntity` espone automaticamente una collezione inversa accessibile tramite una naming convention:
+Quando un'entità è referenziata da altre entità (es. `User` referenziato da `Post.author`), la `ReferencedEntity` espone una collezione inversa accessibile tramite una naming convention:
 
 ```php
 // Naming convention per le collezioni:
@@ -730,67 +621,63 @@ Quando un'entità è referenziata da altre entità (es. `User` referenziato da `
 $user->postCollectionAuthor; // SismaCollection di Post
 
 // Se c'è una sola foreign key, il suffisso può essere omesso:
-$user->postCollection; // Equivalente se Post ha solo 'author' come FK verso User
+$user->postCollection; // equivalente se Post ha solo 'author' come FK verso User
 ```
 
 #### Metodi Magici Disponibili
 
-Il metodo `__call()` in `ReferencedEntity` intercetta tre pattern di chiamata:
-
-**1. `set{CollectionName}(SismaCollection $collection)` - Sostituisce la collezione**
+**1. `set{NomeCollezione}(SismaCollection $collection)` - Sostituisce la collezione**
 
 ```php
 $user = $userModel->getEntityById(1);
 
-// Crea una nuova collezione di post
 $newPosts = new SismaCollection(Post::class);
 $newPosts->append($post1);
 $newPosts->append($post2);
 
-// Sostituisce tutti i post dell'utente
 $user->setPostCollectionAuthor($newPosts);
 
 // Internamente:
-// - La collezione viene assegnata
-// - Per ogni post nella collezione, $post->author = $user viene impostato automaticamente
+// - la collezione viene assegnata
+// - per ogni post della collezione viene impostato $post->author = $user
 ```
 
-**2. `add{EntityName}(BaseEntity $entity)` - Aggiunge un'entità alla collezione**
+**2. `add{NomeEntità}(BaseEntity $entity)` - Aggiunge un'entità alla collezione**
 
 ```php
 $user = $userModel->getEntityById(1);
 $newPost = new Post();
 $newPost->title = "Nuovo articolo";
 
-// Aggiunge il post alla collezione dell'utente
 $user->addPost($newPost);
 
 // Internamente:
-// - Se esiste già un post con lo stesso ID, viene sostituito
-// - Altrimenti viene aggiunto alla collezione
-// - $newPost->author = $user viene impostato automaticamente
+// - se esiste già un post con lo stesso ID, viene sostituito
+// - altrimenti viene aggiunto alla collezione
+// - viene impostato $newPost->author = $user
 ```
 
-**3. `count{CollectionName}()` - Conta le entità nella collezione**
+`add{NomeEntità}()` usa la forma abbreviata della collezione (`postCollection`), per cui è disponibile solo quando l'entità figlia ha una sola foreign key verso l'entità referenziata.
+
+**3. `count{NomeCollezione}()` - Conta le entità nella collezione**
 
 ```php
 $user = $userModel->getEntityById(1);
 
-// Conta i post dell'utente (esegue una query COUNT)
 $postCount = $user->countPostCollectionAuthor();
 
 // Internamente:
-// - Viene creato il Model corrispondente (PostModel)
-// - Viene chiamato il metodo magico countBy{ForeignKey}() (es. countByAuthor())
-// - Ritorna il numero intero di risultati
+// - viene creato il model corrispondente (PostModel)
+// - viene chiamato il metodo magico countBy{ForeignKey}() (es. countByAuthor())
+// - restituisce il numero di risultati
 ```
 
 #### Accesso Diretto alle Collezioni
 
-Oltre ai metodi magici, le collezioni sono accessibili anche tramite `__get()` e `__set()`:
+Oltre ai metodi magici, le collezioni sono accessibili tramite `__get()`, `__set()` e `__isset()`:
 
 ```php
-// Lettura (trigger lazy loading se necessario)
+// Lettura (lazy loading se necessario)
 $posts = $user->postCollectionAuthor;
 
 // Scrittura diretta
@@ -807,249 +694,163 @@ if (isset($user->postCollectionAuthor)) {
 #### Esempio Completo
 
 ```php
-class UserService
-{
-    public function demonstrateCollectionMethods(int $userId): void
-    {
-        $userModel = new UserModel($this->dataMapper);
-        $user = $userModel->getEntityById($userId);
+$userModel = new UserModel();
+$user = $userModel->getEntityById($userId);
 
-        // 1. Conta i post (query COUNT, efficiente)
-        $totalPosts = $user->countPostCollectionAuthor();
-        echo "L'utente ha {$totalPosts} post";
+// 1. Conta i post (query COUNT)
+echo "L'utente ha {$user->countPostCollectionAuthor()} post";
 
-        // 2. Accedi alla collezione (lazy loading)
-        $posts = $user->postCollectionAuthor;
-        foreach ($posts as $post) {
-            echo $post->title;
-        }
-
-        // 3. Aggiungi un nuovo post
-        $newPost = new Post();
-        $newPost->title = "Post aggiunto tramite metodo magico";
-        $newPost->content = "Contenuto...";
-        $user->addPost($newPost);
-        // $newPost->author è ora automaticamente $user
-
-        // 4. Sostituisci l'intera collezione
-        $selectedPosts = new SismaCollection(Post::class);
-        $selectedPosts->append($posts[0]);
-        $user->setPostCollectionAuthor($selectedPosts);
-
-        // 5. Salva le modifiche
-        $this->dataMapper->save($user);
-    }
-
-    public function getAuthorWithPostCount(int $userId): array
-    {
-        $userModel = new UserModel($this->dataMapper);
-        $user = $userModel->getEntityById($userId);
-
-        return [
-            'user' => $user,
-            'post_count' => $user->countPostCollectionAuthor(),
-            'comment_count' => $user->countCommentCollectionAuthor(),
-        ];
-    }
+// 2. Accedi alla collezione (lazy loading)
+foreach ($user->postCollectionAuthor as $post) {
+    echo $post->title;
 }
+
+// 3. Aggiungi un nuovo post
+$newPost = new Post();
+$newPost->title = "Post aggiunto tramite metodo magico";
+$newPost->content = "Contenuto...";
+$user->addPost($newPost);
+
+// 4. Salva l'utente e, a cascata, i post della collezione
+$dataMapper = new DataMapper();
+$dataMapper->save($user);
 ```
 
 #### Validazione Automatica
-
-Il sistema valida automaticamente i tipi:
 
 ```php
 // ✅ VALIDO
 $user->setPostCollectionAuthor(new SismaCollection(Post::class));
 
-// ❌ INVALIDO - Tipo errato
-$user->setPostCollectionAuthor(new SismaCollection(Comment::class));
+// ❌ INVALIDO: non è una SismaCollection
+$user->setPostCollectionAuthor([$post]);
 // Lancia InvalidArgumentException
 
-// ✅ VALIDO
-$user->addPost(new Post());
+// ❌ INVALIDO: collezione di un tipo diverso assegnata alla proprietà
+$user->postCollectionAuthor = new SismaCollection(Comment::class);
+// Lancia InvalidArgumentException
 
-// ❌ INVALIDO - Non è un'entità
+// ❌ INVALIDO: non è un'entità
 $user->addPost("stringa");
 // Lancia InvalidArgumentException
 ```
 
-#### Differenza tra `count` e `->count()`
+#### Differenza tra `count{NomeCollezione}()` e `->count()`
 
 ```php
-// countPostCollectionAuthor() - Query COUNT sul database
-// Efficiente, non carica le entità in memoria
+// countPostCollectionAuthor(): query COUNT sul database,
+// non carica le entità in memoria
 $count = $user->countPostCollectionAuthor();
 
-// postCollectionAuthor->count() - Conta elementi già caricati
-// Richiede prima il lazy loading di tutte le entità
+// postCollectionAuthor->count(): conta gli elementi caricati,
+// richiede prima il caricamento di tutte le entità
 $count = $user->postCollectionAuthor->count();
 ```
 
-Per grandi collezioni, preferire sempre `count{CollectionName}()` per evitare di caricare tutte le entità in memoria.
+Per le collezioni grandi è preferibile `count{NomeCollezione}()`, che non carica le entità in memoria.
 
 ### Lazy Loading: Come Funziona Internamente
 
-Il lazy loading in SismaFramework è implementato attraverso i **metodi magici** di PHP (`__get`, `__set`, `__isset`) nella classe `BaseEntity`. Questo meccanismo consente di caricare le relazioni solo quando vengono effettivamente accessate, migliorando significativamente le performance.
+Il lazy loading in SismaFramework è implementato attraverso i **metodi magici** di PHP (`__get`, `__set`, `__isset`) nella classe `BaseEntity`. Le relazioni vengono caricate solo quando vengono effettivamente lette.
 
 #### Meccanismo Interno
 
-Quando un'entità viene caricata dal database, le **foreign key** vengono inizialmente memorizzate come **semplici ID** nell'array `$foreignKeyIndexes`, senza caricare le entità correlate. Solo quando si accede alla proprietà, il metodo magico `__get()` intercetta la richiesta e:
+Quando un'entità viene caricata dal database, le **foreign key** vengono memorizzate come **semplici ID** nell'array `$foreignKeyIndexes`, senza caricare le entità correlate (a meno che non siano già in cache). Quando si legge la proprietà, `__get()`:
 
 1. **Verifica** se la proprietà è una foreign key non ancora convertita
 2. **Carica** l'entità correlata dal database usando il DataMapper
 3. **Converte** l'ID in un'istanza dell'entità
 4. **Rimuove** l'ID dall'array `$foreignKeyIndexes`
-5. **Ritorna** l'entità caricata
-
-Questo processo è completamente trasparente per il developer.
+5. **Restituisce** l'entità caricata
 
 #### Stati di una Foreign Key
 
-Una foreign key può trovarsi in tre stati:
-
 ```php
 // Stato 1: ID non convertito (lazy loading pronto)
-$post->author = 5; // Assegna l'ID intero
+$post->author = 5;
 // Internamente: $foreignKeyIndexes['author'] = 5
 
-// Stato 2: Entità caricata
-$author = $post->author; // Trigger del lazy loading
-// Internamente: $author è ora un'istanza di User, foreignKeyIndexes['author'] rimosso
+// Stato 2: entità caricata
+$author = $post->author; // lazy loading
+// Internamente: $author è un'istanza di User, foreignKeyIndexes['author'] rimosso
 
-// Stato 3: Cache hit
-$post->author = 5; // Stesso ID già in cache
+// Stato 3: cache hit
+$post->author = 5; // User con ID 5 già in cache
 // L'entità viene recuperata dalla cache invece che dal database
 ```
 
 #### Il Ruolo del Metodo `switchSettingType()`
 
-Il metodo `switchSettingType()` nella classe `BaseEntity` gestisce tre scenari quando si imposta una foreign key:
+Il metodo `switchSettingType()` di `BaseEntity` gestisce tre scenari quando si imposta una foreign key:
 
 **1. Assegnazione di un ID intero:**
 ```php
 $post->author = 5;
 
 // Internamente:
-// - Se l'entità User con ID=5 è già in cache, la recupera immediatamente
-// - Altrimenti, memorizza l'ID in $foreignKeyIndexes['author'] = 5
-// - La proprietà $author viene unset (lazy loading attivato)
-// - Al primo accesso, __get() caricherà l'entità dal database
+// - se User con ID 5 è già in cache, viene assegnato subito
+// - altrimenti l'ID viene memorizzato in $foreignKeyIndexes['author']
+// - la proprietà $author viene rimossa con unset (lazy loading attivato)
+// - al primo accesso, __get() caricherà l'entità dal database
 ```
 
 **2. Assegnazione di un'entità:**
 ```php
-$author = new User();
-$author->id = 5;
-$post->author = $author;
+$post->author = $userModel->getEntityById(5);
 
 // Internamente:
-// - L'entità viene assegnata direttamente alla proprietà
-// - L'ID viene rimosso da $foreignKeyIndexes se presente
-// - Il sistema di tracking 'modified' viene aggiornato
+// - l'entità viene assegnata direttamente alla proprietà
+// - l'ID viene rimosso da $foreignKeyIndexes se presente
+// - il flag 'modified' viene aggiornato
 ```
 
 **3. Assegnazione null:**
 ```php
-$post->author = null;
+$post->category = null;
 
 // Internamente:
-// - La proprietà viene impostata a null
-// - L'ID viene rimosso da $foreignKeyIndexes
-// - Il sistema di tracking 'modified' viene aggiornato
+// - la proprietà viene impostata a null
+// - l'ID viene rimosso da $foreignKeyIndexes
+// - il flag 'modified' viene aggiornato
 ```
 
 #### Vantaggi del Lazy Loading
 
-✅ **Performance**: Carica solo i dati effettivamente necessari
+✅ **Performance**: carica solo i dati effettivamente necessari
 ✅ **Semplicità**: API trasparente, nessun metodo speciale da chiamare
-✅ **Memoria**: Riduce il footprint in memoria per relazioni non utilizzate
-✅ **Caching**: Integrazione automatica con il sistema di cache delle entità
+✅ **Memoria**: riduce l'occupazione di memoria per le relazioni non utilizzate
+✅ **Caching**: integrazione automatica con la cache delle entità
 
-#### Problemi Comuni e Soluzioni
+#### Problema N+1 ed Eager Loading
 
-**⚠️ Problema N+1:**
 ```php
-// ❌ INEFFICIENTE: Query per ogni post
+// ❌ N+1 query: una query per ogni autore non ancora in cache
 $posts = $postModel->getEntityCollection();
 foreach ($posts as $post) {
-    echo $post->author->name; // Query separata per ogni autore!
+    echo $post->author->name;
+}
+
+// ✅ Eager loading: gli autori vengono caricati con una JOIN nella stessa query
+$posts = $postModel->getEntityCollectionWithRelations(['author']);
+foreach ($posts as $post) {
+    echo $post->author->name; // nessuna query aggiuntiva
 }
 ```
 
-**✅ Soluzione - Batch Loading:**
-```php
-class LazyLoadingExample
-{
-    public function demonstrateLazyLoading(): void
-    {
-        $postModel = new PostModel($this->dataMapper);
-
-        // Carica solo il post
-        $post = $postModel->getEntityById(1);
-
-        // Lazy loading automatico dell'autore
-        $authorName = $post->author->name; // Query automatica
-
-        // Lazy loading della collezione commenti
-        $comments = $post->commentCollection; // Query automatica
-    }
-
-    public function optimizedBatchLoading(): void
-    {
-        $postModel = new PostModel($this->dataMapper);
-        $userModel = new UserModel($this->dataMapper);
-
-        // Carica tutti i post
-        $posts = $postModel->getEntityCollection();
-
-        // Estrae IDs degli autori dai foreignKeyIndexes
-        $authorIds = [];
-        foreach ($posts as $post) {
-            $foreignKeyIndexes = $post->getForeignKeyIndexes();
-            if (isset($foreignKeyIndexes['author'])) {
-                $authorIds[] = $foreignKeyIndexes['author'];
-            }
-        }
-        $authorIds = array_unique($authorIds);
-
-        // Carica tutti gli autori in una query (batch loading)
-        $authors = $userModel->getEntityCollectionByIds($authorIds);
-
-        // Crea mappa per lookup veloce O(1)
-        $authorMap = [];
-        foreach ($authors as $author) {
-            $authorMap[$author->id] = $author;
-        }
-
-        // Assegna gli autori pre-caricati ai post
-        foreach ($posts as $post) {
-            $foreignKeyIndexes = $post->getForeignKeyIndexes();
-            if (isset($foreignKeyIndexes['author']) && isset($authorMap[$foreignKeyIndexes['author']])) {
-                $post->author = $authorMap[$foreignKeyIndexes['author']];
-            }
-        }
-
-        // Ora l'accesso all'autore non genera query
-        foreach ($posts as $post) {
-            echo $post->author->name; // Nessuna query aggiuntiva
-        }
-    }
-}
-```
+Per le relazioni annidate, le collection e le query personalizzate con JOIN vedi [JOIN con Idratazione Gerarchica](join-eager-loading.md).
 
 #### Integrazione con Cache
 
-Il lazy loading si integra automaticamente con il sistema di cache delle entità:
+Il lazy loading si integra automaticamente con la cache delle entità:
 
 ```php
 use SismaFramework\Orm\HelperClasses\Cache;
 
-// Prima richiesta: carica dal database e mette in cache
-$post->author; // SELECT * FROM user WHERE id = 5
+// Prima lettura: carica dal database e mette in cache
+$post->author; // SELECT … FROM user WHERE user.id = ?
 
-// Successive richieste: recupera dalla cache
-$post->author; // Nessuna query - cache hit!
+// Letture successive dello stesso autore, anche da altre entità: cache hit
+$otherPost->author; // nessuna query
 
 // Verifica presenza in cache
 if (Cache::checkEntityPresenceInCache(User::class, 5)) {
@@ -1059,165 +860,110 @@ if (Cache::checkEntityPresenceInCache(User::class, 5)) {
 
 #### Best Practices
 
-1. **Usa batch loading** quando itteri su collezioni
-2. **Profila le query** per identificare problemi N+1
-3. **Considera eager loading** per relazioni sempre necessarie
-4. **Monitora la cache** per ottimizzare il hit rate
-5. **Documenta le dipendenze** delle entità per il team
+1. **Usa l'eager loading** quando iteri su collezioni e accedi alle relazioni
+2. **Profila le query** con la barra di debug per individuare i problemi N+1
+3. **Lascia il lazy loading** per le relazioni lette solo in alcuni casi
+4. **Documenta le dipendenze** delle entità per il team
 
 ---
 
 ## Performance e Ottimizzazioni
 
-### Caching Intelligente
+### Cache delle Entità
+
+Con la costante di configurazione `ORM_CACHE` attiva, ogni entità caricata viene registrata nella cache delle entità (identity map) per la durata della richiesta: una seconda lettura della stessa entità, tramite lazy loading o tramite JOIN, restituisce lo stesso oggetto senza interrogare il database.
 
 ```php
-class CachedPostService
-{
-    private PostModel $postModel;
-    private CacheInterface $cache;
-
-    public function getPopularPosts(int $limit = 10): SismaCollection
-    {
-        $cacheKey = "popular_posts_{$limit}";
-
-        $cachedPosts = $this->cache->get($cacheKey);
-        if ($cachedPosts !== null) {
-            return $cachedPosts;
-        }
-
-        $query = $this->postModel->initQuery();
-        $query->setOrderBy(['view_count' => 'DESC'])
-              ->setLimit($limit);
-        $query->close();
-
-        $posts = $this->dataMapper->find('Post', $query);
-
-        $this->cache->set($cacheKey, $posts, 3600); // Cache 1 ora
-        return $posts;
-    }
-
-    public function invalidatePostCache(Post $post): void
-    {
-        // Invalida cache correlate
-        $this->cache->delete("post_{$post->getId()}");
-        $this->cache->delete("popular_posts_*");
-        $this->cache->delete("author_posts_{$post->getAuthorId()}");
-    }
-}
+$post = $postModel->getEntityById(1);    // query
+$samePost = $postModel->getEntityById(1); // nessuna query, stesso oggetto
 ```
 
-### Batch Operations
+La cache vale per la singola richiesta: per conservare dati tra richieste diverse si usa un sistema di cache applicativo, salvando valori semplici (array, scalari) e non le entità, che dipendono dallo stato della richiesta.
+
+### Operazioni Batch
 
 ```php
-class BatchOperationService
+class PostModel extends DependentModel
 {
-    public function bulkUpdateViewCounts(array $postIds): bool
+    public function deletePostsByIds(array $postIds): bool
     {
-        // ❌ INEFFICIENTE: Query singole
-        foreach ($postIds as $id) {
-            $post = $this->postModel->getEntityById($id);
-            $post->incrementViewCount();
-            $this->dataMapper->save($post);
-        }
-
-        // ✅ EFFICIENTE: Query batch
-        $query = $this->postModel->initQuery();
+        $query = $this->initQuery();
         $query->setWhere()
-              ->appendCondition('id', ComparisonOperator::in, Placeholder::placeholder);
+            ->appendCondition('id', ComparisonOperator::in, array_fill(0, count($postIds), Placeholder::placeholder));
 
-        // Per operazioni batch personalizzate, usa deleteBatch o SQL raw tramite l'adapter
-        $query->close();
-        $bindValues = [$postIds];
-        $bindTypes = [DataType::typeArrayInteger];
-
-        // Esempio: usa l'adapter direttamente per SQL personalizzato
-        $sql = "UPDATE post SET view_count = view_count + 1 WHERE id IN (?)";
-        return $this->dataMapper->getAdapter()->execute($sql, $bindValues, $bindTypes);
+        return $this->dataMapper->deleteBatch($query, $postIds, array_fill(0, count($postIds), DataType::typeInteger));
     }
 
-    public function createMultiplePosts(array $postsData): SismaCollection
+    public function incrementViewCounts(array $postIds): bool
     {
-        $posts = new SismaCollection('Post');
-
-        $this->dataMapper->beginTransaction();
-
-        try {
-            foreach ($postsData as $data) {
-                $post = new Post();
-                $post->setTitle($data['title']);
-                $post->setContent($data['content']);
-                $post->setAuthorId($data['author_id']);
-
-                $this->dataMapper->save($post);
-                $posts->append($post);
-            }
-
-            $this->dataMapper->commit();
-            return $posts;
-
-        } catch (\Exception $e) {
-            $this->dataMapper->rollback();
-            throw $e;
-        }
+        $placeholders = implode(', ', array_fill(0, count($postIds), '?'));
+        $sql = "UPDATE post SET view_count = view_count + 1 WHERE id IN ({$placeholders})";
+        return $this->initQuery()->getAdapter()->execute($sql, $postIds, array_fill(0, count($postIds), DataType::typeInteger));
     }
 }
 ```
 
-### Query Count e Aggregazioni
+`deleteBatch()` esegue una sola `DELETE` invece di cancellare le entità una alla volta. Per gli aggiornamenti in blocco si esegue SQL diretto tramite l'adapter, sempre con i valori legati.
+
+Per creare più entità in modo atomico si usa una transazione (vedi [Gestione Transazioni](#gestione-transazioni)):
 
 ```php
-class StatisticsService
+$dataMapper = new DataMapper();
+$dataMapper->startTransaction();
+foreach ($postsData as $data) {
+    $post = new Post();
+    $post->title = $data['title'];
+    $post->content = $data['content'];
+    $post->author = $data['author_id'];
+    $dataMapper->save($post);
+}
+$dataMapper->commitTransaction();
+```
+
+### Conteggi e Aggregazioni
+
+```php
+$postModel = new PostModel();
+
+$statistics = [
+    'total_posts' => $postModel->countEntityCollection(),
+    'published_posts' => $postModel->countByStatus(PostStatus::published),
+    'posts_per_author' => $postModel->getPostCountPerAuthor(),
+];
+```
+
+`DataMapper::find()` restituisce entità. Per le aggregazioni si esegue la query con `select()` dell'adapter, che restituisce righe di tipo `StandardEntity`:
+
+```php
+class PostModel extends DependentModel
 {
-    public function getContentStatistics(): array
+    public function getPostCountPerAuthor(): array
     {
-        $postModel = new PostModel($this->dataMapper);
-        $userModel = new UserModel($this->dataMapper);
-        $commentModel = new CommentModel($this->dataMapper);
-
-        return [
-            'total_posts' => $postModel->countEntityCollection(),
-            'published_posts' => $this->countPublishedPosts(),
-            'total_users' => $userModel->countEntityCollection(),
-            'total_comments' => $commentModel->countEntityCollection(),
-            'posts_per_author' => $this->getPostsPerAuthor()
-        ];
-    }
-
-    private function countPublishedPosts(): int
-    {
-        $query = $this->postModel->initQuery();
-        $query->setWhere()
-              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
-
-        $bindValues = ['published'];
-        $bindTypes = [DataType::typeString];
-
-        $query->close();
-        return $this->dataMapper->getCount($query, $bindValues, $bindTypes);
-    }
-
-    private function getPostsPerAuthor(): SismaCollection
-    {
-        // Per aggregazioni, crea un'entità specifica per i risultati
-        $query = $this->postModel->initQuery();
-        $query->setColumns(['author_id', 'COUNT(*) as post_count'])
-              ->setGroupBy(['author_id'])
-              ->setOrderBy(['post_count' => 'DESC']);
-
+        $query = $this->initQuery();
+        $query->setCount('')
+            ->appendColumn('author_id')
+            ->setGroupBy(['author_id'])
+            ->setOrderBy(['_numrows' => Indexing::desc]);
         $query->close();
 
-        // Restituisce sempre una SismaCollection di entità tipizzate
-        return $this->dataMapper->find(AuthorPostStats::class, $query);
+        $postCountPerAuthor = [];
+        foreach ($query->getAdapter()->select($query->getCommandToExecute()) as $row) {
+            $postCountPerAuthor[$row->author_id] = $row->_numrows;
+        }
+        return $postCountPerAuthor;
     }
 }
 ```
+
+`setCount()` genera la colonna `COUNT(…) as _numrows`; le altre funzioni di aggregazione (`setAVG()`, `setMax()`, `setMin()`, `setSum()`) accettano un alias per la colonna calcolata.
 
 ---
 
-## Architetture Enterprise
+## Organizzazione del Codice di Accesso ai Dati
 
 ### Repository Pattern
+
+Le query personalizzate restano nel model, e il repository le espone al resto dell'applicazione:
 
 ```php
 interface PostRepositoryInterface
@@ -1225,7 +971,6 @@ interface PostRepositoryInterface
     public function findById(int $id): ?Post;
     public function findByAuthor(User $author): SismaCollection;
     public function findPublished(): SismaCollection;
-    public function findByDateRange(\DateTime $from, \DateTime $to): SismaCollection;
     public function save(Post $post): bool;
     public function delete(Post $post): bool;
 }
@@ -1233,11 +978,9 @@ interface PostRepositoryInterface
 class PostRepository implements PostRepositoryInterface
 {
     private PostModel $model;
-    private DataMapper $dataMapper;
 
-    public function __construct(DataMapper $dataMapper)
+    public function __construct(private DataMapper $dataMapper = new DataMapper())
     {
-        $this->dataMapper = $dataMapper;
         $this->model = new PostModel($dataMapper);
     }
 
@@ -1253,34 +996,7 @@ class PostRepository implements PostRepositoryInterface
 
     public function findPublished(): SismaCollection
     {
-        $query = $this->model->initQuery();
-        $query->setWhere()
-              ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder)
-              ->appendAnd()
-              ->appendCondition('published_at', ComparisonOperator::lessThanOrEqual, Placeholder::placeholder);
-
-        $bindValues = ['published', new \DateTime()];
-        $bindTypes = [DataType::typeString, DataType::typeDateTime];
-
-        $query->setOrderBy(['published_at' => 'DESC']);
-        $query->close();
-
-        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
-    }
-
-    public function findByDateRange(\DateTime $from, \DateTime $to): SismaCollection
-    {
-        $query = $this->model->initQuery();
-        $query->setWhere()
-              ->appendCondition('published_at', ComparisonOperator::greaterThanOrEqual, Placeholder::placeholder)
-              ->appendAnd()
-              ->appendCondition('published_at', ComparisonOperator::lessThanOrEqual, Placeholder::placeholder);
-
-        $bindValues = [$from, $to];
-        $bindTypes = [DataType::typeDateTime, DataType::typeDateTime];
-
-        $query->close();
-        return $this->dataMapper->find('Post', $query, $bindValues, $bindTypes);
+        return $this->model->getPublishedBefore(new SismaDateTime());
     }
 
     public function save(Post $post): bool
@@ -1293,6 +1009,22 @@ class PostRepository implements PostRepositoryInterface
         return $this->dataMapper->delete($post);
     }
 }
+
+class PostModel extends DependentModel
+{
+    public function getPublishedBefore(SismaDateTime $date): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere()
+            ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder)
+            ->appendAnd()
+            ->appendCondition('publishedAt', ComparisonOperator::lessOrEqual, Placeholder::placeholder);
+        $query->setOrderBy(['publishedAt' => Indexing::desc]);
+
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, [PostStatus::published, $date], [DataType::typeEnumeration, DataType::typeDate]);
+    }
+}
 ```
 
 ### Service Layer con Domain Logic
@@ -1300,33 +1032,33 @@ class PostRepository implements PostRepositoryInterface
 ```php
 class BlogService
 {
-    private PostRepository $postRepository;
-    private UserRepository $userRepository;
-    private NotificationService $notificationService;
+    public function __construct(
+        private PostRepository $postRepository,
+        private UserRepository $userRepository,
+        private NotificationService $notificationService
+    ) {
+    }
 
     public function publishPost(int $postId, int $authorId): bool
     {
         $post = $this->postRepository->findById($postId);
         $author = $this->userRepository->findById($authorId);
 
-        if (!$post || !$author) {
+        if ($post === null || $author === null) {
             throw new \InvalidArgumentException('Post or Author not found');
         }
 
-        if ($post->getAuthorId() !== $authorId) {
-            throw new \UnauthorizedAccessException('Author mismatch');
+        if ($post->author->id !== $author->id) {
+            throw new \DomainException('Author mismatch');
         }
 
-        // Domain logic
-        $post->publish();
+        $post->status = PostStatus::published;
+        $post->publishedAt = new SismaDateTime();
 
         $success = $this->postRepository->save($post);
-
         if ($success) {
-            // Side effects
             $this->notificationService->notifySubscribers($post);
         }
-
         return $success;
     }
 
@@ -1334,23 +1066,23 @@ class BlogService
     {
         $posts = $this->postRepository->findByAuthor($author);
 
-        $stats = [
+        $statistics = [
             'total_posts' => $posts->count(),
             'published_posts' => 0,
             'draft_posts' => 0,
-            'total_views' => 0
+            'total_views' => 0,
         ];
 
         foreach ($posts as $post) {
-            if ($post->isPublished()) {
-                $stats['published_posts']++;
+            if ($post->status === PostStatus::published) {
+                $statistics['published_posts']++;
             } else {
-                $stats['draft_posts']++;
+                $statistics['draft_posts']++;
             }
-            $stats['total_views'] += $post->getViewCount();
+            $statistics['total_views'] += $post->viewCount;
         }
 
-        return $stats;
+        return $statistics;
     }
 }
 ```
@@ -1361,51 +1093,41 @@ class BlogService
 
 ### Gestione Transazioni
 
+`DataMapper::save()` è già atomico: il salvataggio di un'entità e, a cascata, delle entità collegate avviene in una transazione, annullata se uno dei salvataggi fallisce. Per rendere atomiche più operazioni si apre una transazione esplicita:
+
 ```php
-class TransactionalService
+class OwnershipTransferService
 {
-    private DataMapper $dataMapper;
-
-    public function transferPostOwnership(Post $post, User $newOwner): bool
+    public function __construct(private DataMapper $dataMapper = new DataMapper())
     {
-        $this->dataMapper->beginTransaction();
-
-        try {
-            // Aggiorna il post
-            $post->setAuthorId($newOwner->getId());
-            $this->dataMapper->save($post);
-
-            // Log del trasferimento
-            $transferLog = new OwnershipTransfer();
-            $transferLog->setPostId($post->getId());
-            $transferLog->setOldOwnerId($post->getAuthorId());
-            $transferLog->setNewOwnerId($newOwner->getId());
-            $transferLog->setTransferDate(new \DateTime());
-
-            $this->dataMapper->save($transferLog);
-
-            // Aggiorna statistiche
-            $this->updateAuthorStatistics($post->getAuthorId(), -1);
-            $this->updateAuthorStatistics($newOwner->getId(), +1);
-
-            $this->dataMapper->commit();
-            return true;
-
-        } catch (\Exception $e) {
-            $this->dataMapper->rollback();
-            error_log("Transfer failed: " . $e->getMessage());
-            return false;
-        }
     }
 
-    private function updateAuthorStatistics(int $userId, int $delta): void
+    public function transferPostOwnership(Post $post, User $newOwner): void
     {
-        $userStats = $this->getUserStats($userId);
-        $userStats->setPostCount($userStats->getPostCount() + $delta);
-        $this->dataMapper->save($userStats);
+        $oldOwner = $post->author;
+
+        $this->dataMapper->startTransaction();
+
+        $post->author = $newOwner;
+        $this->dataMapper->save($post);
+
+        $transferLog = new OwnershipTransfer();
+        $transferLog->post = $post;
+        $transferLog->oldOwner = $oldOwner;
+        $transferLog->newOwner = $newOwner;
+        $transferLog->transferDate = new SismaDateTime();
+        $this->dataMapper->save($transferLog);
+
+        $this->dataMapper->commitTransaction();
     }
 }
 ```
+
+**Comportamento:**
+- `startTransaction()` apre la transazione e restituisce `true`; se una transazione è già aperta restituisce `false` e i salvataggi successivi entrano in quella esistente
+- i salvataggi eseguiti dentro la transazione non la chiudono: viene confermata solo da `commitTransaction()`
+- se un salvataggio fallisce, il `DataMapper` annulla l'intera transazione e solleva una `DataMapperException`
+- il `DataMapper` non espone un metodo di rollback: se dentro la transazione si verifica un'eccezione diversa da un salvataggio fallito, la transazione resta aperta e il database la annulla alla chiusura della connessione. In quel caso non vanno eseguite altre scritture nella stessa richiesta
 
 ### Data Validation e Business Rules
 
@@ -1416,128 +1138,76 @@ class PostValidationService
     {
         $errors = [];
 
-        // Validazione base
-        if (empty($post->getTitle())) {
+        if (empty($post->title)) {
             $errors[] = 'Title is required';
-        }
-
-        if (strlen($post->getTitle()) > 255) {
+        } elseif (strlen($post->title) > 255) {
             $errors[] = 'Title too long';
         }
 
-        // Validazione business rules
-        if ($post->isPublished() && empty($post->getContent())) {
+        if ($post->status === PostStatus::published && empty($post->content)) {
             $errors[] = 'Content required for published posts';
         }
 
-        // Validazione relazioni
-        if (!$this->isValidAuthor($post->getAuthorId())) {
+        if ($post->author->active === false) {
             $errors[] = 'Invalid author';
         }
 
         return $errors;
     }
-
-    private function isValidAuthor(int $authorId): bool
-    {
-        $userModel = new UserModel($this->dataMapper);
-        $author = $userModel->getEntityById($authorId);
-
-        return $author !== null && $author->isActive();
-    }
 }
 ```
 
+Per la validazione dei dati provenienti dai form vedi [Form](forms.md).
+
 ---
 
-## Considerazioni sui JOIN
+## Query di Reporting
 
-### Limitazioni e Alternative
+### JOIN e SQL Diretto
 
-L'ORM di SismaFramework **non supporta JOIN espliciti** nel query builder. Questo è una scelta architetturale del pattern Data Mapper che ha sia vantaggi che svantaggi:
-
-**✅ Vantaggi:**
-- **Semplicità**: API più semplice e meno prone ad errori
-- **Purezza del Domain**: Le entità rappresentano sempre record singoli
-- **Lazy Loading**: Relazioni caricate solo quando necessarie
-- **Cache Friendly**: Entità cachiate individualmente
-
-**⚠️ Limitazioni:**
-- **Performance**: Possibile problema N+1
-- **Query Complesse**: Aggregazioni multi-tabella più difficili
-- **Reporting**: Query di reporting richiedono SQL raw
-
-**💡 Alternative e Workaround:**
+Il query builder supporta le JOIN (vedi [JOIN con Idratazione Gerarchica](join-eager-loading.md)), sia per l'eager loading delle relazioni sia nelle query personalizzate. Per le query di reporting che non restituiscono entità si esegue la query, costruita con il query builder o scritta in SQL, tramite `select()` dell'adapter, che restituisce righe di tipo `StandardEntity`:
 
 ```php
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+
 class ReportingService
 {
-    // 1. SQL Raw per query complesse - usa l'adapter direttamente
-    public function getPostsWithAuthorNames(): array
+    public function getPublishedPostsWithAuthorNames(): array
     {
         $sql = "
-            SELECT p.*, u.name as author_name
+            SELECT p.title, u.name AS author_name
             FROM post p
             INNER JOIN user u ON p.author_id = u.id
-            WHERE p.status = 'published'
+            WHERE p.status = ?
             ORDER BY p.published_at DESC
         ";
 
-        $adapter = BaseAdapter::getDefault();
-        $result = $adapter->select($sql);
-        return $result ? $result->fetchAll() : [];
-    }
-
-    // 2. Caricamento batch per evitare N+1
-    public function getPostsWithAuthorsOptimized(): array
-    {
-        $postModel = new PostModel($this->dataMapper);
-        $userModel = new UserModel($this->dataMapper);
-
-        // Carica post
-        $posts = $postModel->getEntityCollection();
-
-        // Estrae author IDs
-        $authorIds = array_unique(
-            array_map(fn($post) => $post->getAuthorId(), $posts->toArray())
-        );
-
-        // Carica autori in batch
-        $authors = $userModel->getEntityCollectionByIds($authorIds);
-        $authorMap = $authors->indexBy('id');
-
-        // Combina risultati
-        $result = [];
-        foreach ($posts as $post) {
-            $result[] = [
-                'post' => $post,
-                'author' => $authorMap[$post->getAuthorId()]
-            ];
+        $rows = [];
+        foreach (BaseAdapter::getDefault()->select($sql, [PostStatus::published->value], [DataType::typeString]) as $row) {
+            $rows[] = ['title' => $row->title, 'author' => $row->author_name];
         }
-
-        return $result;
+        return $rows;
     }
 
-    // 3. View materializzate per reporting
     public function getPostStatistics(): array
     {
-        // Usa una view pre-calcolata tramite l'adapter
-        $sql = "SELECT * FROM post_statistics_view";
-        $adapter = BaseAdapter::getDefault();
-        $result = $adapter->select($sql);
-        return $result ? $result->fetchAll() : [];
+        $rows = [];
+        foreach (BaseAdapter::getDefault()->select("SELECT * FROM post_statistics_view") as $row) {
+            $rows[] = get_object_vars($row);
+        }
+        return $rows;
     }
 }
 ```
 
-### Quando Usare SQL Raw
+### Quando Usare SQL Diretto
 
-È appropriato usare SQL raw quando:
-- Query di **reporting complesse** con aggregazioni
-- **Performance critiche** dove JOIN è necessario
-- **Bulk operations** su grandi dataset
-- **Stored procedures** esistenti
+È appropriato usare SQL diretto per:
+- query di **reporting complesse** con aggregazioni su più tabelle
+- costrutti non supportati dal query builder, come le JOIN su subquery, `IN (subquery)` ed `EXISTS`
+- **operazioni in blocco** su grandi insiemi di dati
+- **stored procedure** e viste esistenti
+
+Anche con l'SQL diretto i valori vanno passati come valori legati, mai concatenati nella stringa della query.
 
 ---
-
-[Indice](index.md) | Precedente: [Configuration Reference](configuration-reference.md) | Successivo: [Performance Guide](performance.md)

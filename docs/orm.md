@@ -148,11 +148,15 @@ Un modello è la porta d'accesso al database per una specifica entità. Deve est
 namespace MyModule\App\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\HelperClasses\Query;
 use MyModule\App\Entities\Post;
 
 class PostModel extends BaseModel
 {
-    protected static function getEntityName(): string
+    protected function getEntityName(): string
     {
         return Post::class;
     }
@@ -160,11 +164,20 @@ class PostModel extends BaseModel
     // Usato per le ricerche testuali
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
-        $query->where('title LIKE :searchKey OR content LIKE :searchKey');
-        $bindValues[':searchKey'] = '%' . $searchKey . '%';
+        $query->appendOpenBlock()
+            ->appendCondition('title', ComparisonOperator::like, Placeholder::placeholder)
+            ->appendOr()
+            ->appendCondition('content', ComparisonOperator::like, Placeholder::placeholder)
+            ->appendCloseBlock();
+        $bindValues[] = '%' . $searchKey . '%';
+        $bindValues[] = '%' . $searchKey . '%';
+        $bindTypes[] = DataType::typeString;
+        $bindTypes[] = DataType::typeString;
     }
 }
 ```
+
+`appendSearchCondition()` viene chiamato dopo `setWhere()` e, quando la ricerca si combina con altre condizioni, dopo `appendAnd()`: il metodo aggiunge solo le proprie condizioni, racchiudendo in un blocco quelle in OR. I valori si legano con un placeholder per ogni occorrenza, nello stesso ordine delle condizioni.
 
 ### Metodi di Base (`BaseModel`)
 

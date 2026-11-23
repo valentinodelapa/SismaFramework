@@ -35,6 +35,7 @@ use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\JoinType;
 use SismaFramework\Orm\Enumerations\JsonValueType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
@@ -45,6 +46,7 @@ use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\CustomTypes\SismaJson;
 use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
@@ -494,8 +496,84 @@ class AdapterMysqlTest extends TestCase
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('SELECT * FROM `table_name` WHERE `table_name`.`id` = 1 ', $adapterMysql->parseSelect(false, ['*'], '`table_name`', ['`table_name`.`id` = 1'], [], [], [], 0, 0));
-        $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP_BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
+        $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
                 $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], '`table_name`', ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id` ASC'], 1, 10));
+    }
+
+    public function testBuildJoinOnForeignKey()
+    {
+        $adapterMysql = new AdapterMysql();
+        $joinMetadata = $adapterMysql->buildJoinOnForeignKey(JoinType::left, 'parentSelfReferencedSample', SelfReferencedSample::class, '`self_referenced_sample`');
+        $this->assertSame('`parent_self_referenced_sample`', $joinMetadata['alias']);
+        $this->assertSame('parentSelfReferencedSample', $joinMetadata['aliasPath']);
+        $this->assertSame('`self_referenced_sample`.`parent_self_referenced_sample_id` = `parent_self_referenced_sample`.id', $joinMetadata['on']);
+    }
+
+    public function testBuildJoinedColumns()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertSame([
+            '`parent_self_referenced_sample`.`id` AS parentSelfReferencedSample__id',
+            '`parent_self_referenced_sample`.`parent_self_referenced_sample_id` AS parentSelfReferencedSample__parentSelfReferencedSample',
+            '`parent_self_referenced_sample`.`base_sample_id` AS parentSelfReferencedSample__baseSample',
+            '`parent_self_referenced_sample`.`text` AS parentSelfReferencedSample__text',
+            '`parent_self_referenced_sample`.`nullable_text` AS parentSelfReferencedSample__nullableText',
+                ], $adapterMysql->buildJoinedColumns('parentSelfReferencedSample', SelfReferencedSample::class));
+    }
+
+    public function testSelectWithJoinAndConditionsOnColumnsOfJoinedTable()
+    {
+        $adapterMysql = new AdapterMysql();
+        $query = new Query($adapterMysql);
+        $query->setTable(SelfReferencedSample::class)
+                ->appendJoinOnForeignKey(JoinType::left, 'parentSelfReferencedSample', SelfReferencedSample::class)
+                ->setWhere()
+                ->appendCondition('id', ComparisonOperator::equal)
+                ->appendAnd()
+                ->appendCondition('parentSelfReferencedSample.text', ComparisonOperator::equal)
+                ->close();
+        $this->assertSame('SELECT `self_referenced_sample`.* FROM `self_referenced_sample` LEFT JOIN `self_referenced_sample` AS `parent_self_referenced_sample` ON `self_referenced_sample`.`parent_self_referenced_sample_id` = `parent_self_referenced_sample`.id WHERE `self_referenced_sample`.`id` = ? AND `parent_self_referenced_sample`.`text` = ? ', $query->getCommandToExecute());
+    }
+
+    public function testSelectWithCrossJoin()
+    {
+        $adapterMysql = new AdapterMysql();
+        $query = new Query($adapterMysql);
+        $query->setTable('size')
+                ->appendJoin(JoinType::cross, 'color', 'color', '')
+                ->close();
+        $this->assertSame('SELECT `size`.* FROM `size` CROSS JOIN `color` AS `color`  ', $query->getCommandToExecute());
+    }
+
+    public function testSelectWithTableAliasQualifiesWhereConditions()
+    {
+        $adapterMysql = new AdapterMysql();
+        $query = new Query($adapterMysql);
+        $query->setTable('event', 'parentEvent')
+                ->setWhere()
+                ->appendConditionOnEncryptedColumn('secret', 'secretInitializationVector', ComparisonOperator::equal)
+                ->appendAnd()
+                ->appendFulltextCondition(['title', 'body'])
+                ->appendAnd()
+                ->appendJsonCondition('attributes', '$.price', ComparisonOperator::greater)
+                ->appendAnd()
+                ->appendJsonContainsCondition('attributes', JsonValueType::string)
+                ->appendAnd()
+                ->appendJsonPathExistsCondition('attributes', '$.discount')
+                ->appendAnd()
+                ->appendJsonNullCondition('attributes', '$.discount')
+                ->setGroupBy(['website'])
+                ->setHaving()
+                ->appendJsonCondition('attributes', '$.price', ComparisonOperator::greater)
+                ->close();
+        $this->assertSame("SELECT `parent_event`.* FROM `event` as `parent_event` WHERE "
+                . "AES_DECRYPT( FROM_BASE64( `parent_event`.`secret` ), ?, UNHEX( HEX( `parent_event`.`secret_initialization_vector` ) ) ) = ? "
+                . "AND MATCH (`parent_event`.`title`,`parent_event`.`body`) AGAINST (? IN NATURAL LANGUAGE MODE) "
+                . "AND JSON_UNQUOTE( JSON_EXTRACT( `parent_event`.`attributes`, '$.price' ) ) > ? "
+                . "AND JSON_CONTAINS( `parent_event`.`attributes`, JSON_QUOTE( ? ) ) "
+                . "AND JSON_CONTAINS_PATH( `parent_event`.`attributes`, 'one', '$.discount' ) "
+                . "AND CAST( JSON_TYPE( JSON_EXTRACT( `parent_event`.`attributes`, '$.discount' ) ) AS BINARY ) = 'NULL' "
+                . "GROUP BY `website` HAVING JSON_UNQUOTE( JSON_EXTRACT( `attributes`, '$.price' ) ) > ? ", $query->getCommandToExecute());
     }
 
     public function testParseInsert()

@@ -28,10 +28,13 @@ namespace SismaFramework\Tests\Orm;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Orm\Adapters\AdapterMysql;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseModel;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\Enumerations\JoinType;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\TestsApplication\Entities\DependentEntityOne;
 use SismaFramework\TestsApplication\Entities\EntityWithTwoCollection;
@@ -229,6 +232,61 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertTrue($method->invoke($model, 'sonCollection'));
     }
 
+    public function testGetEntityCollectionWithRelationsLoadsSonCollection(): void
+    {
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
+        $firstParent = new SelfReferencedSample();
+        $firstParent->id = 8101;
+        $secondParent = new SelfReferencedSample();
+        $secondParent->id = 8102;
+        $parents = new SismaCollection(SelfReferencedSample::class);
+        $parents->append($firstParent);
+        $parents->append($secondParent);
+        $firstChild = new SelfReferencedSample();
+        $firstChild->id = 8103;
+        $firstChild->parentSelfReferencedSample = 8101;
+        $secondChild = new SelfReferencedSample();
+        $secondChild->id = 8104;
+        $secondChild->parentSelfReferencedSample = 8101;
+        $children = new SismaCollection(SelfReferencedSample::class);
+        $children->append($firstChild);
+        $children->append($secondChild);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('initQuery')
+                ->willReturn(new Query($baseAdapterStub));
+        $dataMapperMock->expects($this->exactly(2))
+                ->method('find')
+                ->willReturnOnConsecutiveCalls($parents, $children);
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $result = $model->getEntityCollectionWithRelations(['sonCollection']);
+        $this->assertSame($parents, $result);
+        $this->assertCount(2, $firstParent->sonCollection);
+        $this->assertSame($firstChild, $firstParent->sonCollection[0]);
+        $this->assertSame($secondChild, $firstParent->sonCollection[1]);
+        $this->assertCount(0, $secondParent->sonCollection);
+    }
+
+    public function testGetEntityCollectionWithRelationsJoinsSharedSegmentOnce(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        BaseAdapter::setDefault($adapterMysql);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('initQuery')
+                ->willReturn(new Query($adapterMysql));
+        $executedQuery = null;
+        $dataMapperMock->expects($this->once())
+                ->method('find')
+                ->willReturnCallback(function (string $entityName, Query $query) use (&$executedQuery) {
+                    $executedQuery = $query;
+                    return new SismaCollection(SelfReferencedSample::class);
+                });
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $model->getEntityCollectionWithRelations(['parentSelfReferencedSample' => ['parentSelfReferencedSample']]);
+        $aliases = array_column($executedQuery->getJoins(), 'alias');
+        $this->assertSame(['`parent_self_referenced_sample`', '`parent_self_referenced_sample_parent_self_referenced_sample`'], $aliases);
+    }
+
     public function testBaseModelHasCollectionEagerLoadingMethod(): void
     {
         $reflection = new \ReflectionClass(\SismaFramework\Orm\BaseClasses\BaseModel::class);
@@ -381,7 +439,8 @@ class JoinEagerLoadingTest extends TestCase
         );
         $joins = $query->getJoins();
         $this->assertCount(1, $joins);
-        $this->assertSame('`custom_alias`', $joins[0]['alias']);
+        $this->assertSame('custom_alias', $joins[0]['alias']);
+        $this->assertSame('custom_alias', $joins[0]['aliasPath']);
         $this->assertStringContainsString('custom_alias.active = 1', $joins[0]['on']);
         $this->assertSame(EntityWithTwoCollection::class, $joins[0]['relatedEntityClass']);
     }

@@ -338,12 +338,12 @@ class QueryTest extends TestCase
                 ->willReturnCallback(function ($columns, $value, $textSearchMode) use ($matcherTwo) {
                     switch ($matcherTwo->numberOfInvocations()) {
                         case 1:
-                            $this->assertEquals(['fulltextColumn'], $columns);
+                            $this->assertEquals(['table_name.fulltextColumn'], $columns);
                             $this->assertEquals(Placeholder::placeholder, $value);
                             $this->assertEquals(TextSearchMode::inNaturaLanguageMode, $textSearchMode);
                             return 'MATCH (filltext_column) AGAINST ?';
                         case 2:
-                            $this->assertEquals(['fulltextColumn'], $columns);
+                            $this->assertEquals(['table_name.fulltextColumn'], $columns);
                             $this->assertEquals('value', $value);
                             $this->assertEquals(TextSearchMode::inNaturaLanguageMode, $textSearchMode);
                             return 'MATCH (filltext_column) AGAINST value';
@@ -414,7 +414,7 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('fulltextConditionSintax')
                 ->willReturnCallback(function ($columns, $value, $textSearchMode) {
-                    $this->assertEquals(['fulltextColumn'], $columns);
+                    $this->assertEquals(['table_name.fulltextColumn'], $columns);
                     $this->assertEquals(Placeholder::placeholder, $value);
                     $this->assertEquals(TextSearchMode::inBooleanMode, $textSearchMode);
                     return 'MATCH (filltext_column) AGAINST ? IN BOOLEAN MODE';
@@ -454,7 +454,7 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('fulltextConditionSintax')
                 ->willReturnCallback(function ($columns, $value, $textSearchMode) {
-                    $this->assertEquals(['fulltextColumn'], $columns);
+                    $this->assertEquals(['table_name.fulltextColumn'], $columns);
                     $this->assertEquals(Placeholder::placeholder, $value);
                     $this->assertEquals(TextSearchMode::withQueryExpansion, $textSearchMode);
                     return 'MATCH (filltext_column) AGAINST ? WITH QUERY EXPANSION';
@@ -572,21 +572,21 @@ class QueryTest extends TestCase
                 ->willReturnCallback(function ($column, $foreignKey) use ($matcherOne) {
                     switch ($matcherOne->numberOfInvocations()) {
                         case 1:
-                            $this->assertEquals('columnOne', $column);
+                            $this->assertEquals('table_name.columnOne', $column);
                             $this->assertFalse($foreignKey);
-                            return 'column_one';
+                            return 'table_name.column_one';
                         case 2:
-                            $this->assertEquals('columnTwo', $column);
+                            $this->assertEquals('table_name.columnTwo', $column);
                             $this->assertFalse($foreignKey);
-                            return 'column_two';
+                            return 'table_name.column_two';
                         case 3:
-                            $this->assertEquals('columnTree', $column);
+                            $this->assertEquals('table_name.columnTree', $column);
                             $this->assertFalse($foreignKey);
-                            return 'column_tree';
+                            return 'table_name.column_tree';
                         case 4:
-                            $this->assertEquals('columnFour', $column);
+                            $this->assertEquals('table_name.columnFour', $column);
                             $this->assertTrue($foreignKey);
-                            return 'column_four_id';
+                            return 'table_name.column_four_id';
                     }
                 });
         $matcherTwo = $this->exactly(4);
@@ -649,15 +649,15 @@ class QueryTest extends TestCase
         $baseAdapterMock->expects($this->once())
                 ->method('parseSelect')
                 ->with(false, ['table_name.*'], 'table_name', [
-                    'column_one = ?',
+                    'table_name.column_one = ?',
                     'AND',
                     '(',
-                    'column_two > 1',
+                    'table_name.column_two > 1',
                     'OR',
-                    'column_tree <= value',
+                    'table_name.column_tree <= value',
                     ')',
                     'NOT',
-                    'column_four_id IS NULL ',
+                    'table_name.column_four_id IS NULL ',
                         ], [], [], [], 0, 0);
         $query = new Query($baseAdapterMock);
         $query->setTable('tableName')
@@ -854,6 +854,122 @@ class QueryTest extends TestCase
         $query->setTable('tableName', 'A')
                 ->appendColumn('column')
                 ->setWhere()
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testAppendConditionWithTableAlias()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->exactly(2))
+                ->method('escapeTable')
+                ->willReturnCallback(fn($tableName) => $tableName === 'tableName' ? 'table_name' : 'a');
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeColumn')
+                ->with('a.column', false)
+                ->willReturn('a.column');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeValue')
+                ->willReturn('?');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseComparisonOperator')
+                ->willReturn('=');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['a.*'], 'table_name as a', ['a.column = ?'], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName', 'A')
+                ->setWhere()
+                ->appendCondition('column', ComparisonOperator::equal)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testAppendConditionWithQualifiedColumn()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeTable')
+                ->willReturn('table_name');
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeColumn')
+                ->with('author.country', false)
+                ->willReturn('author.country');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeValue')
+                ->willReturn('?');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseComparisonOperator')
+                ->willReturn('=');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['table_name.*'], 'table_name', ['author.country = ?'], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName')
+                ->setWhere()
+                ->appendCondition('author.country', ComparisonOperator::equal)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testAppendHavingConditionWithTable()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeTable')
+                ->willReturn('table_name');
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeColumn')
+                ->with('_numrows', false)
+                ->willReturn('_numrows');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeValue')
+                ->willReturn('?');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseComparisonOperator')
+                ->willReturn('>');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['table_name.*'], 'table_name', [], [], ['_numrows > ?'], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setTable('tableName')
+                ->setHaving()
+                ->appendCondition('_numrows', ComparisonOperator::greater)
+                ->close();
+        $this->assertEquals('', $query->getCommandToExecute());
+    }
+
+    public function testAppendConditionWithoutTable()
+    {
+        $baseAdapterMock = $this->createMock(BaseAdapter::class);
+        $baseAdapterMock->expects($this->once())
+                ->method('allColumns')
+                ->willReturnCallback(fn($table = '') => $table ? $table . '.*' : '*');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeColumn')
+                ->with('column', false)
+                ->willReturn('column');
+        $baseAdapterMock->expects($this->once())
+                ->method('escapeValue')
+                ->willReturn('?');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseComparisonOperator')
+                ->willReturn('=');
+        $baseAdapterMock->expects($this->once())
+                ->method('parseSelect')
+                ->with(false, ['*'], '', ['column = ?'], [], [], [], 0, 0);
+        $query = new Query($baseAdapterMock);
+        $query->setWhere()
+                ->appendCondition('column', ComparisonOperator::equal)
                 ->close();
         $this->assertEquals('', $query->getCommandToExecute());
     }
