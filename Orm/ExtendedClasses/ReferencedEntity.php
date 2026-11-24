@@ -120,7 +120,7 @@ abstract class ReferencedEntity extends BaseEntity
         return $collectionNameParts[0];
     }
 
-    protected function getForeignKeyName(string $collectionName): ?string
+    public function getForeignKeyName(string $collectionName): ?string
     {
         $collectionNameParts = array_diff(explode($this->config->foreignKeySuffix, $collectionName), ['']);
         if (str_ends_with($collectionName, $this->config->foreignKeySuffix) && count(Cache::getForeignKeyData(static::class, $collectionNameParts[0])) === 1) {

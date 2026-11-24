@@ -54,10 +54,22 @@
  *   * Supporto per tutti i tipi di JOIN: INNER, LEFT, RIGHT, CROSS tramite enum JoinType
  * - Aggiunta del supporto alle query su colonne JSON (v12.7.0): setJsonExtractColumn(), appendOrderByJsonPath(),
  *   appendJsonCondition(), appendJsonContainsCondition(), appendJsonPathExistsCondition(), appendJsonNullCondition().
+ * - Sostituzione di $tableName con $tableReference, valorizzata con l'alias della tabella quando presente, per qualificare
+ *   correttamente le colonne di default e le JOIN su foreign key nelle query con tabella aliasata (v12.17.1).
+ * - Qualificazione delle colonne non qualificate nelle condizioni WHERE (v12.17.2):
+ *   * Aggiunta di $tableReferenceName, nome non escapato della tabella o del suo alias
+ *   * Aggiunta di qualifyColumn() e qualifyColumnForCurrentCondition(), usati da appendCondition(),
+ *     appendConditionOnEncryptedColumn(), appendFulltextCondition() e dalle condizioni JSON
+ *   * Alias di appendJoin() convertito in snake_case tramite escapeTable() e aggiunta della chiave aliasPath nei metadati
+ * - Estensione del supporto alle subquery (v12.18.0):
+ *   * appendCondition() accetta una Query come valore, per IN, NOT IN e confronti con subquery scalari
+ *   * Aggiunta di appendExistsCondition() per le condizioni EXISTS e, preceduto da appendNot(), NOT EXISTS
+ *   * Aggiunta di appendJoinOnSubquery() per le JOIN su tabelle derivate
  */
 
 namespace SismaFramework\Orm\HelperClasses;
 
+use SismaFramework\Core\HelperClasses\NotationManager;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\Statement;
@@ -75,7 +87,8 @@ use SismaFramework\Orm\Enumerations\ComparisonOperator;
 class Query
 {
 
-    protected string $tableName = '';
+    protected string $tableReference = '';
+    protected string $tableReferenceName = '';
     protected string $table = '';
     protected bool $distinct = false;
     protected array $columns = [];
@@ -202,7 +215,7 @@ class Query
     private function initializeColumn(): void
     {
         if (count($this->columns) === 0) {
-            $this->columns = [$this->adapter->allColumns($this->tableName)];
+            $this->columns = [$this->adapter->allColumns($this->tableReference)];
         }
     }
 
@@ -232,9 +245,11 @@ class Query
 
     public function &setTable(string $table, ?string $tableAlias = null): self
     {
-        $this->tableName = $this->table = $this->adapter->escapeTable($table);
+        $this->tableReferenceName = NotationManager::convertEntityNameToTableName($tableAlias ?? $table);
+        $this->tableReference = $this->table = $this->adapter->escapeTable($table);
         if ($tableAlias !== null) {
-            $this->table .= ' as ' . $this->adapter->escapeTable($tableAlias);
+            $this->tableReference = $this->adapter->escapeTable($tableAlias);
+            $this->table .= ' as ' . $this->tableReference;
         }
         return $this;
     }
@@ -244,7 +259,8 @@ class Query
         $joinData = [
             'type' => $joinType,
             'table' => $this->adapter->escapeTable($joinedTable),
-            'alias' => $this->adapter->escapeIdentifier($tableAlias),
+            'alias' => $this->adapter->escapeTable($tableAlias),
+            'aliasPath' => $tableAlias,
             'on' => $onCondition
         ];
         if ($relatedEntityClass !== null) {
@@ -254,9 +270,22 @@ class Query
         return $this;
     }
 
+    public function &appendJoinOnSubquery(JoinType $joinType, Query $subquery, string $tableAlias, string $onCondition): self
+    {
+        $subquery->close();
+        $this->joins[] = [
+            'type' => $joinType,
+            'table' => $this->adapter->opSubquery($subquery),
+            'alias' => $this->adapter->escapeTable($tableAlias),
+            'aliasPath' => $tableAlias,
+            'on' => $onCondition
+        ];
+        return $this;
+    }
+
     public function &appendJoinOnForeignKey(JoinType $joinType, string $foreignKeyProperty, string $relatedEntityClass): self
     {
-        $this->joins[] = $this->adapter->buildJoinOnForeignKey($joinType, $foreignKeyProperty, $relatedEntityClass, $this->table);
+        $this->joins[] = $this->adapter->buildJoinOnForeignKey($joinType, $foreignKeyProperty, $relatedEntityClass, $this->tableReference);
         return $this;
     }
 
@@ -355,58 +384,78 @@ class Query
         return $this;
     }
 
-    public function &appendCondition(string $column, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder, bool $foreignKey = false): self
+    public function &appendCondition(string $column, ComparisonOperator $operator, Placeholder|Query|string|array $value = Placeholder::placeholder, bool $foreignKey = false): self
     {
-        $escapedColumn = $this->adapter->escapeColumn($column, $foreignKey);
-        $escapedValue = $this->adapter->escapeValue($value, $operator);
-        if ($this->currentCondition == Condition::where) {
-            $this->where[] = $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
-        }
-        if ($this->currentCondition == Condition::having) {
-            $this->having[] = $escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
-        }
+        $escapedColumn = $this->adapter->escapeColumn($this->qualifyColumnForCurrentCondition($column), $foreignKey);
+        $escapedValue = $this->escapeConditionValue($value, $operator);
+        $this->appendToCurrentCondition($escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue);
         return $this;
+    }
+
+    private function escapeConditionValue(Placeholder|Query|string|array $value, ComparisonOperator $operator): string
+    {
+        if ($value instanceof Query) {
+            $value->close();
+            return $this->adapter->opSubquery($value);
+        }
+        return $this->adapter->escapeValue($value, $operator);
+    }
+
+    public function &appendExistsCondition(Query $subquery): self
+    {
+        $subquery->close();
+        $this->appendToCurrentCondition($this->adapter->opExists($subquery));
+        return $this;
+    }
+
+    private function qualifyColumnForCurrentCondition(string $column): string
+    {
+        return $this->currentCondition === Condition::where ? $this->qualifyColumn($column) : $column;
+    }
+
+    private function qualifyColumn(string $column): string
+    {
+        if ($this->tableReferenceName === '' || str_contains($column, '.')) {
+            return $column;
+        }
+        return $this->tableReferenceName . '.' . $column;
     }
 
     public function &appendConditionOnEncryptedColumn(string $column, string $initializationVectorColumn, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder): self
     {
         $escapedValue = $this->adapter->escapeValue($value, $operator);
-        if ($this->currentCondition == Condition::where) {
-            $this->where[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
-        }
-        if ($this->currentCondition == Condition::having) {
-            $this->having[] = $this->adapter->opDecryptFunction($column, $initializationVectorColumn) . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue;
-        }
+        $decryptedColumn = $this->adapter->opDecryptFunction($this->qualifyColumnForCurrentCondition($column), $this->qualifyColumnForCurrentCondition($initializationVectorColumn));
+        $this->appendToCurrentCondition($decryptedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue);
         return $this;
     }
 
     public function &appendFulltextCondition(array $columns, Placeholder|string $value = Placeholder::placeholder, TextSearchMode $textSearchMode = TextSearchMode::inNaturaLanguageMode): self
     {
-        $this->where[] = $this->adapter->fulltextConditionSintax($columns, $value, $textSearchMode);
+        $this->where[] = $this->adapter->fulltextConditionSintax(array_map($this->qualifyColumn(...), $columns), $value, $textSearchMode);
         return $this;
     }
 
     public function &appendJsonCondition(string $column, Placeholder|string $path, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder, JsonValueType $jsonValueType = JsonValueType::string): self
     {
-        $this->appendToCurrentCondition($this->adapter->opJsonCondition($column, $path, $operator, $value, $jsonValueType));
+        $this->appendToCurrentCondition($this->adapter->opJsonCondition($this->qualifyColumnForCurrentCondition($column), $path, $operator, $value, $jsonValueType));
         return $this;
     }
 
     public function &appendJsonContainsCondition(string $column, JsonValueType $jsonValueType, Placeholder|string $value = Placeholder::placeholder, Placeholder|string|null $path = null): self
     {
-        $this->appendToCurrentCondition($this->adapter->opJsonContains($column, $value, $jsonValueType, $path));
+        $this->appendToCurrentCondition($this->adapter->opJsonContains($this->qualifyColumnForCurrentCondition($column), $value, $jsonValueType, $path));
         return $this;
     }
 
     public function &appendJsonPathExistsCondition(string $column, Placeholder|string $path): self
     {
-        $this->appendToCurrentCondition($this->adapter->opJsonContainsPath($column, $path));
+        $this->appendToCurrentCondition($this->adapter->opJsonContainsPath($this->qualifyColumnForCurrentCondition($column), $path));
         return $this;
     }
 
     public function &appendJsonNullCondition(string $column, Placeholder|string $path): self
     {
-        $this->appendToCurrentCondition($this->adapter->opJsonIsNull($column, $path));
+        $this->appendToCurrentCondition($this->adapter->opJsonIsNull($this->qualifyColumnForCurrentCondition($column), $path));
         return $this;
     }
 
@@ -514,7 +563,7 @@ class Query
                 Statement::update => $this->adapter->parseUpdate($this->table, $this->columns, $this->values, $this->where),
                 Statement::delete => $this->adapter->parseDelete($this->table, $this->where),
                 Statement::set => $this->adapter->parseSet($this->variable, $this->value),
-                Statement::select => $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns($this->tableName)], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit, $this->joins),
+                Statement::select => $this->adapter->parseSelect($this->distinct, $this->columns ?: [$this->adapter->allColumns($this->tableReference)], $this->table, $this->where, $this->group, $this->having, $this->order, $this->offset, $this->limit, $this->joins),
             };
             return $this->command;
         } else {

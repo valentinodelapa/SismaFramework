@@ -27,11 +27,16 @@
 namespace SismaFramework\Tests\Orm;
 
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\Exceptions\InvalidArgumentException;
 use SismaFramework\Core\HelperClasses\Config;
+use SismaFramework\Orm\Adapters\AdapterMysql;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
 use SismaFramework\Orm\BaseClasses\BaseModel;
 use SismaFramework\Orm\BaseClasses\BaseResultSet;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\Enumerations\JoinType;
+use SismaFramework\Orm\HelperClasses\Cache;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\TestsApplication\Entities\DependentEntityOne;
 use SismaFramework\TestsApplication\Entities\EntityWithTwoCollection;
@@ -229,6 +234,160 @@ class JoinEagerLoadingTest extends TestCase
         $this->assertTrue($method->invoke($model, 'sonCollection'));
     }
 
+    public function testGetEntityCollectionWithRelationsLoadsSonCollection(): void
+    {
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
+        $firstParent = new SelfReferencedSample();
+        $firstParent->id = 8101;
+        $secondParent = new SelfReferencedSample();
+        $secondParent->id = 8102;
+        $parents = new SismaCollection(SelfReferencedSample::class);
+        $parents->append($firstParent);
+        $parents->append($secondParent);
+        $firstChild = new SelfReferencedSample();
+        $firstChild->id = 8103;
+        $firstChild->parentSelfReferencedSample = 8101;
+        $secondChild = new SelfReferencedSample();
+        $secondChild->id = 8104;
+        $secondChild->parentSelfReferencedSample = 8101;
+        $children = new SismaCollection(SelfReferencedSample::class);
+        $children->append($firstChild);
+        $children->append($secondChild);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('initQuery')
+                ->willReturn(new Query($baseAdapterStub));
+        $dataMapperMock->expects($this->exactly(2))
+                ->method('find')
+                ->willReturnOnConsecutiveCalls($parents, $children);
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $result = $model->getEntityCollectionWithRelations(['sonCollection']);
+        $this->assertSame($parents, $result);
+        $this->assertCount(2, $firstParent->sonCollection);
+        $this->assertSame($firstChild, $firstParent->sonCollection[0]);
+        $this->assertSame($secondChild, $firstParent->sonCollection[1]);
+        $this->assertCount(0, $secondParent->sonCollection);
+    }
+
+    public function testGetEntityCollectionWithRelationsJoinsSharedSegmentOnce(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        BaseAdapter::setDefault($adapterMysql);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('initQuery')
+                ->willReturn(new Query($adapterMysql));
+        $executedQuery = null;
+        $dataMapperMock->expects($this->once())
+                ->method('find')
+                ->willReturnCallback(function (string $entityName, Query $query) use (&$executedQuery) {
+                    $executedQuery = $query;
+                    return new SismaCollection(SelfReferencedSample::class);
+                });
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $model->getEntityCollectionWithRelations(['parentSelfReferencedSample' => ['parentSelfReferencedSample']]);
+        $aliases = array_column($executedQuery->getJoins(), 'alias');
+        $this->assertSame(['`parent_self_referenced_sample`', '`parent_self_referenced_sample_parent_self_referenced_sample`'], $aliases);
+    }
+
+    public function testGetEntityByIdWithRelationsJoinsNestedRelations(): void
+    {
+        $adapterMysql = new AdapterMysql();
+        BaseAdapter::setDefault($adapterMysql);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('initQuery')
+                ->willReturn((new Query($adapterMysql))->setTable(SelfReferencedSample::class));
+        $executedQuery = null;
+        $dataMapperMock->expects($this->once())
+                ->method('find')
+                ->willReturnCallback(function (string $entityName, Query $query, array $bindValues) use (&$executedQuery) {
+                    $executedQuery = $query;
+                    $this->assertSame([8201], $bindValues);
+                    return new SismaCollection(SelfReferencedSample::class);
+                });
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $this->assertNull($model->getEntityByIdWithRelations(8201, ['parentSelfReferencedSample' => ['parentSelfReferencedSample']]));
+        $this->assertSame(['`parent_self_referenced_sample`', '`parent_self_referenced_sample_parent_self_referenced_sample`'], array_column($executedQuery->getJoins(), 'alias'));
+        $this->assertStringContainsString('WHERE `self_referenced_sample`.`id` = ?', $executedQuery->getCommandToExecute());
+    }
+
+    public function testGetEntityByIdWithRelationsLoadsCollection(): void
+    {
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
+        $parent = new SelfReferencedSample();
+        $parent->id = 8211;
+        $parents = new SismaCollection(SelfReferencedSample::class);
+        $parents->append($parent);
+        $child = new SelfReferencedSample();
+        $child->id = 8212;
+        $child->parentSelfReferencedSample = 8211;
+        $children = new SismaCollection(SelfReferencedSample::class);
+        $children->append($child);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('initQuery')
+                ->willReturn(new Query($baseAdapterStub));
+        $dataMapperMock->expects($this->exactly(2))
+                ->method('find')
+                ->willReturnOnConsecutiveCalls($parents, $children);
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $this->assertSame($parent, $model->getEntityByIdWithRelations(8211, ['sonCollection']));
+        $this->assertCount(1, $parent->sonCollection);
+        $this->assertSame($child, $parent->sonCollection[0]);
+    }
+
+    public function testGetEntityByIdWithRelationsRejectsNestedRelationOfCollection(): void
+    {
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('initQuery')
+                ->willReturn(new Query($baseAdapterStub));
+        $dataMapperMock->expects($this->never())
+                ->method('find');
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $this->expectException(InvalidArgumentException::class);
+        $model->getEntityByIdWithRelations(8221, ['sonCollection.parentSelfReferencedSample']);
+    }
+
+    public function testGetEntityByIdWithRelationsUsesCachedEntityWithLoadedRelation(): void
+    {
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
+        $parent = new SelfReferencedSample();
+        $parent->id = 8231;
+        $entity = new SelfReferencedSample();
+        $entity->id = 8232;
+        $entity->parentSelfReferencedSample = $parent;
+        Cache::setEntity($entity);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->expects($this->never())
+                ->method('find');
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $this->assertSame($entity, $model->getEntityByIdWithRelations(8232, ['parentSelfReferencedSample']));
+        Cache::clearEntityCache();
+    }
+
+    public function testGetEntityByIdWithRelationsReloadsCachedEntityWithUnloadedRelation(): void
+    {
+        $baseAdapterStub = $this->createStub(BaseAdapter::class);
+        BaseAdapter::setDefault($baseAdapterStub);
+        $entity = new SelfReferencedSample();
+        $entity->id = 8242;
+        $entity->parentSelfReferencedSample = 8241;
+        Cache::setEntity($entity);
+        $entities = new SismaCollection(SelfReferencedSample::class);
+        $entities->append($entity);
+        $dataMapperMock = $this->createMock(DataMapper::class);
+        $dataMapperMock->method('initQuery')
+                ->willReturn(new Query($baseAdapterStub));
+        $dataMapperMock->expects($this->once())
+                ->method('find')
+                ->willReturn($entities);
+        $model = new SelfReferencedSampleModel($dataMapperMock);
+        $this->assertSame($entity, $model->getEntityByIdWithRelations(8242, ['parentSelfReferencedSample']));
+        Cache::clearEntityCache();
+    }
+
     public function testBaseModelHasCollectionEagerLoadingMethod(): void
     {
         $reflection = new \ReflectionClass(\SismaFramework\Orm\BaseClasses\BaseModel::class);
@@ -381,7 +540,8 @@ class JoinEagerLoadingTest extends TestCase
         );
         $joins = $query->getJoins();
         $this->assertCount(1, $joins);
-        $this->assertSame('`custom_alias`', $joins[0]['alias']);
+        $this->assertSame('custom_alias', $joins[0]['alias']);
+        $this->assertSame('custom_alias', $joins[0]['aliasPath']);
         $this->assertStringContainsString('custom_alias.active = 1', $joins[0]['on']);
         $this->assertSame(EntityWithTwoCollection::class, $joins[0]['relatedEntityClass']);
     }

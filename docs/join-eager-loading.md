@@ -2,88 +2,109 @@
 
 ## Panoramica
 
-Implementazione completa di JOIN SQL con eager loading e idratazione gerarchica multi-entità nell'ORM di SismaFramework, risolvendo il problema N+1 delle query senza introdurre breaking changes.
+L'ORM di SismaFramework supporta le JOIN SQL con eager loading e idratazione gerarchica delle entità collegate. Le relazioni richieste vengono caricate insieme all'entità principale, evitando il problema delle N+1 query del caricamento lazy.
 
-## Caratteristiche Implementate
+## Caratteristiche
 
-### 1. Supporto JOIN Completo
+### 1. Relazioni Supportate
 
 #### Many-to-One (Foreign Keys)
-Caricamento eager di relazioni many-to-one tramite LEFT/INNER/RIGHT JOIN:
+
+Le relazioni many-to-one vengono caricate con una JOIN (LEFT, INNER o RIGHT):
 
 ```php
 $articleModel = new ArticleModel();
 
-// Eager loading dell'autore
 $articles = $articleModel->getEntityCollectionWithRelations(['author']);
 
 foreach ($articles as $article) {
-    echo $article->author->name; // GIÀ CARICATO, nessuna query aggiuntiva
+    echo $article->author->name; // già caricato, nessuna query aggiuntiva
 }
 ```
 
-#### One-to-Many (ReferencedEntity Collections)
-Caricamento eager di collection inverse con batch loading:
+#### Relazioni Annidate
+
+Le relazioni many-to-one si possono concatenare con la notazione puntata o con array annidati. Ogni livello aggiunge una JOIN, e i segmenti condivisi tra più percorsi vengono uniti una sola volta:
+
+```php
+$articles = $articleModel->getEntityCollectionWithRelations(['author.country', 'author.publisher']);
+
+$articles = $articleModel->getEntityCollectionWithRelations([
+    'author' => ['country', 'publisher'],
+    'category',
+]);
+
+foreach ($articles as $article) {
+    echo $article->author->country->name; // già caricato
+}
+```
+
+#### One-to-Many (Collection delle ReferencedEntity)
+
+Le collection inverse vengono caricate con una seconda query, unica per tutte le entità principali (batch loading):
 
 ```php
 $authorModel = new AuthorModel();
 
-// Eager loading degli articoli
 $authors = $authorModel->getEntityCollectionWithRelations(['articleCollection']);
 
 foreach ($authors as $author) {
     foreach ($author->articleCollection as $article) {
-        echo $article->title; // Collection pre-caricata
+        echo $article->title; // collection già caricata
     }
 }
 ```
 
+Il nome della collection segue la convenzione delle `ReferencedEntity` (vedi [ORM](orm.md)). Per caricarla, l'entità figlia deve avere il proprio model nel namespace `Models` corrispondente a quello delle entità, con il nome dell'entità seguito da `Model` (`Entities\Article` → `Models\ArticleModel`).
+
 #### SelfReferencedEntity
-Supporto per relazioni ricorsive (tree structures):
+
+Per le strutture ad albero si possono caricare sia il padre sia i figli:
 
 ```php
 $categoryModel = new CategoryModel();
 
-// Eager loading della categoria padre
 $categories = $categoryModel->getEntityCollectionWithRelations(['parentCategory']);
 
 foreach ($categories as $category) {
     if (isset($category->parentCategory)) {
-        echo $category->parentCategory->name; // Già caricato
+        echo $category->parentCategory->name; // già caricato
     }
 }
 
-// Eager loading delle sotto-categorie (collection)
-$parentCategories = $categoryModel->getEntityCollectionWithRelations(['sonCollection']);
+$categories = $categoryModel->getEntityCollectionWithRelations(['sonCollection']);
 
-foreach ($parentCategories as $parent) {
-    foreach ($parent->sonCollection as $child) {
-        echo $child->name; // Collection pre-caricata
+foreach ($categories as $category) {
+    foreach ($category->sonCollection as $child) {
+        echo $child->name; // collection già caricata
     }
 }
 ```
 
-### 2. API Utilizzabile
+### 2. API
 
 #### BaseModel::getEntityCollectionWithRelations()
 
 ```php
 public function getEntityCollectionWithRelations(
-    array $relations,           // ['author', 'category', 'tagCollection']
-    ?string $searchKey = null,  // Filtro di ricerca
-    ?array $order = null,       // Ordinamento
-    ?int $offset = null,        // Paginazione
-    ?int $limit = null,         // Limite risultati
-    JoinType $joinType = JoinType::left  // Tipo di JOIN
+    array $relations,                   // ['author', 'author.country', 'articleCollection']
+    ?string $searchKey = null,          // filtro di ricerca, applicato da appendSearchCondition() del model
+    ?array $order = null,               // ['proprietà' => Indexing::asc|Indexing::desc]
+    ?int $offset = null,                // paginazione
+    ?int $limit = null,                 // numero massimo di risultati
+    JoinType $joinType = JoinType::left // tipo di JOIN
 ): SismaCollection
 ```
 
 **Esempio:**
+
 ```php
+use SismaFramework\Orm\Enumerations\Indexing;
+
 $articles = $articleModel->getEntityCollectionWithRelations(
     relations: ['author', 'category'],
     searchKey: 'php',
-    order: ['createdAt' => 'DESC'],
+    order: ['createdAt' => Indexing::desc],
     limit: 10
 );
 ```
@@ -93,43 +114,47 @@ $articles = $articleModel->getEntityCollectionWithRelations(
 ```php
 public function getEntityByIdWithRelations(
     int $id,
-    array $relations,
+    array $relations,                   // ['author', 'author.country', 'tagCollection']
     JoinType $joinType = JoinType::left
 ): ?BaseEntity
 ```
 
 **Esempio:**
+
 ```php
 $article = $articleModel->getEntityByIdWithRelations(
     id: 1,
-    relations: ['author', 'category', 'tagCollection']
+    relations: ['author' => ['country'], 'category', 'tagCollection']
 );
 ```
 
-### 3. Meccanismo di Rilevamento Automatico
+Dalla 12.18.0 questo metodo accetta le stesse relazioni di `getEntityCollectionWithRelations()`: chiavi esterne, relazioni annidate e collection. Se l'entità è già nella cache delle entità e tutte le relazioni richieste sono chiavi esterne dirette già caricate, viene restituita senza interrogare il database.
 
-L'implementazione distingue automaticamente tra:
+### 3. Rilevamento Automatico del Tipo di Relazione
 
-- **Foreign Key Properties** (many-to-one): Usano JOIN SQL
-- **Collections** (one-to-many): Usano batch loading con IN query
-- **SelfReferencedEntity**: Gestite come foreign key normali
+`getEntityCollectionWithRelations()` distingue automaticamente:
+
+- **Chiavi esterne** (many-to-one), anche annidate: caricate con JOIN SQL
+- **Collection** (one-to-many): caricate con una query `IN` per tutte le entità principali
+- **SelfReferencedEntity**: il padre come una chiave esterna, i figli (`sonCollection`) come una collection
 
 ```php
-// L'ORM rileva automaticamente il tipo di relazione
 $model->getEntityCollectionWithRelations([
-    'author',           // ← Many-to-one: JOIN SQL
-    'articleCollection', // ← One-to-many: Batch loading
-    'parentCategory'    // ← Self-reference: JOIN SQL
+    'author',            // many-to-one: JOIN SQL
+    'articleCollection', // one-to-many: batch loading
+    'parentCategory',    // self-reference: JOIN SQL
 ]);
 ```
 
-## Architettura Implementata
+## Architettura
 
 ### 1. Enum JoinType
+
 **File:** `Orm/Enumerations/JoinType.php`
 
 ```php
-enum JoinType {
+enum JoinType
+{
     case inner;
     case left;
     case right;
@@ -137,129 +162,119 @@ enum JoinType {
 }
 ```
 
-### 2. Query Builder Extension
+### 2. Query
+
 **File:** `Orm/HelperClasses/Query.php`
 
-**Nuove proprietà:**
-- `protected array $joins = []` - Metadati JOIN
+- `appendJoin()` - JOIN manuale, con condizione `ON` esplicita
+- `appendJoinOnForeignKey()` - JOIN automatica da una chiave esterna
+- `appendColumn()` - aggiunta di colonne alla `SELECT`
+- `getJoins()` - metadati delle JOIN
+- `hasJoins()` - presenza di JOIN nella query
 
-**Nuovi metodi:**
-- `appendJoin()` - JOIN manuale
-- `appendJoinOnForeignKey()` - JOIN automatica da foreign key
-- `appendColumn()` - Aggiunta colonne
-- `getJoins()` - Recupero metadati
+### 3. BaseAdapter
 
-### 3. BaseAdapter Extension
 **File:** `Orm/BaseClasses/BaseAdapter.php`
 
-**Nuovi metodi:**
-- `buildJoinOnForeignKey()` - Costruisce JOIN da metadata entity
-- `buildJoinedColumns()` - Genera colonne con prefisso `foreignKey__property`
-- `buildJoinClause()` - Costruisce clausola SQL JOIN
-- `parseSelect()` - Esteso con parametro `$joins`
+- `buildJoinOnForeignKey()` - metadati di una JOIN costruita dalla chiave esterna
+- `buildJoinedColumns()` - colonne della tabella joinata con prefisso `relazione__proprietà`
+- `buildJoinClause()` - clausola SQL delle JOIN
+- `parseSelect()` - con il parametro `$joins`
 
-### 4. Idratazione Gerarchica Trasparente
+### 4. Idratazione Gerarchica
+
 **File:** `Orm/BaseClasses/BaseResultSet.php`
 
-**Costante:**
-```php
-protected const COLUMN_SEPARATOR = '__';
-```
+Le colonne con prefisso `relazione__` vengono separate da quelle dell'entità principale e usate per idratare l'entità collegata, che viene poi assegnata alla proprietà corrispondente:
 
-**Nuove proprietà:**
-- `protected array $joinMetadata = []`
-
-**Nuovi metodi:**
-- `setJoinMetadata()` - Imposta metadati JOIN
-- `convertToHierarchicalEntity()` - Idratazione multi-entity
-- `convertToBaseEntity()` - Idratazione dell'entity principale e, con la classe come secondo parametro, delle entity correlate
-- `getJoinInfoByProperty()` - Recupero info JOIN
-
-**Logica automatica:**
 ```php
 protected function hydrate(\stdClass &$result): StandardEntity|BaseEntity
 {
     if ($this->returnType == StandardEntity::class) {
         return $this->convertToStandardEntity($result);
     } elseif (!empty($this->joinMetadata)) {
-        return $this->convertToHierarchicalEntity($result); // ← AUTOMATICO
+        return $this->convertToHierarchicalEntity($result);
     } else {
         return $this->convertToBaseEntity($result);
     }
 }
 ```
 
-### 5. Eager Loading Collections
+- `setJoinMetadata()` - metadati delle JOIN, impostati da `DataMapper`
+- `convertToHierarchicalEntity()` - separazione delle colonne dell'entità principale da quelle delle entità collegate
+- `hydrateNestedEntities()` - idratazione delle entità collegate, anche su più livelli
+- `getEntityClassForAlias()` - classe dell'entità collegata a partire dal prefisso delle colonne
+
+### 5. Eager Loading delle Collection
+
 **File:** `Orm/BaseClasses/BaseModel.php`
 
-**Nuovi metodi:**
-- `isCollectionRelation()` - Rileva se è una collection
-- `eagerLoadCollections()` - Carica collections con batch loading
-- `loadCollectionForEntities()` - Carica collection specifica
-- `appendSelfReferencedJoin()` - Gestisce self-reference
+- `isCollectionRelation()` - rileva se una relazione è una collection
+- `eagerLoadCollections()` - carica le collection richieste
+- `loadCollectionForEntities()` - carica una collection per tutte le entità con una sola query
+- `appendNestedRelationJoin()` - JOIN delle relazioni annidate
 
-## Pattern SQL Generato
+## SQL Generato
 
-### Many-to-One JOIN
+### Many-to-One
 
 ```sql
 SELECT
-    articles.*,
-    author.id AS author__id,
-    author.name AS author__name,
-    author.email AS author__email
-FROM articles
-LEFT JOIN authors AS author ON articles.author_id = author.id
-WHERE articles.title LIKE ?
-ORDER BY articles.created_at DESC
+    `article`.*,
+    `author`.`id` AS author__id,
+    `author`.`name` AS author__name,
+    `author`.`email` AS author__email
+FROM `article`
+LEFT JOIN `user` AS `author` ON `article`.`author_id` = `author`.id
+WHERE `article`.`title` LIKE ?
+ORDER BY `created_at` DESC
 LIMIT 10
 ```
 
-### One-to-Many Batch Loading
+### One-to-Many (Batch Loading)
 
 ```sql
--- Query principale
-SELECT * FROM authors WHERE ... ;
+-- query principale
+SELECT `author`.* FROM `author` WHERE …
 
--- Batch loading automatico (1 sola query per tutti gli autori)
-SELECT * FROM articles
-WHERE author_id IN (?, ?, ?, ...) -- IDs di tutti gli autori caricati
+-- batch loading: una sola query per tutti gli autori caricati
+SELECT `article`.* FROM `article` WHERE `article`.`author_id` IN (?, ?, ?)
 ```
 
 ### SelfReferencedEntity
 
 ```sql
 SELECT
-    categories.*,
-    parentCategory.id AS parentCategory__id,
-    parentCategory.name AS parentCategory__name
-FROM categories
-LEFT JOIN categories AS parentCategory
-    ON categories.parent_category_id = parentCategory.id
+    `category`.*,
+    `parent_category`.`id` AS parentCategory__id,
+    `parent_category`.`name` AS parentCategory__name
+FROM `category`
+LEFT JOIN `category` AS `parent_category`
+    ON `category`.`parent_category_id` = `parent_category`.id
 ```
 
-## Integrazione con Cache
+L'alias SQL della tabella joinata è il nome della relazione convertito in snake_case (`parentCategory` → `parent_category`), come i nomi di tabelle e colonne. Il prefisso delle colonne nel risultato (`parentCategory__`) resta invece il nome della proprietà, perché serve all'idratazione dell'entità collegata.
 
-L'implementazione si integra perfettamente con la cache esistente:
+## Integrazione con la Cache
+
+Le entità collegate passano dalla cache delle entità, come quelle caricate in modo lazy:
 
 ```php
-// In convertToHierarchicalEntity()
-if (Cache::checkEntityPresenceInCache($relatedEntityClass, $entityId)) {
-    $relatedEntity = Cache::getEntityById($relatedEntityClass, $entityId);
+// in BaseResultSet::hydrateNestedEntities()
+if (Cache::checkEntityPresenceInCache($entityClass, $entityId)) {
+    $relatedEntity = Cache::getEntityById($entityClass, $entityId);
 } else {
-    $relatedEntity = $this->convertToBaseEntity($childData, $relatedEntityClass);
-    Cache::setEntity($relatedEntity); // ← Cache automatica
+    $relatedEntity = $this->convertToBaseEntity($childData, $entityClass);
+    Cache::setEntity($relatedEntity);
 }
 ```
 
-**Vantaggi:**
-- ✅ Stesso oggetto in memoria per entity duplicate
-- ✅ Compatibilità con lazy loading esistente
-- ✅ Identity Map pattern automatico
+- La stessa entità collegata a più righe è un unico oggetto in memoria
+- Le entità caricate con le JOIN sono disponibili anche al caricamento lazy successivo
 
-## Separatore Colonne
+## Separatore delle Colonne
 
-Le colonne delle entity joined usano il separatore `__` (doppio underscore):
+Le colonne delle tabelle joinate usano il separatore `__` (doppio underscore) tra il nome della relazione e quello della proprietà:
 
 ```
 author__id
@@ -269,314 +284,374 @@ category__id
 category__name
 ```
 
-**Perché `__`?**
-- Non conflitto con snake_case esistente (`author_id`)
-- Facile parsing: `explode('__', $col, 2)`
-- Standard de-facto in molti ORM
+Il doppio underscore non entra in conflitto con i nomi in snake_case delle colonne (`author_id`), e il prefisso si separa con `explode('__', $colonna, 2)`.
 
 ## Performance
 
-### Prima (N+1 Query)
+### Caricamento Lazy (N+1 Query)
+
 ```php
 $articles = $articleModel->getEntityCollection(); // 1 query
 
 foreach ($articles as $article) {
-    echo $article->author->name; // N query (una per articolo)
+    echo $article->author->name; // 1 query per ogni autore non ancora in cache
 }
-// Totale: 1 + N query
 ```
 
-### Dopo (1 o 2 Query)
+### Eager Loading
+
 ```php
-// Many-to-one: 1 SOLA query con JOIN
+// many-to-one: 1 query con JOIN
 $articles = $articleModel->getEntityCollectionWithRelations(['author']);
 
-// One-to-many: 2 query totali (main + batch)
+// one-to-many: 2 query (principale + batch)
 $authors = $authorModel->getEntityCollectionWithRelations(['articleCollection']);
 ```
 
 ## Compatibilità
 
-### ✅ Zero Breaking Changes
-
-Tutto il codice esistente continua a funzionare:
+L'eager loading si aggiunge al caricamento lazy senza sostituirlo:
 
 ```php
-// Vecchia API - FUNZIONA
 $articles = $articleModel->getEntityCollection();
 foreach ($articles as $article) {
-    $author = $article->author; // Lazy loading
+    $author = $article->author; // caricamento lazy
 }
 
-// Nuova API - OPZIONALE
 $articles = $articleModel->getEntityCollectionWithRelations(['author']);
 foreach ($articles as $article) {
-    $author = $article->author; // Già caricato
+    $author = $article->author; // già caricato
 }
 ```
 
-### ✅ Backward Compatible
+- `parseSelect()` ha il parametro `$joins = []` opzionale
+- `BaseResultSet` usa l'idratazione gerarchica solo se la query ha delle JOIN
 
-- `parseSelect()` ha parametro `$joins = []` opzionale
-- `BaseResultSet` usa idratazione gerarchica solo se `!empty($joinMetadata)`
-- Metodi esistenti non modificati
+## Test
 
-## Testing
+**File:** `Tests/Orm/JoinEagerLoadingTest.php`, `Tests/Orm/Adapters/AdapterMysqlTest.php`, `Tests/Orm/ResultSets/ResultSetMysqlTest.php`
 
-**File:** `Tests/Orm/JoinEagerLoadingTest.php`
-
-Test implementati:
-- ✅ Query con JOIN costruisce SQL corretto
-- ✅ Colonne joined hanno separatore `__`
-- ✅ Model espone metodi eager loading
-- ✅ Rilevamento automatico collection
-- ✅ Separatore costante
+- SQL generato per le JOIN su chiave esterna, manuali, su subquery e CROSS JOIN
+- Alias in snake_case e colonne qualificate nelle condizioni WHERE
+- Colonne joinate con separatore `__`
+- Idratazione di un'entità collegata tramite JOIN
+- Eager loading di una collection (`sonCollection`), anche con `getEntityByIdWithRelations()`
+- JOIN unica per i segmenti condivisi tra relazioni annidate
+- Uso dell'entità in cache in `getEntityByIdWithRelations()` solo con le relazioni già caricate
+- Rilevamento automatico delle collection
+- Appiattimento delle relazioni annidate
 
 ## Limitazioni Attuali
 
-1. **Many-to-Many**: Non implementato (richiederebbe pivot table support)
-2. **Polymorphic Relations**: Non supportato
+1. **Many-to-Many**: non implementato (richiederebbe il supporto delle tabelle pivot)
+2. **Relazioni polimorfiche**: non supportate
+3. **Collection annidate**: le collection si caricano solo al primo livello (`'articleCollection'`, non `'author.articleCollection'` né `'articleCollection.category'`). Una relazione annidata all'interno di una collection solleva un'`InvalidArgumentException`
+4. **Tabelle derivate**: le colonne di una JOIN su subquery (`appendJoinOnSubquery()`, vedi [Subquery](orm.md#join-su-una-subquery)) non corrispondono a un'entità e non vengono idratate; si leggono con `select()` dell'adapter
+5. **Aggregazioni**: `DataMapper::find()` restituisce entità; per i risultati di aggregazioni e report si usa `select()` dell'adapter, che restituisce `StandardEntity` (vedi [Aggregazioni con JOIN](#aggregazioni-con-join))
 
-## Query Custom con JOIN Espliciti
+## Query Personalizzate con JOIN
 
-Oltre ai metodi helper come `getEntityCollectionWithRelations()`, puoi costruire query completamente personalizzate con JOIN espliciti e condizioni complesse sulle tabelle joined.
+Oltre a `getEntityCollectionWithRelations()`, si possono scrivere nel model query personalizzate con JOIN esplicite e condizioni sulle tabelle joinate. La query si ottiene con `initQuery()`, che imposta già la tabella dell'entità, e si esegue con `$this->dataMapper->find()`.
 
-### Costruzione Query Manuale
+### Alias e Qualificazione delle Colonne
+
+- **Alias in snake_case**: gli alias delle JOIN vengono convertiti in snake_case, sia quelli generati da `appendJoinOnForeignKey()` sia quelli passati ad `appendJoin()`. Nelle condizioni `ON` scritte a mano gli alias vanno quindi indicati in snake_case (`author_country.id`, non `authorCountry.id`).
+- **Colonne qualificate nel WHERE**: le colonne delle condizioni WHERE (`appendCondition()`, `appendConditionOnEncryptedColumn()`, `appendFulltextCondition()` e le condizioni JSON) vengono qualificate con la tabella principale, o con il suo alias. In una query con JOIN, quindi, una condizione su `id` si riferisce sempre alla tabella principale e non è mai ambigua.
+- **Colonne delle tabelle joinate**: per filtrare su una tabella joinata si indica il nome della relazione seguito dal punto (`author.country`, `parentCategory.name`). Relazione e colonna vengono convertite in snake_case e la colonna non viene qualificata di nuovo.
+- **HAVING non qualificato**: le condizioni HAVING non vengono qualificate, perché di norma si riferiscono agli alias della `SELECT`.
+
+### Regole Generali
+
+- **`setWhere()` prima delle condizioni**: senza `setWhere()` (o `setHaving()`) le condizioni aggiunte vengono ignorate.
+- **Operatori logici espliciti**: le condizioni si collegano con `appendAnd()` e `appendOr()`, e si raggruppano con `appendOpenBlock()` e `appendCloseBlock()`.
+- **Valori tramite placeholder**: i valori vanno passati con `Placeholder::placeholder` e legati in `find()` con `$bindValues` e `$bindTypes`, nello stesso ordine in cui compaiono nella query. Un valore letterale viene inserito nell'SQL così com'è, senza apici: va usato solo per riferimenti a colonne, come nelle subquery correlate.
+- **Colonne delle tabelle joinate**: `appendJoinOnForeignKey()` e `appendJoin()` aggiungono solo la JOIN. Per idratare l'entità collegata vanno aggiunte anche le sue colonne con `buildJoinedColumns()`.
+
+### Query con JOIN e Condizioni sulla Tabella Joinata
 
 ```php
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Orm\Enumerations\JoinType;
-use SismaFramework\Orm\Enumerations\Operator;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\JoinType;
+use SismaFramework\Orm\Enumerations\Placeholder;
 
-// Query con JOIN e condizioni sulla tabella joined
-$query = new Query($articleModel->getAdapter());
-$query->setTable(Article::class)
-    ->appendJoinOnForeignKey(JoinType::left, 'author', User::class)
-    ->appendCondition('author.country', Operator::eq, 'IT')
-    ->appendCondition('article.status', Operator::eq, ArticleStatus::PUBLISHED)
-    ->setOrderBy(['article.createdAt' => Indexing::desc])
-    ->setLimit(10);
+class ArticleModel extends DependentModel
+{
+    public function getPublishedArticlesByAuthorCountry(string $country): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->appendJoinOnForeignKey(JoinType::left, 'author', User::class);
+        foreach ($query->getAdapter()->buildJoinedColumns('author', User::class) as $column) {
+            $query->appendColumn($column);
+        }
+        $query->setWhere()
+            ->appendCondition('author.country', ComparisonOperator::equal, Placeholder::placeholder)
+            ->appendAnd()
+            ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        $query->setOrderBy(['createdAt' => Indexing::desc])
+            ->setLimit(10);
 
-// Esegui query con hydration automatica
-$italianArticles = $articleModel->getEntityCollection(
-    searchKey: null,
-    order: null,
-    offset: null,
-    limit: null,
-    customQuery: $query
-);
+        $bindValues = [$country, ArticleStatus::published];
+        $bindTypes = [DataType::typeString, DataType::typeEnumeration];
 
-foreach ($italianArticles as $article) {
-    echo $article->author->name; // Già caricato con JOIN
-    echo $article->author->country; // = 'IT'
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+    }
 }
 ```
 
-### JOIN Multipli con Condizioni Complesse
-
 ```php
-// Prodotti con categoria premium E brand specifico
-$query = new Query($productModel->getAdapter());
-$query->setTable(Product::class)
-    ->appendJoinOnForeignKey(JoinType::inner, 'category', Category::class)
-    ->appendJoinOnForeignKey(JoinType::inner, 'brand', Brand::class)
-    ->appendCondition('category.tier', Operator::eq, 'PREMIUM')
-    ->appendCondition('brand.name', Operator::in, ['Apple', 'Samsung', 'Sony'])
-    ->appendCondition('product.price', Operator::gte, 500.00)
-    ->appendCondition('product.stock', Operator::gt, 0)
-    ->setOrderBy(['product.price' => Indexing::asc]);
-
-$premiumProducts = $productModel->getEntityCollection(customQuery: $query);
-```
-
-### JOIN Nested Manuali
-
-```php
-// Articoli -> Autore -> Paese (relazione a 3 livelli)
-$query = new Query($articleModel->getAdapter());
-$query->setTable(Article::class)
-    ->appendJoinOnForeignKey(JoinType::left, 'author', User::class);
-
-// JOIN manuale per il paese dell'autore
-$query->appendJoin(
-    JoinType::left,
-    Country::class,  // Tabella da joinare
-    'author_country', // Alias
-    'author.country_id = author_country.id', // Condizione ON
-    Country::class // Entity class per hydration
-);
-
-// Aggiungi colonne del paese
-$countryColumns = $query->getAdapter()->buildJoinedColumns('author_country', Country::class);
-foreach ($countryColumns as $column) {
-    $query->appendColumn($column);
+foreach ($articleModel->getPublishedArticlesByAuthorCountry('IT') as $article) {
+    echo $article->author->name; // già caricato con la JOIN
 }
-
-// Condizione sulla tabella nested
-$query->appendCondition('author_country.continent', Operator::eq, 'Europe');
-
-$europeanAuthorArticles = $articleModel->getEntityCollection(customQuery: $query);
 ```
 
-### Self-Join per Comparazioni
+### JOIN Multiple
 
 ```php
-// Trova prodotti più economici dei prodotti della stessa categoria
-$query = new Query($productModel->getAdapter());
-$query->setTable(Product::class)
-    ->appendJoin(
-        JoinType::inner,
-        Product::class,
-        'p2', // Alias per self-join
-        'product.category_id = p2.category_id AND product.price < p2.price',
-        Product::class
-    )
-    ->setDistinct(true) // Evita duplicati
-    ->setOrderBy(['product.category_id' => Indexing::asc, 'product.price' => Indexing::asc]);
+class ProductModel extends DependentModel
+{
+    public function getPremiumProductsByBrands(array $brandNames, float $minimumPrice): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->appendJoinOnForeignKey(JoinType::inner, 'category', Category::class)
+            ->appendJoinOnForeignKey(JoinType::inner, 'brand', Brand::class);
+        $query->setWhere()
+            ->appendCondition('category.tier', ComparisonOperator::equal, Placeholder::placeholder)
+            ->appendAnd()
+            ->appendCondition('brand.name', ComparisonOperator::in, array_fill(0, count($brandNames), Placeholder::placeholder))
+            ->appendAnd()
+            ->appendCondition('price', ComparisonOperator::greaterOrEqual, Placeholder::placeholder)
+            ->appendAnd()
+            ->appendCondition('stock', ComparisonOperator::greater, Placeholder::placeholder);
+        $query->setOrderBy(['price' => Indexing::asc]);
 
-$cheaperProducts = $productModel->getEntityCollection(customQuery: $query);
+        $bindValues = ['PREMIUM', ...$brandNames, $minimumPrice, 0];
+        $bindTypes = [DataType::typeString, ...array_fill(0, count($brandNames), DataType::typeString), DataType::typeDecimal, DataType::typeInteger];
+
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+    }
+}
 ```
+
+In questo esempio le JOIN servono solo a filtrare: le colonne di `category` e `brand` non vengono aggiunte, e le due relazioni restano a caricamento lazy.
+
+### JOIN Annidate Manuali
+
+`getEntityCollectionWithRelations(['author.country'])` costruisce automaticamente le JOIN annidate. Scritte a mano, servono quando si vogliono aggiungere condizioni:
+
+```php
+class ArticleModel extends DependentModel
+{
+    public function getArticlesByAuthorContinent(string $continent): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->appendJoinOnForeignKey(JoinType::left, 'author', User::class);
+        $query->appendJoin(
+            JoinType::left,
+            Country::class,                          // entità da joinare
+            'author_country',                        // alias: percorso della relazione separato da underscore
+            'author.country_id = author_country.id', // condizione ON, con gli alias in snake_case
+            Country::class                           // entità per l'idratazione
+        );
+        foreach ($query->getAdapter()->buildJoinedColumns('author', User::class) as $column) {
+            $query->appendColumn($column);
+        }
+        foreach ($query->getAdapter()->buildJoinedColumns('author_country', Country::class) as $column) {
+            $query->appendColumn($column);
+        }
+        $query->setWhere()
+            ->appendCondition('author_country.continent', ComparisonOperator::equal, Placeholder::placeholder);
+
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, [$continent], [DataType::typeString]);
+    }
+}
+```
+
+L'alias `author_country` indica il percorso della relazione: l'entità `Country` viene assegnata a `$article->author->country`. Le colonne di `author` vanno aggiunte prima di quelle di `author_country`, perché l'autore deve essere idratato prima del suo paese.
+
+### Self-Join
+
+```php
+class ProductModel extends DependentModel
+{
+    public function getProductsWithMoreExpensiveAlternative(): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->appendJoin(
+            JoinType::inner,
+            Product::class,
+            'more_expensive',
+            'product.category_id = more_expensive.category_id AND product.price < more_expensive.price'
+        );
+        $query->setDistinct()
+            ->setOrderBy(['product.price' => Indexing::asc]);
+
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query);
+    }
+}
+```
+
+Senza entità per l'idratazione, la JOIN serve solo come filtro e il risultato contiene le sole entità `Product`.
 
 ### Aggregazioni con JOIN
 
+`DataMapper::find()` restituisce entità. Per le aggregazioni si esegue la query con `select()` dell'adapter, che restituisce righe di tipo `StandardEntity`:
+
 ```php
-use SismaFramework\Orm\Enumerations\AggregationFunction;
+class ProductModel extends DependentModel
+{
+    public function getAveragePriceByCategory(): array
+    {
+        $query = $this->initQuery();
+        $query->appendJoinOnForeignKey(JoinType::inner, 'category', Category::class)
+            ->setColumns(['category.name'])
+            ->setAVG('product.price', 'averagePrice', append: true)
+            ->setGroupBy(['category.name']);
+        $query->setWhere()
+            ->appendCondition('active', ComparisonOperator::equal, Placeholder::placeholder);
+        $query->close();
 
-// Media prezzi per categoria (con JOIN)
-$query = new Query($productModel->getAdapter());
-$query->setTable(Product::class)
-    ->appendJoinOnForeignKey(JoinType::inner, 'category', Category::class)
-    ->setColumns(['category.name', 'category.id'])
-    ->setAVG('product.price', 'average_price', append: true)
-    ->setGroupBy(['category.id'])
-    ->appendCondition('product.active', Operator::eq, true);
-
-// Nota: Questo restituirà stdClass, non entità complete
-$categoryAverages = $productModel->getAdapter()->select($query);
+        $averages = [];
+        foreach ($query->getAdapter()->select($query->getCommandToExecute(), [true], [DataType::typeBoolean]) as $row) {
+            $averages[$row->name] = (float) $row->average_price;
+        }
+        return $averages;
+    }
+}
 ```
 
-### CROSS JOIN per Combinazioni
+### CROSS JOIN
+
+La CROSS JOIN non ha condizione: si passa una stringa vuota come condizione `ON`.
 
 ```php
-// Tutte le combinazioni Size x Color disponibili
-$query = new Query($sizeModel->getAdapter());
-$query->setTable(Size::class)
-    ->appendJoin(
-        JoinType::cross,
-        Color::class,
-        'color',
-        '', // CROSS JOIN non ha condizione ON
-        Color::class
-    );
+class SizeModel extends BaseModel
+{
+    public function getSizeColorCombinations(): array
+    {
+        $query = $this->initQuery();
+        $query->appendJoin(JoinType::cross, Color::class, 'color', '')
+            ->setColumns(['size.name'])
+            ->appendColumn('`color`.`name` AS color_name');
+        $query->close();
 
-$allCombinations = $sizeModel->getEntityCollection(customQuery: $query);
+        $combinations = [];
+        foreach ($query->getAdapter()->select($query->getCommandToExecute()) as $row) {
+            $combinations[] = $row->name . ' / ' . $row->color_name;
+        }
+        return $combinations;
+    }
+}
 ```
 
-### Subquery con JOIN
+### Subquery Correlate
+
+Per filtrare le entità in base a dati aggregati, senza leggerli, si usa una subquery correlata, che si riferisce alla tabella della query esterna:
 
 ```php
-// Trova autori con almeno 10 articoli pubblicati
-$subquery = new Query($articleModel->getAdapter());
-$subquery->setTable(Article::class)
-    ->setColumns(['author_id'])
-    ->setCount('id', 'article_count')
-    ->setGroupBy(['author_id'])
-    ->appendCondition('status', Operator::eq, ArticleStatus::PUBLISHED)
-    ->setHaving('article_count >= 10');
+use SismaFramework\Orm\HelperClasses\Query;
 
-$query = new Query($userModel->getAdapter());
-$query->setTable(User::class)
-    ->appendJoin(
-        JoinType::inner,
-        '(' . $subquery->build() . ')',
-        'prolific_authors',
-        'user.id = prolific_authors.author_id',
-        null // Nessuna entity class per subquery
-    );
+class UserModel extends DependentModel
+{
+    public function getProlificAuthors(int $minimumArticles): SismaCollection
+    {
+        $subquery = new Query();
+        $subquery->setTable(Article::class)
+            ->setCount('')
+            ->setWhere()
+            ->appendCondition('author', ComparisonOperator::equal, 'user.id', true)
+            ->appendAnd()
+            ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        $subquery->close();
 
-$prolificAuthors = $userModel->getEntityCollection(customQuery: $query);
+        $query = $this->initQuery();
+        $query->setWhere()
+            ->appendSubqueryCondition($subquery, ComparisonOperator::greaterOrEqual, Placeholder::placeholder);
+
+        $bindValues = [ArticleStatus::published, $minimumArticles];
+        $bindTypes = [DataType::typeEnumeration, DataType::typeInteger];
+
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+    }
+}
 ```
 
-### Accesso Diretto al DataMapper
+La condizione `author_id = user.id` collega ogni riga della subquery all'utente della query esterna. `'user.id'` è un riferimento a una colonna, non un valore, e per questo è scritto direttamente nella condizione invece che legato con un placeholder.
 
-Per query ancora più complesse, puoi usare direttamente il DataMapper:
+Quando il dato aggregato va anche letto, ad esempio il numero di articoli di ogni autore, si usa una JOIN su subquery con `appendJoinOnSubquery()`. Le condizioni `IN (subquery)`, `EXISTS` e il confronto con una subquery scalare sono descritti in [Subquery](orm.md#subquery-sottoquery).
+
+### DataMapper Fuori dal Model
+
+Fuori da un model si può usare direttamente `DataMapper`, che con `initQuery()` restituisce una query con la tabella dell'entità già impostata:
 
 ```php
+use SismaFramework\Orm\CustomTypes\SismaDate;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
-$dataMapper = new DataMapper(Article::class);
+$dataMapper = new DataMapper();
+$query = $dataMapper->initQuery(Article::class);
+$query->appendJoinOnForeignKey(JoinType::left, 'author', User::class)
+    ->appendJoinOnForeignKey(JoinType::left, 'category', Category::class);
+$query->setWhere()
+    ->appendCondition('author.verified', ComparisonOperator::equal, Placeholder::placeholder)
+    ->appendAnd()
+    ->appendCondition('category.active', ComparisonOperator::equal, Placeholder::placeholder)
+    ->appendAnd()
+    ->appendCondition('publishedAt', ComparisonOperator::greaterOrEqual, Placeholder::placeholder);
+$query->close();
 
-$query = new Query($dataMapper->getAdapter());
-$query->setTable(Article::class)
-    ->appendJoinOnForeignKey(JoinType::left, 'author', User::class)
-    ->appendJoinOnForeignKey(JoinType::left, 'category', Category::class)
-    ->appendCondition('author.verified', Operator::eq, true)
-    ->appendCondition('category.active', Operator::eq, true)
-    ->appendCondition('article.publishedAt', Operator::gte, '2024-01-01');
-
-// Esegui query custom tramite DataMapper
-$verifiedAuthorArticles = $dataMapper->getEntityCollection($query);
+$articles = $dataMapper->find(
+    Article::class,
+    $query,
+    [true, true, new SismaDate('2024-01-01')],
+    [DataType::typeBoolean, DataType::typeBoolean, DataType::typeDate]
+);
 ```
 
 ## Esempi Completi
 
-### Scenario E-commerce
+### E-commerce
 
 ```php
-// Prodotti con categoria e brand (many-to-one)
 $products = $productModel->getEntityCollectionWithRelations(
     relations: ['category', 'brand'],
     searchKey: 'laptop',
-    order: ['price' => 'ASC'],
+    order: ['price' => Indexing::asc],
     limit: 20
 );
 
-// Categoria con tutti i prodotti (one-to-many)
-$category = $categoryModel->getEntityByIdWithRelations(
-    id: 5,
-    relations: ['productCollection']
-);
+$categories = $categoryModel->getEntityCollectionWithRelations(['productCollection']);
 
-// Tree di categorie (self-reference)
-$categories = $categoryModel->getEntityCollectionWithRelations(['parentCategory']);
+$categories = $categoryModel->getEntityCollectionWithRelations(['parentCategory', 'sonCollection']);
 ```
 
-### Scenario Blog
+### Blog
 
 ```php
-// Post con autore e tag
 $posts = $postModel->getEntityCollectionWithRelations(
-    relations: ['author', 'tagCollection'],
-    order: ['publishedAt' => 'DESC']
+    relations: ['author', 'author.country', 'tagCollection'],
+    order: ['publishedAt' => Indexing::desc]
 );
 
-// Autore con tutti i post
-$author = $authorModel->getEntityByIdWithRelations(
+$post = $postModel->getEntityByIdWithRelations(
     id: 1,
-    relations: ['postCollection', 'country']
+    relations: ['author.country', 'category', 'tagCollection']
 );
 ```
 
-### Scenario Organizational Tree
+### Organigramma
 
 ```php
-// Dipendenti con manager
-$employees = $employeeModel->getEntityCollectionWithRelations(['manager']);
+$employees = $employeeModel->getEntityCollectionWithRelations(['parentEmployee']);
 
-// Manager con team (self-reference collection)
 $managers = $employeeModel->getEntityCollectionWithRelations(['sonCollection']);
 ```
 
-## Conclusioni
-
-L'implementazione fornisce:
-
-✅ **Risoluzione problema N+1** - Eager loading completo
-✅ **Zero breaking changes** - Compatibilità totale
-✅ **API pulita** - Semplice da usare
-✅ **Type-safe** - Validation con Reflection API
-✅ **Cache integration** - Sfrutta infrastruttura esistente
-✅ **Production-ready** - Gestione completa di tutti i casi d'uso
-
-L'ORM di SismaFramework ora supporta relazioni complesse mantenendo le performance ottimali! 🎉
+In una `SelfReferencedEntity` la proprietà del padre ha il prefisso `parent` seguito dal nome dell'entità (`parentEmployee`), e i figli sono nella collection `sonCollection`.

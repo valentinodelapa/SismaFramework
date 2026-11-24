@@ -120,7 +120,7 @@ use Blog\Application\Entities\User;
 
 class UserModel extends BaseModel
 {
-    protected static function getEntityName(): string
+    protected function getEntityName(): string
     {
         return User::class;
     }

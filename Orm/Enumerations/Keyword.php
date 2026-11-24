@@ -48,6 +48,7 @@ enum Keyword
     case placeholder;
     case openBlock;
     case closeBlock;
+    case exists;
 
     #[\Override]
     public function getAdapterVersion(AdapterType $adapterType): string
@@ -78,7 +79,7 @@ enum Keyword
                 AdapterType::mysql => 'ORDER BY',
             },
             self::groupBy => match ($adapterType) {
-                AdapterType::mysql => 'GROUP_BY',
+                AdapterType::mysql => 'GROUP BY',
             },
             self::limit => match ($adapterType) {
                 AdapterType::mysql => 'LIMIT',
@@ -94,6 +95,9 @@ enum Keyword
             },
             self::closeBlock => match ($adapterType) {
                 AdapterType::mysql => ')',
+            },
+            self::exists => match ($adapterType) {
+                AdapterType::mysql => 'EXISTS',
             },
         };
     }
