@@ -2,6 +2,110 @@
 
 All notable changes to this project will be documented in this file.
 
+## [12.18.0] - 2026-11-24 - Subquery in IN, EXISTS e JOIN, Relazioni in `getEntityByIdWithRelations()` e Rollback delle Transazioni
+
+Minor release che completa il supporto alle subquery nel query builder, allinea `getEntityByIdWithRelations()` a `getEntityCollectionWithRelations()` e aggiunge al `DataMapper` l'annullamento esplicito delle transazioni.
+
+### ✨ Nuove Funzionalità
+
+#### `Orm/HelperClasses/Query` — subquery in `IN`, `EXISTS`, confronti e JOIN
+
+Finora una subquery poteva essere usata come colonna, come argomento delle aggregazioni, nell'ordinamento e come primo termine di una condizione (`appendSubqueryCondition()`, nella forma `(subquery) operatore valore`). Ora può essere usata anche:
+- **come valore di `appendCondition()`**, che accetta una `Query` oltre a placeholder, stringhe e array: con `ComparisonOperator::in` e `notIn` genera `colonna IN (subquery)`, con gli altri operatori il confronto con una subquery scalare (`colonna > (SELECT AVG(…))`);
+- **in una condizione `EXISTS`**, con il nuovo metodo `appendExistsCondition(Query $subquery)`; preceduto da `appendNot()` genera `NOT EXISTS`;
+- **come tabella derivata in una JOIN**, con il nuovo metodo `appendJoinOnSubquery(JoinType $joinType, Query $subquery, string $tableAlias, string $onCondition)`. L'alias viene convertito in snake_case come quelli delle altre JOIN; le colonne della tabella derivata non corrispondono a un'entità e si leggono con `select()` dell'adapter.
+
+I tre metodi chiudono automaticamente la subquery. I valori legati seguono l'ordine dei placeholder nel testo SQL: quelli di una subquery in JOIN precedono quelli del WHERE.
+
+```php
+$verifiedAuthors = new Query();
+$verifiedAuthors->setTable(User::class)
+    ->setColumn('id')
+    ->setWhere()
+    ->appendCondition('verified', ComparisonOperator::equal, Placeholder::placeholder);
+
+$query = $this->initQuery();
+$query->setWhere()
+    ->appendCondition('author', ComparisonOperator::in, $verifiedAuthors, true);
+// WHERE `post`.`author_id` IN (SELECT `id` FROM `user` WHERE `user`.`verified` = ?)
+```
+
+**File modificati**:
+- **`Orm/HelperClasses/Query.php`**: `appendCondition()` accetta `Query` come valore; nuovi metodi `appendExistsCondition()` e `appendJoinOnSubquery()`; nuovo metodo privato `escapeConditionValue()`
+- **`Orm/BaseClasses/BaseAdapter.php`**: nuovo metodo `opExists()`
+- **`Orm/Enumerations/Keyword.php`**: nuovo caso `exists`
+
+#### `Orm/BaseClasses/BaseModel::getEntityByIdWithRelations()` — relazioni annidate e collection
+
+`getEntityByIdWithRelations()` accettava solo le chiavi esterne dirette dell'entità: una relazione annidata (`'author.country'`) o una collection (`'tagCollection'`) sollevavano un'`InvalidArgumentException`, e la sintassi ad array (`['author' => ['country']]`) un errore di conversione. Ora il metodo accetta le stesse relazioni di `getEntityCollectionWithRelations()`, con cui condivide la costruzione delle JOIN e il caricamento delle collection.
+
+Se l'entità è già nella cache delle entità, viene restituita senza interrogare il database solo quando tutte le relazioni richieste sono chiavi esterne dirette già caricate. In precedenza il controllo usava `isset()` sulle relazioni, che le caricava in modo lazy con una query per ognuna.
+
+Una relazione annidata all'interno di una collection (`'articleCollection.category'`), non supportata, solleva ora un'`InvalidArgumentException` con un messaggio esplicito, sia in `getEntityByIdWithRelations()` sia in `getEntityCollectionWithRelations()`.
+
+**File modificati**:
+- **`Orm/BaseClasses/BaseModel.php`**: nuovi metodi privati `appendRelationJoins()` e `areRelationsLoaded()`; `getEntityByIdWithRelations()`, `fetchEntityByIdWithRelations()` e `getEntityCollectionWithRelations()` li usano
+
+#### `Orm/HelperClasses/DataMapper::rollbackTransaction()` — annullamento esplicito delle transazioni
+
+Una transazione aperta con `startTransaction()` veniva annullata solo quando un salvataggio falliva. Se si verificava un'altra eccezione, non c'era modo di annullarla: restava aperta fino alla chiusura della connessione. Il nuovo metodo `rollbackTransaction()` la annulla; senza una transazione aperta non fa nulla.
+
+```php
+$dataMapper->startTransaction();
+try {
+    $dataMapper->save($post);
+    $dataMapper->save($transferLog);
+    $dataMapper->commitTransaction();
+} catch (\Throwable $exception) {
+    $dataMapper->rollbackTransaction();
+    throw $exception;
+}
+```
+
+Il rollback, sia esplicito sia dovuto a un salvataggio fallito, svuota ora anche l'elenco delle entità già processate, come avviene al commit: un'entità salvata nella transazione annullata può essere salvata di nuovo nella stessa richiesta.
+
+**File modificati**:
+- **`Orm/HelperClasses/DataMapper.php`**: nuovo metodo `rollbackTransaction()`
+- **`Orm/HelperClasses/DataMapper/TransactionManager.php`**: `rollback()` svuota `ProcessedEntitiesCollection`
+
+### 📖 Documentazione
+
+#### `docs/orm.md` — aggregazioni e subquery
+
+Le sezioni sulle funzioni di aggregazione e sulle subquery sono state riscritte:
+- i risultati delle aggregazioni si leggono con `select()` dell'adapter, perché `DataMapper::find()` restituisce entità senza proprietà per i valori calcolati;
+- le espressioni SQL nelle colonne si aggiungono con `appendColumn()`, perché `setColumns()` ne fa l'escape come nomi di colonna;
+- le subquery sono descritte con le regole generali (chiusura, subquery correlate, alias per la stessa tabella, ordine dei valori legati) e con esempi per ogni uso: colonna, confronto, `IN`, `EXISTS`, `appendSubqueryCondition()` e JOIN.
+
+Gli esempi precedenti usavano `setColumns()` con espressioni SQL, `ComparisonOperator::greaterThan` e `ComparisonOperator::exists`, che non esistono, e leggevano i risultati delle aggregazioni dalle entità.
+
+#### `docs/join-eager-loading.md` e `docs/advanced-orm.md`
+
+- **`docs/join-eager-loading.md`**: `getEntityByIdWithRelations()` con relazioni annidate e collection; limitazioni aggiornate; rimandi alle JOIN su subquery.
+- **`docs/advanced-orm.md`**: transazioni con `rollbackTransaction()` e stato delle entità dopo l'annullamento; aggiornati i casi in cui serve SQL diretto.
+
+### 🧪 Test
+
+#### `Tests/Orm/JoinEagerLoadingTest` — `getEntityByIdWithRelations()`
+
+Nuovi test per le relazioni annidate, il caricamento di una collection, l'eccezione sulle relazioni annidate all'interno di una collection, e l'uso dell'entità in cache con le relazioni già caricate o da caricare.
+
+#### `Tests/Orm/Adapters/AdapterMysqlTest` — subquery
+
+Nuovi test con l'adapter reale per `IN (subquery)`, il confronto con una subquery scalare, `NOT EXISTS` e la JOIN su subquery.
+
+#### `Tests/Orm/HelperClasses/DataMapperTest` — rollback
+
+Nuovi test per `rollbackTransaction()`, con lo svuotamento delle entità processate, e per la chiamata senza transazione aperta.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change per chi usa il framework**: i nuovi metodi si aggiungono a quelli esistenti, e le chiamate esistenti producono lo stesso SQL.
+- **`Query::appendCondition()`**: il parametro `$value` accetta anche `Query`. Una sottoclasse di `Query` che ridefinisce il metodo deve allargare allo stesso modo il tipo del parametro.
+- **`getEntityByIdWithRelations()` su un'entità in cache**: con relazioni non ancora caricate, il metodo esegue ora la query con le JOIN invece di caricare le relazioni in modo lazy.
+
+---
+
 ## [12.17.2] - 2026-11-23 - Query con JOIN, Eager Loading, `GROUP BY` e Documentazione delle JOIN
 
 Patch che corregge i difetti delle query con JOIN e dell'eager loading emersi verificando l'ORM su un database MariaDB reale:

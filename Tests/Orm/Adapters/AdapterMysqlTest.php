@@ -535,6 +535,69 @@ class AdapterMysqlTest extends TestCase
         $this->assertSame('SELECT `self_referenced_sample`.* FROM `self_referenced_sample` LEFT JOIN `self_referenced_sample` AS `parent_self_referenced_sample` ON `self_referenced_sample`.`parent_self_referenced_sample_id` = `parent_self_referenced_sample`.id WHERE `self_referenced_sample`.`id` = ? AND `parent_self_referenced_sample`.`text` = ? ', $query->getCommandToExecute());
     }
 
+    public function testSelectWithInSubqueryCondition()
+    {
+        $adapterMysql = new AdapterMysql();
+        $subquery = new Query($adapterMysql);
+        $subquery->setTable(SelfReferencedSample::class)
+                ->setColumn('parent_self_referenced_sample_id')
+                ->setWhere()
+                ->appendCondition('text', ComparisonOperator::like);
+        $query = new Query($adapterMysql);
+        $query->setTable(SelfReferencedSample::class)
+                ->setWhere()
+                ->appendCondition('id', ComparisonOperator::in, $subquery)
+                ->close();
+        $this->assertSame('SELECT `self_referenced_sample`.* FROM `self_referenced_sample` WHERE `self_referenced_sample`.`id` IN (SELECT `parent_self_referenced_sample_id` FROM `self_referenced_sample` WHERE `self_referenced_sample`.`text` LIKE ? ) ', $query->getCommandToExecute());
+    }
+
+    public function testSelectWithScalarSubqueryCondition()
+    {
+        $adapterMysql = new AdapterMysql();
+        $subquery = new Query($adapterMysql);
+        $subquery->setTable(SelfReferencedSample::class)
+                ->setAVG('id');
+        $query = new Query($adapterMysql);
+        $query->setTable(SelfReferencedSample::class)
+                ->setWhere()
+                ->appendCondition('id', ComparisonOperator::greater, $subquery)
+                ->close();
+        $this->assertSame('SELECT `self_referenced_sample`.* FROM `self_referenced_sample` WHERE `self_referenced_sample`.`id` > (SELECT AVG(`id`) FROM `self_referenced_sample`  ) ', $query->getCommandToExecute());
+    }
+
+    public function testSelectWithExistsCondition()
+    {
+        $adapterMysql = new AdapterMysql();
+        $subquery = new Query($adapterMysql);
+        $subquery->setTable(SelfReferencedSample::class, 'son')
+                ->setWhere()
+                ->appendCondition('parentSelfReferencedSample', ComparisonOperator::equal, 'self_referenced_sample.id', true);
+        $query = new Query($adapterMysql);
+        $query->setTable(SelfReferencedSample::class)
+                ->setWhere()
+                ->appendNot()
+                ->appendExistsCondition($subquery)
+                ->close();
+        $this->assertSame('SELECT `self_referenced_sample`.* FROM `self_referenced_sample` WHERE NOT EXISTS (SELECT `son`.* FROM `self_referenced_sample` as `son` WHERE `son`.`parent_self_referenced_sample_id` = self_referenced_sample.id ) ', $query->getCommandToExecute());
+    }
+
+    public function testSelectWithJoinOnSubquery()
+    {
+        $adapterMysql = new AdapterMysql();
+        $subquery = new Query($adapterMysql);
+        $subquery->setTable(SelfReferencedSample::class)
+                ->setCount('')
+                ->appendColumn('parent_self_referenced_sample_id')
+                ->setGroupBy(['parent_self_referenced_sample_id']);
+        $query = new Query($adapterMysql);
+        $query->setTable(SelfReferencedSample::class)
+                ->appendJoinOnSubquery(JoinType::inner, $subquery, 'sonCount', 'self_referenced_sample.id = son_count.parent_self_referenced_sample_id')
+                ->setWhere()
+                ->appendCondition('son_count._numrows', ComparisonOperator::greaterOrEqual)
+                ->close();
+        $this->assertSame('SELECT `self_referenced_sample`.* FROM `self_referenced_sample` INNER JOIN (SELECT COUNT(*) as _numrows,parent_self_referenced_sample_id FROM `self_referenced_sample`  GROUP BY `parent_self_referenced_sample_id` ) AS `son_count` ON self_referenced_sample.id = son_count.parent_self_referenced_sample_id WHERE `son_count`.`_numrows` >= ? ', $query->getCommandToExecute());
+    }
+
     public function testSelectWithCrossJoin()
     {
         $adapterMysql = new AdapterMysql();

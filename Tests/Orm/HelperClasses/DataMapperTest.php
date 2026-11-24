@@ -1326,6 +1326,41 @@ class DataMapperTest extends TestCase
         $dataMapper->save($simpleEntity);
     }
 
+    public function testRollbackTransaction()
+    {
+        $this->initializeBaseAdapterMock();
+        $this->baseAdapterMock->expects($this->once())
+                ->method('beginTransaction')
+                ->willReturn(true);
+        $this->baseAdapterMock->expects($this->once())
+                ->method('execute')
+                ->willReturn(true);
+        $this->baseAdapterMock->expects($this->once())
+                ->method('rollbackTransaction')
+                ->willReturn(true);
+        $this->baseAdapterMock->expects($this->never())
+                ->method('commitTransaction');
+        $processedEntitiesCollection = new ProcessedEntitiesCollection();
+        $dataMapper = $this->createDataMapperWithMockedAdapter($processedEntitiesCollection);
+        $simpleEntity = new SimpleEntity($dataMapper, $processedEntitiesCollection);
+        $simpleEntity->string = 'test';
+        $dataMapper->startTransaction();
+        $dataMapper->save($simpleEntity);
+        $this->assertTrue($processedEntitiesCollection->has($simpleEntity));
+        $dataMapper->rollbackTransaction();
+        $dataMapper->commitTransaction();
+        $this->assertFalse($processedEntitiesCollection->has($simpleEntity));
+    }
+
+    public function testRollbackTransactionWithoutActiveTransaction()
+    {
+        $this->initializeBaseAdapterMock();
+        $this->baseAdapterMock->expects($this->never())
+                ->method('rollbackTransaction');
+        $dataMapper = $this->createDataMapperWithMockedAdapter(new ProcessedEntitiesCollection());
+        $dataMapper->rollbackTransaction();
+    }
+
     public function testSaveDoesNotAutoloadBuiltinTypeNames()
     {
         $this->initializeBaseAdapterMock();

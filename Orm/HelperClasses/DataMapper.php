@@ -42,6 +42,7 @@
  *   - Logica di persistenza (insert, update, delete): Riportata come metodi privati in DataMapper per evitare accoppiamento circolare
  *   - DataType::fromReflection(): Risoluzione automatica dei tipi di dato per il binding
  * - Ottimizzazione dipendenze: Utilizzo di singleton pattern per BaseAdapter e ProcessedEntitiesCollection
+ * - Aggiunta di rollbackTransaction() per l'annullamento esplicito delle transazioni (v12.18.0)
  */
 
 namespace SismaFramework\Orm\HelperClasses;
@@ -289,6 +290,11 @@ class DataMapper
     public function commitTransaction(bool $checkAnnidation = true): void
     {
         $this->transactionManager->commit($checkAnnidation);
+    }
+
+    public function rollbackTransaction(): void
+    {
+        $this->transactionManager->rollback();
     }
 
     public function delete(BaseEntity $entity, Query $query = new Query()): bool

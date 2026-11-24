@@ -48,6 +48,7 @@ enum Keyword
     case placeholder;
     case openBlock;
     case closeBlock;
+    case exists;
 
     #[\Override]
     public function getAdapterVersion(AdapterType $adapterType): string
@@ -94,6 +95,9 @@ enum Keyword
             },
             self::closeBlock => match ($adapterType) {
                 AdapterType::mysql => ')',
+            },
+            self::exists => match ($adapterType) {
+                AdapterType::mysql => 'EXISTS',
             },
         };
     }

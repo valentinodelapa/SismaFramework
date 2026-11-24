@@ -61,6 +61,10 @@
  *   * Aggiunta di qualifyColumn() e qualifyColumnForCurrentCondition(), usati da appendCondition(),
  *     appendConditionOnEncryptedColumn(), appendFulltextCondition() e dalle condizioni JSON
  *   * Alias di appendJoin() convertito in snake_case tramite escapeTable() e aggiunta della chiave aliasPath nei metadati
+ * - Estensione del supporto alle subquery (v12.18.0):
+ *   * appendCondition() accetta una Query come valore, per IN, NOT IN e confronti con subquery scalari
+ *   * Aggiunta di appendExistsCondition() per le condizioni EXISTS e, preceduto da appendNot(), NOT EXISTS
+ *   * Aggiunta di appendJoinOnSubquery() per le JOIN su tabelle derivate
  */
 
 namespace SismaFramework\Orm\HelperClasses;
@@ -266,6 +270,19 @@ class Query
         return $this;
     }
 
+    public function &appendJoinOnSubquery(JoinType $joinType, Query $subquery, string $tableAlias, string $onCondition): self
+    {
+        $subquery->close();
+        $this->joins[] = [
+            'type' => $joinType,
+            'table' => $this->adapter->opSubquery($subquery),
+            'alias' => $this->adapter->escapeTable($tableAlias),
+            'aliasPath' => $tableAlias,
+            'on' => $onCondition
+        ];
+        return $this;
+    }
+
     public function &appendJoinOnForeignKey(JoinType $joinType, string $foreignKeyProperty, string $relatedEntityClass): self
     {
         $this->joins[] = $this->adapter->buildJoinOnForeignKey($joinType, $foreignKeyProperty, $relatedEntityClass, $this->tableReference);
@@ -367,11 +384,27 @@ class Query
         return $this;
     }
 
-    public function &appendCondition(string $column, ComparisonOperator $operator, Placeholder|string|array $value = Placeholder::placeholder, bool $foreignKey = false): self
+    public function &appendCondition(string $column, ComparisonOperator $operator, Placeholder|Query|string|array $value = Placeholder::placeholder, bool $foreignKey = false): self
     {
         $escapedColumn = $this->adapter->escapeColumn($this->qualifyColumnForCurrentCondition($column), $foreignKey);
-        $escapedValue = $this->adapter->escapeValue($value, $operator);
+        $escapedValue = $this->escapeConditionValue($value, $operator);
         $this->appendToCurrentCondition($escapedColumn . ' ' . $this->adapter->parseComparisonOperator($operator) . ' ' . $escapedValue);
+        return $this;
+    }
+
+    private function escapeConditionValue(Placeholder|Query|string|array $value, ComparisonOperator $operator): string
+    {
+        if ($value instanceof Query) {
+            $value->close();
+            return $this->adapter->opSubquery($value);
+        }
+        return $this->adapter->escapeValue($value, $operator);
+    }
+
+    public function &appendExistsCondition(Query $subquery): self
+    {
+        $subquery->close();
+        $this->appendToCurrentCondition($this->adapter->opExists($subquery));
         return $this;
     }
 

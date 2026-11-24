@@ -36,6 +36,7 @@
  * - BaseAdapter e ProcessedEntitiesCollection resi parametri opzionali del costruttore con utilizzo dei singleton come default
  * - Gestione stato transazione tramite proprietà statica per controllo annidamento
  * - Integrazione con ProcessedEntitiesCollection per pulizia entità processate al commit
+ * - Pulizia delle entità processate anche al rollback (v12.18.0)
  */
 
 namespace SismaFramework\Orm\HelperClasses\DataMapper;
@@ -87,6 +88,7 @@ class TransactionManager
         if (self::$isActiveTransaction) {
             $this->adapter->rollbackTransaction();
             self::$isActiveTransaction = false;
+            $this->processedEntitiesCollection->clear();
         }
     }
 }

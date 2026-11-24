@@ -114,7 +114,7 @@ $articles = $articleModel->getEntityCollectionWithRelations(
 ```php
 public function getEntityByIdWithRelations(
     int $id,
-    array $relations,                   // solo chiavi esterne dirette: ['author', 'category']
+    array $relations,                   // ['author', 'author.country', 'tagCollection']
     JoinType $joinType = JoinType::left
 ): ?BaseEntity
 ```
@@ -124,11 +124,11 @@ public function getEntityByIdWithRelations(
 ```php
 $article = $articleModel->getEntityByIdWithRelations(
     id: 1,
-    relations: ['author', 'category']
+    relations: ['author' => ['country'], 'category', 'tagCollection']
 );
 ```
 
-Questo metodo accetta solo le chiavi esterne dirette dell'entità: non gestisce le collection né le relazioni annidate (vedi [Limitazioni Attuali](#limitazioni-attuali)).
+Dalla 12.18.0 questo metodo accetta le stesse relazioni di `getEntityCollectionWithRelations()`: chiavi esterne, relazioni annidate e collection. Se l'entità è già nella cache delle entità e tutte le relazioni richieste sono chiavi esterne dirette già caricate, viene restituita senza interrogare il database.
 
 ### 3. Rilevamento Automatico del Tipo di Relazione
 
@@ -331,12 +331,13 @@ foreach ($articles as $article) {
 
 **File:** `Tests/Orm/JoinEagerLoadingTest.php`, `Tests/Orm/Adapters/AdapterMysqlTest.php`, `Tests/Orm/ResultSets/ResultSetMysqlTest.php`
 
-- SQL generato per le JOIN su chiave esterna, manuali e CROSS JOIN
+- SQL generato per le JOIN su chiave esterna, manuali, su subquery e CROSS JOIN
 - Alias in snake_case e colonne qualificate nelle condizioni WHERE
 - Colonne joinate con separatore `__`
 - Idratazione di un'entità collegata tramite JOIN
-- Eager loading di una collection (`sonCollection`)
+- Eager loading di una collection (`sonCollection`), anche con `getEntityByIdWithRelations()`
 - JOIN unica per i segmenti condivisi tra relazioni annidate
+- Uso dell'entità in cache in `getEntityByIdWithRelations()` solo con le relazioni già caricate
 - Rilevamento automatico delle collection
 - Appiattimento delle relazioni annidate
 
@@ -344,11 +345,9 @@ foreach ($articles as $article) {
 
 1. **Many-to-Many**: non implementato (richiederebbe il supporto delle tabelle pivot)
 2. **Relazioni polimorfiche**: non supportate
-3. **`getEntityByIdWithRelations()`**: accetta solo le chiavi esterne dirette, non le collection né le relazioni annidate. Per queste si può usare `getEntityById()` e il caricamento lazy, oppure una query personalizzata
-4. **Collection annidate**: le collection si caricano solo al primo livello (`'articleCollection'`, non `'author.articleCollection'` né `'articleCollection.category'`)
-5. **JOIN su subquery**: `appendJoin()` accetta una tabella o un'entità, non una subquery. Per filtrare in base a dati aggregati si usa una subquery correlata con `appendSubqueryCondition()` (vedi [Subquery Correlate](#subquery-correlate))
-6. **`IN (subquery)` ed `EXISTS`**: `appendSubqueryCondition()` accetta la subquery solo a sinistra dell'operatore, nella forma `(subquery) operatore valore`
-7. **Aggregazioni**: `DataMapper::find()` restituisce entità; per i risultati di aggregazioni e report si usa `select()` dell'adapter, che restituisce `StandardEntity` (vedi [Aggregazioni con JOIN](#aggregazioni-con-join))
+3. **Collection annidate**: le collection si caricano solo al primo livello (`'articleCollection'`, non `'author.articleCollection'` né `'articleCollection.category'`). Una relazione annidata all'interno di una collection solleva un'`InvalidArgumentException`
+4. **Tabelle derivate**: le colonne di una JOIN su subquery (`appendJoinOnSubquery()`, vedi [Subquery](orm.md#join-su-una-subquery)) non corrispondono a un'entità e non vengono idratate; si leggono con `select()` dell'adapter
+5. **Aggregazioni**: `DataMapper::find()` restituisce entità; per i risultati di aggregazioni e report si usa `select()` dell'adapter, che restituisce `StandardEntity` (vedi [Aggregazioni con JOIN](#aggregazioni-con-join))
 
 ## Query Personalizzate con JOIN
 
@@ -553,7 +552,7 @@ class SizeModel extends BaseModel
 
 ### Subquery Correlate
 
-Le JOIN su subquery non sono supportate. Per filtrare in base a dati aggregati si usa una subquery correlata, che si riferisce alla tabella della query esterna:
+Per filtrare le entità in base a dati aggregati, senza leggerli, si usa una subquery correlata, che si riferisce alla tabella della query esterna:
 
 ```php
 use SismaFramework\Orm\HelperClasses\Query;
@@ -585,6 +584,8 @@ class UserModel extends DependentModel
 ```
 
 La condizione `author_id = user.id` collega ogni riga della subquery all'utente della query esterna. `'user.id'` è un riferimento a una colonna, non un valore, e per questo è scritto direttamente nella condizione invece che legato con un placeholder.
+
+Quando il dato aggregato va anche letto, ad esempio il numero di articoli di ogni autore, si usa una JOIN su subquery con `appendJoinOnSubquery()`. Le condizioni `IN (subquery)`, `EXISTS` e il confronto con una subquery scalare sono descritti in [Subquery](orm.md#subquery-sottoquery).
 
 ### DataMapper Fuori dal Model
 
@@ -641,7 +642,7 @@ $posts = $postModel->getEntityCollectionWithRelations(
 
 $post = $postModel->getEntityByIdWithRelations(
     id: 1,
-    relations: ['author', 'category']
+    relations: ['author.country', 'category', 'tagCollection']
 );
 ```
 

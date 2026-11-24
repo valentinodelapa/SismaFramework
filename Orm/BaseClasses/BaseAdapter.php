@@ -54,6 +54,7 @@
  * - Alias delle JOIN in snake_case tramite escapeTable() in buildJoinOnForeignKey() e buildJoinedColumns(), e aggiunta
  *   della chiave aliasPath nei metadati di buildJoinOnForeignKey(); clausola ON omessa in buildJoinClause() per le JOIN
  *   senza condizione, come la CROSS JOIN (v12.17.2).
+ * - Aggiunta di opExists() per le condizioni EXISTS su subquery (v12.18.0).
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -284,6 +285,11 @@ abstract class BaseAdapter
             $column .= ' as ' . $this->escapeColumn($columnAlias);
         }
         return $column;
+    }
+
+    public function opExists(Query $subquery): string
+    {
+        return Keyword::exists->getAdapterVersion($this->adapterType) . ' ' . $this->opSubquery($subquery);
     }
 
     public function parseSet(string $variable, string $value): string

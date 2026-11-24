@@ -58,6 +58,10 @@
  *   * Alias in snake_case nelle condizioni ON delle JOIN annidate di appendNestedRelationJoin()
  *   * Aggiunta di isRelationJoined() e appendRelationSegmentJoin() per non ripetere la JOIN dei segmenti condivisi tra relazioni annidate
  *   * Raggruppamento dei figli in loadCollectionForEntities() tramite getForeignKeyIndexes(), senza caricare l'entità padre
+ * - Allineamento di getEntityByIdWithRelations() a getEntityCollectionWithRelations() (v12.18.0):
+ *   * Aggiunta di appendRelationJoins(), condiviso dai due metodi, con supporto di relazioni annidate e collection
+ *   * Aggiunta di areRelationsLoaded() per l'uso dell'entità in cache senza caricare le relazioni in modo lazy
+ *   * Eccezione esplicita per le relazioni annidate all'interno di una collection, non supportate
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -144,16 +148,7 @@ abstract class BaseModel
     {
         $query = $this->initQuery();
         $bindValues = $bindTypes = [];
-        $collectionsToLoad = [];
-        $flattenedRelations = $this->flattenRelations($relations);
-        foreach ($flattenedRelations as $relationPath) {
-            $firstSegment = explode('.', $relationPath)[0];
-            if ($this->isCollectionRelation($firstSegment)) {
-                $collectionsToLoad[] = $relationPath;
-            } else {
-                $this->appendNestedRelationJoin($query, $relationPath, $joinType);
-            }
-        }
+        $collectionsToLoad = $this->appendRelationJoins($query, $relations, $joinType);
         if ($searchKey !== null) {
             $query->setWhere();
             $this->appendSearchCondition($query, $searchKey, $bindValues, $bindTypes);
@@ -171,6 +166,22 @@ abstract class BaseModel
             $this->eagerLoadCollections($collection, $collectionsToLoad);
         }
         return $collection;
+    }
+
+    private function appendRelationJoins(Query &$query, array $relations, JoinType $joinType): array
+    {
+        $collectionsToLoad = [];
+        foreach ($this->flattenRelations($relations) as $relationPath) {
+            $segments = explode('.', $relationPath);
+            if ($this->isCollectionRelation($segments[0]) === false) {
+                $this->appendNestedRelationJoin($query, $relationPath, $joinType);
+            } elseif (count($segments) === 1) {
+                $collectionsToLoad[] = $relationPath;
+            } else {
+                throw new InvalidArgumentException("Nested relation '{$relationPath}' of collection '{$segments[0]}' is not supported");
+            }
+        }
+        return $collectionsToLoad;
     }
 
     protected function flattenRelations(array $relations, string $prefix = ''): array
@@ -316,29 +327,36 @@ abstract class BaseModel
     {
         if (Cache::checkEntityPresenceInCache($this->entityName, $id)) {
             $entity = Cache::getEntityById($this->entityName, $id);
-
-            foreach ($relations as $relation) {
-                if (!isset($entity->$relation) || $entity->$relation === null) {
-                    return $this->fetchEntityByIdWithRelations($id, $relations, $joinType);
-                }
+            if ($this->areRelationsLoaded($entity, $this->flattenRelations($relations))) {
+                return $entity;
             }
-            return $entity;
         }
         return $this->fetchEntityByIdWithRelations($id, $relations, $joinType);
+    }
+
+    private function areRelationsLoaded(BaseEntity $entity, array $relationPaths): bool
+    {
+        foreach ($relationPaths as $relationPath) {
+            if (str_contains($relationPath, '.') || $this->isCollectionRelation($relationPath) || array_key_exists($relationPath, $entity->getForeignKeyIndexes())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected function fetchEntityByIdWithRelations(int $id, array $relations, JoinType $joinType): ?BaseEntity
     {
         $query = $this->initQuery();
-        foreach ($relations as $relation) {
-            $this->appendRelationJoin($query, $relation, $joinType);
-        }
+        $collectionsToLoad = $this->appendRelationJoins($query, $relations, $joinType);
         $query->setWhere();
         $query->appendCondition('id', ComparisonOperator::equal, Placeholder::placeholder);
         $bindValues = [$id];
         $bindTypes = [DataType::typeInteger];
         $query->close();
         $results = $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
+        if (($results->count() > 0) && ($collectionsToLoad !== [])) {
+            $this->eagerLoadCollections($results, $collectionsToLoad);
+        }
         return $results->count() > 0 ? $results[0] : null;
     }
 

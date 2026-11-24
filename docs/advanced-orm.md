@@ -1107,18 +1107,22 @@ class OwnershipTransferService
         $oldOwner = $post->author;
 
         $this->dataMapper->startTransaction();
+        try {
+            $post->author = $newOwner;
+            $this->dataMapper->save($post);
 
-        $post->author = $newOwner;
-        $this->dataMapper->save($post);
+            $transferLog = new OwnershipTransfer();
+            $transferLog->post = $post;
+            $transferLog->oldOwner = $oldOwner;
+            $transferLog->newOwner = $newOwner;
+            $transferLog->transferDate = new SismaDateTime();
+            $this->dataMapper->save($transferLog);
 
-        $transferLog = new OwnershipTransfer();
-        $transferLog->post = $post;
-        $transferLog->oldOwner = $oldOwner;
-        $transferLog->newOwner = $newOwner;
-        $transferLog->transferDate = new SismaDateTime();
-        $this->dataMapper->save($transferLog);
-
-        $this->dataMapper->commitTransaction();
+            $this->dataMapper->commitTransaction();
+        } catch (\Throwable $exception) {
+            $this->dataMapper->rollbackTransaction();
+            throw $exception;
+        }
     }
 }
 ```
@@ -1127,7 +1131,8 @@ class OwnershipTransferService
 - `startTransaction()` apre la transazione e restituisce `true`; se una transazione è già aperta restituisce `false` e i salvataggi successivi entrano in quella esistente
 - i salvataggi eseguiti dentro la transazione non la chiudono: viene confermata solo da `commitTransaction()`
 - se un salvataggio fallisce, il `DataMapper` annulla l'intera transazione e solleva una `DataMapperException`
-- il `DataMapper` non espone un metodo di rollback: se dentro la transazione si verifica un'eccezione diversa da un salvataggio fallito, la transazione resta aperta e il database la annulla alla chiusura della connessione. In quel caso non vanno eseguite altre scritture nella stessa richiesta
+- `rollbackTransaction()` (dalla 12.18.0) annulla la transazione aperta, ad esempio quando si verifica un'eccezione diversa da un salvataggio fallito; senza una transazione aperta non fa nulla
+- dopo l'annullamento le entità in memoria non tornano allo stato precedente: quelle inserite nella transazione hanno un `id` che nel database non esiste più, e vanno ricaricate o ricreate prima di essere salvate di nuovo
 
 ### Data Validation e Business Rules
 
@@ -1204,7 +1209,7 @@ class ReportingService
 
 È appropriato usare SQL diretto per:
 - query di **reporting complesse** con aggregazioni su più tabelle
-- costrutti non supportati dal query builder, come le JOIN su subquery, `IN (subquery)` ed `EXISTS`
+- costrutti non supportati dal query builder, come `UNION` o le funzioni specifiche del database
 - **operazioni in blocco** su grandi insiemi di dati
 - **stored procedure** e viste esistenti
 
