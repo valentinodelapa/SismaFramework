@@ -2,6 +2,89 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.19] - 2026-11-25 - Documentazione Allineata all'API della 11.x
+
+Patch della documentazione che riporta sulla 11.x le correzioni della documentazione delle versioni dalla 12.4.0 alla 12.18.0 che riguardano funzionalità presenti anche nella 11, comprese le guide dell'ORM riscritte sull'API reale. Non sono riportate le parti relative a funzionalità introdotte nella 12.x, come le colonne JSON, la cache dei metadati di reflection, le subquery in `IN`, `EXISTS` e JOIN e i valori di default della configurazione del progetto.
+
+### 📖 Documentazione
+
+#### `docs/internationalization.md` — struttura del file di localizzazione allineata al codice (12.4.0)
+
+La guida descriveva un file di localizzazione piatto (chiavi direttamente alla radice), non corrispondente alla struttura letta da `Localizator` (sezioni `pages` e `templates`), dichiarava il supporto a file `.php` (`Localizator` legge solo file `.json`) e l'esempio di vista usava una variabile inesistente (`$edit_post`). Riscritte le sezioni "Come Funziona", "Creare un File di Lingua" e "Utilizzo nelle Viste"; aggiunte le sezioni "Utilizzo nei Template" e "Precedenza tra Label e Variabili". Rispetto alla 12.x, nella 11 le label dei template restano associate a una chiave piatta con il percorso completo del template (`"emails/welcome"`), senza label `common`.
+
+#### `docs/views.md` e `docs/conventions.md` — estensioni e struttura dei file allineate al codice (12.4.0)
+
+`docs/views.md` indicava per il template di esempio l'estensione `.html`, mentre `Templater` cerca file `.tpl`; aggiunto inoltre un rimando alla localizzazione dei template. `docs/conventions.md` dichiarava il supporto a file di lingua `.php`; aggiunta la descrizione della struttura delle sezioni `pages` e `templates`.
+
+#### `docs/conventions.md` e `docs/helper-classes.md` — numeri nei nomi e proprietà scalari con suffisso `Id` (12.14.0, 12.16.1)
+
+Documentate la regola di conversione per i nomi contenenti cifre (`Oauth2Client` ↔ `oauth2_client`) e la mappatura delle proprietà scalari che terminano in `Id`, entrambe introdotte nella 11.9.18.
+
+#### `docs/configuration-reference.md` — esempi di configurazione errati (12.9.0, 12.15.0)
+
+- I template "Configurazione Minimale" e "Configurazione Completa per Produzione" terminavano con `require_once 'config.defaults.php'`, un file che non esiste. La riga è rimossa, e una nota spiega che il file di configurazione del progetto deve dichiarare tutte le costanti del `config.php` del framework: nella 11 una costante mancante solleva `Undefined constant`.
+- L'esempio di produzione e la sezione "Configurazione Sicura" suggerivano `ENCRYPTION_ALGORITHM = 'AES-256-GCM'`: `encryptString()` non passa il tag di autenticazione a `openssl_encrypt()`, che con GCM restituisce `false`, quindi la cifratura delle proprietà falliva. Il suggerimento è sostituito da una nota.
+- La sezione "Tipi di Risorsa Personalizzati" dichiarava `CUSTOM_RENDERABLE_RESOURCE_TYPES` e `CUSTOM_DOWNLOADABLE_RESOURCE_TYPES` come liste di estensioni (`['xml', 'rss']`), mentre `ResourceMaker` le legge come array `estensione => MIME`: con la forma documentata le estensioni non venivano mai riconosciute. L'esempio usava inoltre estensioni già gestite da `Resource` (`xml`, `pdf`, `docx`), che hanno la precedenza.
+
+#### `docs/security.md` — algoritmi deboli suggeriti per `SIMPLE_HASH_ALGORITHM` (12.9.0)
+
+L'esempio di configurazione proponeva `md5` e `sha1` come alternative a `sha256`. Sono sostituiti da `sha384`, `sha512` e `sha3-256`, con una nota che sconsiglia gli algoritmi vulnerabili alle collisioni e ricorda di usare `getBlowfishHash()` per le password.
+
+#### `docs/join-eager-loading.md` — riscrittura sull'API reale (12.17.2)
+
+Gli esempi delle query personalizzate usavano API inesistenti (`Operator::eq`, `getEntityCollection(customQuery: …)`, `setHaving()` con una condizione, `Query::build()`, `new DataMapper(Article::class)`, `DataMapper::getAdapter()`, `DataMapper::getEntityCollection()`), condizioni senza `setWhere()` e senza `appendAnd()`, e valori letterali, che l'adapter inserisce nell'SQL senza apici. Il documento è stato riscritto:
+- gli esempi delle query personalizzate sono metodi del model, con `initQuery()`, `setWhere()`, placeholder e valori legati in `DataMapper::find()`;
+- nuove sezioni sulle regole generali delle query personalizzate, sulla convenzione snake_case degli alias e sulla qualificazione delle colonne, introdotte nella 11.9.18;
+- le JOIN scritte a mano aggiungono anche le colonne con `buildJoinedColumns()`, senza le quali l'entità collegata non viene idratata;
+- le aggregazioni e la CROSS JOIN usano `select()` dell'adapter, e l'esempio con la JOIN su subquery, non supportata, è sostituito da una subquery correlata;
+- gli esempi di `getEntityByIdWithRelations()` usano solo chiavi esterne dirette;
+- gli esempi SQL usano i nomi di tabella previsti dalle convenzioni e gli alias in snake_case;
+- le limitazioni attuali sono elencate per intero.
+
+#### `docs/advanced-orm.md` — riscrittura sull'API reale (12.17.2)
+
+Gli esempi costruivano le query da servizi esterni con `$this->postModel->initQuery()`, che è `protected`, e usavano API inesistenti: `ComparisonOperator::greaterThan`, `lessThanOrEqual` e `greaterThanOrEqual`, `DataType::typeArrayInteger` e `typeDateTime`, `find('Post', …)` con il nome breve dell'entità, getter e setter sulle entità (`getAuthorId()`, `setTitle()`), `beginTransaction()`, `commit()` e `rollback()` sul `DataMapper`, `DataMapper::getAdapter()`, `fetchAll()`, `getEntityCollectionByIds()`. La sezione sulle JOIN affermava che il query builder non le supporta. Il documento è stato riscritto:
+- le query personalizzate sono metodi del model, con le regole su `setWhere()`, operatori logici, placeholder e nomi delle proprietà;
+- `IN` usa un placeholder per ogni valore, legato singolarmente;
+- i metodi magici dei model sono descritti com'è il loro comportamento: sono definiti in `BaseModel`, valgono per qualunque proprietà e accettano `null` solo per le proprietà nullable;
+- `add{NomeEntità}()` delle `ReferencedEntity` è indicato come disponibile solo per la forma abbreviata della collezione;
+- il problema N+1 rimanda all'eager loading con JOIN;
+- le transazioni usano `startTransaction()` e `commitTransaction()`, con il rollback automatico dei salvataggi falliti e l'assenza di un metodo di rollback esplicito;
+- le aggregazioni e il reporting usano `select()` dell'adapter, che restituisce `StandardEntity`.
+
+#### `docs/performance.md` — riscrittura sull'API reale (12.17.2)
+
+La guida usava le stesse API inesistenti di `advanced-orm.md` e altre ancora (`findRaw()`, `executeBatch()`, `Cache::getHitCount()`, `getMissCount()` e `getAllCachedEntities()`, un file `config/database.php` con chiavi non previste dal framework), proponeva un monitor delle query e un middleware che il framework non ha, e sosteneva che il framework non supporta le JOIN. Il ciclo di paginazione d'esempio leggeva la collezione dopo averla distrutta. Il documento è stato riscritto:
+- il problema N+1 si risolve con l'eager loading con JOIN;
+- la cache delle entità è descritta com'è il suo comportamento: per `getEntityById()` evita la query, per le altre query sostituisce le entità con l'istanza in memoria, e `Cache::clearEntityCache()` la svuota;
+- le elaborazioni di grandi quantità di dati procedono a pagine, svuotando la cache delle entità a ogni pagina;
+- la cache applicativa salva valori semplici e non entità;
+- il monitoraggio usa la barra di debug, e la configurazione le costanti `DEVELOPMENT_ENVIRONMENT`, `ORM_CACHE` e `DATABASE_*`.
+
+#### `docs/orm.md`, `docs/getting-started.md` e `docs/enumerations.md` — esempi dei model e degli enum dell'ORM (12.17.2)
+
+- **`docs/orm.md`** e **`docs/getting-started.md`**: `getEntityName()` dei model era dichiarato `static`, mentre in `BaseModel` è un metodo d'istanza; l'esempio di `appendSearchCondition()` di `orm.md` usava un metodo `where()` inesistente.
+- **`docs/enumerations.md`**: `ComparisonOperator` e `LogicalOperator` erano descritti come enumerazioni con valori stringa e con casi inesistenti (`greaterThan`, `greaterThanOrEqual`, …), e gli esempi usavano un query builder immaginario. Le sezioni di `DataType`, `ComparisonOperator` e `LogicalOperator` mostrano ora l'uso reale con `Query` e la corrispondenza tra valori e `DataType`.
+
+#### `docs/orm.md` — aggregazioni e subquery (12.18.0)
+
+Gli esempi leggevano i risultati delle aggregazioni dalle entità restituite da `DataMapper::find()`, che non hanno proprietà per i valori calcolati, passavano espressioni SQL a `setColumns()`, che ne fa l'escape come nomi di colonna, chiamavano `initQuery()`, che è `protected`, sul model di un'altra entità, e usavano `ComparisonOperator::greaterThan` e `ComparisonOperator::exists`, che non esistono. Le sezioni sono state riscritte:
+- i risultati delle aggregazioni si leggono con `select()` dell'adapter, ed è documentato `setCount()`;
+- le espressioni SQL nelle colonne si aggiungono con `appendColumn()`;
+- le subquery si costruiscono con `new Query()` e `setTable()`, con le regole generali (chiusura, subquery correlate, alias per la stessa tabella, ordine dei valori legati) e con esempi per le subquery come colonna e come primo termine di `appendSubqueryCondition()`, compreso il confronto con una colonna della query esterna.
+
+Rispetto alla 12.x non sono documentati il confronto di una colonna con una subquery, `IN` ed `EXISTS` con una subquery e le JOIN su una subquery, introdotti nella 12.18.0: la guida indica che nella 11.x non sono disponibili.
+
+#### `docs/traits.md` e `docs/upgrade.md` — case inesistenti negli esempi
+
+Gli esempi usavano `Language::it_IT`, mentre il case di `Language` è `italian` (`it_IT` è il suo valore), e `ResponseType::Json`, che non esiste: i case di `ResponseType` sono i codici di stato HTTP. Sostituiti con `Language::italian` e `ResponseType::httpOk`.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la modifica riguarda solo la documentazione.
+
+---
+
 ## [11.9.18] - 2026-11-25 - Query con JOIN, Eager Loading e Proprietà Scalari che Terminano in `Id`
 
 Patch che riporta sulla 11.x le correzioni dell'ORM delle versioni 12.16.1, 12.17.1 e 12.17.2, l'uso delle cifre negli identificatori SQL della 12.14.0 e alcune correzioni minori delle versioni 12.0.1, 12.2.0, 12.12.0, 12.15.1 e 12.18.0 sfuggite ai backport precedenti. Il supporto alle JOIN e all'eager loading è presente dalla 10.1.0, con gli stessi difetti corretti nella 12.x. Non sono riportate le parti legate a funzionalità introdotte nella 12.x, come le condizioni sulle colonne JSON e la cache dei metadati di reflection.

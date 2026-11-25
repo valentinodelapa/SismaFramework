@@ -165,12 +165,12 @@ Il metodo `Response::setResponseType()` e' stato rimosso in favore dell'iniezion
 **Prima:**
 ```php
 $response = new Response();
-$response->setResponseType(ResponseType::Json);
+$response->setResponseType(ResponseType::httpOk);
 ```
 
 **Dopo:**
 ```php
-$response = new Response(ResponseType::Json);
+$response = new Response(ResponseType::httpOk);
 ```
 
 Se il pattern risulta troppo complesso per la trasformazione automatica, viene emesso un warning con la richiesta di revisione manuale.

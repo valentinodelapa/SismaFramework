@@ -48,11 +48,13 @@ const MODULE_FOLDERS = ['Blog', 'UserModule', 'ApiModule'];
     *   `Post` -> tabella `post`
     *   `User` -> tabella `user`
     *   `PostComment` -> tabella `post_comment`
+    *   `Oauth2Client` -> tabella `oauth2_client`
     *
-    **⚠️ Importante:** SismaFramework utilizza nomi di tabelle al **singolare**, non al plurale come altri framework.
+    **⚠️ Importante:** SismaFramework utilizza nomi di tabelle al **singolare**, non al plurale come altri framework. Eventuali numeri nei nomi di entità o proprietà fanno parte della parola che li precede senza underscore aggiuntivo prima della cifra (es. `$sha256Hash` <-> `sha256_hash`).
 *   **Chiave Primaria:** Si assume che la colonna della chiave primaria si chiami `id`.
 *   **Chiavi Esterne:** Vengono inferite dal nome della proprietà e dal suo tipo.
     *   `protected User $author;` -> colonna `author_id`.
+    *   Una proprietà scalare il cui nome termina in `Id` non è una chiave esterna: si mappa sulla colonna con lo stesso nome in `snake_case`, sia in scrittura sia in lettura (es. `protected int $externalEventId;` <-> `external_event_id`, utile per gli identificativi provenienti da sistemi esterni). Una colonna che termina in `_id` viene trattata come chiave esterna solo se la proprietà senza suffisso esiste ed è di tipo entità.
 *   **Collezioni Inverse (Lazy-Loaded):** Una "proprietà magica" viene aggiunta a un'entità per accedere alle entità che la referenziano.
     *   `$user->postCollection` -> restituisce una collezione di tutti i `Post` il cui `author` è `$user`.
 
@@ -74,9 +76,10 @@ const MODULE_FOLDERS = ['Blog', 'UserModule', 'ApiModule'];
 ## Internazionalizzazione (i18n)
 
 *   **Posizione:** `NomeModulo/Application/Locales/`
-*   **Nome File:** Deve corrispondere esattamente alla costante `LANGUAGE` in `config.php`, con estensione `.php` o `.json`.
-    *   `LANGUAGE = 'it_IT'` -> `it_IT.php` o `it_IT.json`.
-*   **Variabili:** Le chiavi definite nel file di lingua diventano variabili PHP disponibili nella vista.
+*   **Nome File:** Deve corrispondere esattamente alla costante `LANGUAGE` in `config.php`, con estensione `.json`.
+    *   `LANGUAGE = 'it_IT'` -> `it_IT.json`.
+*   **Struttura:** Le chiavi della sezione `pages` rispecchiano la struttura della cartella `Views/`, con label `common` facoltative a ogni livello; nella sezione `templates` ogni template ha una chiave con il suo percorso completo relativo a `Templates/` (es. `"emails/welcome"`).
+*   **Variabili:** Le label definite per una vista diventano variabili PHP disponibili nella vista; quelle definite per un template diventano segnaposto `{{...}}` del template.
 
 ## Asset Statici
 

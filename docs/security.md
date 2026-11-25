@@ -351,8 +351,10 @@ $hash = Encryptor::getSimpleHash('testo', $customConfig);
 
 **Configurazione algoritmo in `Config/config.php`:**
 ```php
-const SIMPLE_HASH_ALGORITHM = 'sha256'; // o 'md5', 'sha1', 'sha512'
+const SIMPLE_HASH_ALGORITHM = 'sha256'; // o 'sha384', 'sha512', 'sha3-256'
 ```
+
+Non usare `md5` né `sha1`: sono vulnerabili alle collisioni, quindi non garantiscono che due testi diversi abbiano hash diversi. `getSimpleHash()` è comunque un hash veloce e senza sale, adatto a impronte e confronti di integrità: per le password usa `getBlowfishHash()`.
 
 #### Hash Password (Blowfish/BCrypt)
 

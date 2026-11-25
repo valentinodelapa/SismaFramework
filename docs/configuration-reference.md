@@ -232,12 +232,20 @@ const DEFAULT_CONTROLLER = 'ApiController';
 
 ### Tipi di Risorsa Personalizzati
 
+Le due costanti associano a ogni estensione, senza punto, il MIME con cui il file viene servito. Le estensioni gestite dal framework (CSS, JavaScript, immagini, font, documenti) hanno la precedenza e non vanno dichiarate.
+
 ```php
 // Tipi di file renderizzabili custom
-const CUSTOM_RENDERABLE_RESOURCE_TYPES = ['xml', 'rss'];
+const CUSTOM_RENDERABLE_RESOURCE_TYPES = [
+    'rss' => 'application/rss+xml',
+    'webmanifest' => 'application/manifest+json',
+];
 
 // Tipi di file scaricabili custom
-const CUSTOM_DOWNLOADABLE_RESOURCE_TYPES = ['pdf', 'docx'];
+const CUSTOM_DOWNLOADABLE_RESOURCE_TYPES = [
+    'csv' => 'text/csv',
+    '7z' => 'application/x-7z-compressed',
+];
 ```
 
 ---
@@ -309,10 +317,9 @@ const BLOWFISH_HASH_WORKLOAD = 15;  // Più sicuro ma più lento
 
 // Chiave crittografia forte (genera con random_bytes)
 const ENCRYPTION_PASSPHRASE = 'kJ8k3nR9mQ7pL5xW2zB6vC4nM8qT1eY7';
-
-// Algoritmo raccomandato
-const ENCRYPTION_ALGORITHM = 'AES-256-GCM';  // Più sicuro di CBC
 ```
+
+`ENCRYPTION_ALGORITHM` deve restare un cifrario non autenticato (default `AES-256-CBC`): `encryptString()`/`decryptString()` non gestiscono il tag di autenticazione, quindi con GCM la cifratura fallisce.
 
 **⚠️ Avvertenze Sicurezza**:
 - Mai committare `ENCRYPTION_PASSPHRASE` in repository
@@ -412,6 +419,8 @@ const HTTPS_IS_FORCED = true;
 
 ## Template di Configurazione
 
+I template mostrano solo le costanti da personalizzare. Il file di configurazione del progetto deve comunque dichiarare tutte le costanti del `config.php` del framework: una costante mancante solleva un errore `Undefined constant` la prima volta che viene letta. Conviene quindi partire dal `configFramework.php` generato dall'installazione, che le contiene già, e modificarne i valori.
+
 ### Configurazione Minimale
 
 ```php
@@ -438,9 +447,6 @@ const MODULE_FOLDERS = [
 
 // === SICUREZZA ===
 const ENCRYPTION_PASSPHRASE = 'change-this-secret-key';
-
-// Includi configurazioni standard
-require_once 'config.defaults.php';
 ```
 
 ### Configurazione Completa per Produzione
@@ -481,16 +487,12 @@ const MODULE_FOLDERS = [
 // === SICUREZZA ===
 const ENCRYPTION_PASSPHRASE = 'production-encryption-key-32-chars';
 const BLOWFISH_HASH_WORKLOAD = 15;
-const ENCRYPTION_ALGORITHM = 'AES-256-GCM';
 
 // === LOGGING ===
 const LOG_VERBOSE_ACTIVE = false;
 const LOG_PRODUCTION_MAX_ROW = 200;
 const LOG_WARNING_ROW = 20;
 const LOG_DANGER_ROW = 50;
-
-// Include configurazioni base
-require_once 'config.defaults.php';
 ```
 
 ---

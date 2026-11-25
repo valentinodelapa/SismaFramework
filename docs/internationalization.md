@@ -7,8 +7,10 @@ SismaFramework è progettato per supportare applicazioni multilingua fin da subi
 Il meccanismo è semplice e automatico. Quando si utilizza `Render::generateView()` per renderizzare una vista, il framework esegue i seguenti passaggi:
 
 1.  Controlla la costante `LANGUAGE` nel file `Config/config.php` (es. `it_IT`).
-2.  Cerca un file di localizzazione corrispondente nella cartella `Application/Locales/` di ogni modulo registrato. Il framework supporta sia file `.php` che `.json`.
-3.  Se trova un file, lo carica. Questo rende le variabili definite nel file di lingua disponibili direttamente all'interno della vista.
+2.  Cerca il file di localizzazione corrispondente (es. `it_IT.json`) nella cartella `Application/Locales/` del modulo.
+3.  Estrae dal file le label relative alla vista da renderizzare e le rende disponibili come variabili all'interno della vista.
+
+Lo stesso meccanismo è applicato da `Templater::generateTemplate()` ai template.
 
 ## Configurazione
 
@@ -21,43 +23,54 @@ const LANGUAGE = 'it_IT'; // o 'en_US', 'fr_FR', ecc.
 
 ## Creare un File di Lingua
 
-Puoi definire le tue traduzioni usando file PHP o JSON. Le chiavi sono gli identificatori delle stringhe e i valori sono le traduzioni.
-
 1. Crea la cartella `Locales` nel tuo modulo, se non esiste.
-2. Al suo interno, crea un file con il nome della locale (es. `it_IT.php` o `it_IT.json`).
+2. Al suo interno, crea un file JSON con il nome della locale (es. `it_IT.json`).
 
-**`MyBlog/Application/Locales/it_IT.php`**
+Il file contiene una sezione `pages` per le viste e una sezione `templates` per i template.
 
-```php
-<?php
+Nella sezione `pages` le chiavi rispecchiano la struttura della cartella `Views/`, con un livello per ogni cartella e un ultimo livello per il file, a qualunque profondità. A ogni livello può essere presente una chiave `common`, le cui label sono condivise da tutte le viste contenute in quel livello e nei livelli sottostanti. Quando la stessa chiave è definita a più livelli, prevale quella del livello più specifico.
 
-return [
-    'welcomeTitle' => 'Benvenuto nel nostro Blog!',
-    'editPost' => 'Modifica Articolo',
-    'createNewPost' => 'Crea un nuovo articolo',
-    'formSaveButton' => 'Salva Modifiche',
-];
-```
+Nella sezione `templates` ogni template ha una sola chiave, con il percorso completo del template relativo alla cartella `Templates/` (es. `"emails/welcome"`). La sezione `templates` non prevede label `common`.
 
-**`MyBlog/Application/Locales/en_US.json`**
+Le sezioni `pages` e `templates` sono entrambe facoltative.
+
+**`MyBlog/Application/Locales/it_IT.json`**
 
 ```json
 {
-    "welcomeTitle": "Welcome to our Blog!",
-    "editPost": "Edit Post",
-    "createNewPost": "Create a new post",
-    "formSaveButton": "Save Changes"
+    "pages": {
+        "common": {
+            "siteName": "Il mio Blog"
+        },
+        "post": {
+            "common": {
+                "formSaveButton": "Salva Modifiche"
+            },
+            "form": {
+                "editPost": "Modifica Articolo"
+            }
+        }
+    },
+    "templates": {
+        "emails/welcome": {
+            "subject": "Benvenuto nel nostro Blog!"
+        },
+        "emails/account/activation": {
+            "subject": "Attiva il tuo account",
+            "signature": "Il team del Blog"
+        }
+    }
 }
 ```
 
 ## Utilizzo nelle Viste
 
-Poiché il file di lingua viene incluso automaticamente, puoi accedere alle traduzioni come se fossero normali variabili PHP.
+Le label della vista vengono estratte automaticamente, quindi puoi accedervi come se fossero normali variabili PHP. Per la vista `post/form` sono disponibili `siteName`, `formSaveButton` ed `editPost`.
 
 **`MyBlog/Application/Views/post/form.php`**
 
 ```php
-<h2><?= $edit_post ?></h2>
+<h2><?= $editPost ?></h2>
 
 <form method="post">
     <!-- ... campi del form ... -->
@@ -66,6 +79,18 @@ Poiché il file di lingua viene incluso automaticamente, puoi accedere alle trad
 ```
 
 Cambiando il valore della costante `LANGUAGE` in `config.php` da `it_IT` a `en_US`, la stessa vista mostrerà automaticamente il testo in inglese.
+
+## Utilizzo nei Template
+
+Per il template `emails/account/activation` (file `Templates/emails/account/activation.tpl`) sono disponibili i segnaposto `{{subject}}` e `{{signature}}`, oltre a `{{username}}` passato dal codice.
+
+```php
+$corpoEmail = Templater::generateTemplate('emails/account/activation', ['username' => 'Mario Rossi']);
+```
+
+## Precedenza tra Label e Variabili
+
+Sia nelle viste sia nei template, le variabili passate dal codice prevalgono sulle label con la stessa chiave: le label del file di localizzazione sono valori di default che lo sviluppatore può sempre sovrascrivere.
 
 * * *
 

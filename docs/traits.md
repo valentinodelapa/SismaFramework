@@ -22,7 +22,7 @@ enum Status: string
 }
 
 // Ottenere etichetta localizzata
-$language = Language::it_IT;
+$language = Language::italian;
 $label = Status::active->getFriendlyLabel($language); // "Attivo" (dal file di lingua)
 
 // Creare array per dropdown
@@ -151,7 +151,7 @@ enum Permission: string
 }
 
 // Ottenere dropdown con i figli di un permesso
-$language = Language::it_IT;
+$language = Language::italian;
 $userManagementChoices = Permission::user_management->getChoiceByMultipleParent($language);
 // ['Crea Utente' => 'user_create', 'Modifica Utente' => 'user_edit', 'Elimina Utente' => 'user_delete']
 ```

@@ -90,7 +90,7 @@ I template utilizzano una sintassi semplice con segnaposto (es. `{{nome_variabi
 ### Esempio di un Template
 
 1.  **Crea il file del template:**
-    `MyModule/Application/Templates/emails/welcome.html`
+    `MyModule/Application/Templates/emails/welcome.tpl`
    
    ```html
    <h1>Benvenuto, {{username}}!</h1>
@@ -114,6 +114,8 @@ I template utilizzano una sintassi semplice con segnaposto (es. `{{nome_variabi
    // e può essere usata per inviare un'email.
    // mail('utente@example.com', 'Benvenuto!', $corpoEmail, $headers);
    ```
+
+Oltre alle variabili passate, il template riceve le label definite per esso nella sezione `templates` del file di localizzazione: vedi [Internazionalizzazione](internationalization.md#utilizzo-nei-template).
 
 ---
 

@@ -86,12 +86,14 @@ Il `NotationManager` gestisce le conversioni tra diverse convenzioni di nomencla
 ### Schema delle Conversioni
 
 ```
-StudlyCaps/PascalCase: UserProfile
-camelCase: userProfile
-kebab-case: user-profile
-snake_case: user_profile
-UPPER_SNAKE_CASE: USER_PROFILE
+StudlyCaps/PascalCase: UserProfile / Oauth2Client
+camelCase: userProfile / oauth2Client
+kebab-case: user-profile / oauth2-client
+snake_case: user_profile / oauth2_client
+UPPER_SNAKE_CASE: USER_PROFILE / OAUTH2_CLIENT
 ```
+
+> **Nota sui numeri nei nomi:** Le cifre sono trattate come parte della parola che le precede (senza `_` o `-` prima del numero), garantendo la conversione biunivoca tra i formati (es. `sha256Hash` $\leftrightarrow$ `sha256_hash`).
 
 ### Utilizzi nel Framework
 

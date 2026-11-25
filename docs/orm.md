@@ -106,11 +106,15 @@ Un modello è la porta d'accesso al database per una specifica entità. Deve est
 namespace MyModule\App\Models;
 
 use SismaFramework\Orm\BaseClasses\BaseModel;
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\HelperClasses\Query;
 use MyModule\App\Entities\Post;
 
 class PostModel extends BaseModel
 {
-    protected static function getEntityName(): string
+    protected function getEntityName(): string
     {
         return Post::class;
     }
@@ -118,11 +122,20 @@ class PostModel extends BaseModel
     // Usato per le ricerche testuali
     protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void
     {
-        $query->where('title LIKE :searchKey OR content LIKE :searchKey');
-        $bindValues[':searchKey'] = '%' . $searchKey . '%';
+        $query->appendOpenBlock()
+            ->appendCondition('title', ComparisonOperator::like, Placeholder::placeholder)
+            ->appendOr()
+            ->appendCondition('content', ComparisonOperator::like, Placeholder::placeholder)
+            ->appendCloseBlock();
+        $bindValues[] = '%' . $searchKey . '%';
+        $bindValues[] = '%' . $searchKey . '%';
+        $bindTypes[] = DataType::typeString;
+        $bindTypes[] = DataType::typeString;
     }
 }
 ```
+
+`appendSearchCondition()` viene chiamato dopo `setWhere()` e, quando la ricerca si combina con altre condizioni, dopo `appendAnd()`: il metodo aggiunge solo le proprie condizioni, racchiudendo in un blocco quelle in OR. I valori si legano con un placeholder per ogni occorrenza, nello stesso ordine delle condizioni.
 
 ### Metodi di Base (`BaseModel`)
 
@@ -368,7 +381,7 @@ class PostModel extends DependentModel
 
 ### Funzioni di Aggregazione
 
-A partire dalla versione 10.1.0, l'ORM supporta nativamente le funzioni di aggregazione SQL (`AVG`, `MAX`, `MIN`, `SUM`) tramite la classe `Query`. Queste funzioni permettono di eseguire calcoli statistici direttamente nel database.
+A partire dalla versione 10.1.0, l'ORM supporta le funzioni di aggregazione SQL (`AVG`, `MAX`, `MIN`, `SUM`, `COUNT`) tramite la classe `Query`. Queste funzioni permettono di eseguire calcoli statistici direttamente nel database.
 
 #### Metodi Disponibili
 
@@ -376,6 +389,7 @@ A partire dalla versione 10.1.0, l'ORM supporta nativamente le funzioni di aggre
 - `setMax()` - Trova il valore massimo
 - `setMin()` - Trova il valore minimo
 - `setSum()` - Calcola la somma totale
+- `setCount()` - Conta le righe, nella colonna `_numrows`
 
 #### Sintassi
 
@@ -386,297 +400,258 @@ $query->setAVG(
     bool $distinct = false,           // Applica DISTINCT (opzionale)
     bool $append = false              // Aggiungi alle colonne esistenti (opzionale)
 );
+
+$query->setCount(
+    string $column,                   // Colonna da contare, '' per COUNT(*)
+    bool $distinct = false            // Applica DISTINCT (opzionale)
+);
 ```
 
-Gli stessi parametri si applicano a `setMax()`, `setMin()` e `setSum()`.
+Gli stessi parametri di `setAVG()` si applicano a `setMax()`, `setMin()` e `setSum()`.
 
-#### Aggregazioni Semplici
+#### Lettura dei Risultati
+
+`DataMapper::find()` restituisce entità, che non hanno proprietà per i valori calcolati. Le query di aggregazione si eseguono con `select()` dell'adapter, che restituisce righe di tipo `StandardEntity` con una proprietà per ogni colonna, chiamata come l'alias convertito in snake_case:
 
 ```php
 // Calcolare la media dei prezzi
 public function getAveragePrice(): float
 {
     $query = $this->initQuery();
-    $query->setAVG('price', 'average_price');
+    $query->setAVG('price', 'averagePrice');
     $query->close();
-    
-    $result = $this->dataMapper->find($this->entityName, $query);
-    return $result[0]->averagePrice ?? 0.0;
+
+    $row = $query->getAdapter()->select($query->getCommandToExecute())->fetch();
+    return (float) ($row->average_price ?? 0);
 }
 
-// Trovare il prodotto più costoso
+// Trovare il prezzo più alto
 public function getMaxPrice(): float
 {
     $query = $this->initQuery();
-    $query->setMax('price', 'max_price');
+    $query->setMax('price', 'maxPrice');
     $query->close();
-    
-    $result = $this->dataMapper->find($this->entityName, $query);
-    return $result[0]->maxPrice ?? 0.0;
-}
 
-// Somma totale delle vendite
-public function getTotalSales(): float
-{
-    $query = $this->initQuery();
-    $query->setSum('amount', 'total_sales');
-    $query->close();
-    
-    $result = $this->dataMapper->find($this->entityName, $query);
-    return $result[0]->totalSales ?? 0.0;
+    $row = $query->getAdapter()->select($query->getCommandToExecute())->fetch();
+    return (float) ($row->max_price ?? 0);
 }
 ```
 
+Per i conteggi senza altre colonne sono disponibili anche `countEntityCollection()`, i metodi magici `countBy…()` e `DataMapper::getCount()`.
+
 #### Aggregazioni con DISTINCT
 
-Utilizza il parametro `$distinct` per aggregare solo valori unici:
+Il parametro `$distinct` aggrega solo i valori distinti:
 
 ```php
 // Somma dei prezzi distinti (ignora duplicati)
 public function getSumOfDistinctPrices(): float
 {
     $query = $this->initQuery();
-    $query->setSum('price', 'total_distinct_prices', distinct: true);
+    $query->setSum('price', 'totalDistinctPrices', distinct: true);
     $query->close();
-    
-    $result = $this->dataMapper->find($this->entityName, $query);
-    return $result[0]->totalDistinctPrices ?? 0.0;
-}
 
-// Media delle valutazioni distinte
-public function getAverageDistinctRating(): float
-{
-    $query = $this->initQuery();
-    $query->setAVG('rating', 'avg_rating', distinct: true);
-    $query->close();
-    
-    $result = $this->dataMapper->find($this->entityName, $query);
-    return $result[0]->avgRating ?? 0.0;
+    $row = $query->getAdapter()->select($query->getCommandToExecute())->fetch();
+    return (float) ($row->total_distinct_prices ?? 0);
 }
 ```
 
-#### Multiple Aggregazioni con `$append`
+#### Più Aggregazioni con `$append`
 
-Il parametro `$append` permette di calcolare più aggregazioni nella stessa query:
+Il parametro `$append` calcola più aggregazioni nella stessa query:
 
 ```php
 // Statistiche complete sui prezzi
-public function getPriceStatistics(): object
+public function getPriceStatistics(): array
 {
     $query = $this->initQuery();
-    
-    // Prima aggregazione (sostituisce le colonne)
-    $query->setMin('price', 'min_price');
-    
-    // Aggregazioni successive (aggiungono alle colonne)
-    $query->setMax('price', 'max_price', append: true);
-    $query->setAVG('price', 'avg_price', append: true);
-    $query->setSum('price', 'total_price', append: true);
-    
+    $query->setMin('price', 'minPrice')                // sostituisce le colonne
+        ->setMax('price', 'maxPrice', append: true)    // aggiunge alle colonne
+        ->setAVG('price', 'avgPrice', append: true)
+        ->setSum('price', 'totalPrice', append: true);
     $query->close();
-    
-    $result = $this->dataMapper->find($this->entityName, $query);
-    return $result[0] ?? (object)[
-        'minPrice' => 0,
-        'maxPrice' => 0,
-        'avgPrice' => 0,
-        'totalPrice' => 0
+
+    $row = $query->getAdapter()->select($query->getCommandToExecute())->fetch();
+    return [
+        'min' => (float) $row->min_price,
+        'max' => (float) $row->max_price,
+        'average' => (float) $row->avg_price,
+        'total' => (float) $row->total_price,
     ];
 }
 ```
 
-⚠️ **Nota:** Senza `$append`, ogni chiamata sostituisce le colonne precedenti. Con `$append = true`, le aggregazioni vengono aggiunte.
+⚠️ **Nota:** senza `$append` ogni chiamata sostituisce le colonne precedenti; con `$append = true` l'aggregazione viene aggiunta. Con `$append = true` su una query senza colonne, l'aggregazione si aggiunge a quelle di default della tabella (`tabella.*`).
 
 #### Aggregazioni con Condizioni WHERE
-
-Combina aggregazioni con filtri per calcoli condizionali:
 
 ```php
 // Media dei prezzi solo per prodotti attivi
 public function getAveragePriceForActiveProducts(): float
 {
     $query = $this->initQuery();
-    $query->setAVG('price', 'avg_active_price');
+    $query->setAVG('price', 'avgActivePrice');
     $query->setWhere()
-          ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
     $query->close();
-    
-    $result = $this->dataMapper->find(
-        $this->entityName, 
-        $query, 
-        [ProductStatus::Active]
-    );
-    return $result[0]->avgActivePrice ?? 0.0;
+
+    $row = $query->getAdapter()->select($query->getCommandToExecute(), [ProductStatus::active->value], [DataType::typeString])->fetch();
+    return (float) ($row->avg_active_price ?? 0);
 }
 ```
+
+`select()` dell'adapter lega i valori così come sono: le enumerazioni si passano con il loro valore (`->value`).
 
 #### Aggregazioni con GROUP BY
 
-Combina aggregazioni con raggruppamento per analisi dettagliate:
-
 ```php
 // Somma vendite per categoria
-public function getSalesByCategory(): SismaCollection
+public function getSalesByCategory(): array
 {
     $query = $this->initQuery();
-    $query->setColumns(['category_id']);
-    $query->setSum('amount', 'total_sales', append: true);
-    $query->setGroupBy(['category_id']);
-    $query->setOrderBy(['total_sales' => 'DESC']);
+    $query->setColumns(['category_id'])
+        ->setSum('amount', 'totalSales', append: true)
+        ->setGroupBy(['category_id'])
+        ->setOrderBy(['totalSales' => Indexing::desc]);
     $query->close();
-    
-    return $this->dataMapper->find($this->entityName, $query);
+
+    $salesByCategory = [];
+    foreach ($query->getAdapter()->select($query->getCommandToExecute()) as $row) {
+        $salesByCategory[$row->category_id] = (float) $row->total_sales;
+    }
+    return $salesByCategory;
 }
 ```
 
-#### Aggregazioni su Subquery
+`setColumns()`, `setGroupBy()` e `setOrderBy()` convertono i nomi in snake_case e ne fanno l'escape come colonne: le chiavi esterne si indicano con il nome della colonna (`category_id`), e gli alias delle aggregazioni si possono usare per l'ordinamento.
 
-Le funzioni di aggregazione supportano anche subquery come argomento:
+#### Espressioni nelle Colonne
+
+`setColumns()` tratta ogni elemento come il nome di una colonna, per cui non accetta espressioni SQL. Le espressioni si aggiungono con `appendColumn()`, che le inserisce così come sono:
 
 ```php
-// Media del numero di commenti per post
-public function getAverageCommentsPerPost(): float
+// Report vendite mensili
+public function getMonthlySalesReport(): array
 {
-    // Subquery per contare commenti per post
-    $commentCountQuery = (new CommentModel($this->dataMapper))->initQuery();
-    $commentCountQuery->setColumns(['COUNT(*)'])
-                     ->setWhere()
-                     ->appendCondition('post_id', ComparisonOperator::equal, 'post.id');
-    $commentCountQuery->close();
-    
-    // Aggregazione sulla subquery
     $query = $this->initQuery();
-    $query->setAVG($commentCountQuery, 'avg_comments');
+    $query->setSum('amount', 'totalSales')
+        ->appendColumn('YEAR(`sale`.`sale_date`) AS sale_year')
+        ->appendColumn('MONTH(`sale`.`sale_date`) AS sale_month')
+        ->setGroupBy(['sale_year', 'sale_month'])
+        ->setOrderBy(['sale_year' => Indexing::desc, 'sale_month' => Indexing::desc]);
     $query->close();
-    
-    $result = $this->dataMapper->find($this->entityName, $query);
-    return $result[0]->avgComments ?? 0.0;
+
+    $report = [];
+    foreach ($query->getAdapter()->select($query->getCommandToExecute()) as $row) {
+        $report[] = ['year' => $row->sale_year, 'month' => $row->sale_month, 'total' => (float) $row->total_sales];
+    }
+    return $report;
 }
 ```
 
-#### Esempi Pratici Completi
-
-**Dashboard con statistiche prodotti:**
-
-```php
-public function getDashboardStats(): object
-{
-    $query = $this->initQuery();
-    
-    // Multiple aggregazioni
-    $query->setSum('quantity', 'total_quantity')
-          ->setAVG('price', 'average_price', append: true)
-          ->setMin('price', 'cheapest_price', append: true)
-          ->setMax('price', 'most_expensive_price', append: true);
-    
-    // Solo prodotti in stock
-    $query->setWhere()
-          ->appendCondition('in_stock', ComparisonOperator::equal, Placeholder::placeholder);
-    
-    $query->close();
-    
-    $result = $this->dataMapper->find($this->entityName, $query, [true]);
-    return $result[0] ?? (object)[];
-}
-```
-
-**Report vendite mensili con aggregazioni:**
-
-```php
-public function getMonthlySalesReport(): SismaCollection
-{
-    $query = $this->initQuery();
-    
-    // Seleziona anno e mese
-    $query->setColumns(['YEAR(sale_date) as year', 'MONTH(sale_date) as month']);
-    
-    // Aggregazioni multiple
-    $query->setSum('amount', 'total_sales', append: true)
-          ->setAVG('amount', 'avg_sale', append: true)
-          ->setMax('amount', 'max_sale', append: true);
-    
-    // Raggruppa per anno e mese
-    $query->setGroupBy(['YEAR(sale_date)', 'MONTH(sale_date)']);
-    $query->setOrderBy(['year' => 'DESC', 'month' => 'DESC']);
-    
-    $query->close();
-    
-    return $this->dataMapper->find($this->entityName, $query);
-}
-```
+`appendColumn()` non fa l'escape del suo argomento: va usato solo con espressioni scritte nel codice, mai con valori provenienti dall'utente.
 
 ### Subquery (Sottoquery)
 
-L'ORM supporta l'uso di subquery sia come colonne che come condizioni nella clausola WHERE. Le subquery sono query annidate che possono essere utilizzate per creare query complesse.
+L'ORM supporta le subquery come colonne, come argomento delle aggregazioni e come primo termine di una condizione. Una subquery è una `Query` costruita a parte, con la propria tabella:
+
+```php
+use SismaFramework\Orm\HelperClasses\Query;
+
+$commentCount = new Query();
+$commentCount->setTable(Comment::class)
+    ->setCount('')
+    ->setWhere()
+    ->appendCondition('post', ComparisonOperator::equal, 'post.id', true);
+$commentCount->close();
+```
+
+**Regole generali:**
+- **Chiusura**: la subquery va chiusa con `close()` prima di essere usata.
+- **Subquery correlate**: per riferirsi a una colonna della query esterna si indica la tabella esterna, o il suo alias, seguita dalla colonna (`'post.id'`), come valore letterale e non come placeholder. Le colonne della subquery vengono qualificate con la tabella della subquery.
+- **Stessa tabella**: se la subquery interroga la stessa tabella della query esterna, le si assegna un alias con `setTable(Entity::class, 'alias')`, così che i riferimenti alla tabella esterna non siano ambigui.
+- **Ordine dei valori legati**: i placeholder vengono legati nell'ordine in cui compaiono nel testo SQL: prima quelli delle subquery usate come colonne, poi quelli del WHERE nell'ordine delle condizioni.
 
 #### Subquery come Colonna
 
-Puoi utilizzare una subquery come colonna nel SELECT:
-
 ```php
-public function getPostsWithCommentCount(): SismaCollection
+public function getPostsOrderedByCommentCount(): SismaCollection
 {
+    $commentCount = new Query();
+    $commentCount->setTable(Comment::class)
+        ->setCount('')
+        ->setWhere()
+        ->appendCondition('post', ComparisonOperator::equal, 'post.id', true);
+    $commentCount->close();
+
     $query = $this->initQuery();
-
-    // Crea la subquery per contare i commenti
-    $commentCountQuery = (new CommentModel($this->dataMapper))->initQuery();
-    $commentCountQuery->setColumns(['COUNT(*)'])
-                     ->setWhere()
-                     ->appendCondition('post_id', ComparisonOperator::equal, 'post.id');
-    $commentCountQuery->close();
-
-    // Usa la subquery come colonna
-    $query->setSubqueryColumn($commentCountQuery, 'comment_count', true);
-
+    $query->setSubqueryColumn($commentCount, 'commentCount', true)
+        ->setOrderBy(['commentCount' => Indexing::desc]);
     $query->close();
+
     return $this->dataMapper->find($this->entityName, $query);
 }
 ```
 
-#### Subquery nelle Condizioni WHERE
+Il valore calcolato serve all'ordinamento: le entità restituite da `find()` non hanno una proprietà corrispondente. Per leggerlo si esegue la query con `select()` dell'adapter.
 
-Puoi utilizzare subquery nelle condizioni WHERE per filtri complessi:
+#### Subquery nelle Condizioni
+
+`appendSubqueryCondition()` confronta il risultato della subquery con un valore, nella forma `(subquery) operatore valore`, e va usato con una subquery che restituisce un solo valore:
 
 ```php
+// Post con almeno un certo numero di commenti
+public function getPostsWithMinimumComments(int $minimumComments): SismaCollection
+{
+    $commentCount = new Query();
+    $commentCount->setTable(Comment::class)
+        ->setCount('')
+        ->setWhere()
+        ->appendCondition('post', ComparisonOperator::equal, 'post.id', true);
+    $commentCount->close();
+
+    $query = $this->initQuery();
+    $query->setWhere()
+        ->appendSubqueryCondition($commentCount, ComparisonOperator::greaterOrEqual, Placeholder::placeholder);
+    $query->close();
+
+    return $this->dataMapper->find($this->entityName, $query, [$minimumComments], [DataType::typeInteger]);
+}
+```
+
+```sql
+SELECT `post`.* FROM `post`
+WHERE (SELECT COUNT(*) as _numrows FROM `comment` WHERE `comment`.`post_id` = post.id) >= ?
+```
+
+Con lo stesso schema si ottengono i post con almeno un commento (`ComparisonOperator::greater` e valore `0`) o senza commenti (`ComparisonOperator::equal` e valore `0`).
+
+Poiché la subquery è sempre il primo termine, per confrontarla con una colonna della query esterna l'operatore va invertito:
+
+```php
+// Post con più visualizzazioni della media
 public function getPopularPosts(): SismaCollection
 {
+    $averageViews = new Query();
+    $averageViews->setTable(Post::class, 'averagePost')
+        ->setAVG('viewCount');
+    $averageViews->close();
+
     $query = $this->initQuery();
-
-    // Subquery per trovare la media dei view_count
-    $avgViewsQuery = $this->initQuery();
-    $avgViewsQuery->setColumns(['AVG(view_count)']);
-    $avgViewsQuery->close();
-
-    // Condizione con subquery
     $query->setWhere()
-          ->appendSubqueryCondition($avgViewsQuery, ComparisonOperator::greaterThan);
-
+        ->appendSubqueryCondition($averageViews, ComparisonOperator::less, 'post.view_count');
     $query->close();
+
     return $this->dataMapper->find($this->entityName, $query);
 }
 ```
 
-#### Subquery con EXISTS
-
-```php
-public function getPostsWithComments(): SismaCollection
-{
-    $query = $this->initQuery();
-
-    // Subquery per verificare esistenza commenti
-    $existsQuery = (new CommentModel($this->dataMapper))->initQuery();
-    $existsQuery->setColumns(['1'])
-               ->setWhere()
-               ->appendCondition('post_id', ComparisonOperator::equal, 'post.id');
-    $existsQuery->close();
-
-    $query->setWhere()
-          ->appendSubqueryCondition($existsQuery, ComparisonOperator::exists);
-
-    $query->close();
-    return $this->dataMapper->find($this->entityName, $query);
-}
+```sql
+SELECT `post`.* FROM `post`
+WHERE (SELECT AVG(`view_count`) FROM `post` as `average_post`) < post.view_count
 ```
+
+Il confronto di una colonna con una subquery come secondo termine, `IN` ed `EXISTS` con una subquery e le JOIN su una subquery non sono disponibili nella 11.x.
 
 ---
 

@@ -387,64 +387,63 @@ enum DataType
 
 #### Utilizzi nell'ORM
 
+`DataType` indica il tipo con cui legare i valori dei placeholder di una query. I valori si passano a `DataMapper::find()` (o a `getCount()`, `deleteBatch()` e a `select()` dell'adapter) in `$bindValues`, e i tipi corrispondenti in `$bindTypes`, nello stesso ordine:
+
 ```php
+use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
+use SismaFramework\Orm\Enumerations\Placeholder;
 
-// Mappatura automatica delle proprietà
-class EntityMapper {
-    public function mapProperty(\ReflectionProperty $property): DataType {
-        $type = $property->getType();
+class PostModel extends DependentModel
+{
+    public function getRecentPostsByAuthor(User $author, SismaDateTime $fromDate): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere()
+            ->appendCondition('author', ComparisonOperator::equal, Placeholder::placeholder, true)
+            ->appendAnd()
+            ->appendCondition('publishedAt', ComparisonOperator::greaterOrEqual, Placeholder::placeholder);
 
-        return match ($type->getName()) {
-            'bool' => DataType::typeBoolean,
-            'int' => DataType::typeInteger,
-            'string' => DataType::typeString,
-            'float' => DataType::typeDecimal,
-            'DateTime' => DataType::typeDate,
-            default => $this->isEntityClass($type->getName())
-                ? DataType::typeEntity
-                : DataType::typeGeneric,
-        };
-    }
-}
-
-// Generazione SQL basata sui tipi
-class SqlGenerator {
-    public function getColumnDefinition(DataType $dataType): string {
-        return match ($dataType) {
-            DataType::typeBoolean => 'BOOLEAN',
-            DataType::typeInteger => 'INT',
-            DataType::typeString => 'VARCHAR(255)',
-            DataType::typeDecimal => 'DECIMAL(10,2)',
-            DataType::typeDate => 'DATETIME',
-            DataType::typeBinary => 'BLOB',
-            default => 'TEXT',
-        };
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, [$author, $fromDate], [DataType::typeEntity, DataType::typeDate]);
     }
 }
 ```
+
+| Valore | `DataType` |
+|---|---|
+| `bool` | `typeBoolean` |
+| `int` | `typeInteger` |
+| `float` | `typeDecimal` |
+| `string` | `typeString` |
+| `null` | `typeNull` |
+| entità (chiave esterna) | `typeEntity` |
+| enumerazione | `typeEnumeration` |
+| `SismaDate`, `SismaDateTime`, `SismaTime` | `typeDate` |
+| dati binari | `typeBinary` |
 
 ### ComparisonOperator
 
 **Namespace:** `SismaFramework\Orm\Enumerations\ComparisonOperator`
 
-Operatori di confronto per le query dell'ORM.
+Operatori di confronto per le condizioni delle query. L'enumerazione non ha valori: l'operatore SQL si ottiene con `getAdapterVersion()`, in base all'adapter.
 
 ```php
-enum ComparisonOperator: string
+enum ComparisonOperator
 {
-    case equal = '=';
-    case notEqual = '!=';
-    case greaterThan = '>';
-    case lessThan = '<';
-    case greaterThanOrEqual = '>=';
-    case lessThanOrEqual = '<=';
-    case like = 'LIKE';
-    case notLike = 'NOT LIKE';
-    case in = 'IN';
-    case notIn = 'NOT IN';
-    case isNull = 'IS NULL';
-    case isNotNull = 'IS NOT NULL';
+    case against;        // AGAINST (ricerca fulltext)
+    case equal;          // =
+    case notEqual;       // <>
+    case greater;        // >
+    case less;           // <
+    case greaterOrEqual; // >=
+    case lessOrEqual;    // <=
+    case in;             // IN
+    case notIn;          // NOT IN
+    case like;           // LIKE
+    case notLike;        // NOT LIKE
+    case isNull;         // IS NULL
+    case isNotNull;      // IS NOT NULL
 }
 ```
 
@@ -453,82 +452,76 @@ enum ComparisonOperator: string
 ```php
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 
-// Query builder fluido
-class QueryBuilder {
-    public function where(string $column, ComparisonOperator $operator, mixed $value = null): self {
-        $condition = match ($operator) {
-            ComparisonOperator::isNull,
-            ComparisonOperator::isNotNull => "{$column} {$operator->value}",
-            ComparisonOperator::in,
-            ComparisonOperator::notIn => "{$column} {$operator->value} (" . implode(',', $value) . ")",
-            default => "{$column} {$operator->value} ?",
-        };
+class UserModel extends BaseModel
+{
+    public function getActiveAdultUsers(array $statuses): SismaCollection
+    {
+        $query = $this->initQuery();
+        $query->setWhere()
+            ->appendCondition('age', ComparisonOperator::greaterOrEqual, Placeholder::placeholder)
+            ->appendAnd()
+            ->appendCondition('status', ComparisonOperator::in, array_fill(0, count($statuses), Placeholder::placeholder))
+            ->appendAnd()
+            ->appendCondition('deletedAt', ComparisonOperator::isNull);
 
-        $this->conditions[] = $condition;
-        if ($value !== null && !in_array($operator, [ComparisonOperator::isNull, ComparisonOperator::isNotNull])) {
-            $this->parameters[] = $value;
-        }
+        $bindValues = [18, ...$statuses];
+        $bindTypes = [DataType::typeInteger, ...array_fill(0, count($statuses), DataType::typeString)];
 
-        return $this;
-    }
-}
-
-// Utilizzo
-$users = $queryBuilder
-    ->from('user')
-    ->where('age', ComparisonOperator::greaterThanOrEqual, 18)
-    ->where('status', ComparisonOperator::in, ['active', 'premium'])
-    ->where('deleted_at', ComparisonOperator::isNull)
-    ->get();
-
-// Search functionality
-class UserSearchService {
-    public function searchByName(string $searchTerm): array {
-        return $this->userModel
-            ->createQuery()
-            ->where('first_name', ComparisonOperator::like, "%{$searchTerm}%")
-            ->orWhere('last_name', ComparisonOperator::like, "%{$searchTerm}%")
-            ->execute();
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 }
 ```
+
+- `isNull` e `isNotNull` non hanno un valore da legare
+- `in` e `notIn` richiedono un placeholder per ogni valore
+- `against` è usato internamente dalle condizioni fulltext (`appendFulltextCondition()`)
 
 ### LogicalOperator
 
 **Namespace:** `SismaFramework\Orm\Enumerations\LogicalOperator`
 
-Operatori logici per combinare condizioni nelle query.
+Operatori logici per combinare le condizioni. L'enumerazione non ha valori: l'operatore SQL si ottiene con `getAdapterVersion()`.
 
 ```php
-enum LogicalOperator: string
+enum LogicalOperator
 {
-    case and = 'AND';
-    case or = 'OR';
-    case not = 'NOT';
+    case and; // AND
+    case or;  // OR
+    case not; // NOT
 }
 ```
 
 #### Utilizzi per Query Complesse
 
-```php
-use SismaFramework\Orm\Enumerations\LogicalOperator;
+Nel query builder gli operatori logici si inseriscono con `appendAnd()`, `appendOr()` e `appendNot()`, che usano `LogicalOperator` internamente, e le condizioni si raggruppano con `appendOpenBlock()` e `appendCloseBlock()`:
 
-class AdvancedQueryBuilder {
-    public function buildComplexQuery(): string {
-        // (age >= 18 AND status = 'active') OR (type = 'premium' AND verified = true)
-        return $this->group(function($query) {
-                return $query
-                    ->where('age', ComparisonOperator::greaterThanOrEqual, 18)
-                    ->combine(LogicalOperator::and)
-                    ->where('status', ComparisonOperator::equal, 'active');
-            })
-            ->combine(LogicalOperator::or)
-            ->group(function($query) {
-                return $query
-                    ->where('type', ComparisonOperator::equal, 'premium')
-                    ->combine(LogicalOperator::and)
-                    ->where('verified', ComparisonOperator::equal, true);
-            });
+```php
+class UserModel extends BaseModel
+{
+    public function getEligibleUsers(): SismaCollection
+    {
+        $query = $this->initQuery();
+
+        // (age >= ? AND status = ?) OR (type = ? AND verified = ?)
+        $query->setWhere()
+            ->appendOpenBlock()
+                ->appendCondition('age', ComparisonOperator::greaterOrEqual, Placeholder::placeholder)
+                ->appendAnd()
+                ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder)
+            ->appendCloseBlock()
+            ->appendOr()
+            ->appendOpenBlock()
+                ->appendCondition('type', ComparisonOperator::equal, Placeholder::placeholder)
+                ->appendAnd()
+                ->appendCondition('verified', ComparisonOperator::equal, Placeholder::placeholder)
+            ->appendCloseBlock();
+
+        $bindValues = [18, 'active', 'premium', true];
+        $bindTypes = [DataType::typeInteger, DataType::typeString, DataType::typeString, DataType::typeBoolean];
+
+        $query->close();
+        return $this->dataMapper->find($this->entityName, $query, $bindValues, $bindTypes);
     }
 }
 ```
