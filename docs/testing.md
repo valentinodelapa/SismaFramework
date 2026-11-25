@@ -1,31 +1,31 @@
 # Testing
 
-SismaFramework è progettato per supportare pratiche di testing robuste attraverso PHPUnit e fornisce strumenti specifici per testare tutti i componenti del framework. Questa guida copre configurazione, best practices e patterns comuni per i test.
+SismaFramework è testato con PHPUnit, e la stessa impostazione si usa per i test delle applicazioni. Questa guida descrive la struttura della suite del framework e i pattern per testare i componenti di un'applicazione: helper, entità, query, model, form, voter e integrazione con il database.
 
 ## Panoramica del Testing
 
-SismaFramework supporta diversi tipi di test:
-
-- **Unit Tests**: Test di singole classi e metodi
-- **Integration Tests**: Test di interazione tra componenti
-- **Functional Tests**: Test di funzionalità end-to-end
-- **Database Tests**: Test specifici per l'ORM e DataMapper
+- **Unit test**: verificano una classe isolando le sue dipendenze. Il framework permette di sostituire configurazione, adapter del database e `DataMapper` con stub e mock di PHPUnit, quindi la maggior parte dei test non richiede un database.
+- **Test di integrazione**: eseguono query reali su un database di test. L'ORM supporta MySQL/MariaDB: non esiste un adapter in memoria.
 
 ## Struttura dei Test
 
+La suite del framework è organizzata come i sorgenti, con un modulo di supporto, `TestsApplication`, che contiene entità, model, form, voter e fixture usati dai test:
+
 ```
 Tests/
-├── bootstrap.php              # Bootstrap per i test
+├── bootstrap.php              # Autoload di Composer e del framework
 ├── Config/
-│   └── config.php            # Configurazione test
+│   └── config.php            # Mappe di autoload per i test
+├── Console/
 ├── Core/
-│   ├── BaseClasses/          # Test classi base
-│   ├── HelperClasses/        # Test helper
-│   └── CustomTypes/          # Test tipi personalizzati
 ├── Orm/
-│   ├── HelperClasses/        # Test ORM
-│   └── BaseClasses/          # Test entità e modelli
-└── Security/                 # Test componenti sicurezza
+└── Security/
+TestsApplication/
+├── Entities/
+├── Forms/
+├── Models/
+├── Voters/
+└── ...
 ```
 
 ---
@@ -34,83 +34,73 @@ Tests/
 
 ### Bootstrap File
 
-Il file `Tests/bootstrap.php` configura l'autoloader per i test:
+`Tests/bootstrap.php` carica l'autoload di Composer (per PHPUnit) e registra l'autoloader che risolve le classi a partire dalla cartella che contiene il framework:
 
 ```php
 <?php
-// Tests/bootstrap.php
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
+error_reporting(-1);
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
 spl_autoload_register(function (string $className) {
-    $actualClassPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR .
-                      str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
+    $actualClassPath = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php';
     if (file_exists($actualClassPath)) {
         require_once($actualClassPath);
     }
 });
 ```
 
-### Configurazione Test
+### Configurazione nei Test
 
-Creare un file di configurazione specifico per i test:
+I componenti del framework leggono la configurazione da `Config::getInstance()`, e la maggior parte accetta anche un `Config` nel costruttore. Nei test si sostituisce la configurazione con uno stub che restituisce solo i valori necessari, e lo si registra con `Config::setInstance()` per i componenti che usano l'istanza globale:
 
 ```php
-<?php
-// Tests/Config/config.php
+use PHPUnit\Framework\TestCase;
+use SismaFramework\Core\HelperClasses\Config;
 
-// Database di test
-const DATABASE_HOST = 'localhost';
-const DATABASE_NAME = 'sisma_test';
-const DATABASE_USERNAME = 'test_user';
-const DATABASE_PASSWORD = 'test_password';
+class PostTest extends TestCase
+{
+    private Config $configStub;
 
-// Ambiente di test
-const DEVELOPMENT_ENVIRONMENT = true;
-const LOG_ERRORS = false;
-
-// Moduli per test
-const MODULE_FOLDERS = ['TestsApplication'];
-
-// Fixtures
-const FIXTURES = 'fixtures';
+    protected function setUp(): void
+    {
+        $this->configStub = $this->createStub(Config::class);
+        $this->configStub->method('__get')
+            ->willReturnMap([
+                ['defaultPrimaryKeyPropertyName', 'id'],
+                ['ormCache', false],
+            ]);
+        Config::setInstance($this->configStub);
+    }
+}
 ```
+
+Le chiavi sono i nomi delle costanti di `Config/config.php` in camelCase (`DEFAULT_PRIMARY_KEY_PROPERTY_NAME` → `defaultPrimaryKeyPropertyName`).
 
 ### PHPUnit Configuration
 
-Creare `phpunit.xml` nella root del progetto:
+La configurazione di PHPUnit del framework (`phpunit.xml`) usa il bootstrap e raccoglie in un'unica suite i test delle cartelle `Tests/Console`, `Tests/Core`, `Tests/Orm` e `Tests/Security`. Per un'applicazione la struttura è analoga:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="Tests/bootstrap.php"
-         cacheResult="false"
          colors="true">
     <testsuites>
-        <testsuite name="Core">
-            <directory>Tests/Core</directory>
-        </testsuite>
-        <testsuite name="ORM">
-            <directory>Tests/Orm</directory>
-        </testsuite>
-        <testsuite name="Security">
-            <directory>Tests/Security</directory>
+        <testsuite name="Blog">
+            <directory suffix="Test.php">./Tests/Blog</directory>
         </testsuite>
     </testsuites>
 
-    <coverage>
-        <include>
-            <directory suffix=".php">./Core</directory>
-            <directory suffix=".php">./Orm</directory>
-            <directory suffix=".php">./Security</directory>
-        </include>
-        <exclude>
-            <directory>./Tests</directory>
-            <directory>./vendor</directory>
-        </exclude>
-    </coverage>
-
     <php>
-        <env name="DB_CONNECTION" value="testing"/>
+        <!-- Solo per i test di integrazione: Config/config.php legge le credenziali del database dalle variabili d'ambiente -->
+        <env name="DATABASE_HOST" value="localhost"/>
+        <env name="DATABASE_NAME" value="blog_test"/>
+        <env name="DATABASE_USERNAME" value="test_user"/>
+        <env name="DATABASE_PASSWORD" value="test_password"/>
+        <env name="DATABASE_PORT" value="3306"/>
     </php>
 </phpunit>
 ```
@@ -125,6 +115,7 @@ Creare `phpunit.xml` nella root del progetto:
 <?php
 namespace SismaFramework\Tests\Core\HelperClasses;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\NotationManager;
 
@@ -132,27 +123,15 @@ class NotationManagerTest extends TestCase
 {
     public function testConvertToKebabCase(): void
     {
-        $input = 'UserProfileController';
-        $expected = 'user-profile-controller';
-
-        $result = NotationManager::convertToKebabCase($input);
-
-        $this->assertEquals($expected, $result);
+        $this->assertEquals('user-profile-controller', NotationManager::convertToKebabCase('UserProfileController'));
     }
 
     public function testConvertToCamelCase(): void
     {
-        $input = 'user-profile-action';
-        $expected = 'userProfileAction';
-
-        $result = NotationManager::convertToCamelCase($input);
-
-        $this->assertEquals($expected, $result);
+        $this->assertEquals('userProfileAction', NotationManager::convertToCamelCase('user-profile-action'));
     }
 
-    /**
-     * @dataProvider conversionProvider
-     */
+    #[DataProvider('conversionProvider')]
     public function testMultipleConversions(string $input, string $expectedKebab, string $expectedCamel): void
     {
         $this->assertEquals($expectedKebab, NotationManager::convertToKebabCase($input));
@@ -178,7 +157,6 @@ namespace SismaFramework\Tests\Core\CustomTypes;
 
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\CustomTypes\FormFilterError;
-use SismaFramework\Core\CustomTypes\FormFilterErrorCollection;
 
 class FormFilterErrorTest extends TestCase
 {
@@ -198,10 +176,9 @@ class FormFilterErrorTest extends TestCase
 
     public function testSetAndGetCustomMessage(): void
     {
-        $message = 'Username is required';
-        $this->formError->usernameCustomMessage = $message;
+        $this->formError->usernameCustomMessage = 'Username is required';
 
-        $this->assertEquals($message, $this->formError->usernameCustomMessage);
+        $this->assertEquals('Username is required', $this->formError->usernameCustomMessage);
     }
 
     public function testGetErrorsToArray(): void
@@ -210,23 +187,17 @@ class FormFilterErrorTest extends TestCase
         $this->formError->usernameCustomMessage = 'Username required';
         $this->formError->emailError = false;
 
-        $expected = [
+        $this->assertEquals([
             'usernameError' => true,
-            'usernameCustomMessage' => 'Username required',
             'emailError' => false,
-        ];
-
-        $result = $this->formError->getErrorsToArray();
-
-        $this->assertEquals($expected, $result);
+            'usernameCustomMessage' => 'Username required',
+        ], $this->formError->getErrorsToArray());
     }
 
     public function testAutoCreateFormFilterError(): void
     {
-        // Accesso a proprietà inesistente deve creare FormFilterError vuoto
-        $result = $this->formError->nonExistentField;
-
-        $this->assertInstanceOf(FormFilterError::class, $result);
+        // Una proprietà senza suffisso è il form annidato omonimo: se non esiste, restituisce un FormFilterError vuoto
+        $this->assertInstanceOf(FormFilterError::class, $this->formError->nonExistentField);
     }
 }
 ```
@@ -237,368 +208,112 @@ class FormFilterErrorTest extends TestCase
 
 ### Test di Entità
 
+Le entità ricevono `DataMapper`, `ProcessedEntitiesCollection` e `Config` nel costruttore, tutti facoltativi. Le proprietà si leggono e si scrivono direttamente:
+
 ```php
-<?php
-namespace SismaFramework\Tests\Orm\BaseClasses;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+use Blog\Application\Entities\Post;
 
-use PHPUnit\Framework\TestCase;
-use SismaFramework\TestsApplication\Entities\BaseSample;
-
-class BaseEntityTest extends TestCase
+public function testModifiedFlag(): void
 {
-    private BaseSample $entity;
+    $post = new Post($this->createStub(DataMapper::class), null, $this->configStub);
+    $this->assertFalse($post->modified);
 
-    protected function setUp(): void
-    {
-        $this->entity = new BaseSample();
-    }
+    $post->title = 'Nuovo titolo';
 
-    public function testSetAndGetId(): void
-    {
-        $id = 123;
-        $this->entity->setId($id);
-
-        $this->assertEquals($id, $this->entity->getId());
-    }
-
-    public function testEntityInitialization(): void
-    {
-        $this->assertNull($this->entity->getId());
-        $this->assertInstanceOf(BaseSample::class, $this->entity);
-    }
-
-    public function testPropertyTypes(): void
-    {
-        $reflection = new \ReflectionClass($this->entity);
-        $properties = $reflection->getProperties();
-
-        foreach ($properties as $property) {
-            $type = $property->getType();
-            $this->assertNotNull($type, "Property {$property->getName()} should have a type");
-        }
-    }
+    $this->assertTrue($post->modified);
+    $this->assertSame('Nuovo titolo', $post->title);
 }
 ```
 
 ### Test di Query Builder
 
-```php
-<?php
-namespace SismaFramework\Tests\Orm\HelperClasses;
+`AdapterMysql` genera l'SQL senza aprire la connessione, che viene stabilita solo alla prima esecuzione: le query si possono verificare confrontando il testo generato.
 
+```php
 use PHPUnit\Framework\TestCase;
-use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\Adapters\AdapterMysql;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
+use SismaFramework\Orm\Enumerations\Placeholder;
+use SismaFramework\Orm\HelperClasses\Query;
 
-class QueryTest extends TestCase
+class PostQueryTest extends TestCase
 {
-    private $adapterMock;
-    private Query $query;
-
-    protected function setUp(): void
+    public function testSelectWithCondition(): void
     {
-        $this->adapterMock = $this->createMock(BaseAdapter::class);
-        $this->query = new Query($this->adapterMock);
-    }
+        $adapter = new AdapterMysql();
+        $query = new Query($adapter);
+        $query->setTable('post')
+            ->setWhere()
+            ->appendCondition('status', ComparisonOperator::equal, Placeholder::placeholder);
+        $query->close();
 
-    public function testSelectDistinct(): void
-    {
-        $this->adapterMock->expects($this->once())
-            ->method('allColumns')
-            ->willReturn('*');
-
-        $this->adapterMock->expects($this->once())
-            ->method('parseSelect')
-            ->with(true, ['*'], '', [], [], [], [], 0, 0);
-
-        $this->query->setDistinct()->close();
-
-        $this->assertEquals('', $this->query->getCommandToExecute());
-    }
-
-    public function testSelectCount(): void
-    {
-        $this->adapterMock->expects($this->once())
-            ->method('opCOUNT')
-            ->with('id')
-            ->willReturn('COUNT(id)');
-
-        $this->query->setCount('id')->close();
-
-        $this->assertEquals('', $this->query->getCommandToExecute());
-    }
-
-    public function testWhereCondition(): void
-    {
-        $this->adapterMock->expects($this->once())
-            ->method('parseWhere')
-            ->with(['name = ?'], ['John']);
-
-        $this->query
-            ->where('name', ComparisonOperator::equal, 'John')
-            ->close();
+        $this->assertSame('SELECT `post`.* FROM `post` WHERE `post`.`status` = ? ', $query->getCommandToExecute());
     }
 }
 ```
 
-### Test di DataMapper
+### Test di Model e DataMapper
+
+Per isolare il database si sostituisce l'adapter con un mock: `BaseAdapter::setDefault()` lo rende l'adapter delle query create durante il test, e lo si passa anche al `DataMapper`.
 
 ```php
-<?php
-namespace SismaFramework\Tests\Orm\HelperClasses;
-
-use PHPUnit\Framework\TestCase;
+use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\TestsApplication\Entities\BaseSample;
-use SismaFramework\TestsApplication\Models\BaseSampleModel;
+use Blog\Application\Models\PostModel;
 
-class DataMapperTest extends TestCase
+public function testGetEntityCollectionWithoutResults(): void
 {
-    private DataMapper $dataMapper;
-    private \PDO $pdoMock;
+    $adapterMock = $this->createMock(BaseAdapter::class);
+    BaseAdapter::setDefault($adapterMock);
+    $adapterMock->expects($this->once())
+        ->method('select')
+        ->willReturn(null);
 
-    protected function setUp(): void
-    {
-        $this->pdoMock = $this->createMock(\PDO::class);
-        $this->dataMapper = new DataMapper();
+    $postModel = new PostModel(new DataMapper($adapterMock, null, $this->configStub), $this->configStub);
+    $posts = $postModel->getEntityCollection();
 
-        // Inject mock PDO se necessario
-        $reflection = new \ReflectionClass($this->dataMapper);
-        $property = $reflection->getProperty('pdo');
-        $property->setAccessible(true);
-        $property->setValue($this->dataMapper, $this->pdoMock);
-    }
-
-    public function testSaveNewEntity(): void
-    {
-        $entity = new BaseSample();
-        $entity->setName('Test Entity');
-
-        $statementMock = $this->createMock(\PDOStatement::class);
-        $statementMock->expects($this->once())
-            ->method('execute')
-            ->willReturn(true);
-
-        $this->pdoMock->expects($this->once())
-            ->method('prepare')
-            ->willReturn($statementMock);
-
-        $this->pdoMock->expects($this->once())
-            ->method('lastInsertId')
-            ->willReturn('1');
-
-        $result = $this->dataMapper->save($entity);
-
-        $this->assertTrue($result);
-        $this->assertEquals(1, $entity->getId());
-    }
-
-    public function testFindById(): void
-    {
-        $model = new BaseSampleModel($this->dataMapper);
-
-        $statementMock = $this->createMock(\PDOStatement::class);
-        $statementMock->expects($this->once())
-            ->method('execute')
-            ->with([1])
-            ->willReturn(true);
-
-        $statementMock->expects($this->once())
-            ->method('fetch')
-            ->willReturn([
-                'id' => 1,
-                'name' => 'Test Entity'
-            ]);
-
-        $this->pdoMock->expects($this->once())
-            ->method('prepare')
-            ->willReturn($statementMock);
-
-        $result = $model->find(1);
-
-        $this->assertInstanceOf(BaseSample::class, $result);
-        $this->assertEquals(1, $result->getId());
-        $this->assertEquals('Test Entity', $result->getName());
-    }
+    $this->assertInstanceOf(SismaCollection::class, $posts);
+    $this->assertCount(0, $posts);
 }
 ```
+
+Allo stesso modo, un mock che si aspetta `execute()` verifica i salvataggi di `DataMapper::save()` e le cancellazioni di `delete()`. Per restituire entità, `select()` restituisce un mock di `BaseResultSet`, che è un `Iterator`.
 
 ---
 
 ## Testing dei Controller
 
-### Test di Controller Base
-
-```php
-<?php
-namespace SismaFramework\Tests\Core\BaseClasses;
-
-use PHPUnit\Framework\TestCase;
-use SismaFramework\Core\BaseClasses\BaseController;
-use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\TestsApplication\Controllers\SampleController;
-
-class BaseControllerTest extends TestCase
-{
-    private SampleController $controller;
-    private DataMapper $dataMapperMock;
-
-    protected function setUp(): void
-    {
-        $this->dataMapperMock = $this->createMock(DataMapper::class);
-        $this->controller = new SampleController($this->dataMapperMock);
-    }
-
-    public function testControllerInitialization(): void
-    {
-        $this->assertInstanceOf(BaseController::class, $this->controller);
-
-        // Verificare che le variabili di base siano impostate
-        $reflection = new \ReflectionClass($this->controller);
-        $varsProperty = $reflection->getProperty('vars');
-        $varsProperty->setAccessible(true);
-        $vars = $varsProperty->getValue($this->controller);
-
-        $this->assertArrayHasKey('controllerUrl', $vars);
-        $this->assertArrayHasKey('actionUrl', $vars);
-        $this->assertArrayHasKey('rootUrl', $vars);
-    }
-
-    public function testDataMapperInjection(): void
-    {
-        $reflection = new \ReflectionClass($this->controller);
-        $dataMapperProperty = $reflection->getProperty('dataMapper');
-        $dataMapperProperty->setAccessible(true);
-        $dataMapper = $dataMapperProperty->getValue($this->controller);
-
-        $this->assertSame($this->dataMapperMock, $dataMapper);
-    }
-}
-```
-
-### Test Funzionali con Action
-
-```php
-<?php
-namespace SismaFramework\Tests\Functional;
-
-use PHPUnit\Framework\TestCase;
-use SismaFramework\TestsApplication\Controllers\SampleController;
-use SismaFramework\Core\HttpClasses\Request;
-use SismaFramework\Core\HttpClasses\Response;
-
-class ControllerActionTest extends TestCase
-{
-    private SampleController $controller;
-
-    protected function setUp(): void
-    {
-        $this->controller = new SampleController();
-    }
-
-    public function testIndexAction(): void
-    {
-        // Simulare una richiesta GET
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $_SERVER['REQUEST_URI'] = '/sample/index';
-
-        // Mock output buffering per catturare la vista
-        ob_start();
-        $response = $this->controller->index();
-        $output = ob_get_clean();
-
-        $this->assertInstanceOf(Response::class, $response);
-        $this->assertStringContainsString('Sample', $output);
-    }
-
-    public function testActionWithParameters(): void
-    {
-        $testId = 123;
-
-        // Test action che accetta parametri
-        $response = $this->controller->show($testId);
-
-        $this->assertInstanceOf(Response::class, $response);
-    }
-}
-```
+Le action generano la risposta con `RenderService`, che include le viste dei moduli registrati e stampa l'output: per testarle servono la struttura dei moduli e una configurazione completa. Conviene quindi tenere la logica nei model, nei form e nei servizi, testati come negli esempi di questa guida, e lasciare ai controller il solo coordinamento. La suite del framework verifica il dispatch completo di una richiesta in `Tests/Core/HelperClasses/DispatcherTest.php`, simulando la richiesta tramite `$_SERVER`.
 
 ---
 
 ## Testing dei Form
 
-### Test di Validazione Form
+Il form riceve una `Request`, il cui array `input` contiene i dati inviati. Nei test lo si valorizza direttamente:
 
 ```php
-<?php
-namespace SismaFramework\Tests\Core\BaseClasses;
+use SismaFramework\Core\HttpClasses\Request;
+use SismaFramework\Orm\HelperClasses\DataMapper;
+use Blog\Application\Forms\PostForm;
 
-use PHPUnit\Framework\TestCase;
-use SismaFramework\TestsApplication\Forms\BaseSampleForm;
-use SismaFramework\TestsApplication\Entities\BaseSample;
-use SismaFramework\Core\CustomTypes\FormFilterError;
-
-class FormValidationTest extends TestCase
+public function testShortContentIsRejected(): void
 {
-    private BaseSampleForm $form;
-    private BaseSample $entity;
+    $request = new Request();
+    $request->input = [
+        'title' => 'Titolo valido',
+        'content' => 'Breve',
+        'submitted' => '1',
+    ];
 
-    protected function setUp(): void
-    {
-        $this->entity = new BaseSample();
-        $this->form = new BaseSampleForm($this->entity);
-    }
+    $form = new PostForm(null, $this->createStub(DataMapper::class));
+    $form->handleRequest($request);
 
-    public function testValidForm(): void
-    {
-        // Simulare dati validi
-        $_POST = [
-            'name' => 'Valid Name',
-            'email' => 'valid@example.com'
-        ];
-
-        $this->form->handleRequest();
-
-        $this->assertTrue($this->form->isValid());
-        $this->assertTrue($this->form->isSubmitted());
-    }
-
-    public function testInvalidForm(): void
-    {
-        // Simulare dati non validi
-        $_POST = [
-            'name' => '', // Nome vuoto
-            'email' => 'invalid-email' // Email non valida
-        ];
-
-        $this->form->handleRequest();
-
-        $this->assertFalse($this->form->isValid());
-
-        $errors = $this->form->getErrors();
-        $this->assertInstanceOf(FormFilterError::class, $errors);
-
-        // Verificare errori specifici
-        $this->assertTrue($errors->nameError);
-        $this->assertTrue($errors->emailError);
-    }
-
-    public function testCSRFProtection(): void
-    {
-        // Simulare richiesta senza token CSRF
-        $_POST = [
-            'name' => 'Test Name'
-            // Manca csrf_token
-        ];
-
-        $this->form->handleRequest();
-
-        $this->assertFalse($this->form->isValid());
-
-        $errors = $this->form->getErrors();
-        $this->assertTrue($errors->csrfError);
-    }
+    $this->assertTrue($form->isSubmitted());
+    $this->assertFalse($form->isValid());
+    $this->assertTrue($form->getFilterErrors()->contentError);
+    $this->assertFalse($form->getFilterErrors()->titleError);
 }
 ```
 
@@ -608,231 +323,109 @@ class FormValidationTest extends TestCase
 
 ### Test di Voter
 
+`isAllowed()` crea il Voter, gli passa soggetto, tipo di accesso e utente e restituisce il risultato di `checkVote()`:
+
 ```php
-<?php
-namespace SismaFramework\Tests\Security;
-
-use PHPUnit\Framework\TestCase;
-use SismaFramework\Security\BaseClasses\BaseVoter;
-use SismaFramework\Security\BaseClasses\BasePermission;
+use SismaFramework\Orm\HelperClasses\DataMapper;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
-use SismaFramework\TestsApplication\Entities\BaseSample;
+use Blog\Application\Entities\Post;
+use Blog\Application\Entities\User;
+use Blog\Application\Voters\PostVoter;
 
-class VoterTest extends TestCase
+public function testAuthorCanEdit(): void
 {
-    private BaseVoter $voter;
-    private BasePermission $permission;
+    $dataMapperStub = $this->createStub(DataMapper::class);
+    $author = new User($dataMapperStub, null, $this->configStub);
+    $author->id = 1;
+    $post = new Post($dataMapperStub, null, $this->configStub);
+    $post->author = $author;
 
-    protected function setUp(): void
-    {
-        $this->voter = new class extends BaseVoter {
-            public function vote(BasePermission $permission, $subject = null): AccessControlEntry {
-                if ($subject instanceof BaseSample) {
-                    return match ($permission->getAction()) {
-                        'view' => AccessControlEntry::allow,
-                        'edit' => $this->getCurrentUser()->getId() === $subject->getOwnerId()
-                            ? AccessControlEntry::allow
-                            : AccessControlEntry::deny,
-                        default => AccessControlEntry::deny,
-                    };
-                }
+    $this->assertTrue(PostVoter::isAllowed($post, AccessControlEntry::check, $author));
+}
 
-                return AccessControlEntry::deny;
-            }
+public function testOtherUserCannotEdit(): void
+{
+    $dataMapperStub = $this->createStub(DataMapper::class);
+    $author = new User($dataMapperStub, null, $this->configStub);
+    $author->id = 1;
+    $otherUser = new User($dataMapperStub, null, $this->configStub);
+    $otherUser->id = 2;
+    $post = new Post($dataMapperStub, null, $this->configStub);
+    $post->author = $author;
 
-            protected function getCurrentUser() {
-                // Mock user per test
-                return (object)['id' => 1];
-            }
-        };
-
-        $this->permission = new class extends BasePermission {
-            private string $action;
-
-            public function __construct(string $action) {
-                $this->action = $action;
-            }
-
-            public function getAction(): string {
-                return $this->action;
-            }
-        };
-    }
-
-    public function testViewPermissionAllowed(): void
-    {
-        $entity = new BaseSample();
-        $permission = new $this->permission('view');
-
-        $result = $this->voter->vote($permission, $entity);
-
-        $this->assertEquals(AccessControlEntry::allow, $result);
-    }
-
-    public function testEditPermissionForOwner(): void
-    {
-        $entity = new BaseSample();
-        $entity->setOwnerId(1); // Stesso ID dell'user mocckato
-
-        $permission = new $this->permission('edit');
-
-        $result = $this->voter->vote($permission, $entity);
-
-        $this->assertEquals(AccessControlEntry::allow, $result);
-    }
-
-    public function testEditPermissionForNonOwner(): void
-    {
-        $entity = new BaseSample();
-        $entity->setOwnerId(2); // ID diverso dall'user mockato
-
-        $permission = new $this->permission('edit');
-
-        $result = $this->voter->vote($permission, $entity);
-
-        $this->assertEquals(AccessControlEntry::deny, $result);
-    }
+    $this->assertFalse(PostVoter::isAllowed($post, AccessControlEntry::check, $otherUser));
 }
 ```
+
+Le Permission si testano allo stesso modo, verificando che `isAllowed()` sollevi `AccessDeniedException` quando il Voter risponde `false`.
 
 ---
 
 ## Database Testing
 
-### Test con Database In-Memory
+I test di integrazione usano un database MySQL/MariaDB dedicato, con le tabelle dell'applicazione. `Config/config.php` legge le credenziali dalle variabili d'ambiente `DATABASE_*`, che si impostano nella sezione `<php>` di `phpunit.xml` come nell'esempio sopra. Questi test usano la configurazione reale, senza stub.
 
 ```php
-<?php
-namespace SismaFramework\Tests\Database;
-
 use PHPUnit\Framework\TestCase;
+use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\Orm\HelperClasses\DataMapper;
-use SismaFramework\TestsApplication\Entities\BaseSample;
-use SismaFramework\TestsApplication\Models\BaseSampleModel;
+use Blog\Application\Entities\Post;
+use Blog\Application\Entities\User;
+use Blog\Application\Models\PostModel;
 
-class DatabaseIntegrationTest extends TestCase
+class PostIntegrationTest extends TestCase
 {
     private DataMapper $dataMapper;
-    private \PDO $pdo;
+    private User $author;
 
     protected function setUp(): void
     {
-        // Creare database SQLite in-memory per i test
-        $this->pdo = new \PDO('sqlite::memory:');
-        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-        // Creare tabelle di test
-        $this->createTestTables();
-
         $this->dataMapper = new DataMapper();
-        // Inject PDO di test
-        $reflection = new \ReflectionClass($this->dataMapper);
-        $property = $reflection->getProperty('pdo');
-        $property->setAccessible(true);
-        $property->setValue($this->dataMapper, $this->pdo);
+        $this->author = new User($this->dataMapper);
+        $this->author->username = 'Autore di prova';
+        $this->author->email = 'autore@example.com';
+        $this->dataMapper->save($this->author);
     }
 
-    private function createTestTables(): void
+    protected function tearDown(): void
     {
-        $sql = "
-            CREATE TABLE base_sample (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name VARCHAR(255) NOT NULL,
-                description TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )
-        ";
-
-        $this->pdo->exec($sql);
+        $this->dataMapper->delete($this->author);
     }
 
     public function testSaveAndRetrieve(): void
     {
-        $entity = new BaseSample();
-        $entity->setName('Test Entity');
-        $entity->setDescription('Test Description');
+        $post = new Post($this->dataMapper);
+        $post->title = 'Test';
+        $post->content = 'Contenuto di prova';
+        $post->publicationDate = new SismaDateTime();
+        $post->author = $this->author;
 
-        // Salvare entità
-        $result = $this->dataMapper->save($entity);
-        $this->assertTrue($result);
-        $this->assertNotNull($entity->getId());
+        $this->assertTrue($this->dataMapper->save($post));
+        $this->assertGreaterThan(0, $post->id);
 
-        // Recuperare entità
-        $model = new BaseSampleModel($this->dataMapper);
-        $retrieved = $model->find($entity->getId());
+        $retrieved = (new PostModel($this->dataMapper))->getEntityById($post->id);
+        $this->assertSame('Test', $retrieved->title);
 
-        $this->assertInstanceOf(BaseSample::class, $retrieved);
-        $this->assertEquals($entity->getName(), $retrieved->getName());
-        $this->assertEquals($entity->getDescription(), $retrieved->getDescription());
-    }
-
-    public function testQuery(): void
-    {
-        // Inserire dati di test
-        $entities = [
-            ['name' => 'Entity 1', 'description' => 'First entity'],
-            ['name' => 'Entity 2', 'description' => 'Second entity'],
-            ['name' => 'Entity 3', 'description' => 'Third entity'],
-        ];
-
-        foreach ($entities as $data) {
-            $entity = new BaseSample();
-            $entity->setName($data['name']);
-            $entity->setDescription($data['description']);
-            $this->dataMapper->save($entity);
-        }
-
-        // Testare query
-        $model = new BaseSampleModel($this->dataMapper);
-        $results = $model->findAll();
-
-        $this->assertCount(3, $results);
-        $this->assertEquals('Entity 1', $results[0]->getName());
+        $this->dataMapper->delete($post);
     }
 }
 ```
+
+Ogni test deve lasciare il database come l'ha trovato, cancellando le righe che ha creato. Con `ORM_CACHE` attivo, `getEntityById()` restituisce l'istanza già in memoria: per verificare quanto scritto nel database si svuota la cache con `Cache::clearEntityCache()`.
 
 ---
 
 ## Test con Fixtures
 
-### Setup con Data Fixtures
+Le [fixture](data-fixtures.md) popolano il database di test con dati noti. `FixturesManager` esegue tutte le fixture dei moduli registrati, nell'ordine delle dipendenze:
 
 ```php
-<?php
-namespace SismaFramework\Tests\Fixtures;
-
-use PHPUnit\Framework\TestCase;
 use SismaFramework\Console\Services\Fixtures\FixturesManager;
 use SismaFramework\Orm\HelperClasses\DataMapper;
 
-class FixtureTest extends TestCase
+public static function setUpBeforeClass(): void
 {
-    private DataMapper $dataMapper;
-    private FixturesManager $fixturesManager;
-
-    protected function setUp(): void
-    {
-        $this->dataMapper = new DataMapper();
-        $this->fixturesManager = new FixturesManager($this->dataMapper);
-
-        // Caricare fixtures di test
-        $this->fixturesManager->run();
-    }
-
-    public function testFixturesLoaded(): void
-    {
-        $this->assertTrue($this->fixturesManager->extecuted());
-    }
-
-    public function testDataFromFixtures(): void
-    {
-        $model = new BaseSampleModel($this->dataMapper);
-        $entities = $model->findAll();
-
-        // Verificare che le fixtures abbiano caricato i dati
-        $this->assertGreaterThan(0, count($entities));
-    }
+    (new FixturesManager(new DataMapper()))->run();
 }
 ```
 
@@ -843,77 +436,48 @@ class FixtureTest extends TestCase
 ### 1. Organizzazione dei Test
 
 ```php
-// Struttura consigliata per i test
-class UserServiceTest extends TestCase
+use PHPUnit\Framework\Attributes\DataProvider;
+
+class PostServiceTest extends TestCase
 {
-    // Setup e teardown
     protected function setUp(): void { }
-    protected function tearDown(): void { }
 
     // Test di successo
-    public function testCreateUserSuccess(): void { }
+    public function testPublishSuccess(): void { }
 
     // Test di errore
-    public function testCreateUserWithInvalidData(): void { }
+    public function testPublishWithoutTitle(): void { }
 
     // Test con data provider
-    /**
-     * @dataProvider userDataProvider
-     */
-    public function testUserValidation(array $data, bool $expected): void { }
+    #[DataProvider('statusProvider')]
+    public function testStatusTransition(PostStatus $from, PostStatus $to, bool $expected): void { }
 
-    // Data provider
-    public static function userDataProvider(): array { }
+    public static function statusProvider(): array { }
 }
 ```
 
 ### 2. Mocking Efficace
 
+Le classi del framework ricevono le dipendenze nel costruttore, con un default: nei test si passano stub e mock.
+
 ```php
-class ServiceTest extends TestCase
+public function testPublishSavesPost(): void
 {
-    public function testServiceWithMocks(): void
-    {
-        // Mock delle dipendenze
-        $repositoryMock = $this->createMock(UserRepository::class);
-        $repositoryMock->expects($this->once())
-            ->method('save')
-            ->with($this->isInstanceOf(User::class))
-            ->willReturn(true);
+    $dataMapperMock = $this->createMock(DataMapper::class);
+    $dataMapperMock->expects($this->once())
+        ->method('save')
+        ->with($this->isInstanceOf(Post::class))
+        ->willReturn(true);
 
-        // Inject mock nel servizio
-        $service = new UserService($repositoryMock);
+    $service = new PostPublisher($dataMapperMock);
 
-        // Test del comportamento
-        $result = $service->createUser(['name' => 'Test']);
-        $this->assertTrue($result);
-    }
+    $this->assertTrue($service->publish($this->post));
 }
 ```
 
-### 3. Test di Integrazione
+### 3. Stato Globale
 
-```php
-class IntegrationTest extends TestCase
-{
-    use DatabaseTransactions; // Rollback automatico
-
-    public function testCompleteWorkflow(): void
-    {
-        // Test end-to-end che verifica l'intera catena
-        $response = $this->makeRequest('POST', '/users', [
-            'name' => 'Test User',
-            'email' => 'test@example.com'
-        ]);
-
-        $this->assertEquals(201, $response->getStatusCode());
-
-        // Verificare che l'utente sia stato creato nel database
-        $user = $this->userRepository->findByEmail('test@example.com');
-        $this->assertNotNull($user);
-    }
-}
-```
+`Config`, l'adapter di default, la cache delle entità (`Cache`) e la sessione (`$_SESSION`) sono condivisi tra i test: ogni test che li modifica deve impostarli nel proprio `setUp()`, così che l'ordine di esecuzione non influisca sui risultati.
 
 ---
 
@@ -928,11 +492,8 @@ vendor/bin/phpunit
 # Test specifici
 vendor/bin/phpunit Tests/Core/HelperClasses/NotationManagerTest.php
 
-# Test con coverage
+# Test con coverage (richiede Xdebug o PCOV)
 vendor/bin/phpunit --coverage-html coverage/
-
-# Test per suite specifica
-vendor/bin/phpunit --testsuite Core
 
 # Test con filtro
 vendor/bin/phpunit --filter testConvertToKebabCase
@@ -941,20 +502,19 @@ vendor/bin/phpunit --filter testConvertToKebabCase
 ### Debug dei Test
 
 ```php
-// Aggiungere debug nei test
-class DebugTest extends TestCase
+public function testWithDebug(): void
 {
-    public function testWithDebug(): void
-    {
-        $result = $this->someMethod();
+    $result = NotationManager::convertToKebabCase('UserProfile');
 
-        // Output di debug durante i test
-        var_dump($result);
-        $this->expectOutputString('Expected output');
+    // Assertions con messaggi custom
+    $this->assertEquals('user-profile', $result, 'Conversione in kebab-case errata');
+}
 
-        // Assertions con messaggi custom
-        $this->assertEquals($expected, $result, 'Custom error message');
-    }
+public function testOutput(): void
+{
+    // Verifica dell'output prodotto dal codice testato
+    $this->expectOutputString('Expected output');
+    echo 'Expected output';
 }
 ```
 

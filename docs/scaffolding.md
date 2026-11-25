@@ -33,7 +33,7 @@ Il sistema di scaffolding analizza ogni proprietà dell'entità tramite **Reflec
 
 ### Gestione Proprietà Nullable
 
-Se una proprietà è dichiarata **nullable** (es. `?string`, `?int`), il sistema aggiunge automaticamente il flag `true` come terzo parametro del filtro per permettere valori nulli:
+Se una proprietà è dichiarata **nullable** (es. `?string`, `?int`), il sistema aggiunge automaticamente un array di parametri vuoto e il flag `true` come quarto argomento di `addFilterFieldMode()`, per permettere valori nulli:
 
 ```php
 // Proprietà non-nullable
@@ -151,9 +151,9 @@ Il comando richiede due argomenti obbligatori:
 Per il corretto funzionamento dello scaffolding, è necessario che:
 
 1. La classe dell'entità esista già all'interno del modulo specificato, nel percorso `<NomeModulo>/Application/Entities/<NomeEntita>.php`.
-2. Il modulo abbia la struttura di cartelle standard del framework. In particolare, devono esistere le cartelle `Controllers`, `Models` e `Forms` all'interno di `<NomeModulo>/Application/`.
+2. Esistano la cartella del modulo e la sua cartella `Application/`: in caso contrario il comando termina con un errore.
 
-Qualora la struttura delle cartelle del modulo non fosse presente, il comando restituirà un errore, suggerendo di utilizzare l'opzione `--force` per crearla automaticamente.
+Le cartelle `Controllers`, `Models`, `Forms`, `Entities` e `Views` di `<NomeModulo>/Application/`, se mancano, vengono create automaticamente.
 
 ### Esempio di utilizzo
 

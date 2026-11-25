@@ -67,24 +67,35 @@ use MyModule\App\Entities\Post;
 class PostController extends BaseController
 {     
     /**
-    * Questa action risponde a URL come:     
-    * /post/show/id/42     
-    * /post/show/post/42 (l'ORM usa il tipo per risolvere l'entità)     
-    */
-    public function show(int $id, Post $post): Response
+    * Questa action risponde a URL come /post/show/post/42
+    * (l'ORM usa il tipo per risolvere l'entità)
+    */
+    public function show(Post $post): Response
     {
-        // $id conterrà il valore 42
         // $post sarà l'oggetto Post con id=42, caricato automaticamente dall'ORM
         $this->vars['post'] = $post;
         return $this->render->generateView('post/show', $this->vars);
     }
+
+    /**
+    * Questa action risponde a URL come /post/list/page/2
+    * Il parametro con valore di default può mancare: /post/list
+    */
+    public function list(int $page = 1): Response
+    {
+        // $page conterrà il valore 2 (o 1 se assente)
+        $this->vars['page'] = $page;
+        return $this->render->generateView('post/list', $this->vars);
+    }
 }
 ```
+
+Il nome nell'URL è quello del parametro dell'action. Un parametro senza valore di default che manca nell'URL produce una risposta `400 Bad Request`.
 
 I tipi di parametro supportati per il binding automatico sono:
 
 * Tipi nativi: `int`, `float`, `string`, `bool`, `array`.
-* Oggetti `SismaDateTime` (formato `Y-m-d H:i:s`).
+* Oggetti `SismaDateTime` (formato `Y-m-d H:i:s`), `SismaDate` (`Y-m-d`) e `SismaTime` (`H:i:s`).
 * `BackedEnum`: il valore viene usato per trovare il case corrispondente.
 * **Entità**: il framework carica automaticamente l'entità dal database usando l'ID fornito.
 
@@ -103,7 +114,7 @@ use SismaFramework\Security\HttpClasses\Authentication;
 public function updateUser(Request $request, Authentication $auth): Response
 {
     // Verifica se l'utente è autenticato controllando la sessione
-    if (!Session::hasItem('user.id')) {
+    if (!Session::hasItem('userId')) {
         return $this->router->redirect('security/login');
     }
 

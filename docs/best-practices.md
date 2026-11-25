@@ -20,12 +20,12 @@ Un codice fortemente tipizzato è più leggibile, meno soggetto a errori e più 
 ## 3. Usa l'ORM in Modo Intelligente
 
 *   **Preferisci le query specifiche:** Invece di caricare un'intera collezione di entità per poi filtrarla in PHP, usa i metodi del `Model` (es. `getBy...`, `countBy...`) o crea metodi personalizzati che costruiscano query SQL mirate. Questo è molto più efficiente.
-*   **Sii consapevole del Lazy Loading:** Il Lazy Loading è ottimo per le performance, ma può portare al "problema N+1" se usato in modo improprio all'interno di un ciclo. Se devi accedere a una relazione per ogni elemento di una collezione, valuta se una query personalizzata con una JOIN possa essere più performante.
+*   **Sii consapevole del Lazy Loading:** Il Lazy Loading è ottimo per le performance, ma può portare al "problema N+1" se usato in modo improprio all'interno di un ciclo. Se devi accedere a una relazione per ogni elemento di una collezione, caricala insieme alla collezione con l'[eager loading](join-eager-loading.md) (`getEntityCollectionWithRelations()`).
 
 ## 4. Non Trascurare la Sicurezza
 
 *   **Usa sempre le `Permission`:** Non inserire la logica di autorizzazione direttamente nei controller. Usa il sistema di `Voter` e `Permission` per proteggere le tue actions. È più pulito, riutilizzabile e sicuro.
-*   **Non disabilitare la protezione CSRF:** Il componente `Form` gestisce automaticamente la protezione CSRF. Assicurati che sia sempre attiva per tutti i form che modificano dati.
+*   **Proteggi i form dal CSRF:** I form di `BaseForm` non verificano un token CSRF: la verifica la fornisce `Authentication::checkCsrfToken()`, già chiamata da `checkAuthenticable()` nel login. Per gli altri form che modificano dati, includi il token nel form e verificalo nell'action (vedi [Sicurezza](security.md#protezione-csrf)).
 *   **Sanifica sempre l'output:** Usa `htmlspecialchars()` in tutte le viste quando stampi dati che potrebbero provenire da un utente, per prevenire attacchi XSS.
 
 ## 5. Mantieni le Viste "Stupide"

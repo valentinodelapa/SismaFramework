@@ -45,11 +45,9 @@ Il tuo web server (es. l'utente `www-data` su sistemi Debian/Ubuntu) deve avere 
 Assicurati che i permessi di queste cartelle siano impostati correttamente. Ad esempio:
 
 ```bash
-# Assumendo che il tuo web server giri come www-data
-chown -R www-data:www-data SismaFramework/Application/Logs
-chown -R www-data:www-data SismaFramework/Application/Cache
-chmod -R 775 SismaFramework/Application/Logs
-chmod -R 775 SismaFramework/Application/Cache
+# Dalla root del progetto, assumendo che il tuo web server giri come www-data
+chown -R www-data:www-data Logs Cache filesystemMedia
+chmod -R 775 Logs Cache filesystemMedia
 ```
 
 ### 5. Abilita la Cache dell'ORM

@@ -44,33 +44,30 @@ enum RequestType: string
 ```php
 use SismaFramework\Core\Enumerations\RequestType;
 
-// Verifica del metodo HTTP
-$request = new Request();
-if ($request->getMethod() === RequestType::methodPost->value) {
-    // Gestire richiesta POST
-}
+// Il metodo HTTP si legge dai dati del server della Request
+$method = RequestType::tryFrom($request->server['REQUEST_METHOD'] ?? '');
 
-// Switch statement con enum
-switch (RequestType::from($request->getMethod())) {
-    case RequestType::methodGet:
-        return $this->handleGet();
-    case RequestType::methodPost:
-        return $this->handlePost();
-    case RequestType::methodDelete:
-        return $this->handleDelete();
-}
+// Match con enum
+return match ($method) {
+    RequestType::methodGet => $this->handleGet(),
+    RequestType::methodPost => $this->handlePost(),
+    RequestType::methodDelete => $this->handleDelete(),
+    default => new Response(ResponseType::httpMethodNotAllowed),
+};
 
 // Validazione API REST
 class ApiController extends BaseController {
-    public function updateResource(): Response {
+    public function updateResource(Request $request): Response {
         $allowedMethods = [
             RequestType::methodPut,
             RequestType::methodPatch
         ];
 
-        if (!in_array(RequestType::from($_SERVER['REQUEST_METHOD']), $allowedMethods)) {
-            throw new MethodNotAllowedException();
+        if (!in_array(RequestType::tryFrom($request->server['REQUEST_METHOD'] ?? ''), $allowedMethods, true)) {
+            return new Response(ResponseType::httpMethodNotAllowed);
         }
+
+        // ...
     }
 }
 ```
@@ -120,58 +117,31 @@ enum ResponseType: int
 ```php
 use SismaFramework\Core\Enumerations\ResponseType;
 
-// Impostazione status code
+// Il codice di stato si passa al costruttore di Response, che lo invia con http_response_code()
 class UserController extends BaseController {
-    public function create(): Response {
-        $user = $this->userService->createUser($data);
-
-        $response = new Response();
-        $response->setStatusCode(ResponseType::httpCreated->value);
-        return $response;
-    }
-
-    public function delete(int $id): Response {
-        $this->userService->deleteUser($id);
-
-        $response = new Response();
-        $response->setStatusCode(ResponseType::httpNoContent->value);
-        return $response;
+    public function delete(User $user): Response {
+        $this->dataMapper->delete($user);
+        return new Response(ResponseType::httpNoContent);
     }
 }
 
-// Gestione errori strutturata
-class ErrorHandler {
-    public static function handleException(\Throwable $exception): Response {
-        $response = new Response();
-
-        $statusCode = match (true) {
-            $exception instanceof ValidationException => ResponseType::httpBadRequest,
-            $exception instanceof UnauthorizedException => ResponseType::httpUnauthorized,
-            $exception instanceof NotFoundException => ResponseType::httpNotFound,
-            default => ResponseType::httpInternalServerError,
-        };
-
-        $response->setStatusCode($statusCode->value);
-        return $response;
-    }
-}
-
-// API REST con status appropriati
+// Viste e JSON accettano il codice di stato come argomento
 class PostApiController extends BaseController {
     public function show(int $id): Response {
-        $post = $this->postService->findById($id);
+        $post = (new PostModel($this->dataMapper))->getEntityById($id);
 
-        if (!$post) {
-            return $this->jsonResponse(
-                ['error' => 'Post not found'],
-                ResponseType::httpNotFound->value
-            );
+        if ($post === null) {
+            return $this->render->generateJson(['error' => 'Post not found'], ResponseType::httpNotFound);
         }
 
-        return $this->jsonResponse(
-            $post->toArray(),
-            ResponseType::httpOk->value
-        );
+        return $this->render->generateJson(['id' => $post->id, 'title' => $post->title]);
+    }
+}
+
+// Le eccezioni del framework dichiarano il proprio codice di stato
+class ArticleNotPublishedException extends BaseException {
+    protected function setResponseType(): ResponseType {
+        return ResponseType::httpForbidden;
     }
 }
 ```
@@ -294,66 +264,69 @@ class ContentNegotiator {
 ### FilterType
 
 **Namespace:** `SismaFramework\Core\Enumerations\FilterType`
-**Tipo:** `string` enum
+**Tipo:** enum puro (senza valori)
 
-Definisce i tipi di filtri disponibili per la validazione dei form e dei dati input.
+Definisce i filtri disponibili per la validazione dei form. Ogni case corrisponde al metodo omonimo di `SismaFramework\Core\HelperClasses\Filter`, che riceve il valore da validare seguito dagli eventuali parametri.
+
+| Case | Parametri | Il valore è valido se |
+|---|---|---|
+| `noFilter` | — | sempre |
+| `isString` | — | è una stringa non vuota |
+| `isMinLimitString`, `isMaxLimitString` | `int $minLimit` / `int $maxLimit` | è una stringa non vuota con almeno / al massimo il numero di caratteri indicato |
+| `isLimitString` | `int $minLimit, int $maxLimit` | è una stringa non vuota con lunghezza compresa tra i due limiti |
+| `isAlphabeticString` (e le varianti `isMinLimit…`, `isMaxLimit…`, `isLimit…`) | come sopra | è una stringa di sole lettere |
+| `isAlphanumericString` (e varianti) | come sopra | è una stringa di sole lettere e cifre |
+| `isStrictAlphanumericString` (e varianti) | come sopra | è una stringa di lettere e cifre che contiene almeno una lettera e almeno una cifra |
+| `isSecurePassword` | — | ha almeno 8 caratteri, con almeno una minuscola, una maiuscola, una cifra e un simbolo tra `@#-_$%^&+=§!?` |
+| `isEmail` | — | è un indirizzo email |
+| `isNumeric` | — | è un numero o una stringa numerica |
+| `isInteger` | — | è un `int` |
+| `isFloat` | — | è un `float` |
+| `isBoolean` | — | è un `bool` |
+| `isArray` | — | è un array non vuoto |
+| `isDate`, `isDatetime`, `isTime` | — | è un `SismaDate`, `SismaDateTime` o `SismaTime` |
+| `isUploadedFile` | — | è un file caricato senza errori |
+| `isEntity` | — | è un'entità |
+| `isEnumeration` | — | è un case di un'enumerazione |
+| `isJson` | — | è un `SismaJson` |
+| `customFilter` | `string $regularExpression` | è una stringa che corrisponde all'espressione regolare |
+
+Le lunghezze sono misurate in byte (`strlen()`).
+
+#### Utilizzo nei Form
+
+I filtri si associano alle proprietà dell'entità in `setFilterFieldsMode()`, con `addFilterFieldMode()`. I parametri si passano come array, nell'ordine della firma del metodo o per nome; il quarto argomento indica se il campo può essere vuoto:
 
 ```php
-enum FilterType: string
-{
-    case text = 'text';
-    case email = 'email';
-    case integer = 'integer';
-    case float = 'float';
-    case boolean = 'boolean';
-    case date = 'date';
-    case url = 'url';
-    case required = 'required';
-    case minLength = 'min_length';
-    case maxLength = 'max_length';
-    case regex = 'regex';
-}
-```
-
-#### Utilizzi Comuni
-
-```php
+use SismaFramework\Core\BaseClasses\BaseForm;
 use SismaFramework\Core\Enumerations\FilterType;
 
-// Configurazione validazione form
-class UserRegistrationForm extends BaseForm {
-    protected function configureFilters(): array {
-        return [
-            'email' => [
-                FilterType::required,
-                FilterType::email,
-                FilterType::maxLength->withValue(255)
-            ],
-            'password' => [
-                FilterType::required,
-                FilterType::minLength->withValue(8)
-            ],
-            'age' => [
-                FilterType::integer,
-                FilterType::required
-            ]
-        ];
+class UserRegistrationForm extends BaseForm
+{
+    protected function setFilterFieldsMode(): void
+    {
+        $this->addFilterFieldMode('email', FilterType::isEmail)
+            ->addFilterFieldMode('password', FilterType::isSecurePassword)
+            ->addFilterFieldMode('username', FilterType::isLimitAlphanumericString, ['minLimit' => 3, 'maxLimit' => 30])
+            ->addFilterFieldMode('postalCode', FilterType::customFilter, ['/^[0-9]{5}$/'])
+            ->addFilterFieldMode('age', FilterType::isInteger, [], true);
     }
-}
 
-// Validazione manuale
-class DataValidator {
-    public function validateField(string $value, FilterType $filter): bool {
-        return match ($filter) {
-            FilterType::email => filter_var($value, FILTER_VALIDATE_EMAIL) !== false,
-            FilterType::integer => filter_var($value, FILTER_VALIDATE_INT) !== false,
-            FilterType::url => filter_var($value, FILTER_VALIDATE_URL) !== false,
-            FilterType::required => !empty(trim($value)),
-            default => true
-        };
-    }
+    // ...
 }
 ```
+
+I filtri ricevono il valore già convertito nel tipo della proprietà (vedi [Gestione dei Form](forms.md)).
+
+#### Validazione Manuale
+
+`applyFilter()` applica il filtro a un valore qualunque:
+
+```php
+$isValid = FilterType::isLimitString->applyFilter($username, [3, 30]);
+```
+
+`FilterType::fromPhpType()` restituisce il filtro predefinito per un tipo: `isInteger` per `int`, `isFloat` per `float`, `isString` per `string`, `isBoolean` per `bool`, `isEntity` per le entità, `isEnumeration` per le enumerazioni, `isDate`, `isDatetime` o `isTime` per i tipi data e ora dell'ORM e `isJson` per `SismaJson`.
 
 ---
 
@@ -561,84 +534,47 @@ Vedi [Query su Colonne JSON](advanced-orm.md#query-su-colonne-json) per la conve
 
 **Namespace:** `SismaFramework\Security\Enumerations\AccessControlEntry`
 
-Definisce i risultati possibili per i controlli di accesso nel sistema di sicurezza.
+Indica il tipo di accesso richiesto quando si interroga una Permission o un Voter. Il chiamante lo passa a `isAllowed()`, e il Voter lo legge in `$this->accessControlEntry` per decidere quale controllo eseguire; il risultato del Voter è un booleano (vedi [Sicurezza](security.md#sistema-di-autorizzazione-voters-e-permissions)).
 
 ```php
 enum AccessControlEntry
 {
-    case allow;    // Accesso consentito
-    case check;    // Richiede ulteriori verifiche
-    case deny;     // Accesso negato
+    case allow;
+    case check;
+    case deny;
 }
 ```
+
+Il significato di ogni case è stabilito dal Voter: il framework usa `allow` per chiedere se un'entità referenziata può essere cancellata (`ReferencedEntityDeletionVoter`).
 
 #### Utilizzi nel Sistema di Sicurezza
 
 ```php
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 
-// Implementazione di un Voter
-class PostVoter extends BaseVoter {
-    public function vote(Permission $permission, $subject = null): AccessControlEntry {
-        if (!$subject instanceof Post) {
-            return AccessControlEntry::deny;
-        }
+// Un Voter che distingue il tipo di accesso richiesto
+class PostVoter extends BaseVoter
+{
+    protected function isInstancePermitted(): bool
+    {
+        return $this->subject instanceof Post;
+    }
 
-        return match ($permission->getAction()) {
-            'view' => $this->canView($subject),
-            'edit' => $this->canEdit($subject),
-            'delete' => $this->canDelete($subject),
-            default => AccessControlEntry::deny,
+    protected function checkVote(): bool
+    {
+        return match ($this->accessControlEntry) {
+            AccessControlEntry::allow => $this->subject->isPublished,
+            AccessControlEntry::check => ($this->authenticable instanceof User) && ($this->subject->author->id === $this->authenticable->id),
+            default => false,
         };
     }
-
-    private function canEdit(Post $post): AccessControlEntry {
-        $user = $this->getCurrentUser();
-
-        // Owner può sempre modificare
-        if ($post->getAuthor()->getId() === $user->getId()) {
-            return AccessControlEntry::allow;
-        }
-
-        // Admin può modificare tutto
-        if ($user->hasRole('ADMIN')) {
-            return AccessControlEntry::allow;
-        }
-
-        // Moderatori solo se il post non è pubblicato
-        if ($user->hasRole('MODERATOR') && !$post->isPublished()) {
-            return AccessControlEntry::check; // Richiede ulteriori verifiche
-        }
-
-        return AccessControlEntry::deny;
-    }
 }
 
-// Security Manager
-class SecurityManager {
-    public function isGranted(Permission $permission, $subject = null): bool {
-        $result = AccessControlEntry::deny;
+// Lettura consentita a tutti se il post è pubblicato
+$canRead = PostVoter::isAllowed($post, AccessControlEntry::allow);
 
-        foreach ($this->voters as $voter) {
-            $vote = $voter->vote($permission, $subject);
-
-            // Se almeno un voter consente, permettere l'accesso
-            if ($vote === AccessControlEntry::allow) {
-                $result = AccessControlEntry::allow;
-                break;
-            }
-
-            // Se richiede verifica, continuare con altri voter
-            if ($vote === AccessControlEntry::check) {
-                $result = AccessControlEntry::check;
-            }
-        }
-
-        // Se nessun voter ha dato allow, verificare se c'è almeno un check
-        return $result === AccessControlEntry::allow ||
-               ($result === AccessControlEntry::check && $this->performAdditionalChecks($permission, $subject));
-    }
-}
+// Modifica consentita solo all'autore: la Permission solleva AccessDeniedException se il Voter risponde false
+PostPermission::isAllowed($post, AccessControlEntry::check, $user);
 ```
 
 ---
@@ -676,20 +612,18 @@ enum Status: string
 ### 2. Factory Pattern con Enumerations
 
 ```php
-class ResponseFactory {
-    public static function createFromType(ResponseType $type, array $data = []): Response {
-        $response = new Response();
-        $response->setStatusCode($type->value);
+class ApiResponder {
+    private RenderService $render;
 
+    public function __construct() {
+        $this->render = RenderService::getInstance();
+    }
+
+    public function respond(ResponseType $type, array $data = []): Response {
         return match ($type) {
-            ResponseType::httpOk => $response->setContent(json_encode($data)),
-            ResponseType::httpCreated => $response
-                ->setContent(json_encode($data))
-                ->setHeader('Location', $data['location'] ?? ''),
-            ResponseType::httpNoContent => $response,
-            ResponseType::httpNotFound => $response
-                ->setContent(json_encode(['error' => 'Resource not found'])),
-            default => $response->setContent(json_encode(['error' => 'Unknown error'])),
+            ResponseType::httpNoContent => new Response($type),
+            ResponseType::httpNotFound => $this->render->generateJson(['error' => 'Resource not found'], $type),
+            default => $this->render->generateJson($data, $type),
         };
     }
 }
@@ -724,17 +658,18 @@ enum OrderStatus: string
 }
 
 class OrderService {
-    public function changeStatus(Order $order, OrderStatus $newStatus): void {
-        $currentStatus = OrderStatus::from($order->getStatus());
+    public function __construct(private DataMapper $dataMapper = new DataMapper()) {}
 
-        if (!$currentStatus->canTransitionTo($newStatus)) {
-            throw new InvalidStateTransitionException(
-                "Cannot transition from {$currentStatus->value} to {$newStatus->value}"
+    public function changeStatus(Order $order, OrderStatus $newStatus): void {
+        // La proprietà dell'entità è tipizzata OrderStatus: l'ORM converte il valore della colonna nel case
+        if (!$order->status->canTransitionTo($newStatus)) {
+            throw new \DomainException(
+                "Cannot transition from {$order->status->value} to {$newStatus->value}"
             );
         }
 
-        $order->setStatus($newStatus->value);
-        $this->entityManager->save($order);
+        $order->status = $newStatus;
+        $this->dataMapper->save($order);
     }
 }
 ```
@@ -783,33 +718,21 @@ enum Priority: int
 ### 3. Validation con Enumerations
 
 ```php
-class FormValidator {
-    public function validateEnum(mixed $value, string $enumClass): bool {
-        if (!enum_exists($enumClass)) {
-            return false;
-        }
-
-        try {
-            $enumClass::from($value);
-            return true;
-        } catch (ValueError) {
-            return false;
-        }
-    }
+// Fuori dai form, tryFrom() restituisce null per un valore non valido
+$status = UserStatus::tryFrom($rawValue);
+if ($status === null) {
+    // valore non valido
 }
 
-// Utilizzo nei form
+// Nei form, un campo di tipo enumerazione viene convertito nel case dall'ORM, e un valore che non
+// corrisponde a nessun case solleva InvalidArgumentException: FilterType::isEnumeration verifica
+// che il campo sia stato valorizzato
 class UserForm extends BaseForm {
-    public function validate(): bool {
-        $validator = new FormValidator();
-
-        if (!$validator->validateEnum($this->entity->status, UserStatus::class)) {
-            $this->addError('status', 'Invalid status value');
-            return false;
-        }
-
-        return true;
+    protected function setFilterFieldsMode(): void {
+        $this->addFilterFieldMode('status', FilterType::isEnumeration);
     }
+
+    // ...
 }
 ```
 

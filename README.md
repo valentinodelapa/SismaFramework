@@ -32,8 +32,8 @@ SismaFramework è un framework PHP moderno, basato sul pattern MVC, progettato p
 
 Per iniziare a usare SismaFramework, la guida migliore è la nostra documentazione completa.
 
-*   **Leggi la documentazione completa**
-*   **Guida all'installazione**
+*   **[Leggi la documentazione completa](docs/index.md)**
+*   **[Guida all'installazione](docs/installation.md)**
 
 La documentazione ti guiderà attraverso la configurazione iniziale, i concetti fondamentali e l'utilizzo di tutti i componenti del framework.
 

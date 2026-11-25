@@ -12,7 +12,7 @@ Questa guida fornisce istruzioni dettagliate per aggiornare SismaFramework tra v
 
 ## Da 11.x a 12.x
 
-La versione 12.0.0 introduce due breaking changes nella nomenclatura dei model e nella firma di un metodo di `Query`.
+La versione 12.0.0 introduce cinque breaking changes: la nomenclatura dei model, la firma di un metodo di `Query`, la rimozione dei metodi legacy dei model e delle classi base `LogException`/`NoLogException`, e la rimozione di costanti di configurazione non utilizzate. Il comando `sisma upgrade` corregge automaticamente le prime due e segnala i punti delle altre da rivedere a mano (vedi [Upgrade dei Moduli](docs/upgrade.md#strategia-di-upgrade-11x---1200)).
 
 ### Breaking Changes
 
@@ -102,6 +102,56 @@ $query->setFulltextIndexColumn(
 
 ---
 
+#### 3. Rimozione dei metodi legacy di `DependentModel` e `SelfDependentModel`
+
+**Impatto**: Medio
+**Componenti interessati**: Codice che usa i metodi deprecati dalla 10.1.0
+
+`getEntityCollectionByEntity()`, `countEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()` e le varianti `...ByParentAndEntity()` sono stati rimossi. Si usano le query dinamiche:
+
+**Prima (11.x)**:
+```php
+$posts = $postModel->getEntityCollectionByEntity(['author' => $user]);
+```
+
+**Dopo (12.x)**:
+```php
+$posts = $postModel->getByAuthor($user);
+```
+
+---
+
+#### 4. Rimozione di `LogException` e `NoLogException`
+
+**Impatto**: Basso
+**Componenti interessati**: Eccezioni dell'applicazione che estendono queste classi
+
+Le eccezioni estendono direttamente `BaseException`; quelle che vanno registrate nel log implementano anche `ShouldBeLoggedException`.
+
+**Prima (11.x)**:
+```php
+class PaymentException extends LogException
+```
+
+**Dopo (12.x)**:
+```php
+use SismaFramework\Security\BaseClasses\BaseException;
+use SismaFramework\Security\Interfaces\Exceptions\ShouldBeLoggedException;
+
+class PaymentException extends BaseException implements ShouldBeLoggedException
+```
+
+---
+
+#### 5. Costanti di configurazione rimosse
+
+**Impatto**: Basso
+**Componenti interessati**: Codice che legge direttamente le costanti rimosse
+
+Sono state rimosse da `Config/config.php` le costanti non utilizzate dal framework: `ADAPTERS`, `ADAPTER_NAMESPACE`, `ADAPTER_PATH`, `CONFIGURATION_PASSWORD`, `CORE`, `CORE_NAMESPACE`, `CORE_PATH`, `DEFAULT_CONTROLLER`, `DEFAULT_CONTROLLER_NAMESPACE`, `DEFAULT_CONTROLLER_PATH`, `DEFAULT_META_URL`, `MODEL_PATH`, `ORM`, `ORM_NAMESPACE`, `ORM_PATH`, `PUBLIC_PATH`, `STRUCTURAL_RESOURCES_PATH`, `THIS_DIRECTORY`, `LOG_WARNING_ROW` e `LOG_DANGER_ROW`. Un modulo che le usa direttamente (`\Config\NOME`) deve dichiararle nella propria configurazione.
+
+---
+
 ### Checklist di Migrazione
 
 - [ ] **Model che estendono `SelfReferencedModel`**
@@ -113,6 +163,15 @@ $query->setFulltextIndexColumn(
 - [ ] **Chiamate a `Query::setFulltextIndexColumn()`**
   - [ ] Cercate tutte le chiamate nel codebase
   - [ ] Verificato l'ordine degli argomenti posizionali per ogni chiamata con più di 2 argomenti
+
+- [ ] **Metodi legacy dei model**
+  - [ ] Sostituite le chiamate a `...EntityCollectionByEntity()` e `...EntityCollectionByParentAndEntity()` con le query dinamiche
+
+- [ ] **Eccezioni**
+  - [ ] Sostituiti `extends LogException` ed `extends NoLogException` con `extends BaseException` (più `implements ShouldBeLoggedException` per le eccezioni da registrare)
+
+- [ ] **Configurazione**
+  - [ ] Verificato che il codice non usi le costanti rimosse
 
 - [ ] **Testing**
   - [ ] Eseguiti tutti i test unitari

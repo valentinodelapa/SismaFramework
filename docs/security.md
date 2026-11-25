@@ -58,7 +58,7 @@ class SecurityController extends BaseController
             if ($auth->checkAuthenticable()) {
                 // 3. Recupera l'entità autenticata e persisti l'ID in sessione
                 $user = $auth->getAuthenticableInterface();
-                Session::setItem('userId', $user->getId());
+                Session::setItem('userId', $user->id);
 
                 return $this->router->redirect('dashboard/index');
             }
@@ -166,6 +166,7 @@ Il flusso OAuth si articola in due action: una che avvia il redirect verso il pr
 namespace MyModule\Application\Controllers;
 
 use SismaFramework\Core\BaseClasses\BaseController;
+use SismaFramework\Core\Enumerations\ResponseType;
 use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Core\HttpClasses\Request;
 use SismaFramework\Core\HttpClasses\Response;
@@ -176,46 +177,48 @@ use MyModule\Application\Wrappers\GoogleOAuthWrapper;
 class OAuthController extends BaseController
 {
     // Fase 1: Reindirizza l'utente al provider OAuth
-    public function redirectToProvider(OAuthAuthentication $auth): Response
+    public function redirectToProvider(Request $request): Response
     {
-        $wrapper = new GoogleOAuthWrapper(
-            clientId: 'YOUR_CLIENT_ID',
-            clientSecret: 'YOUR_CLIENT_SECRET',
-            redirectUri: 'https://myapp.com/oauth/callback',
-        );
-        $auth->setOAuthWrapperInterface($wrapper);
+        $auth = new OAuthAuthentication($request);
+        $auth->setOAuthWrapperInterface($this->createWrapper());
 
         // getAuthorizationUrl() genera lo state anti-CSRF, lo salva in sessione
         // e restituisce l'URL completo del provider
-        $url = $auth->getAuthorizationUrl();
-
-        return $this->router->redirectToUrl($url);
+        header('Location: ' . $auth->getAuthorizationUrl());
+        return new Response(ResponseType::httpFound);
     }
 
     // Fase 2: Gestisce il callback del provider
-    public function callback(Request $request, OAuthAuthentication $auth): Response
+    public function callback(Request $request): Response
     {
-        $wrapper = new GoogleOAuthWrapper(
-            clientId: 'YOUR_CLIENT_ID',
-            clientSecret: 'YOUR_CLIENT_SECRET',
-            redirectUri: 'https://myapp.com/oauth/callback',
-        );
-        $auth->setOAuthWrapperInterface($wrapper);
+        $auth = new OAuthAuthentication($request);
+        $auth->setOAuthWrapperInterface($this->createWrapper());
         $auth->setAuthenticableModelInterface(new UserModel($this->dataMapper));
 
         // checkCallback() verifica lo state anti-CSRF, scambia il code per
         // un identificatore e recupera l'utente dal modello
         if ($auth->checkCallback()) {
             $user = $auth->getAuthenticableInterface();
-            Session::setItem('userId', $user->getId());
+            Session::setItem('userId', $user->id);
             return $this->router->redirect('dashboard/index');
         }
 
         $this->vars['error'] = 'Autenticazione OAuth fallita.';
         return $this->render->generateView('security/oauth-error', $this->vars);
     }
+
+    private function createWrapper(): GoogleOAuthWrapper
+    {
+        return new GoogleOAuthWrapper(
+            clientId: 'YOUR_CLIENT_ID',
+            clientSecret: 'YOUR_CLIENT_SECRET',
+            redirectUri: 'https://myapp.com/oauth/callback',
+        );
+    }
 }
 ```
+
+`OAuthAuthentication` non viene iniettata automaticamente nelle action, a differenza di `Authentication`: si crea passando la `Request`. `RouterService::redirect()` accetta solo percorsi interni all'applicazione, per cui il redirect verso il provider si fa con l'header `Location`.
 
 > **Protezione CSRF in OAuth**: `getAuthorizationUrl()` genera automaticamente uno `state` casuale di `OAUTH_STATE_BYTES` byte (default 16) e lo persiste in sessione, nella chiave `OAUTH_STATE_KEY` (default `oauthState`). `checkCallback()` lo verifica in modo timing-safe tramite `hash_equals()`, seguendo lo stesso pattern difensivo di `checkCsrfToken()` nella classe `Authentication`.
 
@@ -264,7 +267,7 @@ class PostVoter extends BaseVoter
         }
 
         // L'utente è l'autore del post?
-        return $post->getAuthor()->getId() === $user->getId();
+        return $post->author->id === $user->id;
     }
 }
 ```
@@ -278,6 +281,7 @@ Crea una `PostPermission` nella cartella `Permissions` che utilizzi il `PostVote
 namespace MyBlog\Application\Permissions;
 
 use SismaFramework\Security\BaseClasses\BasePermission;
+use SismaFramework\Security\BaseClasses\BaseVoter;
 use MyBlog\Application\Voters\PostVoter;
 
 class PostPermission extends BasePermission
@@ -286,9 +290,9 @@ class PostPermission extends BasePermission
     protected function callParentPermissions(): void {}
 
     // Specifica quale Voter deve essere usato
-    protected function getVoter(): string
+    protected function getVoter(): BaseVoter
     {
-        return PostVoter::class;
+        return new PostVoter();
     }
 }
 ```
@@ -298,18 +302,25 @@ class PostPermission extends BasePermission
 Ora, all'inizio dell'action `edit` del tuo `PostController`, invoca la `Permission`.
 
 ```php
+use MyBlog\Application\Models\UserModel;
 use MyBlog\Application\Permissions\PostPermission;
+use SismaFramework\Core\HelperClasses\Session;
 use SismaFramework\Security\Enumerations\AccessControlEntry;
 
 class PostController extends BaseController
 {
-    public function edit(Request $request, Post $post, Authentication $auth): Response
+    public function edit(Request $request, Post $post): Response
     {
+        // L'utente loggato si recupera dalla sessione, dove l'ha salvato il login
+        $user = Session::hasItem('userId')
+            ? (new UserModel($this->dataMapper))->getEntityById(Session::getItem('userId'))
+            : null;
+
         // 1. Controlla il permesso. Se fallisce, lancia un'eccezione 403.
         PostPermission::isAllowed(
             $post,                         // Il soggetto su cui decidere
             AccessControlEntry::check,     // Il tipo di controllo
-            $auth->getAuthenticableInterface() // L'utente attualmente loggato
+            $user                          // L'utente attualmente loggato, o null
         );
 
         // 2. Se il controllo passa, prosegui con la logica del form...
@@ -379,7 +390,7 @@ $isCorrect = Encryptor::verifyBlowfishHash('password_utente', $hashedPassword);
 
 **Configurazione workload in `Config/config.php`:**
 ```php
-const BLOWFISH_HASH_WORKLOAD = 12; // Range: 4-31 (default: 10)
+const BLOWFISH_HASH_WORKLOAD = 12; // Range: 4-31 (default: 12)
 ```
 
 **Note di sicurezza:**
@@ -513,7 +524,7 @@ if ($privateKeyPem === false) {
 ```
 
 - **Algoritmi**: per default la chiave è ricavata dalla password con PBKDF2-HMAC-SHA256 (600.000 iterazioni, minimo 100.000) e un sale casuale di 16 byte; i dati sono cifrati con AES-256-GCM, che ne garantisce anche l'integrità. Hash, cifrario (purché autenticato) e lunghezze sono configurabili.
-- **Involucro autodescrittivo**: il risultato è una stringa `sisma-pw2$<cifrario>$pbkdf2-<hash>$<iterazioni>$<sale>$<iv>$<tag>$<dati>` (campi binari in base64) che contiene tutto il necessario per decifrare, password esclusa: non serve conservare a parte sale o IV, e cambiare la configurazione non rende indecifrabili gli involucri esistenti. L'intestazione (versione, cifrario, hash, iterazioni, sale) è autenticata insieme ai dati, quindi un involucro con i parametri alterati non si decifra. Gli involucri `sisma-pw1` della 12.8.x non sono piÃ¹ supportati.
+- **Involucro autodescrittivo**: il risultato è una stringa `sisma-pw2$<cifrario>$pbkdf2-<hash>$<iterazioni>$<sale>$<iv>$<tag>$<dati>` (campi binari in base64) che contiene tutto il necessario per decifrare, password esclusa: non serve conservare a parte sale o IV, e cambiare la configurazione non rende indecifrabili gli involucri esistenti. L'intestazione (versione, cifrario, hash, iterazioni, sale) è autenticata insieme ai dati, quindi un involucro con i parametri alterati non si decifra. Gli involucri `sisma-pw1` della 12.8.x non sono più supportati.
 - **Configurazione**: il costo di default e l'intervallo ammesso delle iterazioni sono letti da `PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`, `PASSWORD_KEY_DERIVATION_MINIMUM_ITERATIONS` e `PASSWORD_KEY_DERIVATION_MAXIMUM_ITERATIONS`; il terzo argomento di `encryptWithPassword()` permette di scegliere un costo diverso per il singolo involucro. Le iterazioni effettive sono scritte nell'involucro, quindi alzare il default non rende indecifrabili gli involucri già creati.
 - **Errori**: `encryptWithPassword()` solleva `InvalidArgumentException` per una password vuota o un numero di iterazioni fuori dall'intervallo ammesso; `decryptWithPassword()` non solleva eccezioni e restituisce `false`, come `decryptString()`.
 
@@ -521,107 +532,99 @@ La robustezza dipende dalla password: un PIN numerico corto resiste a un attacco
 
 ### Interfacce di Autenticazione
 
-#### `AuthenticableInterface`
+`Authentication` lavora con entità e model dell'applicazione attraverso le interfacce di `Security/Interfaces/`.
 
-Definisce il contratto per entità che possono essere autenticate:
+#### Interfacce delle Entità
 
-```php
-use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
+Le interfacce delle entità (`Security/Interfaces/Entities/`) non dichiarano metodi: identificano il ruolo di ciascuna entità. `Authentication` legge direttamente alcune proprietà:
 
-class User implements AuthenticableInterface
-{
-    public function getAuthIdentifier(): string
-    {
-        return $this->email; // o $this->username
-    }
+| Interfaccia | Entità | Proprietà lette da `Authentication` |
+|---|---|---|
+| `AuthenticableInterface` | l'utente | — |
+| `PasswordInterface` | la password dell'utente | `password`: hash prodotto da `Encryptor::getBlowfishHash()` |
+| `MultiFactorInterface` | il secondo fattore dell'utente | — (lo verifica il wrapper) |
+| `MultiFactorRecoveryInterface` | un codice di recupero del secondo fattore | `token`: hash del codice prodotto da `Encryptor::getBlowfishHash()`; il codice usato viene cancellato |
 
-    public function getAuthPassword(): string
-    {
-        return $this->passwordHash;
-    }
-}
-```
+#### Interfacce dei Model
 
-#### `PasswordInterface`
+| Interfaccia | Metodo da implementare |
+|---|---|
+| `AuthenticableModelInterface` | `getValidAuthenticableInterfaceByIdentifier(string $identifier): ?AuthenticableInterface` |
+| `PasswordModelInterface` | `getPasswordByAuthenticableInterface(AuthenticableInterface $authenticableIntherface): ?PasswordInterface` |
+| `MultiFactorModelInterface` | `getLastActiveMultiFactorByAuthenticableInterface(AuthenticableInterface $userInterface): ?MultiFactorInterface` |
+| `MultiFactorRecoveryModelInterface` | `getMultiFactorRecoveryInterfaceCollectionByMultiFactorInterface(MultiFactorInterface $multiFactorInterface): SismaCollection` |
 
-Per entità che gestiscono reset password:
-
-```php
-use SismaFramework\Security\Interfaces\Entities\PasswordInterface;
-
-class User implements PasswordInterface
-{
-    public function getEmailForPasswordReset(): string
-    {
-        return $this->email;
-    }
-
-    public function getPasswordResetToken(): ?string
-    {
-        return $this->resetToken;
-    }
-
-    public function setPasswordResetToken(?string $token): void
-    {
-        $this->resetToken = $token;
-        $this->resetTokenExpiry = $token ? (new DateTime())->add(new DateInterval('P1D')) : null;
-    }
-}
-```
-
-#### `MultiFactorInterface`
-
-Per autenticazione a due fattori:
-
-```php
-use SismaFramework\Security\Interfaces\Entities\MultiFactorInterface;
-
-class User implements MultiFactorInterface
-{
-    public function isMfaEnabled(): bool
-    {
-        return $this->mfaSecret !== null;
-    }
-
-    public function getMfaSecret(): ?string
-    {
-        return $this->mfaSecret;
-    }
-
-    public function setMfaSecret(?string $secret): void
-    {
-        $this->mfaSecret = $secret;
-    }
-}
-```
+Il secondo fattore è verificato da un `MultiFactorWrapperInterface` (`Security/Interfaces/Wrappers/`), che implementa `testCodeForLogin(MultiFactorInterface $multiFactorInterface, string $code): bool`, ad esempio con un algoritmo TOTP.
 
 ## Esempi Pratici
 
-### 1. Sistema di Login Sicuro
+### 1. Entità e Model per il Login
+
+Le entità e i model usati dall'esempio di [login](#esempio-creare-una-pagina-di-login): l'utente è identificato dall'email, e la password è un'entità separata.
 
 ```php
-class AuthController extends BaseController
+use SismaFramework\Orm\BaseClasses\BaseEntity;
+use SismaFramework\Orm\BaseClasses\BaseModel;
+use SismaFramework\Orm\ExtendedClasses\DependentModel;
+use SismaFramework\Orm\ExtendedClasses\ReferencedEntity;
+use SismaFramework\Orm\HelperClasses\Query;
+use SismaFramework\Security\Interfaces\Entities\AuthenticableInterface;
+use SismaFramework\Security\Interfaces\Entities\PasswordInterface;
+use SismaFramework\Security\Interfaces\Models\AuthenticableModelInterface;
+use SismaFramework\Security\Interfaces\Models\PasswordModelInterface;
+
+class User extends ReferencedEntity implements AuthenticableInterface
 {
-    public function login(Request $request): Response
+    protected int $id;
+    protected string $email;
+    protected bool $active = true;
+
+    protected function setEncryptedProperties(): void {}
+    protected function setPropertyDefaultValue(): void {}
+}
+
+class Password extends BaseEntity implements PasswordInterface
+{
+    protected int $id;
+    protected User $user;
+    protected string $password; // hash Blowfish
+
+    protected function setEncryptedProperties(): void {}
+    protected function setPropertyDefaultValue(): void {}
+}
+
+class UserModel extends BaseModel implements AuthenticableModelInterface
+{
+    protected function getEntityName(): string
     {
-        $email = $request->input['email'] ?? '';
-        $password = $request->input['password'] ?? '';
+        return User::class;
+    }
 
-        $user = $this->userModel->getByEmail($email);
+    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void {}
 
-        if ($user && Encryptor::verifyBlowfishHash($password, $user->getAuthPassword())) {
-            // Login riuscito
-            Session::setItem('userId', $user->getId());
-            Session::setItem('sessionToken', Encryptor::getSimpleRandomToken());
+    public function getValidAuthenticableInterfaceByIdentifier(string $identifier): ?AuthenticableInterface
+    {
+        return $this->getByEmailAndActive($identifier, true)[0] ?? null;
+    }
+}
 
-            return $this->router->redirect('dashboard');
-        }
+class PasswordModel extends DependentModel implements PasswordModelInterface
+{
+    protected function getEntityName(): string
+    {
+        return Password::class;
+    }
 
-        $this->vars['error'] = 'Credenziali non valide';
-        return $this->render->generateView('auth/login', $this->vars);
+    protected function appendSearchCondition(Query &$query, string $searchKey, array &$bindValues, array &$bindTypes): void {}
+
+    public function getPasswordByAuthenticableInterface(AuthenticableInterface $authenticableIntherface): ?PasswordInterface
+    {
+        return $this->getByUser($authenticableIntherface)[0] ?? null;
     }
 }
 ```
+
+Per salvare una nuova password: `$password->password = Encryptor::getBlowfishHash($newPassword);`.
 
 ### 2. Crittografia Dati Utente
 
@@ -649,44 +652,48 @@ class UserProfile
 
 ### 3. Reset Password Sicuro
 
+L'entità `User` dell'esempio 1 ha in più le proprietà `?string $resetTokenHash` e `?SismaDateTime $resetTokenExpiry`. Nel database si salva solo l'hash del token: chi legge la tabella non può usarlo.
+
 ```php
 class PasswordResetController extends BaseController
 {
     public function requestReset(Request $request): Response
     {
-        $email = $request->input['email'] ?? '';
-        $user = $this->userModel->getByEmail($email);
+        $userModel = new UserModel($this->dataMapper);
+        $user = $userModel->getValidAuthenticableInterfaceByIdentifier($request->input['email'] ?? '');
 
-        if ($user) {
-            // Genera token sicuro
+        if ($user instanceof User) {
+            // Genera token sicuro e ne salva l'hash con la scadenza
             $token = Encryptor::getSimpleRandomToken();
-            $user->setPasswordResetToken($token);
+            $user->resetTokenHash = Encryptor::getSimpleHash($token);
+            $user->resetTokenExpiry = new SismaDateTime('+1 day');
             $this->dataMapper->save($user);
 
             // Invia email con link di reset
-            $resetLink = "https://mysite.com/reset-password?token={$token}";
+            $resetLink = "https://mysite.com/password-reset/reset-password/token/{$token}";
             // ... codice invio email
         }
 
+        // Stessa risposta che l'utente esista o no, per non rivelare quali email sono registrate
         return $this->render->generateView('auth/reset-sent', $this->vars);
     }
 
-    public function resetPassword(Request $request): Response
+    public function resetPassword(Request $request, string $token): Response
     {
-        $token = $request->query['token'] ?? '';
+        $user = (new UserModel($this->dataMapper))->getByResetTokenHash(Encryptor::getSimpleHash($token))[0] ?? null;
         $newPassword = $request->input['password'] ?? '';
 
-        $user = $this->userModel->getByResetToken($token);
+        if (($user instanceof User) && ($user->resetTokenExpiry > new SismaDateTime()) && (new Filter())->isSecurePassword($newPassword)) {
+            $password = (new PasswordModel($this->dataMapper))->getPasswordByAuthenticableInterface($user);
+            $password->password = Encryptor::getBlowfishHash($newPassword);
+            $this->dataMapper->save($password);
 
-        if ($user && $this->isTokenValid($user)) {
-            // Hash nuova password
-            $hashedPassword = Encryptor::getBlowfishHash($newPassword);
-            $user->setPassword($hashedPassword);
-            $user->setPasswordResetToken(null); // Invalida token
-
+            // Invalida il token
+            $user->resetTokenHash = null;
+            $user->resetTokenExpiry = null;
             $this->dataMapper->save($user);
 
-            return $this->router->redirect('login');
+            return $this->router->redirect('security/login');
         }
 
         $this->vars['error'] = 'Token non valido o scaduto';

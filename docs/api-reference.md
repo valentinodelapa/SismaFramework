@@ -41,17 +41,21 @@ Classe base per tutti i controller dell'applicazione. Fornisce funzionalità com
 
 ```php
 protected DataMapper $dataMapper;
+protected RouterService $router;   // redirect e URL
+protected RenderService $render;   // viste, dati e JSON
 protected array $vars;
+protected Debugger $debugger;
 ```
 
 #### Costruttore
 
 ```php
-public function __construct(DataMapper $dataMapper = new DataMapper())
+public function __construct(DataMapper $dataMapper = new DataMapper(), ?Debugger $debugger = null)
 ```
 
 **Parametri:**
 - `$dataMapper` (DataMapper, opzionale): Istanza del DataMapper per l'accesso ai dati
+- `$debugger` (Debugger, opzionale): Istanza della barra di debug
 
 **Variabili disponibili in `$this->vars`:**
 - `controllerUrl`: URL del controller corrente
@@ -62,20 +66,23 @@ public function __construct(DataMapper $dataMapper = new DataMapper())
 
 #### Metodi Ereditabili
 
-I controller che estendono `BaseController` possono implementare qualsiasi metodo pubblico che diventerà automaticamente un'action accessibile via URL.
+I controller che estendono `BaseController` possono implementare qualsiasi metodo pubblico che diventerà automaticamente un'action accessibile via URL. Ogni action restituisce una `Response`.
 
 **Esempio:**
 ```php
 class PostController extends BaseController
 {
-    public function index(): void
+    public function index(): Response
     {
         // Action accessibile tramite /post/index
+        return $this->render->generateView('post/index', $this->vars);
     }
 
-    public function show(int $id): void
+    public function show(int $id): Response
     {
         // Action accessibile tramite /post/show/id/123
+        $this->vars['id'] = $id;
+        return $this->render->generateView('post/show', $this->vars);
     }
 }
 ```
@@ -86,7 +93,7 @@ class PostController extends BaseController
 
 **Namespace:** `SismaFramework\Core\BaseClasses\BaseForm`
 
-Classe base per la gestione dei form con validazione automatica e protezione CSRF. Utilizza `SubmittableTrait` per la gestione della submission e degli errori.
+Classe base per la gestione dei form con validazione automatica. Utilizza `SubmittableTrait` per la gestione della submission e degli errori. La protezione CSRF non è gestita dai form: la fornisce `Authentication::checkCsrfToken()`.
 
 #### Metodi Principali
 
@@ -98,7 +105,7 @@ Riceve la richiesta HTTP, esegue `injectRequest()`, applica le regole di filtro 
 ```php
 public function isSubmitted(): bool
 ```
-Verifica se il form è stato inviato (da `SubmittableTrait`).
+Verifica se il form è stato inviato, cioè se la richiesta contiene il campo `submitted` (da `SubmittableTrait`).
 
 ```php
 public function isValid(): bool
@@ -113,7 +120,12 @@ Restituisce l'oggetto `FormFilterError` con gli errori di validazione (da `Submi
 ```php
 public function resolveEntity(): BaseEntity
 ```
-Salva l'entità validata e restituisce l'istanza aggiornata.
+Restituisce l'entità valorizzata con i dati validati, compresi quelli dei form annidati. Non la salva: il salvataggio si fa con `DataMapper::save()`.
+
+```php
+public function getResponseType(): ResponseType
+```
+Restituisce `httpBadRequest` dopo una validazione fallita e `httpOk` negli altri casi, da passare a `generateView()`.
 
 ```php
 public function getEntityDataToStandardEntity(): StandardEntity
@@ -136,9 +148,14 @@ Classe base per le fixtures di dati utilizzate nei test e per popolare il databa
 #### Metodi Astratti
 
 ```php
-abstract public function load(): void
+abstract protected function setDependencies(): void
 ```
-Metodo da implementare per caricare i dati fixture.
+Dichiara con `addDependency(string $dependencyClassName)` le fixture da eseguire prima di questa.
+
+```php
+abstract public function setEntity(): void
+```
+Crea l'entità e la registra con `addEntity(BaseEntity $baseEntity)`. Ogni fixture salva una sola entità; quelle delle dipendenze si recuperano con `getEntityByFixtureName(string $fixtureName)`.
 
 ---
 
@@ -258,7 +275,12 @@ Converte il nome di una classe entità nel nome della tabella.
 ```php
 public static function convertColumnNameToPropertyName(string $columnName): string
 ```
-Converte il nome di una colonna del database nel nome della proprietà PHP.
+Converte il nome di una colonna del database nel nome della proprietà PHP, togliendo il suffisso `_id` delle chiavi esterne.
+
+```php
+public static function convertPropertyNameToColumnName(string $propertyName): string
+```
+Converte il nome di una proprietà PHP nel nome della colonna del database.
 
 ---
 
@@ -266,34 +288,61 @@ Converte il nome di una colonna del database nel nome della proprietà PHP.
 
 **Namespace:** `SismaFramework\Core\HelperClasses\BufferManager`
 
-Gestisce il buffer di output PHP per il controllo dell'output.
+Gestisce gli output buffer aperti dal framework durante la generazione della risposta (vedi [Helper Classes](helper-classes.md#buffermanager)).
 
 #### Metodi Statici
 
 ```php
 public static function start(): void
 ```
-Avvia il buffering dell'output.
+Apre un nuovo livello di output buffer.
 
 ```php
 public static function clear(): void
 ```
-Pulisce il buffer corrente senza inviare l'output.
+Scarta e chiude tutti i livelli aperti dal framework, senza inviare l'output.
 
 ```php
 public static function flush(): void
 ```
-Invia l'output del buffer e lo pulisce.
+Invia al client e chiude tutti i livelli aperti dal framework.
 
 ```php
-public static function getContents(): string
+public static function discardAll(): void
 ```
-Restituisce il contenuto del buffer senza pulirlo.
+Scarta e chiude tutti i livelli di output buffer, compresi quelli aperti prima del framework.
+
+---
+
+### Router
+
+**Namespace:** `SismaFramework\Core\HelperClasses\Router`
+
+Facade statica di `RouterService`: `Router::metodo()` equivale a `RouterService::getInstance()->metodo()`, disponibile nei controller come `$this->router`. Guida d'uso in [Helper Classes](helper-classes.md#router).
+
+#### Metodi
 
 ```php
-public static function end(): void
+public function redirect(string $relativeUrl, Request $request = new Request()): Response
 ```
-Termina il buffering dell'output.
+Imposta l'header `Location` verso un percorso dell'applicazione (es. `post/show/post/42`) e restituisce la `Response`.
+
+```php
+public function getRootUrl(Request $request = new Request()): string
+public function getActualUrl(Request $request = new Request()): string
+public function getActualCleanUrl(): ?string
+public function getControllerUrl(): ?string
+public function getActionUrl(): ?string
+```
+URL della root dell'applicazione (comprensivo del meta URL), percorso della richiesta relativo alla root, URL pulito corrente e sue parti.
+
+```php
+public function getMetaUrl(): string
+public function setMetaUrl(string $metaUrl): void
+public function concatenateMetaUrl(string $pathToConcatenate): void
+public function resetMetaUrl(): void
+```
+Lettura e modifica del prefisso (meta URL) dell'applicazione.
 
 ---
 
@@ -303,7 +352,7 @@ Termina il buffering dell'output.
 
 API unificata per operazioni crittografiche: token casuali, hash semplici, hash password (Blowfish/BCrypt), cifratura simmetrica e (dalla v12.3.0) crittografia asimmetrica — coppie di chiavi, CSR, certificati self-signed o emessi da una CA, firma e verifica di dati. Guida d'uso completa in [Sicurezza](security.md#crittografia-e-protezione-dati).
 
-Tutti i metodi sono statici e accettano un `?Config $customConfig = null` opzionale come ultimo parametro (usa `Config::getInstance()` se omesso).
+Tutti i metodi sono statici. Quelli che leggono la configurazione accettano un `?Config $customConfig = null` opzionale come ultimo parametro (usa `Config::getInstance()` se omesso).
 
 #### Token e Hash
 
@@ -382,7 +431,7 @@ Cifratura a busta (envelope encryption): la chiave pubblica cifra una chiave sim
 public static function encryptWithPassword(string $plainText, string $password, ?int $iterations = null, ?Config $customConfig = null): string
 public static function decryptWithPassword(string $envelope, string $password, ?Config $customConfig = null): string|false
 ```
-Cifra con una chiave ricavata da una password (PBKDF2, per default HMAC-SHA256) usando un cifrario autenticato (per default AES-256-GCM), indipendentemente da `ENCRYPTION_PASSPHRASE`. Ritorna un involucro autodescrittivo (`sisma-pw2$<cifrario>$pbkdf2-<hash>$<iterazioni>$<sale>$<iv>$<tag>$<dati>`) che contiene tutti i parametri: `decryptWithPassword()` li legge dall'involucro, non dalla configurazione; gli involucri `sisma-pw1` prodotti dalla 12.8.x non sono piÃ¹ supportati. Se `$iterations` non è indicato vale `PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`. `encryptWithPassword()` solleva `InvalidArgumentException` se la password è vuota, le iterazioni sono fuori dall'intervallo ammesso o la configurazione indica un hash non supportato, un cifrario non autenticato o un tag più corto del minimo; `decryptWithPassword()` ritorna `false` se la password è errata o l'involucro è malformato, alterato o fuori dagli stessi limiti.
+Cifra con una chiave ricavata da una password (PBKDF2, per default HMAC-SHA256) usando un cifrario autenticato (per default AES-256-GCM), indipendentemente da `ENCRYPTION_PASSPHRASE`. Ritorna un involucro autodescrittivo (`sisma-pw2$<cifrario>$pbkdf2-<hash>$<iterazioni>$<sale>$<iv>$<tag>$<dati>`) che contiene tutti i parametri: `decryptWithPassword()` li legge dall'involucro, non dalla configurazione; gli involucri `sisma-pw1` prodotti dalla 12.8.x non sono più supportati. Se `$iterations` non è indicato vale `PASSWORD_KEY_DERIVATION_DEFAULT_ITERATIONS`. `encryptWithPassword()` solleva `InvalidArgumentException` se la password è vuota, le iterazioni sono fuori dall'intervallo ammesso o la configurazione indica un hash non supportato, un cifrario non autenticato o un tag più corto del minimo; `decryptWithPassword()` ritorna `false` se la password è errata o l'involucro è malformato, alterato o fuori dagli stessi limiti.
 
 **Configurazione**: `PASSWORD_KEY_DERIVATION_*` e `PASSWORD_ENCRYPTION_*` — dettagli in [Configuration Reference](configuration-reference.md#crittografia). Esempi in [Sicurezza](security.md#cifratura-con-password-v1280).
 
@@ -412,11 +461,8 @@ $tableName = NotationManager::convertToSnakeCase('BlogPost'); // "blog_post"
 
 ### Esempio: Gestione Buffer
 ```php
-// Catturare output in una variabile
-BufferManager::start();
-echo "Contenuto da catturare";
-$content = BufferManager::getContents();
-BufferManager::end();
+// Scartare l'output parziale prima di generare una risposta diversa
+BufferManager::clear();
 ```
 
 ---
@@ -425,74 +471,65 @@ BufferManager::end();
 
 ### DataMapper
 
-**Namespace:** `SismaFramework\Orm\DataMapper`
+**Namespace:** `SismaFramework\Orm\HelperClasses\DataMapper`
 
-Classe principale per la gestione della mappatura tra oggetti PHP e database.
+Esegue le query e salva le entità. Le query di lettura si costruiscono nei model con `initQuery()` (vedi [ORM](orm.md)).
 
 #### Metodi Principali
 
 ```php
-// Trova un'entità per ID
-public function find(string $entityClass, int|string $id): ?StandardEntity
+// Esegue una query di lettura e restituisce le entità trovate
+public function find(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): SismaCollection
 
-// Trova più entità con criteri
-public function findBy(string $entityClass, array $criteria = []): array
+// Come find(), ma restituisce la prima entità o null
+public function findFirst(string $entityName, Query $query, array $bindValues = [], array $bindTypes = []): ?BaseEntity
 
-// Salva un'entità
-public function save(StandardEntity $entity): StandardEntity
+// Conta le righe di una query
+public function getCount(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): int
 
-// Elimina un'entità
-public function delete(StandardEntity $entity): bool
+// Inserisce o aggiorna un'entità, insieme alle entità collegate modificate
+public function save(BaseEntity $entity, Query $query = new Query()): bool
 
-// Esegue query personalizzate
-public function query(string $sql, array $parameters = []): array
+// Elimina un'entità, o le righe di una query
+public function delete(BaseEntity $entity, Query $query = new Query()): bool
+public function deleteBatch(Query $query = new Query(), array $bindValues = [], array $bindTypes = []): bool
+
+// Transazioni
+public function startTransaction(): bool
+public function commitTransaction(bool $checkAnnidation = true): void
+public function rollbackTransaction(): void
 ```
 
 ### BaseModel
 
 **Namespace:** `SismaFramework\Orm\BaseClasses\BaseModel`
 
-Classe base per tutti i modeli che utilizzano l'ORM.
+Classe base per tutti i modelli che utilizzano l'ORM. Le sottoclassi implementano `getEntityName()` e `appendSearchCondition()`.
 
 #### Metodi Principali
 
 ```php
-// Crea una nuova istanza del modello
-public function create(array $data): StandardEntity
+public function getEntityById(int $id): ?BaseEntity
+public function getEntityCollection(?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null): SismaCollection
+public function countEntityCollection(?string $searchKey = null): int
+public function getOtherEntityCollection(BaseEntity $excludedEntity): SismaCollection
+public function deleteEntityById(int $id): bool
 
-// Trova per ID
-public function find(int|string $id): ?StandardEntity
+// Eager loading con JOIN (vedi join-eager-loading.md)
+public function getEntityByIdWithRelations(int $id, array $relations, JoinType $joinType = JoinType::left): ?BaseEntity
+public function getEntityCollectionWithRelations(array $relations, ?string $searchKey = null, ?array $order = null, ?int $offset = null, ?int $limit = null, JoinType $joinType = JoinType::left): SismaCollection
 
-// Trova con criteri
-public function findBy(array $criteria): array
-
-// Aggiorna un'entità esistente
-public function update(StandardEntity $entity, array $data): StandardEntity
+// Query dinamiche: getBy…(), countBy…(), deleteBy…() (vedi orm.md)
+public function __call($name, $arguments): SismaCollection|int|bool
 ```
+
+`DependentModel` aggiunge `getOtherEntityCollectionByEntity()`; `SelfDependentModel` aggiunge i metodi per la gerarchia (`getEntityCollectionByParent()`, `countEntityCollectionByParent()`, `getEntityTree()`, `deleteEntityTree()`, …).
 
 ### StandardEntity
 
-**Namespace:** `SismaFramework\Orm\BaseClasses\StandardEntity`
+**Namespace:** `SismaFramework\Orm\ExtendedClasses\StandardEntity`
 
-Classe base per tutte le entità del sistema.
-
-#### Proprietà e Metodi
-
-```php
-// Proprietà standard
-protected ?int $id;
-protected ?\DateTime $createdAt;
-protected ?\DateTime $updatedAt;
-
-// Serializzazione
-public function toArray(): array
-
-// Aggiornamento automatico timestamp
-public function updateTimestamps(): void
-
-// Validazione
-public function validate(): array
-```
+Oggetto generico che rappresenta una riga non mappata su un'entità: lo restituiscono `select()` dell'adapter e `BaseForm::getEntityDataToStandardEntity()`. Ha una proprietà pubblica per ogni colonna o campo; una proprietà assente vale `null`, e una proprietà il cui nome contiene `Collection` restituisce una `SismaCollection`.
 
 ---
 
@@ -645,15 +682,15 @@ protected function callParentPermissions(): void
 Permette di concatenare controlli di permesso padre.
 
 ```php
-protected function getVoter(): string
+protected function getVoter(): BaseVoter
 ```
-Restituisce il FQCN del Voter da utilizzare.
+Restituisce l'istanza del Voter da utilizzare.
 
 #### Utilizzo
 
 ```php
-// Nel controller
-PostPermission::isAllowed($post, AccessControlEntry::check, $auth->getAuthenticableInterface());
+// Nel controller: $user è l'utente loggato (AuthenticableInterface) o null
+PostPermission::isAllowed($post, AccessControlEntry::check, $user);
 ```
 
 ---
@@ -669,15 +706,10 @@ Oggetto risposta HTTP restituito da ogni action del controller.
 #### Costruttore
 
 ```php
-public function __construct(ResponseType $responseType = ResponseType::httpOk)
+public function __construct(?ResponseType $responseType = null)
 ```
 
-#### Proprietà Principali
-
-```php
-public string $content;       // Corpo della risposta
-public array  $headers;       // Header HTTP aggiuntivi
-```
+Con un `ResponseType` imposta il codice di stato HTTP della risposta (`http_response_code()`); senza argomenti legge quello già impostato. Il corpo della risposta è l'output prodotto dall'action (vista, dati o JSON) e gli header si impostano con `header()`: `Response` non ha proprietà pubbliche.
 
 ---
 
@@ -686,7 +718,6 @@ public array  $headers;       // Header HTTP aggiuntivi
 - **Tipizzazione Forte**: Tutte le API utilizzano la tipizzazione forte di PHP 8.3+
 - **Convenzioni**: I metodi seguono le convenzioni PSR-12 per il naming
 - **Immutabilità**: Molti helper restituiscono nuovi valori senza modificare gli input
-- **Thread Safety**: Le classi statiche sono thread-safe per l'uso in ambienti multi-processo
 
 ---
 

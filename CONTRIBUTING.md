@@ -78,8 +78,8 @@ vendor/bin/phpunit
 # Esegui test con coverage
 vendor/bin/phpunit --coverage-html coverage/
 
-# Esegui una suite specifica
-vendor/bin/phpunit --testsuite Core
+# Esegui i test di una sola area
+vendor/bin/phpunit Tests/Core
 ```
 
 Il target di code coverage è **>80%**. Se aggiungi nuove funzionalità, includi i test corrispondenti.
@@ -122,7 +122,7 @@ Attualmente la documentazione è in italiano. Le traduzioni in altre lingue sono
 SismaFramework/
 ├── Autoload/           # Sistema di autoloading
 ├── Config/             # Configurazione del framework
-├── Console/            # Comandi CLI (install, scaffold)
+├── Console/            # Comandi CLI (install, scaffold, fixtures, upgrade)
 ├── Core/               # Componenti core del framework
 ├── Orm/                # Object-Relational Mapper
 ├── Security/           # Autenticazione e autorizzazione

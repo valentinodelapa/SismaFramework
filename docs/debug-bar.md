@@ -19,12 +19,12 @@ La barra è divisa in diverse sezioni che forniscono informazioni specifiche.
 
 | Sezione              | Descrizione                                                                                                                                                            |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Database**         | Mostra un elenco dettagliato di tutte le query SQL eseguite durante la richiesta, inclusi i tempi di esecuzione. Fondamentale per individuare query lente o duplicate. |
+| **Database**         | Mostra il numero e il testo di tutte le query SQL eseguite durante la richiesta. Utile per individuare query duplicate o il problema N+1.                             |
 | **Log**              | Visualizza le ultime voci del file di log (`Logs/log.txt`), permettendoti di controllare errori e messaggi di debug senza dover aprire il file manualmente.            |
 | **Form**             | Se la richiesta corrente è l'invio di un form, questa sezione mostra l'esito della validazione per ogni campo, evidenziando eventuali errori.                          |
 | **Variables**        | Elenca tutte le variabili che il controller ha passato alla vista. Utile per verificare che i dati corretti vengano inviati al template.                               |
 | **Peso Pagina**      | Indica il consumo di memoria (in MB) richiesto per generare la pagina. Aiuta a monitorare l'efficienza dell'applicazione.                                              |
-| **Tempo Esecuzione** | Misura il tempo totale (in secondi) impiegato dal server per processare la richiesta e generare la risposta.                                                           |
+| **Tempo Esecuzione** | Misura il tempo totale (in millisecondi) impiegato dal server per processare la richiesta e generare la risposta.                                                      |
 
 * * *
 

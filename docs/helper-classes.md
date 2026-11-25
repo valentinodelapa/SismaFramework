@@ -125,7 +125,7 @@ $propertyName = NotationManager::convertColumnNameToPropertyName('created_at');
 ```php
 class UrlGenerator {
     public static function generateControllerUrl(string $controllerName): string {
-        return '/' . NotationManager::convertToKebabCase($controllerName);
+        return '/' . NotationManager::convertToKebabCase(substr($controllerName, 0, -strlen('Controller')));
     }
 }
 
@@ -260,59 +260,30 @@ $apiUrl = ApiRouter::getRootUrl(); // "https://example.com/api/v3" (sostituisce 
 
 ## BufferManager
 
-Il `BufferManager` fornisce un controllo granulare sull'output buffer di PHP. È particolarmente utile per catturare output, gestire template e controllare il flusso di dati verso il browser.
+Il `BufferManager` gestisce gli output buffer aperti dal framework durante la generazione della risposta. `RenderService` apre un buffer prima di includere la vista e lo invia al termine; se durante la generazione viene sollevata un'eccezione del framework, il costruttore di `BaseException` scarta l'output parziale, così che la pagina di errore non si mescoli a una vista incompleta.
+
+### Metodi
+
+| Metodo | Effetto |
+|---|---|
+| `start()` | apre un nuovo livello di output buffer |
+| `flush()` | invia al client e chiude tutti i livelli aperti dal framework |
+| `clear()` | scarta e chiude tutti i livelli aperti dal framework |
+| `discardAll()` | scarta e chiude tutti i livelli, compresi quelli aperti prima del framework |
+
+Il livello di base viene rilevato al primo utilizzo: `flush()` e `clear()` non chiudono i buffer aperti prima di quel momento (ad esempio dal server o da PHPUnit), e gestiscono anche i buffer annidati che una vista apre al proprio interno.
 
 ### Utilizzi Comuni
 
-#### Cattura dell'Output
+`BufferManager` non restituisce il contenuto del buffer: per catturare un output in una variabile si usano le funzioni di PHP.
+
 ```php
-// Catturare output in una variabile
-BufferManager::start();
-echo "Questo contenuto verrà catturato";
+ob_start();
 include 'template.php';
-$content = BufferManager::getContents();
-BufferManager::end();
-
-// Ora $content contiene tutto l'output
+$content = ob_get_clean();
 ```
 
-#### Template System
-```php
-class TemplateRenderer {
-    public static function render(string $templatePath, array $vars = []): string {
-        BufferManager::start();
-
-        extract($vars);
-        include $templatePath;
-
-        $content = BufferManager::getContents();
-        BufferManager::end();
-
-        return $content;
-    }
-}
-
-// Utilizzo
-$html = TemplateRenderer::render('user/profile.php', ['user' => $user]);
-```
-
-#### Controllo dell'Output in Debug
-```php
-class DebugOutput {
-    public static function captureDebugInfo(): string {
-        BufferManager::start();
-
-        var_dump($_POST);
-        var_dump($_SESSION);
-        phpinfo();
-
-        $debugInfo = BufferManager::getContents();
-        BufferManager::clear(); // Pulisce senza inviare
-
-        return $debugInfo;
-    }
-}
-```
+Nelle action non serve chiamarlo: `generateView()`, `generateData()` e `generateJson()` aprono e inviano il proprio buffer.
 
 ---
 
@@ -345,16 +316,16 @@ class AppRouter extends Router {
 }
 ```
 
-### 3. Gestione Buffer con Try/Finally
+### 3. Cattura dell'Output con Try/Finally
 ```php
-class SafeBufferManager {
-    public static function safeCapture(callable $callback): string {
-        BufferManager::start();
+class OutputCapture {
+    public static function capture(callable $callback): string {
+        ob_start();
         try {
             $callback();
-            return BufferManager::getContents();
+            return ob_get_contents();
         } finally {
-            BufferManager::end();
+            ob_end_clean();
         }
     }
 }
@@ -381,15 +352,14 @@ NotationManager::convertToKebabCase('CamelCaseString');
 ```
 
 ### Problema: Router redirect non funziona
-**Soluzione**: Assicurarsi che non ci sia output prima del redirect:
+**Soluzione**: `redirect()` imposta l'header `Location` e restituisce una `Response`, che l'action deve restituire; l'esecuzione prosegue fino al `return`. L'header non può essere inviato se dell'output è già stato inviato al client:
 ```php
 // SBAGLIATO
 echo "Debug info";
-Router::redirect('home');
+$this->router->redirect('home');
 
 // CORRETTO
-Router::redirect('home');
-exit; // Fermare l'esecuzione dopo redirect
+return $this->router->redirect('home');
 ```
 
 ---

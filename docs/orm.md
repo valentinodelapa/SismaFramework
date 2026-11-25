@@ -120,7 +120,7 @@ class Certificate extends BaseEntity
 
 ### Lazy Loading (Caricamento Pigro)
 
-Una delle caratteristiche più potenti dell'ORM è il **Lazy Loading**. Quando carichi un'entità, le sue relazioni (es. `$post->author`) non vengono caricate immediatamente. L'ORM carica l'oggetto `User` correlato solo nel momento esatto in cui provi ad accedervi (es. `echo $post->author->getUsername();`). Questo ottimizza drasticamente le performance, evitando query inutili.
+Una delle caratteristiche più potenti dell'ORM è il **Lazy Loading**. Quando carichi un'entità, le sue relazioni (es. `$post->author`) non vengono caricate immediatamente. L'ORM carica l'oggetto `User` correlato solo nel momento esatto in cui provi ad accedervi (es. `echo $post->author->username;`). Questo ottimizza drasticamente le performance, evitando query inutili.
 
 ### Relazioni Inverse (Collezioni)
 
@@ -134,7 +134,7 @@ $user = $userModel->getEntityById(1);
 $userPosts = $user->postCollection;
 
 foreach ($userPosts as $post) {
-    echo $post->getTitle();
+    echo $post->title;
 }
 ```
 
@@ -382,9 +382,9 @@ Supponiamo di voler trovare tutti i post che contengono una certa parola nel tit
 ```php
 namespace MyModule\App\Models;
 
-use SismaFramework\Orm\BaseClasses\DependentModel; // o BaseModel
+use SismaFramework\Orm\ExtendedClasses\DependentModel; // o BaseModel
 use SismaFramework\Orm\HelperClasses\Query;
-use SismaFramework\Orm\HelperClasses\SismaCollection;
+use SismaFramework\Orm\CustomTypes\SismaCollection;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use MyModule\App\Enumerations\PostStatus;

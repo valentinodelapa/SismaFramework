@@ -129,14 +129,18 @@ const MAX_RELOAD_ATTEMPTS = 3;
 
 ## Configurazione Database
 
+Nel `config.php` del framework le credenziali del database sono lette dalle variabili d'ambiente, con un valore di ripiego:
+
 ```php
 // Connessione database
-const DATABASE_HOST = 'localhost';
-const DATABASE_NAME = 'my_database';
-const DATABASE_USERNAME = 'db_user';
-const DATABASE_PASSWORD = 'db_password';
-const DATABASE_PORT = '3306';
+define(__NAMESPACE__ . '\DATABASE_HOST', getenv('DATABASE_HOST') ?: "");
+define(__NAMESPACE__ . '\DATABASE_NAME', getenv('DATABASE_NAME') ?: "");
+define(__NAMESPACE__ . '\DATABASE_PASSWORD', getenv('DATABASE_PASSWORD') ?: "");
+define(__NAMESPACE__ . '\DATABASE_PORT', getenv('DATABASE_PORT') ?: "");
+define(__NAMESPACE__ . '\DATABASE_USERNAME', getenv('DATABASE_USERNAME') ?: "");
 ```
+
+Nel file del progetto si possono impostare le variabili d'ambiente (consigliato in produzione), modificare i valori di ripiego oppure sostituire ogni riga con una dichiarazione `const`, come negli esempi di questa pagina. La stessa costante non va dichiarata due volte nello stesso file. Lo stesso vale per `ENCRYPTION_PASSPHRASE` e `OPENSSL_CONFIG_PATH`.
 
 ### Parametri Database
 
@@ -146,7 +150,9 @@ const DATABASE_PORT = '3306';
 | `DATABASE_NAME` | Nome del database | `'my_app_db'` |
 | `DATABASE_USERNAME` | Username per connessione | `'db_user'` |
 | `DATABASE_PASSWORD` | Password per connessione | `'secure_password'` |
-| `DATABASE_PORT` | Porta del database | `'3306'` (MySQL), `'5432'` (PostgreSQL) |
+| `DATABASE_PORT` | Porta del database | `'3306'` |
+
+L'unico adapter disponibile è quello per MySQL e MariaDB (`DEFAULT_ADAPTER_TYPE = 'mysql'`).
 
 **Configurazione di Esempio**:
 ```php
@@ -156,13 +162,6 @@ const DATABASE_NAME = 'sisma_app';
 const DATABASE_USERNAME = 'sisma_user';
 const DATABASE_PASSWORD = 'MySecurePassword123!';
 const DATABASE_PORT = '3306';
-
-// PostgreSQL
-const DATABASE_HOST = 'localhost';
-const DATABASE_NAME = 'sisma_app';
-const DATABASE_USERNAME = 'postgres';
-const DATABASE_PASSWORD = 'postgres_password';
-const DATABASE_PORT = '5432';
 ```
 
 ---
@@ -305,7 +304,6 @@ const PRESERVED_QUERY_STRING_PARAMETERS = ["utm_source", "utm_medium", "utm_camp
 ```php
 // Lista moduli attivi
 const MODULE_FOLDERS = [
-    'SismaFramework',
     'Blog',
     'User',
     'Shop'
@@ -324,13 +322,12 @@ const AUTOLOAD_CLASS_MAPPER = [
 
 #### MODULE_FOLDERS
 - **Tipo**: `array`
-- **Descrizione**: Lista ordinata dei moduli da caricare
-- **Ordine**: Importante per override di rotte e risorse
+- **Descrizione**: Lista ordinata dei moduli dell'applicazione. Il framework non va indicato: le sue classi sono caricate comunque
+- **Ordine**: Importante per override di rotte e risorse: un controller o un asset presente in più moduli viene preso dal primo
 
 **Esempio Configurazione Multi-Modulo**:
 ```php
 const MODULE_FOLDERS = [
-    'SismaFramework',  // Framework core (sempre primo)
     'Core',            // Funzionalità core app
     'User',            // Gestione utenti
     'Blog',            // Sistema blog
@@ -768,7 +765,6 @@ const DATABASE_HOST = 'localhost:3306'; // ❌ Porta va in DATABASE_PORT
 ```php
 // Assicurati che i moduli esistano
 const MODULE_FOLDERS = [
-    'SismaFramework',  // ✓ Deve esistere
     'MyModule',        // ✓ Verifica che la cartella MyModule esista
     'NonExistent'      // ❌ Causerà errori
 ];
@@ -777,7 +773,7 @@ const MODULE_FOLDERS = [
 #### 3. Path Non Corretti
 ```php
 // I path sono auto-generati, verifica costanti base
-const APPLICATION = 'MyApp';          // Nome modulo principale
+const APPLICATION = 'Application';    // Cartella dell'applicazione dentro ogni modulo
 const SYSTEM = 'SismaFramework';       // Nome cartella framework
 ```
 

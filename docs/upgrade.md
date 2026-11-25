@@ -165,12 +165,12 @@ Il metodo `Response::setResponseType()` e' stato rimosso in favore dell'iniezion
 **Prima:**
 ```php
 $response = new Response();
-$response->setResponseType(ResponseType::Json);
+$response->setResponseType(ResponseType::httpOk);
 ```
 
 **Dopo:**
 ```php
-$response = new Response(ResponseType::Json);
+$response = new Response(ResponseType::httpOk);
 ```
 
 Se il pattern risulta troppo complesso per la trasformazione automatica, viene emesso un warning con la richiesta di revisione manuale.
@@ -195,7 +195,7 @@ La strategia segnala le seguenti breaking changes che possono richiedere interve
 
 ## Strategia di Upgrade 11.x -> 12.0.0
 
-La strategia `Upgrade11to12Strategy` gestisce le due breaking change della versione 12.0.0 tramite due transformer dedicati.
+La strategia `Upgrade11to12Strategy` applica quattro transformer: due correggono il codice automaticamente, due segnalano i casi da rivedere a mano.
 
 ### Rinomina di `SelfReferencedModel` in `SelfDependentModel`
 
@@ -203,17 +203,19 @@ Il transformer `ClassRenameTransformer` (confidence: 95%) rinomina automaticamen
 
 **Prima:**
 ```php
-use SismaFramework\Orm\BaseClasses\SelfReferencedModel;
+use SismaFramework\Orm\ExtendedClasses\SelfReferencedModel;
 
 class CategoryModel extends SelfReferencedModel
 ```
 
 **Dopo:**
 ```php
-use SismaFramework\Orm\BaseClasses\SelfDependentModel;
+use SismaFramework\Orm\ExtendedClasses\SelfDependentModel;
 
 class CategoryModel extends SelfDependentModel
 ```
+
+Lo stesso transformer rinomina il case `ModelType::selfReferencedModel` in `ModelType::selfDependentModel`.
 
 ### Riordino dei Parametri di `setFulltextIndexColumn()`
 
@@ -223,11 +225,21 @@ Il transformer `FulltextIndexColumnTransformer` (confidence: 70%) riordina gli a
 - Chiamate con ≤ 2 argomenti → nessuna modifica necessaria.
 - Chiamate con 3 o 4 argomenti → nessuna modifica automatica; il file viene segnalato con `requiresManualReview` perché l'ordine non è deducibile con certezza.
 
+### Classi Base delle Eccezioni
+
+Il transformer `ExceptionBaseClassTransformer` (confidence: 80%) sostituisce `extends LogException` ed `extends NoLogException`, classi rimosse, con `extends BaseException`, aggiungendo `implements ShouldBeLoggedException` per le eccezioni che estendevano `LogException`, e aggiorna gli statement `use`. Segnala per la revisione manuale i riferimenti che non può convertire, come un uso di `LogException` fuori da un `extends`.
+
+### Metodi Legacy Rimossi
+
+Il transformer `DeprecatedMethodUsageTransformer` non modifica il codice: segnala le chiamate a `getEntityCollectionByEntity()`, `countEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()` e alle varianti `...ByParentAndEntity()`, indicando il metodo magico che le sostituisce. Il nome del metodo magico dipende dalla proprietà usata a runtime, quindi la sostituzione va fatta a mano.
+
 ### Breaking Changes della Versione 12.0.0
 
-- `SelfReferencedModel` → `SelfDependentModel` (classe rinominata)
+- `SelfReferencedModel` → `SelfDependentModel` (classe rinominata), e `ModelType::selfReferencedModel` → `ModelType::selfDependentModel`
 - `Query::setFulltextIndexColumn()`: il parametro `TextSearchMode` precede ora `$columnAlias` e `$append`
 - Rimozione dei metodi legacy già deprecati nella 10.1.0 (`getEntityCollectionByEntity()`, `countEntityCollectionByEntity()`, `deleteEntityCollectionByEntity()` e le relative varianti `...ByParentAndEntity()` di `SelfDependentModel`) in favore delle query dinamiche `getBy{PropertyName}()`/`countBy{PropertyName}()`/`deleteBy{PropertyName}()`
+- Rimozione di `LogException` e `NoLogException`: le eccezioni estendono direttamente `BaseException`, implementando `ShouldBeLoggedException` se vanno registrate nel log
+- Rimozione da `Config/config.php` delle costanti non utilizzate dal framework (tra cui `DEFAULT_CONTROLLER`, `DEFAULT_META_URL`, `CONFIGURATION_PASSWORD`, `LOG_WARNING_ROW` e `LOG_DANGER_ROW`): il report le elenca tutte, e un modulo che le usa direttamente deve dichiararle nella propria configurazione
 
 ## Il Report di Upgrade
 
@@ -267,7 +279,7 @@ Il sistema classifica i file del modulo nelle seguenti categorie:
 
 ## Backup e Rollback
 
-Se non viene specificata l'opzione `--skip-backup`, il sistema crea automaticamente un archivio ZIP del modulo prima di applicare le modifiche. Il file viene salvato nella stessa directory del modulo con il formato `<NomeModulo>_backup_<timestamp>.zip`.
+Se non viene specificata l'opzione `--skip-backup`, il sistema crea automaticamente un archivio ZIP del modulo prima di applicare le modifiche. Il file viene salvato nella cartella che contiene il modulo (la root del progetto), con il formato `<NomeModulo>_backup_<timestamp>.zip`.
 
 In caso di errore durante l'applicazione delle trasformazioni, il sistema esegue automaticamente il rollback ripristinando il modulo dallo stato del backup.
 

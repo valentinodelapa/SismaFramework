@@ -10,12 +10,14 @@ Le Data Fixtures sono classi utilizzate per caricare un set di dati "falsi" o di
 
 ## Creare una Fixture
 
-Una fixture è una classe PHP che risiede nella cartella `Fixtures` del tuo modulo. Deve estendere la classe base `SismaFramework\Core\BaseClasses\BaseFixture` e implementare il metodo `load()`.
+Una fixture è una classe PHP che risiede nella cartella `Fixtures` del tuo modulo. Deve estendere la classe base `SismaFramework\Core\BaseClasses\BaseFixture`.
 
 Il `BaseFixture` astrae la logica di salvataggio e l'ordine di esecuzione attraverso due metodi principali che devi implementare:
 
 * `setDependencies()`: Qui dichiari se la tua fixture dipende da altre. Il framework si assicurerà di eseguire prima le dipendenze.
-* `setEntity()`: Qui crei l'istanza della tua entità, imposti le sue proprietà e la registri per il salvataggio.
+* `setEntity()`: Qui crei l'istanza della tua entità, imposti le sue proprietà e la registri per il salvataggio con `addEntity()`.
+
+Ogni fixture salva una sola entità: una seconda chiamata ad `addEntity()` sostituisce la prima. Per inserire più entità si crea una fixture per ciascuna.
 
 ### Esempio: Creare Utenti e Post
 
@@ -41,8 +43,8 @@ class UserFixture extends BaseFixture
     public function setEntity(): void
     {
         $user = new User();
-        $user->setUsername('Mario Rossi');
-        $user->setEmail('mario.rossi@example.com');
+        $user->username = 'Mario Rossi';
+        $user->email = 'mario.rossi@example.com';
 
         // Aggiunge l'entità al gestore delle fixture.
         // Verrà salvata automaticamente.
@@ -75,9 +77,9 @@ class PostFixture extends BaseFixture
         // Recupera l'entità User creata dalla sua fixture di dipendenza
         $author = $this->getEntityByFixtureName(UserFixture::class);
         $post = new Post();
-        $post->setTitle('Il mio primo articolo');  
-        $post->setContent('Contenuto dell\'articolo...');
-        $post->setAuthor($author); // Associa l'autore recuperato
+        $post->title = 'Il mio primo articolo';
+        $post->content = 'Contenuto dell\'articolo...';
+        $post->author = $author; // Associa l'autore recuperato
         $this->addEntity($post);
     }
 } 
@@ -91,7 +93,7 @@ Le fixtures si eseguono tramite il comando CLI della console:
 php SismaFramework/Console/sisma fixtures
 ```
 
-Il framework troverà ed eseguirà automaticamente tutte le classi `Fixture` presenti nei moduli registrati, rispettando l'ordine delle dipendenze dichiarate.
+Il framework troverà ed eseguirà automaticamente tutte le fixture presenti nelle cartelle `Fixtures` dei moduli registrati, rispettando l'ordine delle dipendenze dichiarate. `getEntityByFixtureName()` restituisce l'entità salvata dalla fixture indicata, che deve essere dichiarata come dipendenza.
 
 * * *
 
