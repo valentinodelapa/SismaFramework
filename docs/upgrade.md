@@ -231,7 +231,7 @@ Il sistema classifica i file del modulo nelle seguenti categorie:
 
 ## Backup e Rollback
 
-Se non viene specificata l'opzione `--skip-backup`, il sistema crea automaticamente un archivio ZIP del modulo prima di applicare le modifiche. Il file viene salvato nella stessa directory del modulo con il formato `<NomeModulo>_backup_<timestamp>.zip`.
+Se non viene specificata l'opzione `--skip-backup`, il sistema crea automaticamente un archivio ZIP del modulo prima di applicare le modifiche. Il file viene salvato nella cartella che contiene il modulo (la root del progetto), con il formato `<NomeModulo>_backup_<timestamp>.zip`.
 
 In caso di errore durante l'applicazione delle trasformazioni, il sistema esegue automaticamente il rollback ripristinando il modulo dallo stato del backup.
 

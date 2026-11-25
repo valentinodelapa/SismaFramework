@@ -9,20 +9,14 @@ SismaFramework si basa su una serie di convenzioni per automatizzare molte attiv
     *   **URL:** `/user-profile/show-details`
     *   **Controller:** `UserProfileController`
     *   **Action:** `showDetails()`
-*   **Controller di Default:** Se l'URL è vuoto, viene eseguita l'action `index()` del `SampleController` (configurabile in `config.php`).
+*   **Controller di Default:** Se l'URL è vuoto, viene eseguita l'action indicata da `DEFAULT_ACTION` (default `index`) del controller indicato da `DEFAULT_PATH` (configurabili in `config.php`).
 
 ## Moduli e Configurazione
 
-*   **Registrazione Moduli:** I moduli devono essere dichiarati nell'array `MODULE_FOLDERS` in `Config/config.php`.
-*   **Modulo Framework:** `'SismaFramework'` contiene l'applicazione di esempio (cartella `Sample/`).
-    *   **Opzionale:** Puoi mantenerlo se vuoi accedere agli esempi del framework
-    *   **Setup pulito:** Rimuovilo e usa solo i tuoi moduli personalizzati
+*   **Registrazione Moduli:** I moduli devono essere dichiarati nell'array `MODULE_FOLDERS` in `Config/config.php`, nell'ordine in cui vanno cercati controller e asset.
+*   **Modulo Framework:** `'SismaFramework'` non va indicato: le sue classi sono caricate comunque, e l'applicazione di esempio che contiene (cartella `Sample/`) è il sito del framework, non un modulo da usare nei progetti. L'installazione genera la configurazione con `MODULE_FOLDERS` vuoto.
 
 ```php
-// Opzione A: Con esempi del framework (opzionale)
-const MODULE_FOLDERS = ['SismaFramework', 'Blog', 'UserModule'];
-
-// Opzione B: Solo moduli personalizzati (setup pulito)
 const MODULE_FOLDERS = ['Blog', 'UserModule', 'ApiModule'];
 ```
 
@@ -84,8 +78,8 @@ const MODULE_FOLDERS = ['Blog', 'UserModule', 'ApiModule'];
 ## Asset Statici
 
 *   **Posizione:** `NomeModulo/Application/Assets/`
-*   **URL:** Il percorso nell'URL rispecchia la struttura all'interno della cartella `Assets`.
-    *   `/assets/css/style.css` viene cercato in `NomeModulo/Application/Assets/css/style.css` in tutti i moduli registrati.
+*   **URL:** Il percorso nell'URL rispecchia la struttura all'interno della cartella `Assets`, senza prefisso.
+    *   `/css/style.css` viene cercato in `NomeModulo/Application/Assets/css/style.css` nei moduli registrati, nell'ordine di `MODULE_FOLDERS`.
 
 ## Altre Convenzioni
 

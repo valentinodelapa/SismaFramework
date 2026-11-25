@@ -99,33 +99,21 @@ echo json_encode($errorArray);
 
 ### Integrazione con BaseForm
 
+`BaseForm` crea il proprio `FormFilterError`, lo valorizza durante la validazione dei filtri e lo restituisce con `getFilterErrors()`. Nei form è disponibile come proprietà protetta `$this->formFilterError`, su cui `customFilter()` può segnalare errori aggiuntivi (vedi [Gestione dei Form](forms.md)):
+
 ```php
-class UserForm extends BaseForm {
-    private FormFilterError $filterErrors;
+class UserForm extends BaseForm
+{
+    // ...
 
-    public function getFilterErrors(): FormFilterError {
-        return $this->filterErrors;
-    }
-
-    public function validate(): bool {
-        $this->filterErrors = new FormFilterError();
-
-        if (empty($this->entity->username)) {
-            $this->filterErrors->usernameError = true;
-            $this->filterErrors->usernameCustomMessage = "Username obbligatorio";
+    protected function customFilter(): bool
+    {
+        if (str_starts_with($this->entityData->username ?? '', 'admin')) {
+            $this->formFilterError->usernameError = true;
+            $this->formFilterError->usernameCustomMessage = "Username riservato";
+            return false;
         }
-
-        if (!filter_var($this->entity->email, FILTER_VALIDATE_EMAIL)) {
-            $this->filterErrors->emailError = true;
-            $this->filterErrors->emailCustomMessage = "Email non valida";
-        }
-
-        return !$this->hasErrors();
-    }
-
-    private function hasErrors(): bool {
-        $errors = $this->filterErrors->getErrorsToArray();
-        return !empty(array_filter($errors, fn($error) => $error === true));
+        return true;
     }
 }
 ```
@@ -140,7 +128,8 @@ class UserForm extends BaseForm {
 
 - **Estende ArrayObject**: Supporta tutte le operazioni di array standard
 - **Auto-Creation**: Restituisce automaticamente `FormFilterError` vuoti per chiavi inesistenti
-- **Type Safety**: Garantisce che tutti gli elementi siano `FormFilterError`
+
+La collezione non controlla il tipo degli elementi inseriti: contiene `FormFilterError` perché è così che la popola il framework.
 
 ### Utilizzi Comuni
 
@@ -181,42 +170,24 @@ if ($errorCollection[0]->usernameError) {
 ```
 
 #### Integrazione con Form Master-Detail
+
+Quando un form dichiara un form annidato per una collezione con `addEntityFromForm()`, gli errori dei form annidati sono raccolti in una `FormFilterErrorCollection`, accessibile con il nome della collezione:
+
 ```php
-class OrderFormManager {
-    private FormFilterErrorCollection $itemErrors;
-
-    public function __construct() {
-        $this->itemErrors = new FormFilterErrorCollection();
+class OrderForm extends BaseForm
+{
+    protected function setEntityFromForm(): void
+    {
+        $this->addEntityFromForm('orderItemCollection', OrderItemForm::class);
     }
 
-    public function validateOrderItems(array $orderItems): bool {
-        $hasErrors = false;
-
-        foreach ($orderItems as $index => $item) {
-            $itemForm = new OrderItemForm($item);
-            if (!$itemForm->isValid()) {
-                $this->itemErrors[$index] = $itemForm->getFilterErrors();
-                $hasErrors = true;
-            }
-        }
-
-        return !$hasErrors;
-    }
-
-    public function getItemErrors(): FormFilterErrorCollection {
-        return $this->itemErrors;
-    }
+    // ...
 }
 
-// Utilizzo
-$orderManager = new OrderFormManager();
-if (!$orderManager->validateOrderItems($orderItems)) {
-    $errors = $orderManager->getItemErrors();
-
-    // Mostrare errori per item specifico
-    if ($errors[0]->quantityError) {
-        echo "Quantità non valida per il primo item";
-    }
+// Nella vista, dopo la validazione
+$errors = $form->getFilterErrors();
+if ($errors->orderItemCollection[0]->quantityError) {
+    echo "Quantità non valida per il primo item";
 }
 ```
 
@@ -234,32 +205,24 @@ if (!$orderManager->validateOrderItems($orderItems)) {
 
 ### Utilizzi nel Framework
 
-#### Risultati Query Grezzi
+#### Risultati Non Mappati su Entità
+
+`StandardEntity`, che estende `SismaStandardClass`, rappresenta le righe che non corrispondono a un'entità: le restituisce `select()` dell'adapter, con una proprietà per ogni colonna, e i form la usano per i dati inviati (`getEntityDataToStandardEntity()`).
+
 ```php
-// L'ORM potrebbe utilizzare SismaStandardClass per risultati non mappati
-class DataMapper {
-    public function executeRawQuery(string $sql): array {
-        $results = [];
-        $rows = $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+$query = $this->initQuery();
+$query->setCount('');
+$query->close();
 
-        foreach ($rows as $row) {
-            $obj = new SismaStandardClass();
-            foreach ($row as $key => $value) {
-                $obj->$key = $value;
-            }
-            $results[] = $obj;
-        }
-
-        return $results;
-    }
-}
+$row = $query->getAdapter()->select($query->getCommandToExecute())->fetch(); // StandardEntity
+echo $row->_numrows;
 ```
 
 #### Strutture Dati Temporanee
 ```php
 // Utilizzare per aggregazioni o calcoli temporanei
 class ReportGenerator {
-    public function generateSalesReport(): array {
+    public function generateSalesReport(): SismaStandardClass {
         $report = new SismaStandardClass();
         $report->totalSales = $this->calculateTotalSales();
         $report->averageOrder = $this->calculateAverageOrder();
@@ -283,6 +246,7 @@ class ValidationChain {
         $this->errors = new FormFilterError();
     }
 
+    // applyRule() e getRuleMessage() sono metodi della classe d'esempio, da implementare
     public function validate(string $field, mixed $value, array $rules): self {
         foreach ($rules as $rule => $param) {
             if (!$this->applyRule($field, $value, $rule, $param)) {
@@ -376,16 +340,14 @@ $formError->fieldnameCustomMessage = "...";  // ✓ Corretto
 $formError->fieldname_error = true;          // ✗ Sbagliato
 ```
 
-### 2. Inizializzazione Sicura
+### 2. Usare il FormFilterError del Form
 ```php
-// Sempre inizializzare FormFilterError nei form
-class UserForm extends BaseForm {
-    private FormFilterError $filterErrors;
-
-    public function __construct() {
-        $this->filterErrors = new FormFilterError(); // ✓ Inizializzazione
-        parent::__construct();
-    }
+// Nei form non serve creare un FormFilterError: BaseForm lo inizializza nel costruttore
+// e lo espone con getFilterErrors(). Gli errori personalizzati vanno su $this->formFilterError.
+protected function customFilter(): bool
+{
+    $this->formFilterError->emailCustomMessage = "Email già registrata"; // ✓ Corretto
+    // ...
 }
 ```
 

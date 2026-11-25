@@ -2,6 +2,108 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.20] - 2026-11-25 - Filtri dei Form e Altre Incongruenze nella Documentazione
+
+Patch della documentazione che corregge gli esempi dei filtri dei form, scritti con case di `FilterType` inesistenti, e le altre incongruenze tra documentazione e codice emerse da una revisione completa della documentazione.
+
+### 📖 Documentazione
+
+#### `docs/forms.md` e `docs/enumerations.md` — filtri dei form con case di `FilterType` inesistenti
+
+Gli esempi dei filtri usavano case inesistenti (`FilterType::string`, `datetime`, `boolean`, `required`, `email`, `minLength`, …), parametri con chiavi inventate (`['minLength' => 3]`), un metodo `withValue()` e un metodo `configureFilters()` che `BaseForm` non ha; la sezione `FilterType` di `enumerations.md` descriveva un enum con valori stringa. La sezione elenca ora tutti i case reali con i loro parametri, e mostra `addFilterFieldMode()`, `applyFilter()` e `fromPhpType()`.
+
+`docs/forms.md` è stato corretto anche nel resto del flusso:
+- `isSubmitted()` richiede il campo `submitted`, che il form HTML d'esempio non inviava;
+- `$errors->titleError` vale `true`/`false`, non il messaggio, e il messaggio personalizzato si imposta in `customFilter()` su `$this->formFilterError`, con i dati validati in `$this->entityData`;
+- `resolveEntity()` non salva l'entità; il controller non usa più variabili non definite (`$post`) e passa a `generateView()` il codice di stato restituito da `getResponseType()`;
+- le viste leggono le proprietà delle entità invece di getter inesistenti (`getTitle()`), e il messaggio standard viene dal file di localizzazione `.json`;
+- `injectRequest()` legge la sessione con `Session::hasItem()`/`getItem()` invece di un `$this->session` inesistente, e imposta la chiave esterna con il nome della proprietà (`author`);
+- la sezione su `Request` indica `cookie` (non `cookies`), `headers`, `data` e `input`.
+
+#### Getter e setter inesistenti sulle entità
+
+Gli esempi di `docs/getting-started.md`, `docs/data-fixtures.md`, `docs/views.md`, `docs/orm.md` e `docs/security.md` usavano getter e setter (`getTitle()`, `setUsername()`, `getId()`, `getAuthor()`, …) che le entità non hanno: le proprietà si leggono e si scrivono direttamente (`$post->title`).
+
+#### `docs/getting-started.md`, `docs/data-fixtures.md` e `docs/controllers.md` — fixture e parametri delle action
+
+- Le fixture creavano più entità in un ciclo, ma ogni fixture salva una sola entità: `addEntity()` sostituisce la precedente. `data-fixtures.md` indicava inoltre un metodo `load()` inesistente.
+- `getEntityName()` del `PostModel` di `getting-started.md` era ancora `static`.
+- Gli URL d'esempio usavano la chiave `id` per un parametro `Post $post`, mentre la chiave è il nome del parametro (`/post/show/post/1`); `controllers.md` dichiarava due parametri obbligatori come alternativi. Documentati anche `SismaDate` e `SismaTime` tra i tipi dei parametri.
+
+#### `docs/enumerations.md` — esempi di `RequestType`, `ResponseType` e `AccessControlEntry`
+
+Gli esempi usavano API inesistenti: `Request::getMethod()`, `Response::setStatusCode()`, `setContent()` e `setHeader()`, `jsonResponse()`, `MethodNotAllowedException`, un `PostVoter::vote()` che restituiva un `AccessControlEntry`, un `entityManager` e un `addError()` sui form. `AccessControlEntry` è descritto com'è usato: il tipo di accesso richiesto che il Voter legge in `$this->accessControlEntry`, con un risultato booleano.
+
+#### `docs/security.md` — OAuth, Voter, Permission e interfacce di autenticazione
+
+- `OAuthAuthentication` non viene iniettata nelle action, e `redirectToUrl()` non esiste: il controller d'esempio crea l'oggetto dalla `Request` e reindirizza al provider con l'header `Location`.
+- `getVoter()` di `BasePermission` restituisce un'istanza di `BaseVoter`, non il nome della classe.
+- L'esempio della Permission passava `getAuthenticableInterface()`, che è valorizzato solo nella richiesta di login: l'utente si recupera dalla sessione.
+- La sezione "Interfacce di Autenticazione" attribuiva metodi (`getAuthIdentifier()`, `getAuthPassword()`, `isMfaEnabled()`, …) a interfacce che non ne dichiarano: descrive ora le interfacce delle entità, le proprietà lette da `Authentication` (`password`, `token`) e i metodi delle interfacce dei model e del wrapper.
+- Gli esempi di login e di reset della password usano model e proprietà reali; il token di reset è salvato come hash.
+- Il default di `BLOWFISH_HASH_WORKLOAD` è 12, non 10.
+
+#### `docs/custom-types.md` — integrazione di `FormFilterError` con `BaseForm`
+
+Gli esempi ridefinivano `getFilterErrors()` e il costruttore nei form, usavano un `DataMapper` fittizio con `$this->pdo` e attribuivano a `FormFilterErrorCollection` un controllo del tipo degli elementi che non esiste. Mostrano ora `customFilter()` con `$this->formFilterError`, gli errori dei form annidati e `StandardEntity` restituita da `select()`.
+
+#### `docs/helper-classes.md` e `docs/api-reference.md` — `BufferManager`, `Router` e classi dell'ORM
+
+- `BufferManager::getContents()` e `end()` non esistono: i metodi sono `start()`, `flush()`, `clear()` e `discardAll()`.
+- L'indice di `api-reference.md` rimandava a una sezione `Router` inesistente, ora aggiunta.
+- La sezione sulle classi dell'ORM di `api-reference.md` era inventata (`DataMapper::findBy()` e `query()`, `BaseModel::create()` e `update()`, `StandardEntity::toArray()`, namespace errati): riporta ora le firme reali di `DataMapper`, `BaseModel` e `StandardEntity`.
+- Corretti anche `BaseFixture` (metodo `load()` inesistente), `BaseForm` (nessuna protezione CSRF, `resolveEntity()` non salva), `BaseController` (proprietà e costruttore), `BasePermission::getVoter()`, `Response` (nessuna proprietà pubblica) e l'esempio di `UrlGenerator`, che produceva `/user-profile-controller`.
+
+#### `docs/testing.md` — riscrittura sull'API reale
+
+La guida usava setter sulle entità, `Query::where()`, `BaseModel::find()` e `findAll()`, `handleRequest()` senza richiesta, voter con `vote()`, un database SQLite in memoria che l'ORM non supporta, un file `Tests/Config/config.php` con costanti inesistenti e le annotazioni `@dataProvider`, non più supportate da PHPUnit 13. È stata riscritta: stub di `Config` con `Config::setInstance()`, mock dell'adapter con `BaseAdapter::setDefault()`, SQL verificato con `AdapterMysql`, form testati valorizzando `Request::$input`, voter testati con `isAllowed()` e test di integrazione su un database MySQL configurato con le variabili `DATABASE_*`.
+
+#### `docs/orm.md` — namespace errati
+
+L'esempio delle query personalizzate importava `DependentModel` da `Orm\BaseClasses` e `SismaCollection` da `Orm\HelperClasses`: i namespace corretti sono `Orm\ExtendedClasses` e `Orm\CustomTypes`.
+
+#### `docs/installation.md` e `docs/configuration-reference.md` — web server, credenziali e installazione manuale
+
+- Il `.htaccess` proposto (`Public/index.php?url=$1`) non era quello del framework, che il comando di installazione copia già insieme a quello di `Public/`: la guida descrive ora i due file reali e aggiunge la configurazione per Nginx. L'installazione manuale copia anche il `.htaccess` della root.
+- Le credenziali del database e `ENCRYPTION_PASSPHRASE` erano mostrate come costanti `const` da aggiungere, mentre `config.php` le dichiara con `define()` leggendo le variabili d'ambiente: aggiungerle accanto alle righe esistenti le dichiara due volte. Le guide spiegano ora come impostarle.
+- `DATABASE_ADAPTER_TYPE` e `'mariadb'` non esistono: la costante è `DEFAULT_ADAPTER_TYPE`, e l'unico adapter è `mysql`, per MySQL e MariaDB. Rimosso anche l'esempio di configurazione per PostgreSQL, che non ha un adapter.
+- L'installazione manuale non adattava il file di configurazione copiato come fa `sisma install`: `APPLICATION` restava `Sample`, `ROOT_PATH` puntava una cartella troppo in alto, cache e log restavano nel modulo del framework e `MODULE_FOLDERS` conteneva `SismaFramework`. Le modifiche da fare sono ora elencate.
+- L'installazione manuale faceva caricare a `Public/index.php` il `config.php` del framework invece del `Config/configFramework.php` del progetto, come fa invece `sisma install`.
+
+#### Modulo `SismaFramework` in `MODULE_FOLDERS`
+
+`docs/getting-started.md`, `docs/conventions.md` e `docs/configuration-reference.md` indicavano di registrare `'SismaFramework'` in `MODULE_FOLDERS`, "sempre primo", per accedere agli esempi. In un progetto `APPLICATION` vale `Application`, quindi il modulo non espone l'applicazione di esempio (`Sample/`), che è il sito del framework; le classi del framework sono caricate comunque, e l'installazione genera `MODULE_FOLDERS` vuoto. Corretto anche il commento di `APPLICATION`, che è la cartella dell'applicazione dentro ogni modulo, non il nome di un modulo.
+
+#### Asset statici senza prefisso `/assets/`
+
+`docs/static-assets.md`, `docs/conventions.md` e `docs/troubleshooting.md` indicavano URL come `/assets/css/style.css` per il file `Application/Assets/css/style.css`: il percorso dell'URL è relativo alla cartella `Assets`, quindi l'URL corretto è `/css/style.css`. Descritto anche l'ordine di ricerca del file (root del progetto, asset strutturali, cartella `Assets` dei moduli) e l'esclusione dei file PHP e delle cartelle bloccate.
+
+#### Percorsi di `Logs/` e `Cache/`
+
+`docs/deployment.md`, `docs/troubleshooting.md` e `docs/orm-additional-features.md` indicavano `SismaFramework/Application/Logs` e `SismaFramework/Application/Cache`, mentre in un progetto le cartelle sono `Logs/` e `Cache/` nella root.
+
+#### `docs/upgrade.md` — percorso del backup
+
+Il backup ZIP viene salvato nella cartella che contiene il modulo, non al suo interno.
+
+#### Altre correzioni
+
+- **`docs/conventions.md`**: il controller di default non è `SampleController`, ma quello indicato da `DEFAULT_PATH`.
+- **`docs/scaffolding.md`**: il flag dei campi nullable è il quarto argomento di `addFilterFieldMode()`, non il terzo, e le cartelle mancanti del modulo vengono create automaticamente, senza `--force`.
+- **`docs/debug-bar.md`**: la sezione Database non mostra i tempi delle query, e il tempo di esecuzione è in millisecondi.
+- **`docs/error-handling-and-logging.md`**: `LOG_VERBOSE_ACTIVE` aggiunge lo stack trace agli errori registrati, non i messaggi informativi, e `LOG_*_MAX_ROW` tronca il file alle righe più recenti invece di archiviarlo.
+- **`docs/best-practices.md`** e **`docs/overview.md`**: i form non gestiscono la protezione CSRF, verificata da `Authentication::checkCsrfToken()`; i file di traduzione sono solo JSON.
+- **`docs/orm-additional-features.md`**: l'Identity Map dipende da `ORM_CACHE` e riguarda `getEntityById()`, non un metodo `find(42)`.
+- **`README.md`**: ripristinati i link alla documentazione e alla guida di installazione.
+- **`CONTRIBUTING.md`**: `phpunit.xml` non definisce una suite `Core`; i test di un'area si eseguono indicandone la cartella.
+- **`SECURITY.md`**: la tabella delle versioni supportate indicava ancora la 11.x come versione con supporto completo e la 10.x come supportata fino al 2026-07-01; è allineata a quella della 12.x.
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change**: la modifica riguarda solo la documentazione.
+
+---
+
 ## [11.9.19] - 2026-11-25 - Documentazione Allineata all'API della 11.x
 
 Patch della documentazione che riporta sulla 11.x le correzioni della documentazione delle versioni dalla 12.4.0 alla 12.18.0 che riguardano funzionalità presenti anche nella 11, comprese le guide dell'ORM riscritte sull'API reale. Non sono riportate le parti relative a funzionalità introdotte nella 12.x, come le colonne JSON, la cache dei metadati di reflection, le subquery in `IN`, `EXISTS` e JOIN e i valori di default della configurazione del progetto.

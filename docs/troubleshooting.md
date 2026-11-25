@@ -41,14 +41,14 @@ Se l'applicazione non riesce a connettersi al database:
 
 Se una relazione tra entità non funziona come previsto o se ricevi errori inaspettati dall'ORM:
 
-1.  **Cache delle Relazioni non aggiornata:** Il file `referenceCache.json` potrebbe essere obsoleto. Eliminalo dalla sua cartella (`SismaFramework/Application/Cache/` di default). Il framework lo rigenererà automaticamente alla richiesta successiva.
+1.  **Cache delle Relazioni non aggiornata:** Il file `referenceCache.json` potrebbe essere obsoleto. Eliminalo dalla sua cartella (`Cache/` nella root del progetto, come indicato da `REFERENCE_CACHE_DIRECTORY`). Il framework lo rigenererà automaticamente alla richiesta successiva.
 2.  **Convenzioni non rispettate:** Controlla che i nomi delle tabelle e delle colonne nel database corrispondano alle convenzioni usate per i nomi delle classi `Entity` e delle loro proprietà.
 
 ## Gli Asset (CSS/JS) non vengono caricati
 
 Se i tuoi file CSS, JavaScript o le immagini non vengono visualizzati:
 
-1.  **Percorso errato:** Controlla il percorso nell'attributo `href` o `src` nel tuo HTML. Deve essere un percorso assoluto dalla root del sito (es. `/assets/css/style.css`).
+1.  **Percorso errato:** Controlla il percorso nell'attributo `href` o `src` nel tuo HTML. Deve essere un percorso assoluto dalla root del sito, relativo alla cartella `Assets` del modulo (es. `/css/style.css` per `Application/Assets/css/style.css`).
 2.  **File non trovato:** Assicurati che il file esista nel percorso corretto all'interno della cartella `Application/Assets/` di uno dei moduli registrati.
 
 ## Errore 403 (Access Denied / Forbidden)

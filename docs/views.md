@@ -17,9 +17,9 @@ Se un controller passa `['pageTitle' => 'Dettaglio Articolo', 'post' => $postObj
     <title><?= htmlspecialchars($pageTitle) ?></title>
 </head>
 <body>
-    <h1><?= htmlspecialchars($post->getTitle()) ?></h1>
+    <h1><?= htmlspecialchars($post->title) ?></h1>
     <article>
-        <?= $post->getContent() // Supponendo che il contenuto sia già sanificato ?>
+        <?= $post->content // Supponendo che il contenuto sia già sanificato ?>
     </article>
 </body>
 </html>

@@ -28,8 +28,8 @@ Il framework fornisce due componenti principali:
 Il comportamento del logger può essere personalizzato tramite diverse costanti nel file `Config/config.php`:
 
 *   `LOG_DIRECTORY_PATH` e `LOG_PATH`: Definiscono dove viene salvato il file di log.
-*   `LOG_VERBOSE_ACTIVE`: Se impostato su `true`, verranno registrati anche i messaggi di livello "informativo", non solo gli errori.
-*   `LOG_DEVELOPMENT_MAX_ROW` e `LOG_PRODUCTION_MAX_ROW`: Controllano la rotazione del log, ovvero il numero massimo di righe prima che il file venga archiviato e ne venga creato uno nuovo.
+*   `LOG_VERBOSE_ACTIVE`: Se impostato su `true`, per gli errori registrati da `ErrorHandler` viene scritto nel log anche lo stack trace.
+*   `LOG_DEVELOPMENT_MAX_ROW` e `LOG_PRODUCTION_MAX_ROW`: Il numero massimo di righe conservate nel file di log, rispettivamente in sviluppo e in produzione: oltre questo limite le righe più vecchie vengono eliminate.
 
 ### Scrivere nel Log
 
@@ -99,7 +99,7 @@ class AdminController extends BaseController
 }
 ```
 
-I messaggi registrati appariranno nel file di log (Logs/log.txt) e, se sei in ambiente di sviluppo, saranno visibili anche nella sezione "Log" della Barra di Debug.
+I messaggi registrati appariranno nel file di log (Logs/log.txt) e, se sei in ambiente di sviluppo, saranno visibili anche nella sezione "Log" della Barra di Debug. Le chiavi `code`, `file`, `line` e `trace` del contesto sono scritte nei campi corrispondenti della riga di log; le altre sostituiscono i segnaposto `{chiave}` del messaggio.
 
 ### Utilizzo di Logger PSR-3 Personalizzati
 

@@ -42,22 +42,7 @@ SismaFramework è modulare. Creiamo un modulo `Blog` per contenere tutta la logi
    ];
    ```
 
-   📝 **Nota**: Il modulo `'SismaFramework'` (presente nel config di default) contiene l'applicazione di esempio del framework (cartella `Sample/`). Puoi scegliere di:
-   - **Mantenerlo** se vuoi accedere agli esempi durante lo sviluppo
-   - **Rimuoverlo** se preferisci un setup più pulito
-
-   ```php
-   // Opzione A: Con esempi del framework
-   const MODULE_FOLDERS = [
-       'SismaFramework', // Opzionale: per accedere agli esempi
-       'Blog',
-   ];
-
-   // Opzione B: Solo i tuoi moduli (setup pulito)
-   const MODULE_FOLDERS = [
-       'Blog',
-   ];
-   ```
+   📝 **Nota**: Il modulo `'SismaFramework'` non va aggiunto: le classi del framework sono caricate comunque, e l'applicazione di esempio che contiene (cartella `Sample/`) è il sito del framework, non un modulo da usare nel progetto.
 
 ## 3. Creare le Entità
 
@@ -140,7 +125,7 @@ use Blog\Application\Entities\Post;
 
 class PostModel extends DependentModel
 {
-    protected static function getEntityName(): string
+    protected function getEntityName(): string
     {
         return Post::class;
     }
@@ -174,7 +159,7 @@ CREATE TABLE `post` (
 
 ## 6. Popolare il Database con le Fixtures
 
-Creiamo delle fixture per inserire un utente e alcuni articoli di prova. Questo sistema gestisce automaticamente l'ordine di creazione.
+Creiamo delle fixture per inserire un utente e un articolo di prova. Ogni fixture crea e salva una sola entità, e il sistema gestisce automaticamente l'ordine di creazione.
 
 #### Fixture per l'Utente
 
@@ -194,8 +179,8 @@ class UserFixture extends BaseFixture
     public function setEntity(): void
     {
         $user = new User();
-        $user->setUsername('Mario Rossi');
-        $user->setEmail('mario.rossi@example.com');
+        $user->username = 'Mario Rossi';
+        $user->email = 'mario.rossi@example.com';
         $this->addEntity($user);
     }
 }
@@ -224,17 +209,17 @@ class PostFixture extends BaseFixture
     {
         $user = $this->getEntityByFixtureName(UserFixture::class);
 
-        for ($i = 1; $i <= 3; $i++) {
-            $post = new Post();
-            $post->setTitle('Il mio articolo di prova #' . $i);
-            $post->setContent('Questo è il contenuto dell\'articolo di test...');
-            $post->setPublicationDate(new SismaDateTime());
-            $post->setAuthor($user);
-            $this->addEntity($post);
-        }
+        $post = new Post();
+        $post->title = 'Il mio articolo di prova';
+        $post->content = 'Questo è il contenuto dell\'articolo di test...';
+        $post->publicationDate = new SismaDateTime();
+        $post->author = $user;
+        $this->addEntity($post);
     }
 }
 ```
+
+Le proprietà delle entità sono `protected`, ma si leggono e si scrivono direttamente (`$post->title`): i metodi magici di `BaseEntity` intercettano l'accesso. Per altri articoli si crea una fixture per ciascuno.
 
 Per eseguire le fixtures, utilizza il comando CLI della console:
 
@@ -271,11 +256,11 @@ class PostController extends BaseController
         return $this->render->generateView('post/index', $this->vars);
     }
 
-    // URL: /post/show/id/1
+    // URL: /post/show/post/1
     public function show(Post $post): Response
     {
         $this->vars['post'] = $post;
-        $this->vars['pageTitle'] = $post->getTitle();
+        $this->vars['pageTitle'] = $post->title;
         return $this->render->generateView('post/show', $this->vars);
     }
 }
@@ -293,11 +278,11 @@ Infine, creiamo i file HTML per visualizzare i dati.
 <?php foreach ($posts as $post): ?>
     <article>
         <h2>
-            <a href="/post/show/id/<?= $post->getId() ?>">
-                <?= htmlspecialchars($post->getTitle()) ?>
+            <a href="/post/show/post/<?= $post->id ?>">
+                <?= htmlspecialchars($post->title) ?>
             </a>
         </h2>
-        <p>Scritto da: <?= htmlspecialchars($post->getAuthor()->getUsername()) ?></p>
+        <p>Scritto da: <?= htmlspecialchars($post->author->username) ?></p>
     </article>
 <?php endforeach; ?>
 ```
@@ -305,11 +290,11 @@ Infine, creiamo i file HTML per visualizzare i dati.
 **`Blog/Application/Views/post/show.php`** (Dettaglio articolo)
 
 ```php
-<h1><?= htmlspecialchars($post->getTitle()) ?></h1>
-<p><em>Scritto da: <?= htmlspecialchars($post->getAuthor()->getUsername()) ?></em></p>
+<h1><?= htmlspecialchars($post->title) ?></h1>
+<p><em>Scritto da: <?= htmlspecialchars($post->author->username) ?></em></p>
 <hr>
 <div>
-    <?= nl2br(htmlspecialchars($post->getContent())) ?>
+    <?= nl2br(htmlspecialchars($post->content)) ?>
 </div>
 <hr>
 <a href="/post/index">Torna alla lista</a>

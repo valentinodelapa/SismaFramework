@@ -65,7 +65,8 @@ sisma install NomeDelProgetto
 
 Questo comando creerà automaticamente:
 - La cartella `Config/` con il file `configFramework.php` pre-configurato con il nome del progetto
-- La cartella `Public/` con `index.php` configurato (path dell'autoloader aggiornati automaticamente)
+- La cartella `Public/` con `index.php` configurato (path dell'autoloader aggiornati automaticamente) e il relativo `.htaccess`
+- Il file `.htaccess` nella root del progetto, che indirizza le richieste alla cartella `Public/`
 - Le cartelle `Cache/`, `Logs/` e `filesystemMedia/` con permessi **0777** (lettura, scrittura, esecuzione per tutti)
 
 #### Configurazione Interattiva del Database
@@ -155,18 +156,17 @@ chmod 755 Cache Logs filesystemMedia
 
 ### Passo 4: Configura il Web Server
 
-Crea un file `.htaccess` nella root del progetto:
+Con Apache non serve altro: il comando di installazione copia il `.htaccess` della root, che indirizza tutte le richieste a `Public/`, e quello di `Public/`, che le passa a `index.php`. Il routing legge il percorso dall'URL della richiesta (`REQUEST_URI`). Con `mod_rewrite` abilitato, la tua applicazione è ora pronta! ✅
 
-```apacheconf
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ Public/index.php?url=$1 [QSA,L]
-</IfModule>
+Con Nginx, imposta `Public/` come document root e inoltra a `index.php` le richieste che non corrispondono a un file:
+
+```nginx
+root /percorso/del/progetto/Public;
+
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
 ```
-
-La tua applicazione è ora pronta! ✅
 
 ---
 
@@ -207,6 +207,7 @@ Per garantire che gli aggiornamenti del framework non sovrascrivano le tue confi
 ```bash
 cp -R SismaFramework/Config/ .
 cp -R SismaFramework/Public/ .
+cp SismaFramework/.htaccess .
 ```
 
 Rinomina il file di configurazione del framework:
@@ -229,10 +230,12 @@ La struttura della tua cartella di progetto dovrebbe ora essere simile a questa:
 ```
 il-mio-progetto/
 ├── Cache/
+├── .htaccess
 ├── Config/
 │   └── configFramework.php
 ├── Logs/
 ├── Public/
+│   ├── .htaccess
 │   └── index.php
 ├── filesystemMedia/
 └── SismaFramework/
@@ -245,7 +248,7 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
 
 1. **Modifica `Public/index.php`**
 
-   Apri il file `Public/index.php` e modifica i percorsi di inclusione per puntare alla sottocartella `SismaFramework`.
+   Apri il file `Public/index.php`: la configurazione deve essere quella del progetto (`Config/configFramework.php`), mentre l'autoloader è quello della sottocartella `SismaFramework`.
 
    _Cerca queste righe:_
 
@@ -257,7 +260,7 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
    _E modificale in:_
 
    ```php
-   require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'config.php';
+   require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'configFramework.php';
    require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'SismaFramework' . DIRECTORY_SEPARATOR . 'Autoload' . DIRECTORY_SEPARATOR . 'autoload.php';
    ```
 
@@ -265,46 +268,42 @@ Ora devi modificare i file che hai appena copiato per farli puntare correttament
 
    Apri il file `Config/configFramework.php` e imposta le costanti necessarie per il tuo ambiente.
 
-   * **Impostazioni del Progetto:**
+   * **Impostazioni del Progetto:** il file copiato contiene i valori del modulo del framework, da adattare al progetto come fa il comando di installazione:
 
      ```php
      const PROJECT = 'NomeDelTuoProgetto';
-     // ROOT_PATH viene calcolato automaticamente
+     const APPLICATION = 'Application';   // nel modulo vale 'Sample'
+     const MODULE_FOLDERS = [];           // nel modulo vale ['SismaFramework']: aggiungi qui i tuoi moduli
+
+     // Il file si trova in Config/ del progetto, un livello sotto la root: rimuovi un DIRECTORY_UP
+     const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . DIRECTORY_UP . DIRECTORY_SEPARATOR;
+
+     // Cache e log nelle cartelle Cache/ e Logs/ della root del progetto
+     const REFERENCE_CACHE_DIRECTORY = ROOT_PATH . CACHE . DIRECTORY_SEPARATOR;
+     const LOG_DIRECTORY_PATH = ROOT_PATH . LOGS . DIRECTORY_SEPARATOR;
      ```
 
-   * **Impostazioni del Database:**
+   * **Impostazioni del Database:** le credenziali sono lette dalle variabili d'ambiente `DATABASE_*`; il secondo valore di ogni riga è quello usato quando la variabile non è impostata. Imposta le variabili d'ambiente (consigliato in produzione) oppure modifica questi valori, senza aggiungere altre dichiarazioni delle stesse costanti. `DEFAULT_ADAPTER_TYPE` vale `'mysql'`, l'adapter per MySQL e MariaDB.
 
      ```php
-     const DATABASE_ADAPTER_TYPE = 'mysql'; // o 'mariadb'
-     const DATABASE_HOST = '127.0.0.1';
-     const DATABASE_NAME = 'nome_database';
-     const DATABASE_USERNAME = 'utente_db';
-     const DATABASE_PASSWORD = 'password_db';
-     const DATABASE_PORT = '3306';
+     define(__NAMESPACE__ . '\DATABASE_HOST', getenv('DATABASE_HOST') ?: "127.0.0.1");
+     define(__NAMESPACE__ . '\DATABASE_NAME', getenv('DATABASE_NAME') ?: "nome_database");
+     define(__NAMESPACE__ . '\DATABASE_PASSWORD', getenv('DATABASE_PASSWORD') ?: "password_db");
+     define(__NAMESPACE__ . '\DATABASE_PORT', getenv('DATABASE_PORT') ?: "3306");
+     define(__NAMESPACE__ . '\DATABASE_USERNAME', getenv('DATABASE_USERNAME') ?: "utente_db");
      ```
 
-   * **Chiave di Cifratura:** Genera una chiave sicura e inseriscila qui. È fondamentale per la crittografia dei dati.
+   * **Chiave di Cifratura:** Genera una chiave sicura e impostala nella variabile d'ambiente `ENCRYPTION_PASSPHRASE`, o come valore di ripiego della riga corrispondente. È fondamentale per la crittografia dei dati.
 
      ```php
-     const ENCRYPTION_PASSPHRASE = 'una-frase-segreta-molto-lunga-e-casuale';
+     define(__NAMESPACE__ . '\ENCRYPTION_PASSPHRASE', getenv('ENCRYPTION_PASSPHRASE') ?: "una-frase-segreta-molto-lunga-e-casuale");
      ```
 
 ### Passo 4: Configura il Web Server
 
 Il framework utilizza un unico punto di accesso (`Public/index.php`). Tutte le richieste devono essere reindirizzate a questo file.
 
-**Esempio per Apache (`.htaccess`)**
-
-Crea un file `.htaccess` nella root del tuo progetto (`il-mio-progetto/.htaccess`) con il seguente contenuto:
-
-```apacheconf
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ Public/index.php?url=$1 [QSA,L]
-</IfModule>
-```
+Con Apache bastano i due `.htaccess` copiati al passo 2: quello della root indirizza le richieste a `Public/`, quello di `Public/` le passa a `index.php`. Con Nginx, imposta `Public/` come document root e inoltra a `index.php` le richieste che non corrispondono a un file, come indicato nel [metodo automatico](#passo-4-configura-il-web-server).
 
 A questo punto, la tua applicazione dovrebbe essere configurata e funzionante. Punta il tuo browser all'URL del progetto per verificare.
 

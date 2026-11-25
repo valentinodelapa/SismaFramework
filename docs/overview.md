@@ -7,7 +7,7 @@ Sfrutta appieno le funzionalità di PHP 8.3+ (come la tipizzazione forte, le `Ba
 ## La Nostra Filosofia
 
 *   **Sviluppo Rapido, Codice Solido:** Promuoviamo pratiche di programmazione solide e un'architettura modulare che ti aiutano a scrivere codice pulito e manutenibile, senza sacrificare la velocità di sviluppo.
-*   **Sicurezza by Design:** La sicurezza non è un'opzione, è integrata. Dal componente di autenticazione e autorizzazione (Voters & Permissions) alla protezione CSRF, hai gli strumenti per costruire applicazioni sicure fin dal primo giorno.
+*   **Sicurezza by Design:** La sicurezza non è un'opzione, è integrata. Dal componente di autenticazione e autorizzazione (Voters & Permissions) alla verifica del token CSRF, hai gli strumenti per costruire applicazioni sicure fin dal primo giorno.
 *   **Libertà e Potenza:** Forniamo una struttura potente ma non restrittiva. L'ORM basato su Data Mapper, il routing automatico e la gestione dei form ti fanno risparmiare tempo, lasciandoti il pieno controllo quando ne hai bisogno.
 
 ## Caratteristiche Principali
@@ -15,10 +15,10 @@ Sfrutta appieno le funzionalità di PHP 8.3+ (come la tipizzazione forte, le `Ba
 *   **[Architettura Modulare](module-architecture.md):** Organizza il tuo codice in moduli riutilizzabili per mantenere i progetti grandi puliti e gestibili.
 *   **[ORM Potente (Data Mapper)](orm.md):** Interagisci con il database usando oggetti PHP con mappatura automatica e relazioni intelligenti.
 *   **[Componente di Sicurezza](security.md):** Sistema completo per autenticazione, autorizzazione e protezione con Voters e Permissions.
-*   **[Gestione Form Avanzata](forms.md):** Validazione automatica, mappatura dati e gestione errori con protezione CSRF integrata.
+*   **[Gestione Form Avanzata](forms.md):** Validazione automatica, mappatura dati e gestione degli errori, anche per form annidati.
 *   **[Routing Automatico](controllers.md):** URL SEO-friendly generati automaticamente dalla struttura dei controller.
 *   **[Strumenti di Sviluppo](debug-bar.md):** Debug bar, [data fixtures](data-fixtures.md) e [sistema di testing](testing.md) integrati.
-*   **[Internazionalizzazione](internationalization.md):** Supporto multilingua con file di traduzione PHP o JSON.
+*   **[Internazionalizzazione](internationalization.md):** Supporto multilingua con file di traduzione JSON.
 
 ## Per chi è SismaFramework?
 
