@@ -29,12 +29,16 @@ namespace SismaFramework\Tests\Orm\ResultSets;
 use PHPUnit\Framework\TestCase;
 use SismaFramework\Core\HelperClasses\Config;
 use SismaFramework\Core\HelperClasses\Encryptor;
+use SismaFramework\Orm\Adapters\AdapterMysql;
 use SismaFramework\Orm\BaseClasses\BaseAdapter;
+use SismaFramework\Orm\Enumerations\JoinType;
 use SismaFramework\Orm\ExtendedClasses\StandardEntity;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\TestsApplication\Entities\BaseSample;
 use SismaFramework\TestsApplication\Entities\EntityWithEncryptedPropertyOne;
+use SismaFramework\TestsApplication\Entities\EntityWithExternalIdentifiers;
 use SismaFramework\TestsApplication\Entities\EntityWithNullableEncryptedProperty;
+use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
 
 /**
  * @author Valentino de Lapa
@@ -247,6 +251,71 @@ class ResultSetMysqlTest extends TestCase
         $entityWithEncryptedProperty = $resultSetMysql->fetch();
         $this->assertSame('cipher-text-one', $entityWithEncryptedProperty->encryptedPropertyOne);
         $this->assertSame('cipher-text-two', $entityWithEncryptedProperty->encryptedPropertyTwo);
+    }
+
+    public function testFetchWithScalarPropertyEndingInId()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_event_id = 4815;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame(4815, $entity->externalEventId);
+    }
+
+    public function testFetchWithScalarPropertyEndingInIdAndScalarPropertyWithoutSuffix()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_code = 'code';
+        $result->external_code_id = 1623;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame('code', $entity->externalCode);
+        $this->assertSame(1623, $entity->externalCodeId);
+    }
+
+    public function testFetchWithForeignKeyAlongsideScalarPropertiesEndingInId()
+    {
+        $result = new \stdClass();
+        $result->id = 1;
+        $result->external_event_id = 42;
+        $result->base_sample_id = 987654;
+        $entity = $this->fetchSingleEntity($result, EntityWithExternalIdentifiers::class);
+        $this->assertSame(42, $entity->externalEventId);
+        $this->assertSame(['baseSample' => 987654], $entity->getForeignKeyIndexes());
+    }
+
+    public function testFetchWithJoinOnForeignKeyHydratesRelatedEntity()
+    {
+        $result = new \stdClass();
+        $result->id = 7192;
+        $result->parent_self_referenced_sample_id = 7191;
+        $result->base_sample_id = null;
+        $result->text = 'child';
+        $result->nullable_text = null;
+        $result->parentSelfReferencedSample__id = 7191;
+        $result->parentSelfReferencedSample__parentSelfReferencedSample = null;
+        $result->parentSelfReferencedSample__baseSample = null;
+        $result->parentSelfReferencedSample__text = 'parent';
+        $result->parentSelfReferencedSample__nullableText = null;
+        $joinMetadata = (new AdapterMysql())->buildJoinOnForeignKey(JoinType::left, 'parentSelfReferencedSample', SelfReferencedSample::class, '`self_referenced_sample`');
+        $entity = $this->fetchSingleEntity($result, SelfReferencedSample::class, [$joinMetadata]);
+        $this->assertSame([], $entity->getForeignKeyIndexes());
+        $this->assertInstanceOf(SelfReferencedSample::class, $entity->parentSelfReferencedSample);
+        $this->assertSame(7191, $entity->parentSelfReferencedSample->id);
+        $this->assertSame('parent', $entity->parentSelfReferencedSample->text);
+    }
+
+    private function fetchSingleEntity(\stdClass $result, string $entityClass, array $joinMetadata = []): object
+    {
+        $PDOStatementStub = $this->createStub(\PDOStatement::class);
+        $PDOStatementStub->method('rowCount')
+                ->willReturn(1);
+        $PDOStatementStub->method('fetch')
+                ->willReturn($result);
+        $resultSetMysql = new ResultSetMysql($PDOStatementStub);
+        $resultSetMysql->setReturnType($entityClass);
+        $resultSetMysql->setJoinMetadata($joinMetadata);
+        return $resultSetMysql->fetch();
     }
 
     public function testFetchWithMultipleBaseEntity()

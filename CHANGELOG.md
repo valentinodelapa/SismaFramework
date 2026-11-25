@@ -2,6 +2,169 @@
 
 All notable changes to this project will be documented in this file.
 
+## [11.9.18] - 2026-11-25 - Query con JOIN, Eager Loading e Proprietà Scalari che Terminano in `Id`
+
+Patch che riporta sulla 11.x le correzioni dell'ORM delle versioni 12.16.1, 12.17.1 e 12.17.2, l'uso delle cifre negli identificatori SQL della 12.14.0 e alcune correzioni minori delle versioni 12.0.1, 12.2.0, 12.12.0, 12.15.1 e 12.18.0 sfuggite ai backport precedenti. Il supporto alle JOIN e all'eager loading è presente dalla 10.1.0, con gli stessi difetti corretti nella 12.x. Non sono riportate le parti legate a funzionalità introdotte nella 12.x, come le condizioni sulle colonne JSON e la cache dei metadati di reflection.
+
+### 🐛 Bug Fix
+
+#### `Orm/HelperClasses/Query` — colonne ambigue nelle condizioni WHERE con JOIN (12.17.2)
+
+Le colonne delle condizioni WHERE non erano qualificate con la tabella. In una query con JOIN, una condizione su una colonna presente in più tabelle (`id`, ma anche `name`, `text`, ecc.) veniva rifiutata da MySQL con l'errore 1052 `Column '…' in WHERE is ambiguous`. `BaseModel::getEntityByIdWithRelations()` falliva quindi sempre, perché filtra per `id` dopo aver aggiunto le JOIN:
+
+```sql
+SELECT … FROM `article` LEFT JOIN `user` AS `author` ON … WHERE `id` = ?
+```
+
+Ora le colonne delle condizioni WHERE vengono qualificate con la tabella della query, o con il suo alias quando è presente:
+
+```sql
+SELECT … FROM `article` LEFT JOIN `user` AS `author` ON … WHERE `article`.`id` = ?
+```
+
+La qualificazione riguarda `appendCondition()`, `appendConditionOnEncryptedColumn()` e `appendFulltextCondition()`. Inoltre:
+- vale per tutte le query con una tabella impostata tramite `setTable()`, con o senza JOIN, comprese quelle di `UPDATE` e `DELETE` generate da `DataMapper`;
+- non si applica alle colonne già qualificate (`appendCondition('author.country', …)`), che restano invariate;
+- non si applica alle condizioni HAVING, dove le colonne sono di norma alias della `SELECT`;
+- nelle subquery usa la tabella della subquery, cioè la stessa che MySQL sceglie per le colonne non qualificate: le subquery correlate continuano a funzionare.
+
+`Query` passa all'adapter il nome della colonna già qualificato (`article.id`) e lascia all'adapter l'escape, come già avveniva per le colonne qualificate dall'utente: le firme dei metodi di `BaseAdapter` non cambiano.
+
+#### `Orm/HelperClasses/Query::appendJoin()`, `Orm/BaseClasses/BaseAdapter` e `Orm/BaseClasses/BaseModel` — alias delle JOIN in snake_case (12.17.2)
+
+L'alias della tabella principale passava da `escapeTable()` e veniva quindi convertito in snake_case (`parentEvent` → `parent_event`), mentre quello delle JOIN passava da `escapeIdentifier()` e restava invariato (`parentCategory`). Una condizione su una colonna di una relazione con nome composto, come `appendCondition('parentCategory.name', …)`, veniva convertita in `` `parent_category`.`name` `` e MySQL rispondeva con l'errore 1054 `Unknown column`, perché la tabella joinata si chiamava `parentCategory`. Ora anche gli alias delle JOIN vengono convertiti in snake_case, in `appendJoin()`, in `BaseAdapter::buildJoinOnForeignKey()`, in `BaseAdapter::buildJoinedColumns()` e nelle condizioni `ON` delle JOIN annidate di `BaseModel::appendNestedRelationJoin()`:
+
+```sql
+LEFT JOIN `category` AS `parent_category` ON `category`.`parent_category_id` = `parent_category`.id
+```
+
+Il prefisso delle colonne della tabella joinata nel risultato (`parentCategory__name`) non cambia, perché serve all'idratazione.
+
+#### `Orm/BaseClasses/BaseResultSet` — entità collegate tramite JOIN mai idratate con l'adapter MySQL (12.17.2)
+
+L'adapter MySQL salva l'alias delle JOIN nei metadati con i backtick (`` `author` ``), mentre le colonne della tabella collegata arrivano nel risultato con il prefisso senza backtick (`author__name`). `getEntityClassForAlias()` confrontava i due valori, non trovava corrispondenze e saltava l'entità collegata. Ogni relazione richiesta all'eager loading (`getEntityByIdWithRelations()`, `getEntityCollectionWithRelations()`) veniva poi caricata in modo lazy. I risultati erano corretti, ma ogni relazione costava una query in più per riga. Ora i metadati delle JOIN contengono anche la chiave `aliasPath`, con il nome della relazione così com'è, e `getEntityClassForAlias()` usa quella.
+
+#### `Orm/BaseClasses/BaseModel::loadCollectionForEntities()` — eager loading delle collection sempre in errore (12.17.2)
+
+`getEntityCollectionWithRelations()` con una collection (`['articleCollection']`, `['sonCollection']`) passava da `loadCollectionForEntities()`, che chiama `getForeignKeyName()` sulle entità. Il metodo era `protected` in `ReferencedEntity` e `SelfReferencedEntity`: la chiamata finiva nel `__call()` dell'entità, che sollevava `EntityException: getForeignKeyName`. Ora `getForeignKeyName()` è pubblico, come `getCollectionDataInformation()`.
+
+Per raggruppare i figli per entità padre, inoltre, `loadCollectionForEntities()` leggeva la proprietà della chiave esterna di ogni figlio, caricando in modo lazy l'entità padre. Ora legge l'id con `getForeignKeyIndexes()`, senza query aggiuntive.
+
+#### `Orm/BaseClasses/BaseModel::appendNestedRelationJoin()` — JOIN ripetute per i segmenti condivisi (12.17.2)
+
+Con le relazioni annidate in forma di array (`['author' => ['country']]`) o con più percorsi che iniziano dalla stessa relazione (`['author.country', 'author.publisher']`), la JOIN del segmento comune veniva aggiunta una volta per percorso, con lo stesso alias. MySQL rifiutava la query con l'errore 1066 `Not unique table/alias`. Ora la JOIN di un segmento già presente nella query non viene ripetuta. La sola notazione puntata con un unico percorso (`['author.country']`) funzionava già.
+
+#### `Orm/BaseClasses/BaseAdapter::buildJoinClause()` — CROSS JOIN con clausola `ON` vuota (12.17.2)
+
+La clausola `ON` veniva aggiunta a ogni JOIN, anche senza condizione: una CROSS JOIN diventava `` CROSS JOIN `color` AS `color` ON `` e la query non era valida. Ora `ON` viene omessa quando la condizione è vuota.
+
+#### `Orm/Enumerations/Keyword::groupBy` — `GROUP_BY` al posto di `GROUP BY` (12.17.2)
+
+La parola chiave restituita per l'adapter MySQL era `GROUP_BY`, per cui qualunque query con `setGroupBy()` veniva rifiutata dal database. Ora è `GROUP BY`.
+
+#### `Orm/HelperClasses/Query` — colonne di default qualificate con il nome della tabella invece che con l'alias (12.17.1)
+
+Dalla 10.1.0, con l'introduzione delle JOIN, le colonne di default di una `SELECT` vengono qualificate con la tabella (`tabella.*`) anziché essere un semplice `*`. `Query` usava però sempre il nome della tabella, anche quando `setTable()` riceveva un alias. Una volta assegnato l'alias, MySQL non riconosce più il nome della tabella in quella query:
+
+```sql
+SELECT `event`.* FROM `event` as `parent_event` WHERE ...
+```
+
+e risponde con `Unknown table 'event'`. Il difetto riguardava sia la `SELECT` senza colonne esplicite, sia i metodi che aggiungono una colonna a quelle di default, come `appendColumn()` e le aggregazioni con `$append = true`. Ora le colonne vengono qualificate con l'alias:
+
+```sql
+SELECT `parent_event`.* FROM `event` as `parent_event` WHERE ...
+```
+
+#### `Orm/HelperClasses/Query::appendJoinOnForeignKey()` — condizione `ON` non valida con l'alias (12.17.1)
+
+La tabella principale veniva passata a `BaseAdapter::buildJoinOnForeignKey()` comprensiva della dichiarazione dell'alias, e la condizione risultante (`` `event` as `parent_event`.`x_id` = ... ``) non era SQL valido. Ora viene passato l'alias, e la condizione diventa `` `parent_event`.`x_id` = ... ``. La correzione vale anche per le JOIN generate dall'eager loading dei model quando la query ha un alias.
+
+#### `Orm/BaseClasses/BaseResultSet` — proprietà scalari con suffisso `Id` mai caricate (12.16.1)
+
+In scrittura il suffisso `_id` viene aggiunto alla colonna solo se la proprietà è di tipo entità. Una proprietà `protected int $externalEventId;` viene quindi salvata correttamente nella colonna `external_event_id`. In lettura, invece, il nome della proprietà veniva ricavato dalla colonna con `NotationManager::convertColumnNameToPropertyName()`, che toglie sempre il suffisso `_id` senza considerare il tipo. La colonna `external_event_id` veniva cercata nella proprietà `externalEvent`. Se la proprietà non esisteva, il valore veniva scartato e `externalEventId` non veniva mai caricata. Se esisteva una proprietà scalare `externalEvent`, il valore di `external_event_id` sovrascriveva quello della colonna `external_event`.
+
+La lettura segue ora la stessa regola della scrittura, basata sul tipo, sia per l'entità principale (`convertToBaseEntity()`) sia per quelle collegate tramite JOIN (`hydrateRelatedEntity()`). Una colonna che termina in `_id` viene assegnata alla proprietà senza suffisso solo se questa esiste ed è di tipo entità. Altrimenti, se l'entità ha una proprietà con il nome completo della colonna (`externalEventId`), il valore viene assegnato a quella. Negli altri casi il comportamento resta quello precedente. `NotationManager::convertColumnNameToPropertyName()` non cambia.
+
+#### `Orm/BaseClasses/BaseAdapter::escapeIdentifier()` — cifre rimosse dagli identificatori SQL (12.14.0)
+
+`NotationManager` tratta i numeri come parte della parola che li precede nelle conversioni tra `StudlyCaps`/`camelCase` e `snake_case` (`Oauth2Client` ↔ `oauth2_client`, `sha256Hash` ↔ `sha256_hash`), ma `escapeIdentifier()` rimuoveva qualsiasi carattere diverso da lettere e underscore: l'entità `Oauth2Client` veniva salvata nella tabella `` `oauth_client` `` e la proprietà `sha256Hash` nella colonna `` `sha_hash` ``, senza alcun errore. `escapeIdentifier()` conserva ora anche le cifre, purché nel database il numero faccia parte della parola che lo precede senza un underscore aggiuntivo prima della cifra.
+
+#### `Orm/HelperClasses/DataMapper/TransactionManager::rollback()` — entità processate non svuotate (12.18.0)
+
+Al commit l'elenco delle entità già processate nella transazione viene svuotato, al rollback no. Dopo il fallimento di un salvataggio, un nuovo `save()` della stessa entità nella stessa richiesta restituiva `true` senza eseguire alcuna query. Ora anche il rollback svuota l'elenco.
+
+#### `Core/HelperClasses/Dispatcher/ResourceMaker::sendCacheHeaders()` — header `Expires` non valido (12.12.0)
+
+La data dell'header `Expires` delle risorse statiche usava il formato dei cookie (`Wed, 25-Nov-2026 10:00:00 GMT`) invece di quello HTTP (`Wed, 25 Nov 2026 10:00:00 GMT`), e i client potevano ignorarla.
+
+#### `Console/Services/Upgrade/UpgradeManager` — warning scartati per i file senza modifiche automatiche (12.0.1)
+
+I warning raccolti dai transformer venivano inclusi nel report solo per i file modificati automaticamente: un file che richiedeva solo una revisione manuale, come una chiamata a `setResponseType()` troppo complessa per essere convertita, non compariva nel report. Ora i suoi warning vengono riportati, e il file resta conteggiato tra quelli non modificati.
+
+#### `Sample/Controllers/SampleController::protected()` — metodi inesistenti su `Authentication` (12.0.1)
+
+L'azione del modulo demo chiamava `isLogged()`, `getAuthenticatedUser()` e `getUserIdentifier()`, che non esistono su `Security\HttpClasses\Authentication`, e la view `sample/protected.php` non esisteva: ogni richiesta a `/sample/protected` falliva con un `Error`. L'azione verifica ora la sessione con `Session::hasItem('userId')`, come nell'esempio di login di `docs/security.md`.
+
+#### `Sample/robots.txt` e `Sample/sitemap.xml` — non raggiungibili (12.0.1)
+
+`ResourceHandler::handleResourceFile()` cerca i file statici del modulo applicativo nella sua cartella `Assets/`, non nella root del modulo: le richieste a `/robots.txt` e `/sitemap.xml` del sito demo restituivano la pagina di errore. I due file sono stati spostati in `Sample/Assets/`.
+
+#### `Config/config.php` — la root del sito demo serviva la pagina degli esempi invece della homepage (12.0.1)
+
+`DEFAULT_PATH` era impostato su `sample`: `RouteResolver::parsePath()` lo usa come controller quando l'URL è vuoto, quindi ogni richiesta a `/` risolveva a `SampleController::index()` invece che a `HomeController::index()`, mentre il logo, la voce "Home" del menu, le breadcrumb e `sitemap.xml` indicano `/` come homepage. `DEFAULT_PATH` è ora `home`.
+
+### 🔧 Manutenzione
+
+#### `Core/Traits/ReferencedSelectableEnumeration` — parametro implicitamente nullable (12.2.0)
+
+`getChoiceByReferencedEnumeration()` dichiarava `\UnitEnum $referencedEnumeration = null`, che dalla PHP 8.4 emette un avviso di deprecazione a ogni caricamento del trait. Il tipo è ora `?\UnitEnum`.
+
+#### `Core/HelperClasses/Filter` e `Orm/Adapters/AdapterMysql` — `is_int()` al posto di `is_integer()` (12.15.1)
+
+PHP 8.6 depreca l'alias `is_integer()`. Le due occorrenze sono state sostituite con `is_int()`.
+
+**File modificati**:
+- **`Orm/HelperClasses/Query.php`**: la proprietà `$tableName` è sostituita da `$tableReference`, che contiene l'alias quando è presente; nuova proprietà `$tableReferenceName` e nuovi metodi privati `qualifyColumn()`, `qualifyColumnForCurrentCondition()` e `appendToCurrentCondition()`; alias di `appendJoin()` convertito con `escapeTable()` e chiave `aliasPath` nei metadati
+- **`Orm/BaseClasses/BaseAdapter.php`**: `escapeIdentifier()` mantiene le cifre; alias convertito con `escapeTable()` in `buildJoinOnForeignKey()` e `buildJoinedColumns()`; chiave `aliasPath` nei metadati di `buildJoinOnForeignKey()`; clausola `ON` omessa in `buildJoinClause()` per le JOIN senza condizione
+- **`Orm/BaseClasses/BaseModel.php`**: alias convertiti con `escapeTable()` nelle condizioni `ON` di `appendNestedRelationJoin()`; nuovi metodi privati `isRelationJoined()` e `appendRelationSegmentJoin()`; raggruppamento dei figli in `loadCollectionForEntities()` tramite `getForeignKeyIndexes()`
+- **`Orm/BaseClasses/BaseResultSet.php`**: nuovi metodi privati `resolvePropertyName()` e `isEntityProperty()`, usati da `convertToBaseEntity()` e `hydrateRelatedEntity()`; `getEntityClassForAlias()` confronta l'alias con `aliasPath`, e con `alias` per i metadati che non hanno questa chiave
+- **`Orm/ExtendedClasses/ReferencedEntity.php`** e **`Orm/ExtendedClasses/SelfReferencedEntity.php`**: `getForeignKeyName()` da `protected` a `public`
+- **`Orm/Enumerations/Keyword.php`**: `GROUP BY` per `Keyword::groupBy`
+- **`Orm/HelperClasses/DataMapper/TransactionManager.php`**: `rollback()` svuota `ProcessedEntitiesCollection`
+- **`Orm/Adapters/AdapterMysql.php`**, **`Core/HelperClasses/Filter.php`**: `is_int()` al posto di `is_integer()`
+- **`Core/HelperClasses/Dispatcher/ResourceMaker.php`**: formato HTTP per la data dell'header `Expires`
+- **`Core/Traits/ReferencedSelectableEnumeration.php`**: parametro `?\UnitEnum $referencedEnumeration`
+- **`Console/Services/Upgrade/UpgradeManager.php`**: report dei warning anche per i file senza modifiche automatiche
+- **`Sample/Controllers/SampleController.php`**: `protected()` usa `Session` e non riceve più `Authentication`
+- **`Sample/Views/sample/protected.php`**: nuova view
+- **`Config/config.php`**: `DEFAULT_PATH` da `"sample"` a `"home"`
+- **`Sample/robots.txt`** → **`Sample/Assets/robots.txt`**, **`Sample/sitemap.xml`** → **`Sample/Assets/sitemap.xml`**
+
+### 🧪 Test
+
+- **`Tests/Orm/HelperClasses/QueryTest.php`**: qualificazione delle colonne nel WHERE, anche con alias, con colonna già qualificata, senza tabella impostata e nell'HAVING; colonne di default e JOIN su foreign key con alias della tabella
+- **`Tests/Orm/Adapters/AdapterMysqlTest.php`**: SQL generato con l'adapter reale per `buildJoinOnForeignKey()`, `buildJoinedColumns()`, una query con JOIN e condizioni, una CROSS JOIN e una query con alias in cui le condizioni cifrate e fulltext vengono qualificate nel WHERE e non nell'HAVING; `GROUP BY` in `testParseSelect`; cifre in `testEscapeIdentifier()`, `testEscapeTable()` e `testEscapeColumn()`
+- **`Tests/Orm/ResultSets/ResultSetMysqlTest.php`**: idratazione di un'entità collegata con i metadati generati da `AdapterMysql`; proprietà scalari con suffisso `Id`, con la nuova entità di test `TestsApplication/Entities/EntityWithExternalIdentifiers`
+- **`Tests/Orm/JoinEagerLoadingTest.php`**: eager loading di `sonCollection` e relazioni annidate in forma di array con una sola JOIN per il segmento comune; alias e chiave `aliasPath` nei metadati di `appendJoin()`
+- **`Tests/Core/HelperClasses/NotationManagerTest.php`**: casi con cifre nelle conversioni tra notazioni
+- **`Tests/Orm/HelperClasses/DataMapper/TransactionManagerTest.php`**: nuovo test sullo svuotamento delle entità processate al rollback
+- **`Tests/Console/Services/Upgrade/UpgradeManagerTest.php`**: aggiunto `testUpgradeSurfacesWarningsForFilesWithNoAutomaticChanges()`
+
+### ✅ Backward Compatibility
+
+- **Nessun Breaking Change nell'API pubblica**: le firme dei metodi non cambiano; `getForeignKeyName()` di `ReferencedEntity` e `SelfReferencedEntity` passa da `protected` a `public`, e le eventuali sottoclassi che lo ridefiniscono devono dichiararlo `public`.
+- **Cambiamento dell'SQL generato**: nelle condizioni WHERE le colonne sono ora qualificate con la tabella (`` `website_id` = ? `` diventa `` `event`.`website_id` = ? ``), e gli alias delle JOIN sono in snake_case. Il significato delle query non cambia.
+- **Condizioni `ON` scritte a mano**: con `appendJoin()` l'alias viene ora convertito in snake_case, per cui una condizione `ON` che lo indica in camelCase (`authorCountry.id`) va riscritta in snake_case (`author_country.id`). Gli alias già in snake_case o di una sola parola non cambiano.
+- **Subquery correlate**: una subquery che, con una condizione su una colonna non qualificata, intendeva riferirsi a una colonna della query esterna assente nella propria tabella deve ora qualificare quella colonna esplicitamente.
+- **Cifre negli identificatori**: i nomi di entità e proprietà che contengono cifre producono ora tabelle e colonne con le cifre (`Oauth2Client` → `oauth2_client`). Le tabelle e le colonne create con i nomi senza cifre vanno rinominate. I nomi privi di cifre non cambiano.
+- **Cambiamento di comportamento osservabile**: in un'entità con una proprietà scalare `x` e una proprietà `xId`, la colonna `x_id` viene ora letta in `xId` e non sovrascrive più `x`.
+- **Proprietà rinominata**: la proprietà protetta `Query::$tableName` diventa `$tableReference`. Riguarda solo eventuali sottoclassi di `Query` che la leggono direttamente.
+- **Metadati delle JOIN**: `Query::getJoins()` restituisce anche la chiave `aliasPath`.
+- **`DEFAULT_PATH` nelle nuove installazioni**: il `Config/configFramework.php` generato da `sisma install` parte ora da `DEFAULT_PATH = "home"` invece di `"sample"`. I progetti esistenti non cambiano.
+
+---
+
 ## [11.9.17] - 2026-10-24 - Descrizione di `HTTPS_IS_FORCED` nella Documentazione
 
 Patch della documentazione che corregge la descrizione di `HTTPS_IS_FORCED`, presentata come un redirect da HTTP a HTTPS.
@@ -22,9 +185,9 @@ La documentazione descriveva `HTTPS_IS_FORCED` come la costante che forza il red
 
 ---
 
-## [11.9.16]
+## [11.9.16] - 2026-10-24 - Correzioni di Sicurezza e Bug Riportate dalla 12.x
 
-Patch 11.9.16, non ancora rilasciata, che riporta sulla 11.x le correzioni di bug e di sicurezza delle versioni dalla 12.3.1 alla 12.13.1 che riguardano codice presente anche nella 11. Non sono riportate le correzioni legate a funzionalità introdotte nella 12.x: le chiavi di localizzazione composte degli enum (12.2.0), le colonne JSON (12.7.0) e il caricamento di `Config/config.php` nel namespace del modulo (12.13.2).
+Patch che riporta sulla 11.x le correzioni di bug e di sicurezza delle versioni dalla 12.3.1 alla 12.13.1 che riguardano codice presente anche nella 11. Non sono riportate le correzioni legate a funzionalità introdotte nella 12.x: le chiavi di localizzazione composte degli enum (12.2.0), le colonne JSON (12.7.0) e il caricamento di `Config/config.php` nel namespace del modulo (12.13.2).
 
 ### 🛡️ Sicurezza
 

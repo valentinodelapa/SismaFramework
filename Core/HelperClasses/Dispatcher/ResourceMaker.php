@@ -159,7 +159,7 @@ class ResourceMaker
     {
         header_remove("Pragma");
         header("Cache-Control: public");
-        header("Expires: " . gmdate("D, d-M-Y H:i:s \G\M\T", time() + 60));
+        header("Expires: " . gmdate("D, d M Y H:i:s \G\M\T", time() + 60));
     }
 
     private function servePartialContent(string $filename, int $fileSize, string $rangeHeader): Response

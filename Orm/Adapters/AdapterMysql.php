@@ -145,7 +145,7 @@ class AdapterMysql extends BaseAdapter
 
     private function parseGenericBindType(mixed $value): DataType
     {
-        if (is_integer($value)) {
+        if (is_int($value)) {
             return DataType::typeInteger;
         } elseif (is_float($value)) {
             return DataType::typeDecimal;

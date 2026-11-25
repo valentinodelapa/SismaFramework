@@ -83,7 +83,7 @@ abstract class SelfReferencedEntity extends ReferencedEntity
     }
 
     #[\Override]
-    protected function getForeignKeyName(string $collectionName): ?string
+    public function getForeignKeyName(string $collectionName): ?string
     {
         $collectionNameParts = array_diff(explode($this->config->foreignKeySuffix, $collectionName), ['']);
         if ($collectionName === $this->config->sonCollectionPropertyName) {

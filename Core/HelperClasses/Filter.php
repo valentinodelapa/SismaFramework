@@ -191,7 +191,7 @@ class Filter
     {
         $result = true;
         $result = ($this->isNumeric($value)) ? $result : false;
-        $result = (is_integer($value)) ? $result : false;
+        $result = (is_int($value)) ? $result : false;
         return $result;
     }
 

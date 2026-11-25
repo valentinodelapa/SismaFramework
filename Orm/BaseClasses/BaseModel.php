@@ -54,6 +54,10 @@
  *   * Aggiunta di appendNestedRelationJoin() per costruzione ricorsiva di JOIN multi-livello
  *   * Validazione automatica delle proprietà foreign key tramite Reflection API
  *   * Integrazione con sistema di cache esistente per evitare duplicazione di entità
+ * - Correzioni dell'eager loading (v11.9.18):
+ *   * Alias in snake_case nelle condizioni ON delle JOIN annidate di appendNestedRelationJoin()
+ *   * Aggiunta di isRelationJoined() e appendRelationSegmentJoin() per non ripetere la JOIN dei segmenti condivisi tra relazioni annidate
+ *   * Raggruppamento dei figli in loadCollectionForEntities() tramite getForeignKeyIndexes(), senza caricare l'entità padre
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -209,25 +213,35 @@ abstract class BaseModel
             }
             $relatedEntityClass = $propertyType->getName();
             $alias = implode('_', array_slice($segments, 0, $index + 1));
-            if ($parentAlias === null) {
-                $query->appendJoinOnForeignKey($joinType, $segment, $relatedEntityClass);
-            } else {
-                $foreignKeyColumn = $query->getAdapter()->escapeColumn($segment, true);
-                $onCondition = $parentAlias . '.' . $foreignKeyColumn . ' = ' . $alias . '.id';
-                $query->appendJoin(
-                    $joinType,
-                    $relatedEntityClass,
-                    $alias,
-                    $onCondition,
-                    $relatedEntityClass
-                );
-            }
-            $joinedColumns = $query->getAdapter()->buildJoinedColumns($alias, $relatedEntityClass);
-            foreach ($joinedColumns as $column) {
-                $query->appendColumn($column);
+            if ($this->isRelationJoined($query, $alias) === false) {
+                $this->appendRelationSegmentJoin($query, $joinType, $segment, $relatedEntityClass, $alias, $parentAlias);
             }
             $currentEntityClass = $relatedEntityClass;
             $parentAlias = $alias;
+        }
+    }
+
+    private function isRelationJoined(Query $query, string $aliasPath): bool
+    {
+        foreach ($query->getJoins() as $join) {
+            if (($join['aliasPath'] ?? null) === $aliasPath) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function appendRelationSegmentJoin(Query &$query, JoinType $joinType, string $segment, string $relatedEntityClass, string $alias, ?string $parentAlias): void
+    {
+        if ($parentAlias === null) {
+            $query->appendJoinOnForeignKey($joinType, $segment, $relatedEntityClass);
+        } else {
+            $foreignKeyColumn = $query->getAdapter()->escapeColumn($segment, true);
+            $onCondition = $query->getAdapter()->escapeTable($parentAlias) . '.' . $foreignKeyColumn . ' = ' . $query->getAdapter()->escapeTable($alias) . '.id';
+            $query->appendJoin($joinType, $relatedEntityClass, $alias, $onCondition, $relatedEntityClass);
+        }
+        foreach ($query->getAdapter()->buildJoinedColumns($alias, $relatedEntityClass) as $column) {
+            $query->appendColumn($column);
         }
     }
 
@@ -288,11 +302,7 @@ abstract class BaseModel
 
         $groupedChildren = [];
         foreach ($allChildren as $child) {
-            $parentId = $child->$foreignKeyName;
-            if ($parentId instanceof BaseEntity && isset($parentId->id)) {
-                $parentId = $parentId->id;
-            }
-
+            $parentId = $child->getForeignKeyIndexes()[$foreignKeyName] ?? $child->$foreignKeyName->id;
             if (!isset($groupedChildren[$parentId])) {
                 $groupedChildren[$parentId] = new SismaCollection($collectionDataClass);
             }

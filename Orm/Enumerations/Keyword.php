@@ -78,7 +78,7 @@ enum Keyword
                 AdapterType::mysql => 'ORDER BY',
             },
             self::groupBy => match ($adapterType) {
-                AdapterType::mysql => 'GROUP_BY',
+                AdapterType::mysql => 'GROUP BY',
             },
             self::limit => match ($adapterType) {
                 AdapterType::mysql => 'LIMIT',

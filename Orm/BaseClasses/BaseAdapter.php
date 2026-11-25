@@ -47,6 +47,9 @@
  *   * Modifica di buildJoinOnForeignKey() per includere relatedEntityClass nei metadati
  *   * Modifica di allColumns() per accettare parametro opzionale $table e restituire table.* per qualificazione colonne
  *   * Supporto per eager loading gerarchico multi-entità con hydration automatica
+ * - Alias delle JOIN in snake_case tramite escapeTable() in buildJoinOnForeignKey() e buildJoinedColumns(), e aggiunta
+ *   della chiave aliasPath nei metadati di buildJoinOnForeignKey(); clausola ON omessa in buildJoinClause() per le JOIN
+ *   senza condizione, come la CROSS JOIN (v11.9.18).
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -146,7 +149,7 @@ abstract class BaseAdapter
 
     public function escapeIdentifier(string $name): string
     {
-        $parsedName = preg_replace("/([^a-zA-Z_]+)/", "", $name);
+        $parsedName = preg_replace("/([^a-zA-Z0-9_]+)/", "", $name);
         return $parsedName;
     }
 
@@ -284,7 +287,7 @@ abstract class BaseAdapter
 
     public function buildJoinOnForeignKey(JoinType $joinType, string $foreignKeyProperty, string $relatedEntityClass, string $mainTable): array
     {
-        $tableAlias = $this->escapeIdentifier($foreignKeyProperty);
+        $tableAlias = $this->escapeTable($foreignKeyProperty);
         $relatedTable = $this->escapeTable(NotationManager::convertEntityNameToTableName($relatedEntityClass));
         $foreignKeyColumn = $this->escapeColumn($foreignKeyProperty, true);
 
@@ -294,6 +297,7 @@ abstract class BaseAdapter
             'type' => $joinType,
             'table' => $relatedTable,
             'alias' => $tableAlias,
+            'aliasPath' => $foreignKeyProperty,
             'on' => $onCondition,
             'entityClass' => $relatedEntityClass,
             'relatedEntityClass' => $relatedEntityClass,
@@ -328,7 +332,7 @@ abstract class BaseAdapter
                     $columnName = $this->escapeColumn($propertyName, true);
                 }
 
-                $columns[] = $tableAlias . '.' . $columnName . ' ' .
+                $columns[] = $this->escapeTable($tableAlias) . '.' . $columnName . ' ' .
                         Keyword::as->getAdapterVersion($this->adapterType) . ' ' .
                         $tableAlias . $separator . $propertyName;
             }
@@ -349,8 +353,8 @@ abstract class BaseAdapter
                     Keyword::join->getAdapterVersion($this->adapterType) . ' ' .
                     $join['table'] . ' ' .
                     Keyword::as->getAdapterVersion($this->adapterType) . ' ' .
-                    $join['alias'] . ' ' .
-                    'ON ' . $join['on'];
+                    $join['alias'] .
+                    ($join['on'] === '' ? '' : ' ON ' . $join['on']);
         }
 
         return implode(' ', $clauses) . ' ';

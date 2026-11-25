@@ -87,6 +87,7 @@ class TransactionManager
         if (self::$isActiveTransaction) {
             $this->adapter->rollbackTransaction();
             self::$isActiveTransaction = false;
+            $this->processedEntitiesCollection->clear();
         }
     }
 }

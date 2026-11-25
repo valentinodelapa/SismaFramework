@@ -43,6 +43,7 @@
  *   * Aggiunta di getEntityClassForAlias() per risoluzione entity class da alias JOIN
  *   * Integrazione con Cache per Identity Map pattern su entità nested
  *   * Supporto per navigazione gerarchica delle relazioni tramite alias path
+ * - Risoluzione in getEntityClassForAlias() tramite la chiave aliasPath dei metadati JOIN, non escapata dall'adapter (v11.9.18).
  */
 
 namespace SismaFramework\Orm\BaseClasses;
@@ -212,7 +213,7 @@ abstract class BaseResultSet implements \Iterator
     private function getEntityClassForAlias(string $alias): ?string
     {
         foreach ($this->joinMetadata as $join) {
-            if (isset($join['alias']) && $join['alias'] === $alias) {
+            if (($join['aliasPath'] ?? $join['alias'] ?? null) === $alias) {
                 return $join['relatedEntityClass'] ?? $join['entityClass'] ?? null;
             }
         }
@@ -223,8 +224,8 @@ abstract class BaseResultSet implements \Iterator
     {
         $entity = new $entityClass();
 
-        foreach ($data as $property => $value) {
-            $property = NotationManager::convertColumnNameToPropertyName($property);
+        foreach ($data as $columnName => $value) {
+            $property = $this->resolvePropertyName($entityClass, $columnName);
             if (property_exists($entity, $property)) {
                 $reflectionProperty = new \ReflectionProperty($entityClass, $property);
                 $reflectionType = $reflectionProperty->getType();
@@ -266,8 +267,8 @@ abstract class BaseResultSet implements \Iterator
     {
         $class = $this->returnType;
         $entity = new $class();
-        foreach ($standardClass as $property => $value) {
-            $property = NotationManager::convertColumnNameToPropertyName($property);
+        foreach ($standardClass as $columnName => $value) {
+            $property = $this->resolvePropertyName($class, $columnName);
             if (property_exists($entity, $property)) {
                 $reflectionProperty = new \ReflectionProperty($class, $property);
                 $reflectionType = $reflectionProperty->getType();
@@ -280,6 +281,25 @@ abstract class BaseResultSet implements \Iterator
         }
         $entity->modified = false;
         return $entity;
+    }
+
+    private function resolvePropertyName(string $entityClass, string $columnName): string
+    {
+        $propertyName = NotationManager::convertColumnNameToPropertyName($columnName);
+        $fullPropertyName = NotationManager::convertToCamelCase($columnName);
+        if (($propertyName !== $fullPropertyName) && property_exists($entityClass, $fullPropertyName) && ($this->isEntityProperty($entityClass, $propertyName) === false)) {
+            return $fullPropertyName;
+        }
+        return $propertyName;
+    }
+
+    private function isEntityProperty(string $entityClass, string $propertyName): bool
+    {
+        if (property_exists($entityClass, $propertyName) === false) {
+            return false;
+        }
+        $reflectionType = (new \ReflectionProperty($entityClass, $propertyName))->getType();
+        return ($reflectionType instanceof \ReflectionNamedType) && ($reflectionType->isBuiltin() === false) && is_subclass_of($reflectionType->getName(), BaseEntity::class);
     }
 
     private function decryptValue(string $value, string $initializationVector): string

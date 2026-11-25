@@ -35,6 +35,7 @@ use SismaFramework\Orm\Enumerations\AggregationFunction;
 use SismaFramework\Orm\Enumerations\ComparisonOperator;
 use SismaFramework\Orm\Enumerations\DataType;
 use SismaFramework\Orm\Enumerations\Indexing;
+use SismaFramework\Orm\Enumerations\JoinType;
 use SismaFramework\Orm\Enumerations\Placeholder;
 use SismaFramework\Orm\Enumerations\TextSearchMode;
 use SismaFramework\Orm\Exceptions\AdapterException;
@@ -43,6 +44,7 @@ use SismaFramework\Orm\HelperClasses\Query;
 use SismaFramework\Orm\ResultSets\ResultSetMysql;
 use SismaFramework\Orm\CustomTypes\SismaDateTime;
 use SismaFramework\TestsApplication\Entities\BaseSample;
+use SismaFramework\TestsApplication\Entities\SelfReferencedSample;
 use SismaFramework\TestsApplication\Enumerations\SampleType;
 
 /**
@@ -93,7 +95,8 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('*', $adapterMysql->escapeIdentifier("*"));
         $this->assertEquals('1', $adapterMysql->escapeIdentifier("1"));
         $this->assertEquals('1.1', $adapterMysql->escapeIdentifier("1.1"));
-        $this->assertEquals('`Table`.`column_name`', $adapterMysql->escapeIdentifier("T-a#b@l4e.c#o8l(umn_name"));
+        $this->assertEquals('`Table`.`column_name`', $adapterMysql->escapeIdentifier("T-a#b@le.c#ol(umn_name"));
+        $this->assertEquals('`Tabl4e`.`co8lumn_name2`', $adapterMysql->escapeIdentifier("T-a#b@l4e.c#o8l(umn_name2"));
     }
 
     public function testEscapeTable()
@@ -101,6 +104,7 @@ class AdapterMysqlTest extends TestCase
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('`table_name`', $adapterMysql->escapeTable("tableName"));
         $this->assertEquals('`table_name`', $adapterMysql->escapeTable("table#Name"));
+        $this->assertEquals('`oauth2_client`', $adapterMysql->escapeTable("Oauth2Client"));
     }
 
     public function testEscapeOrderIndexing()
@@ -131,6 +135,9 @@ class AdapterMysqlTest extends TestCase
         $this->assertEquals('`column_name`', $adapterMysql->escapeColumn('columnName'));
         $this->assertEquals('`table_name`.`column_name_id`', $adapterMysql->escapeColumn('tableName.column#Name', true));
         $this->assertEquals('`table_name`.`column_name`', $adapterMysql->escapeColumn('tableName.column#Name'));
+        $this->assertEquals('`sha256_hash`', $adapterMysql->escapeColumn('sha256Hash'));
+        $this->assertEquals('`oauth2_client_id`', $adapterMysql->escapeColumn('oauth2Client', true));
+        $this->assertEquals('`oauth2_client`.`sha256_hash`', $adapterMysql->escapeColumn('oauth2Client.sha256#Hash'));
     }
 
     public function testEscapeValue()
@@ -410,8 +417,75 @@ class AdapterMysqlTest extends TestCase
     {
         $adapterMysql = new AdapterMysql();
         $this->assertEquals('SELECT * FROM `table_name` WHERE `table_name`.`id` = 1 ', $adapterMysql->parseSelect(false, ['*'], '`table_name`', ['`table_name`.`id` = 1'], [], [], [], 0, 0));
-        $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP_BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
+        $this->assertEquals('SELECT DISTINCT `table_name`.`column_name_one`,`table_name`.`column_name_two` FROM `table_name` WHERE `table_name`.`id` = 1 GROUP BY `table_name`.`column_name_one` HAVING `value` ORDER BY `table_name`.`id` ASC LIMIT 10 OFFSET 1 ',
                 $adapterMysql->parseSelect(true, ['`table_name`.`column_name_one`', '`table_name`.`column_name_two`'], '`table_name`', ['`table_name`.`id` = 1'], ['`table_name`.`column_name_one`'], ['`value`'], ['`table_name`.`id` ASC'], 1, 10));
+    }
+
+    public function testBuildJoinOnForeignKey()
+    {
+        $adapterMysql = new AdapterMysql();
+        $joinMetadata = $adapterMysql->buildJoinOnForeignKey(JoinType::left, 'parentSelfReferencedSample', SelfReferencedSample::class, '`self_referenced_sample`');
+        $this->assertSame('`parent_self_referenced_sample`', $joinMetadata['alias']);
+        $this->assertSame('parentSelfReferencedSample', $joinMetadata['aliasPath']);
+        $this->assertSame('`self_referenced_sample`.`parent_self_referenced_sample_id` = `parent_self_referenced_sample`.id', $joinMetadata['on']);
+    }
+
+    public function testBuildJoinedColumns()
+    {
+        $adapterMysql = new AdapterMysql();
+        $this->assertSame([
+            '`parent_self_referenced_sample`.`id` AS parentSelfReferencedSample__id',
+            '`parent_self_referenced_sample`.`parent_self_referenced_sample_id` AS parentSelfReferencedSample__parentSelfReferencedSample',
+            '`parent_self_referenced_sample`.`base_sample_id` AS parentSelfReferencedSample__baseSample',
+            '`parent_self_referenced_sample`.`text` AS parentSelfReferencedSample__text',
+            '`parent_self_referenced_sample`.`nullable_text` AS parentSelfReferencedSample__nullableText',
+                ], $adapterMysql->buildJoinedColumns('parentSelfReferencedSample', SelfReferencedSample::class));
+    }
+
+    public function testSelectWithJoinAndConditionsOnColumnsOfJoinedTable()
+    {
+        $adapterMysql = new AdapterMysql();
+        $query = new Query($adapterMysql);
+        $query->setTable(SelfReferencedSample::class)
+                ->appendJoinOnForeignKey(JoinType::left, 'parentSelfReferencedSample', SelfReferencedSample::class)
+                ->setWhere()
+                ->appendCondition('id', ComparisonOperator::equal)
+                ->appendAnd()
+                ->appendCondition('parentSelfReferencedSample.text', ComparisonOperator::equal)
+                ->close();
+        $this->assertSame('SELECT `self_referenced_sample`.* FROM `self_referenced_sample` LEFT JOIN `self_referenced_sample` AS `parent_self_referenced_sample` ON `self_referenced_sample`.`parent_self_referenced_sample_id` = `parent_self_referenced_sample`.id WHERE `self_referenced_sample`.`id` = ? AND `parent_self_referenced_sample`.`text` = ? ', $query->getCommandToExecute());
+    }
+
+    public function testSelectWithCrossJoin()
+    {
+        $adapterMysql = new AdapterMysql();
+        $query = new Query($adapterMysql);
+        $query->setTable('size')
+                ->appendJoin(JoinType::cross, 'color', 'color', '')
+                ->close();
+        $this->assertSame('SELECT `size`.* FROM `size` CROSS JOIN `color` AS `color`  ', $query->getCommandToExecute());
+    }
+
+    public function testSelectWithTableAliasQualifiesWhereConditions()
+    {
+        $adapterMysql = new AdapterMysql();
+        $query = new Query($adapterMysql);
+        $query->setTable('event', 'parentEvent')
+                ->setWhere()
+                ->appendConditionOnEncryptedColumn('secret', 'secretInitializationVector', ComparisonOperator::equal)
+                ->appendAnd()
+                ->appendFulltextCondition(['title', 'body'])
+                ->appendAnd()
+                ->appendCondition('price', ComparisonOperator::greater)
+                ->setGroupBy(['website'])
+                ->setHaving()
+                ->appendCondition('price', ComparisonOperator::greater)
+                ->close();
+        $this->assertSame("SELECT `parent_event`.* FROM `event` as `parent_event` WHERE "
+                . "AES_DECRYPT( FROM_BASE64( `parent_event`.`secret` ), ?, UNHEX( HEX( `parent_event`.`secret_initialization_vector` ) ) ) = ? "
+                . "AND MATCH (`parent_event`.`title`,`parent_event`.`body`) AGAINST (? IN NATURAL LANGUAGE MODE) "
+                . "AND `parent_event`.`price` > ? "
+                . "GROUP BY `website` HAVING `price` > ? ", $query->getCommandToExecute());
     }
 
     public function testParseInsert()
